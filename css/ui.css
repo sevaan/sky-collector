@@ -1,0 +1,632 @@
+/* Shared components (2026-10-07, Sevaan: the Explore/Collection switcher is one thing, so it should look like one
+   thing). Loaded by index.html and cards.html after their page styles, so a component looks the same everywhere.
+   Page CSS may place a component (top/bottom/z-index); it should not restyle it. */
+:root {
+  --ui-link-ink: #bdbea9; --ui-ink: #fff2b3; --ui-muted: rgba(255, 242, 179, .55); --ui-gold: #fa8127; --ui-edge: #627a8b; --ui-edge-soft: #344654;
+  --ui-glass: rgba(12, 23, 37, .95); --ui-bar: rgba(8, 15, 27, .78);
+  --ui-medal: #ffc93d; --ui-label: 'SC Label', 'Arial Narrow', sans-serif; --ui-display: 'SC Display', Impact, sans-serif;
+  --nav-w: calc(28 * max(7px, min(14px, calc((var(--vws, 100vw) - 58px) / 28), calc((100dvh - 120px) / 39.2)))); /* = a full card's width */
+}
+
+/* Switcher: Explore | Collection. As wide as a card; the current page is the gold pill. */
+.sc-switch { position: fixed; z-index: 20; left: 50%; right: auto; bottom: calc(20px + var(--safe-bottom, env(safe-area-inset-bottom, 0px))); transform: translateX(-50%);
+  width: var(--nav-w); height: 72px; display: grid; /* taller for an easier tap (2026-10-11, Sevaan asked three times: 46 → 54 → 62 → 72px) */ grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; margin: 0; box-sizing: border-box;
+  background: var(--ui-bar); border: 1px solid var(--ui-edge-soft); border-top: 1px solid var(--ui-edge-soft); border-radius: 99px;
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.sc-switch__item { display: flex; flex-direction: row; justify-content: center; align-items: center; width: auto; min-height: 0; gap: 0; border: 0; border-radius: 99px;
+  background: transparent; color: var(--ui-muted); text-decoration: none; font: 500 14px/1 var(--ui-label); letter-spacing: .14em; text-transform: uppercase; cursor: pointer; }
+.sc-switch__item > span, .sc-switch__item .ico { display: none; }
+.sc-switch__item[aria-current] { color: var(--ui-gold); background: rgba(250, 129, 39, .14); box-shadow: inset 0 0 0 1px rgba(250, 129, 39, .45); }
+.sc-switch__item:focus-visible { outline: 2px solid var(--ui-gold); outline-offset: 2px; }
+
+/* ✕: every close in the app (bare glyph, see "Bare icons" below). */
+.x-close { display: grid; place-items: center; width: 44px; min-width: 44px; height: 44px; padding: 0; border-radius: 50%;
+  border: 1px solid var(--ui-edge); background: var(--ui-glass); color: var(--ui-ink); font: 400 20px/1 system-ui, sans-serif; cursor: pointer; }
+
+/* Round header buttons (night mode, settings). */
+.icon-button { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border-radius: 50%; border: 1px solid var(--ui-edge); background: var(--ui-glass); color: var(--ui-ink); }
+
+/* Red night mode keeps the same shapes, in red. */
+:where(html[data-theme='night'], body.night) .sc-switch__item[aria-current] { color: #ff6a55; background: rgba(255, 70, 50, .12); box-shadow: inset 0 0 0 1px rgba(255, 70, 50, .45); }
+
+/* Toasts ("tickets"): shared by Explore and Collection (js/toast.js). A stack at the bottom, as wide as a card.
+   Pages set the stack's height above their own controls (#toasts bottom); the ticket itself lives here. */
+:where(#toasts) { position: fixed; z-index: 30; left: 50%; transform: translateX(-50%); width: var(--nav-w); max-width: var(--nav-w); margin: 0;
+  bottom: calc(var(--safe-bottom, env(safe-area-inset-bottom, 0px)) + 84px); display: flex; flex-direction: column-reverse; gap: 8px; pointer-events: none; }
+:root { --ticket-event:#e2b53c; --ticket-event-text:#f4d27a; }
+html[data-theme=night],body.night { --ticket-event:var(--gold, #fa8127); --ticket-event-text:var(--gold, #fa8127); }
+.ticket { pointer-events:auto; display:flex; align-items:center; gap:12px; min-height:52px; padding:8px 12px 8px 14px; border:1px solid var(--edge, #627a8b); border-left:4px solid var(--edge, #627a8b); border-radius:10px; background:var(--glass-strong, #0c1725); color:var(--text, #fff2b3); box-shadow:0 8px 24px rgba(0,0,0,.5);
+  /* Like a phone notification (2026-10-06): drops in from above the screen with a little spring, slides back up to leave. */
+  opacity:0; transform:translateY(calc(-100% - var(--safe-top) - 80px)) scale(.96); transition:transform .3s cubic-bezier(.5,0,.9,.5), opacity .3s ease-in; }
+.ticket.in { opacity:1; transform:none; transition:transform .55s cubic-bezier(.18,1.25,.4,1), opacity .2s ease-out; }
+@media (prefers-reduced-motion: reduce) { .ticket, .ticket.in { transition:opacity .2s; transform:none; } }
+/* First Light: a little paper-and-star confetti above the achievement, after its entrance settles. */
+.ticket--celebrate { position: relative; }
+.ticket__confetti { position: absolute; inset: 0; pointer-events: none; }
+.ticket__confetti i { position: absolute; left: 50%; top: 0; width: 4px; height: 7px; border-radius: 1px; background: var(--ui-gold); opacity: 0;
+  animation: ticketConfetti 1350ms var(--delay) ease-out both; }
+.ticket__confetti i:nth-child(3n) { background: var(--ui-ink); }
+.ticket__confetti i:nth-child(3n + 1) { background: var(--ui-edge); }
+.ticket__confetti i:nth-child(4n) { width: 9px; height: 9px; border-radius: 0; clip-path: polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%); }
+@keyframes ticketConfetti {
+  0% { opacity: 0; transform: translate(-50%, 0) rotate(0deg) scale(.5); }
+  12% { opacity: 1; }
+  48% { opacity: 1; transform: translate(calc(var(--dx) * .7), var(--dy)) rotate(calc(var(--turn) * .6)) scale(1); }
+  100% { opacity: 0; transform: translate(var(--dx), 24px) rotate(var(--turn)) scale(.7); }
+}
+.ticket__confetti.down i { top: auto; bottom: 0; animation-name: ticketConfettiDown; }
+@keyframes ticketConfettiDown {
+  0% { opacity: 0; transform: translate(-50%, 0) rotate(0deg) scale(.5); }
+  12% { opacity: 1; }
+  55% { opacity: 1; transform: translate(calc(var(--dx) * .7), var(--dy)) rotate(calc(var(--turn) * .6)) scale(1); }
+  100% { opacity: 0; transform: translate(var(--dx), calc(var(--dy) + 70px)) rotate(var(--turn)) scale(.7); }
+}
+@media (prefers-reduced-motion: reduce) { .ticket__confetti { display: none; } .ticket__confetti i { animation: none; } }
+.ticket.linked { cursor:pointer; }
+.ticket__mark { flex:none; width:12px; height:12px; }
+.ticket__body { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+.ticket__eyebrow { font:500 12px/1.2 var(--label, 'SC Label','Arial Narrow',sans-serif); letter-spacing:.18em; color:var(--muted, #bdbea9); }
+.ticket__line { font:500 15px/1.15 var(--label, 'SC Label','Arial Narrow',sans-serif); letter-spacing:.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ticket__xp { flex:none; font:400 15px/1 var(--display, 'SC Display',Impact,sans-serif); color:var(--gold, #fa8127); }
+.ticket__xp small { font:500 12px/1 var(--label, 'SC Label','Arial Narrow',sans-serif); letter-spacing:.1em; color:var(--muted, #bdbea9); margin-left:3px; }
+.ticket__go { flex:none; font:500 12px/1 var(--label, 'SC Label','Arial Narrow',sans-serif); letter-spacing:.12em; color:var(--cyan, #8fb3cf); }
+.ticket--mission, .ticket--achievement, .ticket--rank { border-left-color:var(--gold, #fa8127); } .ticket--mission .ticket__eyebrow, .ticket--achievement .ticket__eyebrow, .ticket--rank .ticket__eyebrow { color:var(--gold, #fa8127); }
+.ticket--mission .ticket__mark, .ticket--achievement .ticket__mark, .ticket--rank .ticket__mark { transform:rotate(45deg); background:var(--gold, #fa8127); }
+.ticket--xp { border-left-color:var(--cyan, #8fb3cf); } .ticket--xp .ticket__eyebrow { color:var(--cyan, #8fb3cf); } .ticket--xp .ticket__xp { color:var(--cyan, #8fb3cf); }
+.ticket--xp .ticket__mark { border-radius:50%; border:2px solid var(--cyan, #8fb3cf); box-sizing:border-box; }
+.ticket--event { border-color:var(--ticket-event); border-left-color:var(--ticket-event); } .ticket--event .ticket__eyebrow, .ticket--event .ticket__go { color:var(--ticket-event-text); }
+.ticket--event .ticket__mark { border-radius:50%; background:radial-gradient(circle at 35% 30%, #fff1c2, var(--ticket-event) 60%, #9a7420); }
+.ticket--info { border-left-color:var(--edge, #627a8b); } .ticket--info .ticket__mark { display:none; } .ticket--info .ticket__line { white-space:normal; font:400 14px/1.35 var(--label, 'SC Label','Arial Narrow',sans-serif); }
+.ticket--info .big-line { display:block; color:var(--gold, #fa8127); font:400 17px/1.3 var(--display, 'SC Display',Impact,sans-serif); margin-bottom:3px; }
+.ticket--info .ticket__line:has(.tk-art) { display:flex; align-items:center; gap:12px; }
+.ticket--info .tk-art { flex:none; line-height:0; } .ticket--info .tk-text { min-width:0; }
+@media (prefers-reduced-motion: reduce) { .tk-art animateMotion, .tk-art animateTransform { display:none; } }
+.ticket { transform:translateY(calc(100% + var(--safe-bottom, env(safe-area-inset-bottom,0px)) + 160px)) scale(.96); cursor:pointer; }
+.ticket.in { transform:none; }
+.ticket { padding:8px 10px 8px 12px; gap:10px; }
+.ticket--info .ticket__line { font-size:14px; }
+.ticket.in { transition:transform .38s cubic-bezier(.2,1.1,.3,1), opacity .2s ease-out; } /* a small settle, not a bob (UX room 2026-10-12) */
+/* Leaving: a quick fade and 8px drop, instead of sliding back down through the slider and switcher */
+.ticket.out { transform:translateY(8px) !important; opacity:0 !important; transition:transform .18s ease-in, opacity .18s ease-in !important; }
+@media (prefers-reduced-motion: reduce) { .ticket.in { transition:opacity .2s; } }
+.ticket--standing { border-left-color:var(--gold, #fa8127); }
+.ticket--standing .ticket__go { color:var(--gold, #fa8127); font-size:20px; }
+.ticket--compass { border-left-color:var(--gold, #fa8127); } .ticket--compass .ticket__mark { display:none; }
+.ticket--compass .ticket__eyebrow { color:var(--gold, #fa8127); grid-column:2; grid-row:1; }
+.ticket--compass .ticket__body { display:grid; grid-template-columns:auto 1fr; column-gap:10px; align-items:center; }
+.ticket--compass .ticket__line { display:contents; }
+.ticket--compass .tk-art { grid-column:1; grid-row:1 / 3; line-height:0; }
+.ticket--compass .tk-text { grid-column:2; grid-row:2; white-space:normal; font:500 14px/1.25 var(--label, 'SC Label','Arial Narrow',sans-serif); }
+
+/* A toast with a picture in place of the mark (e.g. the constellation filling in): a small card-art window. */
+.ticket--art { padding-left: 8px; }
+.ticket__art { flex: none; width: 84px; height: 56px; border-radius: 6px; overflow: hidden; border: 1px solid rgba(255, 242, 179, .25); line-height: 0; }
+.ticket__art svg { width: 100%; height: 100%; display: block; }
+.ticket__art polyline, .ticket__art circle { vector-effect: non-scaling-stroke; }
+.ticket__art .con-spark { display: none; }
+
+/* Type (2026-10-07): one reading font everywhere (the phone's own), the card fonts for labels and display. */
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+
+/* Section label: the small spaced capitals over a group ("TONIGHT'S MISSIONS", "EVENTS", settings headings). */
+.ui-eyebrow, .session-title, .t-head, .lb-head, .viewer-history h2, .collection-intro .eyebrow {
+  font: 500 13px/1.2 var(--ui-label); letter-spacing: .16em; text-transform: uppercase; }
+.session-title, .t-head, .lb-head, .viewer-history h2, .collection-intro .eyebrow { color: var(--ui-gold); }
+.ui-eyebrow { color: rgba(255, 242, 179, .6); }
+
+/* Chip: one line in a pill. Label muted, the name bold gold ("Next: COSMOS 2082 · 9:44 PM", "Next: ORIONIDS · OCT 21"). */
+.ui-chip { display: inline-flex; align-items: baseline; gap: .35em; max-width: 100%; box-sizing: border-box; padding: 7px 11px; border-radius: 99px; white-space: nowrap;
+  background: var(--ui-bar); border: 1px solid var(--ui-edge-soft); color: var(--ui-ink); font: 500 12px/1.2 var(--ui-label); letter-spacing: .1em; text-transform: uppercase; }
+.ui-chip b { color: var(--ui-gold); font-weight: 700; letter-spacing: .06em; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.ui-chip__k { flex: none; color: var(--ui-muted); }
+.ui-chip--earned { border-color: #e2b53c; } .ui-chip--earned b { color: #f4d27a; }
+
+/* Buttons: one shape. Default is a cream outline; --primary is solid gold (the sky's Tap to collect); --accent a gold outline. */
+.ui-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 20px; border-radius: 4px; cursor: pointer;
+  border: 1.5px solid var(--ui-ink); background: rgba(8, 15, 27, .8); color: var(--ui-ink); text-decoration: none;
+  font: 500 15px/1.2 var(--ui-label); letter-spacing: .16em; text-transform: uppercase; }
+.ui-btn--primary { background: var(--ui-gold); border-color: var(--ui-gold); color: #080f1b; box-shadow: 0 3px 0 #080f1b, 0 4px 0 #bcb585; }
+.ui-btn--accent { border-color: var(--ui-gold); color: var(--ui-gold); }
+.ui-btn:active { transform: translateY(1px); }
+#viewer .ui-btn { margin: 6px auto; } /* stacked under the card */
+
+/* Twinkling starfield behind a card (js/starfield.js): the reveal and the collection viewer. Pages place the field. */
+.starfield i { position: absolute; width: var(--s); height: var(--s); border-radius: 50%; background: #fff2b3; opacity: var(--o);
+  animation: ui-twinkle var(--t) ease-in-out var(--d) infinite; }
+@keyframes ui-twinkle { 0%, 100% { opacity: var(--o); transform: scale(1); } 50% { opacity: .08; transform: scale(.6); } }
+@media (prefers-reduced-motion: reduce) { .starfield i { animation: none; } }
+:where(html[data-theme='night'], body.night) .starfield i { background: #b45b53; }
+
+/* Under-the-card status line (viewer): the same voice as the sky's lines under the circle. */
+.viewer-status { font: 500 14px/1.35 var(--ui-label); letter-spacing: .04em; color: rgba(255, 242, 179, .7); }
+
+/* Fields: dropdowns and search boxes share one look (heights stay with each page's layout). */
+select, .filter select, .search { border: 1px solid var(--ui-edge); border-radius: 6px; background: var(--ui-glass); color: var(--ui-ink);
+  font: 500 14px/1.2 var(--ui-label); letter-spacing: .03em; }
+
+/* One focus ring for keyboard users, everywhere. */
+:is(button, a, input, select, summary):focus-visible { outline: 2px solid var(--ui-gold); outline-offset: 3px; }
+
+/* Red night mode, once for every shared component: the components read these tokens, so they all turn red together. */
+:where(html[data-theme='night'], body.night) {
+  --ui-link-ink: #e8705f; --ui-ink: #ff7f70; --ui-muted: rgba(214, 118, 116, .6); --ui-gold: #ff6a55; --ui-edge: #58272b; --ui-edge-soft: #3a1716;
+  --ui-glass: rgba(26, 9, 9, .96); --ui-bar: rgba(20, 4, 4, .82);
+}
+.lb-head span { font: 500 12px/1.2 var(--ui-label); letter-spacing: .06em; text-transform: none; color: var(--ui-muted); }
+
+/* Slider: ends labelled in small caps, a gold-filled track, a ringed thumb with a 44px touch band. Explore's sky
+   slider (#skybar) and Collection's card size (#sizebar). Pages set the height above their own controls. */
+:where(.ui-slider) { position: fixed; z-index: 15; left: 50%; transform: translateX(-50%); width: var(--nav-w); bottom: calc(80px + var(--safe-bottom, env(safe-area-inset-bottom, 0px)));
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; column-gap: 9px; }
+.ui-slider__end { font: 500 11px/1 var(--ui-label); letter-spacing: .16em; color: var(--ui-muted); opacity: .9; }
+.ui-range { -webkit-appearance: none; appearance: none; width: 100%; height: 44px; margin: 0; background: transparent; touch-action: none; cursor: pointer; }
+.ui-range:focus { outline: none; }
+.ui-range::-webkit-slider-runnable-track { height: 3px; border-radius: 2px; background: linear-gradient(90deg, color-mix(in srgb, var(--ui-gold) 45%, #080f1b) 0 var(--p, 50%), rgba(98, 122, 139, .55) var(--p, 50%)); }
+.ui-range::-moz-range-track { height: 3px; border-radius: 2px; background: rgba(98, 122, 139, .55); }
+.ui-range::-moz-range-progress { height: 3px; border-radius: 2px; background: color-mix(in srgb, var(--ui-gold) 45%, #080f1b); }
+.ui-range::-webkit-slider-thumb { -webkit-appearance: none; width: 26px; height: 26px; margin-top: -11.5px; border-radius: 50%; background: #080f1b; border: 2.5px solid color-mix(in srgb, var(--ui-gold) 45%, #080f1b);
+  box-shadow: 0 0 0 5px rgba(8, 15, 27, .6), 0 2px 8px #0008; }
+.ui-range::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: #080f1b; border: 2px solid color-mix(in srgb, var(--ui-gold) 45%, #080f1b); }
+.ui-range:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(250, 129, 39, .35); }
+
+/* Bare icons (2026-10-07, Sevaan): no circle around the header buttons or any ✕; the 44px tap area stays. */
+.icon-button, .x-close, .pill.x-close, #viewer .close { border: 0 !important; background: transparent !important; box-shadow: none !important; }
+.x-close { font-size: 24px !important; }
+
+/* Text actions under cards: the welcome screen's muted, spaced capitals, with a 44px tap area. */
+.ui-link { display: flex; align-items: center; justify-content: center; width: max-content; max-width: calc(100% - 32px); margin: 0 auto; padding: 10px 4px; box-sizing: border-box;
+  border: 0 !important; background: none !important; box-shadow: none !important; cursor: pointer; text-align: center;
+  font: 500 12px/1 var(--ui-label) !important; letter-spacing: .14em; text-transform: uppercase; color: var(--ui-link-ink) !important; text-decoration: none; min-height: 44px !important; }
+.ui-link:focus-visible { outline: none; text-decoration: underline; }
+
+/* The switcher's pill slides (2026-10-07, Sevaan): one orange pill under the buttons, moved by data-side, rather than
+   each button lighting up. Tap → the pill glides across, then the view changes. */
+.sc-switch::before { content: ''; position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 6px); border-radius: 99px; pointer-events: none;
+  background: rgba(250, 129, 39, .14); box-shadow: inset 0 0 0 1px rgba(250, 129, 39, .45); transition: transform .26s cubic-bezier(.3, 1.25, .5, 1); }
+.sc-switch[data-side='right']::before { transform: translateX(calc(100% + 4px)); }
+.sc-switch.no-anim::before, .sc-switch.no-anim .sc-switch__item { transition: none !important; }
+.sc-switch__item { position: relative; z-index: 1; transition: color .22s ease; }
+.sc-switch__item[aria-current] { background: transparent !important; box-shadow: none !important; }
+:where(html[data-theme='night'], body.night) .sc-switch::before { background: rgba(255, 70, 50, .12); box-shadow: inset 0 0 0 1px rgba(255, 70, 50, .45); }
+@media (prefers-reduced-motion: reduce) { .sc-switch::before { transition: none; } }
+
+/* ---------- Mission patches (js/patches.js) ---------- */
+.patch { position: relative; display: block; width: 100%; aspect-ratio: 1; border-radius: 50%; --x: 40%; }
+.patch .patch-svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.patch--gold .patch-svg { filter: sepia(.55) saturate(1.5) hue-rotate(-8deg) brightness(1.08); }
+.patch--gold::after, .patch--holo::after, .patch--holo::before { content: ''; position: absolute; inset: 3%; border-radius: 50%; pointer-events: none; }
+.patch--gold::after { mix-blend-mode: overlay; opacity: .8; background: linear-gradient(115deg, transparent 42%, rgba(255,250,225,.75) 50%, transparent 58%) 0 0 / 300% 100%; animation: patch-sheen 5s ease-in-out infinite; }
+.patch--holo::after { mix-blend-mode: overlay; opacity: .55; background: linear-gradient(115deg, #ff8fd8 0%, #8ff0ff 20%, #fff2b3 40%, #8fffb0 60%, #b48fff 80%, #ff8fd8 100%) 0 50% / 300% 300%; animation: patch-sheen 7s ease-in-out infinite; }
+.patch--holo::before { z-index: 1; mix-blend-mode: overlay; background: linear-gradient(115deg, transparent 44%, rgba(255,255,255,.55) 50%, transparent 56%) 0 0 / 300% 100%; animation: patch-sheen 5s ease-in-out infinite; }
+@keyframes patch-sheen { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+/* tilt-driven (detail view): the sheen follows --x instead of drifting */
+.patch.tilt::after, .patch.tilt::before { animation: none; background-position: var(--x) 50%; }
+@media (prefers-reduced-motion: reduce) { .patch::after, .patch::before { animation: none !important; } }
+:where(html[data-theme='night'], body.night) .patch { filter: grayscale(1) brightness(.6) sepia(1) saturate(4) hue-rotate(318deg); }
+:where(html[data-theme='night'], body.night) .patch::after, :where(html[data-theme='night'], body.night) .patch::before { display: none; }
+
+/* Patch toast: the patch as its picture, round. */
+.ticket--patch { border-left-color: var(--ui-gold); padding-left: 8px; }
+.ticket--patch .ticket__eyebrow { color: var(--ui-gold); }
+.ticket--patch .ticket__art { width: 46px; height: 46px; border: 0; border-radius: 50%; overflow: visible; }
+
+/* The earning moment (js/main.js earnPatch): the patch drops in big, its border stitches itself on, it lands with a
+   thump, then it shrinks away and a toast takes over. Tap to skip. */
+.patch-moment { position: fixed; inset: 0; z-index: 70; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+  background: radial-gradient(ellipse at 50% 45%, rgba(8, 15, 27, .55), rgba(4, 7, 13, .9)); cursor: pointer; animation: pm-fade .3s ease-out; }
+.patch-moment .pm-patch { width: min(62vw, 250px); animation: pm-drop .7s cubic-bezier(.2, 1.4, .4, 1) both; filter: drop-shadow(0 20px 30px #000a); }
+.patch-moment .patch-thread { stroke-dasharray: 100; stroke-dashoffset: 100; animation: pm-stitch 1s .55s ease-in-out forwards; }
+.patch-moment .pm-label { text-align: center; opacity: 0; animation: pm-up .45s 1.3s ease-out forwards; }
+.patch-moment .pm-label small { display: block; font: 500 13px/1 var(--ui-label); letter-spacing: .22em; color: var(--ui-gold); }
+.patch-moment .pm-label b { display: block; margin-top: 8px; font: 400 28px/1 var(--ui-display); text-transform: uppercase; color: var(--ui-ink); }
+.patch-moment .pm-label span { display: block; margin-top: 8px; font: 500 15px/1.3 var(--ui-label); letter-spacing: .04em; color: rgba(255, 242, 179, .7); max-width: 280px; }
+.patch-moment.landed .pm-patch { animation: pm-thump .32s ease-out; }
+.patch-moment.out { animation: pm-fade .35s ease-in reverse forwards; }
+.patch-moment.out .pm-patch { transition: transform .4s cubic-bezier(.5, 0, .8, .4); transform: translateY(42vh) scale(.18); }
+@keyframes pm-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pm-drop { from { transform: translateY(-60vh) scale(1.5) rotate(-14deg); opacity: 0; } 60% { opacity: 1; } to { transform: none; } }
+@keyframes pm-stitch { to { stroke-dashoffset: 0; } }
+@keyframes pm-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes pm-thump { 0% { transform: scale(1); } 35% { transform: scale(.94); } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .patch-moment, .patch-moment .pm-patch, .patch-moment .pm-label { animation: none !important; opacity: 1; } .patch-moment .patch-thread { stroke-dashoffset: 0; animation: none; } }
+
+/* Several patches at once: side by side, a little smaller, names on one line under them. */
+.patch-moment .pm-row { display: flex; justify-content: center; gap: 14px; }
+.patch-moment.many .pm-patch { width: min(28vw, 130px); }
+.patch-moment.many .pm-label b { font-size: 20px; line-height: 1.2; max-width: 320px; }
+/* Nothing else talks during the reveal or a patch moment. */
+body:has(#reveal:not([hidden])) #banner, body:has(.patch-moment) #banner, body:has(.patch-moment) #toasts { visibility: hidden; }
+.patch-moment { background: radial-gradient(ellipse at 50% 45%, rgba(8, 15, 27, .86), rgba(4, 7, 13, .96)) !important; }
+
+/* Weather backdrops (js/weather-art.js): drifting noise clouds and falling rain, behind a page's headline. */
+.wx-clouds { position: absolute; left: -45%; right: -45%; top: -10px; height: 360px; pointer-events: none; -webkit-mask: linear-gradient(#000 45%, transparent 92%); mask: linear-gradient(#000 45%, transparent 92%); }
+.wx-layer { position: absolute; inset: 0; animation: wx-drift var(--d, 30s) ease-in-out infinite alternate; will-change: transform; }
+@keyframes wx-drift { from { transform: translateX(-14%); } to { transform: translateX(14%); } }
+.wx-side { position: absolute; inset: 0; -webkit-mask: linear-gradient(90deg, transparent 35%, #000 85%); mask: linear-gradient(90deg, transparent 35%, #000 85%); pointer-events: none; }
+.wx-rain { position: absolute; left: 0; right: 0; top: 0; height: 360px; overflow: hidden; pointer-events: none; -webkit-mask: linear-gradient(#000 60%, transparent); mask: linear-gradient(#000 60%, transparent); }
+.wx-rain i { position: absolute; top: -30px; width: 1.2px; height: var(--h, 16px); border-radius: 1px; background: linear-gradient(transparent, rgba(170, 200, 225, .75)); transform: rotate(12deg); animation: wx-fall var(--t, .7s) linear var(--dl, 0s) infinite; }
+@keyframes wx-fall { to { transform: translate(-80px, 400px) rotate(12deg); } }
+@media (prefers-reduced-motion: reduce) { .wx-layer, .wx-rain i { animation: none; } }
+
+.search input { border: 0 !important; background: transparent !important; outline: none; } /* the box is the .search label, not the input (2026-10-08) */
+.search input:focus-visible { outline: none; } .search:focus-within { border-color: var(--ui-gold); }
+
+/* ---------- Motion system (2026-10-08 polish pass) ----------
+   Three durations and two curves used everywhere, so the app moves with one rhythm. Reduce Motion → short fades. */
+:root { --m-fast: 150ms; --m-norm: 280ms; --m-slow: 520ms; --ease-out: cubic-bezier(.2, .8, .2, 1); --ease-spring: cubic-bezier(.3, 1.35, .5, 1); }
+@media (prefers-reduced-motion: reduce) { :root { --m-fast: 1ms; --m-norm: 120ms; --m-slow: 160ms; --ease-spring: ease-out; } }
+
+/* Press feedback: everything tappable dips a touch. */
+:where(button, a.pill, .ui-btn, .ui-link, .set-row, .ud-opt, .pw-item, .album, .lb-badge, .t-row, .chip, .ui-chip):active { transform: scale(.97); transition: transform var(--m-fast) var(--ease-out); }
+:where(.card-tile):active { transform: scale(.97) !important; }
+
+/* Sheets and panels slide up with a little spring; .leaving slides them away. */
+@keyframes ui-sheet-in { from { transform: translateY(28px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes ui-sheet-out { to { transform: translateY(36px); opacity: 0; } }
+@keyframes ui-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes ui-rise { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes ui-pop { 0% { transform: scale(1); } 40% { transform: scale(1.18); } 100% { transform: scale(1); } }
+@keyframes ui-wiggle { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-16deg); } 40% { transform: rotate(13deg); } 60% { transform: rotate(-8deg); } 80% { transform: rotate(4deg); } }
+@keyframes ui-shimmer { from { background-position: -200% 0; } to { background-position: 200% 0; } }
+@keyframes ui-roll { from { opacity: 0; transform: translateY(-40%); } to { opacity: 1; transform: none; } }
+
+/* Dialogs (card viewer, patch detail) fade their backdrop in. */
+dialog[open] { animation: ui-fade-in var(--m-norm) var(--ease-out); }
+dialog.leaving { animation: ui-fade-in var(--m-norm) var(--ease-out) reverse forwards; }
+
+/* Image loading: a soft shimmer until the picture arrives, then it fades in. */
+/* Empty tile slots are every card not yet scrolled near (thousands): a plain placeholder, no animation (2026-10-16:
+   4,849 of them shimmering at once made the card viewer's flip janky). Only a picture still loading shimmers. */
+.tile-slot:empty { background: #0f1b2a; }
+.card-tile__art:has(img:not(.loaded)) { background: linear-gradient(100deg, #0f1b2a 30%, #18283a 50%, #0f1b2a 70%) 0 0 / 200% 100%; animation: ui-shimmer 1.4s linear infinite; }
+.card-tile .card-art-image { transition: opacity var(--m-norm) var(--ease-out); } .card-tile .card-art-image:not(.loaded) { opacity: 0; }
+/* Long toasts wrap to two lines instead of cutting off mid-sentence (2026-10-09 tour test: the tour's hint ended in "Follow the …"). */
+.ticket__line { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.ticket--compass .ticket__line { display: contents; }
+/* Many patches in one moment (2026-10-09): they wrap (2 × 2 for four, rows of three for more), sized by --pw. */
+.patch-moment .pm-row { flex-wrap: wrap; margin: 0 auto; row-gap: 12px; }
+.patch-moment.many .pm-patch { width: var(--pw, min(28vw, 130px)); }
+
+/* Patch coins (2026-10-09, design/patch-earn-options.html A2): earned patches pop up on the left over the sky, then
+   roll into the Collection tab. Round at every moment: only flat rotation and scale, never rotateY. */
+.patch-coins { position: fixed; left: 14px; top: calc(var(--safe-top, 0px) + 92px); bottom: auto; z-index: 40; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; pointer-events: auto; cursor: pointer; }
+.pc-coin { display: flex; align-items: center; }
+.pc-disc { width: 58px; flex: none; aspect-ratio: 1; filter: drop-shadow(0 6px 12px #000a); opacity: 0; transform: translateY(46px) scale(.2) rotate(-200deg); }
+.pc-disc .patch, .pc-disc svg { display: block; width: 100%; height: 100%; }
+.pc-tag { margin-left: 8px; padding: 6px 10px; border-radius: 8px; background: #0c1725ee; border: 1px solid #344654; white-space: nowrap; opacity: 0; transform: translateX(-12px); transition: opacity .3s ease, transform .35s ease; }
+.pc-tag small { display: block; color: var(--gold, #fa8127); font: 500 12px/1 var(--label, 'SC Label', sans-serif); letter-spacing: .18em; text-transform: uppercase; }
+.pc-tag b { display: block; margin-top: 3px; color: var(--text, #fff2b3); font: 400 13px/1 var(--display, 'SC Display', sans-serif); text-transform: uppercase; }
+.pc-coin.in .pc-disc { animation: pc-pop .55s cubic-bezier(.2,1.4,.4,1) forwards; }
+.pc-coin.in .pc-tag { opacity: 1; transform: none; transition-delay: .25s; }
+@keyframes pc-pop { 0% { opacity: 0; transform: translateY(46px) scale(.2) rotate(-200deg); } 65% { opacity: 1; transform: translateY(-8px) scale(1.12) rotate(10deg); } 100% { opacity: 1; transform: none; } }
+.pc-coin.out .pc-tag { opacity: 0; transform: translateX(-10px); transition-delay: 0s; }
+.pc-coin.out .pc-disc { animation: pc-roll .6s cubic-bezier(.5,0,.75,.4) forwards; }
+@keyframes pc-roll { 0% { opacity: 1; transform: none; } 85% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(.25) rotate(160deg); } }
+.pc-more { margin-left: 4px; color: var(--muted, #bdbea9); font: 500 12px/1 var(--label, sans-serif); letter-spacing: .16em; text-transform: uppercase; }
+.pc-badge { position: fixed; z-index: 41; min-width: 24px; height: 24px; padding: 0 7px; border-radius: 12px; background: var(--gold, #fa8127); color: #080f1b; font: 400 12px/24px var(--display, 'SC Display', sans-serif); text-align: center; pointer-events: none; animation: pc-badge 2.4s ease forwards; }
+@keyframes pc-badge { 0% { opacity: 0; transform: scale(.4); } 12% { opacity: 1; transform: scale(1.25); } 20%, 80% { opacity: 1; transform: scale(1); } 100% { opacity: 0; } }
+:where(html[data-theme='night'], body.night) .pc-disc { filter: grayscale(1) brightness(.55) sepia(1) saturate(5) hue-rotate(318deg) drop-shadow(0 6px 12px #000a); }
+@media (prefers-reduced-motion: reduce) { .pc-coin.in .pc-disc { animation: none; opacity: 1; transform: none; } .pc-coin.out .pc-disc { animation: pc-fade .3s forwards; } @keyframes pc-fade { to { opacity: 0; } } }
+.patch-coins { left: calc((100vw - var(--nav-w)) / 2); } /* same left edge as the toasts (2026-10-09) */
+
+/* Three-way switcher (2026-10-09, Sevaan): Up in the sky | Explore | Collection. --n buttons, --i the current one. */
+.sc-switch { grid-template-columns: repeat(var(--n, 2), 1fr); }
+.sc-switch::before { width: calc((100% - 8px - (var(--n, 2) - 1) * 4px) / var(--n, 2)); transform: translateX(calc(var(--i, 0) * (100% + 4px))) !important; }
+.sc-switch.three .sc-switch__item { font-size: clamp(10px, 3.1vw, 12.5px); letter-spacing: .1em; white-space: nowrap; }
+/* Sticky tickets (2026-10-11): stay until tapped or closed; a ✕ on the right, a 44px target. */
+.ticket--sticky { padding-right: 4px; }
+.ticket__x { flex: none; width: 40px; height: 44px; margin: -8px 0; border: 0; background: none; color: var(--muted, #bdbea9); font: 400 16px/1 -apple-system, system-ui, sans-serif; cursor: pointer; border-left: 1px solid color-mix(in srgb, var(--edge, #627a8b) 45%, transparent); }
+.ticket__x:active { color: var(--ink, #fff2b3); }
+/* Tickets already up step aside while a card reveal, the Tonight page or a patch is showing. */
+body:has(#reveal:not([hidden])) #toasts, body:has(#ob-done:not([hidden])) #toasts { visibility: hidden; }
+/* Over the radar for its 7 seconds: the one spot clear of the circle and the target name above it (2026-10-12) */
+/* Coins slide down out from under the radar (2026-10-12). */
+.patch-coins .pc-disc { transform: translateY(-46px) scale(.3); }
+.patch-coins .pc-coin.in .pc-disc { animation: pc-drop .55s cubic-bezier(.2,1.3,.4,1) forwards; }
+@keyframes pc-drop { 0% { opacity: 0; transform: translateY(-46px) scale(.3) rotate(-120deg); } 65% { opacity: 1; transform: translateY(6px) scale(1.08) rotate(8deg); } 100% { opacity: 1; transform: none; } }
+.patch-coins .pc-more { margin-left: 0; width: 58px; text-align: center; }
+@media (prefers-reduced-motion: reduce) { .patch-coins .pc-coin.in .pc-disc { animation: none; opacity: 1; transform: none; } }
+/* Rolling into the Collection wins over the drop-in (2026-10-12: pc-drop's selector outranked pc-roll, so the coins just sat
+   there and vanished). */
+.patch-coins .pc-coin.out .pc-disc { animation: pc-roll .6s cubic-bezier(.5,0,.75,.4) forwards; }
+@media (prefers-reduced-motion: reduce) { .patch-coins .pc-coin.out .pc-disc { animation: pc-fade .3s forwards; } }
+/* (2026-10-18 playtest) The rules that hid patch labels and toasts while something was in the circle are gone: the
+   circle's name and Collect now sit in the card under the circle, and toasts are top right, so nothing collides; they
+   were hiding every patch name right after a catch and holding notifications for as long as you stayed locked on. */
+/* A patch coin never sits over a panel (2026-10-14 playtest: "Stage Hand" over the Settings rows). */
+body:has(.overlay.panel:not([hidden])) .patch-coins { visibility: hidden; }
+/* "Last chance" pill (js/last-chance.js): falling satellites in Tonight's run and Find. */
+.lc-pill { font-style: normal !important; color: #ff6b5a !important; letter-spacing: .1em; text-transform: uppercase; font-size: .85em; }
+.run-stop .lc-pill { margin-left: 6px; border: 1px solid #ff6b5a88; border-radius: 4px; padding: 1px 5px; }
+body:has(#gh-remind:not([hidden])) #toasts { opacity: 0; pointer-events: none; transition: opacity .2s; } /* Remind me under the steering pill comes first (2026-10-14) */
+/* Tour notifications card art (2026-10-14): two notifications drop onto the little phone. */
+@media (prefers-reduced-motion: no-preference) { .ob-note { animation: ob-note 3.2s ease-out infinite; } .ob-note2 { animation-delay: .45s; } @keyframes ob-note { 0% { transform: translateY(-10px); opacity: 0; } 18%, 80% { transform: none; opacity: 1; } 100% { opacity: 0; } } }
+/* Tour card art moves, like the notifications card (2026-10-14, Sevaan). Location: the pin drops and a ring ripples out;
+   motion: the phone sways side to side and the waves pulse. */
+@media (prefers-reduced-motion: no-preference) {
+  .ob-pin { transform-box: fill-box; transform-origin: 50% 100%; animation: ob-pin 3.2s cubic-bezier(.3,.7,.4,1) infinite; }
+  @keyframes ob-pin { 0% { transform: translateY(-18px); opacity: 0; } 14% { opacity: 1; } 24% { transform: none; } 30% { transform: scaleY(.9); } 36%, 100% { transform: none; } }
+  .ob-ripple { transform-box: fill-box; transform-origin: center; opacity: 0; animation: ob-ripple 3.2s ease-out infinite; }
+  @keyframes ob-ripple { 0%, 24% { transform: scale(.4); opacity: 0; } 30% { opacity: .9; } 70%, 100% { transform: scale(3.2); opacity: 0; } }
+  .ob-phone { animation: ob-phone 3.2s ease-in-out infinite; }
+  @keyframes ob-phone { 0%, 100% { transform: rotate(-14deg); } 50% { transform: rotate(14deg); } }
+  .ob-waves path { animation: ob-wave 1.6s ease-in-out infinite; } .ob-waves path:nth-child(even) { animation-delay: .25s; }
+  @keyframes ob-wave { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
+}
+
+/* ---------- Notifications, design A (2026-10-17, Sevaan picked "Ticket strip" on design/notifications): the same dark
+   glass ticket as the target circle. A coloured top edge and label say what kind it is, the words are cream, an action
+   is a solid button in that colour and ✕ is a soft square. --tkc is the kind's colour. ---------- */
+.ticket { --tkc: #c9cbb6; gap: 12px !important; min-height: 52px; padding: 9px 10px 9px 14px !important; border: 0 !important; border-top: 3px solid var(--tkc) !important; border-radius: 14px !important;
+  background: rgba(8, 15, 27, .9) !important; box-shadow: 0 10px 22px rgba(0, 0, 0, .3) !important; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); color: #fff2b3; text-shadow: none; }
+.ticket--mission, .ticket--compass, .ticket--standing { --tkc: #fa8127; }
+.ticket--rank, .ticket--event, .ticket--achievement { --tkc: #ffc93d; }
+.ticket--xp { --tkc: #8fb3cf; }
+.ticket--patch { --tkc: #e46ad6; }
+.ticket--info, .ticket--standing { --tkc: #c9cbb6; }
+.ticket[data-eyebrow="REMINDER SET"], .ticket[data-eyebrow="STREAK"] { --tkc: #7fb2ff; }
+.ticket[data-eyebrow="NEW STAMP"] { --tkc: #6fd3e0; }
+.ticket[data-eyebrow^="SHINY"] { --tkc: #ff8fd8; }
+.ticket[data-eyebrow="THE SUN"], .ticket[data-id="save-fail"] { --tkc: #ff6a5c; }
+.ticket[data-eyebrow$="COMPLETE"]:not(.ticket--mission), .ticket[data-eyebrow="MILESTONE"] { --tkc: #ffc93d; }
+.ticket .ticket__mark { display: none !important; }
+.ticket .ticket__body { gap: 3px; }
+.ticket .ticket__eyebrow { font: 600 11px/1.2 var(--label, 'SC Label', sans-serif) !important; letter-spacing: .2em !important; color: var(--tkc) !important; }
+.ticket .ticket__line { font: 500 15px/1.25 var(--label, 'SC Label', sans-serif) !important; letter-spacing: .02em !important; color: #fff2b3 !important; white-space: normal !important; }
+.ticket .ticket__line .big-line { color: var(--tkc); }
+.ticket .ticket__xp { font: 400 16px/1 var(--display, 'SC Display', sans-serif) !important; color: var(--tkc) !important; }
+.ticket .ticket__xp small { color: #c3c9d1 !important; }
+.ticket .ticket__go { display: inline-grid; place-items: center; height: 36px; padding: 0 12px; border-radius: 9px; background: var(--tkc); color: #0b1018 !important; font: 600 13px/1 var(--label, 'SC Label', sans-serif) !important; letter-spacing: .16em !important; text-transform: uppercase; }
+.ticket .ticket__x { flex: none; width: 36px; height: 36px; border: 0 !important; border-radius: 9px !important; background: rgba(255, 255, 255, .06) !important; color: #c3c9d1 !important; display: grid; place-items: center; font-size: 13px; }
+.ticket--art .ticket__art { flex: none; }
+:where(html[data-theme='night'], body.night) .ticket { --tkc: #ff6a55 !important; background: rgba(12, 3, 3, .92) !important; color: #ff7f70; }
+:where(html[data-theme='night'], body.night) .ticket .ticket__line { color: #ff7f70 !important; }
+:where(html[data-theme='night'], body.night) .ticket .ticket__go { color: #120606 !important; }
+
+/* The patch coin's label as a little ticket (gold edge). */
+.pc-tag { padding: 7px 12px 8px !important; border: 0 !important; border-top: 3px solid #ffc93d !important; border-radius: 12px !important; background: rgba(8, 15, 27, .9) !important; box-shadow: 0 8px 18px rgba(0, 0, 0, .3); }
+.pc-tag small { color: #ffc93d !important; font-weight: 600 !important; font-size: 11px !important; letter-spacing: .2em !important; }
+.pc-tag b { font: 400 15px/1.1 var(--display, 'SC Display', sans-serif) !important; text-transform: none !important; }
+
+/* ---------- Explore / Collection switcher, design A (2026-10-17, Sevaan, after trying B): a full-width dark glass
+   bar like the tickets, icon over the word; the side you're on gets an orange top edge and an orange word. Same width
+   as the notifications; 72px tall (asked for three times for easier taps). ---------- */
+/* The orange edge is part of the bar's own background (2026-10-17, Sevaan: the full width of its half). As a ::before
+   it poked out above the bar on iOS; a background is always clipped by the rounded corners. */
+.sc-switch::before { display: none !important; }
+.sc-switch { --edge: #fa8127; background: linear-gradient(var(--edge), var(--edge)) no-repeat 0 0 / 50% 3px, rgba(8, 15, 27, .9) !important; transition: background-position .26s cubic-bezier(.3,1.25,.5,1); }
+.sc-switch[data-side='right'] { background-position: 100% 0, 0 0 !important; }
+:where(html[data-theme='night'], body.night) .sc-switch { --edge: #ff6a55; background-color: rgba(12, 3, 3, .92) !important; }
+.sc-switch { width: var(--nav-w) !important; padding: 0 !important; gap: 0 !important; border: 0 !important; border-radius: 18px !important; overflow: hidden; box-shadow: 0 10px 24px rgba(0, 0, 0, .35); }
+.sc-switch__item { flex-direction: column !important; gap: 5px !important; border-radius: 0 !important; color: #c9cbb6; font: 600 12px/1 var(--ui-label, 'SC Label', sans-serif) !important; letter-spacing: .2em !important; }
+.sc-switch__item .ico { display: inline-block !important; width: 22px; height: 22px; flex: none; }
+.sc-switch[data-side='left'] .sc-switch__item:first-child, .sc-switch[data-side='right'] .sc-switch__item:last-child, .sc-switch:not([data-side]) .sc-switch__item[aria-current] { color: #fa8127 !important; }
+:where(html[data-theme='night'], body.night) .sc-switch__item { color: #a8463b !important; }
+:where(html[data-theme='night'], body.night) .sc-switch[data-side='left'] .sc-switch__item:first-child, :where(html[data-theme='night'], body.night) .sc-switch[data-side='right'] .sc-switch__item:last-child { color: #ff6a55 !important; }
+/* One close ✕ everywhere (2026-10-18, Sevaan: "use the view card one"): the reveal's, drawn in the app's label font, not
+   the heavier system glyph Settings and the Now page fell back to. */
+.x-close, .pill.x-close, #viewer .close { font: 500 24px/1.2 var(--label, 'SC Label'), 'Arial Narrow', sans-serif !important; }
+/* ---- Notices, redesign (2026-10-18, Sevaan approved design/notifications-all.html) ----
+   An icon tile, a short kind line, a title, an optional detail, one thing on the right. One width and place (css/app.css
+   puts the stack top right on the sky). Tones: orange rewards, gold the night's news, steel progress, cream info, red
+   failures, a shiny edge for shinies. The whole notice is the button. */
+#toasts .ticket { --k: #c9cbb6; display: grid !important; grid-template-columns: 32px minmax(0, 1fr) auto; column-gap: 10px; align-items: start; min-height: 0 !important;
+  padding: 10px 10px 11px !important; border: 0 !important; border-top: 3px solid var(--k) !important; border-radius: 14px !important;
+  background: rgba(9, 16, 28, .96) !important; box-shadow: 0 10px 24px rgba(0, 0, 0, .38), inset 0 0 0 1px rgba(255, 255, 255, .05) !important; color: #fff2b3; }
+#toasts .ticket.tone-orange { --k: #fa8127; } #toasts .ticket.tone-gold { --k: #f1c04e; } #toasts .ticket.tone-steel { --k: #8fb3cf; }
+#toasts .ticket.tone-info { --k: #c9cbb6; } #toasts .ticket.tone-red { --k: #ff7a64; } #toasts .ticket.tone-shiny { --k: #ffcf7a; }
+#toasts .ticket.tone-shiny { border-top: 3px solid transparent !important; background: linear-gradient(rgba(9,16,28,.96), rgba(9,16,28,.96)) padding-box, linear-gradient(90deg, #fff2b3, #ffcf7a, #fa8127, #ffb3a1) border-box !important; }
+#toasts .ticket .ticket__mark, #toasts .ticket .ticket__art, #toasts .ticket .ticket__go { display: none !important; }
+#toasts .tn-ic { width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; color: var(--k); background: color-mix(in srgb, var(--k) 15%, transparent); overflow: hidden; }
+#toasts .tn-ic svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+#toasts .tn-ic.art { background: #0b1626; border: 1px solid color-mix(in srgb, var(--k) 35%, transparent); }
+#toasts .tn-ic.art svg, #toasts .tn-ic.art img { width: 100%; height: 100%; object-fit: cover; stroke: none; }
+#toasts .ticket__body { display: block !important; min-width: 0; }
+#toasts .ticket__eyebrow { display: block; font: 500 10.5px/1.25 var(--label, 'SC Label', 'Arial Narrow', sans-serif) !important; letter-spacing: .18em !important; text-transform: uppercase; color: var(--k) !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-top: 1px; }
+#toasts .ticket__line { display: -webkit-box !important; -webkit-line-clamp: 2 !important; -webkit-box-orient: vertical; overflow: hidden; white-space: normal !important; margin-top: 2px; font: 500 16.5px/1.12 var(--label, 'SC Label', 'Arial Narrow', sans-serif) !important; letter-spacing: .02em !important; color: #fff2b3 !important; }
+#toasts .ticket__line:first-child { margin-top: 1px; }
+#toasts .ticket__sub { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 3px; font: 500 13px/1.28 var(--label, 'SC Label', 'Arial Narrow', sans-serif); letter-spacing: .03em; color: #aab6c3; }
+#toasts .tn-go { color: var(--k); white-space: nowrap; }
+#toasts .ticket__xp { align-self: center; font: 400 17px/1 var(--display, 'SC Display', sans-serif) !important; color: var(--k) !important; white-space: nowrap; }
+#toasts .ticket__xp small { font: 500 11px var(--label, 'SC Label', sans-serif); letter-spacing: .12em; color: #aab6c3 !important; margin-left: 2px; }
+#toasts .ticket .ticket__x { width: 28px !important; height: 28px !important; min-height: 0 !important; margin: -4px -4px 0 0 !important; padding: 0 !important; border: 0 !important; border-radius: 50% !important; background: none !important; box-shadow: none !important; color: #7f8fa1 !important; font: 500 17px/1 var(--label, 'SC Label', 'Arial Narrow', sans-serif) !important; display: grid; place-items: center; }
+:where(html[data-theme='night'], body.night) #toasts .ticket { --k: #ff6a55 !important; background: rgba(18, 6, 6, .96) !important; }
+:where(html[data-theme='night'], body.night) #toasts .ticket .ticket__line { color: #ff7f70 !important; }
+:where(html[data-theme='night'], body.night) #toasts .ticket :is(.ticket__sub, .ticket__x, .ticket__xp small) { color: #c95a4c !important; }
+#toasts .ticket__sub { -webkit-line-clamp: 3; } /* a compass or error detail gets a third line before it's cut */
+/* Notices come down from the top like the phone's own (2026-10-18, Sevaan: "like SMS messages… down over things"):
+   full width at the top edge, over the header, newest on top; they slide down in and up out, and a swipe up sends one
+   away (js/toast.js). #toasts#toasts outranks the older top-right / bottom placements in css/app.css. A page (Now,
+   Settings) and the reveal keep their rules: sky notices wait, a page's own show here over it. */
+html body #toasts#toasts#toasts { top: calc(var(--safe-top, env(safe-area-inset-top, 0px)) + 8px) !important; bottom: auto !important; left: 50% !important; right: auto !important;
+  transform: translateX(-50%) !important; width: min(440px, calc(var(--vws, 100vw) - 16px)) !important; max-width: none !important; margin: 0 !important;
+  flex-direction: column-reverse !important; justify-content: flex-end !important; gap: 8px; z-index: 90; }
+html body #toasts#toasts#toasts .ticket { width: 100%; touch-action: none; background: rgba(9, 16, 28, .97) !important; -webkit-backdrop-filter: blur(14px) saturate(1.2); backdrop-filter: blur(14px) saturate(1.2); box-shadow: 0 10px 28px rgba(0,0,0,.45) !important; transform: translateY(calc(-100% - 28px)); opacity: 0;
+  transition: transform .32s cubic-bezier(.4, 0, .9, .6), opacity .25s ease-in !important; }
+html body #toasts#toasts#toasts .ticket.in { transform: none; opacity: 1; transition: transform .5s cubic-bezier(.18, 1.15, .4, 1), opacity .2s ease-out !important; }
+html body #toasts#toasts#toasts .ticket.dragging { transition: none !important; }
+html body #toasts#toasts#toasts .ticket--celebrate { overflow: visible !important; }
+/* Up top the standing message (new version, time travel…) is nowhere near the circle, so it stays when something's in it. */
+body:has(#discover:not([hidden])) #toasts #banner:not([hidden]) { display: grid; }
+body:has(#discover:not([hidden])) #toast-tray #banner:not([hidden]) { display: flex; }
+#toast-tray .ticket[hidden] { display: none !important; }
+@media (prefers-reduced-motion: reduce) { html body #toasts#toasts#toasts .ticket, html body #toasts#toasts#toasts .ticket.in { transform: none; transition: opacity .2s !important; } }
+/* Tucked stay-up notices: small chips under the header on the right (js/toast.js tray), icon + kind line; tap to open. */
+#toast-tray { position: fixed; z-index: 30; right: calc(12px + var(--safe-r, 0px)); top: calc(var(--safe-top, env(safe-area-inset-top, 0px)) + 143px); display: flex; flex-direction: column; align-items: flex-end; gap: 6px; pointer-events: none; }
+#toast-tray { top: calc(var(--safe-top, env(safe-area-inset-top, 0px)) + 101px); } /* level with the top of the radar: the Next chip it used to sit under is gone (2026-10-24), but it is only CSS-hidden, so the old :not([hidden]) test always pushed the chips 42px lower */
+#toast-tray .ticket { --k: #c9cbb6; pointer-events: auto; display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 5px; border: 0; border-top: 2px solid var(--k); border-radius: 12px; background: rgba(9, 16, 28, .94); box-shadow: 0 6px 16px rgba(0,0,0,.35); cursor: pointer; opacity: 0; transform: translateX(16px); transition: opacity .25s ease, transform .35s cubic-bezier(.2,.9,.3,1.1); }
+#toast-tray .ticket.in { opacity: 1; transform: none; }
+#toast-tray .ticket.tone-orange { --k: #fa8127; } #toast-tray .ticket.tone-gold { --k: #f1c04e; } #toast-tray .ticket.tone-steel { --k: #8fb3cf; } #toast-tray .ticket.tone-red { --k: #ff7a64; }
+#toast-tray .tn-ic { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; color: var(--k); background: color-mix(in srgb, var(--k) 15%, transparent); }
+#toast-tray .tn-ic svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+#toast-tray .ticket__eyebrow { font: 500 11px/1 var(--label, 'SC Label', sans-serif); letter-spacing: .16em; text-transform: uppercase; color: var(--k); white-space: nowrap; }
+#toast-tray .ticket__line, #toast-tray .ticket__sub, #toast-tray .ticket__xp, #toast-tray .ticket__x, #toast-tray .ticket__mark, #toast-tray .ticket__go { display: none !important; }
+#toast-tray .ticket__body { display: block; }
+#toast-tray .ticket__body { display: block !important; }
+#toast-tray .ticket__eyebrow { display: inline !important; margin: 0 !important; }
+#toast-tray .ticket__eyebrow::after { content: '\00a0›'; letter-spacing: 0; }
+body.ob-tour #toast-tray, body:has(#start:not([hidden])) #toast-tray, body:has(#ob-done:not([hidden])) #toast-tray, html.embedded #toast-tray, body:has(.overlay.panel:not([hidden])) #toast-tray, body:has(#reveal:not([hidden])) #toast-tray, body.col-open #toast-tray { visibility: hidden; }
+:where(html[data-theme='night'], body.night) #toast-tray .ticket { --k: #ff6a55 !important; background: rgba(18, 6, 6, .94); }
+/* Inside the Collection (embedded under Explore's header, its top clipped away) notices drop in just under that header;
+   with a card or stats open the frame takes the whole screen, but they still sit under the header line, which is fine. */
+html.embedded body #toasts#toasts#toasts { top: calc(var(--safe-top, env(safe-area-inset-top, 0px)) + 88px) !important; }
+
+/* Nothing over the welcome card (2026-10-18, Sevaan): notices wait (toast.js pump) and any already up step aside. */
+body:has(#start:not([hidden])) #toasts { visibility: hidden !important; }
+/* Chips under the header (2026-10-18 playtest): at most the two newest show, and they step aside while a banner is
+   down (a 3-line banner reached over the top chip on an SE). Chips were also hidden on the Tonight page and inside the
+   Collection (rule above), where they sat over the heading / the rank card. */
+#toast-tray > .ticket:nth-last-child(n+3) { display: none !important; }
+#toast-tray { transition: opacity .2s ease; }
+body:has(#toasts .ticket.in:not([hidden])) #toast-tray { opacity: 0; pointer-events: none; }
+body:has(.overlay.panel:not([hidden])) .pc-badge { display: none; } /* the Collection "+1" never shows through a page (iOS playtest 2026-10-19) */
+/* Tucked chips stack under the meteor-shower banner too (polish 2026-10-20: the TONIGHT chip sat on the ORIONIDS banner). */
+body:has(#event-banner:not([hidden])) #toast-tray { top: calc(var(--safe-top, env(safe-area-inset-top, 0px)) + 141px); }
+body:has(#event-banner:not([hidden])):has(#nextpass:not([hidden])) #toast-tray { top: calc(var(--safe-top, env(safe-area-inset-top, 0px)) + 183px); }
+
+/* ---------- Navigation prototypes (2026-10-21, Testing tools → Navigation prototype) ---------- */
+.sc-switch[data-side='mid'] { background-position: 50% 0, 0 0 !important; }
+.sc-switch[data-side='mid'] .sc-switch__item:nth-child(2) { color: #fa8127 !important; }
+body:is(.nav-tabs, .nav-lens).sky-open #nav { z-index: 70; visibility: visible !important; }
+body:is(.nav-tabs, .nav-lens) #visible { padding-bottom: calc(var(--safe-bottom, 0px) + 110px); }
+/* A · three equal parts with a live Sky tab */
+body.nav-tabs .sc-switch { background-size: 33.34% 3px, auto !important; }
+body.nav-tabs .sc-switch__item { flex: 1 1 0 !important; min-width: 0; }
+body.nav-tabs #nav-sky .nav-sky-t { font-variant-numeric: tabular-nums; white-space: nowrap; }
+@keyframes sky-in-left { from { transform: translateX(-100%); } to { transform: none; } }
+@keyframes sky-out-left { from { transform: none; } to { transform: translateX(-100%); } }
+/* B · wings and a raised round Explore lens */
+body.nav-lens .sc-switch { overflow: visible !important; background: rgba(8, 15, 27, .92) !important; display: grid !important; grid-template-columns: 1fr 84px 1fr; align-items: center; }
+body.nav-lens #nav-explore { width: 76px; height: 76px; margin-top: -26px; border-radius: 50% !important; justify-self: center; background: #0e1828; box-shadow: 0 0 0 3px #fa8127, 0 10px 20px rgba(0,0,0,.5); font-size: 10px !important; letter-spacing: .12em !important; gap: 3px !important; }
+body.nav-lens .sc-switch[data-side='mid'] #nav-explore { background: #fa8127; color: #0b1018 !important; }
+body.nav-lens .sc-switch[data-side='left'] #nav-sky, body.nav-lens .sc-switch[data-side='right'] #nav-collection { color: #fa8127 !important; }
+body.nav-lens .sc-switch[data-side='left'] .sc-switch__item:first-child:not(#nav-sky) { color: inherit; }
+body.nav-lens #nav-sky .nav-sky-t { font-size: 11px; letter-spacing: .14em; }
+/* C · a live strip at the top of Explore; the sky page drops from the top */
+#sky-strip { position: fixed; z-index: 3; top: calc(var(--safe-top) + 92px); left: 132px; right: 12px; min-height: 44px; display: flex; align-items: center; gap: 9px; padding: 8px 12px; border-radius: 14px; border: 1px solid #34466a; background: rgba(8, 15, 27, .82); color: #fff2b3; font: 500 13.5px/1.2 var(--label); letter-spacing: .04em; text-align: left; box-shadow: 0 8px 18px rgba(0,0,0,.35); }
+#sky-strip[hidden] { display: none; }
+#sky-strip .ss-dot { width: 8px; height: 8px; border-radius: 50%; background: #fa8127; flex: none; box-shadow: 0 0 0 4px #fa812733; }
+#sky-strip .ss-t { flex: 1; min-width: 0; font-variant-numeric: tabular-nums; } #sky-strip .ss-c { color: #fa8127; font-size: 16px; }
+body.nav-stack #nextpass { display: none !important; }
+body.ob-tour #sky-strip, body.col-open #sky-strip { display: none; }
+@keyframes sky-in-top { from { transform: translateY(-100%); } to { transform: none; } }
+@keyframes sky-out-top { from { transform: none; } to { transform: translateY(-100%); } }
+body.nav-stack #visible:not([hidden]) { animation: sky-in-top .38s cubic-bezier(.2, .9, .25, 1) !important; }
+body.nav-stack #visible.leaving { animation: sky-out-top .3s cubic-bezier(.5, 0, .75, .4) forwards !important; }
+body.night #sky-strip { color: #ff7f70; border-color: #5a1d18; } body.night #sky-strip .ss-dot { background: #ff6a55; }
+#nav-sky .nav-sky-t { display: inline !important; }
+body.nav-lens #nav-explore { background: #0e1828 !important; }
+body.nav-lens .sc-switch[data-side='mid'] #nav-explore { background: #fa8127 !important; }
+body:is(.nav-tabs, .nav-lens).sky-open .sc-switch { background-color: #0b1220 !important; } body.nav-lens.sky-open .sc-switch { background: #0b1220 !important; }
+/* Three tabs are the navigation now (2026-10-21): Up in your sky rises like the other pages, not from the left. */
+/* A dark soft fade behind the tabs over the sky page, so its rows don't show through. Its own element (2026-10-21):
+   as body::after it took over red night mode's full-screen tint, which then only covered the top of the screen. */
+#tab-fade { display: none; } body.nav-tabs.sky-open #tab-fade { display: block; position: fixed; left: 0; right: 0; bottom: 0; height: calc(var(--safe-bottom, 0px) + 140px); z-index: 69; pointer-events: none;
+  background: linear-gradient(rgba(6, 11, 20, 0), rgba(6, 11, 20, .92) 45%, rgba(6, 11, 20, .98));
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); -webkit-mask: linear-gradient(transparent, #000 40%); mask: linear-gradient(transparent, #000 40%); }
+body.nav-tabs:has(#visible.leaving) #nav, body.nav-tabs:has(#visible:not([hidden])) #nav { z-index: 70; visibility: visible !important; } /* the sky page sliding away never covers the tabs (2026-10-21) */
+body.nav-tabs.sky-open #tab-fade { height: calc(var(--safe-bottom, 0px) + 175px); background: linear-gradient(rgba(6, 11, 20, 0), rgba(6, 11, 20, .96) 38%, #060b14); -webkit-mask: linear-gradient(transparent, #000 30%); mask: linear-gradient(transparent, #000 30%); }
+/* Sky tab: always the word SKY, the live value (Next 1:51 / Dark 6:49 / 3 new) small underneath (2026-10-21, Sevaan). */
+body.nav-tabs #nav-sky { position: relative; }
+body.nav-tabs #nav-sky .nav-sky-v { position: absolute; left: 0; right: 0; bottom: 7px; font: 600 10px/1 var(--label, 'SC Label'), sans-serif; letter-spacing: .12em; text-transform: uppercase; color: #8f9aa6; font-variant-numeric: tabular-nums; white-space: nowrap; text-align: center; }
+body.nav-tabs #nav-sky .nav-sky-v:empty { display: none; }
+.sc-switch[data-side='left'] #nav-sky .nav-sky-v { color: #fa8127; opacity: .8; }
+body.night #nav-sky .nav-sky-v { color: #c4584a; }
+/* Notices out from under the header (2026-10-21, Sevaan picked design/notices-under-header.html A). The stack sits just
+   below the header's double line; anything above that line is clipped, so a notice slides in from behind the header and
+   swipes back up under it. The header (moon, Settings) is never covered. The radar, chips and tucked notices step down
+   by the notices' height (--toast-push, js/toast.js) while one shows. */
+html body #toasts#toasts#toasts { top: calc(var(--safe-top, env(safe-area-inset-top, 0px)) + 86px) !important; width: min(440px, calc(var(--vws, 100vw) - 20px)) !important; clip-path: inset(0 -40px -100vh -40px); }
+#nextpass, #event-banner, #toast-tray, .patch-coins, #whatsthis { translate: 0 var(--toast-push, 0px); /* not the radar: it stays put (2026-10-25, Sevaan) */ transition: translate .45s cubic-bezier(.2, .9, .3, 1); }
+body:has(.overlay.panel:not([hidden])) :is(#radar, #nextpass, #toast-tray) { translate: none; }
+@media (prefers-reduced-motion: reduce) { #radar, #nextpass, #event-banner, #toast-tray, .patch-coins { transition: none; } }
+/* Tabs, words only, 54 px (2026-10-24, Sevaan picked design/footer-blend.html A): today's glass, orange word and orange
+   top edge, full width; the icons go and the bar drops from 72 to 54 px (tap targets stay 54 px tall). */
+.sc-switch { height: 54px !important; }
+.sc-switch__item { gap: 0 !important; }
+.sc-switch__item .ico { display: none !important; }
+/* No fade behind the tabs on the Tonight page (2026-10-24, Sevaan: "remove the fade entirely"). */
+body.nav-tabs.sky-open #tab-fade { display: none !important; }
+/* Tab bar stands apart from content under it (2026-10-24, Sevaan picked design/tabs-separation.html 1): fully solid, with
+   a faint cream outline like the cards' frames. Nothing shows through. */
+.sc-switch { background-color: #080f1b !important; box-shadow: 0 0 0 1px #fff2b31f, 0 10px 24px rgba(0, 0, 0, .35) !important; }
+body.night .sc-switch, html[data-theme='night'] .sc-switch { background-color: #0c0303 !important; box-shadow: 0 0 0 1px #ff6a5526, 0 10px 24px rgba(0, 0, 0, .35) !important; }
+/* Over a page (Tonight, Settings, All around you), a notice rises from the bottom, just above the tab bar, instead of
+   covering the top of the page (iPad playtest 2026-10-24: the Plus line and the TONIGHT heading went under it). */
+/* Replaced (2026-10-28, Sevaan: "in the settings the notifications still appear near the bottom"): pages now sit under the
+   shared header, so a notice comes out from under it on every page, the same as on Explore. */
+html body:has(.overlay.panel:not([hidden])) #toasts#toasts#toasts, html body:has(.set-sheet:not([hidden])) #toasts#toasts#toasts { top: calc(var(--safe-top, env(safe-area-inset-top, 0px)) + 86px) !important; bottom: auto !important; flex-direction: column !important; clip-path: inset(0 -40px -100vh -40px); }
+
+/* ===== Style audit (2026-10-28) ===== */
+/* Shared main button: 12px corners like every other main button. */
+.ui-btn, .ui-btn--primary { border-radius: 12px; }
+/* The tab bar's orange edge sits inside the rounded corners: each part's edge is inset 18px from its sides. */
+.sc-switch { background-size: calc(50% - 36px) 3px, auto !important; background-position: 18px 0, 0 0 !important; }
+.sc-switch[data-side='right'] { background-position: calc(100% - 18px) 0, 0 0 !important; }
+body.nav-tabs .sc-switch { background-size: calc(33.34% - 36px) 3px, auto !important; }
+.sc-switch[data-side='mid'] { background-position: 50% 0, 0 0 !important; }
+:where(html[data-theme='night'], body.night) { --ui-medal: #ff7f70; }
+
+/* Starfields: opacity-only twinkle (no var() in the keyframes, no scale) and resting while off screen (perf audit 2026-10-29) */
+.starfield i { animation-name: ui-twinkle-o; will-change: opacity; }
+@keyframes ui-twinkle-o { 0%, 100% { opacity: .9; } 50% { opacity: .1; } }
+.starfield.sf-off i { animation-play-state: paused; }
+/* A notice that isn't showing (waiting, held behind a page, or leaving) never takes a tap: one held over Settings sat
+   invisible at the top and swallowed taps on How to play for ~11 s (round-3 playtest 2026-10-30). */
+#toasts .ticket:not(.in), #toasts .ticket:not(.in) * { pointer-events: none !important; }
+/* No double-tap wait anywhere: two quick taps on different things (closing a sheet, then a Settings row) were read as one
+   double tap, so the first landed late on the sheet or the second was lost (round-3 playtest 2026-10-30). Elements with
+   their own touch-action keep it (touch-action only narrows down the tree). */
+html, body, .set-sheet { touch-action: manipulation; }
+/* Patch-earned tags are solid, so sky labels don't show through (final iPhone 14 check 2026-10-30). */
+.pc-tag { background: #080f1b !important; }
+
+/* Mission cards keep their printed size, like every card face (css/cards.css), whatever the phone's Text Size
+   (2026-11-08, Sevaan: on his wife's iPhone, set to larger text, the Tonight mission cards overflowed their card
+   shape). The rest of the app still follows Larger Text (js/text-size.js): a blanket 100% on html and body was tried
+   here on 2026-11-08 and switched that off for everyone, so it was taken back out (2026-11-09). */
+.mc, .mc-row { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+/* Larger Text (html.text-big, set by js/text-size.js at 115% and up): rows that sit side by side at normal size get
+   room to wrap instead of cutting words short (text audit 2026-11-09: "UNCOMMON · CE…" on the target ticket at 135%). */
+html.text-big #discover .d-ticket .d-row { flex-wrap: wrap; row-gap: 2px; }
+html.text-big #discover .d-ticket .d-row #d-tier { flex: 0 1 auto; overflow: visible !important; text-overflow: clip !important; }
+/* Tonight's sky window is taller at larger text, so the headline and its sentence leave room for the sky under them
+   (text audit 2026-11-09: at 135% a planet card sat on the last line of the sentence). */
+html.text-big .sw-sky { height: 390px; }
+/* The rank line (name + XP) wraps at larger text rather than pushing "XP" off the edge (text audit 2026-11-09, Observer stats). */
+html.text-big .lbd-l { flex-wrap: wrap; row-gap: 4px; }
+html.text-big .lbd-l .lb-xp { flex: none; white-space: nowrap; }
+/* A page or sheet takes the reading point when it opens (js/a11y.js); it shows no ring for it. */
+[role="dialog"]:focus, .set-sheet:focus, #onboard:focus { outline: none; }
+
+/* ---------- Contrast (accessibility pass 2026-11-09) ----------
+   Measured with the audit in the session scratchpad (a11y/textaudit.mjs): every text against what's behind it. Three
+   things sat under 4.5:1 at normal settings and are lifted for everyone; the rest answers the phone's Increase
+   Contrast setting (prefers-contrast: more). */
+.tn-run.grey .tn-r { opacity: .8; }             /* the "if it clears" rows on a cloudy night: still stepped back, now readable (was .55 = 3.8:1) */
+.set-sl-note { color: #8ea3b8; }                /* the coordinates note in the location sheet (was #627a8b = 3.9:1) */
+body:not(.night) #set-version { color: #9fb0c6 !important; } /* the version line at the foot of Settings (was 4.3:1) */
+
+@media (prefers-contrast: more) {
+  /* dim text comes up, faint lines firm up, and nothing readable is left faded */
+  :root, body, :root[data-theme] { --muted: #ecead8; --ui-muted: #ecead8; --line: #6f86a3; --h-muted: #ecead8; }
+  body.night, :root[data-theme="night"] { --muted: #ffb3a8; --ui-muted: #ffb3a8; --line: #a04a44; --h-muted: #ffb3a8; }
+  .tn-run.grey .tn-r, .wk3-row.poor .wk3-bars, .od-tl .it.cloud b, .od-tl .it.cloud span { opacity: 1; }
+  #skybar.resting { opacity: 1; }
+  body:not(.night) :is(.set-sl-note, #set-version) { color: #ecead8 !important; } body.night :is(.set-sl-note, #set-version) { color: #ffb3a8 !important; }
+  /* cards, rows, chips, sheets and buttons get a clear edge */
+  .tk-card, .set-card, .set-group, .set-row, .set-sheet-card, .ui-chip, .ui-btn, .tn-btn, .tn-r, .tn-pill, .tag, .pill, .sc-switch, .ticket, .search, .filter-button, .album, .lb-card, .rc-card, .kpi {
+    border-color: #8fa3bd !important; }
+  .sc-switch__item:not([aria-current]) { color: #fff2b3 !important; }
+  /* glass goes solid, so text never sits on the sky showing through */
+  .tk-card, .ticket, .sc-switch, .ui-chip { background-color: #080f1b !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  /* keyboard and switch-control focus is unmistakable */
+  :is(button, a, input, select, summary, [role="button"], [tabindex]):focus-visible { outline: 3px solid #ffffff !important; outline-offset: 2px; }
+}
+/* The three tabs keep clear of the switcher's edges at larger text (iPhone 14 at the largest size: COLLECTION touched the rim). */
+html.text-big .sc-switch__item { letter-spacing: .08em; }
+
+/* The rate link under the weekly recap (2026-11-09). */
+#recap .rc-rate { background: none; border: 0; padding: 8px 12px; min-height: 36px; color: var(--ui-gold, #fa8127); font: 500 13px var(--label, 'SC Label', sans-serif); letter-spacing: .14em; text-transform: uppercase; cursor: pointer; }
+body.night #recap .rc-rate { color: #ff6a55; }

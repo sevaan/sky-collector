@@ -1,0 +1,20 @@
+import { webkit } from 'playwright';
+const reduced = process.argv[2] === 'reduced';
+const b = await webkit.launch(); const ctx = await b.newContext({ viewport: { width: 393, height: 852 }, hasTouch: true, isMobile: true, deviceScaleFactor: 3, reducedMotion: reduced ? 'reduce' : 'no-preference' });
+const p = await ctx.newPage(); p.on('pageerror', (e) => console.log('ERR', e.message));
+await p.goto('http://localhost:8765/'); await p.evaluate(async () => { localStorage.setItem('fingerChosen', '1');
+  const { addSighting } = await import('/js/store.js'); const { cardKeyFor } = await import('/js/card-model.js'); const cat = await (await fetch('/data/catalog.json')).json(); const objs = cat.objects.filter((o) => o.tier).slice(0, 50);
+  for (let i = 0; i < 3; i++) { const o = objs[i * 7], t = Date.now() - 86400e3 * (3 - i); await addSighting({ objectId: o.id, cardKey: cardKeyFor(o), name: o.name, type: o.type, time: t, loggedAt: t, lat: 44.3, lon: -78.3, az: 100, el: 40, mag: 3, sim: false }); } });
+await p.goto('http://localhost:8765/'); await p.waitForFunction(() => document.body.classList.contains('hud-ready'), null, { timeout: 60000 }); await p.waitForTimeout(12000);
+const trace = async (label, fn) => { const r = await p.evaluate(async (fn) => { const gaps = []; let last = performance.now(); const a = last; (0, eval)(fn)();
+  for (let i = 0; i < 30; i++) { await new Promise((r) => requestAnimationFrame(r)); const n = performance.now(); gaps.push(Math.round(n - last)); last = n; }
+  return { total: Math.round(last - a), gaps, dom: document.getElementById('visible').querySelectorAll('*').length, canvases: [...document.querySelectorAll('#visible canvas')].map((c) => `${c.width}x${c.height}`) }; }, fn); console.log(label, JSON.stringify(r)); await p.waitForTimeout(1200); };
+await trace('radar', "() => document.getElementById('radar').click()");
+await trace('close', "() => document.querySelector('#visible [data-close]').click()");
+await trace('chip', "() => document.getElementById('nextpass').click()");
+await trace('close', "() => document.querySelector('#visible [data-close]').click()");
+await trace('chip2', "() => document.getElementById('nextpass').click()");
+await trace('close', "() => document.querySelector('#visible [data-close]').click()");
+await trace('col', "() => document.querySelector('.sc-switch__item:last-child')?.click()"); await p.waitForTimeout(2000);
+await trace('explore', "() => document.querySelector('.sc-switch__item:first-child')?.click()");
+await b.close();

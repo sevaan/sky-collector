@@ -1,0 +1,26 @@
+// Larger Text on iPhone (2026-10-20, iOS playtest: Dynamic Type had no effect, every size is px). WebKit sizes the
+// system "body" font by the phone's text size setting, so a hidden probe tells us the player's scale (17px = normal),
+// and -webkit-text-size-adjust scales the page's text by it on iOS. Capped at 135% so screens hold together (Android's
+// WebView does the same through setTextZoom, capped at 115% in MainActivity). Cards keep their printed size: their faces
+// are fixed artwork (css/cards.css resets it on .card). Only smaller-than-normal is ignored.
+const probe = document.createElement('span');
+probe.style.cssText = 'position:absolute;visibility:hidden;pointer-events:none;font:-apple-system-body;left:-9999px;top:0';
+probe.textContent = 'A';
+export function applyTextSize() {
+  // iPads report a Mac (desktop-class browsing), so a touch Mac counts too (iPad playtest 2026-11-05: Larger Text did nothing)
+  const ios = /iP(hone|ad|od)/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
+  if (!ios) return;
+  if (!probe.isConnected) document.body?.append(probe);
+  const px = parseFloat(getComputedStyle(probe).fontSize);
+  if (!Number.isFinite(px) || px <= 0) return;
+  // Big screens (the unfolded iPhone Duo, iPads: shorter side 560+) cap at 115% (Duo playtest 2026-10-22: at 135%
+  // the whole UI looked blown up there). Their text is already a comfortable size, and the wide layouts hold together.
+  const big = Math.min(innerWidth, innerHeight) >= 560;
+  const pct = Math.round(Math.min(big ? 1.15 : 1.35, Math.max(1, px / 17)) * 100);
+  document.documentElement.style.webkitTextSizeAdjust = `${pct}%`;
+  document.documentElement.dataset.textScale = String(pct);
+  document.documentElement.classList.toggle('text-big', pct >= 115); // layouts that give text more room at larger sizes (css/ui.css)
+}
+if (document.body) applyTextSize(); else document.addEventListener('DOMContentLoaded', applyTextSize, { once: true });
+document.addEventListener('visibilitychange', () => { if (!document.hidden) applyTextSize(); }); // changed in Settings while away
+addEventListener('resize', () => applyTextSize()); // folding or unfolding the Duo changes which cap applies

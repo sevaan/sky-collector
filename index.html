@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>/* Older phones (iOS 15.0-15.3, Android with an old System WebView) lack Array.at and canvas roundRect; the stats page
+  showed "o.launches.at is not a function" on 7 installs (2026-11-06). Filled in before any module runs. */
+  (function () { var at = function (i) { i = Math.trunc(i) || 0; if (i < 0) i += this.length; return i < 0 || i >= this.length ? undefined : this[i]; };
+  [Array, String].concat(typeof Int8Array === 'function' ? [Object.getPrototypeOf(Int8Array)] : []).forEach(function (C) { if (!C.prototype.at) Object.defineProperty(C.prototype, 'at', { value: at, writable: true, configurable: true }); });
+  var R = typeof CanvasRenderingContext2D === 'function' && CanvasRenderingContext2D.prototype;
+  if (R && !R.roundRect) R.roundRect = function (x, y, w, h, r) { r = Array.isArray(r) ? r[0] : r; r = Math.max(0, Math.min(Number(r) || 0, Math.abs(w) / 2, Math.abs(h) / 2));
+    this.moveTo(x + r, y); this.arcTo(x + w, y, x + w, y + h, r); this.arcTo(x + w, y + h, x, y + h, r); this.arcTo(x, y + h, x, y, r); this.arcTo(x, y, x + w, y, r); this.closePath(); }; })();</script>
+<script>/* No Safari bars (Home Screen app or the native app): the bottom inset is the home-indicator strip, so pull the
+  bottom controls down into part of it (2026-10-11, Sevaan: the switcher and toasts sat too high there). */
+  if (navigator.standalone === true || matchMedia('(display-mode: standalone)').matches || window.Capacitor?.isNativePlatform?.()) document.documentElement.classList.add('standalone'); if (window.Capacitor?.getPlatform?.() === 'android') document.documentElement.classList.add('android');</script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#080f1b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Space Collector">
+  <title>Space Collector</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <link rel="icon" href="icons/icon-192.png">
+  <script>try { if (localStorage.getItem("night") === "1") document.documentElement.dataset.theme = "night"; } catch {}
+    // Coming over from the standalone collection page (not a refresh): no loader show, just the target circle in place.
+    // A full refresh always gets the loader (2026-10-07, Sevaan); inside the app Collection is a layer, so no reload at all.
+    try { const nav = performance.getEntriesByType("navigation")[0]; if (sessionStorage.getItem("scBooted") && nav?.type !== "reload" && /cards\.html/.test(document.referrer)) document.documentElement.classList.add("quick"); } catch {}</script>
+  <link rel="preload" href="fonts/RussoOne-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/BarlowCondensed-Medium.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/fonts.css?v=0.1.1574"><!-- Inter + IBM Plex Mono, self-hosted (perf audit 2026-10-29; OFL, fonts/*-OFL.txt) --><!-- not render-blocking: first paint no longer waits on Google, offline or on a weak signal (bug hunt 2026-10-22) -->
+  <link rel="stylesheet" href="css/cards.css?v=0.1.1574">
+  <link rel="stylesheet" href="css/app.css?v=0.1.1574">
+  <link rel="stylesheet" href="css/icons.css?v=0.1.1574">
+  <link rel="stylesheet" href="css/reveal.css?v=0.1.1574">
+  <link rel="stylesheet" href="css/ui.css?v=0.1.1574">
+  <link rel="stylesheet" href="css/gift.css?v=0.1.1574">
+</head>
+<body>
+  <video id="cam" playsinline muted autoplay hidden></video>
+  <canvas id="sky" role="img" aria-label="Sky map aligned with your viewing direction"></canvas>
+
+  <div id="hud" hidden>
+    <header id="sky-header"><span class="wordmark"><span class="hw-t">SPACE COLLECTOR</span><span class="hw-s">COLLECT THE NIGHT SKY</span></span><span class="header-buttons"><button id="peak-toggle" class="icon-button" aria-label="Jump to tonight’s busiest moment (testing)" aria-pressed="false" title="Testing: busiest moment tonight">⏱</button><button id="night-toggle" class="icon-button" hidden aria-label="Turn on red night mode" aria-pressed="false">☾</button><button id="nav-more" class="icon-button" aria-label="Settings"><span class="nm-swap"><span class="ico nm-set" data-ico="sliders"></span><span class="nm-x" aria-hidden="true">✕</span></span></button></span></header>
+    <button id="radar" aria-label="All around you: what’s up, and which way">
+      <canvas id="radar-canvas" width="96" height="96"></canvas>
+      <span id="radar-new" aria-label="new to collect"><b id="new-count">0</b></span><span id="radar-up" hidden><b id="visible-count">0</b> passing</span>
+    </button>
+    <button id="nextpass" hidden></button><button type="button" id="sky-strip" hidden></button>
+    <button id="event-banner" hidden></button>
+    <div id="guidance" aria-live="polite" hidden></div>
+    <div id="sr-target" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+    <div id="callout" hidden>
+      <div class="co-head"><span id="co-name"></span><span id="co-tier" class="tier-pill"></span></div>
+      <div class="co-row"><span class="ico" data-ico="type"></span><span id="co-type"></span></div>
+      <div class="co-row"><span class="ico" data-ico="spark"></span><span id="co-mag"></span></div>
+      <div class="co-row"><span class="ico" data-ico="rocket"></span><span id="co-motion"></span></div>
+    </div>
+
+    <section id="target" role="button" tabindex="0" aria-label="View this card" hidden>
+      <div id="t-thumb"><div id="t-art"></div></div>
+      <div id="t-body">
+        <div class="t-line"><span id="t-name"></span><button id="t-switch" hidden aria-label="Next object in the circle"></button></div>
+        <div id="t-meta"></div>
+      </div>
+      <button id="t-close" aria-label="Close">×</button>
+    </section>
+    <div id="plane" hidden aria-live="polite"><div class="tk-card p-ticket">
+      <span class="d-mini p-mini" aria-hidden="true"><span class="p-card"><svg viewBox="0 0 24 24"><path d="M12 2.5c.9 0 1.4 1 1.4 2.2v5.1l7.6 4.4v2l-7.6-2.3v4.6l2.2 1.7v1.6L12 21l-3.6.8v-1.6l2.2-1.7v-4.6L3 16.2v-2l7.6-4.4V4.7c0-1.2.5-2.2 1.4-2.2z"/></svg></span></span><!-- a little card with the plane in it (2026-10-25, Sevaan) -->
+      <div class="p-body"><div class="p-label"><span id="p-kind">Just a plane</span><span id="p-name"></span></div>
+      <div class="p-info"><span class="p-route" id="p-route"></span><span class="p-meta" id="p-info"></span></div></div>
+    </div></div>
+    <div id="discover" hidden>
+      <button id="d-hit" aria-label="Collect this object"></button>
+      <div class="tk-card d-ticket has-mini">
+      <span class="d-mini" id="d-mini" aria-hidden="true"></span><!-- the real mini card (picture hidden until it's yours), design/target-minicard.html Option 1 -->
+      <div class="d-label"><span class="d-row"><span id="d-tier"></span><span id="d-dist"></span></span><span id="d-name"></span></div>
+      <div class="d-actions"><button id="d-cta" type="button">Collect</button><span id="d-check" hidden><small id="dc-q"></small><span class="dc-btns"><button type="button" class="mc-yes">Yes</button><button type="button" class="mc-off">It’s off</button></span></span><span id="d-sub" hidden></span>
+      <button id="d-switch" hidden aria-label="Next object in the circle"></button></div>
+      </div>
+    </div>
+
+    <!-- Match your sky (2026-10-25, Sevaan; design/tour-rethink.html 05): once, the first time you're really outside at night. -->
+    <div id="sky-match" role="dialog" aria-label="Match your sky" hidden><small>Match your sky</small><b id="sm-text">Slide until the stars on screen look like the ones above you.</b><span class="sm-row"><span id="sm-read"></span><button type="button" id="sm-done">Done</button></span><i class="sm-arrow" aria-hidden="true"></i></div>
+    <div id="skybar" role="group" aria-label="How dark is your sky">
+      <span class="sb-end" aria-hidden="true">SEE LESS</span>
+      <input type="range" id="sky-range" min="17" max="24.9" step="0.05" aria-label="Sky darkness: slide until the screen matches what you can see">
+      <span class="sb-end" aria-hidden="true">SEE MORE</span>
+      <span id="sky-read"><b id="sky-name"></b> · <span id="sky-mag"></span></span>
+    </div>
+
+  </div>
+
+  <button id="banner" hidden></button>
+  <!-- One ticket under the circle for the things the sky names itself (2026-10-17, design/target-states B): a pass
+       lined up by day, hidden by daylight, below the horizon, the fossil, the UFO, a secret. js/main.js syncTicket. -->
+  <div id="tk" class="tk-card" hidden aria-live="polite"><span class="d-mini" id="tk-mini" aria-hidden="true"></span><div class="tk-body"><span id="tk-k"></span><span id="tk-n"></span><span id="tk-m" hidden></span><div id="tk-act"></div></div></div><!-- the card it is, like the new-find ticket (2026-10-25, Sevaan) -->
+  <button id="gh-remind" type="button" hidden><span class="ico" data-ico="bell" aria-hidden="true"></span><span id="gh-remind-t">Remind me</span></button>
+  <div id="wake" hidden aria-live="polite"><i class="wk-ring" aria-hidden="true"></i><i class="wk-finger" aria-hidden="true"></i><span>Tap to wake the sky<small>Motion pauses while you’re away</small></span></div>
+  <div id="until-dark" class="tk-card" hidden aria-live="off"><svg class="ud-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"></path></svg><span class="ud-text"><b id="ud-time"></b><span id="ud-at"></span></span><button id="ud-bell" type="button" aria-label="Remind me"><span class="ico" data-ico="bell" aria-hidden="true"></span></button></div>
+  <div id="help-card" role="dialog" aria-label="Nothing caught yet?" hidden><small>Nothing caught yet?</small><b>One of these usually helps</b><span><button type="button" class="hc-show">Show me something</button><button type="button" class="hc-line">Line up the sky</button><button type="button" class="hc-more">See more stars</button></span><button type="button" class="hc-x" aria-label="Close">✕</button><i aria-hidden="true"></i></div><!-- ten quiet minutes under a dark sky with no catch (2026-10-25, Sevaan) -->
+  <div id="moon-check" role="dialog" aria-label="Is the real Moon in the circle?" hidden><small>Quick check</small><b>Is the real Moon in the circle?</b><span><button type="button" class="mc-yes">Yes</button><button type="button" class="mc-off">It’s off</button></span><i aria-hidden="true"></i></div>
+  <div id="fade-tip" role="note" hidden><small>Catch the fade</small>It’s about to slip into Earth’s shadow. Tap Collect just as it vanishes for a shiny.<i aria-hidden="true"></i></div>
+  <div id="ud-now" hidden><div class="ud-now-h">Right now you can catch</div><div class="ud-chips" id="ud-chips"></div><button type="button" class="ud-plan" id="ud-plan">Tonight’s plan ›</button></div>
+  <div class="set-sheet" id="confirm-sheet" hidden><div class="set-sheet-card"><div class="set-grab"></div><h3 id="cf-title"></h3><p class="cf-body" id="cf-body"></p><button class="d-cta cf-danger" id="cf-ok" type="button"><span></span></button><button class="set-link" id="cf-cancel" type="button">Cancel</button></div></div>
+  <div class="set-sheet" id="ud-sheet" hidden><div class="set-sheet-card"><div class="set-grab"></div><h3>Remind me tonight</h3><div id="ud-opts"></div>
+    <button class="d-cta o" id="ud-set" type="button"><span>Set reminder</span><span></span></button><button class="set-link" id="ud-cancel" type="button" hidden>Cancel the reminder</button></div></div>
+  <div class="set-sheet" id="pr-sheet" hidden><div class="set-sheet-card"><div class="set-grab"></div><div class="pr-head" id="pr-title"></div><div id="pr-opts"></div>
+    <button class="set-link" id="pr-cancel" type="button" hidden>Cancel the reminder</button></div></div>
+  <button id="secret-cta" type="button" hidden></button>
+  <button id="ufo-cta" type="button" hidden>Tap to collect<small>Quick, it won’t stay</small></button>
+  <!-- Line up the sky (2026-10-22, design/compass-calibrate.html): a lining-up mode over the live sky -->
+  <div id="calib" hidden>
+    <div class="cb-off" id="cb-off" hidden></div>
+    <div class="cb-card" role="dialog" aria-labelledby="cb-title">
+      <span class="cb-k" id="cb-k"></span><h3 id="cb-title"></h3><p id="cb-text"></p>
+      <div class="cb-dirs" id="cb-dirs" hidden><button type="button" data-dir="90">East</button><button type="button" data-dir="180">South</button><button type="button" data-dir="270">West</button></div>
+      <div class="cb-btns"><button type="button" class="cb-b" id="cb-alt"></button><button type="button" class="cb-b p" id="cb-go"></button></div>
+      <div class="cb-foot"><button type="button" id="cb-cancel">Cancel</button><button type="button" id="cb-reset">Reset to the phone’s compass</button></div>
+    </div>
+  </div>
+  <div id="toasts" aria-live="polite"></div>
+  <div id="version"></div>
+
+  <section id="start" class="overlay booting">
+    <!-- Loader (2026-10-06): shown until the app knows whether to open the sky or the welcome card. -->
+    <div class="wc-loader" role="status" aria-label="Loading the sky">
+      <!-- The loader is the sky’s target circle (2026-10-07, Sevaan): same size, ticks and spot as js/sky.js drawReticle,
+           so the app opens with the circle already where it will be. Built here, before any module loads. -->
+      <svg id="ld-ret" aria-hidden="true"></svg>
+      <script>
+        (() => {
+          const h = window.innerHeight, w = window.innerWidth, r = (h / 2) * Math.tan(6 * Math.PI / 180) / Math.tan(35 * Math.PI / 180), S = Math.ceil(r + 20), D = Math.PI / 180;
+          let ticks = '';
+          for (let a = 0; a < 360; a += 15) { const c = a % 90 === 0, i = r + 5, o = r + (c ? 13 : 9), x = Math.cos(a * D), y = Math.sin(a * D);
+            ticks += `<line x1="${x * i}" y1="${y * i}" x2="${x * o}" y2="${y * o}" stroke="${c ? '#fa8127' : 'rgba(255,242,179,.66)'}" stroke-opacity="${c ? .9 : .42}" stroke-width="${c ? 1.5 : .75}"/>`; }
+          const el = document.getElementById('ld-ret');
+          el.setAttribute('viewBox', `${-w / 2} ${-S} ${w} ${2 * S}`); el.setAttribute('width', w); el.setAttribute('height', 2 * S); el.style.overflow = 'visible';
+          el.style.cssText = `position:fixed;left:0;top:${h / 2 - S}px;overflow:visible`; // full width so the satellite can cross the whole screen
+          el.closest('.wc-loader').style.setProperty('--ld-below', `${h / 2 + r + 34}px`);
+          el.innerHTML = `<circle id="ld-ring" r="${r}" fill="none" stroke="rgba(255,242,179,.66)" stroke-width="1"/><circle r="${r + 5}" fill="none" stroke="rgba(173,188,200,.35)" stroke-width=".75"/>${ticks}<g id="ld-anim"></g>`;
+          // Lock-on (2026-10-09, design/loader-variations.html 2): a satellite drifts across toward the circle; as it
+          // enters, the ring turns orange, a small circle snaps onto it and a pulse rings out; then the next one comes.
+          if (document.documentElement.classList.contains('quick')) return; // a quick switch back: just the static circle
+          const k = r / 46, anim = document.getElementById('ld-anim'), ring = document.getElementById('ld-ring'), x0 = -(w / 2 + 24), y0 = -x0 * 30 / 110, ang = Math.atan2(-60, 220) * 180 / Math.PI, period = 2600 * -x0 / (110 * k); // edge to edge of the screen (2026-10-09), same speed
+          const sat = (c) => `<rect x="-3" y="-2.2" width="6" height="4.4" rx=".6" fill="${c}"/><rect x="-10.5" y="-1.6" width="6.4" height="3.2" fill="${c}" opacity=".85"/><rect x="4.1" y="-1.6" width="6.4" height="3.2" fill="${c}" opacity=".85"/><path d="M-4 0H-3M3 0H4" stroke="${c}" stroke-width=".8"/>`;
+          const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+          const tick = (t) => {
+            if (!document.getElementById('start')?.classList.contains('booting')) return; // the loader is gone: stop
+            const T = still ? .5 : (t / period) % 1, x = x0 + T * -2 * x0, y = y0 + T * -2 * y0, d = Math.hypot(x, y), inside = d < r - 6, near = Math.max(0, 1 - d / (30 * k));
+            ring.setAttribute('stroke', inside ? '#fa8127' : 'rgba(255,242,179,.66)');
+            anim.innerHTML = `<path d="M${x0} ${y0} L${-x0} ${-y0}" stroke="#fff2b3" stroke-opacity=".18" stroke-dasharray="2 5"/>`
+              + (inside ? `<circle r="${r + 8 + (1 - near) * 18 * k}" fill="none" stroke="#fa8127" stroke-opacity="${(near * .6).toFixed(2)}" stroke-width="1.5"/><circle cx="${x}" cy="${y}" r="${13 * Math.min(1.3, k)}" fill="none" stroke="#fa8127" stroke-width="1.4"/>` : `<path transform="scale(.8)" opacity=".7" d="M0 -8 L1.9 -1.9 L8 0 L1.9 1.9 L0 8 L-1.9 1.9 L-8 0 L-1.9 -1.9 Z" fill="#fff2b3"/>`)
+              + `<g transform="translate(${x} ${y}) rotate(${ang}) scale(${Math.min(1.4, k)})">${sat(inside ? '#ffd9a6' : '#fff2b3')}</g>`;
+            if (!still) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        })();
+      </script>
+      <span class="ld-word">SPACE COLLECTOR</span><span class="ld-sub">Loading the sky</span>
+    </div>
+    <!-- Welcome (2026-10-06): a sealed card. It rattles every few seconds; tap and it flips to your mission card;
+         flick it up (or tap Begin) to start the tour. -->
+    <div class="wc-stage">
+      <div class="wc-holder" id="wc-holder" role="button" tabindex="0" aria-label="Tap to reveal your mission card"></div>
+      <div class="wc-hint" id="wc-hint" hidden></div>
+      <div class="wc-after" id="wc-after" hidden>
+        <span class="wc-swipe" aria-hidden="true">↑</span>
+        <button id="btn-start" class="text-button" type="button" disabled><span>Loading the sky…</span></button>
+      </div>
+      <p class="d-under" id="start-note" hidden></p>
+    </div>
+  </section>
+
+  <!-- Guided setup (2026-10-06, design/welcome-flows.html D): bottom sheets over the live sky, then your first catch. -->
+  <div id="recap" hidden role="dialog" aria-modal="true" aria-label="Your week"></div>
+  <section id="onboard" hidden>
+    <!-- Tour as cards (2026-10-06, design/tour-cards.html): each step is the top of a card laid over the live sky,
+         with the next ones stacked underneath; a choice throws it off and the sky reacts. -->
+    <div class="ob-pips" id="ob-pips" aria-hidden="true"><i></i><i></i><i></i></div>
+    <button class="pill ob-exit" id="ob-skip" type="button">Skip</button>
+    <div class="ob-lock" id="ob-lock" aria-live="polite"></div>
+    <div class="ob-deck" id="ob-deck"></div>
+    <div class="ob-done" id="ob-done" hidden>
+      <!-- The tour’s last page (2026-10-08, design/tonight-weather.html B): tonight as a timeline, by weather. -->
+      <div class="od-sky" id="od-sky" aria-hidden="true"></div>
+      <button class="pill x-close od-x" id="od-close" type="button" aria-label="Close">✕</button>
+      <div class="od-head"><span class="eyebrow" id="od-eyebrow">You’re set</span>
+      <h2 class="d-title small" id="ob-done-title">Tonight<br>looks good.</h2>
+      <span class="od-sub" id="od-sub"></span></div>
+      <div class="od-body" id="od-body"></div>
+      <div class="spacer"></div>
+      <button class="d-cta o" id="ob-remind" type="button"><span>Remind me</span><span aria-hidden="true">→</span></button>
+      <button class="d-cta ghost" id="ob-explore" type="button"><span>Explore the sky</span><span aria-hidden="true">→</span></button>
+    </div>
+  </section>
+
+  <section id="reveal" class="overlay" role="dialog" aria-modal="true" aria-labelledby="reveal-eyebrow" hidden>
+    <div id="rv-dim"></div><div id="rv-shock"></div><div id="rv-dot"></div><div id="rv-flash"></div><canvas id="rv-fx"></canvas>
+    <div id="rv-top"><span class="eyebrow ui-eyebrow" id="reveal-eyebrow">NEW CARD</span><span class="rv-buttons"><button class="icon-button rv-share" id="rv-share" type="button" aria-label="Share this card" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7.5 7.5 12 3l4.5 4.5"/><path d="M8 10H6a1.5 1.5 0 0 0-1.5 1.5v8A1.5 1.5 0 0 0 6 21h12a1.5 1.5 0 0 0 1.5-1.5v-8A1.5 1.5 0 0 0 18 10h-2"/></svg></button><button class="pill x-close" data-close="reveal" aria-label="Close">✕</button></span></div>
+    <div id="rv-glow" aria-hidden="true"></div><div id="rv-holder" aria-label="Tap to reveal your card"><div id="rv-flipper">
+      <div class="rv-side rv-back" id="rv-back"><div class="back-holo"></div><div class="back-glare"></div></div>
+      <div class="rv-side rv-front" id="reveal-card"></div>
+    </div><div id="rv-sweep"></div></div>
+    <div id="rv-news" aria-live="polite"></div><div id="rv-rank" hidden><div class="rv-rank-row"><span id="rv-rank-name"></span><span><span id="rv-rank-xp"></span> / <span id="rv-rank-next"></span></span></div><div class="rv-bar"><i id="rv-rank-fill"></i></div></div>
+    <a id="reveal-view" class="ui-link" href="cards.html">View in collection</a>
+  </section>
+
+  <!-- One app (2026-10-07, Sevaan: single page): Collection lives here as a preloaded layer, shown and hidden by the
+       switcher, so moving between Explore and Collection never reloads anything. js/main.js openCollection. -->
+  <!-- The switcher lives outside #hud (2026-10-11) so it can sit above the Collection layer; #hud forms its own stack. -->
+  <div id="tab-fade" aria-hidden="true"></div>
+    <nav id="nav" class="sc-switch" data-side="left" style="--n:2;--i:0" aria-label="Main navigation">
+      <button class="nav-item sc-switch__item" id="nav-sky" type="button" hidden><span class="ico" data-ico="stars" aria-hidden="true"></span><span class="nav-sky-t">Tonight</span></button><button class="nav-item sc-switch__item" id="nav-explore" aria-current="page"><span class="ico" data-ico="sight" aria-hidden="true"></span>Explore</button>
+      <a class="nav-item sc-switch__item" id="nav-collection" href="cards.html" role="button"><span class="ico" data-ico="deck" aria-hidden="true"></span>Collection</a>
+    </nav>
+  <iframe id="collection-frame" title="Collection" hidden></iframe>
+
+  <section id="visible" class="overlay panel" role="dialog" aria-modal="true" aria-label="Tonight" hidden>
+    <div class="panel-head">
+      <div class="wordmark set-title"><h2 id="visible-title">Tonight</h2><span id="visible-sub"></span></div>
+      <button class="pill x-close" data-close="visible" aria-label="Close">✕</button>
+    </div>
+    <nav class="sky-jump" id="sky-jump" aria-label="Jump to" hidden><button type="button" data-jump="now" class="on">Now</button><button type="button" data-jump="tonight">Tonight</button><button type="button" data-jump="missions">Missions</button><button type="button" data-jump="all">All passes</button></nav><!-- not shown since the redesign (2026-10-27, design/tonight-redesign.html A): the night strip took its place; kept for skyJumpTo -->
+    <button type="button" class="sky-plus-line" id="sky-plus-line" hidden><span class="ico-svg" aria-hidden="true"></span><span>Set reminders for passes with Space Collector Plus</span><b>›</b></button>
+    <div id="vtab-now" data-col>
+      <div id="tn-state"></div>
+      <div id="tn-strip"></div>
+      <p class="hint" id="visible-hint" hidden></p>
+      <p class="hint small" id="next-pass-info" hidden></p>
+      <div id="visible-list"></div>
+      <div id="tn-run"></div>
+    </div>
+    <div id="sky-later" data-col><!-- the right-hand page on a wide screen (iPhone Duo, iPads); display: contents on phones --><div class="t-head sky-tonight-head" id="sky-tonight-head" hidden>Tonight</div><div id="vtab-tonight"><p class="hint" id="tonight-summary" hidden></p><div id="tonight-chart"></div><div id="tonight-list"></div><p class="tl-nextclear" id="tonight-next" hidden></p></div></div>
+    </section>
+
+  <!-- All around you (2026-10-21, Sevaan picked design/sky-compass.html D): the radar opens a 360° strip of your horizon. -->
+  <section id="around" class="overlay panel" role="dialog" aria-modal="true" aria-label="All around you" hidden>
+    <div class="ar-wrap"><canvas id="ar-strip" aria-label="Everything above your horizon, the way you face in the middle. Drag to look round."></canvas><button type="button" class="ar-facing" id="ar-head" aria-label="Back to where you’re facing"><span id="ar-deg">Facing</span></button></div>
+    <p class="ar-hint" id="ar-hint">Drag to look round · tap a picture to aim at it</p>
+    <div class="t-head">Worth a look</div><div class="ar-cards" id="ar-front"></div>
+    <div class="t-head">Tonight</div><div class="ar-chips" id="ar-chips"></div>
+  </section>
+
+  <section id="debug" class="overlay panel set-panel" role="dialog" aria-modal="true" aria-label="Settings" hidden>
+    <!-- Settings (2026-10-08, design/settings.html; restyled 2026-10-16 as design/settings-redesign.html A "Field cards": each group is a card with a numbered header bar). Element ids are the old ones. -->
+    <div class="panel-head"><div class="wordmark set-title"><h2>Settings</h2><span>Make it yours</span></div><button class="pill x-close" data-close="debug" aria-label="Close">✕</button></div>
+
+    <!-- Order (2026-10-24, Sevaan): your collection (and Plus) first, then what you fix outside (sky, aiming, display), what shows, set-once things, help, about. -->
+    <div class="set-group set-card set-first"><div class="set-bar"><h3>Collection</h3><b aria-hidden="true">01</b></div>
+      <div class="set-row" id="set-backup" hidden><span class="set-ic" aria-hidden="true" style="background:#3a2259"><span class="ico" data-ico="cloud"></span></span><span class="set-main"><span id="set-backup-name">Saved on this phone</span><small id="set-backup-note">No account needed</small></span></div>
+      <button class="set-row" type="button" id="set-stats-open"><span class="set-ic" aria-hidden="true" style="background:#1d3a52"><span class="ico" data-ico="chart"></span></span><span class="set-main"><span>Observer stats</span><small>Your nights, places and rarest finds</small></span><span class="set-chev">›</span></button>
+      <button class="set-row" type="button" id="set-send-open"><span class="set-ic" aria-hidden="true" style="background:#5a2a12"><span class="ico" data-ico="send"></span></span><span class="set-main"><span>Send cards</span><small>Share cards with another phone</small></span><span class="set-chev">›</span></button>
+      <button class="set-row" type="button" id="set-plus-open"><span class="set-ic" aria-hidden="true" style="background:#5a3c12"><span class="ico" data-ico="crown"></span></span><span class="set-main"><span>Space Collector Plus</span><small id="set-plus-note">Reminders, card backs and more</small></span><span class="set-val" id="set-plus-val">Free</span><span class="set-chev">›</span></button>
+      <button class="set-row" type="button" id="set-back-open"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="cards"></span></span><span class="set-main"><span>Card back</span><small id="set-back-val">Mission Control</small></span><span class="set-back-thumb" id="set-back-thumb" aria-hidden="true"></span><span class="set-chev">›</span></button>
+    </div>
+
+    <div class="set-group set-card"><div class="set-bar"><h3>Your sky</h3><b aria-hidden="true">02</b></div>
+      <button class="set-row" type="button" id="set-loc-open"><span class="set-ic" aria-hidden="true" style="background:#1d4a2a"><span class="ico" data-ico="pin"></span></span><span class="set-main"><span id="set-loc-name">Location</span><small id="location-note"></small></span><span class="set-chev">›</span></button>
+      <div class="set-row" id="look-row"><span class="set-ic" aria-hidden="true" style="background:#173d5c"><span class="ico" data-ico="compass"></span></span><span class="set-main">Look around with<small id="look-sub">The sky follows your phone</small></span><span class="set-seg" role="group" aria-label="Look around with"><button type="button" id="look-motion">Motion</button><button type="button" id="look-finger">Finger</button></span><span hidden><span id="set-motion"></span><button class="set-link" id="retry-motion" type="button">Turn on</button><input type="checkbox" class="set-tog" id="chk-drag"></span></div><!-- Motion and Drag to look were two rows for one choice (UX playtest 2026-10-28) -->
+      <div class="set-slider set-slider--row"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="stars"></span></span><div class="set-sl-main">
+        <div class="set-sl-top"><span>How dark is your sky?</span><span id="set-sky-name"></span></div>
+        <small class="set-sl-sub" style="white-space:nowrap">Right is darker&nbsp;·&nbsp;<button class="set-link sm-inline" id="sm-open" type="button">Match outside</button></small><!-- one row for one slider (flow playtest 2026-10-25) -->
+        <input type="range" id="set-sky-range" class="ui-range set-sl-thin" step="0.05" aria-label="How dark is your sky">
+        <small class="set-sl-note" id="sky-limit-info" hidden></small></div></div>
+    </div>
+
+
+    <div class="set-group set-card"><div class="set-bar"><h3>Aiming</h3><b aria-hidden="true">03</b></div>
+      <button class="set-row" type="button" id="set-hl-open"><span class="set-ic" aria-hidden="true" style="background:#5a2a1a"><span class="ico" data-ico="ring"></span></span><span class="set-main">Circle highlights</span><span class="set-val" id="set-hl-val"></span><span class="set-chev">›</span></button>
+      <label class="set-row"><span class="set-ic" aria-hidden="true" style="background:#5a2a1a"><span class="ico" data-ico="snap"></span></span><span class="set-main">Snap onto targets</span><input type="checkbox" class="set-tog" id="chk-snap"></label>
+      <div class="set-row"><span class="set-ic" aria-hidden="true" style="background:#173d5c"><span class="ico" data-ico="north"></span></span><span class="set-main">Compass<small id="calib-last">Is the sky drifting or off to one side?</small></span><button class="set-link" id="calib-open" type="button">Line up</button></div>
+<span id="nudge-label" hidden></span><!-- "Last lined up" row removed (2026-10-25, Sevaan): the Compass row says when it was lined up -->
+      <div class="set-row" id="nudge-row"><span class="set-ic" aria-hidden="true" style="background:#173d5c"><span class="ico" data-ico="reset"></span></span><span class="set-main">Reset<small>Back to the phone’s own compass</small></span><button class="set-link" id="nudge-reset" type="button">Reset</button></div>
+    </div>
+
+    <div class="set-group set-card"><div class="set-bar"><h3>Display</h3><b aria-hidden="true">04</b></div>
+      <label class="set-row"><span class="set-ic" aria-hidden="true" style="background:#4a1414"><span class="ico" data-ico="moon"></span></span><span class="set-main">Red night mode<small>Saves your night vision</small></span><input type="checkbox" class="set-tog" id="chk-night"></label>
+      
+      <div class="set-row"><span class="set-ic" aria-hidden="true" style="background:#22265a"><span class="ico" data-ico="ruler"></span></span><span class="set-main">Units</span><span class="set-seg" role="group" aria-label="Units"><button type="button" data-units="auto">Auto</button><button type="button" data-units="metric">km</button><button type="button" data-units="imperial">mi</button></span></div>
+      <div class="set-row"><span class="set-ic" aria-hidden="true" style="background:#22265a"><span class="ico" data-ico="clock"></span></span><span class="set-main">Clock</span><span class="set-seg" role="group" aria-label="Clock"><button type="button" data-clock="auto">Auto</button><button type="button" data-clock="12">12 h</button><button type="button" data-clock="24">24 h</button></span></div>
+    </div>
+    <div class="set-group set-card"><div class="set-bar"><h3>What shows</h3><b aria-hidden="true">05</b></div>
+      <label class="set-row"><span class="set-ic" aria-hidden="true" style="background:#22265a"><span class="ico" data-ico="planet"></span></span><span class="set-main">Stars, planets &amp; Moon</span><input type="checkbox" class="set-tog" id="chk-stars" checked></label>
+      <label class="set-row"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="galaxy"></span></span><span class="set-main">Milky Way</span><input type="checkbox" class="set-tog" id="chk-milky" checked aria-label="Milky Way"></label>
+      <label class="set-row"><span class="set-ic" aria-hidden="true" style="background:#22265a"><span class="ico" data-ico="constellation"></span></span><span class="set-main">Constellation lines</span><input type="checkbox" class="set-tog" id="chk-lines"></label>
+      <label class="set-row"><span class="set-ic" aria-hidden="true" style="background:#1d4a2a"><span class="ico" data-ico="tree"></span></span><span class="set-main">Tree line on the horizon</span><input type="checkbox" class="set-tog" id="chk-landscape"></label>
+      <label class="set-row"><span class="set-ic" aria-hidden="true" style="background:#2a2a14"><span class="ico" data-ico="cloud-part"></span></span><span class="set-main">Earth’s shadow<small>Where satellites go dark, at dusk and dawn</small></span><input type="checkbox" class="set-tog" id="chk-shadow"></label>
+      <label class="set-row"><span class="set-ic" aria-hidden="true" style="background:#22265a"><span class="ico" data-ico="sun"></span></span><span class="set-main">Satellites by day<small>The ones daylight hides, not collectable</small></span><input type="checkbox" class="set-tog" id="chk-daysats"></label>
+      <label class="set-row"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="plane"></span></span><span class="set-main">Planes</span><input type="checkbox" class="set-tog" id="chk-planes" checked aria-label="Planes"></label>
+      <div class="set-row"><span class="set-ic" aria-hidden="true" style="background:#22265a"><span class="ico" data-ico="tag"></span></span><span class="set-main">Sky labels</span><span class="set-seg" role="group" aria-label="Sky labels"><button type="button" data-labels="all">All</button><button type="button" data-labels="new">New to me</button><button type="button" data-labels="off">Off</button></span></div>
+      <label class="set-row"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="battery"></span></span><span class="set-main">Battery saver<small>30 fps, no Milky Way or moving clouds</small></span><input type="checkbox" class="set-tog" id="chk-saver" aria-label="Battery saver"></label>
+    </div>
+
+
+    <div class="set-group set-card"><div class="set-bar"><h3>Notifications</h3><b aria-hidden="true">06</b></div>
+      <div class="set-row notes-off" id="notes-off" hidden><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="belloff"></span></span><span class="set-main">Notifications are off on this phone<small>Turn them on in your phone’s Settings → Space Collector</small></span></div>
+      <label class="set-row" id="row-tonight" hidden><span class="set-ic" aria-hidden="true" style="background:#4a3a12"><span class="ico" data-ico="star"></span></span><span class="set-main">Tonight<small>The headliner, and when a clear night is worth it</small></span><input type="checkbox" class="set-tog" id="chk-tonight" aria-label="Tonight"></label>
+      <label class="set-row"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="meteor"></span></span><span class="set-main">Sky events <span class="plus-tag">PLUS</span><small>Meteor showers and constellations coming back</small></span><input type="checkbox" class="set-tog" id="chk-meteor" aria-label="Sky events"></label>
+      <label class="set-row" id="row-alerts" hidden><span class="set-ic" aria-hidden="true" style="background:#123a5a"><span class="ico" data-ico="gem"></span></span><span class="set-main">Pass alerts <span class="plus-tag">PLUS</span><small>Rare passes and Starlink trains</small></span><input type="checkbox" class="set-tog" id="chk-alerts" aria-label="Pass alerts"></label>
+      <div class="set-row" id="row-quiet" hidden><span class="set-ic" aria-hidden="true" style="background:#22304a"><span class="ico" data-ico="quiet"></span></span><span class="set-main">Quiet hours<small>Reminders you set still come</small></span><span class="q-sel"><select id="q-from" class="set-select" aria-label="Quiet from"></select><i>–</i><select id="q-to" class="set-select" aria-label="Quiet until"></select></span></div>
+    </div>
+
+    <div class="set-group set-card"><div class="set-bar"><h3>Sound</h3><b aria-hidden="true">07</b></div>
+      <label class="set-row"><span class="set-ic" aria-hidden="true" style="background:#14284a"><span class="ico" data-ico="sound"></span></span><span class="set-main">Sounds</span><input type="checkbox" class="set-tog" id="chk-sound" checked aria-label="Sounds"></label>
+      <label class="set-row"><span class="set-ic" aria-hidden="true" style="background:#14284a"><span class="ico" data-ico="dial"></span></span><span class="set-main">Sound volume</span><input type="range" class="set-range" id="rng-sfx" min="0" max="100" step="5" value="100" aria-label="Sound volume"></label>
+      <label class="set-row"><span class="set-ic" aria-hidden="true" style="background:#22265a"><span class="ico" data-ico="music"></span></span><span class="set-main">Music<small>“Permafrost” by Scott Buckley</small></span><input type="checkbox" class="set-tog" id="chk-music" aria-label="Music" checked></label>
+      <label class="set-row"><span class="set-ic" aria-hidden="true" style="background:#22265a"><span class="ico" data-ico="dial"></span></span><span class="set-main">Music volume</span><input type="range" class="set-range" id="rng-music" min="0" max="100" step="5" value="100" aria-label="Music volume"></label>
+      <label class="set-row"><span class="set-ic" aria-hidden="true" style="background:#2a2240"><span class="ico" data-ico="vibrate"></span></span><span class="set-main">Haptics<small>Feel locks, catches and rewards in your hand</small></span><input type="checkbox" class="set-tog" id="chk-haptics" checked aria-label="Haptics"></label>
+    </div>
+
+    <div class="set-group set-card"><div class="set-bar"><h3>Help</h3><b aria-hidden="true">08</b></div>
+      <button class="set-row" type="button" id="set-howto"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="book"></span></span><span class="set-main">How to play<small>Collecting, levels, patches, secrets</small></span><span class="set-chev">›</span></button>
+      <a class="set-row" id="set-feedback" href="mailto:hello@spacecollector.app?subject=Space%20Collector%20feedback"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="chat"></span></span><span class="set-main">Send feedback<small>hello@spacecollector.app</small></span><span class="set-chev">›</span></a>
+      <label class="set-row"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="gauge"></span></span><span class="set-main">Share anonymous usage<small>Crashes and play counts, never your location</small></span><input type="checkbox" class="set-tog" id="chk-share" aria-label="Share anonymous usage"></label>
+      <button class="set-row" type="button" id="set-rate" hidden><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="heart"></span></span><span class="set-main">Rate Space Collector<small>It really helps</small></span><span class="set-chev">›</span></button>
+    </div>
+
+    <div class="set-group set-card"><div class="set-bar"><h3>About</h3><b aria-hidden="true">09</b></div>
+      <button class="set-row" type="button" id="set-credits"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="info"></span></span><span class="set-main">Credits and sources</span><span class="set-chev">›</span></button>
+      <button class="set-row" type="button" id="set-reset"><span class="set-ic" aria-hidden="true" style="background:#4a1414"><span class="ico" data-ico="trash"></span></span><span class="set-main">Reset everything<small>Start again as a new player</small></span><span class="set-chev">›</span></button>
+    </div>
+    <p class="set-credit"><a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a></p>
+    <button class="set-version" type="button" id="set-version"></button>
+    <div id="test-tools">
+    <!-- Testing tools in the field-card design (2026-10-21, Sevaan) -->
+    <div class="set-group set-card set-test"><div class="set-bar"><h3>Time travel</h3><b aria-hidden="true">T1</b></div>
+      <div class="set-row"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="calendar"></span></span><span class="set-main">Sky time<small id="sim-time-label"></small></span></div>
+      <div class="set-row set-row--seg"><span class="set-seg set-seg--wide" role="group" aria-label="Move the clock"><button type="button" data-time="-3600">−1 h</button><button type="button" data-time="-600">−10 m</button><button type="button" data-time="now">Now</button><button type="button" data-time="600">+10 m</button><button type="button" data-time="3600">+1 h</button></span></div>
+      <button class="set-row" type="button" id="btn-next-pass"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="sight"></span></span><span class="set-main">Jump to next visible pass<small>Moves the clock only</small></span><span class="set-chev">›</span></button>
+    </div>
+    <div class="set-group set-card set-test"><div class="set-bar"><h3>Try it now</h3><b aria-hidden="true">T2</b></div>
+      <button class="set-row" type="button" id="btn-replay-setup"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="replay"></span></span><span class="set-main">Replay the tour<small>From the sealed welcome card, as a new player</small></span><span class="set-chev">›</span></button>
+      <button class="set-row" type="button" id="btn-toasts"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="bell"></span></span><span class="set-main">Sample notifications<small>A mission, stamp, badge, rank and a patch</small></span><span class="set-chev">›</span></button>
+      <button class="set-row" type="button" id="btn-notetest"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="bell"></span></span><span class="set-main">Test phone notifications<small>Send each kind now, with a checklist</small></span><span class="set-chev">›</span></button>
+      <button class="set-row" type="button" id="btn-review"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="stars"></span></span><span class="set-main">Ask for a review now<small>Apple’s prompt, skipping the checks (iPhone app)</small></span><span class="set-chev">›</span></button>
+      <button class="set-row" type="button" id="btn-ufo"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="spark"></span></span><span class="set-main">Summon the UFO</span><span class="set-chev">›</span></button>
+      <button class="set-row" type="button" id="btn-santa"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="stars"></span></span><span class="set-main">Summon Santa</span><span class="set-chev">›</span></button>
+      <button class="set-row" type="button" id="btn-meteor"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="stars"></span></span><span class="set-main">Shooting star<small>Night, during a meteor shower, looking up</small></span><span class="set-chev">›</span></button>
+    </div>
+    <div class="set-group set-card set-test"><div class="set-bar"><h3>Prototypes</h3><b aria-hidden="true">T3</b></div>
+      <button class="set-row" type="button" id="btn-cam"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="sight"></span></span><span class="set-main">Camera view<small>The real sky behind the drawing</small></span><span class="set-chev">›</span></button>
+      <div class="set-row"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="ring"></span></span><span class="set-main">Camera fit</span><button class="set-step" id="btn-fov-" aria-label="Camera fit: narrower" type="button">−</button><button class="set-step" id="btn-fov+" aria-label="Camera fit: wider" type="button">+</button></div>
+    </div>
+    <div class="set-group set-card set-test"><div class="set-bar"><h3>Switches</h3><b aria-hidden="true">T4</b></div>
+      <label class="set-row"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="stars"></span></span><span class="set-main">Plus (testing)<small>Turns on every Plus perk on this device</small></span><input type="checkbox" class="set-tog" id="chk-plus-test" aria-label="Plus (testing)"></label>
+      <label class="set-row"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="constellation"></span></span><span class="set-main">Show objects that aren’t visible<small>And where every secret is</small></span><input type="checkbox" class="set-tog" id="chk-dim" aria-label="Show objects that aren’t visible"></label>
+      <label class="set-row"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="hand"></span></span><span class="set-main">Allow capturing anything</span><input type="checkbox" class="set-tog" id="chk-any" aria-label="Allow capturing anything"></label>
+    </div>
+    <div class="set-group set-card set-test"><div class="set-bar"><h3>Technical</h3><b aria-hidden="true">T5</b></div>
+      <pre id="debug-info"></pre>
+    </div></div>
+
+
+    <!-- Location sheet -->
+    <div class="set-sheet" id="set-loc-sheet" hidden><div class="set-sheet-card"><div class="set-grab"></div>
+      <h3>Where are you observing from?</h3>
+      <button class="d-cta o" id="retry-location" type="button"><span><span class="ico" data-ico="pin" aria-hidden="true"></span> Use my location</span><span aria-hidden="true">→</span></button>
+      <p class="loc-denied" id="loc-denied" hidden></p>
+      <div class="loc-search"><input id="loc-q" spellcheck="false" autocorrect="off" type="search" placeholder="Or search a city or town" autocomplete="off" autocapitalize="words" enterkeyhint="search" aria-label="Search a city or town"><div id="loc-results" role="listbox" aria-label="Places"></div></div>
+      <form id="location-form" class="set-coords"><span class="set-sl-top"><span>Or enter coordinates</span></span><div class="row wrap"><label>Latitude<input id="latitude" type="number" min="-90" max="90" step="any" required inputmode="decimal"></label><label>Longitude<input id="longitude" type="number" min="-180" max="180" step="any" required inputmode="decimal"></label></div><button class="pill" type="submit">Use these</button></form>
+      <small class="set-sl-note">South and west are negative. Used only to work out your sky and its weather, never sold. <a href="privacy.html" target="_blank" rel="noopener">Privacy</a></small>
+    </div></div>
+    <!-- Space Collector Plus sheet (2026-10-16, design/plus-sheet-card.html): the Plus card (opens face down on a random
+         back, flips after a second), three prices, one button. -->
+    <div class="set-sheet" id="set-plus-sheet" hidden><div class="set-sheet-card"><div class="set-grab"></div>
+      <!-- Join the crew (2026-10-23, Sevaan picked design/plus-page.html B with B2's crew kit): Plus as a page that says the
+           game is free first, the member patch, the kit, then the three prices. -->
+      <div class="crew-top"><b id="plus-head">JOIN THE CREW</b><button type="button" class="x-close" id="plus-x" aria-label="Close">✕</button></div>
+      <div class="crew-intro">
+      <p class="crew-why" id="plus-lead" hidden></p>
+      <div class="crew-patch" id="plus-patch" aria-hidden="true"></div>
+      <h2 class="crew-big" id="plus-title">Keep the lights on.<br>Wear the patch.</h2>
+      <p class="crew-body" id="plus-body">Space Collector is free to play, all of it. The crew are the players who chip in to keep it flying, and get a little kit for it.</p>
+      </div>
+      <div class="crew-side">
+      <div class="crew-sec">Your crew kit</div>
+      <div class="crew-kit" id="plus-kit"></div>
+      <div id="plus-buy">
+        <div class="crew-sec">Pick your mission length</div>
+        <div class="plus-prices" id="plus-prices" role="radiogroup" aria-label="Plan"></div>
+        <button class="plus-cta" id="plus-cta" type="button">Try Plus free for 7 days</button>
+        <p class="plus-fine" id="plus-fine"></p>
+        <p class="plus-fine plus-legal"><a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" target="_blank" rel="noopener">Terms of Use</a> · <a href="https://spacecollector.app/privacy" target="_blank" rel="noopener">Privacy Policy</a></p>
+      </div>
+      <p class="plus-thanks" id="plus-thanks" hidden>You’re crew. Thank you for keeping Space Collector flying.</p>
+      <div class="plus-links"><button class="auth-later" id="plus-restore" type="button">Restore purchases</button><button class="auth-later" id="plus-redeem" type="button">Redeem a code</button></div>
+      </div>
+    </div></div>
+    <!-- Circle highlights sheet -->
+    <div class="set-sheet" id="set-back-sheet" hidden><div class="set-sheet-card"><div class="set-grab"></div>
+      <h3>Card back</h3>
+      <p class="hint" id="back-hint">The back you see on every card you flip, in the reveal and on shared cards.</p>
+      <div class="back-grid" id="back-grid"></div>
+    </div></div>
+    <div class="set-sheet" id="set-notetest-sheet" hidden><div class="set-sheet-card notetest"><div class="set-grab"></div>
+      <h3>Test phone notifications</h3>
+      <p class="nt-lead">Each button sends that notification to this device in about 8 seconds (Android can hold it back up to 10 minutes), with the real wording, buttons and tap. Lock the phone after tapping Send. Tick things off as you check them.</p>
+      <div id="notetest-body"></div>
+    </div></div>
+    <div class="set-sheet" id="set-credits-sheet" hidden><div class="set-sheet-card credits"><div class="set-grab"></div>
+      <h3>Credits and sources</h3><div id="credits-body"></div>
+    </div></div>
+    <div class="set-sheet" id="set-howto-sheet" hidden><div class="set-sheet-card howto"><div class="set-grab"></div>
+      <h3>How to play</h3>
+      <div class="ht-track" id="ht-track" aria-roledescription="carousel"></div>
+      <div class="ht-dots" id="ht-dots" aria-hidden="true"></div>
+      <button class="d-cta o" type="button" id="ht-next"><span>Next</span><span aria-hidden="true">→</span></button>
+    </div></div>
+    <div class="set-sheet" id="set-hl-sheet" hidden><div class="set-sheet-card"><div class="set-grab"></div>
+      <h3>What the circle highlights</h3>
+      <p class="hint">Highlighted things get the inner ring (and the snap, if it’s on). The rest just brighten. Everything new has a Collect button.</p>
+      <div class="set-prev"><span class="set-prev-ring"></span><span>Collect</span></div>
+      <div class="set-chips">
+        <label class="set-chip"><input type="checkbox" data-hl="satellite"><span>Satellites</span></label>
+        <label class="set-chip"><input type="checkbox" data-hl="rocket"><span>Rocket stages</span></label>
+        <label class="set-chip"><input type="checkbox" data-hl="debris"><span>Debris</span></label>
+        <label class="set-chip"><input type="checkbox" data-hl="planet"><span>Moon &amp; planets</span></label>
+        <label class="set-chip"><input type="checkbox" data-hl="sun"><span>The Sun</span></label>
+        <label class="set-chip"><input type="checkbox" data-hl="star"><span>Stars</span></label>
+        <label class="set-chip"><input type="checkbox" data-hl="ufo"><span>UFOs</span></label><!-- off: no UFO ever flies (2026-10-28, Sevaan) -->
+      </div>
+      <button class="d-cta o" type="button" data-sheet-close><span>Save</span><span aria-hidden="true">✓</span></button>
+    </div></div>
+  </section>
+
+  <script type="module" src="js/text-size.js?v=0.1.1574"></script>
+  <script type="module" src="js/a11y.js?v=0.1.1574"></script>
+  <script type="module" src="js/clock.js?v=0.1.1574"></script>
+  <script type="module" src="js/main.js?v=0.1.1574"></script>
+<div id="rotate" role="status" aria-label="Turn your phone upright"><!-- looks like the loader (2026-10-21, Sevaan) --><svg class="rt-ret" viewBox="-62 -62 124 124" aria-hidden="true"><circle class="rt-ring" r="46" fill="none" stroke-width="1.2"/><circle r="51" fill="none" stroke="rgba(173,188,200,.35)" stroke-width=".75"/><line x1="51.0" y1="0.0" x2="59.0" y2="0.0" stroke="#fa8127" stroke-opacity="0.9" stroke-width="1.5"/><line x1="49.3" y1="13.2" x2="53.1" y2="14.2" stroke="#fff2b3" stroke-opacity="0.28" stroke-width="0.75"/><line x1="44.2" y1="25.5" x2="47.6" y2="27.5" stroke="#fff2b3" stroke-opacity="0.28" stroke-width="0.75"/><line x1="36.1" y1="36.1" x2="38.9" y2="38.9" stroke="#fff2b3" stroke-opacity="0.28" stroke-width="0.75"/><line x1="25.5" y1="44.2" x2="27.5" y2="47.6" stroke="#fff2b3" stroke-opacity="0.28" stroke-width="0.75"/><line x1="13.2" y1="49.3" x2="14.2" y2="53.1" stroke="#fff2b3" stroke-opacity="0.28" stroke-width="0.75"/><line x1="0.0" y1="51.0" x2="0.0" y2="59.0" stroke="#fa8127" stroke-opacity="0.9" stroke-width="1.5"/><line x1="-13.2" y1="49.3" x2="-14.2" y2="53.1" stroke="#fff2b3" stroke-opacity="0.28" stroke-width="0.75"/><line x1="-25.5" y1="44.2" x2="-27.5" y2="47.6" stroke="#fff2b3" stroke-opacity="0.28" stroke-width="0.75"/><line x1="-36.1" y1="36.1" x2="-38.9" y2="38.9" stroke="#fff2b3" stroke-opacity="0.28" stroke-width="0.75"/><line x1="-44.2" y1="25.5" x2="-47.6" y2="27.5" stroke="#fff2b3" stroke-opacity="0.28" stroke-width="0.75"/><line x1="-49.3" y1="13.2" x2="-53.1" y2="14.2" stroke="#fff2b3" stroke-opacity="0.28" stroke-width="0.75"/><line x1="-51.0" y1="0.0" x2="-59.0" y2="0.0" stroke="#fa8127" stroke-opacity="0.9" stroke-width="1.5"/><line x1="-49.3" y1="-13.2" x2="-53.1" y2="-14.2" stroke="#fff2b3" stroke-opacity="0.28" stroke-width="0.75"/><line x1="-44.2" y1="-25.5" x2="-47.6" y2="-27.5" stroke="#fff2b3" stroke-opacity="0.28" stroke-width="0.75"/><line x1="-36.1" y1="-36.1" x2="-38.9" y2="-38.9" stroke="#fff2b3" stroke-opacity="0.28" stroke-width="0.75"/><line x1="-25.5" y1="-44.2" x2="-27.5" y2="-47.6" stroke="#fff2b3" stroke-opacity="0.28" stroke-width="0.75"/><line x1="-13.2" y1="-49.3" x2="-14.2" y2="-53.1" stroke="#fff2b3" stroke-opacity="0.28" stroke-width="0.75"/><line x1="-0.0" y1="-51.0" x2="-0.0" y2="-59.0" stroke="#fa8127" stroke-opacity="0.9" stroke-width="1.5"/><line x1="13.2" y1="-49.3" x2="14.2" y2="-53.1" stroke="#fff2b3" stroke-opacity="0.28" stroke-width="0.75"/><line x1="25.5" y1="-44.2" x2="27.5" y2="-47.6" stroke="#fff2b3" stroke-opacity="0.28" stroke-width="0.75"/><line x1="36.1" y1="-36.1" x2="38.9" y2="-38.9" stroke="#fff2b3" stroke-opacity="0.28" stroke-width="0.75"/><line x1="44.2" y1="-25.5" x2="47.6" y2="-27.5" stroke="#fff2b3" stroke-opacity="0.28" stroke-width="0.75"/><line x1="49.3" y1="-13.2" x2="53.1" y2="-14.2" stroke="#fff2b3" stroke-opacity="0.28" stroke-width="0.75"/><g class="rt-phone"><rect x="-11" y="-19" width="22" height="38" rx="4" fill="none" stroke="#fff2b3" stroke-width="1.6"/><path d="M-3.5 -15.5H3.5" stroke="#fff2b3" stroke-width="1.4" stroke-linecap="round"/></g></svg><span class="rt-word">SPACE COLLECTOR</span><span class="rt-sub">Turn your phone upright</span></div>
+</body>
+</html>

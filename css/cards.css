@@ -1,0 +1,745 @@
+/* Field cards retain the original interactive tilt, foil, glitter and glare layers. */
+.card {
+  --set: #d74730; --tier: #e1b955; --paper: #f1efdf; --ink: #193639; --grey: #596c66;
+  --mx: 50%; --my: 50%; --rx: 0deg; --ry: 0deg; --bgx: 50%; --bgy: 50%; --hyp: 0;
+  font-size: 10px; width: 28em; min-height: 39.2em; perspective: 90em; flex: none;
+  font-family: Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif; color: var(--ink);
+  -webkit-user-select: none; user-select: none; touch-action: none; text-align: left; /* the card owns the finger: drag tilts, never scrolls */
+}
+.card *, .card *::before, .card *::after { box-sizing: border-box; }
+/* Tilt is driven by a spring in js/card.js (attachTilt), so no CSS transition here. The shadow
+   grows as the card is lifted (--o). */
+.card__rotator { width: 100%; min-height: inherit; transform: rotateX(var(--rx)) rotateY(var(--ry)) scale(calc(1 + var(--o, 0) * .02)); transform-style: preserve-3d; border-radius: 1.15em;
+  box-shadow: 0 calc(1em + var(--o, 0) * 1em) calc(3em + var(--o, 0) * 2em) #0008; }
+.card__face { position: relative; width: 100%; min-height: inherit; border-radius: 1.15em; overflow: hidden; display: flex; flex-direction: column; background: radial-gradient(ellipse at 10% 10%, #fff8 0, transparent 75%), var(--paper); border: .07em solid #c5cbbd; }
+.card.level-bronze .card__face { border-color: #b8793e; }
+.card.level-silver .card__face { border-color: #b9c1cc; }
+.card.level-gold .card__face { border-color: #e2b53c; }
+.card__setbar { display: flex; justify-content: space-between; align-items: center; gap: 1em; min-height: 2.6em; padding: .65em 1.35em; background: linear-gradient(110deg, transparent 54%, #0002), var(--set); color: #fff6e7; font-size: .87em; font-weight: 750; letter-spacing: .12em; }
+.card__setbar > span:first-child { display: flex; align-items: center; gap: .7em; }
+.card__setbar > span:last-child { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.card__setbar svg { width: 1.9em; height: 1.4em; stroke: currentColor; stroke-width: 1.5; flex: none; }
+.card__top { display: flex; justify-content: space-between; gap: 1em; align-items: center; padding: 1.1em 1.35em .6em; }
+.card__tier { font-size: max(10px, .79em); font-weight: 800; letter-spacing: .14em; }
+.card__tier i { font-style: normal; color: #b08a34; margin-right: .15em; }
+.card__label { font-size: max(10px, .72em); font-weight: 750; letter-spacing: .12em; color: var(--grey); }
+.card__mono { font-family: 'IBM Plex Mono', ui-monospace, Menlo, monospace; }
+.card__name { margin: 0; padding: 0 .56em; font-size: 2.42em; font-weight: 800; line-height: 1.02; letter-spacing: -.045em; overflow-wrap: anywhere; }
+.card.long-name .card__name { font-size: 2.36em; }
+.card__identity { margin: .75em 1.65em 1em; display: flex; justify-content: space-between; gap: .6em; font-size: max(10px, .81em); color: var(--grey); }
+.card__identity > span:last-child { text-align: right; }
+.card__art { position: relative; height: 13.95em; margin: 0 1.35em; overflow: hidden; border-radius: .62em; border: .07em solid #214551; flex: none; background: #102e37; }
+.card__art svg, .card-art-image { display: block; width: 100%; height: 100%; object-fit: cover; }
+.card-art-image.silhouette { filter: grayscale(1) brightness(.45); }
+.card__agebar { display: flex; align-items: center; justify-content: space-between; gap: .75em; margin: 1.1em 1.35em; }
+.card__age { display: inline-flex; align-items: center; gap: .45em; font-size: 1.8em; font-weight: 800; white-space: nowrap; letter-spacing: -.05em; }
+.card__age small { display: inline-block; max-width: 7.5em; white-space: normal; font-size: max(9px, .36em); line-height: 1.3; font-weight: 750; letter-spacing: .12em; }
+.card__seen { font-size: max(10px, .72em); text-align: right; font-weight: 800; letter-spacing: .08em; padding: .65em .8em; border: .12em solid currentColor; border-radius: .3em; color: #667951; }
+.card.not-owned .card__seen { color: var(--grey); }
+.card.level-silver .card__seen { color: #667681; }
+.card.level-gold .card__seen { color: #94711e; }
+.card__fact { margin: 0 1.35em; padding: .05em 0 .05em 1em; border-left: .24em solid var(--set); }
+.card__note-label { display: block; font-size: max(10px, .7em); font-weight: 750; color: var(--grey); letter-spacing: .17em; }
+.card__fact p { margin: .45em 0 0; font-size: max(13px, 1.03em); line-height: 1.45; font-weight: 450; }
+.card__fact b { font-weight: 800; }
+.card__stats { display: grid; grid-template-columns: 1.15fr 1fr 1fr; margin: 1.25em 1.35em .9em; border-top: .1em solid #b6c0ad; padding-top: .75em; }
+.card__stats > div { display: flex; flex-direction: column; gap: .3em; padding-left: .65em; border-left: .08em solid #c5cbbc; }
+.card__stats > div:first-child { padding-left: 0; border-left: 0; }
+.card__stats b { font-size: 1.48em; font-weight: 800; overflow-wrap: anywhere; }
+.card__stats b small { font-size: max(10px, .58em); font-weight: 600; }
+.card__stats b.small { font-size: 1.05em; line-height: 1.2; }
+.card__footer { display: flex; justify-content: space-between; gap: 1em; margin: auto 2.1em 1.7em; padding-top: .25em; color: var(--grey); font: 600 max(9px, .65em)/1.3 'IBM Plex Mono', monospace; letter-spacing: .08em; }
+.card.uncaught .card__fact { color: var(--grey); }
+.card__stamp { position: absolute; left: 50%; top: 46%; transform: translate(-50%,-50%) rotate(-12deg); border: .2em solid #9c312b; color: #9c312b; border-radius: .35em; padding: .35em .7em; font-weight: 800; font-size: 1.8em; letter-spacing: .1em; text-align: center; background: #f1efdfef; z-index: 8; }
+.card__stamp small { display: block; font-size: .5em; letter-spacing: .1em; white-space: nowrap; }
+.card.extinct .card__art { filter: grayscale(.85); }
+/* ---------- Fleet cards: launches stamped + a dot per launch (design/fleet-options.html, the mix) ---------- */
+.card { --ink-stamp: #2d4f86; }
+.fl-count { display: inline-flex; align-items: baseline; gap: .3em; font-size: 1.8em; font-weight: 800; letter-spacing: -.05em; white-space: nowrap; }
+.fl-count em { font-style: normal; font-size: .55em; color: var(--grey); letter-spacing: 0; }
+.fl-count small { display: inline-block; max-width: 6.5em; white-space: normal; font-size: max(9px, .36em); line-height: 1.3; font-weight: 750; letter-spacing: .12em; margin-left: .3em; }
+.fl-dots { margin: 0 1.35em; }
+.fl-grid { display: grid; grid-template-columns: repeat(var(--cols), 1fr); gap: var(--gap); margin-top: .55em; }
+.fl-grid i { aspect-ratio: 1; border-radius: 50%; background: #d4d8c9; }
+.fl-grid i.on { background: var(--ink-stamp); box-shadow: 0 0 0 .08em var(--paper), 0 0 0 .2em color-mix(in srgb, var(--ink-stamp) 40%, transparent); }
+.fl-grid i.latest { box-shadow: 0 0 0 .12em var(--paper), 0 0 0 .32em var(--ink-stamp); position: relative; z-index: 1; }
+.fl-years { display: flex; justify-content: space-between; margin-top: .4em; font: 600 max(9px, .62em) 'IBM Plex Mono', monospace; color: var(--grey); }
+/* Ink stamps, in the viewer's passport */
+.passport { max-width: 390px; margin: 20px auto 0; text-align: left; --ink-stamp: #2d4f86; }
+.passport h2 { font-size: 11px; font-weight: 600; color: var(--accent, #e6c68a); letter-spacing: .12em; text-transform: uppercase; margin: 0 0 12px; }
+.passport__latest { display: flex; gap: 14px; align-items: center; margin-bottom: 14px; }
+.passport .passport__latest p { display: block; margin: 0; font-size: 12px; line-height: 1.5; color: var(--muted, #9fb3dc); }
+.passport .passport__latest p b { color: var(--text, #eef3ff); font-weight: 600; }
+.passport__stamps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; justify-items: center; background: #f1efdf; border-radius: 10px; padding: 14px 8px; }
+.ink-stamp { flex: none; width: 64px; height: 64px; border-radius: 50%; border: 2.5px solid var(--ink-stamp); color: var(--ink-stamp); display: grid; place-items: center; text-align: center;
+  transform: rotate(var(--r, 0deg)); font: 800 7.5px/1.15 'IBM Plex Mono', monospace; letter-spacing: .01em; position: relative; background: #f1efdf; }
+.ink-stamp::before { content: ''; position: absolute; inset: 3px; border-radius: 50%; border: 1px dashed currentColor; opacity: .7; }
+.ink-stamp b { display: block; font: 800 10px Inter, sans-serif; letter-spacing: .06em; color: inherit; }
+.ink-stamp.big { width: 78px; height: 78px; }
+.ink-stamp.blank { border: 1.5px dashed #b9bfb0; color: #9aa293; font-weight: 600; font-size: 10px; }
+.ink-stamp.blank::before { display: none; }
+:where(html[data-theme="night"], body.night) .card, :where(html[data-theme="night"], body.night) .passport { --ink-stamp: #f27463; }
+:where(html[data-theme="night"], body.night) .fl-grid i { background: #3a1512; }
+:where(html[data-theme="night"], body.night) .passport__stamps, :where(html[data-theme="night"], body.night) .ink-stamp { background: #130606; }
+/* ---------- Shine, by rarity ----------
+   Our own take on the poke-holo idea: a glare that follows your finger, plus foil and glitter layers
+   that slide as the card turns. Driven by --mx/--my (pointer), --bgx/--bgy (foil position), --hyp
+   (distance from centre) and --o (0 at rest, 1 while handled), all from the spring in js/card.js.
+   The glitter is SVG noise thresholded into sparse specks, so there are no image files. */
+.card, .rv-back { --glitter: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='1' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 11 -7.6'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); --glitter2: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='2' seed='11'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 12 -8.4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E"); --nbgx: calc(100% - var(--bgx)); --nbgy: calc(100% - var(--bgy)); }
+.card__shine, .card__glare, .card__foil { position: absolute; inset: 0; pointer-events: none; }
+/* Holofoil (2026-10-08, Sevaan: the rainbow was messy, it should shimmer like a real holo card): one clean
+   diagonal spectrum band with a white streak through its middle, mostly clear elsewhere. It sweeps about half a
+   card width as you tilt (--bgx 37–63 % on a 300 % layer). Rare uses it in the picture window, Epic over the whole
+   card, and the backs match. */
+.card, .rv-back {
+  --holo-band: linear-gradient(115deg, transparent 41.5%, hsla(350, 100%, 66%, .55) 43.5%, hsla(30, 100%, 60%, .6) 45%, hsla(55, 100%, 62%, .6) 46.5%, hsla(120, 85%, 58%, .55) 48%, hsla(180, 95%, 60%, .6) 49.5%, hsla(215, 95%, 66%, .6) 51%, hsla(265, 90%, 70%, .55) 52.5%, hsla(310, 90%, 70%, .4) 54%, transparent 56%);
+  --holo-streak: linear-gradient(115deg, transparent 47.6%, rgba(255, 255, 255, .55) 49.3%, rgba(255, 255, 255, .8) 49.8%, rgba(255, 255, 255, .55) 50.3%, transparent 52%);
+}
+.card__glare {
+  z-index: 7;
+  /* The 'spotlight' (2026-10-05, Sevaan: too strong twice): a small soft highlight under the finger only,
+     no dark falloff (that greyed the whole card), and faint. */
+  background: radial-gradient(circle at var(--mx) var(--my), hsla(0, 0%, 100%, .6) 0, hsla(0, 0%, 100%, .18) 18%, transparent 42%);
+  mix-blend-mode: overlay; opacity: calc(var(--o, 0) * .3);
+}
+
+/* Front holo toned down about a third (2026-10-05, Sevaan); card backs keep their own strength.
+   Uncommon: a pastel sheen that slides across the whole card. */
+.card.tier-uncommon .card__shine {
+  z-index: 6;
+  background: linear-gradient(115deg, transparent 22%, hsla(185, 90%, 78%, .55) 38%, hsla(300, 85%, 82%, .55) 47%, hsla(55, 95%, 78%, .55) 56%, transparent 72%) var(--bgx) var(--bgy) / 300% 300%;
+  mix-blend-mode: color-dodge; opacity: calc(var(--o, 0) * .28);
+}
+
+/* Rare and up: rainbow beams with glitter in the picture window. Halved again 2026-10-05 (Sevaan: the
+   rainbow stripes were too strong; phone tilt keeps --o near 1, so this shows all the time). */
+.card.tier-rare .card__foil, .card.tier-epic .card__foil, .card.tier-legendary .card__foil {
+  background: var(--holo-streak) var(--bgx) var(--bgy) / 300% 300%, var(--holo-band) var(--bgx) var(--bgy) / 300% 300%;
+  mix-blend-mode: screen; filter: none;
+  opacity: calc(var(--o, 0) * (.35 + var(--hyp, 0) * .3));
+}
+.card.tier-epic .card__foil { /* Epic: the band crosses the whole card (shine); here, a little glitter caught only inside the band */
+  background: var(--glitter) var(--nbgx) var(--nbgy) / 14em 14em;
+  -webkit-mask: linear-gradient(115deg, transparent 41%, #000 46%, #000 54%, transparent 59%) var(--bgx) var(--bgy) / 300% 300%;
+  mask: linear-gradient(115deg, transparent 41%, #000 46%, #000 54%, transparent 59%) var(--bgx) var(--bgy) / 300% 300%;
+  opacity: calc(var(--o, 0) * .5); }
+.card.tier-legendary .card__foil { background: var(--holo-streak) var(--bgx) var(--bgy) / 300% 300%; } /* gold: just the white streak in the picture */
+.card.uncaught .card__foil { display: none; }
+
+/* Epic: a cosmos foil over the whole card. Two glitter fields drift in opposite directions over a
+   slow diagonal rainbow. */
+.card.tier-epic .card__shine {
+  z-index: 6;
+  background:
+    var(--holo-streak) var(--bgx) var(--bgy) / 300% 300%,
+    var(--holo-band) var(--bgx) var(--bgy) / 300% 300%;
+  mix-blend-mode: screen; filter: none;
+  opacity: calc(var(--o, 0) * (.4 + var(--hyp, 0) * .3));
+}
+
+/* Legendary: gold. Two gold glitter fields slide past each other with a bright glint sweeping
+   across, a stronger art foil, and a gold edge. */
+.card.tier-legendary .card__shine {
+  /* Legendary (2026-10-09, Sevaan: the full gold wash looked flat and khaki): the navy card stays navy; a narrow
+     band of warm gold light sweeps across as you tilt, with fine gold glitter caught only inside the band. */
+  z-index: 6;
+  background:
+    linear-gradient(115deg, transparent 44%, rgba(255, 214, 120, .55) 48%, rgba(255, 246, 214, .8) 50%, rgba(255, 214, 120, .55) 52%, transparent 56%) var(--bgx) var(--bgy) / 300% 300%,
+    var(--glitter) var(--bgx) var(--bgy) / 12em 12em;
+  background-blend-mode: normal, normal;
+  -webkit-mask: linear-gradient(115deg, transparent 40%, #000 47%, #000 53%, transparent 60%) var(--bgx) var(--bgy) / 300% 300%;
+  mask: linear-gradient(115deg, transparent 40%, #000 47%, #000 53%, transparent 60%) var(--bgx) var(--bgy) / 300% 300%;
+  mix-blend-mode: screen; opacity: calc(var(--o, 0) * (.45 + var(--hyp, 0) * .3));
+}
+.card.tier-legendary .card__foil { display: none; } /* the shine band above is the whole effect */
+.card.tier-legendary .card__rotator { box-shadow: 0 0 0 .25em #e8c35a, 0 calc(1em + var(--o, 0) * 1em) calc(3em + var(--o, 0) * 2em) rgba(0, 0, 0, .5); }
+.card.tier-legendary.uncaught .card__shine { display: none; }
+.card.extinct .card__shine, .card.extinct .card__foil { display: none; }
+
+/* The back of the card, seen only mid-spin in the collection's closer look (js/cards-page.js). It is
+   pre-mirrored so it reads correctly while the card faces away. */
+.card__back { position: absolute; inset: 0; z-index: 9; border-radius: 1.15em; opacity: 0; pointer-events: none; transform: scaleX(-1);
+  border: .25em solid var(--tier);
+  background: #01121c center / contain no-repeat; }   /* the back image, set by js/card-backs.js; contain so its frame line is never cropped (edges are the same navy) */
+
+/* Thumbnail typography is deliberately independent of the full card's scale. */
+.card-tile { display: flex; flex-direction: column; width: 100%; padding: 0; text-align: left; font: inherit; color: #193639; background: #eeecdf; border: 1px solid #d1d4c5; border-radius: 12px; overflow: hidden; cursor: pointer; transition: transform .2s, box-shadow .2s; }
+.card-tile:hover { transform: translateY(-3px); box-shadow: 0 12px 25px #0005; }
+.card-tile:focus-visible { outline: 3px solid #8fdfd7; outline-offset: 5px; }
+.card-tile__set { min-height: 27px; padding: 8px 11px 7px; background: var(--set); color: #fff8ea; font-size: 11px; line-height: 1.35; font-weight: 750; letter-spacing: .11em; text-transform: uppercase; }
+.card-tile__art { display: block; height: 108px; margin: 10px 10px 0; border-radius: 6px; overflow: hidden; background: #0d2933; }
+.card-tile__art svg { display: block; width: 100%; height: 100%; }
+.card-tile__body { display: flex; flex-direction: column; flex: 1; padding: 11px; }
+.card-tile__tier { font: 650 11px/1.2 'IBM Plex Mono', monospace; letter-spacing: .07em; text-transform: uppercase; color: #5d6a5e; }
+.card-tile__name { display: block; font-size: 15px; font-weight: 800; line-height: 1.12; letter-spacing: -.025em; overflow-wrap: anywhere; margin-top: 7px; margin-bottom: 16px; }
+.card-tile__status { display: flex; justify-content: space-between; gap: 4px; margin-top: auto; padding-top: 8px; border-top: 1px solid #c9d0bf; font-size: 11px; color: #5f6d60; }
+.card-tile.is-owned .card-tile__status { color: #3f6b4a; }
+
+/* Night mode transforms the card stock as well as artwork; no ivory surface flashes. */
+:where(html[data-theme="night"], body.night) .card { --paper: #130606; --ink: #f27463; --grey: #dd6455; --set: #4c1313 !important; --tier: #d4574a !important; }
+:where(html[data-theme="night"], body.night) .card__face { background: var(--paper); border-color: #4d1b18 !important; }
+:where(html[data-theme="night"], body.night) .card__setbar { background: #3d1010; color: #ba615b; }
+:where(html[data-theme="night"], body.night) .card__art, :where(html[data-theme="night"], body.night) .card-tile__art { filter: grayscale(1) brightness(.48) sepia(1) saturate(5) hue-rotate(318deg) !important; border-color: #55211f; }
+:where(html[data-theme="night"], body.night) .card__seen, :where(html[data-theme="night"], body.night) .card__tier i { color: #dd6455 !important; }
+:where(html[data-theme="night"], body.night) .card__stats, :where(html[data-theme="night"], body.night) .card__stats > div { border-color: #52221f; }
+:where(html[data-theme="night"], body.night) .card__rotator { box-shadow: 0 0 0 .16em #55211f, 0 1em 3em #0007 !important; }
+:where(html[data-theme="night"], body.night) .card__shine, :where(html[data-theme="night"], body.night) .card__foil { filter: grayscale(1) brightness(.25) sepia(1) saturate(5) hue-rotate(318deg); }
+:where(html[data-theme="night"], body.night) .card__glare { background: radial-gradient(circle at var(--mx) var(--my), #9b322833, transparent 70%); }
+:where(html[data-theme="night"], body.night) .card__stamp { background: #210908eb; color: #a5534b; }
+:where(html[data-theme="night"], body.night) .card-tile { background: #160807; color: #b35c56; border-color: #52221f; }
+:where(html[data-theme="night"], body.night) .card-tile__set { background: #3d1010; color: #b35c56; }
+:where(html[data-theme="night"], body.night) .card-tile__tier, :where(html[data-theme="night"], body.night) .card-tile__status { color: #dd6455; border-color: #52221f; }
+@media (prefers-reduced-motion: reduce) {
+  .card__rotator, .card-tile { transform: none !important; transition: none !important; }
+  .card__shine, .card__glare, .card__foil { background-position: 50% 50% !important; }
+}
+
+/* Retro front. All dimensions follow the existing 28em card sizing contract. */
+@font-face{font-family:'SC Display';src:url('../fonts/RussoOne-Regular.woff2') format('woff2'),url('../fonts/RussoOne-Regular.ttf') format('truetype');font-weight:400;font-display:swap}
+@font-face{font-family:'SC Label';src:url('../fonts/BarlowCondensed-Medium.woff2') format('woff2'),url('../fonts/BarlowCondensed-Medium.ttf') format('truetype');font-weight:500;font-display:swap}
+.card.card--retro { --paper:#080f1b;--ink:#fff2b3;--grey:#dfd7a7;--edge:#adbcc8;--rule:#bcb585;--accent:#fa8127;--display:'SC Display',Impact,sans-serif;--label:'SC Label','Arial Narrow',sans-serif;min-height:42em;color:var(--ink); }
+.card--retro .card__face { background:var(--paper);border:.28em solid var(--edge);border-radius:1.4em;box-shadow:inset 0 0 0 .09em #657786,inset 0 0 0 .17em #d4e0e7;padding:.75em 0 .5em; }
+.card--retro .card__rotator { border-radius:1.4em;box-shadow:0 1em 3em #0008; }
+.card--retro .card__setbar { min-height:2.4em;padding:.55em 1.15em;background:none;color:var(--ink);font:500 .87em/1.15 var(--label);letter-spacing:.16em;border-block:1px solid var(--rule);gap:.7em; }
+.card--retro .card__setbar > span:first-child {flex:1;min-width:0;gap:.6em;}
+.card--retro .card__setbar > span:first-child::after {content:'';height:1px;background:var(--rule);flex:1;min-width:.5em;}
+.card--retro .card__setbar svg {display:none;}
+.card--retro .card__tier {display:flex;align-items:center;gap:.6em;flex:none;border-left:1px solid var(--rule);padding-left:.8em;font:inherit;letter-spacing:.14em;}
+.card--retro .card__tier i {font-style:normal;color:var(--accent);font-size:1.3em;margin:0;line-height:1;}
+.card--retro .card__heading {margin:.85em 1.1em 0;display:flex;flex-direction:column;gap:.5em;min-height:6.5em;justify-content:space-between;}
+.card--retro .card__name {padding:0;font:400 2.7em/.99 var(--display);letter-spacing:-.035em;text-transform:uppercase;overflow-wrap:anywhere;}
+.card--retro.long-name .card__name {font-size:2.2em;}
+.card--retro .card__identity {margin:0;border-top:1px solid var(--rule);padding-top:.4em;color:var(--ink);font:500 .95em/1.2 var(--label);letter-spacing:.09em;align-items:center;}
+.card--retro .card__identity > span:last-child {border-left:1px solid var(--rule);padding-left:.8em;font:inherit;white-space:nowrap;}
+.card--retro .card__art {margin:.3em 0 0;height:calc(17.3em - var(--fact-extra, 0) * 1.26em);border:0;border-radius:0;background:transparent;}
+.card--retro .card__stats {margin:0 1.1em;padding:.65em 0 .7em;grid-template-columns:1.15fr 1fr 1fr;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);min-height:5.1em;}
+.card--retro .card__stats > div {padding:0 .65em;gap:.3em;border-color:var(--rule);min-width:0;text-align:center;}
+.card--retro .card__stats > div:first-child {padding-left:0;text-align:left;}
+.card--retro .card__stats > div:last-child {padding-right:0;}
+.card--retro .card__label {font:500 .82em/1.15 var(--label);letter-spacing:.08em;color:var(--ink);border-bottom:1px solid var(--rule);padding-bottom:.4em;}
+.card--retro .card__stats b {font:400 1.65em/1.15 var(--display);letter-spacing:-.04em;overflow-wrap:anywhere;}
+.card--retro .card__stats b small {font-size:.55em;letter-spacing:0;}
+.card--retro .card__stats b.small {font-size:1.1em;}
+.card--retro .card__stat-detail {font:500 .78em/1.2 var(--label);letter-spacing:.06em;}
+.card--retro .card__fact {margin:.65em 1.1em;padding:0 0 0 1em;border-left:.22em solid var(--accent);}
+.card--retro .card__fact p {margin:0;font:400 .87em/1.45 Georgia,'Times New Roman',serif;letter-spacing:.045em;}
+.card--retro .card__fact b {font-weight:700;}
+.card--retro.uncaught .card__fact {color:var(--grey);}
+.card--retro .card__footer {margin:auto 0 0;padding:.65em 1.35em .2em;border-top:1px solid var(--rule);color:var(--ink);font:500 .72em/1.3 var(--label);letter-spacing:.1em;align-items:center;gap:.65em;}
+.card--retro .card__status {display:flex;align-items:center;gap:.65em;flex:1;min-width:0;}
+.card--retro .card__status-icon {width:1.5em;height:1.5em;display:grid;place-items:center;flex:none;border:.08em solid currentColor;border-radius:50%;font:500 1.35em/1 Arial,sans-serif;}
+.card--retro .card__brand {font:400 .98em/1.2 var(--display);letter-spacing:-.04em;border-left:1px solid var(--rule);padding:.6em 0 .6em 1em;flex:none;}
+.card--retro .card__fleet-summary {margin:.7em 1.4em;font:500 .9em/1.3 var(--label);}
+.card--retro .fl-dots {margin-bottom:.7em;}
+.card--retro .fl-grid i {background:#344557;}
+.card--retro .fl-grid i.on {background:var(--accent);}
+.card--retro .card__stamp {background:#080f1bf2;color:var(--accent);border-color:var(--accent);}
+/* Preserve deep-red observing mode as an explicit app preference. */
+:where(html[data-theme='night'],body.night) .card.card--retro {--paper:#130606;--ink:#f27463;--grey:#dd6455;--accent:#a5534b;--rule:#52221f;--edge:#4d1b18;}
+:where(html[data-theme='night'],body.night) .card--retro .card__face {box-shadow:inset 0 0 0 .1em #52221f;}
+.card-tile.card-tile--retro {background:#080f1b;color:#fff2b3;border:2px solid #adbcc8;box-shadow:inset 0 0 0 1px #657786;}
+.card-tile--retro .card-tile__set {background:none;color:inherit;border-bottom:1px solid #bcb585;font:500 12px/1.2 'SC Label',sans-serif;letter-spacing:.12em;}
+.card-tile--retro .card-tile__art {background:transparent;border-radius:0;}
+.card-tile--retro .card-tile__tier {color:#fa8127;font:500 12px/1.2 'SC Label',sans-serif;}
+.card-tile--retro .card-tile__name {font:400 17px/1.1 'SC Display',Impact,sans-serif;text-transform:uppercase;}
+.card-tile--retro .card-tile__status {color:#fff2b3;border-color:#bcb585;font:500 12px/1.3 'SC Label',sans-serif;}
+:where(html[data-theme='night'],body.night) .card-tile.card-tile--retro {background:#130606;color:#f27463;border-color:#52221f;}
+:where(html[data-theme='night'],body.night) .card-tile--retro .card-tile__status,:where(html[data-theme='night'],body.night) .card-tile--retro .card-tile__tier {color:#dd6455;border-color:#52221f;}
+/* Retro frame: silver on every rarity, as the template intends. Without these, the older level colours
+   (.level-bronze etc.) and the Legendary gold ring win on specificity. */
+.card.card--retro .card__face { border-color: var(--edge); }
+.card.card--retro.tier-legendary .card__rotator { box-shadow: 0 1em 3em #0008; }
+/* Keep a stat's value and unit together ("10.7 hours"), shrinking long ones rather than wrapping
+   (js/card.js statClass). Word values such as constellation names still wrap. */
+.card--retro .card__stats b.fit { white-space: nowrap; overflow-wrap: normal; }
+.card--retro .card__stats b.long { font-size: 1.3em; }
+
+/* Fleet cards are kept close to the others' height: shorter art window, denser dot grid, stamped count
+   under the dots. */
+.card--retro .fl-dots { margin: .9em 1.1em .9em; }
+.card--retro.card--fleet .card__art { height: 10.2em; }
+/* Fleet names all fit on one line, so the heading drops its two-line reserve and the art takes the space (2026-10-09). */
+.card--retro.card--fleet .card__heading { min-height: 0; }
+/* ---------- Card backs: tilt + holo (sealed card in the reveal, collection spin, double-tap flip) ----------
+   Glare follows the finger; a rainbow-and-glitter holo slides as the card turns. Tilt values come from
+   attachTilt on an ancestor (the .card, or #rv-holder for the sealed card). */
+.back-holo, .back-glare { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; }
+.rv-back, .card__back { --nbgx: calc(100% - var(--bgx, 50%)); --nbgy: calc(100% - var(--bgy, 50%)); }
+/* The back's holo matches the FRONT's rarity treatment (2026-10-06, Sevaan: it has to read as the same card).
+   Scoped by the tier class on the .card (collection spin, double-tap flip) or on #rv-back (sealed card). */
+.back-holo { display: none; }                                                  /* common: no shine, like its front */
+:is(.card, .rv-back).tier-uncommon .back-holo { display: block;                /* pastel sheen: a narrow band */
+  /* Card backs use plain translucent colour, no blend modes (2026-10-09, Sevaan: the effect vanished at the flip;
+     Safari drops mix-blend-mode on an element while it turns in 3D). Narrower and subtler than before, so the
+     poster reads through. */
+  background: linear-gradient(115deg, transparent 40%, hsla(185, 90%, 80%, .22) 46%, hsla(300, 85%, 84%, .26) 50%, hsla(55, 95%, 80%, .22) 54%, transparent 60%) var(--bgx, 50%) var(--bgy, 50%) / 300% 300%;
+  mix-blend-mode: normal; opacity: calc(.35 + var(--o, 0) * .5); }
+:is(.card, .rv-back):is(.tier-rare, .tier-epic) .back-holo { display: block; /* the same holofoil band as the front, lighter */
+  background: var(--holo-streak) var(--bgx, 50%) var(--bgy, 50%) / 300% 300%, var(--holo-band) var(--bgx, 50%) var(--bgy, 50%) / 300% 300%;
+  mix-blend-mode: normal; filter: none;
+  opacity: calc(.18 + var(--o, 0) * (.18 + var(--hyp, 0) * .14)); }
+:is(.card, .rv-back).tier-legendary .back-holo { display: block;               /* gold glint */
+  background: linear-gradient(115deg, transparent 44%, rgba(255, 214, 120, .32) 48%, rgba(255, 246, 214, .5) 50%, rgba(255, 214, 120, .32) 52%, transparent 56%) var(--bgx, 50%) var(--bgy, 50%) / 300% 300%;
+  mix-blend-mode: normal; opacity: calc(.4 + var(--o, 0) * .5); }
+:is(.card, .rv-back).gold-foil .back-holo { display: block;                    /* gold foil: a warm gold band and glitter */
+  background: var(--glitter) var(--nbgx) var(--nbgy) / 12em 12em, linear-gradient(125deg, transparent 38%, rgba(239, 224, 168, .3) 46%, rgba(255, 246, 216, .45) 50%, rgba(239, 224, 168, .3) 54%, transparent 62%) var(--bgx, 50%) var(--bgy, 50%) / 300% 300%;
+  mix-blend-mode: normal; filter: none; opacity: calc(.45 + var(--o, 0) * .4); }
+:is(.card, .rv-back).shiny .back-holo { display: block;                        /* prism, like a shiny front, gentler */
+  background: repeating-linear-gradient(110deg, hsla(0, 90%, 72%, .16) 0%, hsla(50, 92%, 70%, .16) 7%, hsla(120, 80%, 66%, .16) 14%, hsla(190, 90%, 70%, .16) 21%, hsla(255, 85%, 76%, .16) 28%, hsla(320, 85%, 74%, .16) 35%, hsla(0, 90%, 72%, .16) 42%) var(--bgx, 50%) var(--bgy, 50%) / 320% 320%;
+  mix-blend-mode: normal; filter: none; opacity: calc(.7 + var(--o, 0) * .3); }
+.back-glare { background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), hsla(0, 0%, 100%, .16) 0, hsla(0, 0%, 100%, .05) 22%, transparent 45%);
+  mix-blend-mode: normal; opacity: var(--o, 0); } /* a soft highlight, no blend mode (so it survives the flip in Safari) */
+:where(html[data-theme="night"], body.night) .back-holo { display: none; }
+
+.card--retro .fl-years { align-items: baseline; gap: .8em; color: var(--grey); }
+.card--retro .fl-sum { flex: 1; text-align: center; color: var(--ink); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+/* Retro palette for the fleet's newest-stamp ring and the tile's collected line (older rules otherwise win). */
+.card--retro .fl-grid i.latest { background: var(--accent); box-shadow: 0 0 0 .12em var(--paper), 0 0 0 .32em var(--accent); }
+.card-tile--retro.is-owned .card-tile__status { color: #fff2b3; }
+
+/* The double frame's inner lines sit ABOVE the full-width art band, so the picture runs behind the
+   border instead of over it (2026-10-05). Same lines as the face's inset shadow, drawn on top. */
+.card--retro .card__face::after { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 5;
+  box-shadow: inset 0 0 0 .09em #657786, inset 0 0 0 .17em #d4e0e7; }
+:where(html[data-theme='night'], body.night) .card--retro .card__face::after { box-shadow: inset 0 0 0 .1em #52221f; }
+
+/* Twinkling stars on the card art (js/card.js artStars). The layer copies object-fit: cover so each
+   sparkle sits on a star in the picture: as wide as the window or as tall, whichever covers it. */
+.card__art { container-type: size; }
+.art-stars { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); aspect-ratio: var(--ar);
+  width: max(100cqw, 100cqh * var(--ar)); pointer-events: none; }
+.art-stars i { position: absolute; width: .9em; height: .9em; margin: -.45em 0 0 -.45em; opacity: 0;
+  background: radial-gradient(circle, #fffbe6 0 8%, rgba(255, 242, 179, .55) 14%, transparent 34%),
+    linear-gradient(90deg, transparent 46%, rgba(255, 246, 210, .9) 50%, transparent 54%),
+    linear-gradient(0deg, transparent 46%, rgba(255, 246, 210, .9) 50%, transparent 54%);
+  -webkit-mask: radial-gradient(circle, #000 0 18%, transparent 52%); mask: radial-gradient(circle, #000 0 18%, transparent 52%);
+  animation: art-twinkle var(--t, 3s) ease-in-out var(--d, 0s) infinite; }
+@keyframes art-twinkle { 0%, 100% { opacity: 0; transform: scale(.5) rotate(0deg); } 45% { opacity: .95; transform: scale(1.15) rotate(20deg); } 60% { opacity: .5; transform: scale(.85) rotate(30deg); } }
+@media (prefers-reduced-motion: reduce) { .art-stars { display: none; } }
+/* "Seen N times" after the collected date, set off by a rule like the brand's. */
+.card--retro .card__seen-count { border-left: 1px solid var(--rule); padding-left: .65em; white-space: nowrap; flex: none; }
+.card--retro .card__status > span:nth-child(2) { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+
+/* Constellation cards (js/constellations.js): a row of star pips for progress; gold frame when complete. */
+.card--retro .con-progress { display: flex; flex-wrap: wrap; align-items: center; gap: .3em; margin-top: .5em; font: 500 .8em/1 var(--label); letter-spacing: .12em; color: var(--grey); }
+.card--retro .con-progress i { width: .6em; height: .6em; transform: rotate(45deg); border: .08em solid var(--rule); }
+.card--retro .con-progress i.on { background: var(--accent); border-color: var(--accent); }
+.card--retro .con-progress span { margin-left: .4em; }
+/* A completed constellation, or a fleet at gold level, is a GOLD FOIL card (after the gold rares on poke-holo.simey.me): gold ink and
+   frame, a metallic gold foil over the whole face that always shimmers a little and moves with tilt, gold
+   glitter, and a bright glint that follows the finger. */
+.card.card--retro.gold-foil { --ink: #f4d27a; --grey: #d9b968; --rule: #b98f2e; --edge: #e2b53c; --accent: #ffcf5a; }
+.card.card--retro.gold-foil .card__face { border-color: #e2b53c; box-shadow: inset 0 0 0 .09em #7a5a14, inset 0 0 0 .17em #f7d77a;
+  background: radial-gradient(ellipse at 30% 0%, #5a4415 0, transparent 60%), linear-gradient(160deg, #3a2d10, #17130a 50%, #3a2c0f); }
+.card.card--retro.gold-foil .card__face::after { box-shadow: inset 0 0 0 .09em #7a5a14, inset 0 0 0 .17em #f7d77a; }
+.card.card--retro.gold-foil .card__rotator { box-shadow: 0 0 0 .25em #e8c35a, 0 0 2.2em rgba(232, 195, 90, .35), 0 1em 3em #0008; }
+.card.gold-foil .card__art svg { filter: sepia(1) saturate(1.7) hue-rotate(-8deg) brightness(1.18); }
+.card.gold-foil .card__shine { z-index: 6; mix-blend-mode: overlay;
+  background:
+    linear-gradient(115deg, transparent 30%, rgba(255, 236, 170, .9) 45%, #fff 50%, rgba(255, 236, 170, .9) 55%, transparent 70%) var(--bgx, 50%) var(--bgy, 50%) / 260% 260%,
+    var(--glitter) var(--bgx, 50%) var(--bgy, 50%) / 11em 11em,
+    var(--glitter2) var(--nbgx, 50%) var(--nbgy, 50%) / 17em 17em,
+    repeating-linear-gradient(125deg, #7d6a3a 0%, #efe0a8 6%, #a88c45 12%, #fff6d8 18%, #7d6a3a 24%) var(--bgx, 50%) var(--bgy, 50%) / 340% 340%;
+  background-blend-mode: normal, screen, screen, normal;
+  filter: saturate(1);
+  opacity: calc(.46 + var(--o, 0) * .34); }
+/* The picture's foil is gold here too (not the rarity's rainbow). */
+.card.gold-foil .card__foil { background: var(--glitter) var(--nbgx, 50%) var(--nbgy, 50%) / 12em 12em, repeating-linear-gradient(100deg, #6e5d33 0%, #efe0a8 4%, #a88c45 8%, #fff6d8 12%, #6e5d33 16%) var(--bgx, 50%) 50% / 300% 100%;
+  background-blend-mode: screen, normal; mix-blend-mode: overlay; filter: saturate(1); opacity: calc(.22 + var(--o, 0) * .4); }
+.card.gold-foil .card__glare { background: radial-gradient(circle at var(--mx) var(--my), rgba(255, 244, 200, .8) 0, rgba(255, 220, 140, .25) 20%, transparent 45%); opacity: calc(var(--o, 0) * .55); }
+.card-tile.card-tile--retro.gold-foil { border-color: #e2b53c; box-shadow: inset 0 0 0 1px #7a5a14, 0 0 14px rgba(232, 195, 90, .3); color: #f4d27a;
+  background: linear-gradient(160deg, #1b1608, #0b0c0f 55%, #1c1507); }
+.card.gold-foil .card__art img.card-art-image { filter: sepia(.55) saturate(1.35) hue-rotate(-6deg) brightness(1.06) !important; } /* beats the shared-picture tint (inline) */
+/* A gold fleet card's launch grid sits above the gold foil (tester, 2026-11-07: the gold Starlink card got too bright to
+   read the grid); unstamped dots go dark so the stamped gold ones stand out. */
+.card.gold-foil .fl-dots { position: relative; z-index: 7; }
+.card.card--retro.gold-foil .fl-grid i { background: #2a2414; }
+.card.card--retro.gold-foil .fl-grid i.on { background: #ffcf5a; }
+.card.card--retro.gold-foil .fl-grid i.on:not(.latest, .train) { box-shadow: 0 0 0 .08em #17130a; }
+
+/* Shiny cards (js/shiny.js): a rainbow prism holo over the whole card that shimmers gently (a little more when handled),
+   plus a ribbon on the picture saying why it's shiny. */
+.card.shiny .card__shine { z-index: 6; mix-blend-mode: color-dodge;
+  background:
+    var(--glitter) var(--bgx, 50%) var(--bgy, 50%) / 12em 12em,
+    repeating-linear-gradient(110deg, hsl(0, 90%, 70%) 0%, hsl(50, 92%, 68%) 7%, hsl(120, 80%, 64%) 14%, hsl(190, 90%, 68%) 21%, hsl(255, 85%, 74%) 28%, hsl(320, 85%, 72%) 35%, hsl(0, 90%, 70%) 42%) var(--bgx, 50%) var(--bgy, 50%) / 320% 320%;
+  background-blend-mode: screen, normal; filter: brightness(.55) contrast(1.4) saturate(1.1);
+  /* Kept near the calmer look (2026-10-05, Sevaan): phone tilt holds --o at 1, which made it blaze all the time. */
+  opacity: calc(.26 + var(--o, 0) * .1); }
+.shiny-tag { position: absolute; left: .9em; top: .8em; z-index: 4; padding: .35em .7em .3em; border-radius: 99px; font: 500 .72em/1 var(--label, 'SC Label'); letter-spacing: .14em;
+  color: #0b1120; background: linear-gradient(90deg, #ff8fd8, #ffe08a, #8ff0ff, #b58cff); box-shadow: 0 0 12px rgba(255, 143, 216, .5); }
+/* Shiny tile (2026-10-05): the rainbow border says it, no label. A gradient border via two backgrounds keeps the
+   12px corners (border-image squares them off), and a still prism sheen over the whole tile stands in for the big
+   card's animated holo. */
+.card-tile.card-tile--retro.shiny { position: relative; border: 2px solid transparent; background: linear-gradient(#080f1b, #080f1b) padding-box, linear-gradient(135deg, #ff8fd8, #ffe08a, #8ff0ff, #b58cff) border-box; box-shadow: 0 0 14px rgba(181, 140, 255, .35); }
+.card-tile.card-tile--retro.shiny::after { content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 3; mix-blend-mode: color-dodge; opacity: .28;
+  background: linear-gradient(115deg, transparent 18%, #ff8fd8 30%, #ffe08a 42%, #8ff0ff 54%, #b58cff 66%, transparent 80%); }
+:where(html[data-theme='night'],body.night) .card-tile.card-tile--retro.shiny { background: linear-gradient(#130606, #130606) padding-box, linear-gradient(135deg, #b45b53, #7a2e2a) border-box; box-shadow: none; }
+:where(html[data-theme='night'],body.night) .card-tile.card-tile--retro.shiny::after { display: none; }
+/* Tile tilt under a finger lives in js/starfield.js (attachTileTilt on the grid; inline transform). */
+
+/* Constellation charts (js/con-art.js): background specks twinkle, the figure's stars shimmer gently. Full cards only. */
+.card .con-tw { animation: con-tw var(--t) ease-in-out var(--d) infinite; }
+.card .con-tw--star { animation-name: con-tw-star; }
+@keyframes con-tw { 0%, 100% { opacity: var(--o); } 50% { opacity: .03; } }
+@keyframes con-tw-star { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
+@media (prefers-reduced-motion: reduce) { .card .con-tw { animation: none; } }
+/* Cross-glints on the chart (js/con-art.js glint), timed like the painted cards' .art-stars. */
+.con-spark { display: none; }
+.card .con-spark { display: inline; }
+.card .con-spark__g { opacity: 0; transform-box: fill-box; transform-origin: center; animation: art-twinkle var(--t, 3s) ease-in-out var(--d, 0s) infinite; }
+@media (prefers-reduced-motion: reduce) { .card .con-spark { display: none; } }
+
+/* Red night mode: no shine (2026-10-06): the holo, foil, glare and twinkles stay off so the card is a quiet red sheet. */
+:where(html[data-theme="night"], body.night) :is(.card__shine, .card__foil, .card__glare, .art-stars, .back-glare) { display: none !important; }
+:where(html[data-theme="night"], body.night) .card .con-tw { animation: none; }
+:where(html[data-theme="night"], body.night) .card .con-spark { display: none; }
+
+/* Fleet cards: the grid's heading on the left, the ringed (newest) dot's launch date on the right. */
+.card--retro .fl-head { display: flex; justify-content: space-between; align-items: baseline; gap: .8em; }
+.card--retro .fl-latest { display: inline-flex; align-items: center; gap: .8em; font: 500 max(9px, .66em)/1.2 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--ink); white-space: nowrap; }
+.card--retro .fl-latest i { width: .6em; height: .6em; border-radius: 50%; background: #fa8127; box-shadow: 0 0 0 .16em var(--paper), 0 0 0 .28em #fa8127; flex: none; margin-left: .3em; }
+
+/* Undiscovered cards show their real art, hidden (js/card.js lockedArt): blurred, dark and desaturated, with a
+   fine scan grid over it, like a picture you can't quite make out yet. */
+.art-locked { position: absolute; inset: 0; overflow: hidden; display: block; background: #060b14; }
+.art-locked::after { content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(8, 14, 26, .55) 0 2px, transparent 2px 4px), radial-gradient(ellipse at 50% 50%, transparent 30%, rgba(4, 7, 13, .7) 100%); }
+.card-tile__art:has(.art-locked) { position: relative; }
+.card-art-image--locked { width: 100%; height: 100%; object-fit: cover; filter: blur(8px) brightness(.62) saturate(.6); transform: scale(1.15); }
+.card-tile .card-art-image--locked { filter: blur(4px) brightness(.62) saturate(.6); }
+.fl-about { margin-top: 1.1em; }
+/* A card from an album you've filled to gold wears that album's back (2026-10-10, playtest #17): the seal framed in
+   the album's colour, a soft gold wash, and the album's name across the bottom. */
+.card__back.back--album { box-shadow: inset 0 0 0 .55em var(--album), inset 0 0 0 .7em #f2c94c; }
+.card__back.back--album::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background: radial-gradient(ellipse at 50% 40%, transparent 45%, color-mix(in srgb, var(--album) 45%, transparent)); pointer-events: none; }
+.card__back.back--album::after { content: attr(data-album); position: absolute; left: 10%; right: 10%; bottom: 6.5%; padding: .45em .6em .38em; border-radius: 99px; background: #080f1bdd; border: 1px solid #f2c94c; color: #f2c94c; font: 500 1em/1 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .18em; text-transform: uppercase; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Icons (2026-10-10, playtest #19): the ISS, Tiangong and Hubble are easy to see, so they're Rare now, but famous,
+   so they wear a gold frame and an ICON badge. */
+.card.is-icon .card__rotator, .card-tile.is-icon { box-shadow: 0 0 0 2px #f2c94c, 0 0 18px rgba(242, 201, 76, .35); }
+.card__icon-badge { margin-left: .6em; padding: .15em .45em .1em; border-radius: 99px; background: #f2c94c; color: #080f1b; font: 500 .85em/1 var(--label, 'SC Label'), sans-serif; letter-spacing: .14em; }
+/* Rarity reads at a glance (2026-10-12, playtest room): the tier's own colour and shape on the card's gem and on tiles,
+   instead of the orange accent on every tier. */
+.card--retro .card__tier i { color: var(--tier, var(--accent)); }
+.card-tile--retro .card-tile__tier { color: color-mix(in srgb, var(--tier, #fa8127) 80%, #fff2b3); }
+.card-tile--retro .card-tile__tier i { font-style: normal; color: var(--tier, #fa8127); }
+:where(html[data-theme='night'], body.night) .card-tile--retro .card-tile__tier, :where(html[data-theme='night'], body.night) .card-tile--retro .card-tile__tier i { color: #dd6455; } /* red mode stays red; the shape carries the tier */
+/* Card levels you can see (2026-10-12, collectors): the retro frame is silver-grey on every card, so silver gets a bright
+   double ring and a soft sheen, gold a gold frame and glow; the footer names the level. */
+.card.card--retro.level-silver .card__face { border-color: #eef3f7; box-shadow: inset 0 0 0 .09em #8fa0ad, inset 0 0 0 .17em #ffffff, 0 0 1.1em #dfe8ef40; }
+.card.card--retro.level-gold .card__face { border-color: #e2b53c; box-shadow: inset 0 0 0 .09em #8a6a1c, inset 0 0 0 .17em #ffe7a0, 0 0 1.4em #e2b53c55; }
+.card--retro .card__seen-count .lvl { font-weight: 500; letter-spacing: .14em; }
+.card--retro .card__seen-count .lvl--silver { color: #e6edf3; }
+.card--retro .card__seen-count .lvl--gold { color: #e2b53c; }
+.card-tile.card-tile--retro.lvl-silver { border-color: #eef3f7; box-shadow: inset 0 0 0 1px #ffffff, 0 0 10px #dfe8ef33; }
+.card-tile.card-tile--retro.lvl-gold { border-color: #e2b53c; box-shadow: inset 0 0 0 1px #ffe7a0, 0 0 12px #e2b53c40; }
+.card-tile--retro .tile-lvl { position: absolute; top: 6px; right: 6px; z-index: 2; height: 18px; padding: 0 6px; border-radius: 9px; font: 500 10.5px/18px 'SC Label', sans-serif; letter-spacing: .12em; background: #080f1bd9; }
+.card-tile--retro .tile-lvl--silver { color: #e6edf3; border: 1px solid #e6edf3; }
+.card-tile--retro .tile-lvl--gold { color: #e2b53c; border: 1px solid #e2b53c; }
+.card-tile.card-tile--retro { position: relative; } /* for the level badge */
+/* The collector number in its album, above the brand: "014/716" (collectors 2026-10-11). */
+.card--retro .card__no { display: block; font: 500 .72em/1 var(--label); letter-spacing: .14em; color: var(--grey); margin-bottom: .25em; }
+/* Shiny, warmer (2026-10-12, craft room: rainbow bands on tiles, a mint wash over the art). A cream-gold-rose foil in
+   the card's own palette, soft-light so the art keeps its colours; tiles get only a foil border that drifts. */
+.card.shiny .card__shine { mix-blend-mode: soft-light; filter: none; opacity: calc(.55 + var(--o, 0) * .2);
+  background:
+    var(--glitter) var(--bgx, 50%) var(--bgy, 50%) / 12em 12em,
+    repeating-linear-gradient(110deg, #fff2b3 0%, #ffcf7a 8%, #fa8127 15%, #ffb3a1 22%, #fff2b3 30%, #ffe08a 38%, #fff2b3 46%) var(--bgx, 50%) var(--bgy, 50%) / 320% 320%;
+  background-blend-mode: screen, normal; }
+.shiny-tag { background: linear-gradient(90deg, #fff2b3, #ffcf7a, #fa8127, #ffb3a1); box-shadow: 0 0 12px rgba(250, 129, 39, .45); }
+.card-tile.card-tile--retro.shiny { background: linear-gradient(#080f1b, #080f1b) padding-box, linear-gradient(120deg, #fff2b3, #ffcf7a, #fa8127, #ffb3a1, #fff2b3) border-box; background-size: 100% 100%, 300% 300%; box-shadow: 0 0 14px rgba(250, 129, 39, .3); animation: shiny-edge 6s ease-in-out infinite alternate; }
+.card-tile.card-tile--retro.shiny::after { display: none; }
+@keyframes shiny-edge { from { background-position: 0 0, 0% 50%; } to { background-position: 0 0, 100% 50%; } }
+@media (prefers-reduced-motion: reduce) { .card-tile.card-tile--retro.shiny { animation: none; } }
+
+/* Mini cards (2026-10-13, Sevaan: "if there's a small card, it should look like what the card looks like… throughout
+   the app"). .mini-face holds the real card drawn at its natural 280 × 420 px and scaled by --mini-s (width / 280), so
+   every part shrinks together. The footer carries a short status line in big type; the fact gives way so the footer
+   and the frame always fit. Used by Collection tiles, the Now tab's "Seen before" and Tonight's alarm cards. */
+.mini-face { position: relative; display: block; width: calc(280px * var(--mini-s, .4)); height: calc(420px * var(--mini-s, .4)); border-radius: calc(14px * var(--mini-s, .4)); overflow: hidden; pointer-events: none; }
+.mini-face > .card { font-size: 10px; width: 28em; transform-origin: 0 0; transform: scale(var(--mini-s, .4)); }
+.mini-face > .card, .mini-face .card__rotator, .mini-face .card__face { height: 42em; min-height: 0; max-height: 42em; overflow: hidden; box-sizing: border-box; box-shadow: none; }
+.mini-face .card__face { display: flex; flex-direction: column; }
+.mini-face .card__fact { flex: 0 1 auto; min-height: 0; overflow: hidden; }
+.mini-face .card__footer { flex: none; margin-top: auto; padding: .7em 1.4em .55em; justify-content: flex-start; }
+.mini-face .mini-status { font: 600 2.5em/1 var(--label); letter-spacing: .02em; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.mini-face.locked .mini-status { color: var(--grey); }
+.mini-face.locked .card__art { filter: brightness(.38) saturate(.6); }
+.mini-face .card__shine, .mini-face .card__glare, .mini-face .card__back { display: none; }
+/* Collection tile: the tile is the card. */
+.card-tile.card-tile--mini { position: relative; display: block; padding: 0; background: none; border: 0; border-radius: 5%/3.4%; overflow: hidden; aspect-ratio: 28 / 42; height: auto; }
+.card-tile--mini .mini-face { width: 100%; height: 100%; }
+.card-tile--mini .tile-lvl { z-index: 4; top: auto; bottom: 13%; right: 6%; left: auto; }
+
+/* Welcome card steps (2026-10-14): empty boxes when the card turns over, then each step rises in, one after another. */
+.card__stats b.wc-step { opacity: 0; transform: translateY(6px); }
+.card__stats b.wc-step.in { opacity: 1; transform: none; transition: opacity .45s ease-out, transform .45s cubic-bezier(.2,.8,.3,1.2); }
+@media (prefers-reduced-motion: reduce) { .card__stats b.wc-step.in { transition: opacity .2s; } }
+
+/* Last chance cards (2026-10-14): red bar along the bottom of the picture while it's falling; a stamp once it has. */
+.card__art { position: relative; }
+.card__lc { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; background: #ff5a4a; color: #1a0705; font: 600 1.05em/1 var(--label, 'Barlow Condensed', sans-serif); letter-spacing: .14em; text-align: center; padding: .45em 0; }
+.card__burned { position: absolute; right: .8em; top: .8em; z-index: 3; rotate: -10deg; border: .18em solid #ff5a4a; color: #ff5a4a; background: #0a1220cc; border-radius: .5em; padding: .35em .7em; font: 400 1.5em/1 var(--display, 'Russo One', sans-serif); letter-spacing: .03em; }
+
+/* ===== Mission card front (2026-10-14, Sevaan: design/card-redesign.html style A) =====
+   Cream double frame like the card back, the picture first at a fixed 4:3 (never squished or shrunk; only cropped),
+   rarity and set as chips on the picture, the name and a "what it is" line, a temperature strip for stars, four numbers
+   in a strip, the fact, the footer. Same 28em × 42em card, so tiles, reveal and viewer keep their sizes. */
+.card.card--retro.card--mission { --edge: #e9dfb8; height: 42em; }
+.card--mission .card__face { display: flex; flex-direction: column; padding: .7em .7em .45em; border-width: .22em; border-color: #e9dfb8; box-shadow: none; height: 42em; box-sizing: border-box; overflow: hidden; }
+.card--mission .card__face::before { content: ''; position: absolute; inset: .45em; border: 1px solid #e9dfb85c; border-radius: 1.05em; pointer-events: none; z-index: 6; }
+.card--mission .card__art { flex: none; height: auto; aspect-ratio: 4 / 3; margin: 0; border-radius: .7em; overflow: hidden; position: relative; background: #050a12; }
+.card--mission .card__art > img.card-art-image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.card--mission .card__art > svg { width: 100%; height: 100%; }
+.card--mission .m-chip { position: absolute; top: .65em; z-index: 4; display: inline-flex; align-items: center; gap: .35em; padding: .4em .6em; border-radius: .45em; background: #070d17cc; font: 600 .82em/1 var(--label); letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; }
+.card--mission .m-tier { left: .65em; color: var(--tier); border: 1px solid color-mix(in srgb, var(--tier) 60%, transparent); }
+.card--mission .m-tier i { font-style: normal; display: inline-grid; place-items: center; width: 1em; height: 1em; line-height: 1; font-family: system-ui, sans-serif; font-size: 1.05em; } /* the rarity shape centred on the label's middle, not its baseline (2026-10-15) */
+.card--mission .m-tier .card__icon-badge { margin-left: .3em; }
+.card--mission .m-set.card__setbar { right: .65em; left: auto; min-height: 0; border: 0; color: #d6dccb; max-width: 48%; overflow: hidden; }
+.card--mission .m-set.card__setbar > span:first-child::after { display: none; }
+.card--mission .m-set > span, .card--mission .m-set > span > span { overflow: hidden; text-overflow: ellipsis; }
+.card--mission .card__heading { margin: .55em .25em 0; min-height: 0; gap: .25em; }
+.card--mission .card__name { font-size: 2.35em; line-height: .98; }
+.card--mission.long-name .card__name { font-size: 1.9em; }
+.card--mission .card__identity { border-top: 0; padding-top: 0; font: 500 1.08em/1.15 var(--label); letter-spacing: .02em; color: #d8d6bd; display: flex; justify-content: space-between; gap: .6em; }
+.card--mission .card__identity > span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.card--mission .card__identity > span:last-child { border-left: 1px solid var(--rule); padding-left: .6em; font: 500 .85em/1.2 var(--label); letter-spacing: .1em; }
+.card--mission .card__temp { margin: .45em .25em 0; display: grid; gap: .25em; }
+.card--mission .card__temp > i { display: block; height: .55em; border-radius: .3em; background: linear-gradient(90deg, #ff5a36, #ffb46b 25%, #fff3d6 50%, #cfe0ff 75%, #8fb4ff); position: relative; }
+.card--mission .card__temp > i b { position: absolute; top: -.3em; width: .3em; height: 1.15em; margin-left: -.15em; background: var(--ink); border-radius: .2em; box-shadow: 0 0 0 .15em var(--paper); }
+.card--mission .card__temp > span { display: flex; justify-content: space-between; font: 600 .72em/1 var(--label); letter-spacing: .1em; color: #c9cdb8; }
+.card--mission .card__temp em { font-style: normal; color: var(--ink); font-size: 1.15em; }
+.card--mission .card__stats.m4 { display: grid; grid-template-columns: repeat(var(--n, 4), auto); justify-content: space-between; margin: .55em .25em 0; padding: .45em 0; min-height: 0; border-top: 1px solid #e9dfb844; border-bottom: 1px solid #e9dfb844; }
+.card--mission .card__stats.m4 > div { padding: 0 .4em; border-left: 1px solid #e9dfb833; min-width: 0; }
+.card--mission .card__stats.m4 > div:first-child { border-left: 0; padding-left: 0; }
+.card--mission .card__stats.m4 .card__label { display: block; font: 600 .68em/1.1 var(--label); letter-spacing: .1em; color: #c9cdb8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card--mission .card__stats.m4 b { display: block; font: 400 1.3em/1.2 var(--display); white-space: nowrap; }
+.card--mission .card__stats.m4 b.small, .card--mission .card__stats.m4 b.long { font-size: 1.02em; white-space: normal; line-height: 1.1; }
+.card--mission .card__stats.m4 b small { font: 600 .55em var(--label); color: #c9cdb8; margin-left: .15em; }
+.card--mission .card__fact { flex: 1 1 auto; min-height: 0; overflow: hidden; margin: .6em .25em .3em; font-size: .98em; }
+.card--mission .fl-dots { margin: .5em .25em 0; }
+.card--mission .card__footer { flex: none; margin: 0 .25em; padding: .45em 0 .1em; }
+.card--mission .card__lc { font-size: .95em; }
+.card--mission .shiny-tag { top: auto; bottom: .7em; left: .65em; } /* the rarity chip owns the top-left of the picture */
+.card--mission .art-stars { z-index: 3; } /* above the picture, which is absolutely positioned on mission cards (2026-10-14) */
+/* Welcome card (2026-10-14, Sevaan: lots of room): the three steps are bigger. */
+.wc-mission .card__stats.m4 { padding: .7em 0 .8em; }
+.wc-mission .card__stats.m4 .card__label { font-size: .85em; }
+.wc-mission .card__stats.m4 b.wc-step { font-size: 1.7em; line-height: 1.15; }
+/* Fleet cards have a short picture window: frame the picture lower, so its subject sits below the rarity and set chips
+   instead of under them (2026-10-15, Sevaan). Taller windows (3:2 art in 4:3) have no vertical slack, so this only moves fleets. */
+.card--mission.card--fleet .card__art > img.card-art-image { object-position: 50% 82%; } /* new art centres the object at about 57% height (y 19-95%); 82% centres a 16:10 or shorter crop on it (2026-10-16, Sevaan: Starlink too low, Globalstar cut off) */
+.card--mission.card--fleet .card__art { height: auto; aspect-ratio: 16 / 10; } /* fleets get a proper picture window; the after-mount trim still shortens it if a big launch grid would overflow */
+/* Art sits lower (2026-10-15, Sevaan): the picture is moved down a little so its subject clears the rarity and set
+   chips, and its top fades into the card's own navy, so no picture needs redrawing. The bottom edge is trimmed. */
+.card--mission .card__art > img.card-art-image { object-position: 50% 50%; } /* shown as drawn: framing is fixed in the art (2026-10-15) */
+.card--mission.card--fleet .card__art > img.card-art-image { object-position: 50% 82%; } /* new art centres the object at about 57% height (y 19-95%); 82% centres a 16:10 or shorter crop on it (2026-10-16, Sevaan: Starlink too low, Globalstar cut off) */
+/* Four stats on a star card (2026-10-17: Distance added): every column reads from the left, like Brightness, so a long
+   constellation name doesn't float in the middle of its column (Sevaan). */
+.card--retro .card__stats[style*="--n:4"] > div { text-align: left; }
+/* A card mid-flip (turnCard, js/card.js, 2026-10-17): the shimmer layers sit out the turn. Repainting their blend modes
+   in 3D every frame is what made flips judder. */
+.turning :is(.card__shine, .card__foil, .card__glare, .card__glitter, .art-stars) { opacity: 0 !important; transition: none !important; animation-play-state: paused !important; }
+/* The welcome card, design A (2026-10-17, Sevaan; canvas "Welcome Card Options"): what the game is and how to play at a
+   glance. Sized in em like every card (1em = the card's --cf), so it is the same size as the rest. */
+.wc-a { flex: 1; display: flex; flex-direction: column; gap: 1.25em; padding: 1.3em 1.2em .8em; color: #fff2b3; }
+.wc-a-top { display: flex; justify-content: space-between; align-items: center; font: 600 1em/1 var(--label, 'SC Label', sans-serif); letter-spacing: .22em; text-transform: uppercase; }
+.wc-a-top .hot { color: #fa8127; }
+.wc-a-top .wc-dot { display: inline-block; width: .55em; height: .55em; border-radius: 50%; background: #4fd18b; margin-right: .5em; vertical-align: .08em; box-shadow: 0 0 0 0 #4fd18b88; animation: wcDot 2s ease-out infinite; } /* the live count's pulse (2026-10-25) */
+@keyframes wcDot { 0% { box-shadow: 0 0 0 0 #4fd18b88; } 80%, 100% { box-shadow: 0 0 0 .6em #4fd18b00; } }
+@media (prefers-reduced-motion: reduce) { .wc-a-top .wc-dot { animation: none; } }
+.wc-a-title { margin: 0; font: 400 2.55em/1.05 var(--display, 'SC Display', sans-serif); color: #fff2b3; text-wrap: balance; }
+.wc-a-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .65em; }
+.wc-a-steps .wc-step { display: flex; flex-direction: column; gap: .6em; }
+.wc-a-pic { position: relative; height: 11.5em; border-radius: .85em; overflow: hidden; background: linear-gradient(180deg, #0f1d36, #1a2c4a); }
+.wc-a-pic svg { display: block; width: 100%; height: 100%; }
+.wc-a-pic.card-pic { display: grid; place-items: center; }
+.wc-a-pic.card-pic img { display: block; width: 6em; height: 8.4em; object-fit: cover; border-radius: .5em; border: .17em solid #e9dfb8; box-shadow: 0 .6em 1.4em rgba(0, 0, 0, .5); }
+/* The three pictures move a little (2026-10-19, Sevaan: "could be animated slightly"), on one 6 s clock so they read in
+   order: the phone sways up as its beam reaches out, the satellite slides along its path into the circle and the circle
+   locks on with a pulse, then the card lifts and a sheen crosses it. Stars twinkle. Still under Reduce Motion. */
+.wa-card { position: relative; display: block; border-radius: .5em; overflow: hidden; transform: rotate(6deg); animation: waCard 6s ease-in-out infinite; }
+.wa-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 35%, rgba(255, 248, 220, .38) 50%, transparent 65%); transform: translateX(-120%); animation: waSheen 6s ease-in-out infinite; }
+@keyframes waCard { 0%, 50% { transform: rotate(6deg) translateY(0); } 66% { transform: rotate(3deg) translateY(-.35em) scale(1.04); } 85%, 100% { transform: rotate(6deg) translateY(0); } }
+@keyframes waSheen { 0%, 58% { transform: translateX(-120%); } 78%, 100% { transform: translateX(120%); } }
+.wa-phone { transform-box: view-box; transform-origin: 50px 100px; animation: waPhone 6s ease-in-out infinite; }
+@keyframes waPhone { 0%, 100% { transform: rotate(-4deg); } 22% { transform: rotate(5deg); } 45% { transform: rotate(-1deg); } }
+.wa-beam { animation: waDash 1.2s linear infinite; }
+.wa-path { animation: waDash 1.6s linear infinite; }
+@keyframes waDash { to { stroke-dashoffset: -10; } }
+.wa-lens { transform-box: fill-box; transform-origin: center; animation: waLens 6s ease-in-out infinite; }
+@keyframes waLens { 0%, 12%, 30%, 100% { opacity: 1; } 20% { opacity: .35; } }
+.wa-obj { animation: waObj 6s cubic-bezier(.3, .1, .3, 1) infinite; }
+@keyframes waObj { 0%, 18% { transform: translate(-40px, 40px); opacity: 0; } 24% { opacity: 1; } 48%, 86% { transform: none; opacity: 1; } 96%, 100% { transform: translate(0, 0); opacity: 0; } }
+.wa-ring { transform-box: fill-box; transform-origin: center; animation: waRing 6s ease-out infinite; }
+@keyframes waRing { 0%, 46% { transform: scale(1); filter: none; } 52% { transform: scale(.9); filter: drop-shadow(0 0 3px #fa8127); } 60%, 100% { transform: scale(1); filter: none; } }
+.wa-tw { animation: waTw 3.2s ease-in-out infinite; } .wa-d2 { animation-delay: -1.1s; } .wa-d3 { animation-delay: -2.2s; }
+@keyframes waTw { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+.turning :is(.wa-card, .wa-card::after, .wa-phone, .wa-obj, .wa-ring, .wa-tw, .wa-beam, .wa-path, .wa-lens) { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .wa-card, .wa-card::after, .wa-phone, .wa-obj, .wa-ring, .wa-tw, .wa-beam, .wa-path, .wa-lens { animation: none !important; } .wa-card::after { display: none; } }
+.wc-a-pic i { position: absolute; z-index: 1; left: .55em; top: .5em; width: 1.65em; height: 1.65em; border-radius: 50%; background: #fa8127; color: #0b1018; font: 600 1.05em/1.65em var(--label, 'SC Label', sans-serif); font-style: normal; text-align: center; }
+.wc-a-steps b { text-wrap: wrap; font: 600 1.14em/1.12 var(--label, 'SC Label', sans-serif); letter-spacing: .03em; color: #fff2b3; }
+.wc-a-text { flex: 1; margin: 0; font: 400 1.22em/1.45 Georgia, 'Times New Roman', serif; letter-spacing: .02em; color: #d9d3bd; }
+.wc-a-text b { color: #fff2b3; }
+.wc-a-foot { display: flex; justify-content: space-between; align-items: center; padding-top: .8em; border-top: .08em solid rgba(233, 223, 184, .35); font: 600 1em/1 var(--label, 'SC Label', sans-serif); letter-spacing: .2em; text-transform: uppercase; }
+.wc-a-foot .brand { font: 400 .92em/1 var(--display, 'SC Display', sans-serif); letter-spacing: 0; }
+:where(html[data-theme='night'], body.night) .wc-a, :where(html[data-theme='night'], body.night) .wc-a-title, :where(html[data-theme='night'], body.night) .wc-a-steps b { color: #ff7f70; }
+:where(html[data-theme='night'], body.night) .wc-a-top .hot, :where(html[data-theme='night'], body.night) .wc-a-text { color: #e8705f; }
+:where(html[data-theme='night'], body.night) .wc-a-pic i { background: #ff6a55; color: #120606; }
+/* The Moon's phase stamps (2026-10-17): eight moons under the stats, lit once seen in that phase, the newest ringed. */
+.mn-row { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: .35em; margin-top: .55em; }
+.mn-row svg { display: block; width: 100%; aspect-ratio: 1; overflow: visible; }
+.mn-row circle { fill: color-mix(in srgb, var(--ink, #fff2b3) 8%, transparent); stroke: color-mix(in srgb, var(--ink, #fff2b3) 25%, transparent); stroke-width: 1; }
+.mn-row path { fill: color-mix(in srgb, var(--ink, #fff2b3) 16%, transparent); }
+.mn-row svg.on circle { stroke: color-mix(in srgb, var(--ink, #fff2b3) 70%, transparent); }
+.mn-row svg.on path { fill: var(--ink, #fff2b3); }
+.mn-row svg.latest circle { stroke: var(--accent, #fa8127); stroke-width: 2.6; }
+.mn-phases { margin-bottom: .5em; }
+/* The Moon card fits its phase row (bug hunt 2026-10-17: the label wrapped, the fact was cut mid-line and the heading's
+   rule ran through the subtitle): a 16:10 picture instead of 4:3, a one-line label, smaller gaps. */
+.card--mission.mn-card .card__art { aspect-ratio: 16 / 10 !important; height: auto !important; }
+.mn-phases .card__note-label { white-space: nowrap; }
+.mn-phases .fl-latest { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.mn-card .mn-row { gap: .25em; margin-top: .4em; }
+.mn-card .mn-phases { margin-bottom: .3em; }
+/* Reunited: you own this rocket stage and the satellite it carried (2026-10-17). A chip at the picture's foot. */
+.card--mission .m-chip.m-reunion { top: auto; bottom: .65em; left: .65em; color: #7fe0c4; border: .07em solid #7fe0c466; letter-spacing: .14em; }
+:where(html[data-theme="night"], body.night) .card--mission .m-chip.m-reunion { color: #ff7f70; border-color: #ff7f7066; }
+/* Playtest 2026-10-18: the mini card's status line ("SE · 16° up") sat on the frame; a little smaller, more room under
+   it. The SPACE COLLECTOR mark in a card's footer keeps a hair of space from the inner frame. */
+.mini-face .mini-status { font-size: 2.1em; line-height: 1.1; }
+.mini-face .card__footer { padding-bottom: .9em; }
+.card--retro .card__brand { padding-right: .4em; }
+/* Moon card (2026-10-18 playtest): the picture's Moon shows the phase last caught (js/card.js moonShade); a collected
+   New Moon is a filled dark disc with a bright rim, so it reads as "have it" next to an empty one. */
+.card__art > .mn-shade { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.mn-row svg.on.nm circle { fill: color-mix(in srgb, var(--ink, #fff2b3) 22%, #0b1220); stroke: var(--ink, #fff2b3); }
+/* A fleet card's "LAUNCHED 21 MAY, 2025" types itself in when the card appears (2026-10-18, Sevaan), one character a
+   step, with a block cursor that blinks out after; the orange dot pops in first. */
+.card--retro .fl-type { position: relative; display: inline-block; clip-path: inset(-.2em 100% -.2em 0); animation: flType calc(var(--n, 20) * 45ms) steps(var(--n, 20), end) .45s forwards; }
+.card--retro .fl-type::after { content: ''; position: absolute; right: -.55em; top: .05em; bottom: .05em; width: .42em; background: #fa8127; opacity: 0; animation: flCaret .5s steps(1) calc(.45s + var(--n, 20) * 45ms) 3 backwards; } /* the caret blinks and goes: it stayed as an orange block (iOS playtest 2026-10-20) */
+.card--retro .fl-latest i { animation: flDot .35s cubic-bezier(.2,1.6,.4,1) .15s both; }
+@keyframes flType { to { clip-path: inset(-.2em -1em -.2em 0); } }
+@keyframes flCaret { 0% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes flDot { from { transform: scale(0); } }
+@media (prefers-reduced-motion: reduce) { .card--retro .fl-type { animation: none; clip-path: none; } .card--retro .fl-type::after, .card--retro .fl-latest i { animation: none; } }
+
+/* ---------- Fine-detail polish (2026-10-20, Collection audit) ---------- */
+.card--retro .card__stats > div { text-align: left; display: flex; flex-direction: column; } /* every stat column left-aligned, like the four-stat cards */
+.card--retro .card__stats b { margin-top: auto; } /* shrunk words sit on the same baseline as numbers */
+.card--retro .card__name { text-wrap: balance; }
+.card--mission .card__art:has(.shiny-tag) .m-chip.m-reunion { bottom: calc(.65em + 1.9em); } /* REUNITED above SHINY, not hidden under it */
+.card-tile--retro .tile-lvl { right: 6px; }
+/* The welcome card keeps one edge colour as it turns (2026-10-20, Sevaan: the gold rim of the back became the front's
+   cream at the edge-on frame): the front's frame is the back's gold. */
+#wc-holder > .card.wc-mission > .card__rotator > .card__face, .card.wc-mission > .card__face { border-color: #ffc545 !important; }
+#wc-holder > .card.wc-mission > .card__rotator > .card__face::after, .card.wc-mission > .card__face::after { box-shadow: inset 0 0 0 .09em #a87b22, 0 0 0 .17em #ffd56a !important; }
+.card.wc-mission .card__back { border-width: 2px; }
+/* Collection tiles show the card's own rounded frame, uncut (2026-10-20, Sevaan: "the border of the card gets cut off").
+   The tile used to clip the card with a rounding almost exactly on the card's edge, which ate its thin outer rim at each
+   corner on phone-sized tiles. Now the card rounds itself (its face has radius and overflow hidden), the tile only clips
+   square, and a shiny tile's 2px foil border no longer squeezes the card 4px (the card shows its own shiny finish). */
+.card-tile.card-tile--mini, .grid .tile-slot > .card-tile.card-tile--mini { border-radius: calc(14px * var(--mini-s, .4)); overflow: visible; }
+.card-tile--mini .mini-face { border-radius: 0; overflow: clip; }
+.card-tile.card-tile--retro.card-tile--mini.shiny { border: 0; background: none; }
+/* Card faces keep their printed size whatever the phone's text size (js/text-size.js scales the rest of the app). */
+.card, .card-tile, .mini-face { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+/* Bigger fact text on full cards (2026-10-20, Sevaan: room to be the size of the welcome card's text). fitFact steps a
+   long fact back down so it always fits; tiles keep the small size. */
+.card--mission .card__fact p { font-size: 1.03em; line-height: 1.42; } /* 1.1em was a touch big (Sevaan) */
+.mini-face .card--mission .card__fact p { font-size: .87em; line-height: 1.45; }
+/* The Moon card's shorter (16:10) window crops from the top of the picture, so the Moon sits higher in it (2026-10-20,
+   Sevaan: it looked low). The phase shade (js/card.js moonShade, xMidYMax) crops the same way. */
+.card--mission.mn-card .card__art > img.card-art-image { object-position: 50% 100%; } /* more specific than the 50% 50% rule above, which was winning */
+/* Even frame at the corners (2026-10-20, Sevaan: tiles' corners weren't a uniform border). The edge is .3em (3 px on a
+   tile's 10 px card, so layout doesn't round it), and the inner frame lines follow the inside curve (1.4em - .3em)
+   instead of the outside one, which pinched them at the corners. */
+.card--retro .card__face { border-width: .3em; }
+.card--retro .card__face::after { border-radius: 1.1em; }
+/* Card facts fill each line before wrapping (2026-10-20, Sevaan: "drifts" fitted on line two). The app-wide
+   text-wrap: pretty evens lines out, which on iPhone left short lines on cards. */
+.card .card__fact, .card .card__fact p { text-wrap: wrap; }
+/* Small tiles draw their own cream edge at screen size (2026-10-21, Sevaan: corners still not right). A 3 px edge on
+   the full card scaled to ~0.4 is a 1.2 px line that anti-aliases unevenly round the corners; this one is drawn at
+   the tile's size, so it stays crisp and even all the way round. The card's own edge is hidden under it. */
+.card-tile.card-tile--mini { position: relative; }
+.card-tile.card-tile--mini::after { content: ''; position: absolute; inset: 0; z-index: 4; pointer-events: none; border-radius: calc(14px * var(--mini-s, .4)); border: max(1px, calc(3px * var(--mini-s, .4))) solid #e9dfb8; }
+.card-tile--mini .mini-face .card__face { border-color: transparent; }
+.card-tile.card-tile--mini.lvl-silver::after { border-color: #eef3f7; }
+.card-tile.card-tile--mini.lvl-gold::after { border-color: #e2b53c; }
+:where(html[data-theme='night'], body.night) .card-tile.card-tile--mini::after { border-color: #a8463b; }
+.card-tile--mini .mini-face .card--retro .card__face::after { display: none; } /* the full card's fine double line is sub-pixel at tile size: one crisp edge instead */
+/* The real culprit (2026-10-21): .tile-slot has content-visibility: auto, which clips paint to its box including its
+   12 px rounding, rounder than the card's own corners, so every tile's corners were shaved off. Same rounding as the card. */
+.grid .tile-slot { border-radius: calc(14px * var(--mini-s, .4)); }
+/* Card tags are the border only (2026-10-21, Sevaan): no SILVER/GOLD badge on tiles; the frame colour says it. */
+.card-tile--retro .tile-lvl { display: none; }
+.card-tile.card-tile--mini.lvl-silver::after { border-color: #dfe8ef; box-shadow: 0 0 8px #dfe8ef55; }
+.card-tile.card-tile--mini.lvl-gold::after { border-color: #e9b533; box-shadow: 0 0 10px #e2b53c77; }
+/* Shiny: a saturated moving rainbow edge (it read as white). Drawn as a gradient ring masked to the border width. */
+.card-tile.card-tile--mini.shiny::after { display: block; opacity: 1; mix-blend-mode: normal; border: 0; padding: max(2px, calc(4px * var(--mini-s, .4)));
+  background: linear-gradient(120deg, #ff4fa3, #ffb02e, #ffe14a, #36d6ff, #8f5bff, #ff4fa3) 0 0 / 300% 300%;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude;
+  box-shadow: none; animation: shinyEdge 6s linear infinite; }
+.card-tile.card-tile--mini.shiny { box-shadow: 0 0 12px #ff4fa355, 0 0 18px #36d6ff33; }
+@keyframes shinyEdge { to { background-position: 300% 300%; } }
+@media (prefers-reduced-motion: reduce) { .card-tile.card-tile--mini.shiny::after { animation: none; } }
+:where(html[data-theme='night'], body.night) .card-tile.card-tile--mini.shiny::after { background: #ff6a55; }
+/* A decimal point in a stat value gets room either side (web playtest 2026-10-22: 2.3 laps a day read as 23). */
+.card__stats b i.dp { font-style: normal; margin: 0 .08em 0 .1em; }
+/* A launch caught as a Starlink train (2026-10-25): its dot gets a small ring */
+.fl-grid i.train { box-shadow: 0 0 0 .12em #5fd08a; }
+.card--retro .fl-grid i.train, .card--retro .fl-grid i.latest.train { box-shadow: 0 0 0 .12em #5fd08a; } /* beats the newest-stamp ring: a train is usually the newest (returning playtest 2026-10-25) */
+/* An uncollected star (or chart-only deep-sky object) shows its own chart, hidden the same way as a painted picture:
+   blurred and dimmed under the scan lines (2026-10-25, Sevaan: "Uncollected stars aren't the same tone as the
+   uncollected objects and should be"). Was a near-empty outline. */
+.art-locked--chart > svg { display: block; width: 100%; height: 100%; filter: blur(8px) brightness(1.5) contrast(1.1) saturate(.8); transform: scale(1.15); } /* charts are mostly navy: brighter than a picture to read the same (visual playtest 2026-10-25) */
+.card-tile .art-locked--chart > svg { filter: blur(4px) brightness(1.5) contrast(1.1) saturate(.8); }
+.d-mini .art-locked--chart > svg { filter: blur(5px) brightness(1.8) contrast(1.1) saturate(.9); } /* charts are mostly navy, so a touch brighter to match a picture's tone */
+/* Shiny, readable (2026-10-25, Sevaan: a shiny Moon card was "hard to see"). iPhone Safari drops blend modes on a card
+   turning in 3D, so the soft-light cream foil above became a plain cream wash over the whole card. Now it's a narrow
+   warm band that sweeps across as you tilt, clear everywhere else, so it reads the same with or without the blend. */
+.card.shiny .card__shine { mix-blend-mode: normal; filter: none; opacity: calc(.75 + var(--o, 0) * .25);
+  background: linear-gradient(110deg, transparent 38%, rgba(255, 242, 179, .16) 44%, rgba(255, 207, 122, .26) 48%, rgba(250, 129, 39, .2) 52%, rgba(255, 179, 161, .16) 56%, transparent 62%) var(--bgx, 50%) var(--bgy, 50%) / 300% 300%; }
+/* Photo credit on a card picture that's a real photo (2026-10-26; js/art-credits.js). Tiny, bottom right, readable on
+   any photo; full cards only (artStars isn't drawn on mini cards). */
+.art-credit { position: absolute; z-index: 3; right: .5em; bottom: .4em; max-width: 70%; padding: .15em .45em; border-radius: .4em; background: #080f1bb3; color: #fff2b3cc; font: 500 .55em/1.2 var(--label, 'SC Label', sans-serif); letter-spacing: .04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; }
+/* A fragment's picture: its parent broken apart (js/shape-art.js shatterArt), named bottom left. */
+.card__art .shape-art { position: absolute; inset: 0; width: 100%; height: 100%; }
+.art-credit--from { right: auto; left: .5em; color: #fff2b3; }
+/* A fragment's card: design B "tracking report" of design/fragment-cards.html, as drawn (2026-10-26). */
+.card--frag .frag-top { display: flex; justify-content: space-between; align-items: center; }
+.card--frag .frag-top .m-chip { position: static; inset: auto; transform: none; }
+.card--frag .frag { display: flex; flex-direction: column; gap: .7em; }
+.card--frag svg.frag-orbit { width: 100%; height: 10em; display: block; }
+.card--frag .frag-cap { margin-top: -.4em; text-align: center; font: 500 .95em/1 var(--label, 'SC Label', sans-serif); letter-spacing: .15em; text-transform: uppercase; color: #9aa7b4; }
+.card--frag .frag-rep { margin: 0; border: 1px dashed #627a8b; border-radius: .8em; padding: .9em 1em; display: grid; grid-template-columns: auto 1fr; gap: .45em 1em; font: 500 1.05em/1.25 var(--label, 'SC Label', sans-serif); letter-spacing: .1em; text-transform: uppercase; }
+.card--frag .frag-rep dt { color: #9aa7b4; } .card--frag .frag-rep dd { margin: 0; color: #fff2b3; min-width: 0; }
+body.night .card--frag .frag-orbit ellipse { stroke: #ff6a55; }
+.card--frag .frag-top { margin-bottom: .5em; }
+.card--frag .frag-top .m-set { border: 1px solid #627a8b; border-radius: .5em; padding: .35em .7em; background: none; }
+.card--frag .frag-top .m-set span { white-space: nowrap; }
+.card--frag .frag-orbit-box { position: relative; height: 13em; border-radius: .8em; overflow: hidden; }
+.card--frag .frag-orbit-box svg.frag-orbit { height: 100%; }
+.card--frag .frag-orbit-box.orbiting svg.frag-orbit { opacity: 0; } /* tapped: the live globe (js/orbit-view.js) takes its place */
+.card--frag .frag-orbit-box { background: #050a12; } .card--frag .frag-orbit-box .orbit-globe { position: absolute; inset: 0; width: 100%; height: 100%; }
+.card__art .orbit-globe { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; } /* the tap globe on any card (also in collection.css) */
+/* Source › after a card's fact (2026-10-26, design/nasa-ideas.html 1): opens the page that backs it */
+.card__fact a.src { font: 500 .78em/1 var(--label, 'SC Label', sans-serif); letter-spacing: .12em; text-transform: uppercase; color: #fa8127; text-decoration: none; white-space: nowrap; pointer-events: auto; }
+body.night .card__fact a.src { color: #ff6a55; }
+/* The photo credit belongs to the picture: hidden while the orbit view shows (playtest 2026-10-27) */
+.card__art.orbiting .art-credit { display: none; }
+/* ICON badge: words optically centred (2026-10-28, Sevaan): the trailing letter-spacing is taken back on the right, and
+   the caps sit in the middle instead of on the baseline. */
+.card__icon-badge { display: inline-block; vertical-align: .08em; padding: .2em calc(.45em - .14em) .16em .45em; line-height: 1; }
+/* Card facts: the orange rule runs the length of the words, not down the empty space under a short fact (designer playtest 2026-10-28). */
+.card--mission .card__fact { border-left-color: transparent !important; padding-left: 0 !important; }
+.card--mission .card__fact > p { border-left: .22em solid var(--accent, #fa8127); padding-left: 1em; }
+/* The welcome card's top bar stays one line (2026-10-28, Sevaan: "1,073 tracked overhead" wrapped both halves) */
+.wc-a-top { letter-spacing: .16em; gap: .8em; } .wc-a-top > span { white-space: nowrap; }
+.wa-card.is-mini { overflow: visible; border-radius: 0; } .wa-card.is-mini::after { display: none; }
+.wa-card.is-mini .mini-face { box-shadow: 0 .6em 1.4em rgba(0, 0, 0, .5); }
+.wc-holder .mini-face > .card { font-size: 10px; } /* the welcome card sets every .card inside it to its own --cf */
+/* Starlink sits lower in its window (2026-10-31, Sevaan): show the top of the picture, so the satellite clears the chips. */
+.card--mission.card--fleet .card__art > img.card-art-image[src*="fleet-starlink"] { object-position: 50% 15%; }

@@ -1,0 +1,1092 @@
+:root { --safe-l: env(safe-area-inset-left, 0px); --safe-r: env(safe-area-inset-right, 0px); --vws: calc(100vw - 2 * max(var(--safe-l), var(--safe-r))); --label: 'SC Label', 'Arial Narrow', sans-serif; --display: 'SC Display', Impact, sans-serif; color-scheme: dark; --bg: #080f18; --panel: #111d29; --text: #f3ecd4; --muted: #bdbea9; --line: #2a3a48; --accent: #fa8127; /* card palette (2026-10-05): orange accent, cream ink; the old mint #99d0cc is gone */ --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px); }
+html.standalone { --safe-bottom: max(6px, calc(env(safe-area-inset-bottom, 0px) - 20px)); } /* no Safari bars: sit lower (2026-10-11) */
+html.standalone.android { --safe-bottom: env(safe-area-inset-bottom, 0px); } /* Android's navigation bar takes taps: nothing may sit in it (Android playtest 2026-11-01: Preview artwork opened Recents) */
+:root[data-theme="night"] { --bg: #0c0303; --panel: #160707; --text: #ff7f70; --muted: #e8705f; --line: #361719; --accent: #f2654f; } /* the same reds as Explore (app.css), not the older dimmer set (visual playtest 2026-10-17) */
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.45 Inter, system-ui, sans-serif; }
+button, input, select { font: inherit; }
+button, a, input, select { touch-action: manipulation; }
+button, a { -webkit-user-select: none; user-select: none; }
+button { cursor: pointer; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+[hidden] { display: none !important; }
+/* Same header as Explore (#sky-header in app.css): wordmark, double rule, round buttons — static here, not fixed. */
+/* Fixed 80px like Explore's bar: the height never depends on text metrics, so the rule does not move when the custom fonts swap in. */
+.collection-header { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: var(--safe-top) auto 0; max-width: 1056px; height: 80px; padding: 0 20px; --h-text: #fff2b3; --h-muted: #bdbea9; --h-edge: #627a8b; --h-glass: #0c1725f2; }
+:root[data-theme="night"] .collection-header { --h-text: #ff7f70; --h-muted: #e8705f; --h-edge: #58272b; --h-glass: #1a0909f5; }
+.collection-header::after { content: ""; position: absolute; left: 20px; right: 20px; bottom: 0; height: 3px; border-block: 1px solid var(--h-edge); opacity: .65; }
+.wordmark { display: block; cursor: default; -webkit-user-select: none; user-select: none; color: var(--h-text); text-decoration: none; font: 400 clamp(13px, 3.9vw, 16px)/1.15 'SC Display', Impact, sans-serif; letter-spacing: -.03em; }
+.wordmark span { display: block; color: var(--h-muted); font: 500 12px/1.2 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .18em; margin-top: 6px; }
+.header-buttons { display: flex; gap: 8px; flex: none; }
+.icon-button { width: 44px; height: 44px; border: 1px solid var(--h-edge); border-radius: 50%; display: grid; place-items: center; color: var(--h-text); background: var(--h-glass); font-size: 24px; text-decoration: none; box-sizing: border-box; }
+.icon-button .ico { width: 22px; height: 22px; }
+.ico { display: inline-block; width: 22px; height: 22px; background: currentColor; flex: none; -webkit-mask: var(--m) center / contain no-repeat; mask: var(--m) center / contain no-repeat; }
+[data-ico="sliders"] { --m: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'%3E%3Cpath d='M4 7h10M18 7h2M4 17h4M12 17h8'/%3E%3Ccircle cx='16' cy='7' r='2'/%3E%3Ccircle cx='10' cy='17' r='2'/%3E%3C/svg%3E"); }
+.icon-button[aria-pressed="true"] { border-color: #fa8127; color: #fa8127; }
+@media (max-width: 360px) { .collection-header { padding-inline: 16px; } .wordmark span { letter-spacing: .1em; } }
+main { max-width: 1024px; margin: auto; padding: 0 24px calc(var(--safe-bottom) + 160px); } /* room for the size slider and switcher */
+.collection-intro { padding-top: 29px; }
+.eyebrow { margin: 0; font: 500 11px 'IBM Plex Mono', monospace; letter-spacing: .18em; color: var(--accent); }
+h1 { margin: 13px 0 13px; font-size: clamp(34px, 7vw, 49px); line-height: 1.06; font-weight: 500; letter-spacing: -.045em; }
+#count { color: var(--muted); font-size: 13px; margin-bottom: 26px; }
+.collection-tabs { display: flex; gap: 24px; border-bottom: 1px solid var(--line); }
+.collection-tabs button { white-space: nowrap; }
+@media (max-width: 360px) { .collection-tabs { gap: 14px; } .collection-tabs button { letter-spacing: .08em; font-size: 14px; } }
+.collection-tabs button { min-height: 48px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--muted); font-weight: 600; padding: 0; }
+.collection-tabs button[aria-pressed="true"] { color: var(--text); border-color: var(--accent); }
+#owned-count { display: inline-block; background: var(--panel); color: var(--accent); padding: 1px 7px; margin-left: 5px; border-radius: 20px; font-size: 12px; }
+.collection-tools { margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.search { display: flex; gap: 8px; align-items: center; border: 1px solid var(--line); border-radius: 8px; padding: 0 12px; color: var(--muted); background: var(--panel); }
+.search > span { font-size: 25px; }
+.search input { min-width: 0; width: 100%; min-height: 40px; border: none; background: transparent; color: var(--text); font-size: 16px; }
+.search input::placeholder { color: var(--muted); opacity: 1; }
+.filter-row { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 8px; } /* three menus on one line (2026-10-06: tighter) */
+.filter { display: block; flex: 1; min-width: 0; }
+.filter > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.filter select { width: 100%; height: 40px; padding: 0 22px 0 10px; text-overflow: ellipsis; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--text); font-size: 12px; }
+.result-row { display: flex; justify-content: space-between; align-items: center; min-height: 36px; font: 400 12px 'IBM Plex Mono', monospace; color: var(--muted); }
+#reset-filters { min-height: 44px; background: none; border: 0; padding: 0 2px; color: var(--accent); font-size: 12px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 20px 16px; align-items: stretch; }
+.tile-slot { min-height: 240px; min-width: 0; border-radius: 12px; background: var(--panel); display: flex; }
+/* The grid's "nothing here" placeholder. Scoped so an album with no cards yet (.album.empty) does not inherit it (2026-10-05). */
+.empty:not(.album) { grid-column: 1 / -1; min-height: 270px; padding: 24px 12px 30px; text-align: center; border: 1px dashed var(--line); border-radius: 14px; }
+.empty__orbit { display: block; color: var(--accent); font-size: 36px; margin-bottom: 10px; }
+.empty h2 { margin: 0 0 10px; font-size: 22px; font-weight: 500; letter-spacing: -.04em; }
+.empty p { max-width: 330px; margin: 0 auto 19px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.empty a, .empty button { display: inline-flex; min-height: 44px; align-items: center; padding: 0 17px; border-radius: 7px; background: var(--accent); border: 0; color: var(--bg); text-decoration: none; font-size: 13px; font-weight: 650; }
+.empty .secondary { display: block; background: none; color: var(--accent); margin: 9px auto 0; }
+.collection-notice { padding: 14px; border: 1px solid var(--line); color: var(--muted); font-size: 13px; border-radius: 8px; }
+.storage-note { margin: 27px 0 0; text-align: center; font-size: 12px; color: var(--muted); }
+#viewer { position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; border: none; padding: 0; background: var(--bg); color: var(--text); overflow: hidden; }
+#viewer[open] { display: flex; flex-direction: column; }
+#viewer::backdrop { background: #000e; }
+.viewer-header { display: flex; justify-content: space-between; align-items: center; flex: none; width: min(100%, 620px); align-self: center; padding: calc(var(--safe-top) + 14px) 16px 8px; } /* same spot as the reveal's top row (#rv-top) */
+#v-position { color: rgba(255, 242, 179, .6); } /* the shared .ui-eyebrow look, as the reveal's NEW CARD */
+#viewer button:not(.ui-btn):not(.x-close):not(.ui-link):not(.v-up__remind):not(.v-up__show) { min-height: 44px; padding: 10px 16px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel); color: var(--text); font-size: 12px; }
+#viewer .close { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border-radius: 50%; border: 1px solid #627a8b; background: #0c1725f2; color: #fff2b3; font: 400 20px/1 system-ui, sans-serif; } /* the shared round ✕ (css/ui.css .x-close); #viewer button would otherwise restyle it */
+#viewer .close:focus-visible { outline: none; border-color: #fff2b3; } /* the dialog focuses it on open; a quiet cue, not an orange ring */
+:root[data-theme="night"] #viewer .close { border-color: #58272b; background: #1a0909f5; color: #ff7f70; }
+.viewer-scroll { width: 100%; min-height: 0; flex: 1; overflow-x: hidden; overflow-y: auto; padding-bottom: calc(var(--safe-bottom) + 22px) !important; overscroll-behavior: contain; padding: 18px 20px 22px; text-align: center; }
+#slot { display: flex; align-items: flex-start; justify-content: center; width: 100%; padding: 7px 0; }
+#slot .card { font-size: min(14px, calc((var(--vws) - 40px) / 28 * .95)); } /* 20px a side, the same size as the reveal (web playtest 2026-10-22: 344 vs 362 wide) */
+.viewer-status { max-width: 380px; margin: 20px auto 8px; color: var(--muted); font-size: 12px; }
+.viewer-hint { max-width: 380px; margin: 13px auto; color: var(--muted); font-size: 12px; }
+.viewer-history { margin: 20px auto 0; max-width: 390px; border-top: 1px solid var(--line); text-align: left; }
+.viewer-history:empty { display: none; }
+.viewer-history h2 { font-size: 12px; font-weight: 600; color: var(--accent); letter-spacing: .12em; text-transform: uppercase; margin: 20px 0 13px; }
+.viewer-history p { display: flex; gap: 10px; justify-content: space-between; align-items: center; font-size: 12px; color: var(--muted); margin: 10px 0; }
+.viewer-history p span:first-child { color: var(--text); }
+#viewer .history-delete { min-height: 32px; padding: 2px 10px; font-size: 16px; line-height: 1; background: transparent; border-color: transparent; color: var(--muted); }
+#v-gyro { min-width: 150px; }
+#viewer button:disabled { opacity: .45; cursor: default; }
+@media (max-width: 550px) {
+  .collection-header { padding-left: 20px; padding-right: 20px; }
+  main { padding-left: 20px; padding-right: 20px; }
+  .collection-tools { grid-template-columns: 1fr; }
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px 12px; }
+  .card-tile__art { height: 94px; }
+  .card-tile__name { font-size: 14px; }
+  .card-tile__set { font-size: 12px; }
+}
+@media (max-width: 350px) {
+  main { padding-left: 14px; padding-right: 14px; }
+  .card-tile__art { height: 80px; margin: 8px 8px 0; }
+  .card-tile__body { padding: 9px; }
+  .card-tile__name { font-size: 13px; }
+  .card-tile__status { font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; } }
+
+/* The Explore/Collection switcher is a shared component: css/ui.css .sc-switch. */
+
+/* Twinkling stars behind the card in the viewer (js/starfield.js). */
+.starfield { position: fixed; inset: 0; pointer-events: none; z-index: -1; overflow: hidden; }
+/* The stars themselves are the shared .starfield (css/ui.css). */
+#viewer { isolation: isolate; }
+
+/* Albums (2026-10-05): one cover per set with progress towards bronze / silver / gold goals. */
+body.albums-view .collection-tools { display: none; }
+.album { display: flex; flex-direction: column; width: 100%; text-align: left; font: inherit; color: #fff2b3; background: #080f1b; border: 2px solid #adbcc8;
+  border-radius: 12px; overflow: hidden; box-shadow: inset 0 0 0 1px #657786; padding: 0; cursor: pointer; }
+.album__art { display: block; height: 104px; border-bottom: 3px solid var(--set); overflow: hidden; }
+.album__art img, .album__art svg { display: block; width: 100%; height: 100%; object-fit: cover; }
+.album.empty .album__art { opacity: .55; } .album.empty .album__art img { filter: grayscale(.7) brightness(.55); }
+.album__body { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px 12px; }
+.album__name { display: block; font: 400 15px/1.15 'SC Display', Impact, sans-serif; text-transform: uppercase; }
+.album__count { display: block; font: 500 13px/1.2 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .1em; color: #bdbea9; }
+.album__count b { color: #fff2b3; font-weight: 500; }
+.album__next { font: 500 12px/1.2 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .08em; color: #fa8127; }
+.album-bar { position: relative; height: 6px; border-radius: 3px; background: #1c2a3a; margin: 4px 0 2px; }
+.album-bar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; background: linear-gradient(90deg, #fa8127, #ffcf5a); }
+.album-bar b { position: absolute; top: -3px; width: 4px; height: 12px; margin-left: -2px; border-radius: 2px; background: #344654; }
+.album-bar b.hit.g0 { background: #c98a4b; } .album-bar b.hit.g1 { background: #dfe6ee; } .album-bar b.hit.g2 { background: #f2c94c; }
+.album.gold, .album-head.gold { border-color: #e2b53c; box-shadow: inset 0 0 0 1px #7a5a14, 0 0 16px rgba(232, 195, 90, .3); color: #f4d27a;
+  background: linear-gradient(160deg, #3a2d10, #17130a 50%, #3a2c0f); }
+.album-head { margin: 4px 0 12px; padding: 12px 14px; border: 1px solid #344654; border-left: 4px solid var(--set); border-radius: 10px; background: #0b1424; color: #fff2b3; display: grid; gap: 6px; }
+.album-head .album__count { display: inline; margin-left: 10px; }
+.album-head .album__name { display: inline; }
+
+/* Logbook (2026-10-05, js/progress.js): rank + XP, weekly streak, tonight's missions, achievements. */
+.logbook { margin: 6px 0 22px; padding: 16px 16px 12px; border: 2px solid #adbcc8; border-radius: 14px; box-shadow: inset 0 0 0 1px #657786; background: #080f1b; color: #fff2b3; }
+.lb-rank { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; }
+.lb-label, .lb-head { display: block; font: 500 12px/1.2 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .16em; color: #bdbea9; }
+.lb-name { display: block; font: 400 22px/1.1 'SC Display', Impact, sans-serif; text-transform: uppercase; margin-top: 4px; }
+.lb-xp { font: 500 14px/1 'SC Label', sans-serif; letter-spacing: .1em; color: #bdbea9; } .lb-xp b { font: 400 20px/1 'SC Display', Impact, sans-serif; color: #fa8127; }
+.lb-bar { position: relative; height: 7px; margin: 10px 0 6px; border-radius: 4px; background: #1c2a3a; overflow: hidden; }
+.lb-bar i { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, #fa8127, #ffcf5a); border-radius: 4px; }
+.lb-sub { font: 500 13px/1.3 'SC Label', sans-serif; letter-spacing: .06em; color: #bdbea9; }
+.lb-head { margin: 16px 0 6px; color: #fa8127; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 2px 12px; cursor: default; white-space: nowrap; } /* wraps as two lines on narrow phones, never mid-label */
+.lb-head span { color: #bdbea9; }
+.lb-mission { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid #1d2a3c; font: 500 15px/1.25 'SC Label', sans-serif; letter-spacing: .04em; }
+.lb-mission i { width: 10px; height: 10px; flex: none; transform: rotate(45deg); border: 1.5px solid #bcb585; }
+.lb-mission.done { color: #bdbea9; text-decoration: line-through; text-decoration-color: #fa8127; } .lb-mission.done i { background: #fa8127; border-color: #fa8127; }
+.lb-ach summary { list-style: none; cursor: pointer; } .lb-ach summary::-webkit-details-marker { display: none; }
+.lb-ach summary::after { content: '›'; color: #bdbea9; margin-left: 8px; } .lb-ach[open] summary::after { content: '⌄'; }
+.lb-badges { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; padding: 6px 0 4px; }
+.lb-badge { display: grid; justify-items: center; text-align: center; gap: 4px; opacity: .38; }
+.lb-badge span { width: 46px; height: 46px; display: grid; place-items: center; border-radius: 50%; border: 2px solid #657786; font: 400 14px/1 'SC Display', Impact, sans-serif; color: #bdbea9; }
+.lb-badge b { font: 500 12px/1.1 'SC Label', sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+.lb-badge small { font-size: 12px; line-height: 1.25; color: #8f9aa8; }
+.lb-badge.done { opacity: 1; } .lb-badge.done span { border-color: #e2b53c; color: #0b1120; background: radial-gradient(circle at 35% 30%, #fff1c2, #e2b53c 60%, #9a7420); box-shadow: 0 0 12px rgba(232, 195, 90, .35); }
+.lb-events { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 0 2px; }
+
+/* Typography pass (2026-10-06): the collection page's chrome uses the card fonts like Explore does (Russo One display,
+   Barlow Condensed labels); body copy stays in the system font for reading. Overrides the Inter-era rules above. */
+.collection-intro h1 { font: 400 clamp(28px, 7.2vw, 40px)/1.04 'SC Display', Impact, sans-serif; letter-spacing: -.045em; text-transform: uppercase; color: #fff2b3; margin: 10px 0 12px; }
+.eyebrow { font: 500 12px/1.2 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .2em; }
+.collection-tabs button { font: 500 15px/1 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+#owned-count { font: 500 12px/1.3 'SC Label', sans-serif; letter-spacing: .06em; }
+/* 16px: iOS zooms into any field smaller than that (QA 2026-10-11) */
+.search input, .search input::placeholder, .filter select { font: 500 16px/1.2 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .03em; }
+#results, #reset-filters, .storage-note, .album-head small { font: 500 12px/1.3 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .12em; text-transform: uppercase; }
+.empty h2 { font: 400 22px/1.1 'SC Display', Impact, sans-serif; letter-spacing: -.03em; text-transform: uppercase; color: #fff2b3; }
+.empty a, .empty button { font: 500 14px/1 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+
+/* Phones in landscape (2026-10-06, Sevaan: portrait only): a full-screen ask to turn back. Desktop windows (fine pointer) are left alone. */
+#rotate { display:none; }
+@media (orientation: landscape) and (max-height: 600px) and (pointer: coarse) {
+  #rotate { position:fixed; inset:0; z-index:200; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; text-align:center; padding:24px; background:#080e1a; color:#fff2b3; }
+  #rotate b { font:400 24px/1.1 'SC Display', Impact, sans-serif; letter-spacing:-.03em; text-transform:uppercase; }
+  #rotate span { font:500 14px/1.3 'SC Label', 'Arial Narrow', sans-serif; letter-spacing:.14em; text-transform:uppercase; color:#bdbea9; }
+}
+
+.lb-remind { margin-left: 8px; padding: 3px 10px; border: 1px solid #fa8127; border-radius: 99px; background: none; color: #fa8127; font: 500 12px/1 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .12em; text-transform: uppercase; vertical-align: middle; }
+
+/* Sighting rows on fleet cards carry their launch on a second line; the × stays at the right across both lines. */
+.viewer-history p.with-launch { display: grid; grid-template-columns: 1fr auto; column-gap: 10px; row-gap: 3px; align-items: center; }
+.viewer-history p.with-launch .h-main { grid-column: 1; display: flex; justify-content: space-between; gap: 10px; }
+.viewer-history p.with-launch .h-main span:first-child { color: var(--text); }
+.viewer-history p.with-launch .h-launch { grid-column: 1; font: 500 12px/1.3 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .08em; text-transform: uppercase; color: #fa8127; }
+.viewer-history p.with-launch .history-delete { grid-column: 2; grid-row: 1; align-self: center; } /* beside the time line */
+
+/* The page wears Explore's current sky (js/cards-page.js applySkyTone), fixed behind everything. */
+body.sky-tone { background: var(--page-sky) fixed; background-color: var(--bg); min-height: 100vh; }
+body.sky-tone #viewer { background: var(--page-sky) fixed; }
+
+/* Card size slider (2026-10-07, Sevaan): SMALL ↔ BIG sets the columns (js/cards-page.js applySize). The art keeps
+   its shape at every size; small tiles drop the lines that wouldn't fit. */
+.grid[data-cols] { grid-template-columns: repeat(var(--cols), minmax(0, 1fr)) !important; }
+.grid[data-cols] .card-tile__art { height: auto !important; aspect-ratio: 3 / 2; }
+.grid.dense { gap: 10px 8px !important; }
+.grid.dense .card-tile__set { font-size: 11px; padding: 5px 7px; min-height: 0; letter-spacing: .08em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.grid.dense .card-tile__art { margin: 6px 6px 0; }
+.grid.dense .card-tile__body { padding: 7px; }
+.grid.dense .card-tile__name { font-size: 12px; margin: 4px 0 6px; }
+.grid.dense .card-tile__tier { font-size: 12px; }
+.grid.dense .card-tile__status { font-size: 12px; padding-top: 5px; }
+.grid.tiny .card-tile__set, .grid.tiny .card-tile__status, .grid.tiny .card-tile__tier { display: none; }
+.grid.tiny .card-tile__name { font-size: 12px; margin: 0; letter-spacing: 0; }
+.grid.tiny .card-tile__body { padding: 5px 6px 7px; }
+.grid.single .card-tile__name { font-size: 24px; }
+.grid.single .card-tile__set, .grid.single .card-tile__tier, .grid.single .card-tile__status { font-size: 13px; }
+.grid[data-cols] .tile-slot { min-height: 0; } /* placeholders size to the tile, not a fixed 240px */
+.grid.dense .card-tile__name { margin-bottom: 4px; }
+/* No fade behind the tab bar (2026-10-24, Sevaan: removed on Tonight and the Collection). body::after is red night mode's alone. */
+/* Card-shaped tiles (2026-10-07, Sevaan: cards, not boxes): every slot has a card's proportions (28 × 39.2, i.e. 5:7)
+   at every size and the tile fills it, so a row lines up as a hand of cards. Art keeps its 3:2 window; names clamp. */
+.grid .tile-slot { aspect-ratio: 5 / 7; min-height: 0; min-width: 0; display: block; align-self: start; width: 100%; } /* start, not stretch: a stretched height would widen it through the ratio */
+.grid .tile-slot > .card-tile, .grid > .card-tile { width: 100%; height: 100%; min-height: 0; overflow: hidden; }
+.grid > .card-tile { aspect-ratio: 5 / 7; height: auto; align-self: start; min-width: 0; }
+.grid .tile-slot > .card-tile, .grid > .card-tile { display: flex; flex-direction: column; }
+.grid[data-cols] .card-tile__art, .grid .card-tile__art { flex: 1 1 0; min-height: 24px; height: auto !important; aspect-ratio: auto !important; } /* the art window takes what the words leave */
+.grid .card-tile__set, .grid .card-tile__body { flex: none; }
+.grid .card-tile__body { overflow: hidden; }
+.grid .card-tile__name { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; margin-bottom: 6px; }
+.grid.single .card-tile__name { -webkit-line-clamp: 3; }
+.grid .card-tile__status { margin-top: 0; }
+/* Six across on a phone: just the picture in its card frame, no words. */
+.grid.micro { gap: 7px 6px !important; }
+.grid.micro .card-tile__body { display: none; }
+.grid.micro .card-tile__art { margin: 4px; }
+.grid.tiny .card-tile__name { overflow-wrap: normal; word-break: normal; font-size: 11px; } /* whole words, then … */
+
+/* ---------- Mission patches: the wall (js/cards-page.js renderPatches) and the detail (#patch-view) ---------- */
+body.patches-view .collection-tools, body.patches-view .album-head { display: none !important; }
+.collection-tabs { overflow-x: auto; scrollbar-width: none; } .collection-tabs::-webkit-scrollbar { display: none; }
+.lb-patches { width: 100%; background: none; border: 0; padding: 0; cursor: pointer; text-align: left; margin-top: 16px; }
+.pw-chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding: 2px 0 14px; margin: 0 -4px; } .pw-chips::-webkit-scrollbar { display: none; }
+.pw-chip { flex: none; cursor: pointer; } .pw-chip.on { border-color: rgba(250, 129, 39, .6); background: rgba(250, 129, 39, .14); }
+.pw-chip:not(.on) b { color: rgba(255, 242, 179, .8); }
+.pw-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 12px; }
+@media (min-width: 700px) { .pw-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+.pw-item { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 0; border: 0; background: none; cursor: pointer; color: inherit; min-width: 0; }
+.pw-item span { font: 500 12px/1.15 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .1em; text-transform: uppercase; color: #bdbea9; text-align: center; }
+.pw-item.locked span { color: #627a8b; }
+.pw-item:active .patch { transform: scale(.95); }
+#patch-view { overflow: hidden; isolation: isolate; position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; border: 0; padding: 0; background: var(--page-sky, var(--bg)); background-color: var(--bg); color: var(--text); }
+#patch-view[open] { display: flex; flex-direction: column; }
+#patch-view::backdrop { background: #000e; }
+.pv-body { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; text-align: center; padding: 8px 20px calc(var(--safe-bottom) + 28px); overflow: hidden; overscroll-behavior: none; touch-action: none; } /* nothing to scroll (2026-10-09) */
+.pv-patch { width: min(62%, 230px); margin: 10px auto 0; transition: transform .25s ease-out; filter: drop-shadow(0 18px 30px #0009); }
+.pv-body h2 { margin: 18px 0 8px; font: 400 28px/1.05 'SC Display', Impact, sans-serif; letter-spacing: -.02em; text-transform: uppercase; color: #fff2b3; }
+.pv-body p { margin: 0; max-width: 300px; font: 500 16px/1.35 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .03em; color: rgba(255, 242, 179, .75); }
+.pv-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 18px; }
+#pv-close:focus-visible { outline: none; }
+
+/* 2 · Four tabs fit on one line (2026-10-08 playtest): "Mine" instead of "My collection", tighter spacing. */
+.collection-tabs { display: flex; justify-content: space-between; gap: 6px; }
+.collection-tabs button { font: 500 15px/1 'SC Label', 'Arial Narrow', sans-serif !important; letter-spacing: .1em !important; }
+@media (max-width: 360px) { .collection-tabs button { font-size: 13.5px !important; letter-spacing: .06em !important; } }
+/* 7 · The size slider only shows while the card grid is on screen and has cards. */
+/* Polish pass (2026-10-08). Tabs: the orange underline slides between them; the content crossfades. */
+.collection-tabs { position: relative; } .collection-tabs button { border-bottom-color: transparent !important; }
+.collection-tabs .tab-ink { position: absolute; bottom: 0; height: 2px; background: var(--accent); border-radius: 2px; transition: transform var(--m-norm) var(--ease-spring), width var(--m-norm) var(--ease-spring); pointer-events: none; }
+#grid.swap, #patch-wall.swap { animation: ui-fade-in var(--m-norm) var(--ease-out); }
+/* The grid cascades in on first open. */
+.tile-slot.cascade > * { animation: ui-rise var(--m-norm) var(--ease-out) both; animation-delay: calc(var(--i, 0) * 22ms); }
+/* Patch wall: unseen earned patches shimmer softly with a NEW stitch tag until opened. */
+.pw-item.new .patch::before { content: ''; position: absolute; inset: -4px; border-radius: 50%; box-shadow: 0 0 0 2px rgba(250,129,39,.55), 0 0 18px rgba(250,129,39,.45); animation: ldPulseNew 2.2s ease-in-out infinite; pointer-events: none; }
+.pw-item.new::after { content: 'NEW'; position: absolute; margin-top: -6px; padding: 2px 6px; border-radius: 4px; background: var(--accent); color: #0b1120; font: 500 11px 'SC Label', sans-serif; letter-spacing: .14em; }
+.pw-item { position: relative; }
+@keyframes ldPulseNew { 50% { opacity: .35; } }
+/* Logbook bars fill rather than jump; counts pop when they change. */
+.lb-bar i, .album-bar i { transition: width var(--m-slow) var(--ease-out); }
+#owned-count.bump { display: inline-block; animation: ui-pop var(--m-norm) var(--ease-spring); }
+/* Empty states get a little satellite drifting past. */
+.empty__orbit { display: inline-block; animation: emptyDrift 6s ease-in-out infinite; }
+@keyframes emptyDrift { 0%, 100% { transform: translate(-14px, 4px) rotate(-8deg); } 50% { transform: translate(14px, -4px) rotate(8deg); } }
+#pv-body .pv-patch { will-change: transform; }
+/* Album goal just crossed: the bar sparks once. */
+.album.crossed .album-bar { position: relative; }
+.album.crossed .album-bar::after { content: ''; position: absolute; inset: -6px -2px; border-radius: 6px; background: radial-gradient(circle at var(--x, 90%) 50%, rgba(255,214,120,.9), transparent 40%); animation: albumSpark 1.2s ease-out .4s both; pointer-events: none; }
+@keyframes albumSpark { 0% { opacity: 0; transform: scaleX(.6); } 25% { opacity: 1; transform: scaleX(1); } 100% { opacity: 0; transform: scaleX(1.15); } }
+.album.crossed { animation: ui-pop var(--m-norm) var(--ease-spring) .3s; }
+/* A patch group with nothing earned yet. */
+.pw-empty { display: flex; align-items: center; gap: 12px; margin: 0 4px 16px; padding: 12px 14px; border-radius: 12px; border: 1px dashed #344654; color: var(--muted); font: 500 14px/1.3 'SC Label', sans-serif; letter-spacing: .03em; }
+.pw-empty .empty__orbit { font-size: 22px; color: var(--accent); }
+main { padding-bottom: calc(var(--safe-bottom) + 210px) !important; } /* the last row clears the size slider and switcher */
+/* A new player's patch wall starts with three easy ones, larger. */
+.pw-start { margin: 0 0 18px; } .pw-start > span { display: block; margin: 0 4px 10px; font: 500 12px/1.2 'SC Label', sans-serif; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
+.pw-start .pw-grid .pw-item span { color: #fff2b3; }
+.pw-start .pw-item small { display: block; margin-top: 2px; font: 500 12px/1.25 'SC Label', sans-serif; letter-spacing: .04em; color: var(--muted); text-transform: none; }
+/* Red night mode for the logbook (2026-10-08: it stayed navy and gold). */
+:where(html[data-theme="night"], body.night) .logbook { background: #130606; border-color: #52221f; box-shadow: inset 0 0 0 1px #3a1716; color: #ff7f70; }
+:where(html[data-theme="night"], body.night) :is(.lb-label, .lb-head span, .lb-xp, .lb-sub, .lb-mission.done) { color: #dd6455 !important; }
+:where(html[data-theme="night"], body.night) :is(.lb-head, .lb-xp b) { color: #ff6a55 !important; }
+:where(html[data-theme="night"], body.night) .lb-bar { background: #2a0e0c; }
+:where(html[data-theme="night"], body.night) .lb-bar i { background: linear-gradient(90deg, #a83a2c, #ff6a55); }
+:where(html[data-theme="night"], body.night) .lb-mission { border-color: #2e1010; }
+:where(html[data-theme="night"], body.night) .lb-mission i { border-color: #dd6455; }
+:where(html[data-theme="night"], body.night) .lb-mission.done { text-decoration-color: #ff6a55; } :where(html[data-theme="night"], body.night) .lb-mission.done i { background: #ff6a55; border-color: #ff6a55; }
+:where(html[data-theme="night"], body.night) .ui-chip--earned { border-color: #a83a2c; } :where(html[data-theme="night"], body.night) .ui-chip--earned b { color: #ff6a55; }
+:where(html[data-theme="night"], body.night) .ui-chip { background: #1a0606; border-color: #3a1716; }
+
+/* The logbook as a card (2026-10-08): tilt, glare and a flip to a card back. */
+.logbook.lb-card { padding: 0; perspective: 1400px; background: none; border: 0; box-shadow: none; }
+.lb-rot { position: relative; border-radius: 14px; border: 2px solid #adbcc8; box-shadow: inset 0 0 0 1px #657786, 0 10px 26px #0007; background: #080f1b; overflow: hidden;
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale(calc(1 + var(--o, 0) * .015)); transform-style: preserve-3d; transition: box-shadow .2s; }
+.lb-face { padding: 16px 16px 12px; }
+.lb-glare { position: absolute; inset: 0; pointer-events: none; border-radius: inherit; mix-blend-mode: overlay; opacity: calc(var(--o, 0) * .35);
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), hsla(0,0%,100%,.6) 0, hsla(0,0%,100%,.18) 18%, transparent 42%); }
+.lb-back { border-radius: 12px; border: 0; background-size: cover; }
+:where(html[data-theme="night"], body.night) .lb-rot { background: #130606; border-color: #52221f; box-shadow: inset 0 0 0 1px #3a1716; }
+/* As tall as a standard card (28 × 39.2, the card width from --nav-w), 2026-10-08. Contents spread to fill it. */
+.lb-rot { min-height: calc(var(--nav-w) * 1.4); display: flex; flex-direction: column; }
+.lb-face { flex: 1; display: flex; flex-direction: column; padding: 20px 18px 16px; }
+.lb-face .lb-head { margin-top: 22px; }
+.lb-face .lb-head:has(+ .lb-events) { margin-top: auto; padding-top: 18px; } /* events sit at the foot of the card */
+
+/* Rank card front (2026-10-08, design/rank-card.html D3). */
+.lb-face { padding: 0 !important; }
+.lb-top { display: flex; justify-content: space-between; padding: 10px 14px 8px; border-bottom: 1px solid #bcb58588; font: 500 12px/1.2 'SC Label', sans-serif; letter-spacing: .18em; text-transform: uppercase; color: #fff2b3; }
+.lb-top .lb-streak { color: #fa8127; }
+.lb-pic { height: 160px; flex: none; border-bottom: 1px solid #bcb58588; background: radial-gradient(ellipse at 50% 110%, #1d3350, #070d18 70%); overflow: hidden; }
+.lb-ladder { width: 100%; height: 100%; display: block; }
+.lb-prog { padding: 12px 14px 10px; border-bottom: 1px solid #bcb58588; }
+.lb-prog .lb-rank { display: flex; justify-content: space-between; align-items: baseline; }
+.lb-prog .lb-name { margin: 0; font-size: 22px; }
+.lb-prog .lb-bar { position: relative; height: 9px; margin: 10px 0 6px; overflow: visible; }
+.lb-prog .lb-bar i { border-radius: 5px; }
+.lb-prog .lb-bar em { position: absolute; top: -3px; width: 2px; height: 15px; margin-left: -1px; background: #fff2b3; border-radius: 1px; }
+.lb-prog .lb-sub { display: flex; justify-content: space-between; font: 500 12px/1.2 'SC Label', sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #bdbea9; }
+.lb-prog .lb-sub b { color: #fa8127; font-weight: 500; } .lb-prog .lb-sub span:last-child { color: #fff2b3; }
+.lb-face > .lb-head { margin: 10px 14px 2px !important; padding-top: 0 !important; }
+.lb-face > .lb-mission { margin: 0 14px; }
+.lb-face > .lb-events { margin-top: auto; padding: 10px 14px 12px; }
+:where(html[data-theme="night"], body.night) .lb-pic { background: radial-gradient(ellipse at 50% 110%, #3a1010, #0a0202 70%); filter: hue-rotate(0); }
+:where(html[data-theme="night"], body.night) :is(.lb-top, .lb-prog .lb-sub span:last-child) { color: #ff7f70; }
+:where(html[data-theme="night"], body.night) .lb-ladder { filter: grayscale(1) sepia(1) saturate(5) hue-rotate(318deg) brightness(.8); }
+/* Rank card, version C (2026-10-08). */
+.lb-rankrow { display: flex; justify-content: space-between; align-items: baseline; padding: 14px 14px 6px; }
+.lb-rankrow .lb-name { margin: 0; font-size: 26px; }
+.lb-rankrow .lb-xp { color: #bdbea9; } .lb-rankrow .lb-xp b { font-size: 24px; }
+.lb-face > .lb-foot { margin-top: auto; padding: 12px 14px 12px; }
+.lb-foot .lb-head { margin: 0 0 8px !important; padding: 0 !important; }
+.lb-foot .lb-events { padding: 0; }
+.lb-tw { opacity: .55; animation: lbTw var(--t, 3s) ease-in-out var(--d, 0s) infinite; }
+@keyframes lbTw { 0%, 100% { opacity: .6; } 50% { opacity: .08; } }
+@media (prefers-reduced-motion: reduce) { .lb-tw { animation: none; } }
+
+/* Red night mode, the rest of the page (QA 2026-10-08): headings, albums, the patch wall and patch view, the viewer's
+   position and fleet launch lines kept cream / orange / navy at night. */
+:where(html[data-theme="night"], body.night) :is(.collection-intro h1, .empty h2, .pv-body h2, .album__count b, .pw-start .pw-grid .pw-item span) { color: #ff7f70; }
+:where(html[data-theme="night"], body.night) :is(.album__count, .pw-item span, .pw-start > span, .pv-body p, .h-launch, #v-position) { color: #dd6455 !important; }
+:where(html[data-theme="night"], body.night) :is(.album, .album-head) { background: #130606; border-color: #52221f; color: #ff7f70; }
+:where(html[data-theme="night"], body.night) .album__next { color: #ff6a55; }
+:where(html[data-theme="night"], body.night) .album-bar { background: #2a0e0c; }
+:where(html[data-theme="night"], body.night) .album-bar i { background: linear-gradient(90deg, #a83a2c, #ff6a55); }
+:where(html[data-theme="night"], body.night) .album-bar b { background: #3a1716; }
+:where(html[data-theme="night"], body.night) :is(.album__art, .pv-art) { filter: grayscale(1) sepia(1) saturate(5) hue-rotate(318deg) brightness(.6); }
+:where(html[data-theme="night"], body.night) .lb-remind { border-color: #a83a2c; color: #ff6a55; }
+/* Albums as a list (2026-10-09, Sevaan: at three a row the album names were cut off). One full-width row per
+   album: the cover on the left, then the name and count, the bar, and the level and what's next. */
+body.albums-view #grid { grid-template-columns: 1fr !important; gap: 10px; }
+body.albums-view .album { flex-direction: row; min-height: 92px; aspect-ratio: auto; }
+body.albums-view .album__art { width: 92px; height: auto; flex: none; border-bottom: 0; border-right: 3px solid var(--set); }
+body.albums-view .album__body { flex: 1; min-width: 0; justify-content: center; gap: 7px; padding: 12px 14px; }
+.album__top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+body.albums-view .album__name { font-size: 16px; line-height: 1.1; min-width: 0; }
+body.albums-view .album__count { flex: none; font-size: 14px; }
+.album__foot { display: flex; align-items: center; gap: 8px; }
+.album__level { font: 500 12px/1 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .14em; text-transform: uppercase; padding: 4px 7px 3px; border-radius: 99px; border: 1px solid currentColor; }
+.album__level.l1 { color: #c98a4b; } .album__level.l2 { color: #dfe6ee; } .album__level.l3 { color: #f2c94c; }
+.grid .card-tile__name { overflow-wrap: normal; word-break: normal; hyphens: none; } /* whole words; js fitTileName shrinks a long one */
+/* The patch on a card (2026-10-09, Sevaan): the same frame as the collection's cards, flicked up to put away. */
+.pv-card { width: min(100%, 330px, calc((100dvh - 190px) * 5 / 7)); aspect-ratio: 5 / 7; justify-content: space-between; border-radius: 16px; border: 2px solid #adbcc8; box-shadow: inset 0 0 0 1px #657786, 0 24px 50px #000a; background: radial-gradient(ellipse at 50% 30%, #13233a, #080f1b 70%); padding: 0 0 0; display: flex; flex-direction: column; align-items: center; touch-action: none; user-select: none; -webkit-user-select: none; }
+.pv-bar, .pv-foot { align-self: stretch; display: flex; justify-content: space-between; align-items: center; gap: 10px; font: 500 12px/1 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .18em; text-transform: uppercase; color: #fff2b3; }
+.pv-bar { margin-bottom: auto; padding: 13px 16px 11px; border-bottom: 1px solid #bcb58566; }
+.pv-bar span:last-child { color: #fa8127; }
+.pv-card p { padding: 0 20px; }
+.pv-card .pv-meta { margin-top: 12px; min-height: 0; }
+.pv-card .pv-meta:empty { display: none; }
+.pv-foot { margin-top: auto; padding: 11px 16px 12px; border-top: 1px solid #bcb58566; color: rgba(255, 242, 179, .8); }
+.pv-foot b { font: 400 12px/1 'SC Display', Impact, sans-serif; letter-spacing: 0; color: #fff2b3; }
+.pv-card.locked .pv-foot span { color: rgba(255, 242, 179, .5); }
+.pv-hint { font: 500 12px/1 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .2em; text-transform: uppercase; color: rgba(255, 242, 179, .45); }
+#patch-view.flicked .pv-hint { opacity: 0; transition: opacity .15s; }
+#patch-view > .starfield { position: absolute; z-index: -1; }
+:where(html[data-theme="night"], body.night) .pv-card { background: #130606; border-color: #52221f; box-shadow: none; }
+/* Progress toward a locked patch, in its detail card (playtest 2026-10-09). */
+.pv-prog { display: flex; align-items: center; gap: 10px; width: calc(100% - 56px); margin-top: 16px; font: 500 12px/1 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .12em; text-transform: uppercase; color: rgba(255, 242, 179, .6); }
+.pv-prog b { color: #fa8127; font-weight: 500; }
+.pv-prog__bar { flex: 1; height: 6px; border-radius: 3px; background: #1c2a3a; overflow: hidden; }
+.pv-prog__bar i { display: block; height: 100%; border-radius: 3px; background: linear-gradient(90deg, #fa8127, #ffcf5a); }
+.card-tile__sub { display: block; margin: -3px 0 6px; font: 500 12px/1.2 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .08em; text-transform: uppercase; color: #bdbea9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Tonight's sky challenge, the bonus fourth goal (playtest 2026-10-09). */
+.lb-challenge i { border-color: #fa8127; border-radius: 50%; transform: none; }
+.lb-challenge small { margin-left: auto; flex: none; font: 500 12px/1 'SC Label', sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #fa8127; text-decoration: none; }
+/* "Up tonight" slots in a small collection (playtest 2026-10-09): uncollected tiles with when and where. */
+.up-next__tile { opacity: .82; border-style: dashed !important; position: relative; }
+.up-next__when { position: absolute; left: 6px; right: 6px; top: 34%; z-index: 3; padding: 4px 6px 3px; border-radius: 99px; background: #080f1bdd; border: 1px solid #fa812788; color: #fa8127; font: 500 12px/1 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .1em; text-transform: uppercase; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* "12 cards · not backed up · Sign in ›" (2026-10-11, design/auth-moments.html 3) */
+.backup-line { display:flex; align-items:center; gap:10px; width:100%; box-sizing:border-box; height:44px; margin:14px 0 16px; /* clear of the header's double rule (2026-10-16, Sevaan) */ padding:0 14px; border-radius:12px; background:#0e1a29; border:1px solid rgba(250,129,39,.45); cursor:pointer;
+  font:500 15px/1 'SC Label', 'Barlow Condensed', sans-serif; letter-spacing:.1em; text-transform:uppercase; color:#fff2b3; }
+.backup-line[hidden] { display:none; }
+.backup-line svg { width:18px; height:18px; flex:none; color:#fa8127; }
+.backup-line b { margin-left:auto; font-weight:500; color:#fa8127; }
+body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; } input, textarea { -webkit-user-select: text; user-select: text; } /* QA 2026-10-11 */
+/* Red night mode, guaranteed (2026-10-11, QA: clouds, card backs, chips and the loader leaked white, blue and orange):
+   one fixed layer multiplies everything on screen by pure red, so no blue or green light reaches the eye. */
+body.night::after { content: ''; position: fixed; inset: 0; z-index: 2147483646; pointer-events: none; background: #ff1a00; mix-blend-mode: multiply; }
+
+/* Observer stats (Plus, 2026-10-11) */
+.stats-link { display:block; margin:-6px auto 18px; }
+#stats-view { width:100%; max-width:560px; height:100%; max-height:none; margin:0 auto; padding:0; border:0; background:#080f1b; color:#f3ecd4; }
+#stats-view::backdrop { background:rgba(4,8,14,.7); }
+.stats-body { padding:8px 20px calc(var(--safe-bottom) + 30px); overflow-y:auto; height:calc(100% - 70px); box-sizing:border-box; }
+.week-lock b { font:400 22px 'SC Display', Impact, sans-serif; color:#fff2b3; } .week-lock p { color:#bdbea9; }
+/* Observer stats, redesigned (2026-10-16, Sevaan): rank on top, the collection by rarity, what you've earned, highlights
+   with their cards' pictures, time under the sky, the map and the rarest finds. Sections are framed like the field cards. */
+.st-rank { display:flex; justify-content:space-between; align-items:flex-end; gap:12px; padding:16px 18px; margin:4px 0 14px; border-radius:16px; border:1px solid #2a3a48; background:radial-gradient(120% 140% at 0% 0%, #1b2f48, #0e1a29 60%); }
+.st-rank small { display:block; font:500 12px/1 'SC Label', sans-serif; letter-spacing:.2em; text-transform:uppercase; color:#bdbea9; margin-bottom:6px; }
+.st-rank b { font:400 28px/1 'SC Display', 'Russo One', sans-serif; color:#fff2b3; }
+.st-xp { text-align:right; } .st-xp b { color:#fa8127; font-size:24px; display:block; } .st-xp small { margin:4px 0 0; letter-spacing:.12em; }
+.st-sec { border:1px solid #22344a; border-radius:16px; background:#0b1524; padding:14px 16px 16px; margin:0 0 12px; }
+.st-head { display:flex; justify-content:space-between; align-items:baseline; gap:10px; font:500 13px/1.2 'SC Label', sans-serif; letter-spacing:.18em; text-transform:uppercase; color:#fa8127; margin:0 0 12px; }
+.st-since { font:500 12px/1.2 'SC Label', sans-serif; letter-spacing:.12em; color:#bdbea9; text-transform:uppercase; }
+.st-big { color:#bdbea9; letter-spacing:.08em; } .st-big b { font:400 20px/1 'SC Display', 'Russo One', sans-serif; color:#fff2b3; letter-spacing:0; }
+.st-tiers { display:grid; gap:9px; }
+.st-tier { display:grid; grid-template-columns:7.2em minmax(0,1fr) 5.6em; gap:10px; align-items:center; }
+.st-tl { font:500 13px/1 'SC Label', sans-serif; letter-spacing:.1em; text-transform:uppercase; color:var(--c); white-space:nowrap; }
+.st-tb { height:8px; border-radius:4px; background:#18263a; overflow:hidden; } .st-tb i { display:block; height:100%; border-radius:4px; background:var(--c); }
+.st-tn { text-align:right; font:500 14px/1 'SC Label', sans-serif; color:#fff2b3; font-variant-numeric:tabular-nums; } .st-tn small { color:#bdbea9; }
+.st-goals { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px; }
+.st-goal { position:relative; overflow:hidden; border-radius:12px; background:#0f1d30; border:1px solid #22344a; padding:12px 12px 14px; display:grid; gap:4px; }
+.st-goal b { font:400 24px/1 'SC Display', 'Russo One', sans-serif; color:#fff2b3; font-variant-numeric:tabular-nums; } .st-goal b small { font-size:15px; color:#bdbea9; }
+.st-goal span { font:500 13px/1.2 'SC Label', sans-serif; letter-spacing:.12em; text-transform:uppercase; color:#e6e2c4; }
+.st-goal em { font:500 12px/1.2 'SC Label', sans-serif; letter-spacing:.04em; color:#bdbea9; font-style:normal; }
+.st-goal i { position:absolute; left:0; bottom:0; height:3px; width:calc(var(--p) * 100%); background:#fa8127; }
+.st-hls { display:grid; gap:10px; }
+.st-hl { display:grid; grid-template-columns:64px minmax(0,1fr); gap:12px; align-items:center; }
+.st-hl img, .st-noart { width:64px; height:48px; object-fit:cover; border-radius:8px; background:#0a1220; box-shadow:0 0 0 1px #2a3a48; }
+.st-hl small { display:block; font:500 11px/1 'SC Label', sans-serif; letter-spacing:.2em; text-transform:uppercase; color:#bdbea9; margin-bottom:4px; }
+.st-hl b { display:block; font:400 17px/1.15 'SC Display', 'Russo One', sans-serif; color:#fff2b3; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.st-hl span { font-size:13px; color:#bdbea9; }
+.st-cal { width:64px; height:48px; border-radius:8px; background:#fff2b3; color:#0b1524; display:grid; place-items:center; align-content:center; gap:1px; }
+.st-cal small { margin:0; color:#c9622a; font-size:10px; letter-spacing:.14em; } .st-cal b { color:#0b1524; font-size:20px; }
+.st-tiles { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:0 0 14px; }
+.st-tile { background:#0f1d30; border:1px solid #22344a; border-radius:12px; padding:10px 4px; text-align:center; }
+.st-tile b { display:block; font:400 22px/1.1 'SC Display', 'Russo One', sans-serif; color:#fff2b3; } .st-tile small { font:500 11px/1.15 'SC Label', sans-serif; letter-spacing:.08em; text-transform:uppercase; color:#bdbea9; }
+.st-bars { display:grid; grid-template-columns:repeat(12,1fr); gap:5px; height:96px; align-items:end; }
+.st-bar { display:flex; flex-direction:column; align-items:center; height:100%; justify-content:flex-end; gap:3px; }
+.st-bar em { font:500 11px/1 'SC Label', sans-serif; color:#fff2b3; font-style:normal; min-height:11px; }
+.st-bar span { width:100%; min-height:2px; border-radius:4px 4px 1px 1px; background:#2a3a50; }
+.st-bar.now span, .st-bar span[style*="height:"]:not([style*="height:0%"]) { background:linear-gradient(#fa8127,#c9622a); }
+.st-bar small { font:500 11px 'SC Label', sans-serif; color:#bdbea9; } .st-bar.now small { color:#fa8127; }
+.st-map { width:100%; height:auto; display:block; }
+.st-rare { display:grid; gap:8px; } .st-rare div { display:grid; grid-template-columns:48px auto minmax(0,1fr) auto; gap:10px; align-items:center; }
+.st-rare img, .st-rare .st-noart { width:48px; height:36px; object-fit:cover; border-radius:6px; }
+.st-rare b { font:400 15px/1.1 'SC Display', 'Russo One', sans-serif; color:#fff2b3; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.st-rt { font:500 12px/1 'SC Label', sans-serif; letter-spacing:.06em; white-space:nowrap; } .st-rare small { color:#bdbea9; font-size:12px; }
+.st-empty { color:#bdbea9; padding:24px 4px; text-align:center; }
+/* Inside the app, Explore's switcher sits on top of this page, so the page's own copy is hidden (2026-10-11) */
+html.embedded .bottom-nav { visibility: hidden; }
+/* Your cards first (2026-10-12, UX room): the intro banner only for an empty collection, and the rank card compact until
+   opened (rank and XP; missions, ladder and events on "Missions ›"). */
+body.has-cards .collection-intro { display: none; }
+.logbook.compact :is(.lb-pic, .lb-mission, .lb-foot, .lb-events, .lb-challenge) { display: none; }
+.lb-more { float: right; margin: 0 0 0 10px; padding: 6px 2px; background: none; border: 0; color: var(--accent, #fa8127); font: 500 13px/1 'SC Label', sans-serif; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; position: relative; z-index: 3; }
+.logbook:not(.compact) .lb-more::after { content: ''; }
+.logbook.compact .lb-rot { min-height: 0; }
+.lb-more { float: none; align-self: flex-end; margin: 8px 16px -4px auto; }
+/* No double-tap zoom on controls (2026-10-12, Sevaan: double-tapping a button zoomed the page). Pinch zoom still works. */
+:where(button, a, label, input, select, summary, [role="button"], .d-cta, .ticket) { touch-action: manipulation; } /* zero specificity: anything with its own touch rule (the welcome card, sliders, cards) keeps it */
+/* Mini-card tiles are the retro card's real shape, 28 × 42 (2026-10-13). */
+.grid .tile-slot:has(.card-tile--mini) { aspect-ratio: 28 / 42; }
+.grid .tile-slot { aspect-ratio: 28 / 42; }
+
+/* A drawn magnifier (2026-10-13, Sevaan: the ⌕ glyph looked poor): lens, handle, a dotted orbit inside it. */
+.empty__search { display: inline-grid; place-items: center; color: var(--ui-gold, #fa8127); }
+
+/* Rank card, redesigned (2026-10-13, Sevaan: "I thought we had a nice card that showed where you were and how far to
+   the next level"): no tilt or glare; the ladder picture shows even when compact (shorter), with a progress bar and
+   "615 XP to Tracker" under the rank. */
+.logbook .lb-glare, .logbook .lb-back { display: none; }
+.logbook .lb-rot { transform: none !important; }
+.logbook.compact .lb-pic { display: block; height: 96px; }
+.lb-bar { height: 6px; margin: 2px 16px 6px; border-radius: 99px; background: #22344a; overflow: hidden; }
+.lb-bar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #c4621c, #fa8127); }
+.lb-to { display: flex; justify-content: space-between; gap: 10px; margin: 0 16px 12px; font: 500 13px/1.2 var(--label, 'Barlow Condensed', sans-serif); letter-spacing: .06em; color: #bdbea9; }
+.lb-to b { color: #fff2b3; font-weight: 600; }
+.logbook .lb-more { position: absolute; right: 16px; margin: 0; z-index: 2; }
+.logbook .lb-pic .lb-week { position: absolute; left: 50%; bottom: 10px; transform: translateX(-50%); z-index: 2; margin: 0; padding: 6px 2px; background: none; border: 0; color: #fff2b3; font: 500 13px/1 'SC Label', sans-serif; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; opacity: .85; } /* Last week › opens the recap page from Explore; centre-bottom, between the ladder's foot and Missions › (2026-11-07) */
+.logbook .lb-rankrow { padding-right: 16px; }
+.logbook.compact .lb-more { top: calc(96px + 52px); }
+.logbook:not(.compact) .lb-more { top: calc(160px + 52px); }
+.logbook .lb-rankrow { margin-top: 30px; }
+
+/* Find (2026-10-13): a search-first list. */
+.grid.find-mode { display: grid; grid-template-columns: minmax(0, 1fr) !important; gap: 8px; }
+.find-head { font: 600 13px/1 var(--label, 'Barlow Condensed', sans-serif); letter-spacing: .16em; text-transform: uppercase; color: var(--ui-gold, #fa8127); margin: 4px 0 2px; }
+.find-none { color: #bdbea9; text-align: center; padding: 30px 10px; }
+.find-row { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 12px; border-radius: 14px; background: #0e1a29; border: 1px solid #22344a; border-left: 3px solid var(--c); cursor: pointer; }
+.fd-art { width: 52px; height: 52px; border-radius: 10px; overflow: hidden; background: radial-gradient(circle at 50% 40%, #1a2b40, #0a1220); }
+.fd-art img { width: 100%; height: 100%; object-fit: cover; display: block; } .fd-blank { display: block; width: 100%; height: 100%; }
+.fd-main { display: grid; gap: 2px; min-width: 0; }
+.fd-main b { font: 600 16px/1.15 var(--label, 'Barlow Condensed', sans-serif); color: #fff2b3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fd-main small { font: 500 12.5px/1.2 var(--label, 'Barlow Condensed', sans-serif); color: #bdbea9; } .fd-main small em { font-style: normal; font-weight: 600; color: var(--c); } .fd-main small i { font-style: normal; color: #5fd08a; }
+.fd-pass { font: 500 13px/1.25 var(--label, 'Barlow Condensed', sans-serif); color: #c9d6e3; } .fd-pass b { color: #fff2b3; font-weight: 600; } .fd-wait { color: #627a8b; }
+.fd-acts { display: flex; gap: 6px; }
+.fd-acts .ic { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; border: 1px solid #22344a; background: #0a1220; color: #e6ecf5; cursor: pointer; }
+.fd-acts .ic.on { border-color: #fa8127; color: #fa8127; }
+.fd-art > * { width: 100%; height: 100%; }
+.logbook.compact .lb-pic { height: 160px; } /* the full ladder picture, compact or not (2026-10-13, Sevaan: see the ranks better) */
+/* Find rows: the hidden art stays inside its 52px square (2026-10-13: it spread over the whole screen). */
+.fd-art { position: relative; flex: none; contain: strict; }
+.fd-art > * { position: absolute !important; inset: 0 !important; width: 100% !important; height: 100% !important; }
+/* No gap above the rank (2026-10-13, Sevaan): "Missions ›" sits in the picture's corner, the rank follows the picture. */
+.logbook .lb-rankrow { margin-top: 0; padding-top: 12px; }
+.logbook .lb-more { top: auto !important; bottom: auto; }
+.logbook .lb-pic { position: relative; }
+.logbook.compact .lb-pic, .logbook .lb-pic { height: 180px; }
+.logbook .lb-pic .lb-more { position: absolute; right: 14px; bottom: 10px; top: auto !important; }
+.v-next { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 4px auto 12px; padding: 8px 10px 8px 14px; max-width: 360px; border-radius: 99px; background: #0e1a29; border: 1px solid #22344a; }
+.v-next[hidden] { display: none; }
+.v-next .fd-pass { text-align: left; }
+.empty:not(.album) { min-height: 0; padding: 26px 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; } .empty p { margin-bottom: 16px; } /* no empty band under the button (2026-10-13) */
+
+/* Search and filters on one line (2026-10-13, Sevaan): the menus slide open under it from a Filters button. */
+.collection-tools { grid-template-columns: minmax(0, 1fr) !important; gap: 0; }
+.search-line { display: flex; gap: 8px; align-items: stretch; }
+.search-line .search { flex: 1; min-width: 0; }
+.search .search-ic { display: grid; place-items: center; font-size: 0; color: var(--muted); }
+.filters-btn { display: inline-flex; align-items: center; gap: 6px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font: 500 15px/1 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
+.filters-btn i { width: 7px; height: 7px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg) translateY(-2px); transition: transform .25s ease; }
+.filters-btn[aria-expanded="true"] { border-color: #fa8127aa; color: #fa8127; } .filters-btn[aria-expanded="true"] i { transform: rotate(-135deg) translate(-2px, -1px); }
+.filters-btn.active::after { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #fa8127; }
+.filter-row { overflow: hidden; max-height: 0; opacity: 0; margin-top: 0; transition: max-height .3s ease, opacity .25s ease, margin-top .3s ease; }
+.filter-row.open { max-height: 80px; opacity: 1; margin-top: 8px; }
+@media (prefers-reduced-motion: reduce) { .filter-row, .filters-btn i { transition: none; } }
+.filters-btn { font-size: 13px; letter-spacing: .12em; padding: 0 12px; }
+
+.fd-cloud { color: #8fa3b5; font-style: italic; } /* a pass forecast to be behind cloud (2026-10-13) */
+/* A new player's Collection starts with the tabs and cards, not a 0 XP rank card (2026-10-13 playtest). */
+body:not(.has-cards) #logbook { display: none; }
+/* A long one-word album name ("CONSTELLATIONS") ran into its count: the count drops under it instead (2026-10-13 playtest). */
+.album__top { flex-wrap: wrap; row-gap: 2px; }
+body.albums-view .album__name { overflow-wrap: normal; }
+/* Orbit view + live position (2026-10-14, js/orbit-view.js). */
+.orbit-globe { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; }
+.card__art.orbiting > img, .card__art.orbiting > .card-art-stars { visibility: hidden; }
+.v-where { margin: 10px auto 0; text-align: center; font: 600 13px/1.3 var(--label, 'SC Label', sans-serif); letter-spacing: .06em; color: #fff2b3; max-width: 34ch; }
+.v-where::before { content: '●'; color: #fa8127; margin-right: 6px; }
+.can-orbit .card__art::after { content: 'Tap for its orbit'; position: absolute; right: .8em; bottom: .7em; z-index: 3; font: 600 .95em/1 var(--label, 'Barlow Condensed', sans-serif); letter-spacing: .14em; color: #fff2b3cc; background: #050a12aa; padding: .3em .55em; border-radius: .4em; pointer-events: none; }
+.can-orbit .card__art.orbiting::after { content: 'TAP FOR THE PICTURE'; }
+/* Target and bell centred in their buttons (2026-10-14, Sevaan): the viewer's button padding pushed them off. */
+.fd-acts .ic { padding: 0; line-height: 0; box-sizing: border-box; }
+.fd-acts .ic svg { display: block; margin: auto; }
+#viewer .fd-acts button.ic.ic.ic { padding: 0; min-height: 0; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; } /* beats the viewer's generic button padding */
+
+/* Up tonight slots (2026-10-16, Sevaan): the time fits (label over it, wraps rather than cutting off), and every tile's
+   set header is one line of fixed height, so the dividing line sits level across a row. */
+.up-next__when { display: grid; gap: 3px; justify-items: center; text-align: center; white-space: normal; line-height: 1.1; padding: 5px 6px; border-radius: 12px; }
+.up-next__when small { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #fff2b3b3; }
+.grid .card-tile__set { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; height: 2.1em; min-height: 0; max-height: 2.1em; box-sizing: border-box; display: block; line-height: 1.1em; padding-top: .5em; padding-bottom: .5em; }
+
+/* The Collection is hidden behind the sky: pause everything that animates (2026-10-16 perf sweep). */
+html.away *, html.away *::before, html.away *::after { animation-play-state: paused !important; }
+
+/* Up tonight (2026-10-16, design/upnext-remind.html A + 1, Sevaan). A: the tile's pill sits at the top of the picture,
+   just under the set name. 1: the viewer's pass panel under the card, with a big Remind me and Show me. */
+.up-next__when { top: calc(2.1em + 8px) !important; }
+.v-up { width: min(100%, var(--card-w, 340px)); box-sizing: border-box; margin: 14px auto 0; padding: 12px 14px; border-radius: 14px; border: 1px solid #fa812766; background: #0e1a29; display: grid; gap: 10px; }
+.v-up[hidden] { display: none; }
+.v-up__when { margin: 0; font: 600 13px/1.25 'SC Label', 'Barlow Condensed', sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--muted, #bdbea9); }
+.v-up__when b { color: #fa8127; font-weight: 600; }
+.v-up__btns { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+#viewer .v-up .v-up__btns button, .v-up__soon { min-height: 44px; border-radius: 10px; padding: 0 14px; font: 600 13px/1 'SC Label', 'Barlow Condensed', sans-serif; letter-spacing: .14em; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px; border: 0; cursor: pointer; }
+#viewer .v-up .v-up__remind { background: #fa8127; color: #1a0f05; border: 0; }
+#viewer .v-up .v-up__remind.on { background: #0c1725; color: #fff2b3; box-shadow: inset 0 0 0 1.5px #ffc93d; }
+.v-up__remind svg { width: 16px; height: 16px; }
+#viewer .v-up .v-up__show { background: #14202f; color: #fff2b3; border: 0; }
+.v-up__soon { color: #fa8127; background: transparent; padding: 0; justify-content: flex-start; }
+/* With the Up tonight panel showing, the card shrinks so the panel's buttons fit on screen without scrolling. */
+#viewer:has(#v-up:not([hidden])) #slot .card { font-size: min(14px, calc((var(--vws) - 40px) / 28 * .95), calc((100dvh - 330px) / 42)); }
+/* Constellations album: stars as a quiet second line under the constellations count (2026-10-16). */
+.album__sub { display: block; font: 500 13px/1.2 'SC Label', 'Barlow Condensed', sans-serif; letter-spacing: .06em; color: var(--muted, #bdbea9); margin-top: 2px; }
+.v-up__cloud { margin: 6px 0 0; font: 500 13px/1.3 'SC Label', 'Barlow Condensed', sans-serif; letter-spacing: .04em; color: #bdbea9; }
+
+/* 2026-10-17 (Sevaan: "I don't like the text in the button wrapping"): the pass buttons stay on one line. "at" is gone,
+   the spacing is a little tighter, and the icon never squeezes. */
+#viewer .v-up .v-up__btns button { white-space: nowrap; letter-spacing: .1em; gap: 8px; min-width: 0; }
+#viewer .v-up .v-up__btns button svg { flex: none; }
+#viewer .v-up .v-up__btns button span { overflow: hidden; text-overflow: ellipsis; }
+
+/* ---------- Text audit fixes (2026-10-17) ---------- */
+html { text-wrap: pretty; } h1, h2, h3 { text-wrap: balance; }
+@media (max-width: 370px) { .lb-top { font-size: 11px; letter-spacing: .1em; } .lb-top > * { white-space: nowrap; } } /* "OBSERVER RANK" / "WEEK 1 · COME BACK NEXT WEEK" on one line at 360 */
+.v-up__when { text-wrap: balance; } /* "Up tonight · 8:56 PM · almost overhead in the southwest" breaks evenly */
+/* Observer stats slides up over the Collection and back down, like the app's panels (2026-10-17, Sevaan). */
+@keyframes stats-up { from { transform: translateY(100%); } to { transform: none; } }
+@keyframes stats-down { from { transform: none; } to { transform: translateY(100%); } }
+@keyframes stats-dim-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes stats-dim-out { from { opacity: 1; } to { opacity: 0; } }
+#stats-view[open] { animation: stats-up .42s cubic-bezier(.2, .9, .25, 1); }
+#stats-view[open]::backdrop { animation: stats-dim-in .42s ease-out; }
+#stats-view.leaving { animation: stats-down .3s cubic-bezier(.5, 0, .75, .4) forwards; }
+#stats-view.leaving::backdrop { animation: stats-dim-out .3s ease-in forwards; }
+@media (prefers-reduced-motion: reduce) { #stats-view[open], #stats-view[open]::backdrop { animation: none; } }
+/* Embedded in the app, Explore's header stays on top of the Collection (2026-10-17): this one keeps its space but hides. */
+html.embedded .collection-header { visibility: hidden; }
+
+/* Red night mode reaches the dialogs (visual playtest 2026-10-17): a modal <dialog> paints in the browser's top layer,
+   above body.night::after, so the card viewer, Observer stats and patch detail showed full colour. Each open dialog
+   carries its own red multiply. */
+body.night dialog[open]:not(.docked)::after { content: ''; position: fixed; inset: 0; z-index: 2147483646; pointer-events: none; background: #ff1a00; mix-blend-mode: multiply; }
+body.night dialog::backdrop { background: rgba(12, 3, 3, .82); }
+/* Scrolling a big collection (jank playtest 2026-10-17: a third of frames over 50 ms): tiles off screen skip layout and
+   paint (content-visibility), and the shrunken cards don't each become a 3D layer (no preserve-3d on a tile's card;
+   tile tilt moves the tile itself). */
+.grid .tile-slot { content-visibility: auto; contain-intrinsic-size: auto 180px; }
+.mini-face .card__rotator { transform: none !important; transform-style: flat !important; }
+/* The rank card's ladder picture shows on Mine only (2026-10-17 playtests: on Albums, Patches and Find it pushed the
+   first row behind the switcher, so those tabs opened with no content in view). Rank, XP and the bar stay. */
+/* (2026-10-20, Sevaan: "fix the jumping tabs") the ladder now stays on every tab, so the rank card is one height and the tab bar never moves under your finger. */
+/* removed: body[data-view]:not([data-view="owned"]) .logbook .lb-pic { max-height: 0 !important; opacity: 0; margin-block: 0 !important; padding-block: 0 !important; } */ /* collapses, eased (below), instead of jumping 180px (2026-10-18 playtest) */
+/* Collection colours match Explore's (visual playtest 2026-10-17: two sets of values under the same names) and its
+   pass-panel buttons are 44px. */
+:root:not([data-theme="night"]) { --bg: #080f1b; --text: #fff2b3; --line: #344654; }
+.fd-acts .ic { width: 44px; height: 44px; }
+/* iPad and other big screens (2026-10-18, Sevaan: "the card should always appear in the middle"): the viewer's card
+   grows with the screen instead of stopping at phone size, and sits in the middle, top to bottom. */
+@media (min-width: 700px) {
+  .viewer-scroll { display: flex; flex-direction: column; align-items: center; }
+  .viewer-scroll > #slot { margin-top: auto; }
+  .viewer-scroll > :last-child { margin-bottom: auto; }
+  #slot .card { font-size: min(24px, calc((var(--vws) - 58px) / 28), calc((100dvh - 300px) / 42)); }
+  #viewer:has(#v-up:not([hidden])) #slot .card { font-size: min(24px, calc((var(--vws) - 58px) / 28), calc((100dvh - 470px) / 42)); }
+}
+/* Find rows (2026-10-18 playtest): the rarity colour is a short bar inside the card's left edge, not a thick border that
+   curved into a crescent outside the rounded corners. */
+.find-row { position: relative; border-left: 1px solid #22344a !important; }
+.find-row::before { content: ''; position: absolute; left: -1px; top: 12px; bottom: 12px; width: 3px; border-radius: 0 3px 3px 0; background: var(--c); }
+/* Playtest 2026-10-18 jank:
+   · the rank picture on Mine eases shut / open when you change tab, so the tabs glide instead of jumping 180px;
+   · the patch wall only lays out and paints the patches near the screen (185 drawn patches made a 140 ms frame). */
+.logbook .lb-pic { overflow: hidden; max-height: 280px; transition: max-height .32s cubic-bezier(.3,.7,.3,1), opacity .25s ease, margin .32s ease, padding .32s ease; }
+@media (prefers-reduced-motion: reduce) { .logbook .lb-pic { transition: none; } }
+.pw-item { content-visibility: auto; contain-intrinsic-size: auto 132px; }
+/* "Up tonight" suggestions on Mine get their own labelled row under your cards (2026-10-18 playtest). */
+.grid-head.up-next-head { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 10px; margin: 14px 0 2px; padding-top: 14px; border-top: 1px solid #22344a; }
+.up-next-head b { font: 500 13px/1 'SC Label', sans-serif; letter-spacing: .2em; text-transform: uppercase; color: var(--accent, #fa8127); }
+.up-next-head span { font: 500 13px/1.2 'SC Label', sans-serif; letter-spacing: .06em; color: #8fa3b8; }
+#stats-view .close:focus-visible { outline: none; border-color: #fff2b3; } /* same quiet cue as the viewer: the dialog focuses it on open (iOS playtest 2026-10-19) */
+
+/* ---------- Fine-detail polish (2026-10-20, Collection audit) ---------- */
+.v-where { text-wrap: balance; }
+.v-up__when .nw, .fd-pass .nw, .nw { white-space: nowrap; }
+.result-row { min-height: 44px; } /* no jump when Clear filters appears */
+.pw-chips { padding: 2px 4px 14px; margin: 0; -webkit-mask-image: linear-gradient(90deg, #000 90%, transparent); mask-image: linear-gradient(90deg, #000 90%, transparent); }
+.viewer-header { padding-left: 20px; padding-right: 20px; } /* the header on the same 20px gutter as what's under it */
+#owned-count { vertical-align: 1px; line-height: 1; padding: 2px 7px; }
+.collection-tabs button { min-width: 44px; }
+.lb-more { padding: 10px 2px; margin-block: -8px; }
+.album-head { border-radius: 12px; }
+.st-goal { align-content: start; } /* labels in a row line up when one tile has no sub-line */
+.st-rare div { grid-template-columns: 48px 6.2em minmax(0, 1fr) auto; }
+.filters-btn { border-color: var(--line); }
+#viewer .ui-btn { border-radius: 10px; }
+@media (min-width: 900px) { body.albums-view #grid, .find-mode { max-width: 720px; margin-inline: auto; } }
+/* Red night mode: the last bright bits (badges, album level, the rank card's XP row) */
+:where(html[data-theme='night'], body.night) .card-tile--retro :is(.tile-lvl--gold, .tile-lvl--silver) { color: #ff7f70 !important; border-color: #ff7f70 !important; background: #1a0705 !important; }
+:where(html[data-theme='night'], body.night) .card-tile.is-icon { box-shadow: 0 0 0 2px #a83a2c !important; }
+:where(html[data-theme='night'], body.night) .album__level { color: #ff7f70 !important; border-color: #ff7f70 !important; background: transparent !important; }
+:where(html[data-theme='night'], body.night) .album-bar b.hit { background: #ff7f70 !important; }
+:where(html[data-theme='night'], body.night) .lb-bar { background: #2a0d09 !important; }
+:where(html[data-theme='night'], body.night) .lb-bar > * { background: #ff6a55 !important; }
+:where(html[data-theme='night'], body.night) .lb-to { color: #dd6455 !important; }
+:where(html[data-theme='night'], body.night) .lb-to b { color: #ff7f70 !important; }
+/* Find rows (iOS playtest 2026-10-20): the time on one line, where to look on the next; long names get two lines. */
+.fd-pass .fd-where { display: block; }
+.fd-pass .fd-where::first-letter { text-transform: uppercase; }
+.fd-main b { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.lb-top { gap: 12px; } .lb-top .lb-streak { text-align: right; } /* "OBSERVER RANK" and the streak never touch (iOS playtest 2026-10-20) */
+.v-up__when b { white-space: nowrap; } /* "7:30 PM" never splits */
+.st-noart { display: grid; place-items: center; font-size: 20px; }
+/* Small screens (Android playtest 2026-10-20, 360×640): the streak may wrap instead of running into the title, and on
+   short screens the rank picture is shorter so the tabs and search sit above the switcher. */
+@media (max-width: 370px) { .lb-top { align-items: flex-start; } .lb-top .lb-streak { white-space: normal; min-width: 0; } }
+@media (max-height: 700px) { .lb-pic { height: 96px; } }
+/* The Collection is one flat colour, the header's (2026-10-21, Sevaan), not the sky's gradient, and it doesn't stretch
+   when pulled at the top or bottom. */
+html.embedded, html.embedded body, html.embedded body.sky-tone { background: var(--bg) !important; }
+html.embedded, html.embedded body { overscroll-behavior: none; }
+
+#stats-view.pulled { animation: none !important; }
+
+/* Landscape screen looks like the loader (2026-10-21, Sevaan): the target circle, a phone in it turning upright (the
+   ring locks orange as it does), the wordmark and one line. The apps are portrait-locked, so only browsers see it. */
+@media (orientation: landscape) and (max-height: 600px) and (pointer: coarse) {
+  #rotate { gap: 0; background: #080f1b; }
+  #rotate .rt-ret { width: 124px; height: 124px; margin-bottom: 26px; overflow: visible; }
+  #rotate .rt-ring { stroke: rgba(255,242,179,.66); animation: rtRing 2.8s ease-in-out infinite; }
+  #rotate .rt-phone { animation: rtTurn 2.8s cubic-bezier(.5,0,.2,1) infinite; }
+  #rotate .rt-word { font: 400 15px/1 'SC Display', Impact, sans-serif; letter-spacing: .06em; color: #fff2b3; text-transform: none; }
+  #rotate .rt-sub { margin-top: 12px; font: 500 12px/1 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .26em; text-transform: uppercase; color: #bdbea9; animation: ldPulse 1.8s ease-in-out infinite; }
+}
+@keyframes rtTurn { 0%, 18% { transform: rotate(-90deg); } 52%, 100% { transform: rotate(0deg); } }
+@keyframes rtRing { 0%, 45% { stroke: rgba(255,242,179,.66); } 55%, 88% { stroke: #fa8127; } 100% { stroke: rgba(255,242,179,.66); } }
+@media (prefers-reduced-motion: reduce) { #rotate .rt-phone, #rotate .rt-ring, #rotate .rt-sub { animation: none; } }
+html.embedded #rotate { display: none !important; }
+@keyframes ldPulse { 50% { opacity:.55; } }
+
+/* Bottom edge cut off on the phone (2026-10-21, Sevaan): content-visibility clips each slot at its exact box, and on
+   a 3× screen a fractional bottom edge shaved off the tile's last pixel row, which is the cream border. The slot now
+   reaches 2 px past the card on every side (padding, cancelled by a negative margin), so the clip never meets the edge;
+   the content box keeps the card's 28:42, so nothing moves. */
+.grid .tile-slot { box-sizing: content-box; width: auto; padding: 2px; margin: -2px; border-radius: calc(14px * var(--mini-s, .4) + 2px); background: transparent; }
+.grid .tile-slot:empty { background: #0f1b2a; background-clip: content-box; }
+.grid .tile-slot > .card-tile.card-tile--mini { height: auto; aspect-ratio: 28 / 42; }
+/* The rank card folds to one row (2026-10-21, Sevaan picked design/collection-rank.html D): fixed under the header
+   (Explore's header when embedded), sliding down once the full card has scrolled away. */
+.lb-slim { position: fixed; left: 0; right: 0; top: var(--safe-top); z-index: 30; margin: 0 auto; max-width: 1056px; display: flex; align-items: center; gap: 10px; padding: 9px 20px 10px; background: var(--bg, #080f1b); border-bottom: 1px solid #22304a; transform: translateY(-110%); opacity: 0; pointer-events: none; transition: transform .28s cubic-bezier(.2,.9,.3,1), opacity .2s; cursor: pointer; }
+html.embedded .lb-slim { top: calc(var(--safe-top) + 80px); }
+.lb-slim.on { transform: none; opacity: 1; pointer-events: auto; }
+body:not(.has-cards) .lb-slim, body[data-view]:not([data-view="owned"]) .lb-slim { display: none; }
+.lbs-dot { width: 26px; height: 26px; flex: none; border-radius: 50%; border: 2px solid #fa8127; display: grid; place-items: center; } .lbs-dot i { width: 8px; height: 8px; border-radius: 50%; background: #fa8127; }
+.lbs-main { flex: 1; min-width: 0; display: grid; gap: 3px; }
+.lbs-name { font: 400 15px/1 var(--display, "SC Display"); color: var(--ink, #fff2b3); text-transform: uppercase; }
+.lbs-bar { display: block; height: 3px; border-radius: 2px; background: #22324a; overflow: hidden; } .lbs-bar i { display: block; height: 100%; background: #fa8127; }
+.lbs-main small { display: flex; justify-content: space-between; gap: 8px; font: 500 11px/1.2 var(--label, 'SC Label'); letter-spacing: .06em; color: var(--muted, #bdbea9); white-space: nowrap; }
+.lbs-m { flex: none; min-height: 44px; padding: 0 2px 0 8px; border: 0; background: none; color: #fa8127; font: 500 12px var(--label, 'SC Label'); letter-spacing: .14em; text-transform: uppercase; cursor: pointer; }
+:where(html[data-theme="night"], body.night) .lb-slim { border-color: #58272b; } :where(html[data-theme="night"], body.night) :is(.lbs-dot, .lbs-m) { color: #ff7f70; border-color: #ff6a55; } :where(html[data-theme="night"], body.night) :is(.lbs-dot i, .lbs-bar i) { background: #ff6a55; } :where(html[data-theme="night"], body.night) .lbs-name { color: #ff7f70; }
+@media (prefers-reduced-motion: reduce) { .lb-slim { transition: opacity .15s; } }
+/* What changed since you were here (2026-10-21): the NEW sticker on cards caught since your last visit, with a glint;
+   it peels off when you open the card. "+N XP since last time" on the rank card. */
+.tile-new { position: absolute; z-index: 6; top: 6%; right: -4px; padding: 3px 7px 3px 8px; border-radius: 4px 2px 2px 4px; background: #fa8127; color: #0b1018; font: 700 calc(26px * var(--mini-s, .4)) / 1 var(--label, 'SC Label'); font-size: max(10px, calc(26px * var(--mini-s, .4))); letter-spacing: .12em; transform: rotate(6deg); box-shadow: 0 2px 6px rgba(0,0,0,.45); overflow: hidden; pointer-events: none; }
+.tile-new::after { content: ''; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.75) 50%, transparent 70%); transform: translateX(-120%); animation: tileGlint 3.6s ease-in-out infinite; }
+@keyframes tileGlint { 0%, 70% { transform: translateX(-120%); } 90%, 100% { transform: translateX(120%); } }
+.tile-new.peel { animation: tilePeel .6s cubic-bezier(.5,0,.8,.4) forwards; transform-origin: 100% 0; }
+@keyframes tilePeel { 0% { transform: rotate(6deg); } 35% { transform: rotate(-14deg) translate(-2px, -3px); } 100% { transform: rotate(40deg) translate(10px, 60px); opacity: 0; } }
+:where(html[data-theme="night"], body.night) .tile-new { background: #ff6a55; color: #120606; }
+@media (prefers-reduced-motion: reduce) { .tile-new::after { animation: none; } .tile-new.peel { animation: none; opacity: 0; } }
+.lb-since { position: absolute; z-index: 3; top: 10px; left: 50%; translate: -50% 0; padding: 4px 9px; border-radius: 6px; background: #fa812722; color: #fa8127; font: 600 11px/1.3 var(--label, 'SC Label'); letter-spacing: .1em; text-transform: uppercase; animation: lbSince .5s cubic-bezier(.2,.9,.3,1.3) both; transition: opacity .5s; }
+.lb-since.out { opacity: 0; } @keyframes lbSince { from { transform: scale(.6); opacity: 0; } }
+:where(html[data-theme="night"], body.night) .lb-since { color: #ff7f70; background: #2a0d0a; }
+/* Press and hold to peek (2026-10-21): the card lifts out over a blurred grid. */
+.peek { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; pointer-events: none; background: rgba(4, 8, 15, .35); animation: peekIn .25s ease both; }
+.peek.out { animation: peekOut .22s ease forwards; } @keyframes peekIn { from { background: transparent; } } @keyframes peekOut { to { background: transparent; } }
+.peek .card { box-shadow: 0 24px 60px rgba(0,0,0,.6); }
+body.peeking main > *:not(.peek) { filter: blur(6px) brightness(.7); transition: filter .2s; }
+main > * { transition: filter .2s; }
+.grid .card-tile { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+@media (prefers-reduced-motion: reduce) { body.peeking main > * { filter: brightness(.6); } }
+/* Tabs and search/filters pinned under the header (2026-10-21, Sevaan); the rank card scrolls away as before. */
+:root { --col-top: var(--safe-top, 0px); --tabs-h: 0px; }
+html.embedded { --col-top: calc(var(--safe-top, 0px) + 80px); }
+.lb-slim { display: none !important; }
+.collection-tabs { position: sticky; top: var(--col-top); z-index: 25; background: var(--bg, #080f1b); isolation: isolate; }
+.collection-tabs::before { content: ''; position: absolute; left: -24px; right: -24px; top: -12px; bottom: 0; background: var(--bg, #080f1b); z-index: -1; }
+.collection-tools { position: sticky; top: calc(var(--col-top) + var(--tabs-h)); z-index: 24; background: var(--bg, #080f1b); padding-bottom: 10px; box-shadow: 0 10px 14px -10px rgba(0,0,0,.6); isolation: isolate; }
+.collection-tools::before { content: ''; position: absolute; left: -24px; right: -24px; top: -12px; bottom: 0; background: var(--bg, #080f1b); z-index: -1; }
+
+/* iPhone Duo (2026-10-22): its side status bar (about 84pt) is a side safe area; Explore posts it in ({sc:'insets'}
+   left/right → --safe-l/--safe-r). The page, the viewer's top row and dialogs keep clear of it. */
+main { padding-left: calc(var(--main-pad, 24px) + var(--safe-l)) !important; padding-right: calc(var(--main-pad, 24px) + var(--safe-r)) !important; }
+@media (max-width: 550px) { main { --main-pad: 20px; } }
+@media (max-width: 350px) { main { --main-pad: 14px; } }
+dialog[open] { padding-left: var(--safe-l) !important; padding-right: var(--safe-r) !important; box-sizing: border-box; }
+
+/* The book (iPhone Duo unfolded, iPads; 2026-10-22, design/duo-layouts.html Collection A; Sevaan: "go with your
+   picks"). On its side (≥900 × 560, landscape): the grid on the left page, the card you tap open at full size on the
+   right (#viewer.docked, shown non-modally by js/cards-page.js), the fold's 40px down the middle empty between them.
+   Upright (≥600 × 900, portrait): the grid on the top page, the card on the bottom one. The rank card folds into a slim
+   bar (rank, XP, the bar to the next rank) above the tabs. Albums and Patches keep the whole width. Phones never match. */
+#dock-empty { display: none; }
+@media (min-width: 820px) and (min-height: 560px) and (orientation: landscape), (min-width: 600px) and (min-height: 900px) and (orientation: portrait) {
+  body:not([data-view="albums"]):not([data-view="patches"]) main { max-width: none; margin: 0; }
+  .logbook :is(.lb-top, .lb-pic, .lb-mission, .lb-foot) { display: none !important; }
+  .logbook { margin: 4px 0 12px; padding: 10px 14px 8px; }
+  .logbook .lb-rankrow { margin-top: 0; }
+  body:not([data-view="albums"]):not([data-view="patches"]) main > .stats-link { display: none !important; }
+  #viewer.docked { position: fixed; z-index: 30; margin: 0; max-width: none; max-height: none; width: auto; height: auto; container-type: size; background: var(--bg); }
+  #viewer.docked .viewer-scroll { padding-bottom: 16px !important; }
+  /* The card's page ends above Explore's tabs, which stay over the Collection (Duo playtest 2026-10-22: Share this card
+     and When you saw it peeked out under them). */
+  #viewer.docked { bottom: calc(var(--safe-bottom) + 96px) !important; }
+  #viewer.docked .viewer-header { height: 44px; min-height: 0; padding: 0 4px 0 16px; }
+  #viewer.docked #slot { padding: 0; }
+  .grid .tile-slot.shown { outline: 2px solid #fa8127; outline-offset: 3px; border-radius: calc(14px * var(--mini-s, .5) + 3px); } /* the card open on the other page */
+  #dock-empty { position: fixed; z-index: 2; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding-bottom: calc(var(--safe-bottom) + 90px); color: var(--muted); font: 500 14px/1.3 var(--label, 'SC Label'), 'Barlow Condensed', sans-serif; letter-spacing: .16em; text-transform: uppercase; text-align: center; pointer-events: none; }
+  #dock-empty .de-card { width: min(46%, 220px); aspect-ratio: 28 / 42; border: 2px dashed #2b3c55; border-radius: 14px; display: grid; place-items: center; color: #3c516f; font-size: 30px; }
+}
+@media (min-width: 820px) and (min-height: 560px) and (orientation: landscape) {
+  body:not([data-view="albums"]):not([data-view="patches"]) main { padding-left: calc(20px + var(--safe-l)) !important; padding-right: calc(50vw + 20px) !important; }
+  #viewer.docked, #dock-empty { top: var(--col-top); bottom: 0; left: calc(50vw + 20px); right: 0; padding: 0 var(--safe-r) 0 0 !important; }
+  #dock-empty { padding-bottom: calc(var(--safe-bottom) + 90px) !important; }
+  body:not([data-view="albums"]):not([data-view="patches"]):not(:has(#viewer[open])) #dock-empty { display: flex; }
+  /* The whole card fits above Explore's tabs (about 92px at the foot); with a pass to catch it shrinks a little so
+     the Remind me / Show me panel shows under it. */
+  #viewer.docked #slot .card { font-size: min(18px, calc((100cqw - 36px) / 28), calc((100cqh - 60px) / 42)); }
+  #viewer.docked:has(#v-up:not([hidden])) #slot .card { font-size: min(18px, calc((100cqw - 36px) / 28), calc((100cqh - 160px) / 42)); }
+}
+@media (min-width: 600px) and (min-height: 900px) and (orientation: portrait) {
+  /* With no card open the grid has the whole screen (the top page alone is too short for the rank bar, tabs and a row
+     of cards). A card opens on the bottom page, 20px below the fold (the middle of the screen); the grid keeps the top
+     page, its tabs no longer pinned, and can scroll its last row up there. */
+  body:has(#viewer.docked[open]) main { padding-bottom: calc(50dvh + 20px) !important; }
+  body:has(#viewer.docked[open]) :is(.collection-tabs, .collection-tools) { position: relative; top: auto; } /* relative, not static: their ::before backdrops must stay on them, not cover the page (iPad store shot 2026-10-22) */
+  #viewer.docked { top: calc(50dvh - 20px); bottom: 0; left: 0; right: 0; padding: 40px var(--safe-r) 0 var(--safe-l) !important; }
+  /* The card on the left of its page, what goes with it (passes, history, share) beside it; the ✕ in the corner. */
+  #viewer.docked .viewer-header { position: absolute; top: 40px; right: calc(4px + var(--safe-r)); width: auto; height: 44px; padding: 0; z-index: 2; }
+  #viewer.docked #v-position { display: none; }
+  #viewer.docked .viewer-scroll { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 20px; align-content: start; align-items: start; text-align: left; padding-top: 0 !important; padding-right: 56px !important; }
+  #viewer.docked .viewer-scroll > * { grid-column: 2; }
+  #viewer.docked .viewer-scroll > #slot { grid-column: 1; grid-row: 1 / span 20; width: auto; }
+  #viewer.docked #slot .card, #viewer.docked:has(#v-up:not([hidden])) #slot .card { font-size: min(16px, calc((100cqh - 12px) / 42), calc((100cqw - 330px) / 28)); }
+}
+/* "Up tonight" slot pill: two lines that never wrap (Duo playtest 2026-10-22: on narrower tiles it broke into three
+   and covered the card's name). */
+.up-next__when { white-space: nowrap; overflow: hidden; }
+.up-next__when small { letter-spacing: .1em; }
+.up-next__tile { container-type: inline-size; }
+.up-next__when { font-size: clamp(9px, 12.5cqi, 12px); /* never 0: on the Duo the pills came up blank (iPad/Duo playtest 2026-10-24) */ left: 4px; right: 4px; padding-inline: 3px; }
+.up-next__when small { font-size: clamp(8px, 11cqi, 11px); } /* a floor like the time line: iOS sometimes resolved 11cqi to 0 and the "Up tonight" line vanished (iOS playtest of build 45) */
+/* The card's picture never starts an image drag, so a flick or swipe that begins on it is the card's (as in the reveal, Duo playtest 2026-10-22). */
+#slot img { -webkit-user-drag: none; user-select: none; -webkit-touch-callout: none; }
+/* The open card on the right page (Duo simulator, Sevaan 2026-10-22: "I have to scroll a little to see the bottom of
+   the card and that blue background should maybe be the same colour as the rest of the page"): the page's own navy,
+   and the whole card fits under the ✕ row with room to spare. */
+@media (min-width: 820px) and (min-height: 560px) and (orientation: landscape) {
+  #viewer.docked, #viewer.docked .viewer-scroll { background: var(--bg) !important; background-image: none !important; }
+  #viewer.docked #slot .card { font-size: min(18px, calc((100cqw - 36px) / 28), calc((100cqh - 104px) / 42)); }
+  #viewer.docked:has(#v-up:not([hidden])) #slot .card { font-size: min(18px, calc((100cqw - 36px) / 28), calc((100cqh - 204px) / 42)); }
+}
+@media (min-width: 600px) and (min-height: 900px) and (orientation: portrait) {
+  #viewer.docked, #viewer.docked .viewer-scroll { background: var(--bg) !important; background-image: none !important; }
+}
+
+/* The rank bar runs the full width of the left page (Sevaan 2026-10-22, Duo). */
+@media (min-width: 820px) and (min-height: 560px) and (orientation: landscape) {
+  body:not([data-view="albums"]):not([data-view="patches"]) .logbook { max-width: none !important; width: auto !important; margin-left: 0 !important; margin-right: 0 !important; padding-left: 0 !important; padding-right: 0 !important; }
+}
+
+/* Big-screen playtest 2026-10-22: the patch group chips end before the Duo's side strip. */
+.pw-chips { margin-right: var(--safe-r, 0px); }
+/* No sideways scroll (2026-10-22, Sevaan: "a few pixels of sideways scrolling"): the pinned tabs' and tools' backdrops
+   reached 24px past the page's 20px (14px) margin, so the page was 4–10px wider than the screen. They now reach exactly
+   the margin, and the page never scrolls sideways (clip keeps the sticky tabs working, unlike hidden). */
+.collection-tabs::before, .collection-tools::before { left: calc(-1 * (var(--main-pad, 24px) + var(--safe-l, 0px))); right: calc(-1 * (var(--main-pad, 24px) + var(--safe-r, 0px))); }
+html, body { overflow-x: clip; }
+/* Share is an icon in the viewer's top row, beside the ✕ (2026-10-22, Sevaan), like the catch reveal's; the "Share this
+   card" words under the card are gone. On phones the card sits in the middle of the space under that row, and its
+   sightings start just below the screen. A card with a pass panel (Remind me / Show me) keeps the panel in view instead. */
+.viewer-header .vh-buttons { display: flex; align-items: center; gap: 4px; }
+#viewer .v-share { width: 44px; height: 44px; display: grid; place-items: center; color: var(--cream, #f3ead0); background: none; border: 0; padding: 0; }
+#viewer .v-share[hidden] { display: none; }
+#viewer .v-share.busy { opacity: .45; }
+@media (max-width: 699px) {
+  #viewer:not(.docked):not(:has(#v-up:not([hidden]))) .viewer-scroll > #slot { min-height: calc(100dvh - var(--safe-top, 0px) - var(--safe-bottom, 0px) - 102px - var(--v-where-h, 0px)); align-items: center; }
+  #viewer:has(#v-where:not([hidden])) { --v-where-h: 64px; } /* the "Now over…" line is part of the view: the card centres above it (2026-10-27, Sevaan: more space above than below) */
+}
+/* Observer stats under Explore's shared header (2026-10-24, Sevaan): inside the app the page starts at the header's line
+   and its own eyebrow + ✕ row goes (the header says OBSERVER STATS and its button is the ✕). */
+html.embedded #stats-view { margin-top: var(--col-top); height: calc(100% - var(--col-top)); }
+html.embedded #stats-view > .viewer-header { display: none; }
+html.embedded #stats-view::backdrop { background: transparent; }
+html.embedded #stats-body { padding-top: 16px; padding-bottom: calc(var(--safe-bottom, 0px) + 110px); } /* the tab bar stays over it now */
+html.embedded #stats-view, html.embedded #stats-view:focus, html.embedded #stats-view:focus-visible { outline: none; }
+#stats-view.instant[open], #stats-view.instant[open]::backdrop { animation: none !important; } /* opened under Settings, already in place */
+
+/* iPad/Duo playtest 2026-10-24. Observer stats in the app fills the page under the header at every width (it was a 560px
+   column over the Collection grid on wide screens), its contents kept to a readable column. The docked card page covers
+   down to the bottom edge behind the tab bar, so the grid doesn't peek out under it. */
+html.embedded #stats-view { max-width: none; }
+html.embedded #stats-body { padding-inline: max(20px, calc((100% - 620px) / 2)); }
+#viewer.docked { box-shadow: 0 calc(var(--safe-bottom, 0px) + 96px) 0 0 var(--bg); }
+
+/* Red mode leaves the patch wall's SVGs unfiltered (iPad playtest 2026-10-24: a filter on every patch made WebKit drop or
+   misplace most of them); the page's red multiply layer turns them red. */
+/* Twinkling stars inside the mission patch card (2026-10-25, Sevaan), behind the patch and the words */
+.pv-card { position: relative; overflow: hidden; }
+.pv-card > .starfield { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.pv-card > :not(.starfield) { position: relative; z-index: 1; }
+.pv-card > .starfield i { opacity: calc(var(--o) * .8); }
+/* Your objects and your rank (2026-10-27, Sevaan): one card in front, the other peeking out above it, a little smaller and
+   dimmer. Swipe the front card either way (or tap the one behind) and it flies off and settles behind while the other
+   comes forward. Same size (one grid cell). Book sizes keep just the rank bar. */
+.lb-deck { margin: 6px 0 22px; touch-action: pan-y; }
+.lb-deck.two { padding-top: 14px; }
+.lb-track { display: grid; }
+.lb-track > .logbook { grid-area: 1 / 1; margin: 0; min-width: 0; transition: transform .34s cubic-bezier(.2,.8,.25,1), filter .34s ease, opacity .34s ease; }
+.lb-track > .logbook > .lb-rot { height: 100%; box-sizing: border-box; }
+.lb-track > .lb-front { z-index: 2; }
+.lb-track > .lb-back { z-index: 1; transform-origin: 50% 0; transform: translateY(-14px) scale(.94); filter: brightness(.55); cursor: pointer; }
+.lb-track > .lb-back * { pointer-events: none; }
+.lb-track > .lb-drag { transition: none; }
+.lb-track > .lb-leaving { transition: transform .2s ease-in; z-index: 3; }
+.lb-deck.instant .lb-track > .logbook { transition: none; }
+@media (prefers-reduced-motion: reduce) { .lb-track > .logbook { transition: opacity .2s ease; } }
+.sg-face { display: flex; flex-direction: column; height: 100%; }
+.sg-pic { position: relative; flex: 1 1 auto; min-height: 180px; border-bottom: 1px solid #bcb58588; background: radial-gradient(ellipse at 50% 110%, #1d3350, #070d18 70%); overflow: hidden; }
+.sg-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y; }
+.sg-live { display: inline-flex; align-items: center; gap: 6px; color: #5fd08a; }
+.sg-live i { width: 6px; height: 6px; border-radius: 50%; background: #5fd08a; box-shadow: 0 0 6px #5fd08a; animation: sgLive 2s ease-in-out infinite; }
+@keyframes sgLive { 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .sg-live i { animation: none; } }
+.sg-card .lb-name { font-variant-numeric: tabular-nums; }
+.sg-where { min-height: 2.6em; padding-bottom: 12px; }
+:where(html[data-theme="night"], body.night) .sg-live { color: #ff7f70; } :where(html[data-theme="night"], body.night) .sg-live i { background: #ff6a55; box-shadow: none; }
+body:not(.has-cards) .lb-deck { display: none; }
+@media (min-width: 820px) and (min-height: 560px) and (orientation: landscape), (min-width: 600px) and (min-height: 900px) and (orientation: portrait) {
+  #sat-card { display: none !important; }
+  .lb-deck, .lb-deck.two { margin: 0; padding: 0; } .lb-track { display: block; }
+  .lb-track > #logbook { transform: none !important; filter: none !important; }
+}
+/* The rank card sets the stack's height, as tall as it was on its own (2026-10-27, Sevaan); the objects card fits it, the globe taking what's left. */
+#sat-card > .lb-rot { min-height: 0; }
+#sat-card .sg-pic { min-height: 120px; }
+/* Your objects: just the title and the globe (2026-10-27, Sevaan); the globe fills the card. */
+#sat-card .sg-pic { border-bottom: 0; }
+
+/* ===== Style audit (2026-10-28) ===== */
+/* Search box and Filters button: one corner, one border, and Filters keeps its width when its dot shows. */
+.search, .collection-tools .search { border-radius: 10px; border: 1px solid var(--line); }
+.filters-btn { border-radius: 10px; min-width: 104px; justify-content: center; position: relative; }
+.filters-btn.active::after { position: absolute; top: 8px; right: 8px; }
+/* Fonts: the game's label font, not the phone's. */
+.viewer-history p, .st-hl span, .st-rare small { font-family: 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .03em; }
+/* Panels: 14px corners. */
+.st-sec { border-radius: 14px; }
+/* Stats: tile labels sit right under their number; rank names in capitals like the rank card. */
+.st-tile small { display: block; margin-top: 4px; }
+.st-rank b, .st-rank h2, .st-rank-name { text-transform: uppercase; }
+.st-hl b { text-transform: uppercase; }
+/* Section labels: one style. */
+#results { font-size: 13px; letter-spacing: .16em; }
+.st-since, .st-rank small, .st-hl small { letter-spacing: .16em; }
+/* Find: the cloud note like Tonight's (no italic); the bell bright like Tonight's. */
+.fd-cloud { font-style: normal; color: var(--muted); }
+/* Red mode: rarity words stay bright through the red filter in Stats, Find and dialogs. */
+body.night :is(.st-tl, .fd-main small em, .st-rt) { color: #ff7f70 !important; }
+body.night .find-row::before { background: #ff6a55; }
+/* Short phones: Albums, Patches and Find get the space; the rank/objects deck shows on Mine. */
+@media (max-height: 720px) {
+  body[data-view]:not([data-view="owned"]) .lb-deck { display: none; }
+}
+.can-orbit .card__art::after { letter-spacing: .03em; } /* hints in sentence case (style audit 2026-10-28) */
+/* Find rows read like Tonight's run (style audit 2026-10-28): a divided list, not boxes; the card's picture, the name,
+   rarity · where · cloud, when, then pills; the same round target and bell. */
+.grid.find-mode { gap: 0; }
+.find-row { grid-template-columns: 52px minmax(0, 1fr) auto; gap: 12px; padding: 12px 0; border: 0 !important; border-top: 1px solid #ffffff12 !important; border-radius: 0; background: none; }
+.find-row::before { display: none; }
+.find-head + .find-row { border-top-color: transparent !important; }
+.fd-art { width: 52px; height: 52px; border-radius: 8px; }
+.fd-main { gap: 3px; }
+.fd-main b { font: 600 15.5px/1.15 var(--label, 'SC Label', sans-serif); }
+.fd-pass { display: grid; gap: 2px; font: 500 13px/1.25 var(--label, 'SC Label', sans-serif); color: var(--muted); }
+.fd-pass .fd-w em { font-style: normal; color: var(--c); }
+.fd-pass .fd-when { color: var(--muted); } .fd-pass .fd-when b { color: var(--text); font-weight: 600; } .fd-pass .fd-when .soon { color: #fa8127; }
+.fd-pills { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.fd-pill { display: inline-flex; align-items: center; padding: 3px 7px; border-radius: 6px; background: #ffffff0f; font: 600 12px/1.15 var(--label, 'SC Label', sans-serif); letter-spacing: .03em; color: var(--text); white-space: nowrap; }
+.fd-pill.new { color: #fa8127; } .fd-pill.own { color: var(--muted); } .fd-pill.lc { color: #ff8f7a; background: #ff6a5520; }
+.fd-acts { gap: 4px; }
+.fd-acts .ic { width: 44px; height: 44px; border: 1px solid #22344a; background: #ffffff08; color: var(--text); }
+.fd-acts .ic.on { border-color: #fa8127; color: #fa8127; }
+body.night .fd-pass .fd-w em, body.night .fd-pill.new, body.night .fd-pass .fd-when .soon { color: #ff7f70 !important; }
+.fd-pass .fd-when { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .fd-pass .fd-when b { font: 600 14px/1.25 var(--label, 'SC Label', sans-serif); }
+.fd-pass b { display: inline !important; -webkit-line-clamp: unset; } /* ".fd-main b" (the name's two-line clamp) also caught the time and made it a block */
+/* Find shows each card small, like the circle's ticket (2026-10-28, Sevaan): the uncollected art softly blurred, not one grey box for all. */
+.fd-art.fd-mini { width: 52px; height: 78px; border-radius: 0; background: none; overflow: visible; contain: none; --mini-s: .1857; align-self: center; filter: drop-shadow(0 4px 8px #000a); }
+.fd-art.fd-mini > * { position: relative !important; inset: auto !important; width: calc(280px * var(--mini-s)) !important; height: calc(420px * var(--mini-s)) !important; }
+.fd-mini .mini-face.locked .card__art { filter: none; }
+.fd-mini .card-art-image--locked { filter: blur(6px) brightness(.85) saturate(.8); }
+.fd-mini .art-locked--chart > svg { filter: blur(5px) brightness(1.8) contrast(1.1) saturate(.9); }
+/* Pinned tabs and search (2026-10-28, Sevaan): the tab row scrolls sideways (overflow-x), which clipped its own
+   backdrop, so cards showed through at the right of Find. Its backdrop is now a box-shadow (not clipped by its own
+   overflow), cut to the page's width. And a little room above the search row once it pins. */
+.collection-tabs { box-shadow: 0 0 0 100vmax var(--bg, #080f1b); clip-path: inset(-12px -100vmax 0 -100vmax); }
+.collection-tools { margin-top: 2px; padding-top: 10px; }
+/* "Tap for its orbit" sits bottom-left, clear of the photo credit at the bottom right (playtest 2026-10-28). */
+.can-orbit .card__art::after { right: auto; left: .8em; }
+.can-orbit .card__art:has(.m-reunion, .shiny-tag)::after { bottom: calc(.7em + 2.2em); } .can-orbit .card__art:has(.m-reunion):has(.shiny-tag)::after { bottom: calc(.7em + 4.2em); } /* above the REUNITED / SHINY ribbons, which share its corner (iPhone 14 playtest 2026-11-07) */
+.fd-yr { font-weight: 500; color: var(--muted); }
+/* Observer stats: the goal bars sit inside their tiles on a track. */
+.st-goal i { left: 12px; right: auto; bottom: 10px; height: 3px; border-radius: 2px; width: calc(var(--p) * (100% - 24px)); }
+.st-goal::after { content: ''; position: absolute; left: 12px; right: 12px; bottom: 10px; height: 3px; border-radius: 2px; background: #ffffff12; }
+.st-goal { padding-bottom: 20px; }
+/* Patches filter chips run to the screen edge and fade out instead of being cut mid-word. */
+.pw-chips { margin-left: calc(-1 * var(--main-pad, 20px)) !important; margin-right: calc(-1 * var(--main-pad, 20px)) !important; padding-left: var(--main-pad, 20px) !important; padding-right: var(--main-pad, 20px) !important; -webkit-mask-image: linear-gradient(90deg, transparent, #000 16px, #000 calc(100% - 28px), transparent) !important; mask-image: linear-gradient(90deg, transparent, #000 16px, #000 calc(100% - 28px), transparent) !important; }
+.st-goal i { z-index: 1; }
+
+/* Day one (under 5 cards; UX playtest 2026-10-28): the cards get the screen. No search or filters yet, and the rank card
+   drops its ladder picture. */
+body.few-cards[data-view="owned"] .collection-tools, body.few-cards:not([data-view]) .collection-tools { display: none; }
+body.few-cards .lb-pic .lb-ladder { display: none; }
+body.few-cards .logbook .lb-pic { height: 44px !important; min-height: 0; background: none; border-bottom: 0; }
+
+/* Short phones (iPhone SE; UX playtest 2026-10-28): the first screen was all rank card. Under 700px tall the ladder picture
+   goes and the rank card is just rank, XP and its bar, so the cards start on the first screen. */
+@media (max-height: 700px) {
+  .logbook .lb-pic .lb-ladder { display: none; }
+  .logbook .lb-pic, .logbook.compact .lb-pic { height: 44px !important; background: none; border-bottom: 0; }
+}
+/* Without its ladder picture (day one, short phones) the open rank card is only as tall as what's in it (2026-10-28,
+   Sevaan: it kept a full card's height and left a big empty middle). */
+body.few-cards .logbook .lb-rot { min-height: 0; }
+@media (max-height: 700px) { .logbook .lb-rot { min-height: 0; } }
+
+/* Slim rank card, design/rank-compact.html A (2026-10-28, Sevaan): with no ladder picture (day one, short phones) the rank
+   sits beside a dial that fills as you go; one row, Missions › on it. */
+.lb-dial { display: none; }
+body.few-cards .lb-dial { display: flex; }
+body.few-cards .logbook :is(.lb-pic, .lb-rankrow, .lb-bar, .lb-to) { display: none !important; }
+@media (max-height: 700px) { .lb-dial { display: flex; } .logbook :is(.lb-pic, .lb-rankrow, .lb-bar, .lb-to) { display: none !important; } }
+.lb-dial { align-items: center; gap: 14px; padding: 14px 16px; }
+.lbd-ring { position: relative; width: 74px; height: 74px; flex: none; }
+.lbd-ring svg { width: 100%; height: 100%; display: block; }
+.lbd-ring b { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; font: 400 15px/1 var(--display, 'Russo One'); color: var(--ink, #fff2b3); }
+.lbd-ring b small { font: 500 10px/1 var(--label); letter-spacing: .14em; text-transform: uppercase; color: var(--muted, #bdbea9); margin-top: 4px; }
+.lbd-m { flex: 1; min-width: 0; display: grid; gap: 8px; }
+.lbd-l { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.lbd-name { font: 400 23px/1 var(--display, 'Russo One'); text-transform: uppercase; color: var(--ink, #fff2b3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.lb-dial .lb-xp { white-space: nowrap; }
+.lbd-to { font-size: 14px; color: var(--muted, #bdbea9); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; } .lbd-to b { color: var(--ink, #fff2b3); font-weight: 500; }
+.lbd-more { flex: none; background: none; border: 0; padding: 6px 0; min-height: 32px; color: var(--gold, #fa8127); font: 500 13px var(--label); letter-spacing: .16em; text-transform: uppercase; cursor: pointer; }
+:where(html[data-theme="night"], body.night) .lbd-ring circle[stroke="#fa8127"] { stroke: #ff6a55; }
+/* content-visibility clips each patch at its own box: give it room for the NEW tag and the glow ring (2026-10-28, Sevaan) */
+.pw-item { padding: 16px; margin: -16px; }
+/* Find with nothing typed: no empty results row above the list (2026-10-28, Sevaan: a big gap under the search box) */
+body[data-view="find"] .result-row:has(> #results[hidden], > #results:empty):has(> #reset-filters[hidden]) { display: none; }
+body[data-view="find"] .grid.find-mode > .find-head:first-child { margin-top: 18px; }
+
+/* ===== Observer stats restyled like the rest of the app (2026-10-28, Sevaan: "looks different to the other pages") =====
+   Same sections, Tonight/Settings language: each section's label sits above a quiet panel (#0e1a29, soft edge, 14px), the
+   rank is a hero like Tonight's, tiles inside a panel are flat, bars are the Tonight strip's slate and orange. */
+#stats-view .st-rank { border-radius: 14px; border: 1px solid #fa812755; background: radial-gradient(ellipse at 85% 0%, #fa81271f, transparent 70%), #0e1a29; box-shadow: none; padding: 16px; margin: 6px 0 4px; }
+#stats-view .st-sec { position: relative; margin: 40px 0 0; padding: 14px; border-radius: 14px; border: 1px solid #22344a; background: #0e1a29; }
+#stats-view .st-head { position: absolute; left: 2px; right: 2px; top: -26px; margin: 0; font: 500 13px/1.1 'SC Label', sans-serif !important; letter-spacing: .16em; text-transform: uppercase; color: #fa8127; }
+#stats-view .st-head .st-since, #stats-view .st-head .st-big { letter-spacing: .1em; color: #bdbea9; }
+#stats-view .st-head .st-big b { font-size: 14px; }
+#stats-view :is(.st-goal, .st-tile) { background: #ffffff06; border: 1px solid #ffffff0f; border-radius: 10px; }
+#stats-view .st-tb { height: 5px; background: #22324a; }
+#stats-view .st-bar span { background: #2d4058; border-radius: 3px 3px 0 0; }
+#stats-view .st-bar.now span, #stats-view .st-bar span[style*="height:"]:not([style*="height:0%"]) { background: #fa8127; }
+#stats-view .st-hls > * + *, #stats-view .st-rare > * + * { border-top: 1px solid #ffffff12; padding-top: 10px; }
+#stats-view .st-hl img, #stats-view .st-noart { border-radius: 6px; }
+#stats-body > :last-child { margin-bottom: 28px; }
+:where(body.night, html[data-theme="night"]) #stats-view .st-head { color: #ff6a55; }
+:where(body.night, html[data-theme="night"]) #stats-view .st-rank { border-color: #ff6a5555; background: #0c0303; }
+/* the stats rank is the slim dial card (2026-10-28) */
+#stats-view .st-rank.lb-dial { display: flex; align-items: center; justify-content: flex-start; gap: 14px; padding: 14px 16px; }
+#stats-view .st-rank .lbd-name { font-size: 23px; }
+#stats-view .st-rank .lbd-to b { font: 500 14px/1.2 'SC Label', sans-serif; color: #fff2b3; text-transform: none; letter-spacing: 0; }
+#stats-view .st-rank .lb-xp { font: 500 14px/1 'SC Label', sans-serif; letter-spacing: .1em; color: #bdbea9; } #stats-view .st-rank .lb-xp b { font: 400 22px/1 'SC Display', 'Russo One', sans-serif; color: #fa8127; }
+#stats-view .st-rank .lbd-ring b { font: 400 15px/1 'SC Display', 'Russo One', sans-serif; color: #fff2b3; }
+#stats-view .st-rank .lbd-ring b small { margin: 4px 0 0; font: 500 10px/1 'SC Label', sans-serif; letter-spacing: .14em; color: #bdbea9; }
+/* The last line under a card ("Not yet collected · record a live sighting…") clears the home bar (iOS playtest 2026-10-29) */
+#viewer .viewer-scroll { padding-bottom: calc(max(var(--safe-bottom, 0px), env(safe-area-inset-bottom, 0px)) + 56px) !important; } /* the earlier rule out-ranked it (build 42 playtest: Preview artwork cut off) */
+/* Fleet cards (Starlink…) have a shorter picture, so their name sits higher: their Up tonight pill is the time alone,
+   half the height, clear of the name (iPad playtest 2026-10-30: it covered "STARLINK"). */
+.up-next__tile:has(.card--fleet) .up-next__when small { display: none; }
+.up-next__tile:has(.card--fleet) .up-next__when { padding-block: 3px; }
+/* The viewer on its way out lets taps through to the grid (cards-page letTapsThrough). */
+#viewer.closing, #viewer.closing * { pointer-events: none !important; }
+/* Rarest finds names take two lines rather than "Tiangong Spa…" (final iPhone 14 check 2026-10-30). */
+.st-rare b { white-space: normal !important; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; line-height: 1.12 !important; }
+/* Albums say what's in them where the name doesn't (final iPhone 14 check 2026-10-30: SL-8 stages are in Red Stars, so
+   Rocket Stages read 0 while you had two). */
+.album__sub { display: block; margin-top: 2px; font: 500 12px/1.2 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .03em; text-transform: none; color: #bdbea9; }
+/* An uncollected card's "Preview artwork" link is part of the view too, so it shows without scrolling (final iPhone 14
+   check 2026-10-30). */
+@media (max-width: 699px) { #viewer:has(#v-preview:not([hidden])):not(:has(#v-where:not([hidden]))) { --v-where-h: 48px; } }
+#album-head .album__sub { display: none; } /* the list shows it; in the album's own header it pushed the count onto an indented line */
+
+/* While it closes the viewer is a plain (non-modal) dialog so taps reach the grid; it still sits over the sticky tabs and
+   search bar (z 25/24), or they covered the card spinning back into its tile (2026-11-07, Sevaan). */
+#viewer.closing { z-index: 40; }
+/* OBSERVER RANK never wraps: the streak side wraps its Remind me Sat button under the streak text instead (iPhone playtest 2026-11-07). */
+.lb-top > span:first-child { white-space: nowrap; }
+.lb-top .lb-streak { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 6px 8px; min-width: 0; }
+.lb-top .lb-streak .lb-remind { margin-left: 0; }
+
+/* Share sheet in the card viewer (2026-11-07): one Share icon → a picture of the card, or the sealed pack. Inside #viewer so it shows over the top layer. */
+#viewer .v-sheet { position: absolute; inset: 0; z-index: 30; }
+#viewer .v-sheet-scrim { position: absolute; inset: 0; background: #02070dcc; opacity: 0; transition: opacity var(--m-norm, .26s) ease; }
+#viewer .v-sheet-card { position: absolute; left: 50%; bottom: 0; width: min(100%, 480px); box-sizing: border-box; transform: translate(-50%, 104%); padding: 16px 16px calc(var(--safe-bottom, 0px) + 14px); border-radius: 20px 20px 0 0; background: #0f1b2b; border: 1px solid #ffffff1c; border-bottom: 0; box-shadow: 0 -12px 40px #00000066; transition: transform var(--m-norm, .3s) var(--ease-out, ease); }
+#viewer .v-sheet.on .v-sheet-scrim { opacity: 1; } #viewer .v-sheet.on .v-sheet-card { transform: translate(-50%, 0); }
+#viewer .v-sheet-title { margin: 2px 2px 12px; color: #bdbea9; }
+#viewer .v-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+#viewer .v-opt { display: flex; flex-direction: column; align-items: stretch; margin: 0; padding: 8px 8px 12px; border: 1px solid #ffffff14; border-radius: 14px; background: #ffffff0a; color: #fff2b3; text-align: center; cursor: pointer; transition: transform .12s ease; }
+#viewer .v-opt:active { background: #ffffff1a; transform: scale(.98); }
+#viewer .v-opt-vis { position: relative; display: block; height: 152px; margin-bottom: 10px; border-radius: 10px; overflow: hidden; background: radial-gradient(ellipse at 50% 30%, #13243a, #070d18 80%); }
+#viewer .v-opt-mini { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); --mini-s: .32; filter: drop-shadow(0 6px 12px #0009); }
+#viewer .v-opt-badge { position: absolute; right: 8px; bottom: 8px; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #fa8127; color: #080f1b; box-shadow: 0 4px 12px #0008; }
+#viewer .v-opt-pack .sv-pk { position: absolute; left: 50%; top: 50%; width: 140px; height: 200px; transform: translate(-50%, -50%) scale(.62); animation: none; }
+#viewer .v-opt-pack .sv-bag > span { position: absolute; inset: 0; display: block; }
+#viewer .v-opt > b { display: block; font: 500 14px/1.2 'SC Label', sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+#viewer .v-opt > small { display: block; margin-top: 4px; font: 400 12.5px/1.35 system-ui, sans-serif; color: #bdbea9; }
+#viewer .v-sheet-cancel { display: block; width: 100%; margin-top: 8px; padding: 12px; border: 0; border-radius: 13px; background: none; color: #bdbea9; font: 500 14px 'SC Label', sans-serif; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; }
+:where(html[data-theme="night"], body.night) #viewer .v-sheet-card { background: #120606; border-color: #ff6a5533; }
+:where(html[data-theme="night"], body.night) #viewer .v-opt-badge { background: #ff6a55; }
+@media (prefers-reduced-motion: reduce) { #viewer .v-sheet-card { transition: opacity .15s; transform: translate(-50%, 0); opacity: 0; } #viewer .v-sheet.on .v-sheet-card { opacity: 1; } }

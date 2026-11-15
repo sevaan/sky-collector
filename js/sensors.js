@@ -1,0 +1,254 @@
+// Phone orientation -> where the back of the phone is pointing in the sky.
+// Produces a camera basis in local East-North-Up: right, up (screen edges) and back (view direction).
+import { declination } from './declination.js?v=0.1.1574';
+
+const RAD = Math.PI / 180;
+
+export const pointing = {
+  source: 'none',        // 'ios' | 'absolute' | 'relative' | 'none'
+  basis: null,           // { right, up, back } unit vectors in ENU, before heading offset
+  headingOffset: 0,      // degrees added to raw azimuth to get true azimuth
+  compassAccuracy: null, // iOS: ± degrees, -1 = uncalibrated
+  compassJumpAt: 0,      // when the compass last swung far enough that we had to accept a big correction
+  compassDoubt: 0,       // 0..1: how much the compass currently disagrees with where we think north is
+  settled: false,        // iOS: the compass has had a few seconds to wake and agrees with itself (turn directions wait for it)
+  lastEvent: 0,
+};
+
+// The compass nudge is remembered on this phone (2026-10-08, Sevaan: −20° lined everything up). Most of a steady
+// error like that is the phone’s compass plus magnetic declination (iOS reports magnetic north), which don’t change
+// from night to night, so it shouldn’t need redoing every visit.
+const readNudge = () => { try { const n = Number(localStorage.getItem('compassNudge')); return Number.isFinite(n) ? n : 0; } catch { return 0; } };
+let manualNudge = readNudge(), headingLocked = false, nudgeSave = 0;
+export function lockHeading(on) { headingLocked = !!on; }
+// True north (2026-10-08): iOS’s compass is magnetic, so add the local declination (js/declination.js, WMM2025).
+// The first time it’s applied, a saved nudge is moved by the same amount so the sky doesn’t jump for someone who
+// had already lined it up by hand (Sevaan’s −20° becomes about −9°).
+let decl = 0, declAt = '';
+export function setCompassPlace(lat, lon) {
+  if (lat == null || lon == null) return;
+  const k = `${lat.toFixed(1)},${lon.toFixed(1)}`; if (k === declAt) return;
+  declAt = k;
+  try { decl = declination(lat, lon); } catch { decl = 0; }
+  try {
+    if (!localStorage.getItem('declApplied')) {
+      if (manualNudge) { manualNudge = (manualNudge - decl + 360) % 360; localStorage.setItem('compassNudge', String(Math.round(manualNudge * 10) / 10)); }
+      localStorage.setItem('declApplied', '1');
+    }
+  } catch {}
+}
+export function getDeclination() { return decl; }
+export function nudgeHeading(deg) {
+  manualNudge = (manualNudge + deg + 360) % 360;
+  clearTimeout(nudgeSave); // drags nudge in small steps; save once they settle
+  nudgeSave = setTimeout(() => { try { localStorage.setItem('compassNudge', String(Math.round(manualNudge * 10) / 10)); } catch {} }, 400);
+}
+export function getNudge() { return manualNudge; }
+
+// W3C DeviceOrientation: R = Rz(alpha) · Rx(beta) · Ry(gamma), device frame -> earth frame.
+function basisFromEuler(alpha, beta, gamma) {
+  const a = alpha * RAD, b = beta * RAD, g = gamma * RAD;
+  const cA = Math.cos(a), sA = Math.sin(a), cB = Math.cos(b), sB = Math.sin(b), cG = Math.cos(g), sG = Math.sin(g);
+  const col1 = [cA * cG - sA * sB * sG, cG * sA + cA * sB * sG, -cB * sG]; // device +X (screen right)
+  const col2 = [-cB * sA, cA * cB, sB];                                    // device +Y (screen up)
+  const col3 = [cA * sG + cG * sA * sB, sA * sG - cA * cG * sB, cB * cG];  // device +Z (out of screen)
+  let right = col1, up = col2;
+  // Account for the screen being rotated (landscape).
+  const angle = (screen.orientation?.angle ?? window.orientation ?? 0) * RAD;
+  if (angle) {
+    const c = Math.cos(angle), s = Math.sin(angle);
+    right = [col1[0] * c - col2[0] * s, col1[1] * c - col2[1] * s, col1[2] * c - col2[2] * s];
+    up = [col1[0] * s + col2[0] * c, col1[1] * s + col2[1] * c, col1[2] * s + col2[2] * c];
+  }
+  return { right, up, back: [-col3[0], -col3[1], -col3[2]] };
+}
+
+function rawAzimuth(v) {
+  return (Math.atan2(v[0], v[1]) / RAD + 360) % 360;
+}
+
+// Circular smoothing so the heading offset doesn’t jitter.
+function blendAngle(prev, next, k) {
+  const d = ((next - prev + 540) % 360) - 180;
+  return (prev + d * k + 360) % 360;
+}
+
+// iOS heading calibration. webkitCompassHeading is only trustworthy as "the direction the camera faces"
+// while the phone is held roughly upright (top edge up, camera near the horizon). Tip the phone back
+// overhead and iOS switches to measuring from the top edge instead, so the reading swings ~180°; if we
+// kept blending that in, the whole sky would slowly spin. So: calibrate only in the upright pose, and
+// once calibrated, ignore readings that disagree wildly (a flipped or disturbed compass).
+let offsetSeeded = false;   // any estimate at all
+let offsetTrusted = false;  // estimate came from the upright pose
+let goodSamples = 0;
+let rejectStreak = 0;
+// Is the phone moving? How fast the camera axis turns, smoothed (°/s). Compass corrections are applied only while it
+// moves, where they hide in your own motion; held still, the sky stays put (2026-10-30, Sevaan: "lifted my phone up to
+// look at the Sun and the sky started rotating": the offset eased toward a disagreeing compass while the phone was still).
+let lastBack = null, lastT = 0, turnRate = 0;
+function trackTurn(basis, t) {
+  if (lastBack && t > lastT) { const d = Math.acos(Math.max(-1, Math.min(1, lastBack[0] * basis.back[0] + lastBack[1] * basis.back[1] + lastBack[2] * basis.back[2]))) / RAD, rate = d / ((t - lastT) / 1000); turnRate += (Math.min(rate, 400) - turnRate) * 0.25; }
+  lastBack = basis.back; lastT = t; pointing.turnRate = turnRate;
+}
+const moving = () => turnRate > 6;
+// The compass's first seconds (2026-10-31, Sevaan: first time out, it sent him the wrong way, then the sky jumped and the
+// Sun was back where he started). iOS's first headings after the compass wakes are often stale; the steady-state rules
+// below then treated the real heading as interference and only took it ~1.5 s and a movement later. So for the first
+// EARLY_MS after the first heading, a disagreement is taken at once, and pointing.settled stays false (main.js holds the
+// turn directions) until the compass has agreed with itself for a moment.
+const EARLY_MS = 20000, SETTLE_MS = 2500, SETTLE_MAX_MS = 6000;
+let firstHeadingAt = 0, agreeSince = 0;
+// Waking up again after the app was away: the compass is stale then too, so it settles again (unless lined up by hand).
+if (typeof document !== 'undefined') document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { firstHeadingAt = 0; pointing.settled = false; } });
+// For the turn directions: true while an iPhone's compass is still waking up (at most SETTLE_MAX_MS after its first heading).
+export const compassSettling = () => pointing.source === 'ios' && !pointing.settled && !headingLocked && firstHeadingAt > 0 && performance.now() - firstHeadingAt < SETTLE_MAX_MS;
+function updateHeadingOffset(heading, basis) {
+  const now = performance.now(); if (!firstHeadingAt) { firstHeadingAt = agreeSince = now; }
+  const early = now - firstHeadingAt < EARLY_MS;
+  const elBack = Math.asin(Math.max(-1, Math.min(1, basis.back[2]))) / RAD;
+  const upright = basis.up[2] > 0.6 && Math.abs(elBack) < 40;
+  const measured = (heading - rawAzimuth(basis.back) + 360) % 360;
+  if (!offsetSeeded) { if (Math.abs(basis.back[2]) > 0.9) return; /* flat or overhead: azimuth is noise; wait for a usable pose (bug hunt 2026-10-20) */ pointing.headingOffset = measured; offsetSeeded = true; offsetTrusted = upright; return; }
+  if (!upright) { rejectStreak = 0; pointing.compassDoubt = Math.max(0, pointing.compassDoubt - 0.01); return; } // hold the last good offset while pointing high or at odd angles; old doubt fades
+  const diff = Math.abs(((measured - pointing.headingOffset + 540) % 360) - 180);
+  if (!offsetTrusted) { // first upright reading replaces a guess taken in a bad pose
+    pointing.headingOffset = measured; offsetTrusted = true; goodSamples = 1; return;
+  }
+  if (early && !headingLocked) { // settling: follow the compass closely, snapping on a real disagreement
+    if (diff > 8) { pointing.headingOffset = measured; agreeSince = now; if (pointing.settled && diff > 25) pointing.compassJumpAt = now; }
+    else pointing.headingOffset = blendAngle(pointing.headingOffset, measured, 0.2);
+    const acc = pointing.compassAccuracy, accOk = acc == null || (acc >= 0 && acc <= 30);
+    if (!pointing.settled && ((now - agreeSince > SETTLE_MS && accOk) || now - firstHeadingAt > SETTLE_MAX_MS)) pointing.settled = true;
+    rejectStreak = 0; pointing.compassDoubt = 0; goodSamples++;
+    return;
+  }
+  pointing.settled = true;
+  if (goodSamples > 20 && diff > 35) {
+    // A sudden big disagreement: usually interference or a flip. Only accept it if it persists.
+    pointing.compassDoubt = Math.min(1, rejectStreak / 90);
+    if (++rejectStreak < 90 || !moving()) return; // ~1.5 s of consistent readings at 60 Hz, then taken on the next movement
+    pointing.compassJumpAt = performance.now(); // it persisted: north really moved, so the compass was off
+    // Take the new heading at once (QA 2026-10-08: it used to blend 2 % and then wait another 1.5 s, so a real change
+    // took minutes to land).
+    pointing.headingOffset = measured; rejectStreak = 0; pointing.compassDoubt = 0; goodSamples++;
+    return;
+  }
+  rejectStreak = 0; pointing.compassDoubt = 0;
+  goodSamples++;
+  // Hold steady (2026-10-08, Sevaan: the sky ticked round while the phone was still): iOS reports the compass in
+  // whole degrees and it jitters, so once settled, small disagreements are ignored. After you line the sky up by hand
+  // (headingLocked), only a big, persistent change (handled above) moves it.
+  if (goodSamples > 30 && (diff < 2.5 || headingLocked || !moving())) return;
+  pointing.headingOffset = blendAngle(pointing.headingOffset, measured, goodSamples < 30 ? 0.2 : 0.02);
+}
+
+function onOrientation(e, absolute) {
+  if (e.alpha === null || e.beta === null || e.gamma === null) return;
+  // Android sends both absolute (north-referenced) and relative events; mixing them makes the sky jump.
+  if (!absolute && pointing.source === 'absolute') return;
+  const basis = basisFromEuler(e.alpha, e.beta, e.gamma);
+  pointing.basis = basis;
+  pointing.lastEvent = performance.now(); trackTurn(basis, pointing.lastEvent);
+
+  if (typeof e.webkitCompassHeading === 'number' && e.webkitCompassHeading >= 0) {
+    // iOS: alpha has an arbitrary zero; the compass heading pins it to true directions.
+    pointing.source = 'ios';
+    pointing.compassAccuracy = e.webkitCompassAccuracy;
+    updateHeadingOffset(e.webkitCompassHeading, basis);
+  } else if (pointing.source === 'ios') {
+    // a reading without a compass value (before the first heading, or a hiccup): keep iOS and its offset (bug hunt 2026-10-20)
+  } else if (absolute) {
+    pointing.source = 'absolute';
+    pointing.headingOffset = 0;
+  } else if (pointing.source !== 'absolute') {
+    pointing.source = 'relative';
+  }
+}
+
+export function needsPermission() {
+  return typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function';
+}
+
+let listening = false, attached = false;
+function attach() {
+  if (attached) return;
+  window.addEventListener('deviceorientationabsolute', (e) => onOrientation(e, true));
+  window.addEventListener('deviceorientation', (e) => onOrientation(e, e.absolute === true));
+  attached = true;
+}
+
+// Must be called from a user tap on iOS.
+export async function startSensors() {
+  if (listening) return true;
+  if (typeof DeviceOrientationEvent === 'undefined') return false;
+  if (needsPermission()) {
+    const result = await DeviceOrientationEvent.requestPermission();
+    if (result !== 'granted') return false;
+  }
+  attach();
+  listening = true;
+  return true;
+}
+
+// Tap to wake (bug hunt 2026-10-20): ask again inside the tap even when already listening (iPhone after the app was
+// away, or permission changed), then only report success if readings actually arrive.
+export async function resumeSensors(ms = 1200) {
+  if (typeof DeviceOrientationEvent === 'undefined') return false;
+  if (needsPermission()) { try { if ((await DeviceOrientationEvent.requestPermission()) !== 'granted') return false; } catch { return false; } }
+  return trySensorsQuietly(ms);
+}
+
+// Without a tap: listen anyway and see whether motion arrives. When this iPhone already allowed motion for the
+// site, events often flow with no new request, so a returning player never has to tap (2026-10-11, Sevaan).
+export function trySensorsQuietly(ms = 1200) {
+  if (typeof DeviceOrientationEvent === 'undefined') return Promise.resolve(false);
+  attach();
+  return new Promise((done) => {
+    const t0 = performance.now();
+    const check = () => {
+      if (pointing.basis && pointing.lastEvent > t0 - 50) { listening = true; return done(true); }
+      if (performance.now() - t0 > ms) return done(false);
+      setTimeout(check, 100);
+    };
+    check();
+  });
+}
+
+// The view keeps the phone's last direction while the phone lies still (2026-10-20, Android: Chrome stops sending
+// readings when nothing moves, so after 2 s the view fell back to the finger view looking up, then swept back down
+// at the next nudge, over and over on a table). Only a long silence (10 min) hands the view back to the finger.
+export function hasSensorView() {
+  return pointing.basis !== null && performance.now() - pointing.lastEvent < 600000;
+}
+export function hasLiveSensors() {
+  return pointing.basis !== null && performance.now() - pointing.lastEvent < 2000;
+}
+
+// Rotate an ENU vector about the Up axis by deg (positive = clockwise seen from above, like azimuth).
+export function rotateAz(v, deg) {
+  const a = deg * RAD, c = Math.cos(a), s = Math.sin(a);
+  return [v[0] * c + v[1] * s, -v[0] * s + v[1] * c, v[2]];
+}
+
+// Camera basis in true ENU (heading offset and manual nudge applied).
+export function trueBasis() {
+  const b = pointing.basis;
+  if (!b) return null;
+  const off = pointing.headingOffset + (pointing.source === 'ios' || pointing.source === 'absolute' ? decl : 0) + manualNudge; // Android's absolute orientation is magnetic north too (rotation vector; bug hunt 2026-10-20)
+  return { right: rotateAz(b.right, off), up: rotateAz(b.up, off), back: rotateAz(b.back, off) };
+}
+
+// Build a camera basis from azimuth/elevation (used by sim/desktop drag mode). Roll is zero.
+export function basisFromAzEl(az, el) {
+  const a = az * RAD, e = el * RAD;
+  const back = [Math.cos(e) * Math.sin(a), Math.cos(e) * Math.cos(a), Math.sin(e)];
+  const right = [Math.cos(a), -Math.sin(a), 0];
+  const up = [
+    back[1] * right[2] - back[2] * right[1],
+    back[2] * right[0] - back[0] * right[2],
+    back[0] * right[1] - back[1] * right[0],
+  ];
+  // up = back × right gives screen-up; make sure it tilts skyward.
+  if (up[2] < 0) { up[0] = -up[0]; up[1] = -up[1]; up[2] = -up[2]; }
+  return { right, up, back };
+}

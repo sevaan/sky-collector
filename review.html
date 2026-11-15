@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex">
+  <title>Card Review</title>
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/fonts.css?v=0.1.1574"><!-- Inter + IBM Plex Mono, self-hosted (perf audit 2026-10-29; OFL, fonts/*-OFL.txt) -->
+  <link rel="stylesheet" href="css/cards.css?v=0.1.1574">
+  <link rel="stylesheet" href="css/ui.css?v=0.1.1574">
+  <style>
+    /* Every card on one page, for scanning art and layout (2026-10-14). Not linked from the app. */
+    :root { color-scheme: dark; }
+    body { margin: 0; background: #080f1b; color: #fff2b3; font: 500 15px/1.35 'SC Label', 'Barlow Condensed', 'Arial Narrow', sans-serif; }
+    header { position: sticky; top: 0; z-index: 5; background: #080f1bf2; backdrop-filter: blur(8px); border-bottom: 1px solid #22344a; padding: 12px 16px; display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+    h1 { font: 400 20px/1 'SC Display', Impact, sans-serif; margin: 0 8px 0 0; letter-spacing: .02em; }
+    #count { color: #9fb3c8; letter-spacing: .06em; }
+    input, select, button { font: inherit; color: #fff2b3; background: #0e1a29; border: 1px solid #22344a; border-radius: 10px; padding: 7px 10px; font-size: 16px; }
+    input[type=search] { min-width: 0; width: 200px; }
+    button { cursor: pointer; letter-spacing: .06em; }
+    button.on, label.tog.on { border-color: #fa8127; color: #fa8127; }
+    label.tog { display: inline-flex; gap: 6px; align-items: center; border: 1px solid #22344a; border-radius: 10px; padding: 7px 10px; cursor: pointer; user-select: none; }
+    label.tog input { accent-color: #fa8127; }
+    #size { width: 110px; padding: 0; accent-color: #fa8127; }
+    #grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(calc(280px * var(--mini-s)), 1fr)); gap: 18px 12px; padding: 16px; }
+    .rv { position: relative; display: grid; gap: 5px; justify-items: center; content-visibility: auto; contain-intrinsic-size: calc(280px * var(--mini-s)) calc(420px * var(--mini-s) + 40px); }
+    .rv .slot { width: calc(280px * var(--mini-s)); height: calc(420px * var(--mini-s)); border-radius: calc(14px * var(--mini-s)); background: #0e1a29; cursor: zoom-in; }
+    .rv .slot.old-art { opacity: .5; } /* still on its original art */
+    .rv .cap { width: calc(280px * var(--mini-s)); box-sizing: border-box; padding-right: 38px; font-size: 12px; line-height: 1.25; color: #9fb3c8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .rv .cap b { color: #fff2b3; font-weight: 600; }
+    .rv .star { position: absolute; bottom: 0; right: max(0px, calc(50% - 140px * var(--mini-s))); width: 34px; height: 34px; padding: 0; border-radius: 50%; background: #080f1bcc; border: 1px solid #22344a; font-size: 18px; line-height: 1; color: #9fb3c8; }
+    .rv.starred .star { color: #ffc93d; border-color: #ffc93d; }
+    .rv.starred .slot { outline: 3px solid #ffc93d; outline-offset: 2px; }
+    #view { position: fixed; inset: 0; z-index: 10; background: #050a12f0; display: grid; place-items: center; padding: 16px; overflow: auto; }
+    #view[hidden] { display: none; }
+    #view .wrap { display: grid; gap: 12px; justify-items: center; }
+    #view .card { font-size: min(12px, calc((100vw - 40px) / 28), calc((100vh - 150px) / 42)); }
+    #view .meta { color: #9fb3c8; text-align: center; font-size: 14px; }
+    #view .meta b { color: #fff2b3; }
+    #view .acts { display: flex; gap: 10px; }
+    #view .acts[hidden], #view [hidden] { display: none; }
+    .rv .slot.framed { outline: 3px solid #5fd0c0; outline-offset: 2px; } /* has saved framing */
+    .fr-hint, .fr-read { margin: 0; color: #9fb3c8; font-size: 14px; letter-spacing: .06em; text-align: center; }
+    .fr-read { color: #fa8127; font-variant-numeric: tabular-nums; }
+    .framing .card__art { overflow: visible; outline: 2px solid #fa8127; z-index: 3; }
+    .framing .card__art .art-stars { display: none; } /* the twinkles sit on the unmoved picture */
+    .framing .card__art::after { content: ''; position: absolute; inset: 0; box-shadow: 0 0 0 100vmax #050a12b8; pointer-events: none; z-index: 5; } /* dim the picture outside the window */
+    .fr-ov { position: absolute; inset: 0; z-index: 10; cursor: grab; touch-action: none; }
+    .fr-ov:active { cursor: grabbing; }
+    .fr-tip { position: absolute; left: 0; right: 0; bottom: 6px; margin: 0; text-align: center; font: 600 11px/1 'Barlow Condensed', sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #fff2b3; text-shadow: 0 1px 3px #000; pointer-events: none; }
+    .fr-h { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: #fa8127; border: 2px solid #fff2b3; translate: -50% -50%; cursor: nwse-resize; }
+    .fr-h.tl { left: 0; top: 0; } .fr-h.tr { left: 100%; top: 0; cursor: nesw-resize; } .fr-h.bl { left: 0; top: 100%; cursor: nesw-resize; } .fr-h.br { left: 100%; top: 100%; }
+    #toast { position: fixed; left: 50%; bottom: 20px; translate: -50% 0; background: #0e1a29; border: 1px solid #fa8127; color: #fff2b3; padding: 10px 16px; border-radius: 12px; z-index: 20; }
+    #toast[hidden] { display: none; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Card review</h1>
+    <span id="count">Loading…</span>
+    <input type="search" id="q" placeholder="Search name, type, art…" aria-label="Search">
+    <select id="type" aria-label="Type"><option value="">Every type</option></select>
+    <select id="tier" aria-label="Rarity"><option value="">Every rarity</option></select>
+    <select id="art" aria-label="Art"><option value="">All pictures</option><option value="photo" selected>Real photos</option><option value="painted">Painted pictures</option><option value="drawn">Drawn (no picture)</option></select>
+    <select id="sort" aria-label="Sort"><option value="used">Most used first</option><option value="rare">Rarest first</option><option value="name">A to Z</option></select>
+    <label class="tog" id="one-l"><input type="checkbox" id="one" checked> One per picture</label>
+    <label class="tog" id="starred-l"><input type="checkbox" id="starred"> Starred only</label>
+    <input type="range" id="size" min="0.3" max="0.9" step="0.05" value="0.5" aria-label="Card size">
+    <button type="button" id="copy">Copy starred</button>
+    <button type="button" id="random" title="Six random cards of every kind; press again for a new set">Random mix</button>
+    <button type="button" id="clear">Clear stars</button>
+    <button type="button" id="copy-frames">Copy framing</button>
+  </header>
+  <main id="grid" aria-live="polite"></main>
+  <div id="view" hidden></div>
+  <div id="toast" hidden></div>
+  <script type="module" src="js/review.js?v=0.1.1574"></script>
+</body>
+</html>
