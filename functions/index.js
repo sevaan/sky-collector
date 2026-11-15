@@ -1,5 +1,5 @@
-// Space Collector server on Firebase (2026-10-26, Sevaan: "Go with Firebase"). A Cloud Run function ("api", Node 22) in
-// the personal project space-collector-91cc7, served through Firebase Hosting at https://spacecollector.app/api/…, so
+// Sky Collector server on Firebase (2026-10-26, Sevaan: "Go with Firebase"). A Cloud Run function ("api", Node 22) in
+// the personal project sky-collector-91cc7, served through Firebase Hosting at https://skycollector.app/api/…, so
 // the Hosting CDN caches what it can (Cache-Control s-maxage) and nearby players share upstream requests.
 // Deployed with gcloud (personal login), never the firebase CLI. Same routes as worker/src/index.js:
 //   GET  /api/wx?lat&lon        MET Norway (CC BY 4.0), reshaped for js/weather.js; cached 30 min per 0.1°
@@ -14,8 +14,8 @@ import functions from '@google-cloud/functions-framework';
 import { Firestore } from '@google-cloud/firestore';
 import { statsHtml } from './stats-page.js';
 const db = new Firestore();
-const ALLOWED = [/^https:\/\/sevaan\.github\.io$/, /^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/, /^capacitor:\/\/localhost$/, /^https:\/\/localhost$/, /^https:\/\/spacecollector\.app$/];
-const UA = 'SpaceCollector/1.0 (https://spacecollector.app; hello@spacecollector.app)';
+const ALLOWED = [/^https:\/\/sevaan\.github\.io$/, /^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/, /^capacitor:\/\/localhost$/, /^https:\/\/localhost$/, /^https:\/\/skycollector\.app$/];
+const UA = 'SkyCollector/1.0 (https://skycollector.app; hello@skycollector.app)';
 const REPO_RAW = 'https://raw.githubusercontent.com/sevaan/space-collector-data/main/'; // public copy of data/ (the game's repo went private 2026-11-06)
 const mem = new Map(); // per-instance cache on top of the CDN's
 async function cached(key, ms, make) { const h = mem.get(key); if (h && Date.now() - h.at < ms) return h.body; const body = await make(); if (body != null) { mem.set(key, { at: Date.now(), body }); if (mem.size > 2000) mem.clear(); } return body; }
@@ -94,7 +94,7 @@ async function stats(all, before = false) {
 }
 
 // Send cards (2026-11-07, Sevaan: "a link to a lot of cards [must] be sent by text normally"): the pack lives here under
-// a random 7-character id, so every link is short (spacecollector.app/c/<id>). The code is what the app would have put in
+// a random 7-character id, so every link is short (skycollector.app/c/<id>). The code is what the app would have put in
 // the link: card keys, times, places rounded to ~10 km; no names, no accounts.
 const PACK_ABC = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789', PACK_DAYS = 90, PACK_MAX = 300000;
 const packId = () => { let s = ''; const b = new Uint8Array(7); crypto.getRandomValues(b); for (const x of b) s += PACK_ABC[x % PACK_ABC.length]; return s; };

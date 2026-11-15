@@ -4,9 +4,9 @@
 // or removes sightings; nothing on the other phone is overwritten and every card fact stays true.
 // This module is the rules and the link format (no DOM); the screens are js/send-cards.js (sending, in the Collection)
 // and js/gift-pack.js (receiving, the booster pack). Tests: tests/gift.test.mjs.
-import { nightKey } from './observation.js?v=0.1.1574';
+import { nightKey } from './observation.js?v=0.1.1575';
 
-export const GIFT_HOST = 'https://spacecollector.app/c/';
+export const GIFT_HOST = 'https://skycollector.app/c/';
 export const SAME_MOMENT_MS = 10 * 60e3; // a sent sighting of the same object within 10 min of one you have = the same moment (you were out together)
 export const MAX_LINK = 60000; // characters; far more than a normal send (1,700 sightings is about 15,000)
 
@@ -67,10 +67,10 @@ export async function readGiftCode(code) {
 }
 export const giftLink = (code) => `${GIFT_HOST}#${code}`;
 // Short links (2026-11-07): the pack is stored on our server (functions/index.js /api/pack) and the link carries only its
-// 7-character id: https://spacecollector.app/c/<id>, spacecollector://c/<id>, or ?p=<id>.
-export const packLink = (id) => `https://spacecollector.app/c/${id}`;
+// 7-character id: https://skycollector.app/c/<id>, skycollector://c/<id>, or ?p=<id>.
+export const packLink = (id) => `https://skycollector.app/c/${id}`;
 export function packIdFrom(url) { const m = /(?:\/c\/|[?&]p=)([A-Za-z0-9]{7})(?![A-Za-z0-9])/.exec(String(url ?? '')); return m ? m[1] : null; }
-// The code in anything that might carry one: the https link, the app's own spacecollector://c#… link, or a page hash.
+// The code in anything that might carry one: the https link, the app's own skycollector://c#… link, or a page hash.
 export function codeFrom(url) { const m = /(?:#|[?&]g=)(g\d[A-Za-z0-9_~-]+)/.exec(String(url ?? '')); return m ? m[1] : null; } // ?g= too: an Android intent link can't carry a #
 
 // ---------- receiving ----------

@@ -12,7 +12,7 @@ test('a pack survives the link: same ids, places to ~10 km, nothing local leaks'
   const code = await giftCode(packGift(list, { from: 'Dad', bid: 'abc', deals: { [String(Math.floor((N(1) - 78.3456 / 15 * 3600e3 - 12 * 3600e3) / 86400e3))]: ['m1'] } }));
   assert.match(code, /^g1[A-Za-z0-9~-]+$/); // no underscores: chats eat them
   assert.equal(codeFrom(giftLink(code)), code);
-  assert.equal(codeFrom(`spacecollector://c#${code}`), code);
+  assert.equal(codeFrom(`skycollector://c#${code}`), code);
   const g = await readGiftCode(code);
   assert.equal(g.from, 'Dad'); assert.equal(g.bid, 'abc');
   assert.deepEqual(g.sightings.map(backupId), list.slice().sort((a, b) => a.time - b.time).map(backupId)); // the same sightings everywhere
@@ -72,9 +72,9 @@ test('a fleet card never turns shiny, and gains launches', () => {
 
 test('short links: the pack id from any form of the link', () => {
   assert.equal(packIdFrom(packLink('HWqmCPZ')), 'HWqmCPZ');
-  assert.equal(packIdFrom('https://spacecollector.app/c/HWqmCPZ?app=tester'), 'HWqmCPZ');
+  assert.equal(packIdFrom('https://skycollector.app/c/HWqmCPZ?app=tester'), 'HWqmCPZ');
   assert.equal(packIdFrom('sctester://c/HWqmCPZ'), 'HWqmCPZ');
-  assert.equal(packIdFrom('spacecollector://c?p=HWqmCPZ'), 'HWqmCPZ');
-  assert.equal(packIdFrom('https://spacecollector.app/c/#g1abc'), null);
-  assert.equal(packIdFrom('https://spacecollector.app/c/HWqmCPZx'), null);
+  assert.equal(packIdFrom('skycollector://c?p=HWqmCPZ'), 'HWqmCPZ');
+  assert.equal(packIdFrom('https://skycollector.app/c/#g1abc'), null);
+  assert.equal(packIdFrom('https://skycollector.app/c/HWqmCPZx'), null);
 });

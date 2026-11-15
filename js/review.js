@@ -3,16 +3,16 @@
 // picture" shows one card for each art file (most satellites share a picture by kind) with how many cards use it.
 // Stars (☆) are saved in this browser (localStorage 'reviewStars'); "Copy starred" puts a list on the clipboard to
 // hand back. Not linked from the app.
-import { expandFacts } from './catalog-facts.js?v=0.1.1574';
-import { renderCard, miniCard, artImage } from './card.js?v=0.1.1574';
-import { ART_CREDITS } from './art-credits.js?v=0.1.1574';
-import { buildCards } from './card-model.js?v=0.1.1574';
-import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1574';
-import { loadLore, titleFor, debrisOf } from './lore.js?v=0.1.1574';
-import './stories.js?v=0.1.1574';
-import { CON_FIGURES } from './con-figures.js?v=0.1.1574';
-import { loadConstellations, CON_BY_ID } from './constellations.js?v=0.1.1574';
-import { loadComets } from './comets.js?v=0.1.1574';
+import { expandFacts } from './catalog-facts.js?v=0.1.1575';
+import { renderCard, miniCard, artImage } from './card.js?v=0.1.1575';
+import { ART_CREDITS } from './art-credits.js?v=0.1.1575';
+import { buildCards } from './card-model.js?v=0.1.1575';
+import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1575';
+import { loadLore, titleFor, debrisOf } from './lore.js?v=0.1.1575';
+import './stories.js?v=0.1.1575';
+import { CON_FIGURES } from './con-figures.js?v=0.1.1575';
+import { loadConstellations, CON_BY_ID } from './constellations.js?v=0.1.1575';
+import { loadComets } from './comets.js?v=0.1.1575';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
@@ -220,13 +220,13 @@ const setSize = () => document.documentElement.style.setProperty('--mini-s', $('
 $('size').addEventListener('input', setSize); setSize();
 $('copy').addEventListener('click', async () => {
   const lines = [...stars.values()].map((s) => `- ${s.art ? `art "${s.art}"` : 'drawn art'} · ${s.name} (${s.type}, ${s.tier}, key ${s.key})`);
-  const text = `Space Collector cards to redo (${lines.length}):\n${lines.join('\n')}`;
+  const text = `Sky Collector cards to redo (${lines.length}):\n${lines.join('\n')}`;
   try { await navigator.clipboard.writeText(text); toast(`Copied ${lines.length} starred`); } catch { prompt('Copy this list:', text); }
 });
 $('copy-frames').textContent = `Copy framing (${Object.keys(frames).length})`;
 $('copy-frames').addEventListener('click', async () => {
   const n = Object.keys(frames).length; if (!n) { toast('No framing saved yet'); return; }
-  const text = `Space Collector framing (${n}):\n${JSON.stringify(frames)}`;
+  const text = `Sky Collector framing (${n}):\n${JSON.stringify(frames)}`;
   try { await navigator.clipboard.writeText(text); toast(`Copied framing for ${n} picture${n === 1 ? '' : 's'}`); } catch { prompt('Copy this:', text); }
 });
 $('clear').addEventListener('click', () => { if (stars.size && confirm(`Clear all ${stars.size} stars?`)) { stars.clear(); saveStars(); render(); } });

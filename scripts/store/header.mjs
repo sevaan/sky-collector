@@ -84,7 +84,7 @@ ${mode === 'bare' ? '.sky, .shade { display: none; }' : ''}${mode === 'sky' ? '.
 .ln { margin-top: ${34 * u}px; font: 500 ${40 * u}px/1.3 L; letter-spacing: .03em; color: #c9d3de; }
 .card { position: absolute; border-radius: ${18 * u}px; box-shadow: 0 ${26 * u}px ${80 * u}px rgba(0,0,0,.65), 0 0 ${50 * u}px rgba(250,129,39,.12); }
 </style></head><body><div class="sky"></div><div class="shade"></div>
-<div class="words"><div class="eb">${WORDS.eyebrow}</div><div class="mark">SPACE COLLECTOR</div><div class="hl">${WORDS.headline}</div><div class="ln">${WORDS.line}</div></div>
+<div class="words"><div class="eb">${WORDS.eyebrow}</div><div class="mark">SKY COLLECTOR</div><div class="hl">${WORDS.headline}</div><div class="ln">${WORDS.line}</div></div>
 ${card('hubble', cx - 0.62 * w, -8, ch * 0.9, 1, 0.03 * H)}
 ${card('saturn', cx + 0.62 * w, 8, ch * 0.9, 1, 0.03 * H)}
 ${card('iss', cx, 0, ch, 2)}

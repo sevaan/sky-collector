@@ -887,7 +887,7 @@ body.night .rc-plus { color: #ff6a55; }
 .set-range::-moz-range-track { height: 4px; border-radius: 99px; background: #2a3a4c; }
 .set-range::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; margin-top: -9px; border-radius: 50%; background: var(--gold); border: 0; }
 .set-range::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: var(--gold); border: 0; }
-/* Space Collector Plus (2026-10-11) */
+/* Sky Collector Plus (2026-10-11) */
 .plus-tag { display:inline-block; margin-left:.5em; padding:1px 6px 0; border-radius:99px; border:1px solid color-mix(in srgb,var(--gold) 60%,transparent); color:var(--gold); font:500 12px/1.4 var(--label); letter-spacing:.12em; vertical-align:2px; }
 .plus-perks { list-style:none; margin:4px 0 16px; padding:0; display:grid; gap:10px; max-height:46vh; overflow:auto; }
 .plus-perks li { display:flex; gap:12px; align-items:flex-start; }

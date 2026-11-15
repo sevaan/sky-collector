@@ -1,4 +1,4 @@
-// The usage page at /api/stats (rebuilt 2026-11-06, Sevaan: "Pretend you own spacecollector.app… is it easy to
+// The usage page at /api/stats (rebuilt 2026-11-06, Sevaan: "Pretend you own skycollector.app… is it easy to
 // understand? is it telling you everything you need to know?"). Pure: event rows in, HTML out, so it can be tried
 // locally with made-up rows (node functions/stats-try.mjs). Days and nights are in Toronto time.
 //
@@ -451,7 +451,7 @@ details.long{margin-top:44px;padding-top:18px;border-top:1px solid var(--line)}d
 .hc-col .bar{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:min(70%,18px);background:var(--or);border-radius:4px 4px 0 0}.hc-col .yest{position:absolute;left:50%;transform:translate(-50%,1px);width:min(86%,22px);height:2px;background:#7d8da3;border-radius:2px}
 .hlabs{display:grid;grid-template-columns:repeat(24,1fr);margin-top:6px;font:500 12px var(--label);letter-spacing:.04em;color:var(--dim);white-space:nowrap}.hlabs span{overflow:visible;width:0}.hlabs b{color:var(--or);font-weight:500}
 [data-tip]{cursor:default}</style><main>
-<div class="eyebrow">Space Collector</div><h1>Mission Control</h1>
+<div class="eyebrow">Sky Collector</div><h1>Mission Control</h1>
 <p class="top"><b>${dayTitle}</b> · Toronto time · updated ${clock(now)} · <a href="">refresh</a> (new numbers every 10 minutes)</p>
 <p class="top">${all ? `<b>Everyone, including tests</b> (the website and builds in testing mode) · <a href="?${keyQs}">real players only</a>` : `<b>Real players</b> (the website and tests left out) · <a href="?all=1&amp;${keyQs}">include tests</a>`} · ${before ? `<b>including the testing weeks</b> · <a href="?${all ? 'all=1&amp;' : ''}${keyQs}">from launch only</a>` : `counting from launch (Nov 7, 2026) · <a href="?before=1&amp;${all ? 'all=1&amp;' : ''}${keyQs}">include the testing weeks</a>`} · anonymous: a random ID per install, no places or names</p>`;
   const tipJs = `<div id="tip" role="tooltip"></div><script>(()=>{const t=document.getElementById('tip');let cur=null;const show=(el,x,y)=>{cur=el;t.textContent=el.getAttribute('data-tip');t.classList.add('on');const r=t.getBoundingClientRect();t.style.left=Math.max(8,Math.min(innerWidth-r.width-8,x-r.width/2))+'px';t.style.top=Math.max(8,y-r.height-12)+'px';};const hide=()=>{cur=null;t.classList.remove('on');};

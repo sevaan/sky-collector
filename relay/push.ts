@@ -1,4 +1,4 @@
-// Space Collector pass alerts (2026-10-10, playtest #14). Real push notifications for "a bright pass in 10 minutes".
+// Sky Collector pass alerts (2026-10-10, playtest #14). Real push notifications for "a bright pass in 10 minutes".
 // The app works out tonight's passes on the phone and sends this server a short list of alert times; this server keeps
 // them and pushes each one when it's due. No sightings are stored: only the push subscription, the next ~36 hours of
 // alert texts and a rounded place (~10 km) used to check the weather just before sending.
@@ -26,8 +26,8 @@ import { blob } from "https://esm.town/v/std/blob";
 import { sqlite } from "https://esm.town/v/std/sqlite";
 
 const ALLOWED = [/^https:\/\/sevaan\.github\.io$/, /^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/];
-const APP_ORIGINS = [...ALLOWED, /^capacitor:\/\/localhost$/, /^https:\/\/localhost$/, /^https:\/\/spacecollector\.app$/]; // the native apps' web views, for usage reports
-const SUBJECT = "https://sevaan.github.io/space-collector/";
+const APP_ORIGINS = [...ALLOWED, /^capacitor:\/\/localhost$/, /^https:\/\/localhost$/, /^https:\/\/skycollector\.app$/]; // the native apps' web views, for usage reports
+const SUBJECT = "https://sevaan.github.io/sky-collector/";
 // How often the cron runs (Val Town free plan: every 15 min, the minimum). Alerts go out up to one interval early,
 // never late; the text says the pass time, so early is fine. If the cron ever runs more often, lower CRON_MINUTES.
 const CRON_MINUTES = 15;
@@ -163,10 +163,10 @@ async function stats(all: boolean): Promise<Response> {
   const esc = (t: unknown) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]!));
   const row = (k: string, v: string, sub = "") => `<tr><th>${k}</th><td>${v}</td><td class="m">${sub}</td></tr>`;
   const e = (ends[0] ?? [0, 0, 0, 0]).map((n: unknown) => Number(n) || 0);
-  const html = `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Space Collector · usage</title>
+  const html = `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sky Collector · usage</title>
 <style>body{margin:0;padding:24px 16px;background:#080f1b;color:#e8eef6;font:15px/1.45 -apple-system,system-ui,sans-serif}h1{font-size:22px;color:#fff2b3;margin:0 0 4px}h2{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:#fa8127;margin:26px 0 8px}
 table{border-collapse:collapse;width:100%;max-width:760px}th,td{text-align:left;padding:7px 10px;border-bottom:1px solid #22324a;vertical-align:top}th{font-weight:500;color:#c9d3de;width:46%}td{color:#fff2b3;font-variant-numeric:tabular-nums}.m{color:#9fb0c6;font-size:13px}p{color:#9fb0c6;max-width:760px}a{color:#fa8127}</style>
-<h1>Space Collector · usage</h1><p>Anonymous: a random ID per install, no places or names. ${all ? 'Including test builds · <a href="?">players only</a>' : 'Players only (test builds left out) · <a href="?all=1">include test builds</a>'}. Updated ${new Date().toUTCString()}.</p>
+<h1>Sky Collector · usage</h1><p>Anonymous: a random ID per install, no places or names. ${all ? 'Including test builds · <a href="?">players only</a>' : 'Players only (test builds left out) · <a href="?all=1">include test builds</a>'}. Updated ${new Date().toUTCString()}.</p>
 <h2>The first night</h2><table>${row("New installs", String(installs))}${row("Caught a card on their first night", pct(firstNight, installs), `${firstNight} of ${installs}`)}${row("Finished the tour", esc(tour.map((r) => `${r[0]}: ${r[1]}`).join(" · ") || "–"))}${row("Motion", esc(motion.map((r) => `${r[0]}: ${r[1]}`).join(" · ") || "–"), "live = the phone steers; drag = finger; none = no sensors")}</table>
 <h2>The tour</h2><table>${row("Location", esc(list(tLoc)), "own = shared it; tz = the time-zone city")}${row("Set the day-one reminder", pct(tRemind, tFin), `${tRemind} of ${tFin} who finished`)}${row("Big first target, outside at night", esc(list(tRare)), `${tRareCaught} caught a card that night`)}${row("Match your sky", pct(Number(mDone[0]?.[0] ?? 0), mShown), `${mDone[0]?.[0] ?? 0} of ${mShown} shown${mDone[0]?.[1] ? ` · average ${Number(mDone[0][1]).toFixed(1)}` : ""}`)}</table>
 <h2>Compass</h2><table>${row("Lined up the sky", String(Number(cal[0]) || 0), `${Number(cal[1]) || 0} installs · against: ${esc(list(calRef))}`)}${row("Average turn", cal[4] ? `${Math.round(Number(cal[2]))}°` : "–", "how far people turned the sky to match the real one")}${row("Turned 20° or more", pct(Number(cal[3]) || 0, Number(cal[4]) || 0), "a big turn means a poor compass")}${row("Moon check", esc(list(moonChk)), "moon-off = the drawn Moon was off")}</table>

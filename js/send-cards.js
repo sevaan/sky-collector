@@ -3,13 +3,13 @@
 // know who sent it; 2026-11-07, Sevaan).
 // Sharing only copies: the cards stay on this phone too (2026-11-07, Sevaan: "we don't need Move as a concept... I don't
 // see anyone getting rid of cards they've collected"). Built by cards-page.js, which hands in what it knows (ctx).
-import { packGift, giftCode, giftLink, packLink, plural, MAX_LINK } from './gift.js?v=0.1.1574';
-import { nightKey } from './observation.js?v=0.1.1574';
-import { plugin } from './native.js?v=0.1.1574';
-import { SERVER } from './server.js?v=0.1.1574';
-import { backupBid } from './cloud-backup.js?v=0.1.1574';
-import { readDeals, readWeekThemes } from './progress.js?v=0.1.1574';
-import { TIER_INFO } from './rarity.js?v=0.1.1574';
+import { packGift, giftCode, giftLink, packLink, plural, MAX_LINK } from './gift.js?v=0.1.1575';
+import { nightKey } from './observation.js?v=0.1.1575';
+import { plugin } from './native.js?v=0.1.1575';
+import { SERVER } from './server.js?v=0.1.1575';
+import { backupBid } from './cloud-backup.js?v=0.1.1575';
+import { readDeals, readWeekThemes } from './progress.js?v=0.1.1575';
+import { TIER_INFO } from './rarity.js?v=0.1.1575';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const day = (t) => new Date(t).toLocaleDateString([], { weekday: 'short', day: 'numeric', month: 'short' });
@@ -206,7 +206,7 @@ async function send() {
     try { const r = await fetch(`${SERVER}/pack`, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: code, signal: AbortSignal.timeout(10000) }); if (r.ok) { const { id } = await r.json(); if (/^[A-Za-z0-9]{7}$/.test(id)) link = packLink(id); } } catch {}
     if (!link && code.length <= 6000) link = giftLink(code);
     if (!link) { ctx.ticket({ kind: 'error', eyebrow: 'NO CONNECTION', line: 'Couldn’t make the link', sub: 'Check you’re online and try again.' }); return; }
-    const title = `${plural(cards, 'card')} · Space Collector`;
+    const title = `${plural(cards, 'card')} · Sky Collector`;
     await seal();
     const r = await shareLink(link, title);
     if (!r.ok) { view.querySelector('.sv-stage')?.classList.remove('sealing'); if (!r.cancelled) ctx.ticket({ kind: 'error', line: 'Couldn’t share the link', sub: 'Try again.', ms: 2600 }); return; }

@@ -230,7 +230,7 @@ for (const kind of which === 'all' ? Object.keys(OUT) : [which]) {
       #end .rule { position: absolute; left: 50%; top: 73.3%; width: 27%; height: 1px; transform: translateX(-50%); background: linear-gradient(90deg, transparent, #fff2b366, transparent); }
       #end .s { position: absolute; left: 0; right: 0; top: 75.5%; text-align: center; font: 500 ${Math.round(u * 0.047)}px/1 'SC Label', sans-serif; letter-spacing: .26em; text-transform: uppercase; color: #fff2b3; }
       #end .s b { display: block; margin-top: .85em; font-size: .9em; letter-spacing: .2em; color: #fa8127; font-weight: 500; }
-    </style></head><body><div id="band"></div><div id="cap"></div><div id="end"><div class="shade"></div><img class="cl" src="${cardL}"><img class="cr" src="${cardR}"><img class="cc" src="${card}"><div class="t">SPACE COLLECTOR</div><div class="rule"></div><div class="s">Collect the night sky<b>Free · No ads</b></div></div></body></html>`);
+    </style></head><body><div id="band"></div><div id="cap"></div><div id="end"><div class="shade"></div><img class="cl" src="${cardL}"><img class="cr" src="${cardR}"><img class="cc" src="${card}"><div class="t">SKY COLLECTOR</div><div class="rule"></div><div class="s">Collect the night sky<b>Free · No ads</b></div></div></body></html>`);
     await cp.evaluate(async () => { await document.fonts.load('40px "SC Display"'); await document.fonts.load('500 20px "SC Label"'); await document.fonts.ready; });
     const N = Math.round(END * FPS), ease = (x) => 1 - Math.pow(1 - Math.min(1, Math.max(0, x)), 3);
     for (let i = 0; i < N; i++) {

@@ -1,4 +1,4 @@
-// 30-second vertical marketing video (2026-10-18, Sevaan's script): 1080 × 1920, 30 fps, store/promo/space-collector-30s.mp4.
+// 30-second vertical marketing video (2026-10-18, Sevaan's script): 1080 × 1920, 30 fps, store/promo/sky-collector-30s.mp4.
 // Real app footage recorded from the running app (the same set-up as preview.mjs), a rendered intro (a light crossing the
 // Milky Way, a phone raised into it) and end card, captions for sound-off viewing, the app's own sounds timed from the
 // footage, "Permafrost" underneath, night ambience, and an ElevenLabs voiceover ("Brian"; key from ELEVENLABS_API_KEY,
@@ -25,17 +25,17 @@ const T = {
   grid: [20, 22], moon: [22, 23.6], patch: [23.6, 25], outro: [25, 30],
 };
 const CAPTIONS = [ // [from, to, text]: the script's lines, on screen (no voiceover: Sevaan, 2026-10-18). The intro and
-  // end card carry their own words; all of them also go to store/promo/space-collector-30s.srt.
+  // end card carry their own words; all of them also go to store/promo/sky-collector-30s.srt.
   [4.3, 7.6, 'Point your phone. Find out.'], [7.75, 9.65, 'Track it.'], [9.75, 11.7, 'Collect it.'], [11.8, 13.9, 'Keep its card.'],
   [14.15, 15.9, 'The Space Station.'], [16.15, 17.9, 'Saturn.'], [18.15, 19.9, 'A rocket stage from 1964.'],
   [20.3, 24.85, 'Build a collection from the sky above you.'],
 ];
-const SRT_EXTRA = [[0.4, 3.9, 'What’s that light?'], [25.5, 30, 'Space Collector. Collect the night sky.']];
+const SRT_EXTRA = [[0.4, 3.9, 'What’s that light?'], [25.5, 30, 'Sky Collector. Collect the night sky.']];
 const VOICE = false; // the ElevenLabs voiceover (the VO table) is kept but off
 const VO = [ // [at, file, words]
   [0.45, 'vo1', 'What’s that light?'], [4.25, 'vo2', 'Point your phone. Find out.'], [8.1, 'vo3', 'Track it. Collect it. Keep its card.'],
   [14.2, 'vo4', 'The Space Station.'], [16.15, 'vo5', 'Saturn.'], [18.1, 'vo6', 'A rocket stage from 1964.'],
-  [20.65, 'vo7', 'Build a collection from the sky above you.'], [25.5, 'vo8', 'Space Collector. Collect the night sky.'],
+  [20.65, 'vo7', 'Build a collection from the sky above you.'], [25.5, 'vo8', 'Sky Collector. Collect the night sky.'],
 ];
 
 // ---------------- 1 · record the app ----------------
@@ -161,11 +161,11 @@ function outro(t) { // 25–30: the logo on navy, an orbit drawn round it, a sat
   if (k > .6) { x.fillStyle = '#fa8127'; x.beginPath(); x.arc(sx, sy, 11, 0, 6.283); x.fill(); x.strokeStyle = 'rgba(250,129,39,.5)'; x.lineWidth = 3; x.beginPath(); x.arc(sx, sy, 26, 0, 6.283); x.stroke(); }
   x.restore();
   const ic = document.getElementById('icon'), a1 = ease((k - .2) / .6); x.globalAlpha = a1; x.save(); x.beginPath(); x.roundRect(cx - 120, cy - 120, 240, 240, 54); x.clip(); x.drawImage(ic, cx - 120, cy - 120, 240, 240); x.restore();
-  x.textAlign = 'center'; x.fillStyle = '#fff2b3'; x.globalAlpha = ease((k - .5) / .6); x.font = '400 104px D'; x.fillText('SPACE COLLECTOR', cx, Hd * .62);
+  x.textAlign = 'center'; x.fillStyle = '#fff2b3'; x.globalAlpha = ease((k - .5) / .6); x.font = '400 104px D'; x.fillText('SKY COLLECTOR', cx, Hd * .62);
   x.globalAlpha = ease((k - .9) / .6); x.font = '500 58px L'; x.letterSpacing = '10px'; x.fillStyle = '#fa8127'; x.fillText('COLLECT THE NIGHT SKY', cx, Hd * .62 + 92); x.letterSpacing = '0px';
   const a3 = ease((k - 1.5) / .6); x.globalAlpha = a3; const bw = 560, bh = 120, by = Hd * .62 + 190;
   x.fillStyle = '#fa8127'; x.beginPath(); x.roundRect(cx - bw / 2, by, bw, bh, 60); x.fill(); x.fillStyle = '#080f1b'; x.font = '500 54px L'; x.letterSpacing = '8px'; x.fillText('START COLLECTING', cx, by + 78); x.letterSpacing = '0px';
-  x.globalAlpha = ease((k - 1.9) / .6); x.fillStyle = '#c3c9d1'; x.font = '500 50px L'; x.letterSpacing = '4px'; x.fillText('spacecollector.app', cx, by + bh + 92); x.letterSpacing = '0px'; x.globalAlpha = 1;
+  x.globalAlpha = ease((k - 1.9) / .6); x.fillStyle = '#c3c9d1'; x.font = '500 50px L'; x.letterSpacing = '4px'; x.fillText('skycollector.app', cx, by + bh + 92); x.letterSpacing = '0px'; x.globalAlpha = 1;
 }
 window.render = (t) => {
   x.clearRect(0, 0, Wd, Hd); const cap = document.getElementById('cap');
@@ -243,7 +243,7 @@ function build() {
   // the voice ducks the music a little
   af += `${lab.join('')}amix=inputs=${lab.length}:normalize=0:duration=longest,atrim=0:30,alimiter=limit=0.9,loudnorm=I=-16:TP=-1.5:LRA=11[aout]`;
   ff(...ins.flat(), '-filter_complex', af, '-map', '[aout]', '-ar', '48000', '-c:a', 'pcm_s16le', join(TMP, 'sound.wav'));
-  const out = join(OUT, 'space-collector-30s.mp4');
+  const out = join(OUT, 'sky-collector-30s.mp4');
   ff('-i', join(TMP, 'picture.mp4'), '-i', join(TMP, 'sound.wav'), '-c:v', 'copy', '-c:a', 'aac', '-b:a', '256k', '-shortest', '-movflags', '+faststart', out);
   const ts = (t) => { const ms = Math.round(t * 1000), h = Math.floor(ms / 3600000), m = Math.floor(ms / 60000) % 60, sec = Math.floor(ms / 1000) % 60; return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')},${String(ms % 1000).padStart(3, '0')}`; };
   const srt = [...SRT_EXTRA, ...CAPTIONS].sort((a, b) => a[0] - b[0]).map(([a, z, text], i) => `${i + 1}\n${ts(a)} --> ${ts(z)}\n${text}\n`).join('\n');

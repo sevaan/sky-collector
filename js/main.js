@@ -1,60 +1,60 @@
-import { pullToClose } from './pull-close.js?v=0.1.1574';
-import { TESTER } from './build-flavor.js?v=0.1.1574';
-import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1574';
-import * as Secrets from './secrets.js?v=0.1.1574';
-import { STORY_BY_SECRET } from './stories.js?v=0.1.1574';
-import { cloudsHtml, rainHtml, warmClouds } from './weather-art.js?v=0.1.1574';
-import * as Ufo from './ufo.js?v=0.1.1574';
-import * as Fossil from './fossil.js?v=0.1.1574';
-import { patchHtml, patchSvg } from './patches.js?v=0.1.1574';
-import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1574';
-import { toast, ticket, dropToast, toastPending, onTicketShown, iconSvg, dropPageNotices } from './toast.js?v=0.1.1574';
-import { VERSION } from './version.js?v=0.1.1574';
-import { loadCatalog, frame, look, track, motion, compassPoint, enuFromAzEl, DARK_SUN_ELEVATION, SkyModel, BelowModel, overEarth, RisingSoon, setBinocularMode, setSkyLimit, toWorker } from './orbit.js?v=0.1.1574';
-import { placeName } from './geo.js?v=0.1.1574';
-import { skyLimit, SKIES, DEFAULT_SKY, SB_MIN, SB_MAX, SLIDER_MAX, sbOfSky, skyNameFor } from './sky-limit.js?v=0.1.1574';
-import { fitCards } from './fit-text.js?v=0.1.1574';
-import { conArt } from './con-art.js?v=0.1.1574';
-import { fetchWeather, keptWeather, tonightSky, skyClearAt, goodSkyAt } from './weather.js?v=0.1.1574';
-import { CON_FIGURES } from './con-figures.js?v=0.1.1574';
-import { loadConstellations, CON_STARS, CON_BY_ID, conProgress, starDistance } from './constellations.js?v=0.1.1574';
-import { shinyFor, SHINY } from './shiny.js?v=0.1.1574';
-import { progress as progressOf, missionsFor, readDeals, readWeekThemes, WEEK_THEMES, countryOf, weekStartOf, weekThemeFor, xpCarry } from './progress.js?v=0.1.1574';
-import { eventOf, activeEvent, nextEvent, activeShower, nextShower, eventLine } from './events.js?v=0.1.1574';
-import { localText } from './localize.js?v=0.1.1574';
-import { searchCities } from './cities.js?v=0.1.1574';
-import { catalogUrl, refreshCatalog, dropCatalog } from './fresh-data.js?v=0.1.1574';
-import { conList } from './constellations.js?v=0.1.1574';
-import { compassSettling, startSensors, trySensorsQuietly, hasLiveSensors, trueBasis, basisFromAzEl, rotateAz, pointing, nudgeHeading, getNudge, lockHeading, setCompassPlace, getDeclination, hasSensorView, resumeSensors, needsPermission } from './sensors.js?v=0.1.1574';
-import { SkyView, shortName, stripLandscape } from './sky.js?v=0.1.1574';
-import { loadSky, eqToEnu, solarSystem, milkyWayModel, galAxes, roadster, starVector } from './celestial.js?v=0.1.1574';
-import { isPlus, setPlusForTesting, onPlus, PLUS_PRICES, initStore, storePlans, buyPlus, restorePlus, redeemCode, rcTestStore, storeOpen } from './plus.js?v=0.1.1574';
-import { isNative, getPosition, saveFile, notifyAt, cancelNotify, haptic, onNative, nativeChrome, plugin } from './native.js?v=0.1.1574';
-import { initBackup, onBackupChange, backupSoon, clearBackup, backupStatus, rememberSightings, backupBid } from './cloud-backup.js?v=0.1.1574';
-import { SERVER } from './server.js?v=0.1.1574';
-import { codeFrom, packIdFrom, readGiftCode, planImport, summarizeImport, giftTags, pickHighlights } from './gift.js?v=0.1.1574';
-import { playPack, packMessage } from './gift-pack.js?v=0.1.1574';
-import { addSighting, addSightings, allSightings, deleteSighting } from './store.js?v=0.1.1574';
-import { cardArt } from './art.js?v=0.1.1574';
-import { renderCard, miniCard, cardLevel, artImage, lockedArt, attachTilt, attachGyro, throwOff, attachFlip, turnCard, phasePath } from './card.js?v=0.1.1574';
-import { applyBack, CARD_BACKS, backUnlocked, chosenBack, chooseBack, backEarned, showBackNext } from './card-backs.js?v=0.1.1574';
-import { sfx, loadSfx, sfxVolume, heartbeat } from './sfx.js?v=0.1.1574';
-import { audioCtx } from './audio-ctx.js?v=0.1.1574';
-import { musicOn, startMusic, setMusic, duckMusic, musicVolume, setMusicVolume, musicAway } from './music.js?v=0.1.1574';
-import { onRevealNews, playReveal, playView, primeReveal, stopReveal, onRevealDismiss, onRevealSwipeIntoBinder } from './reveal.js?v=0.1.1574';
-import { buildCards, cardKeyFor, stampKeyFor, normalizeSighting, stampsIn, fleetLevel, moonPhaseOf, moonPhaseAt, MOON_PHASES } from './card-model.js?v=0.1.1574';
-import { collectedDuringPass, collectedTonight, canCapture, nightsIn, nightKey } from './observation.js?v=0.1.1574';
-import { naturalTargets, SOLAR_SYSTEM, DEEP_SKY, NATURAL, NATURAL_BY_KEY } from './natural.js?v=0.1.1574';
-import { placeFromTimeZone } from './tz-places.js?v=0.1.1574';
-import { TIER_INFO } from './rarity.js?v=0.1.1574';
-import { SETS, albumList } from './sets.js?v=0.1.1574';
-import { TYPE_LABEL, ownerName, orbitStats } from './facts.js?v=0.1.1574';
-import { pushConfigured, pushOn, enablePush, disablePush, schedulePush, prefetchKey } from './pass-alerts.js?v=0.1.1574';
-import { note, send as sendNotes, noteError, daysSinceInstall } from './field-notes.js?v=0.1.1574';
-const shareCardEl = (...a) => import('./share-card.js?v=0.1.1574').then((m) => m.shareCardEl(...a)); /* loaded when first shared (perf audit 2026-10-29) */
-import { loadLore, titleFor, factFor, richText } from './lore.js?v=0.1.1574';
-import { PlaneTracker, planesAvailable, aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1574';
-import { addStarfield } from './starfield.js?v=0.1.1574';
+import { pullToClose } from './pull-close.js?v=0.1.1575';
+import { TESTER } from './build-flavor.js?v=0.1.1575';
+import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1575';
+import * as Secrets from './secrets.js?v=0.1.1575';
+import { STORY_BY_SECRET } from './stories.js?v=0.1.1575';
+import { cloudsHtml, rainHtml, warmClouds } from './weather-art.js?v=0.1.1575';
+import * as Ufo from './ufo.js?v=0.1.1575';
+import * as Fossil from './fossil.js?v=0.1.1575';
+import { patchHtml, patchSvg } from './patches.js?v=0.1.1575';
+import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1575';
+import { toast, ticket, dropToast, toastPending, onTicketShown, iconSvg, dropPageNotices } from './toast.js?v=0.1.1575';
+import { VERSION } from './version.js?v=0.1.1575';
+import { loadCatalog, frame, look, track, motion, compassPoint, enuFromAzEl, DARK_SUN_ELEVATION, SkyModel, BelowModel, overEarth, RisingSoon, setBinocularMode, setSkyLimit, toWorker } from './orbit.js?v=0.1.1575';
+import { placeName } from './geo.js?v=0.1.1575';
+import { skyLimit, SKIES, DEFAULT_SKY, SB_MIN, SB_MAX, SLIDER_MAX, sbOfSky, skyNameFor } from './sky-limit.js?v=0.1.1575';
+import { fitCards } from './fit-text.js?v=0.1.1575';
+import { conArt } from './con-art.js?v=0.1.1575';
+import { fetchWeather, keptWeather, tonightSky, skyClearAt, goodSkyAt } from './weather.js?v=0.1.1575';
+import { CON_FIGURES } from './con-figures.js?v=0.1.1575';
+import { loadConstellations, CON_STARS, CON_BY_ID, conProgress, starDistance } from './constellations.js?v=0.1.1575';
+import { shinyFor, SHINY } from './shiny.js?v=0.1.1575';
+import { progress as progressOf, missionsFor, readDeals, readWeekThemes, WEEK_THEMES, countryOf, weekStartOf, weekThemeFor, xpCarry } from './progress.js?v=0.1.1575';
+import { eventOf, activeEvent, nextEvent, activeShower, nextShower, eventLine } from './events.js?v=0.1.1575';
+import { localText } from './localize.js?v=0.1.1575';
+import { searchCities } from './cities.js?v=0.1.1575';
+import { catalogUrl, refreshCatalog, dropCatalog } from './fresh-data.js?v=0.1.1575';
+import { conList } from './constellations.js?v=0.1.1575';
+import { compassSettling, startSensors, trySensorsQuietly, hasLiveSensors, trueBasis, basisFromAzEl, rotateAz, pointing, nudgeHeading, getNudge, lockHeading, setCompassPlace, getDeclination, hasSensorView, resumeSensors, needsPermission } from './sensors.js?v=0.1.1575';
+import { SkyView, shortName, stripLandscape } from './sky.js?v=0.1.1575';
+import { loadSky, eqToEnu, solarSystem, milkyWayModel, galAxes, roadster, starVector } from './celestial.js?v=0.1.1575';
+import { isPlus, setPlusForTesting, onPlus, PLUS_PRICES, initStore, storePlans, buyPlus, restorePlus, redeemCode, rcTestStore, storeOpen } from './plus.js?v=0.1.1575';
+import { isNative, getPosition, saveFile, notifyAt, cancelNotify, haptic, onNative, nativeChrome, plugin } from './native.js?v=0.1.1575';
+import { initBackup, onBackupChange, backupSoon, clearBackup, backupStatus, rememberSightings, backupBid } from './cloud-backup.js?v=0.1.1575';
+import { SERVER } from './server.js?v=0.1.1575';
+import { codeFrom, packIdFrom, readGiftCode, planImport, summarizeImport, giftTags, pickHighlights } from './gift.js?v=0.1.1575';
+import { playPack, packMessage } from './gift-pack.js?v=0.1.1575';
+import { addSighting, addSightings, allSightings, deleteSighting } from './store.js?v=0.1.1575';
+import { cardArt } from './art.js?v=0.1.1575';
+import { renderCard, miniCard, cardLevel, artImage, lockedArt, attachTilt, attachGyro, throwOff, attachFlip, turnCard, phasePath } from './card.js?v=0.1.1575';
+import { applyBack, CARD_BACKS, backUnlocked, chosenBack, chooseBack, backEarned, showBackNext } from './card-backs.js?v=0.1.1575';
+import { sfx, loadSfx, sfxVolume, heartbeat } from './sfx.js?v=0.1.1575';
+import { audioCtx } from './audio-ctx.js?v=0.1.1575';
+import { musicOn, startMusic, setMusic, duckMusic, musicVolume, setMusicVolume, musicAway } from './music.js?v=0.1.1575';
+import { onRevealNews, playReveal, playView, primeReveal, stopReveal, onRevealDismiss, onRevealSwipeIntoBinder } from './reveal.js?v=0.1.1575';
+import { buildCards, cardKeyFor, stampKeyFor, normalizeSighting, stampsIn, fleetLevel, moonPhaseOf, moonPhaseAt, MOON_PHASES } from './card-model.js?v=0.1.1575';
+import { collectedDuringPass, collectedTonight, canCapture, nightsIn, nightKey } from './observation.js?v=0.1.1575';
+import { naturalTargets, SOLAR_SYSTEM, DEEP_SKY, NATURAL, NATURAL_BY_KEY } from './natural.js?v=0.1.1575';
+import { placeFromTimeZone } from './tz-places.js?v=0.1.1575';
+import { TIER_INFO } from './rarity.js?v=0.1.1575';
+import { SETS, albumList } from './sets.js?v=0.1.1575';
+import { TYPE_LABEL, ownerName, orbitStats } from './facts.js?v=0.1.1575';
+import { pushConfigured, pushOn, enablePush, disablePush, schedulePush, prefetchKey } from './pass-alerts.js?v=0.1.1575';
+import { note, send as sendNotes, noteError, daysSinceInstall } from './field-notes.js?v=0.1.1575';
+const shareCardEl = (...a) => import('./share-card.js?v=0.1.1575').then((m) => m.shareCardEl(...a)); /* loaded when first shared (perf audit 2026-10-29) */
+import { loadLore, titleFor, factFor, richText } from './lore.js?v=0.1.1575';
+import { PlaneTracker, planesAvailable, aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1575';
+import { addStarfield } from './starfield.js?v=0.1.1575';
 
 const $ = (id) => document.getElementById(id);
 const RAD = Math.PI / 180;
@@ -2329,7 +2329,7 @@ function shareTonight(T) {
 const widgetName = (o) => yearLabel(o).replace(/^International Space Station\b/, 'Space Station').replace(/ Rocket Stage\b/, ' stage').replace(/ \((?:Zarya|ZARYA)\)/, '');
 let widgetLink = null;
 // ---------- Send cards: receiving (2026-11-07, design/send-cards.html, design/booster-pack.html) ----------
-// A link with cards in it (https://spacecollector.app/c/#g1…, the app's spacecollector://c#g1…, or this page's own hash
+// A link with cards in it (https://skycollector.app/c/#g1…, the app's skycollector://c#g1…, or this page's own hash
 // on the web) opens the gift pack. Nothing is added until the pack is torn open; 'Later' keeps it waiting.
 let giftBusy = false;
 const giftTier = (t) => (TIER_INFO[t] ?? TIER_INFO.common).color;
@@ -2351,10 +2351,10 @@ async function showGift(code, tries = 0) {
     if (code.startsWith('p:')) { /* a short link: fetch the pack from our server */
       let c = null, gone = false;
       try { const r = await fetch(`${SERVER}/pack/${code.slice(2)}`, { signal: AbortSignal.timeout(10000) }); if (r.ok) c = (await r.json()).c; else gone = r.status === 404; } catch {}
-      if (!c) { if (gone) clearGift(pend); await packMessage(gone ? { title: 'These cards have expired', text: 'Packs last 90 days. Ask for them to be shared again.' } : { title: 'No connection', text: 'Space Collector needs the internet to open these cards. Tap the link again once you’re online.' }); return; }
+      if (!c) { if (gone) clearGift(pend); await packMessage(gone ? { title: 'These cards have expired', text: 'Packs last 90 days. Ask for them to be shared again.' } : { title: 'No connection', text: 'Sky Collector needs the internet to open these cards. Tap the link again once you’re online.' }); return; }
       code = c; }
     try { g = await readGiftCode(code); }
-    catch (e) { clearGift(pend); await packMessage(e?.message === 'newer' ? { title: 'Update to open these', text: 'These cards were sent from a newer Space Collector. Update the app, then tap the link again.' } : { title: 'Couldn’t open these cards', text: 'The link was cut short, maybe by the chat app. Ask them to use Share again in Sent cards.' }); return; }
+    catch (e) { clearGift(pend); await packMessage(e?.message === 'newer' ? { title: 'Update to open these', text: 'These cards were sent from a newer Sky Collector. Update the app, then tap the link again.' } : { title: 'Couldn’t open these cards', text: 'The link was cut short, maybe by the chat app. Ask them to use Share again in Sent cards.' }); return; }
     if (g.bid && g.bid === backupBid()) { clearGift(pend); await packMessage({ title: 'Already shared', text: `These ${PH}s use the same iCloud account, so they share one collection already. To keep separate collections, each ${PH} needs its own Apple ID.` }); return; }
     const mine = state.sightings.filter((x) => !x.sim), plan = planImport(mine, g.sightings);
     if (!plan.add.length) { clearGift(pend); ticket({ kind: 'info', icon: 'cards', line: 'Already in your collection', sub: `Every card ${g.from ? `from ${g.from} ` : 'in that link '}is here already.`, ms: 3600 }); return; }
@@ -2393,7 +2393,7 @@ if (codeFrom(location.hash)) { const c = codeFrom(location.hash); try { history.
 else if (packIdFrom(location.search)) { const id = packIdFrom(location.search); try { history.replaceState(null, '', location.pathname); } catch {} openGiftLink(`?p=${id}`); } /* a short link on the web (testing) */
 
 function openWidgetLink(url) {
-  const m = /^spacecollector:\/\/(\w+)\/?(.*)$/.exec(url || ''); if (!m) return;
+  const m = /^skycollector:\/\/(\w+)\/?(.*)$/.exec(url || ''); if (!m) return;
   if (!state.tonight || !$('start').hidden || document.body.classList.contains('ob-tour')) { widgetLink = url; return; } // not before the sky is up
   widgetLink = null;
   /* Settings and its sheets first: the Explore button leaves Settings open on purpose, so a notification tapped there
@@ -2500,7 +2500,7 @@ const pathWords = (p) => { const up = dirWord(p.riseAz), top = dirWord(p.peakAz)
   return p.peakEl >= 80 ? `Comes up in the ${up}, passes almost straight overhead` : up === top ? `Comes up in the ${up} and ${how}` : `Comes up in the ${up}, ${how} in the ${top}`; }; // never the same direction twice
 const tierWord = (o) => { const t = (state.cardModels.get(cardKeyFor(o)) ?? o).tier ?? 'common'; return t[0].toUpperCase() + t.slice(1); };
 // Where a tap goes: the pass (Show me) for a pass reminder, else the Tonight page. Pass reminders get a Show me button.
-const noteLink = (key) => (/^\d+@\d+$/.test(key ?? '') ? { link: `spacecollector://pass/${key}`, actions: 'pass' } : { link: 'spacecollector://tonight' });
+const noteLink = (key) => (/^\d+@\d+$/.test(key ?? '') ? { link: `skycollector://pass/${key}`, actions: 'pass' } : { link: 'skycollector://tonight' });
 function alertText(p) {
   const o = p.obj, card = state.cardModels.get(cardKeyFor(o)) ?? o, when = fmtTime(p.start);
   if (o.family) return { title: `${when} · A new ${card.familyName ?? 'fleet'} stamp`, body: `A launch you haven’t stamped yet. ${pathWords(p)}.` };
@@ -4138,13 +4138,13 @@ function remindUndo(btn) {
   (btn.firstElementChild ?? btn).innerHTML = btn.dataset.idle ?? 'Remind me'; if (btn.children[1]) btn.children[1].textContent = btn.dataset.side || '→';
   btn.classList.remove('done'); btn.setAttribute('aria-pressed', 'false'); buzz(8); return true;
 }
-const reminderWords = (r, when) => (r === 'on' ? `We’ll remind you at ${fmtTime(when)}.` : r === 'app-only' ? 'Reminders work in the Space Collector app.' : r === 'denied' ? `Notifications are off for Space Collector. Turn them on in your ${PH}’s Settings.` : r === 'past' ? 'It’s starting now: look up instead.' : 'Couldn’t set a reminder here.');
+const reminderWords = (r, when) => (r === 'on' ? `We’ll remind you at ${fmtTime(when)}.` : r === 'app-only' ? 'Reminders work in the Sky Collector app.' : r === 'denied' ? `Notifications are off for Sky Collector. Turn them on in your ${PH}’s Settings.` : r === 'past' ? 'It’s starting now: look up instead.' : 'Couldn’t set a reminder here.');
 function reminderToast(r, when) {
   if (r === 'limit') return null; // the Plus sheet is already explaining (null: callers say nothing)
   if (collectionOpen) { colFrame.contentWindow?.postMessage({ sc: 'say', text: reminderWords(r, when) }, location.origin); return r === 'on'; } // toasts here sit behind the Collection (2026-10-14, Sevaan: "nothing happened")
   ticket(r === 'on' ? { kind: 'info', tone: 'steel', icon: 'bell', eyebrow: 'REMINDER SET', line: fmtTime(when), sub: 'We’ll nudge you then', ms: 3500 }
-    : r === 'app-only' ? { kind: 'info', icon: 'bell', eyebrow: 'REMINDERS', line: 'They work in the app', sub: 'Space Collector for iPhone and Android', ms: 3500 }
-    : r === 'denied' ? { kind: 'error', icon: 'belloff', eyebrow: 'NOTIFICATIONS OFF', line: 'Turn them on in Settings', sub: `Your ${PH}’s Settings → Space Collector`, ms: 4500 }
+    : r === 'app-only' ? { kind: 'info', icon: 'bell', eyebrow: 'REMINDERS', line: 'They work in the app', sub: 'Sky Collector for iPhone and Android', ms: 3500 }
+    : r === 'denied' ? { kind: 'error', icon: 'belloff', eyebrow: 'NOTIFICATIONS OFF', line: 'Turn them on in Settings', sub: `Your ${PH}’s Settings → Sky Collector`, ms: 4500 }
     : { kind: 'error', icon: 'belloff', eyebrow: 'REMINDER', line: 'Couldn’t set one here', ms: 3500 });
   return r === 'on';
 }
@@ -4595,8 +4595,8 @@ async function scheduleNotesNow(T) {
   // Every automatic notification opens where it's about, has Show me · Not tonight, and groups with tonight's others
   // (notifications plan 2026-10-29). Wording from the writers' room: the time first, then " · ".
   const night = `night-${nightKey(T?.dusk ?? t0, state.observer.lon ?? 0)}`; // the evening it's about (review room 2026-10-29: keyed on now, a morning open read as the night before)
-  const auto = async (at, title, body, id, link = 'spacecollector://tonight', channel = 'tonight') => { const r = await notifyAt(at, title, body, { id, link, actions: 'auto', night, channel }); if (r === 'on') noteScheduled(id, at); return r; };
-  const passLink = (p) => `spacecollector://pass/${p.id ?? p.obj.id}@${p.start}`;
+  const auto = async (at, title, body, id, link = 'skycollector://tonight', channel = 'tonight') => { const r = await notifyAt(at, title, body, { id, link, actions: 'auto', night, channel }); if (r === 'on') noteScheduled(id, at); return r; };
+  const passLink = (p) => `skycollector://pass/${p.id ?? p.obj.id}@${p.start}`;
   // Tonight: one notification a night at most, and on at most 4 nights in any 7 (review room 2026-10-29: the headliner
   // could go out every clear night). The headliner (or a card one night from its next level) comes first; Look up only
   // when neither does, and only when the night is worth it. localStorage tonightNotes = { night: kind } for the week.
@@ -4715,7 +4715,7 @@ async function scheduleAwayNow() {
     const day = new Date(t0); day.setHours(0, 0, 0, 0); day.setDate(day.getDate() + d);
     const at = day.getTime() + (duskMin + 45) * 60000; if (inQuiet(at)) continue;
     const m = awayText(at, clear, used); if (!m) continue;
-    await notifyAt(at, m.title, m.body, { id: NOTE_AWAY[i], link: 'spacecollector://tonight', actions: 'auto', channel: 'tonight', night: `away-${i}` });
+    await notifyAt(at, m.title, m.body, { id: NOTE_AWAY[i], link: 'skycollector://tonight', actions: 'auto', channel: 'tonight', night: `away-${i}` });
     noteScheduled(NOTE_AWAY[i], at);
   }
 }
@@ -4809,7 +4809,7 @@ async function syncNoteToggles() {
   $('chk-tonight').checked = ok && tonightOn(); $('chk-meteor').checked = isPlus() && readPref('nMeteor', true); $('chk-alerts').checked = ok && isPlus() && alertsOn();
   notesBanner().catch(() => {}); quietRender();
 }
-const noNotes = () => ticket({ kind: 'error', icon: 'belloff', eyebrow: 'NOTIFICATIONS OFF', line: 'Turn them on in Settings', sub: `Your ${PH}’s Settings → Space Collector`, ms: 4500 });
+const noNotes = () => ticket({ kind: 'error', icon: 'belloff', eyebrow: 'NOTIFICATIONS OFF', line: 'Turn them on in Settings', sub: `Your ${PH}’s Settings → Sky Collector`, ms: 4500 });
 for (const [id, k] of [['chk-tonight', 'nTonight'], ['chk-alerts', 'nAlerts']]) $(id).addEventListener('change', async (e) => {
   if (id === 'chk-alerts' && e.target.checked && !isPlus()) { e.target.checked = false; openPlus('alerts'); return; }
   writePref(k, e.target.checked);
@@ -5030,7 +5030,7 @@ $('retry-location').addEventListener('click', async () => {
   const ok = await requestLocation({ gps: true });
   if (ok) { closeSheet($('set-loc-sheet')); return; }
   note.textContent = state.locationError === 'denied'
-    ? `Location is off for Space Collector. Turn it on for Space Collector in your ${PH}’s Settings, or search for a place below.`
+    ? `Location is off for Sky Collector. Turn it on for Sky Collector in your ${PH}’s Settings, or search for a place below.`
     : state.locationError === 'off' ? `Location is switched off on this ${PH}. Turn it on in your ${PH}’s Settings, or search for a place below.`
     : `Couldn’t find you just now${state.locationStatus === 'stale' ? ', so the sky is still your last spot' : ''}. Try again outside, or search for a place below.`;
   note.hidden = false;
@@ -5327,7 +5327,7 @@ const CREDITS = [
   ['Music', [['“Permafrost”', 'Scott Buckley · CC BY 4.0', 'https://www.scottbuckley.com.au']]],
 ];
 async function openCredits() {
-  const { ART_SOURCES } = await import('./art-sources.js?v=0.1.1574');
+  const { ART_SOURCES } = await import('./art-sources.js?v=0.1.1575');
   const a = (t, href) => (href ? `<a href="${escapeHtml(href)}" target="_blank" rel="noopener">${t}</a>` : t);
   const card = (title, n, rows) => `<div class="set-group set-card"><div class="set-bar"><h3>${title}</h3><b aria-hidden="true">${String(n).padStart(2, '0')}</b></div>${rows}</div>`;
   const row = (b, sub, href) => `<div class="cr-row"><b>${escapeHtml(b)}</b><span>${a(escapeHtml(sub), href)}</span></div>`;
@@ -5335,7 +5335,7 @@ async function openCredits() {
   const pics = Object.entries(ART_SOURCES).sort((x, y) => x[0].localeCompare(y[0]));
   html += card('Pictures', CREDITS.length + 1, `<div class="cr-row"><span>Photographs and official illustrations from NASA, ESA, ESO, JAXA, NOAA, the US Air Force, museums and photographers on Wikimedia Commons, used under public-domain and open licences. Milky Way: ESO/S. Brunier · ${a('CC BY 4.0', 'https://www.eso.org/public/images/eso0932a/')}.</span></div>`
     + `<details class="cr-pics"><summary>Every picture and its licence (${pics.length})</summary>${pics.map(([art, [cr, lic, src]]) => `<div class="cr-pic"><b>${escapeHtml(art.replace(/^(sat|bus|deep|planet|star|story|fleet)-/, '').replace(/-/g, ' '))}</b><span>${escapeHtml(cr)} · ${a(escapeHtml(lic === 'PD' ? 'Public domain' : lic), src)}</span></div>`).join('')}</details>`);
-  html += card('A note', CREDITS.length + 2, `<div class="cr-row"><span>Space Collector is an independent app. It isn’t made or endorsed by NASA, ESA or any space agency; their pictures are used under their public-domain and open licences.</span></div>`);
+  html += card('A note', CREDITS.length + 2, `<div class="cr-row"><span>Sky Collector is an independent app. It isn’t made or endorsed by NASA, ESA or any space agency; their pictures are used under their public-domain and open licences.</span></div>`);
   $('credits-body').innerHTML = html; openSheet('set-credits-sheet'); creditsHeader(true); $('set-credits-sheet').querySelector('.set-sheet-card').scrollTop = 0; // opens at the top (iPad playtest 2026-10-30)
 }
 // Credits use the shared header like the Plus page (2026-10-28, Sevaan): CREDITS AND SOURCES / WHERE THE SKY COMES FROM,
@@ -5469,13 +5469,13 @@ $('btn-replay-setup')?.addEventListener('click', () => {
   $('hud').hidden = true; $('start').hidden = false;
 });
 $('chk-snap').addEventListener('change', (e) => { state.snap = e.target.checked; writePref('snap', state.snap); sky.snap = state.snap; });
-// Space Collector Plus (js/plus.js): the Settings row, the sheet, the testing toggle, and switching perks off when
+// Sky Collector Plus (js/plus.js): the Settings row, the sheet, the testing toggle, and switching perks off when
 // Plus ends. `why` names the perk that was tapped, so the sheet can lead with it.
 function renderPlus() {
   const on = isPlus();
   document.body.classList.toggle('is-plus', on);
   $('set-plus-val').textContent = on ? 'Plus ✓' : 'Free';
-  $('set-plus-note').textContent = on ? 'Thanks for supporting Space Collector' : 'Reminders, card backs and more';
+  $('set-plus-note').textContent = on ? 'Thanks for supporting Sky Collector' : 'Reminders, card backs and more';
   try { $('chk-plus-test').checked = localStorage.getItem('plusTest') === '1'; } catch {} // the testing switch only; a store purchase doesn’t flip it
   $('plus-buy').hidden = on; $('plus-thanks').hidden = !on;
   if (!on && $('chk-meteor')) $('chk-meteor').checked = false;
@@ -5521,7 +5521,7 @@ function plusPage(why) {
   $('plus-lead').innerHTML = lead ? `<span class="ico" data-ico="${why === 'reminders' ? 'bell' : 'stars'}"></span>${escapeHtml(lead)}` : ''; $('plus-lead').hidden = !lead || on;
   $('plus-head').textContent = on ? 'THE CREW' : 'JOIN THE CREW';
   $('plus-title').innerHTML = on ? 'You’re crew.' : 'Keep the lights on.<br>Wear the patch.';
-  $('plus-body').textContent = on ? 'Thank you for keeping Space Collector flying. Here’s everything in your kit.' : 'Space Collector is free to play, all of it. The crew are the players who chip in to keep it flying, and get a little kit for it.';
+  $('plus-body').textContent = on ? 'Thank you for keeping Sky Collector flying. Here’s everything in your kit.' : 'Sky Collector is free to play, all of it. The crew are the players who chip in to keep it flying, and get a little kit for it.';
   $('plus-patch').innerHTML = `<i class="crew-meteor"></i>${patchHtml(Secrets.SECRET_PATCHES.plus)}`; // a shooting star crosses behind it every few seconds (2026-10-23, Sevaan)
   addStarfield($('set-plus-sheet').querySelector('.set-sheet-card'), 70); // twinkling stars behind the page (2026-10-23, Sevaan)
   const fan = backs.slice(0, 5).map((x, i) => `<img src="${x.url}" alt="" decoding="async" style="left:${14 + i * 20}px;--r:${-12 + i * 6}deg">`).join(''); /* inside its tile: ±12° from the bottom centre (2026-10-23, Sevaan: it ran over the edge) */
@@ -5559,16 +5559,16 @@ $('plus-cta').addEventListener('click', async () => {
   if (r.result === 'pending') toast('Waiting for approval. Plus turns on as soon as it\u2019s approved.', 4000); // Ask to Buy
   /* no plans at all on Android: Google Play billing isn't there (no Play Store account), and trying again won't help
      (Android playtest 2026-11-05: BILLING_UNAVAILABLE said "Try again in a moment") */
-  else if (r.result === 'error') { const noPlay = !storeP && /Android/.test(navigator.userAgent); buzz('warning'); shake(b); ticket({ kind: 'error', eyebrow: 'SPACE COLLECTOR PLUS', line: noPlay ? 'Google Play isn’t available' : 'The purchase didn’t go through', sub: noPlay ? 'Sign in to the Play Store on this device, then try again. You haven’t been charged.' : 'You haven’t been charged. Try again in a moment.', ms: 5000 }); console.warn('purchase failed', r.message); } // our words, not the store's (iOS QA 2026-10-23)
+  else if (r.result === 'error') { const noPlay = !storeP && /Android/.test(navigator.userAgent); buzz('warning'); shake(b); ticket({ kind: 'error', eyebrow: 'SKY COLLECTOR PLUS', line: noPlay ? 'Google Play isn’t available' : 'The purchase didn’t go through', sub: noPlay ? 'Sign in to the Play Store on this device, then try again. You haven’t been charged.' : 'You haven’t been charged. Try again in a moment.', ms: 5000 }); console.warn('purchase failed', r.message); } // our words, not the store's (iOS QA 2026-10-23)
   // ok: onPlus thanks them and the sheet turns to its thank-you; cancelled: nothing to say
 });
-// The Plus page uses the shared header like every other page (2026-10-24, Sevaan): JOIN THE CREW / SPACE COLLECTOR PLUS,
+// The Plus page uses the shared header like every other page (2026-10-24, Sevaan): JOIN THE CREW / SKY COLLECTOR PLUS,
 // the Settings button turns into its ✕, and whatever the header said before comes back when it closes.
 let plusHdrWas = null;
 function plusHeaderIn() {
   const w = document.querySelector('#sky-header .wordmark'); if (!w) return;
   if (!document.body.classList.contains('plus-open')) plusHdrWas = [w.querySelector('.hw-t')?.textContent ?? '', w.querySelector('.hw-s')?.textContent ?? ''];
-  document.body.classList.add('plus-open'); headerTo(w, isPlus() ? 'THE CREW' : 'JOIN THE CREW', 'SPACE COLLECTOR PLUS');
+  document.body.classList.add('plus-open'); headerTo(w, isPlus() ? 'THE CREW' : 'JOIN THE CREW', 'SKY COLLECTOR PLUS');
 }
 function plusHeaderOut() {
   if (!document.body.classList.contains('plus-open')) return;
@@ -5634,7 +5634,7 @@ onPlus((on, how) => {
   if (on) earnSecret('plus'); // the Plus Member patch: earned once, kept if Plus ends
   if (on && how !== 'restored') { let tries = 0; const go = () => { if (document.querySelector('.overlay.panel:not([hidden]), .set-sheet.in') && tries++ < 120) { setTimeout(go, 500); return; } cardsTurnOver(); }; setTimeout(go, 700); } // every card turns over to the backs you just unlocked (slick idea 15), once you're back on the sky, not over Settings (iOS QA 2026-10-23)
   if (state.tonight) scheduleNotes(state.tonight).catch(() => {});
-  ticket({ kind: 'info', tone: 'orange', icon: 'check', eyebrow: 'SPACE COLLECTOR PLUS', /* info, not mission: it answers the purchase, so it may show over the page you bought from (2026-10-23 Plus test) */ line: how === 'testing' ? (on ? 'On (testing)' : 'Off (testing)') : on ? (how === 'restored' ? 'Welcome back' : 'Welcome to Space Collector Plus') : 'Plus has ended', sub: how === 'testing' ? '' : on ? (how === 'restored' ? 'Plus is back on.' : 'Thank you for your support!') : 'Your Member patch stays on your wall.', ms: 3000 });
+  ticket({ kind: 'info', tone: 'orange', icon: 'check', eyebrow: 'SKY COLLECTOR PLUS', /* info, not mission: it answers the purchase, so it may show over the page you bought from (2026-10-23 Plus test) */ line: how === 'testing' ? (on ? 'On (testing)' : 'Off (testing)') : on ? (how === 'restored' ? 'Welcome back' : 'Welcome to Sky Collector Plus') : 'Plus has ended', sub: how === 'testing' ? '' : on ? (how === 'restored' ? 'Plus is back on.' : 'Thank you for your support!') : 'Your Member patch stays on your wall.', ms: 3000 });
 });
 renderPlus();
 // Accessibility (2026-10-11, QA): every Settings switch and slider is named after its row, for VoiceOver/TalkBack.
@@ -5841,7 +5841,7 @@ function obCard(steps, k) {
   if (k > 0) sfx('step', { gain: 0.8 });
   [...$('ob-pips').children].forEach((p, i) => { p.className = i < k ? 'done' : i === k ? 'on' : ''; });
   const make = (s) => { const el = document.createElement('div'); el.className = `tc${s.gold ? ' gold' : ''}${s.stack ? ' stack' : ''}`; el.dataset.step = steps.indexOf(s);
-    el.innerHTML = `<div class="in"><div class="bar"><span>Space Collector</span><span class="tier">◆ ${escapeHtml(s.tier)}</span></div><h3>${escapeHtml(s.title)}</h3><div class="sub"><span>${escapeHtml(s.sub[0])}</span><span>${escapeHtml(s.sub[1])}</span></div>${s.art ? `<div class="art">${s.art}</div>` : ''}${s.text ? `<p>${escapeHtml(s.text)}</p>` : ''}${s.choice ? `<div class="acts pick">${s.choice.map((c, i) => `<button class="pk pk-card" type="button" data-v="${c.v}"><span class="pk-hd"><span>Where · 0${i + 1}</span><i>◆</i></span><span class="pk-art">${c.img ? `<img src="${c.img}" alt="" decoding="async">` : c.art}</span><b>${escapeHtml(c.label)}</b><small>${escapeHtml(c.sub)}</small>${c.stat ? `<span class="pk-st"><span>${escapeHtml(c.stat[0])}</span><em>${escapeHtml(c.stat[1])}</em></span>` : ''}</button>`).join('')}</div>` : `<div class="acts">${s.no ? `<button class="no" type="button">${escapeHtml(s.no)}</button>` : ''}<button class="yes" type="button">${escapeHtml(s.yes)}</button></div>`}</div><div class="shine"></div>`;
+    el.innerHTML = `<div class="in"><div class="bar"><span>Sky Collector</span><span class="tier">◆ ${escapeHtml(s.tier)}</span></div><h3>${escapeHtml(s.title)}</h3><div class="sub"><span>${escapeHtml(s.sub[0])}</span><span>${escapeHtml(s.sub[1])}</span></div>${s.art ? `<div class="art">${s.art}</div>` : ''}${s.text ? `<p>${escapeHtml(s.text)}</p>` : ''}${s.choice ? `<div class="acts pick">${s.choice.map((c, i) => `<button class="pk pk-card" type="button" data-v="${c.v}"><span class="pk-hd"><span>Where · 0${i + 1}</span><i>◆</i></span><span class="pk-art">${c.img ? `<img src="${c.img}" alt="" decoding="async">` : c.art}</span><b>${escapeHtml(c.label)}</b><small>${escapeHtml(c.sub)}</small>${c.stat ? `<span class="pk-st"><span>${escapeHtml(c.stat[0])}</span><em>${escapeHtml(c.stat[1])}</em></span>` : ''}</button>`).join('')}</div>` : `<div class="acts">${s.no ? `<button class="no" type="button">${escapeHtml(s.no)}</button>` : ''}<button class="yes" type="button">${escapeHtml(s.yes)}</button></div>`}</div><div class="shine"></div>`;
     return el; };
   // Smooth hand-off (2026-10-09, Sevaan: the next card snapped into place): cards already in the deck are kept and
   // promoted (under → top, under2 → under) so their transition carries them up and straight; only the newcomer is
@@ -5911,7 +5911,7 @@ async function runOnboarding(force = false) {
     ...[DEFAULT_LOCATION.fromTz ? (() => { const city = String(DEFAULT_LOCATION.label).replace(/^Example:\s*/, ''); return { tier: 'Step 1 of 3', title: 'Find your sky', sub: ['', ''], art: OB_ART.loc, text: `Share your location so the sky on screen matches yours. Or start with ${city}, picked from your ${PH}’s time zone.`, yes: 'Use my location', no: `Use ${city} · from your time zone`, stack: true }; })()
       : { tier: 'Step 1 of 3', title: 'Find your sky', sub: ['', ''], art: OB_ART.loc, text: 'What’s overhead depends on where you’re standing. Share your location so the sky on screen matches the one above you. It’s only used for that, and never sold.', yes: 'Use my location', no: 'Not now' }],
     { tier: 'Step 2 of 3', title: 'Point and look', sub: ['', ''], art: OB_ART.motion, text: `Turn on motion and your ${PH} becomes a window on the sky. Aim it anywhere, and the circle shows you what’s there.`, yes: 'Allow motion', no: 'Use a finger', onYes: () => { motionAsk = enableMotion(); } },
-    ...([{ tier: 'Step 3 of 3', title: 'When to look up', sub: ['', ''], art: OB_ART.notify, text: 'We’ll tell you when it’s worth stepping outside, and a few minutes before the best catch flies over. A few times a week, never on a cloudy night.', yes: 'Turn on', no: 'Not now', onYes: () => { notesAsk = askNotifications(); if (!isNative()) toast('Notifications come with the Space Collector app.'); } }]) /* the web can't schedule them (Settings playtest 2026-10-27) */, // notifications step (2026-10-14, design/notifications.html); on the website too, for testing (Sevaan) // back in the tour (2026-10-18, Sevaan: moving it after the first catch was undone)
+    ...([{ tier: 'Step 3 of 3', title: 'When to look up', sub: ['', ''], art: OB_ART.notify, text: 'We’ll tell you when it’s worth stepping outside, and a few minutes before the best catch flies over. A few times a week, never on a cloudy night.', yes: 'Turn on', no: 'Not now', onYes: () => { notesAsk = askNotifications(); if (!isNative()) toast('Notifications come with the Sky Collector app.'); } }]) /* the web can't schedule them (Settings playtest 2026-10-27) */, // notifications step (2026-10-14, design/notifications.html); on the website too, for testing (Sevaan) // back in the tour (2026-10-18, Sevaan: moving it after the first catch was undone)
     { tier: 'Your first card', title: 'Your first catch', sub: ['Up right now', ''], art: OB_ART.catch, text: '', yes: 'Show me where', no: 'Skip', onNo: () => $('ob-skip').click() /* the same as the Skip at the top (2026-10-30, Sevaan: the card felt empty without a second choice) */, gold: true, onYes: () => { obCollectNow = obCollectReady && obAimTarget ? obAimTarget.obj : null; if (obCollectNow) { unlockAudio(); primeReveal(); } } },
   ];
   let tgt0 = null; const A = steps.length - 1; // the assignment card
@@ -6197,7 +6197,7 @@ function setSkyPlusLine() {
   let n = 0, mixed = false; const t = now().getTime(), tierN = (o) => TIER_RANK[(state.cardModels.get(cardKeyFor(o)) ?? o).tier] ?? 0;
   try { if (state.tonight && tonightWeather()?.ok !== false) { const eve = eveningEnd(state.tonight), keys = new Map(); for (const p of tonightPasses(state.tonight, t)) if (p.fresh && p.start > t + 10 * 60e3 && p.start <= eve && tierN(p.obj) >= 2) keys.set(cardKeyFor(p.obj), tierN(p.obj)); n = keys.size; mixed = new Set(keys.values()).size > 1 || [...keys.values()].some((v) => v > 2); } } catch {} /* the haul's window and tiers, so the numbers agree */
   const what = mixed ? `Rare${n === 1 ? '' : 's'} or better` : n === 1 ? 'Rare' : 'Rares';
-  l.children[1].textContent = n >= 2 ? `${n} ${what} tonight · get a ping before each one` : n ? `A ${what === 'Rare' ? 'Rare' : 'Rare or better'} tonight · get a ping before it comes over` : 'Set reminders for passes with Space Collector Plus';
+  l.children[1].textContent = n >= 2 ? `${n} ${what} tonight · get a ping before each one` : n ? `A ${what === 'Rare' ? 'Rare' : 'Rare or better'} tonight · get a ping before it comes over` : 'Set reminders for passes with Sky Collector Plus';
 }
 // Weekly recap (playtest 2026-10-09, #15): the first visit of a new week, if you observed last week, opens on a card
 // summing it up: new cards, sightings, nights, XP, your rarest find, the streak, and what’s coming this week. Share it
@@ -6274,9 +6274,9 @@ function showRecap(d) {
     h.addEventListener('pointerup', end); h.addEventListener('pointercancel', () => { fl = null; }); }
   // A Plus line under the buttons on weeks the recap won't ask for a review (design/plus-moments.html, 2026-10-24).
   if (plusSellable() && reviewReady().nights >= 4 && !(reviewable() && reviewReady().ok)) { const a = document.createElement('button'); a.type = 'button'; a.className = 'rc-plus'; a.textContent = 'Put next week on your home screen · Plus ›'; a.onclick = () => { close(); setTimeout(() => openPlus('widgets'), 340); }; el.querySelector('.rc-actions').after(a); }
-  if (canRate()) { const r = document.createElement('button'); r.type = 'button'; r.className = 'rc-rate'; r.textContent = 'Enjoying it? Rate Space Collector ›'; r.onclick = () => rateNow('recap'); (el.querySelector('.rc-plus') ?? el.querySelector('.rc-actions')).after(r); } /* a link, not Apple's limited prompt (2026-11-09) */
+  if (canRate()) { const r = document.createElement('button'); r.type = 'button'; r.className = 'rc-rate'; r.textContent = 'Enjoying it? Rate Sky Collector ›'; r.onclick = () => rateNow('recap'); (el.querySelector('.rc-plus') ?? el.querySelector('.rc-actions')).after(r); } /* a link, not Apple's limited prompt (2026-11-09) */
   el.querySelector('.rc-share').onclick = async () => {
-    const text = `My week in Space Collector: ${fresh.length} new card${fresh.length === 1 ? '' : 's'}, ${week.length} sighting${week.length === 1 ? '' : 's'} over ${nights} night${nights === 1 ? '' : 's'}${best ? `. Rarest: ${label(best)} (${tier.label})` : ''}. https://spacecollector.app`;
+    const text = `My week in Sky Collector: ${fresh.length} new card${fresh.length === 1 ? '' : 's'}, ${week.length} sighting${week.length === 1 ? '' : 's'} over ${nights} night${nights === 1 ? '' : 's'}${best ? `. Rarest: ${label(best)} (${tier.label})` : ''}. https://skycollector.app`;
     note('share', { w: 'week' });
     try { if (navigator.share) await navigator.share({ text }); else { await navigator.clipboard.writeText(text); toast('Copied. Paste it anywhere.', 2200); } } catch {}
   };
@@ -6759,7 +6759,7 @@ document.addEventListener('touchend', motionFromTap, true);
 document.addEventListener('click', motionFromTap, true);
 function saveExploreState() {
   if (!state.started) return;
-  try { sessionStorage.setItem('space-collector.explore',JSON.stringify({ observer:state.observer, locationStatus:state.locationStatus, timeOffsetMs:state.timeOffsetMs, drag:state.drag, preview:state.preview, followPreview:state.followPreview, pinnedId:state.pinnedId })); } catch {}
+  try { sessionStorage.setItem('sky-collector.explore',JSON.stringify({ observer:state.observer, locationStatus:state.locationStatus, timeOffsetMs:state.timeOffsetMs, drag:state.drag, preview:state.preview, followPreview:state.followPreview, pinnedId:state.pinnedId })); } catch {}
 }
 document.addEventListener('click', e => { if (e.target.closest('a[href^="cards.html"]')) saveExploreState(); });
 
@@ -6942,7 +6942,7 @@ function renderStartHand() {
       <div class="wc-step"><div class="wc-a-pic card-pic"><i>3</i><span class="wa-card"><img src="assets/art/cards/sm/iss.webp" alt="" decoding="async"></span></div><b>Tap Collect to claim its card.</b></div>
     </div>
     <p class="wc-a-text">Discover satellites, rocket stages, the Space Station, planets and stars, all really up there. Return on clear nights to level up your cards and uncover <b>secrets</b>.</p>
-    <div class="wc-a-foot"><span>↑ Swipe up to begin</span><span class="brand">SPACE COLLECTOR</span></div>
+    <div class="wc-a-foot"><span>↑ Swipe up to begin</span><span class="brand">SKY COLLECTOR</span></div>
   </div>`);
   // Start face-down: the card is turned half way, so its (pre-mirrored) back faces you.
   const back = card.querySelector('.card__back'); applyBack(back); back.style.opacity = '1';
@@ -7049,7 +7049,7 @@ async function boot() {
   const params=new URLSearchParams(location.search);
   if(params.has('resume')) {
     try {
-      const saved=JSON.parse(sessionStorage.getItem('space-collector.explore'));
+      const saved=JSON.parse(sessionStorage.getItem('sky-collector.explore'));
       if(saved) {
         state.observer=saved.observer; state.locationStatus=['manual','example'].includes(saved.locationStatus)?saved.locationStatus:'saved';
         state.timeOffsetMs=saved.timeOffsetMs??0; state.drag=saved.drag; state.preview=!!saved.preview; state.followPreview=!!saved.followPreview; state.pinnedId=saved.preview ? saved.pinnedId : null; // a selection only survives a reload inside a pass preview (2026-10-06)
@@ -7277,7 +7277,7 @@ function renderSettings() {
   $('set-hl-val').textContent = on.length ? (on.length > 1 ? `${on[0]} +${on.length - 1}` : on[0]) : 'None'; /* short enough for the row (playtest 2026-10-28) */
   $('chk-sound').checked = soundOn();
   if (Date.now() - settingsAsked > 15000) { settingsAsked = Date.now(); renderBackup(); syncNoteToggles(); } // native calls, not on every slider step
-  $('set-version').textContent = `Space Collector v${VERSION}`;
+  $('set-version').textContent = `Sky Collector v${VERSION}`;
   applyDevMode();
 }
 $('set-sky-range').addEventListener('input', (e) => { const m = $('sky-range'); m.value = e.target.value; m.dispatchEvent(new Event('input', { bubbles: true })); renderSettings(); });
@@ -7412,7 +7412,7 @@ function handleBack() {
 if (isNative()) {
   nativeChrome();
   onNative('App', 'backButton', handleBack);
-  // A tap on a widget (spacecollector://pass/<id>@<start>, …/tonight, …/plus): Show me for that pass, the Tonight page or
+  // A tap on a widget (skycollector://pass/<id>@<start>, …/tonight, …/plus): Show me for that pass, the Tonight page or
   // Plus. Kept until tonight's plan is in if the app is only just starting (widgetLink, run from shareTonight).
   onNative('App', 'appUrlOpen', ({ url }) => { if (openGiftLink(url)) return; note('remind', { s: 'widget' }); openWidgetLink(url); });
   // A tap on a notification (notifications plan 2026-10-29): the pass it's about (Show me) or the Tonight page, through
@@ -7420,7 +7420,7 @@ if (isNative()) {
   onNative('LocalNotifications', 'localNotificationActionPerformed', ({ actionId, notification }) => {
     note('remind', { s: actionId === 'nottonight' ? 'nottonight' : 'tap', ch: String(notification?.extra?.ch ?? '').slice(0, 12) }); /* do reminders bring people back? (stats page, 2026-11-06) */
     if (actionId === 'nottonight') { notTonight(notification?.extra?.night).catch(() => {}); return; }
-    openWidgetLink(notification?.extra?.link ?? 'spacecollector://tonight');
+    openWidgetLink(notification?.extra?.link ?? 'skycollector://tonight');
   });
   /* After Reset everything (location.href = pathname) getLaunchUrl still returns the pack link the app was opened with, and
      the new player saw a pack instead of the welcome card (SC Tester, 2026-11-07, Sevaan). The reset leaves a skipLaunch
@@ -7710,7 +7710,7 @@ function noteSamples() {
   const shiny = find((p) => p.eclipseAt) ?? (fresh ? { ...fresh, eclipseAt: fresh.start + 120e3, eclipseAz: 180, eclipseEl: 45 } : null);
   const train = (T && tonightTrains(T, t0)[0]) ?? (fleet ? { start: fleet.start, count: 24, days: 2, first: fleet } : null);
   const ghost = (T && ghostPass(T)) ?? fresh, sh = nextShower(t0), con = consBack(t0)[0] ?? (CON_BY_ID.get('Ori') ? { c: CON_BY_ID.get('Ori'), have: 0 } : null);
-  const until = eve + 2 * 3600e3, link = (p) => (p ? `spacecollector://pass/${p.id ?? p.obj.id}@${p.start}` : 'spacecollector://tonight');
+  const until = eve + 2 * 3600e3, link = (p) => (p ? `skycollector://pass/${p.id ?? p.obj.id}@${p.start}` : 'skycollector://tonight');
   const auto = (ch) => ({ actions: 'auto', channel: ch }), asked = (p) => ({ actions: p ? 'pass' : undefined, channel: 'asked' });
   const ud = T ? udOptions() : [];
   const rows = [
@@ -7770,7 +7770,7 @@ function openNoteTest() {
   let html = `<h4>Check these</h4>${checks.map((c, n) => `<div class="ntt check"><input type="checkbox" data-k="c${n}"${ticks[`c${n}`] ? ' checked' : ''} aria-label="Checked"><span><small style="color:#e6e2c4">${escapeHtml(c)}</small></span></div>`).join('')}`;
   const sn = noteSeen(); html += `<div class="ntt check"><span></span><span><small>Ignored in a row: <b style="display:inline;color:#fff2b3">${sn.run ?? 0}</b> (5 slows Look up and time-away ones to one a week) <button type="button" id="nt-run" style="margin-left:6px">Reset</button></small></span></div>`;
   html += `<div class="ntt check"><span></span><span><small>${nt ? 'Not tonight is <b style="display:inline;color:#fa8127">on</b> for tonight.' : 'Not tonight is off for tonight.'} ${nt ? '<button type="button" id="nt-clear" style="margin-left:6px">Clear it</button>' : ''}</small></span></div>`;
-  for (const [g, items] of rows) { html += `<h4>${escapeHtml(g)}</h4>`; for (const [name, what, m, link, opts] of items) { const k = `${g}|${name}`; html += row(k, name, what, m); if (m) sends.push({ m, link: link ?? 'spacecollector://tonight', opts, id: 7900 + i++ }); } }
+  for (const [g, items] of rows) { html += `<h4>${escapeHtml(g)}</h4>`; for (const [name, what, m, link, opts] of items) { const k = `${g}|${name}`; html += row(k, name, what, m); if (m) sends.push({ m, link: link ?? 'skycollector://tonight', opts, id: 7900 + i++ }); } }
   $('notetest-body').innerHTML = html;
   $('notetest-body').onchange = (e) => { const c = e.target.closest('input[data-k]'); if (c) { ticks[c.dataset.k] = c.checked; save(); } };
   $('notetest-body').onclick = async (e) => {
@@ -7807,7 +7807,7 @@ $('set-reset').addEventListener('click', async () => {
   if (isNative()) { try { const { notifications } = await plugin('LocalNotifications').getPending(); if (notifications?.length) await plugin('LocalNotifications').cancel({ notifications: notifications.map((n) => ({ id: n.id })) }); } catch { for (const v of remindIds.values()) { try { await cancelNotify(v.id); } catch {} } } }
   /* the anonymous install ID, the testing-tools flag and the usage-report choice survive a reset, so a reset isn't counted as a new player on the stats page (2026-11-06, Sevaan: "89 installs… can't be") */
   try { const keep = ['tid', 'tidAt', 'tidNight', 'dev', 'share'].map((k) => [k, localStorage.getItem(k)]); localStorage.clear(); sessionStorage.clear(); for (const [k, v] of keep) if (v != null) localStorage.setItem(k, v); sessionStorage.setItem('skipLaunch', '1'); } catch {}
-  await new Promise((res) => { try { const r = indexedDB.deleteDatabase('space-collector'); r.onsuccess = r.onerror = r.onblocked = () => res(); } catch { res(); } });
+  await new Promise((res) => { try { const r = indexedDB.deleteDatabase('sky-collector'); r.onsuccess = r.onerror = r.onblocked = () => res(); } catch { res(); } });
   location.href = location.pathname;
 });
 
@@ -7963,7 +7963,7 @@ function applyTrProto() { const t = trProto(); document.body.classList.remove('t
 document.addEventListener('pointerdown', (e) => { if (!trProto()) return; /* only with a prototype on: these root variables restyle the whole page, a 50 ms hitch on every tap (mission card flip jank, 2026-11-02, Sevaan) */ const r = document.documentElement.style; r.setProperty('--tx', `${e.clientX}px`); r.setProperty('--ty', `${e.clientY}px`); r.setProperty('--txp', `${(e.clientX / innerWidth * 100).toFixed(1)}%`); r.setProperty('--typ', `${(e.clientY / innerHeight * 100).toFixed(1)}%`); }, { capture: true, passive: true });
 applyTrProto();
 
-// Every place has its own header (2026-10-21, Sevaan): Explore "Space Collector / Collect the night sky"; the Collection
+// Every place has its own header (2026-10-21, Sevaan): Explore "Sky Collector / Collect the night sky"; the Collection
 // keeps Explore's header bar but says "Your collection" with a count under it (Up in your sky has its own panel header).
 function setPageHeader(page) {
   const w = document.querySelector('#sky-header .wordmark'); if (!w) return;
@@ -7974,7 +7974,7 @@ function setPageHeader(page) {
   } else if (page === 'settings') { title = 'SETTINGS'; sub = 'MAKE IT YOURS'; }
   else if (page === 'around') { title = 'ALL AROUND YOU'; sub = 'WHAT’S UP, AND WHICH WAY'; }
   else if (page === 'sky') { title = 'TONIGHT'; /* the tab and the page are "Tonight" (2026-10-21, Sevaan) */ sub = `${(state.observer.place || (state.observer.label && !/^(current|chosen) location$/i.test(state.observer.label) ? state.observer.label.replace(/^Example:\s*/, '') : 'Your sky')).toUpperCase()} · ${fmtTime(now().getTime())}`; }
-  else { title = 'SPACE COLLECTOR'; sub = 'COLLECT THE NIGHT SKY'; }
+  else { title = 'SKY COLLECTOR'; sub = 'COLLECT THE NIGHT SKY'; }
   headerTo(w, title, sub);
 }
 // The header's words change with a quick effect (2026-10-21, Sevaan: "it just immediately switches"). Testing tools →

@@ -88,7 +88,7 @@ export function haptic(kind = 'light') {
 }
 // Local notifications (pass reminders): no server, works offline. Resolves 'on' | 'denied' | 'unsupported'.
 let notifId = 1000;
-// link: where a tap goes ('spacecollector://pass/<id>@<start>' or 'spacecollector://tonight', the widgets' own links).
+// link: where a tap goes ('skycollector://pass/<id>@<start>' or 'skycollector://tonight', the widgets' own links).
 // actions: 'auto' (Show me · Not tonight, for the ones the app sends itself) or 'pass' (Show me, for a pass you asked for).
 // Notifications plan 2026-10-29 (design/notifications-plan.html): taps go somewhere, and a night is grouped together.
 // channel: the Android category it's filed under ('asked' | 'tonight' | 'events' | 'alerts'), so a player can mute one
@@ -157,7 +157,7 @@ if (isNative()) document.addEventListener('click', (e) => {
   const href = a.getAttribute('href') ?? '';
   let url = null;
   if (/^https?:\/\//i.test(href)) url = href;
-  else if (/^privacy\.html/i.test(href)) url = 'https://spacecollector.app/privacy';
+  else if (/^privacy\.html/i.test(href)) url = 'https://skycollector.app/privacy';
   if (!url) return;
   const b = plugin('Browser'); if (!b) return;
   e.preventDefault(); e.stopPropagation();

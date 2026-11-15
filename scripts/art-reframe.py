@@ -3,9 +3,9 @@
 # margin to match. Usage: reframe.py <art key> <scale> <dx> <dy>   (dx, dy = where the shrunk picture's top-left goes)
 import base64, json, subprocess, sys, urllib.request, os, time
 from PIL import Image
-URL = 'https://aiplatform.googleapis.com/v1/projects/space-collector-510722/locations/global/publishers/google/models/gemini-3-pro-image:generateContent'
+URL = 'https://aiplatform.googleapis.com/v1/projects/sky-collector-510722/locations/global/publishers/google/models/gemini-3-pro-image:generateContent'
 key, sc, dx, dy = sys.argv[1], float(sys.argv[2]), int(sys.argv[3]), int(sys.argv[4])
-src = Image.open(f'/Users/sevaan/Documents/Space Collector/assets/art/cards/{key}.webp').convert('RGB'); W, H = src.size
+src = Image.open(f'/Users/sevaan/Documents/Sky Collector/assets/art/cards/{key}.webp').convert('RGB'); W, H = src.size
 small = src.resize((round(W * sc), round(H * sc)), Image.LANCZOS)
 canvas = Image.new('RGB', (W, H), (255, 0, 255)); canvas.paste(small, (dx, dy)); canvas.save(f'{key}-guide.png')
 tok = subprocess.check_output([os.path.expanduser('~/google-cloud-sdk/bin/gcloud'), 'auth', 'print-access-token']).decode().strip()
