@@ -1,0 +1,73 @@
+/* Sky Collector (2026-11-15): the catch panel on Explore, the new-card screen and the flight/plane cards.
+   Design: canvas row D "Light Touch, daylight" — Space Collector's anatomy, cream cards, navy ink, orange accent. */
+:root { --sc-ink:#0d2238; --sc-muted:#4a6178; --sc-paper:#fffdf6; --sc-rule:#c9b98a; --sc-line:#c9d9e6; --sc-orange:#fa8127; --sc-orange-ink:#c2560a;
+  --sc-gold:linear-gradient(160deg,#ffe28a,#f2b632 40%,#ffd86a 70%,#c98f1c); }
+
+/* Space Collector's night-sky helpers have nothing to say about planes. */
+#nextpass, #event-banner, #tk, #ud-now, #until-dark, #gh-remind, #discover, #plane, #skybar { display:none !important; }
+
+/* ---- Catch panel: under the ring, above the tab bar ---- */
+#catchbar { position:fixed; left:50%; transform:translateX(-50%); bottom:calc(var(--nav-h, 112px) + var(--safe-bottom, 0px) + 6px); z-index:18;
+  width:min(360px, calc(var(--vws, 100vw) - 32px)); background:#ffffff; color:var(--sc-ink); border-radius:16px; padding:12px;
+  box-shadow:0 10px 30px rgba(13,34,56,.22); display:flex; flex-direction:column; gap:10px; pointer-events:auto; }
+#catchbar .cb-card { display:flex; gap:12px; align-items:center; }
+#catchbar .cb-art { width:52px; height:52px; flex:none; border-radius:10px; background:linear-gradient(180deg,#78b3e3,#d8eaf8); display:grid; place-items:center; }
+#catchbar .cb-art svg { width:36px; height:36px; fill:#fff; stroke:var(--sc-ink); stroke-width:1.4; }
+#catchbar .cb-body { display:flex; flex-direction:column; gap:2px; min-width:0; }
+#catchbar .cb-k { font:600 12px/1.1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.16em; color:var(--sc-orange-ink); }
+#catchbar.owned .cb-k { color:var(--sc-muted); }
+#catchbar .cb-name { font:400 18px/1.1 'SC Display','Russo One',sans-serif; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+#catchbar .cb-sub { font:500 14px/1.2 'SC Label','Barlow Condensed',sans-serif; color:var(--sc-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+#cb-collect { height:50px; border-radius:12px; background:var(--sc-orange); color:var(--sc-ink); font:600 17px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.2em; }
+#catchbar.owned #cb-collect { background:#eef3f8; }
+
+/* ---- New-card screen ---- */
+.fcatch { position:fixed; inset:0; z-index:80; overflow-y:auto; background:linear-gradient(180deg,#a9d2f0 0%,#e4f1fa 55%,#f6fafd 100%); color:var(--sc-ink);
+  display:flex; flex-direction:column; align-items:center; gap:14px; padding:calc(env(safe-area-inset-top,0px) + 14px) 20px calc(env(safe-area-inset-bottom,0px) + 20px);
+  opacity:0; transition:opacity .22s; }
+.fcatch.on { opacity:1; }
+.fcatch-top { width:min(360px,100%); display:flex; justify-content:space-between; align-items:center; }
+.fcatch-k { font:500 15px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.2em; color:#1f5fbf; }
+.fcatch-k span { color:var(--sc-orange-ink); }
+.fcatch-x { width:44px; height:44px; display:grid; place-items:center; color:var(--sc-ink); }
+.fcatch-card { transform:translateY(16px) scale(.96); transition:transform .35s cubic-bezier(.2,.9,.3,1.2); }
+.fcatch.on .fcatch-card { transform:none; }
+.fcatch-strip { width:min(350px,100%); display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:12px; background:#fff; border:1px solid var(--sc-line); }
+.fcatch-strip-art { width:46px; height:46px; flex:none; border-radius:8px; background:linear-gradient(180deg,#78b3e3,#d8eaf8); display:grid; place-items:center; }
+.fcatch-strip-art svg { width:34px; height:34px; fill:#fff; stroke:var(--sc-ink); stroke-width:1.4; }
+.fcatch-strip-t { display:flex; flex-direction:column; gap:2px; }
+.fcatch-strip-k { font:600 12px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.16em; color:var(--sc-orange-ink); }
+.fcatch-strip-n { font:400 15px/1.1 'SC Display','Russo One',sans-serif; }
+.fcatch-done { margin-top:auto; width:min(350px,100%); height:52px; border-radius:12px; border:2px solid var(--sc-ink); color:var(--sc-ink);
+  font:600 16px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.2em; }
+
+/* ---- The card ---- */
+.fc { width:min(330px, calc(100vw - 40px)); padding:6px; border-radius:18px; background:#b8c6d2; box-shadow:0 14px 34px rgba(13,34,56,.22); color:var(--sc-ink); }
+.fc--rare, .fc--epic, .fc--legendary { background:var(--sc-gold); box-shadow:0 14px 34px rgba(13,34,56,.22), 0 0 24px rgba(242,182,50,.35); }
+.fc-in { background:var(--sc-paper); border-radius:13px; border:1.5px solid #c9d4dd; padding:10px; display:flex; flex-direction:column; gap:8px; }
+.fc-art { position:relative; height:176px; border-radius:8px; overflow:hidden; }
+.fc-art--route { background-color:#d7eaf8; background-image:linear-gradient(rgba(13,34,56,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(13,34,56,.07) 1px,transparent 1px); background-size:28px 28px; }
+.fc-art--plane { background:linear-gradient(180deg,#78b3e3,#d8eaf8); display:grid; place-items:center; }
+.fc-glyph { width:150px; height:150px; fill:#fff; stroke:var(--sc-ink); stroke-width:1.2; transform:rotate(-20deg); }
+.fc-tier { position:absolute; left:8px; top:8px; z-index:1; background:#fff; border-radius:6px; padding:3px 7px; font:600 12px/1.2 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.14em; }
+.fc-set { position:absolute; right:10px; top:10px; z-index:1; font:600 12px/1.2 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.16em; }
+.fc-arc { position:absolute; left:12%; right:12%; top:48px; height:80px; overflow:hidden; }
+.fc-arc div { height:160px; border-radius:50%; border:2.5px dashed var(--sc-orange-ink); }
+.fc-dot { position:absolute; top:121px; width:14px; height:14px; border-radius:50%; border:3px solid #fff; transform:translateX(-50%); }
+.fc-dot--a { left:12%; background:var(--sc-ink); } .fc-dot--b { left:88%; background:var(--sc-orange-ink); }
+.fc-code { position:absolute; top:144px; transform:translateX(-50%); font:400 15px/1 'SC Display','Russo One',sans-serif; }
+.fc-code--a { left:12%; } .fc-code--b { left:88%; }
+.fc-name { margin:0; font:400 25px/1.02 'SC Display','Russo One',sans-serif; text-transform:uppercase; }
+.fc-id { display:flex; justify-content:space-between; align-items:center; gap:8px; font:500 15px/1.2 'SC Label','Barlow Condensed',sans-serif; }
+.fc-id-r { border-left:1.5px solid var(--sc-ink); padding-left:8px; letter-spacing:.06em; white-space:nowrap; }
+.fc-stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); border-top:1px solid var(--sc-rule); }
+.fc-stat { display:flex; flex-direction:column; gap:3px; padding:6px 6px 0; border-right:1px solid var(--sc-rule); }
+.fc-stat:first-child { padding-left:0; } .fc-stat:last-child { border-right:0; padding-right:0; }
+.fc-stat-l { font:600 10px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; color:#5c6a78; }
+.fc-stat-v { font:400 16px/1.1 'SC Display','Russo One',sans-serif; white-space:nowrap; }
+.fc-stat-v small { font:500 10px 'SC Label','Barlow Condensed',sans-serif; margin-left:1px; }
+.fc-fact { margin:4px 0 0; border-left:2px solid var(--sc-orange); padding-left:10px; font:400 13.5px/1.45 Georgia,'Times New Roman',serif; letter-spacing:.03em; color:#1b3047; }
+.fc-foot { display:flex; align-items:center; gap:8px; border-top:1px solid var(--sc-rule); padding-top:7px; font:500 12px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; }
+.fc-check { width:20px; height:20px; border-radius:50%; border:1.2px solid var(--sc-ink); display:grid; place-items:center; font-size:11px; }
+.fc-foot-t { flex:1; }
+.fc-brand { border-left:1px solid var(--sc-rule); padding-left:8px; font:400 10px/1 'SC Display','Russo One',sans-serif; letter-spacing:0; }

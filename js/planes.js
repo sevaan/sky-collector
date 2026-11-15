@@ -3,11 +3,15 @@
 // on the website, because adsb.lol doesn’t allow browser requests directly. The airline comes from the callsign's prefix.
 // No DOM here. Positions are extrapolated between fetches using ground speed, track and climb rate.
 
-import { SERVER } from './server.js?v=0.1.1575';
-import { plugin } from './native.js?v=0.1.1575';
+import { SERVER } from './server.js?v=0.1.1577';
+import { plugin } from './native.js?v=0.1.1577';
+import { lookupRoute } from './routes.js?v=0.1.1577';
 // Empty = feature off. localStorage 'planeRelay' overrides it (testing). Our server's /planes (adsb.lol only) once it's
 // deployed; until then the Val Town relay (relay/handler.ts).
-const RELAY = SERVER ? `${SERVER}/planes` : 'https://sevaan--cd67f53abd3511f18ee51607ee4eb77e.web.val.run'; // relay/handler.ts on Val Town
+// Sky Collector (2026-11-15): Space Collector's Val Town relay is turned away by adsb.lol now, so the website needs Sky
+// Collector's own relay (worker/, a Cloudflare Worker). SKY_RELAY is its address once it's deployed.
+const SKY_RELAY = '';
+const RELAY = SERVER ? `${SERVER}/planes` : SKY_RELAY;
 const POLL_MS = 10000;
 const RADIUS_NM = 40;    // ~75 km: an airliner at cruise height is ~8° up at that distance
 const MAX_AGE_S = 60;    // drop planes we haven’t heard about for a minute
@@ -121,6 +125,8 @@ export class PlaneTracker {
     if (this.routes.has(callsign)) return this.routes.get(callsign);
     const airline = airlineFor(callsign, null), r = airline ? { airline, flight: callsign, from: '', to: '' } : null;
     this.routes.set(callsign, r); if (this.routes.size > 300) this.routes.delete(this.routes.keys().next().value);
+    // Sky Collector: no server of ours, so the phone reads the same CC0 data straight from GitHub (js/routes.js).
+    if (r && !SERVER) lookupRoute(callsign).then((x) => { if (x) { r.from = x.from.city; r.to = x.to.city; r.full = x; } else r.none = true; }).catch(() => {});
     if (r && SERVER) fetch(`${SERVER}/route?cs=${encodeURIComponent(callsign)}`, { signal: AbortSignal.timeout?.(8000) })
       .then((x) => (x.ok ? x.json() : null)).then((j) => { const st = j?.route; if (st?.length >= 2) { const nm = (a) => a.city || a.iata || a.icao; r.from = nm(st[0]); r.to = nm(st[st.length - 1]); } }).catch(() => {});
     return r;
