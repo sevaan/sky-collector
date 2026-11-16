@@ -9,6 +9,7 @@
 
 import { TIERS } from './flights.js?v=0.1.1651';
 import { typePhoto } from './type-photos.js?v=0.1.1651';
+import { housePhoto } from './house-photos.js?v=0.1.1651';
 import { airlinePhoto } from './airline-photos.js?v=0.1.1651';
 import { airlineLogo } from './airline-logos.js?v=0.1.1651';
 import { fitStyle } from './photo-fit.js?v=0.1.1651';
@@ -36,7 +37,15 @@ const feet = (ft) => { if (!ft) return '—'; const r = Math.round(ft / 100) * 1
 const code = (a) => a?.iata || a?.icao || '—';
 
 // The photo for an ICAO type code, or null (the card then draws the top-down glyph on a sky panel).
-export function photoFor(type) { return type ? typePhoto(String(type).toUpperCase()) : null; }
+/* A card never shows another airline's paint (2026-11-15, Sevaan: an Alaska 737 MAX on an Air Canada Rouge card). A type's
+   picture is, in order: the type in its maker's own paint or with no airline markings (js/house-photos.js), the nearest type
+   that has one, then the old type photo only where it shows no airline; otherwise the drawn sky panel. */
+const HOUSE_NEAR = { E190: 'E290', E195: 'E295', E170: 'E75L', A321: 'A21N', A19N: 'A319', A333: 'A332', B738: 'B38M', B739: 'B39M', B744: 'B748' };
+const AIRLINE_TYPE_PHOTO = new Set(['A19N', 'A20N', 'A21N', 'A306', 'A319', 'A320', 'A321', 'A332', 'A333', 'A339', 'A359', 'A35K', 'A388', 'A124', 'B38M', 'B39M', 'B737', 'B738', 'B739', 'B744', 'B748', 'B752', 'B762', 'B763', 'B772', 'B77L', 'B77W', 'B789', 'B78X', 'BCS1', 'BCS3', 'C208', 'CRJ2', 'CRJ9', 'DH8A', 'DH8C', 'DH8D', 'E170', 'E190', 'E195', 'E290', 'E75L', 'MD11']);
+export function photoFor(type) {
+  if (!type) return null; const t = String(type).toUpperCase();
+  return housePhoto(t) || (HOUSE_NEAR[t] && housePhoto(HOUSE_NEAR[t])) || (AIRLINE_TYPE_PHOTO.has(t) ? null : typePhoto(t));
+}
 // A flight's photo: that type in the airline's own livery (js/airline-photos.js) when we have one, else the type photo.
 // The airline is the callsign's ICAO prefix (older saved catches only carry it in the key, F:ACA:CYYZ-KLAX).
 const airlineIcao = (f) => f?.airlineIcao || (/^F:([A-Z]{3}):/.exec(f?.key || '') || [])[1] || (f?.callsign || '').slice(0, 3);
