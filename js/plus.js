@@ -3,7 +3,7 @@
 // (2026-10-16): the purchase belongs to the player’s Apple ID / Google account, no sign-in of ours. The last answer is
 // kept (localStorage 'plusStore') so Plus holds offline. The testing toggle (Settings → Testing tools → "Plus
 // (testing)", 'plusTest') still turns it on anywhere; the website never sells Plus.
-import { plugin, isNative, onNative } from './native.js?v=0.1.1599';
+import { plugin, isNative, onNative } from './native.js?v=0.1.1600';
 
 // RevenueCat public SDK keys (safe in the app). The Test Store key works with no App Store / Play setup; swap in the
 // appl_ / goog_ keys from RevenueCat → Project settings → API keys once the store apps are connected.
@@ -111,11 +111,11 @@ export async function restorePlus() {
 // What Plus adds, in the order the Plus card lists them (2026-10-16, design/plus-sheet-card.html). `why` = the openPlus
 // reason that leads with it (its label turns orange on the card).
 export const PLUS_PERKS = [
-  { why: 'reminders', name: 'Pass reminders', text: 'Alerts for any pass you choose.' },
-  { why: 'rare', name: 'Rare alerts', text: 'A ping when a new Rare or better card passes.' },
-  { why: 'widgets', name: 'Widgets', text: 'Tonight on your home and lock screen.' }, // every widget is Plus (2026-10-22, Sevaan)
-  { why: 'shiny', name: 'Shiny forecast', text: 'When and where a shiny can happen.' },
-  { why: 'backs', name: 'Card backs', text: '6 designs, or a random one each flip.' },
+  { why: 'reminders', name: 'Reminders', text: 'A ping before a flight you’re waiting for comes over.' },
+  { why: 'rare', name: 'Rare alerts', text: 'A ping when a new Rare or better flight is heading your way.' },
+  { why: 'widgets', name: 'Widgets', text: 'What’s overhead, on your home and lock screen.' }, // every widget is Plus (2026-10-22, Sevaan)
+  { why: 'shiny', name: 'Shiny forecast', text: 'When a shiny catch is possible: last light, the Moon, straight overhead.' },
+  { why: 'backs', name: 'Card backs', text: '5 more designs, House Livery included, or a random one each flip.' },
   { why: 'patch', name: 'Member patch', text: 'Only Plus members wear this one.' },
 ];
 // Prices (2026-10-16, Sevaan). The yearly plan has the 7-day free trial; all three are shared with Family Sharing.

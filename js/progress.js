@@ -1,14 +1,14 @@
 // Player progress from the sighting log: XP and observer rank, tonight’s three missions, a weekly streak and
 // achievements. Everything is derived from the saved sightings (nothing extra is stored), so it can’t drift.
 // info(cardKey) -> { tier, type, owner, launch, natural, con } | null. No DOM.
-import { nightKey } from './observation.js?v=0.1.1599';
-import { fleetThresholds } from './card-model.js?v=0.1.1599';
+import { nightKey } from './observation.js?v=0.1.1600';
+import { fleetThresholds } from './card-model.js?v=0.1.1600';
 
 // A longer climb (2026-10-12, playtest room: three ranks on night 1, Mission Control in about two weeks), with two
 // prestige ranks past Mission Control. Nobody drops a rank they had on the old curve (rankFloor below).
 export const RANKS = [
-  [0, 'Stargazer'], [500, 'Spotter'], [1500, 'Tracker'], [4000, 'Navigator'], [10000, 'Flight Controller'], [25000, 'Mission Control'], /* stretched 2026-10-28 (Sevaan): the first rank-up on night 2, not night 1 */
-  [50000, 'Deep Space'], [90000, 'Voyager'],
+  [0, 'Spotter'], [500, 'Plane Spotter'], [1500, 'Tracker'], [4000, 'Navigator'], [10000, 'Air Traffic Controller'], [25000, 'Chief Pilot'], /* Sky Collector names (2026-11-15) */ /* stretched 2026-10-28 (Sevaan): the first rank-up on night 2, not night 1 */
+  [50000, 'Ace'], [90000, 'Sky Legend'],
 ];
 const LEGACY_RANKS = [[0, 'Stargazer'], [200, 'Spotter'], [600, 'Tracker'], [1500, 'Navigator'], [4000, 'Flight Controller'], [10000, 'Mission Control']];
 // The rank a player already held on the old curve, worked out once and kept (localStorage rankFloor2).
