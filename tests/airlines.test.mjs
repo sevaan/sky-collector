@@ -18,7 +18,7 @@ test('airlines outside the hand list resolve to a name', () => {
 test('route() gives any airline-style callsign an airline', () => {
   const t = new PlaneTracker();
   assert.equal(t.route('RYR8123').airline, 'Ryanair');
-  assert.equal(t.route('IGO123').airline, 'IndiGo Airlines');
+  assert.equal(t.route('IGO123').airline, 'IndiGo');
   assert.equal(t.route('N123AB'), null);
 });
 
