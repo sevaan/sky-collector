@@ -1,14 +1,15 @@
-import { SETS, goldAlbums } from './sets.js?v=0.1.1608';
-import { isPlus } from './plus.js?v=0.1.1608';
+import { SETS, goldAlbums } from './sets.js?v=0.1.1609';
+import { isPlus } from './plus.js?v=0.1.1609';
 // Card backs you can choose (2026-10-16, design/card-backs.html, Sevaan liked all six). Mission Control is everyone’s;
 // Plus unlocks the rest; two can also be earned free: Golden Record (find the Pale Blue Dot story) and Star Chart
 // (complete 10 constellations); main.js writes what’s been earned to localStorage 'backEarned'. The choice is
 // localStorage 'cardBack': a back’s id, or 'random' for a different unlocked one each time a card turns over.
 export const CARD_BACKS = [
   // Sky Collector's backs (2026-11-15, Sevaan): painted with Nano Banana Pro like Space Collector's (scripts/art/gen-back.py,
-  // prompts in scripts/art/back-prompts/). Cheatline is everyone's (Sevaan's pick from the design room's twelve); the rest
+  // prompts in scripts/art/back-prompts/). Turbofan is everyone's (Sevaan's pick from design room 3); Cheatline was the default before it; the rest
   // come with Plus, to be curated later.
-  { id: 'cheatline', bg: '#031622', name: 'Cheatline', url: 'assets/art/backs/back-cheatline.webp', title: 'middle', free: true },
+  { id: 'turbofan', bg: '#0d2238', name: 'Turbofan', url: 'assets/art/backs/back-turbofan.webp', title: 'middle', free: true }, // Sevaan's pick from design room 3 (2026-11-15)
+  { id: 'cheatline', bg: '#031622', name: 'Cheatline', url: 'assets/art/backs/back-cheatline.webp', title: 'middle' },
   { id: 'fleet', bg: '#66b7d4', name: 'The Fleet', url: 'assets/art/backs/back-fleet.webp', title: 'middle' },
   { id: 'first-class', bg: '#98a2a6', name: 'First Class', url: 'assets/art/backs/back-first-class.webp', title: 'middle' },
   { id: 'endpaper', bg: '#8abfcf', name: 'Endpaper', url: 'assets/art/backs/back-endpaper.webp', title: 'middle' },
@@ -29,7 +30,7 @@ export const CARD_BACKS = [
 const read = (k, d) => { try { return localStorage.getItem(k) ?? d; } catch { return d; } };
 export const backEarned = () => { try { return new Set(JSON.parse(read('backEarned', '[]'))); } catch { return new Set(); } };
 export const backUnlocked = (b) => !!b && (b.free || isPlus() || backEarned().has(b.id));
-export const chosenBack = () => read('cardBack', 'cheatline');
+export const chosenBack = () => read('cardBack', 'turbofan');
 export function chooseBack(id) { try { localStorage.setItem('cardBack', id); } catch {} last = null; next = pick(); preload(next); }
 const pool = () => { const c = chosenBack(); if (c === 'random') { const u = CARD_BACKS.filter(backUnlocked); return u.length ? u : [CARD_BACKS[0]]; } const b = CARD_BACKS.find((x) => x.id === c); return [backUnlocked(b) ? b : CARD_BACKS[0]]; };
 let last = null;

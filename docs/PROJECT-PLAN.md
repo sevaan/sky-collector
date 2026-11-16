@@ -108,12 +108,21 @@ can run in parallel.
 - Done when: on `data/research/samples-*.jsonl.gz`, 95% or more of airline callsigns get a name; a Ryanair or
   IndiGo callsign shows "To <city>" in the catch panel and Today without collecting; a test covers it.
 
-**2. One catch per plane per pass.** Sonnet.
-- Goal: the same aircraft can't be collected again for a set time; the panel says so.
-- Files: `js/sky-catch.js` (`catchPanel`, `collect`), `css/sky.css`.
-- Rule to build: the same hex can't be collected again within 60 minutes. The panel shows "CAUGHT TODAY" with the
-  button off. The same flight on another day counts as a new sighting.
-- Done when: a second tap on the same plane does nothing; a test covers the rule.
+**2. Catching again stamps the card, like Space Collector's fleet cards.** Sonnet builds, Opus reviews. (Sevaan,
+2026-11-15: "you should just get a new stamp on it each time … like the fleet cards in Space Collector".)
+- Goal: a card you already own gets a stamp, not a duplicate. Stamps level the card Bronze → Silver → Gold the way
+  fleet launches do (`js/card-model.js` `fleetLevel`, `stampsIn`; `js/card.js` dot map and "N / M stamped" line).
+- What a stamp is:
+  - Flight card (e.g. ROU1908 Toronto → Reykjavík): one stamp per day you catch it, dated, like a passport stamp.
+  - Plane card (e.g. A321): one stamp per individual aircraft (hex) of that type, and the airline's colours it
+    flew in, so "7 A321s in 4 liveries".
+- Re-catching the same aircraft on the same day gives nothing: the panel says "STAMPED TODAY" with the button off.
+- Thresholds to start: flights 1 / 5 / 15 days, plane types 1 / 10 / 50 aircraft. XP for a new stamp, less than a new card.
+- The reveal for a re-catch plays Space Collector's "new stamp" moment instead of a new-card reveal.
+- Files: `js/sky-catch.js` (`catchPanel`, `collect`), `js/flights.js` (stamp keys), `js/flight-card.js` (stamp row,
+  level frame), `js/sky-collection.js` (level and stamp count on mini cards), `js/main.js` `skyReveal` (Opus), `css/sky.css`.
+- Done when: a second catch of the same flight on another day adds a dated stamp and moves the level; the same
+  aircraft twice in one day does nothing; tests cover both.
 
 **3. Small correctness fixes.** Haiku.
 - Remove `KAL` from `CARGO` in `js/flights.js`; delete the dead ternary in `tierFor`.
