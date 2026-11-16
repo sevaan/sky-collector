@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """Contact sheets with the detected aircraft box drawn on every photo (2026-11-15), to check scripts/photos/photo_common.py.
-Reads the boxes from js/type-photos.js and js/airline-photos.js. Usage: python3 -I scripts/photos/make-box-sheet.py OUT_DIR [types|airlines]
+Reads the boxes from js/type-photos.js and js/airline-photos.js. Usage: python3 -I scripts/photos/make-box-sheet.py OUT_DIR [types|airlines|house]
 Writes OUT_DIR/box-<kind>-NN.jpg (5 columns x 6 rows)."""
 import json, os, re, sys
 from PIL import Image, ImageDraw, ImageFont
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.join(HERE, '..', '..')
 OUT = sys.argv[1]; os.makedirs(OUT, exist_ok=True)
-KINDS = [k for k in ('types', 'airlines') if len(sys.argv) < 3 or sys.argv[2] == k]
+KINDS = [k for k in ('types', 'airlines', 'house') if len(sys.argv) < 3 or sys.argv[2] == k]
 TW, TH, COLS, ROWS = 360, 240, 5, 6
 FONT = ImageFont.truetype('/System/Library/Fonts/Helvetica.ttc', 16)
 for kind in KINDS:
-    mod, name = ('type-photos.js', 'TYPE_PHOTOS') if kind == 'types' else ('airline-photos.js', 'AIRLINE_PHOTOS')
+    mod, name = {'types': ('type-photos.js', 'TYPE_PHOTOS'), 'airlines': ('airline-photos.js', 'AIRLINE_PHOTOS'), 'house': ('house-photos.js', 'HOUSE_PHOTOS')}[kind]
     data = json.loads(re.search(name + r' = (\{.*?\n\});', open(os.path.join(ROOT, 'js', mod)).read(), re.S).group(1))
     keys = sorted(data)
     for s in range(0, len(keys), COLS * ROWS):
