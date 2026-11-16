@@ -4,7 +4,7 @@
   --sc-gold:linear-gradient(160deg,#ffe28a,#f2b632 40%,#ffd86a 70%,#c98f1c); }
 
 /* Space Collector's night-sky helpers have nothing to say about planes. */
-#nextpass, #event-banner, #tk, #ud-now, #until-dark, #gh-remind, #discover, #plane, #skybar { display:none !important; }
+#nextpass, #event-banner, #tk, #ud-now, #until-dark, #gh-remind, #plane, #skybar, #catchbar { display:none !important; } /* #discover is back: planes use it (2026-11-15) */
 
 /* ---- Catch panel: under the ring, above the tab bar ---- */
 #catchbar { position:fixed; left:50%; transform:translateX(-50%); bottom:calc(var(--nav-h, 112px) + var(--safe-bottom, 0px) + 6px); z-index:18;
@@ -425,3 +425,35 @@ html body .tc .art::after { box-shadow:inset 0 .3em .6em rgba(13,34,56,.22), ins
    shown whole (contain) over a blurred, enlarged copy of itself, so the frame still fills with that sky. */
 .ph-blur { display:none; position:absolute; inset:-8%; width:116%; height:116%; object-fit:cover; filter:blur(14px) saturate(1.1); transform:translateZ(0); pointer-events:none; }
 .ph-contain > .ph-blur { display:block; }
+
+/* The mini card in the target ticket (2026-11-15 alignment pass): drawn at its Collection size (112 × 157) and scaled
+   into Space Collector's 72 × 108 slot, the way Space Collector scales its own mini card (--mini-s), so nothing crams. */
+#discover.sky-plane .d-ticket.has-mini .d-mini { overflow:visible; }
+#discover.sky-plane .d-mini > .sct-face { width:112px; height:157px; transform:scale(calc(72 / 112)); transform-origin:0 0; }
+@media (max-height:720px) { #discover.sky-plane .d-mini > .sct-face { transform:scale(calc(56 / 112)); } }
+body.night #discover.sky-plane .d-mini { filter:drop-shadow(0 6px 12px #000c); } /* not brightened: it's a daylight card, not a night picture */
+
+/* The catch reveal in daylight (2026-11-15, task 8): Space Collector's reveal, the same rush, flash, flip and glow, over the
+   Sky Collector sky instead of the night (the pack and welcome card already are). Text and chips switch to navy ink. */
+body.sky-only #reveal, body.sky-only.night #reveal { background:linear-gradient(180deg,#8cc2ec 0%,#cfe5f6 55%,#eef5fb 100%); }
+body.sky-only #reveal #rv-top, body.sky-only #reveal #rv-top .icon-button, body.sky-only #reveal-eyebrow { color:var(--sc-ink); }
+body.sky-only #reveal .rv-xp, body.sky-only #reveal-eyebrow b { color:var(--sc-orange-ink); }
+body.sky-only #reveal .rv-chip { background:#ffffffd9; border-color:var(--sc-line); color:var(--sc-ink); box-shadow:0 2px 8px rgba(13,34,56,.12); }
+body.sky-only #reveal .rv-chip b { color:var(--sc-orange-ink); }
+body.sky-only #reveal .rv-rank-row { color:#23405c; }
+body.sky-only #reveal .rv-bar { background:#c9dcec; }
+body.sky-only #reveal #reveal-view { color:var(--sc-ink); }
+body.sky-only #reveal #rv-glow { filter:hue-rotate(0deg) opacity(.55); }
+body.sky-only.night #reveal-eyebrow { color:var(--sc-ink) !important; }
+body.sky-only #reveal #rv-top .x-close, body.sky-only.night #reveal #rv-top .x-close { color:var(--sc-ink) !important; }
+body.sky-only #reveal a#reveal-view, body.sky-only.night #reveal a#reveal-view { color:#23405c !important; }
+
+/* The rank card at the top of the Collection (2026-11-15 alignment pass): Space Collector's compact rank dial on card paper. */
+#sky-col .logbook.sky-rank { margin:6px 0 18px; background:#fffdf6; border-color:#c9b98a; box-shadow:inset 0 0 0 1px #e7dcbd, 0 6px 18px rgba(13,34,56,.1); color:var(--sc-ink); }
+#sky-col .sky-rank .lb-top { display:flex; justify-content:space-between; font:500 13px/1 var(--label,'SC Label'); letter-spacing:.2em; text-transform:uppercase; color:var(--sc-orange-ink); }
+#sky-col .sky-rank .lb-dial { display:flex; padding:12px 0 2px; }
+#sky-col .sky-rank .lbd-ring b, #sky-col .sky-rank .lbd-name { color:var(--sc-ink); -webkit-text-fill-color:currentColor; background:none; }
+#sky-col .sky-rank .lbd-ring b small, #sky-col .sky-rank .lbd-to { color:#4a6178; }
+#sky-col .sky-rank .lbd-to b { color:var(--sc-ink); }
+#sky-col .sky-rank .lb-xp, #sky-col .sky-rank .lb-xp b { color:var(--sc-orange-ink); font:500 15px var(--label,'SC Label'); letter-spacing:.06em; }
+#sky-col .sky-rank .lb-xp b { font:400 22px var(--display,'Russo One'); }

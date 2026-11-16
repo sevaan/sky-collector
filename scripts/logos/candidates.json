@@ -1,0 +1,2781 @@
+{
+ "AAL": {
+  "status": "logo",
+  "qid": "Q32396",
+  "label": "American Airlines",
+  "file": "American Airlines wordmark (2013).svg",
+  "n_logos": 2,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:American_Airlines_wordmark_(2013).svg",
+  "title": "American Airlines wordmark (2013).svg",
+  "srcw": 245,
+  "srch": 24
+ },
+ "DAL": {
+  "status": "ambiguous",
+  "items": [
+   [
+    "Q5254741",
+    "Delta Shuttle",
+    5
+   ],
+   [
+    "Q188920",
+    "Delta Air Lines",
+    75
+   ]
+  ]
+ },
+ "UAL": {
+  "status": "ambiguous",
+  "items": [
+   [
+    "Q7893675",
+    "United p.s.",
+    3
+   ],
+   [
+    "Q174769",
+    "United Airlines",
+    79
+   ]
+  ]
+ },
+ "SWA": {
+  "status": "logo",
+  "qid": "Q503308",
+  "label": "Southwest Airlines",
+  "file": "Southwest Airlines logo 2014.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Southwest_Airlines_logo_2014.svg",
+  "title": "Southwest Airlines logo 2014.svg",
+  "srcw": 512,
+  "srch": 78
+ },
+ "ASA": {
+  "status": "logo",
+  "qid": "Q822614",
+  "label": "Alaska Airlines",
+  "file": "Alaska Airlines logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Alaska_Airlines_logo.svg",
+  "title": "Alaska Airlines logo.svg",
+  "srcw": 301,
+  "srch": 92
+ },
+ "HAL": {
+  "status": "logo",
+  "qid": "Q642610",
+  "label": "Hawaiian Airlines",
+  "file": "Hawaiian Airlines 2017 wordmark.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Hawaiian_Airlines_2017_wordmark.svg",
+  "title": "Hawaiian Airlines 2017 wordmark.svg",
+  "srcw": 500,
+  "srch": 130
+ },
+ "JBU": {
+  "status": "logo",
+  "qid": "Q161086",
+  "label": "JetBlue Airways",
+  "file": "JetBlue Airways Logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:JetBlue_Airways_Logo.svg",
+  "title": "JetBlue Airways Logo.svg",
+  "srcw": 585,
+  "srch": 196
+ },
+ "NKS": {
+  "status": "no-item"
+ },
+ "FFT": {
+  "status": "logo",
+  "qid": "Q1139541",
+  "label": "Frontier Airlines",
+  "file": "Frontier Airlines logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Frontier_Airlines_logo.svg",
+  "title": "Frontier Airlines logo.svg",
+  "srcw": 250,
+  "srch": 55
+ },
+ "AAY": {
+  "status": "logo",
+  "qid": "Q1319601",
+  "label": "Allegiant Air",
+  "file": "Allegiant Air logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Allegiant_Air_logo.svg",
+  "title": "Allegiant Air logo.svg",
+  "srcw": 512,
+  "srch": 186
+ },
+ "SKW": {
+  "status": "logo",
+  "qid": "Q773662",
+  "label": "SkyWest Airlines",
+  "file": "SkyWest Airlines (United States) logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:SkyWest_Airlines_(United_States)_logo.svg",
+  "title": "SkyWest Airlines (United States) logo.svg",
+  "srcw": 771,
+  "srch": 183
+ },
+ "RPA": {
+  "status": "no-logo",
+  "qid": "Q1669658",
+  "label": "Republic Airways"
+ },
+ "ENY": {
+  "status": "logo",
+  "qid": "Q371306",
+  "label": "Envoy Air",
+  "file": "Envoy air logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Envoy_air_logo.svg",
+  "title": "Envoy air logo.svg",
+  "srcw": 200,
+  "srch": 51
+ },
+ "EDV": {
+  "status": "no-item"
+ },
+ "JIA": {
+  "status": "no-logo",
+  "qid": "Q1536988",
+  "label": "PSA Airlines"
+ },
+ "QXE": {
+  "status": "logo",
+  "qid": "Q1200062",
+  "label": "Horizon Air",
+  "file": "Horizon Air Logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Horizon_Air_Logo.svg",
+  "title": "Horizon Air Logo.svg",
+  "srcw": 644,
+  "srch": 135
+ },
+ "ACA": {
+  "status": "ambiguous",
+  "items": [
+   [
+    "Q185339",
+    "Air Canada",
+    69
+   ],
+   [
+    "Q2070953",
+    "Air Canada Jetz",
+    9
+   ]
+  ]
+ },
+ "ROU": {
+  "status": "logo",
+  "qid": "Q2828184",
+  "label": "Air Canada Rouge",
+  "file": "Air Canada Rouge logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Air_Canada_Rouge_logo.svg",
+  "title": "Air Canada Rouge logo.svg",
+  "srcw": 150,
+  "srch": 75
+ },
+ "JZA": {
+  "status": "logo",
+  "qid": "Q1458703",
+  "label": "Jazz Aviation",
+  "file": "Jazz Aviation logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Jazz_Aviation_logo.svg",
+  "title": "Jazz Aviation logo.svg",
+  "srcw": 300,
+  "srch": 104
+ },
+ "WJA": {
+  "status": "logo",
+  "qid": "Q1059770",
+  "label": "WestJet",
+  "file": "WestJetLogo2018.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:WestJetLogo2018.svg",
+  "title": "WestJetLogo2018.svg",
+  "srcw": 602,
+  "srch": 121
+ },
+ "WEN": {
+  "status": "logo",
+  "qid": "Q12072764",
+  "label": "WestJet Encore",
+  "file": "WestJet Logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:WestJet_Logo.svg",
+  "title": "WestJet Logo.svg",
+  "srcw": 477,
+  "srch": 43
+ },
+ "POE": {
+  "status": "logo",
+  "qid": "Q1811473",
+  "label": "Porter Airlines",
+  "file": "Porter Airlines Logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Porter_Airlines_Logo.svg",
+  "title": "Porter Airlines Logo.svg",
+  "srcw": 484,
+  "srch": 176
+ },
+ "TSC": {
+  "status": "logo",
+  "qid": "Q407869",
+  "label": "Air Transat",
+  "file": "Air Transat logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Air_Transat_logo.svg",
+  "title": "Air Transat logo.svg",
+  "srcw": 512,
+  "srch": 114
+ },
+ "FLE": {
+  "status": "logo",
+  "qid": "Q4038797",
+  "label": "Flair Airlines",
+  "file": "Flair Airlines logo (2019).svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Flair_Airlines_logo_(2019).svg",
+  "title": "Flair Airlines logo (2019).svg",
+  "srcw": 112,
+  "srch": 47
+ },
+ "FDX": {
+  "status": "logo",
+  "qid": "Q782557",
+  "label": "FedEx Express",
+  "file": "FedEx Express.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:FedEx_Express.svg",
+  "title": "FedEx Express.svg",
+  "srcw": 373,
+  "srch": 170
+ },
+ "UPS": {
+  "status": "logo",
+  "qid": "Q1318737",
+  "label": "UPS Airlines",
+  "file": "United Parcel Service logo 2014.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:United_Parcel_Service_logo_2014.svg",
+  "title": "United Parcel Service logo 2014.svg",
+  "srcw": 52,
+  "srch": 62
+ },
+ "AMX": {
+  "status": "logo",
+  "qid": "Q381563",
+  "label": "Aeroméxico",
+  "file": "Aeroméxico wordmark.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Aerom%C3%A9xico_wordmark.svg",
+  "title": "Aeroméxico wordmark.svg",
+  "srcw": 1920,
+  "srch": 212
+ },
+ "VOI": {
+  "status": "logo",
+  "qid": "Q431757",
+  "label": "Volaris",
+  "file": "Volaris-logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Volaris-logo.svg",
+  "title": "Volaris-logo.svg",
+  "srcw": 100,
+  "srch": 25
+ },
+ "CMP": {
+  "status": "logo",
+  "qid": "Q849404",
+  "label": "Copa Airlines",
+  "file": "Copa airlines logo.png",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Copa_airlines_logo.png",
+  "title": "Copa airlines logo.png",
+  "srcw": 1438,
+  "srch": 217
+ },
+ "AVA": {
+  "status": "logo",
+  "qid": "Q308911",
+  "label": "Avianca",
+  "file": "Avianca 2023 wordmark.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Avianca_2023_wordmark.svg",
+  "title": "Avianca 2023 wordmark.svg",
+  "srcw": 500,
+  "srch": 114
+ },
+ "LAN": {
+  "status": "logo",
+  "qid": "Q649178",
+  "label": "LATAM Airlines",
+  "file": "Latam-logo -v (Indigo).svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Latam-logo_-v_(Indigo).svg",
+  "title": "Latam-logo -v (Indigo).svg",
+  "srcw": 2670,
+  "srch": 630
+ },
+ "TAM": {
+  "status": "logo",
+  "qid": "Q690789",
+  "label": "LATAM Brasil",
+  "file": "Latam-logo -v (Indigo).svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Latam-logo_-v_(Indigo).svg",
+  "title": "Latam-logo -v (Indigo).svg",
+  "srcw": 2670,
+  "srch": 630
+ },
+ "GLO": {
+  "status": "logo",
+  "qid": "Q691637",
+  "label": "Gol Transportes Aéreos",
+  "file": "Gol Linhas Aéreas Inteligentes logo (2015, without the slogan).svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Gol_Linhas_A%C3%A9reas_Inteligentes_logo_(2015,_without_the_slogan).svg",
+  "title": "Gol Linhas Aéreas Inteligentes logo (2015, without the slogan).svg",
+  "srcw": 512,
+  "srch": 293
+ },
+ "AZU": {
+  "status": "logo",
+  "qid": "Q794272",
+  "label": "Q794272",
+  "file": "Logo da Azul Linhas Aéreas Brasileiras.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Logo_da_Azul_Linhas_A%C3%A9reas_Brasileiras.svg",
+  "title": "Logo da Azul Linhas Aéreas Brasileiras.svg",
+  "srcw": 500,
+  "srch": 139
+ },
+ "ARG": {
+  "status": "logo",
+  "qid": "Q83535",
+  "label": "Aerolíneas Argentinas",
+  "file": "Logo wordmark Aerolíneas Argentinas (2010).svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Logo_wordmark_Aerol%C3%ADneas_Argentinas_(2010).svg",
+  "title": "Logo wordmark Aerolíneas Argentinas (2010).svg",
+  "srcw": 512,
+  "srch": 181
+ },
+ "BAW": {
+  "status": "logo",
+  "qid": "Q8766",
+  "label": "British Airways",
+  "file": "Logo wordmark British Airways.png",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Logo_wordmark_British_Airways.png",
+  "title": "Logo wordmark British Airways.png",
+  "srcw": 1236,
+  "srch": 184
+ },
+ "VIR": {
+  "status": "logo",
+  "qid": "Q32277",
+  "label": "Virgin Atlantic",
+  "file": "Virgin Atlantic logo 2018.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Virgin_Atlantic_logo_2018.svg",
+  "title": "Virgin Atlantic logo 2018.svg",
+  "srcw": 512,
+  "srch": 122
+ },
+ "EZY": {
+  "status": "logo",
+  "qid": "Q191551",
+  "label": "easyJet",
+  "file": "EasyJet logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:EasyJet_logo.svg",
+  "title": "EasyJet logo.svg",
+  "srcw": 512,
+  "srch": 115
+ },
+ "RYR": {
+  "status": "logo",
+  "qid": "Q170614",
+  "label": "Ryanair",
+  "file": "Ryanair wordmark.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Ryanair_wordmark.svg",
+  "title": "Ryanair wordmark.svg",
+  "srcw": 244,
+  "srch": 30
+ },
+ "DLH": {
+  "status": "ambiguous",
+  "items": [
+   [
+    "Q170159",
+    "Lufthansa Regional",
+    26
+   ],
+   [
+    "Q9325",
+    "Lufthansa",
+    101
+   ]
+  ]
+ },
+ "AFR": {
+  "status": "logo",
+  "qid": "Q131005",
+  "label": "Air France",
+  "file": "Air France Logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Air_France_Logo.svg",
+  "title": "Air France Logo.svg",
+  "srcw": 189,
+  "srch": 18
+ },
+ "KLM": {
+  "status": "ambiguous",
+  "items": [
+   [
+    "Q181912",
+    "KLM",
+    76
+   ],
+   [
+    "Q14906128",
+    "KLM Asia",
+    4
+   ]
+  ]
+ },
+ "IBE": {
+  "status": "logo",
+  "qid": "Q187972",
+  "label": "Iberia",
+  "file": "Logotipo de Iberia.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Logotipo_de_Iberia.svg",
+  "title": "Logotipo de Iberia.svg",
+  "srcw": 400,
+  "srch": 88
+ },
+ "VLG": {
+  "status": "logo",
+  "qid": "Q646741",
+  "label": "Vueling",
+  "file": "Logo Vueling.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Logo_Vueling.svg",
+  "title": "Logo Vueling.svg",
+  "srcw": 768,
+  "srch": 249
+ },
+ "SWR": {
+  "status": "logo",
+  "qid": "Q156776",
+  "label": "Swiss International Air Lines",
+  "file": "Swiss International Air Lines Logo 2011.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Swiss_International_Air_Lines_Logo_2011.svg",
+  "title": "Swiss International Air Lines Logo 2011.svg",
+  "srcw": 150,
+  "srch": 35
+ },
+ "AUA": {
+  "status": "logo",
+  "qid": "Q781770",
+  "label": "Austrian Airlines",
+  "file": "Austrian Airlines Logo 2018.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Austrian_Airlines_Logo_2018.svg",
+  "title": "Austrian Airlines Logo 2018.svg",
+  "srcw": 512,
+  "srch": 74
+ },
+ "SAS": {
+  "status": "ambiguous",
+  "items": [
+   [
+    "Q187854",
+    "Scandinavian Airlines",
+    64
+   ],
+   [
+    "Q7388799",
+    "SAS Cargo Group",
+    5
+   ]
+  ]
+ },
+ "EIN": {
+  "status": "logo",
+  "qid": "Q83716",
+  "label": "Aer Lingus",
+  "file": "Aer Lingus 2022 logo.svg",
+  "n_logos": 3,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Aer_Lingus_2022_logo.svg",
+  "title": "Aer Lingus 2022 logo.svg",
+  "srcw": 1024,
+  "srch": 201
+ },
+ "ICE": {
+  "status": "logo",
+  "qid": "Q216645",
+  "label": "Icelandair",
+  "file": "Icelandairlogo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Icelandairlogo.svg",
+  "title": "Icelandairlogo.svg",
+  "srcw": 512,
+  "srch": 134
+ },
+ "TAP": {
+  "status": "ambiguous",
+  "items": [
+   [
+    "Q208232",
+    "TAP Air Portugal",
+    51
+   ],
+   [
+    "Q28973970",
+    "TAP Express",
+    12
+   ]
+  ]
+ },
+ "THY": {
+  "status": "ambiguous",
+  "items": [
+   [
+    "Q483676",
+    "AJet",
+    27
+   ],
+   [
+    "Q4548",
+    "Turkish Airlines",
+    89
+   ]
+  ]
+ },
+ "WZZ": {
+  "status": "ambiguous",
+  "items": [
+   [
+    "Q335147",
+    "Wizz Air",
+    53
+   ],
+   [
+    "Q127273061",
+    "Hungary Air Cargo",
+    1
+   ]
+  ]
+ },
+ "LOT": {
+  "status": "logo",
+  "qid": "Q204268",
+  "label": "LOT Polish Airlines",
+  "file": "LOT Polish Airlines wordmark.svg",
+  "n_logos": 2,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:LOT_Polish_Airlines_wordmark.svg",
+  "title": "LOT Polish Airlines wordmark.svg",
+  "srcw": 500,
+  "srch": 169
+ },
+ "FIN": {
+  "status": "logo",
+  "qid": "Q201821",
+  "label": "Finnair",
+  "file": "Finnair Logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Finnair_Logo.svg",
+  "title": "Finnair Logo.svg",
+  "srcw": 200,
+  "srch": 22
+ },
+ "EWG": {
+  "status": "logo",
+  "qid": "Q168836",
+  "label": "Eurowings",
+  "file": "Eurowings Logo 2026.svg",
+  "n_logos": 2,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Eurowings_Logo_2026.svg",
+  "title": "Eurowings Logo 2026.svg",
+  "srcw": 512,
+  "srch": 132
+ },
+ "NOZ": {
+  "status": "logo",
+  "qid": "Q215392",
+  "label": "Norwegian Air Shuttle",
+  "file": "Norwegian Logo 2024.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Norwegian_Logo_2024.svg",
+  "title": "Norwegian Logo 2024.svg",
+  "srcw": 512,
+  "srch": 80
+ },
+ "AEE": {
+  "status": "logo",
+  "qid": "Q380580",
+  "label": "Aegean Airlines",
+  "file": "Aegean Airlines Logo 2020.svg",
+  "n_logos": 2,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Aegean_Airlines_Logo_2020.svg",
+  "title": "Aegean Airlines Logo 2020.svg",
+  "srcw": 225,
+  "srch": 46
+ },
+ "TOM": {
+  "status": "logo",
+  "qid": "Q1156859",
+  "label": "TUI Airways",
+  "file": "TUI Logo 2016.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:TUI_Logo_2016.svg",
+  "title": "TUI Logo 2016.svg",
+  "srcw": 400,
+  "srch": 175
+ },
+ "EXS": {
+  "status": "logo",
+  "qid": "Q1140807",
+  "label": "Jet2.com",
+  "file": "Jet2Logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Jet2Logo.svg",
+  "title": "Jet2Logo.svg",
+  "srcw": 512,
+  "srch": 86
+ },
+ "UAE": {
+  "status": "ambiguous",
+  "items": [
+   [
+    "Q180432",
+    "Emirates",
+    74
+   ],
+   [
+    "Q1317487",
+    "Emirates SkyCargo",
+    22
+   ]
+  ]
+ },
+ "QTR": {
+  "status": "logo",
+  "qid": "Q208033",
+  "label": "Qatar Airways",
+  "file": "Qatar Airways logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Qatar_Airways_logo.svg",
+  "title": "Qatar Airways logo.svg",
+  "srcw": 100,
+  "srch": 35
+ },
+ "ETD": {
+  "status": "logo",
+  "qid": "Q212304",
+  "label": "Etihad Airways",
+  "file": "Etihad-airways-logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Etihad-airways-logo.svg",
+  "title": "Etihad-airways-logo.svg",
+  "srcw": 310,
+  "srch": 110
+ },
+ "SVA": {
+  "status": "ambiguous",
+  "items": [
+   [
+    "Q541179",
+    "Saudia",
+    45
+   ],
+   [
+    "Q65075189",
+    "Saudia Cargo",
+    6
+   ]
+  ]
+ },
+ "MSR": {
+  "status": "logo",
+  "qid": "Q374740",
+  "label": "EgyptAir",
+  "file": "Egyptair-Logo-2010.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Egyptair-Logo-2010.svg",
+  "title": "Egyptair-Logo-2010.svg",
+  "srcw": 100,
+  "srch": 15
+ },
+ "RAM": {
+  "status": "logo",
+  "qid": "Q866103",
+  "label": "Royal Air Maroc",
+  "file": "Logo Royal Air Maroc.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Logo_Royal_Air_Maroc.svg",
+  "title": "Logo Royal Air Maroc.svg",
+  "srcw": 512,
+  "srch": 352
+ },
+ "ETH": {
+  "status": "logo",
+  "qid": "Q245233",
+  "label": "Ethiopian Airlines",
+  "file": "Ethiopian Airlines Logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Ethiopian_Airlines_Logo.svg",
+  "title": "Ethiopian Airlines Logo.svg",
+  "srcw": 570,
+  "srch": 240
+ },
+ "KQA": {
+  "status": "ambiguous",
+  "items": [
+   [
+    "Q638900",
+    "Kenya Airways",
+    49
+   ],
+   [
+    "Q17092819",
+    "Jambojet",
+    14
+   ]
+  ]
+ },
+ "SAA": {
+  "status": "logo",
+  "qid": "Q223763",
+  "label": "South African Airways",
+  "file": "South African Airways 2019 logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:South_African_Airways_2019_logo.svg",
+  "title": "South African Airways 2019 logo.svg",
+  "srcw": 512,
+  "srch": 202
+ },
+ "SIA": {
+  "status": "logo",
+  "qid": "Q32245",
+  "label": "Singapore Airlines",
+  "file": "Singapore Airlines wordmark.svg",
+  "n_logos": 2,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Singapore_Airlines_wordmark.svg",
+  "title": "Singapore Airlines wordmark.svg",
+  "srcw": 300,
+  "srch": 92
+ },
+ "CPA": {
+  "status": "logo",
+  "qid": "Q32141",
+  "label": "Cathay Pacific",
+  "file": "Cathay Pacific Ltd. logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Cathay_Pacific_Ltd._logo.svg",
+  "title": "Cathay Pacific Ltd. logo.svg",
+  "srcw": 100,
+  "srch": 14
+ },
+ "QFA": {
+  "status": "ambiguous",
+  "items": [
+   [
+    "Q32491",
+    "Qantas Airways",
+    70
+   ],
+   [
+    "Q869352",
+    "Qantas Freight",
+    14
+   ]
+  ]
+ },
+ "ANZ": {
+  "status": "logo",
+  "qid": "Q204296",
+  "label": "Air New Zealand",
+  "file": "Air New Zealand logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Air_New_Zealand_logo.svg",
+  "title": "Air New Zealand logo.svg",
+  "srcw": 217,
+  "srch": 37
+ },
+ "VOZ": {
+  "status": "ambiguous",
+  "items": [
+   [
+    "Q608421",
+    "Virgin Australia Regional Airlines",
+    13
+   ],
+   [
+    "Q727074",
+    "Virgin Australia",
+    38
+   ]
+  ]
+ },
+ "JST": {
+  "status": "logo",
+  "qid": "Q767627",
+  "label": "Jetstar Airways",
+  "file": "Jetstar logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Jetstar_logo.svg",
+  "title": "Jetstar logo.svg",
+  "srcw": 183,
+  "srch": 51
+ },
+ "ANA": {
+  "status": "logo",
+  "qid": "Q204284",
+  "label": "All Nippon Airways",
+  "file": "All Nippon Airways Logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:All_Nippon_Airways_Logo.svg",
+  "title": "All Nippon Airways Logo.svg",
+  "srcw": 300,
+  "srch": 78
+ },
+ "JAL": {
+  "status": "logo",
+  "qid": "Q213140",
+  "label": "Japan Airlines",
+  "file": "Japan Airlines Wordmark (2011).svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Japan_Airlines_Wordmark_(2011).svg",
+  "title": "Japan Airlines Wordmark (2011).svg",
+  "srcw": 451,
+  "srch": 27
+ },
+ "KAL": {
+  "status": "logo",
+  "qid": "Q213147",
+  "label": "Q213147",
+  "file": "Korean Air 2025.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Korean_Air_2025.svg",
+  "title": "Korean Air 2025.svg",
+  "srcw": 512,
+  "srch": 78
+ },
+ "AAR": {
+  "status": "logo",
+  "qid": "Q211165",
+  "label": "Asiana Airlines",
+  "file": "Asiana Airlines.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Asiana_Airlines.svg",
+  "title": "Asiana Airlines.svg",
+  "srcw": 512,
+  "srch": 96
+ },
+ "CES": {
+  "status": "no-logo",
+  "qid": "Q291796",
+  "label": "China Eastern Airlines"
+ },
+ "CSN": {
+  "status": "no-logo",
+  "qid": "Q291090",
+  "label": "China Southern Airlines"
+ },
+ "CCA": {
+  "status": "logo",
+  "qid": "Q51747",
+  "label": "Air China",
+  "file": "Air China wordmark.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Air_China_wordmark.svg",
+  "title": "Air China wordmark.svg",
+  "srcw": 344,
+  "srch": 52
+ },
+ "CHH": {
+  "status": "no-logo",
+  "qid": "Q292428",
+  "label": "Hainan Airlines"
+ },
+ "CAL": {
+  "status": "no-logo",
+  "qid": "Q51756",
+  "label": "China Airlines"
+ },
+ "EVA": {
+  "status": "logo",
+  "qid": "Q715113",
+  "label": "EVA Air",
+  "file": "Logo EVA Air.svg",
+  "n_logos": 3,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Logo_EVA_Air.svg",
+  "title": "Logo EVA Air.svg",
+  "srcw": 600,
+  "srch": 95
+ },
+ "IGO": {
+  "status": "logo",
+  "qid": "Q1057110",
+  "label": "IndiGo",
+  "file": "IndiGo Airlines logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:IndiGo_Airlines_logo.svg",
+  "title": "IndiGo Airlines logo.svg",
+  "srcw": 84,
+  "srch": 23
+ },
+ "AIC": {
+  "status": "logo",
+  "qid": "Q69906",
+  "label": "Air India",
+  "file": "Air India 2023.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Air_India_2023.svg",
+  "title": "Air India 2023.svg",
+  "srcw": 168,
+  "srch": 39
+ },
+ "AXM": {
+  "status": "logo",
+  "qid": "Q406643",
+  "label": "AirAsia",
+  "file": "AirAsia New Logo (2020).svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:AirAsia_New_Logo_(2020).svg",
+  "title": "AirAsia New Logo (2020).svg",
+  "srcw": 512,
+  "srch": 154
+ },
+ "GIA": {
+  "status": "no-logo",
+  "qid": "Q512468",
+  "label": "Garuda Indonesia"
+ },
+ "THA": {
+  "status": "no-logo",
+  "qid": "Q188710",
+  "label": "Thai Airways"
+ },
+ "MAS": {
+  "status": "ambiguous",
+  "items": [
+   [
+    "Q1368765",
+    "MASkargo",
+    18
+   ],
+   [
+    "Q308952",
+    "Malaysia Airlines",
+    68
+   ]
+  ]
+ },
+ "HVN": {
+  "status": "logo",
+  "qid": "Q174386",
+  "label": "Vietnam Airlines",
+  "file": "Vietnam Airlines 2015 wordmark.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Vietnam_Airlines_2015_wordmark.svg",
+  "title": "Vietnam Airlines 2015 wordmark.svg",
+  "srcw": 500,
+  "srch": 53
+ },
+ "VJC": {
+  "status": "logo",
+  "qid": "Q853878",
+  "label": "VietJet Air",
+  "file": "VietJet Air logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:VietJet_Air_logo.svg",
+  "title": "VietJet Air logo.svg",
+  "srcw": 221,
+  "srch": 41
+ },
+ "PAL": {
+  "status": "logo",
+  "qid": "Q846910",
+  "label": "Philippine Airlines",
+  "file": "Philippine Airlines logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Philippine_Airlines_logo.svg",
+  "title": "Philippine Airlines logo.svg",
+  "srcw": 512,
+  "srch": 85
+ },
+ "JJA": {
+  "status": "logo",
+  "qid": "Q482642",
+  "label": "Jeju Air",
+  "file": "Jeju Air Logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Jeju_Air_Logo.svg",
+  "title": "Jeju Air Logo.svg",
+  "srcw": 610,
+  "srch": 120
+ },
+ "AAE": {
+  "status": "logo",
+  "qid": "Q553296",
+  "label": "Air Atlanta Europe",
+  "file": "AA Europe logo.jpg",
+  "n_logos": 1,
+  "licence": "CC0",
+  "source": "https://commons.wikimedia.org/wiki/File:AA_Europe_logo.jpg",
+  "title": "AA Europe logo.jpg",
+  "srcw": 1772,
+  "srch": 413
+ },
+ "CKS": {
+  "status": "logo",
+  "qid": "Q1368443",
+  "label": "Kalitta Air",
+  "file": "Kalitta Air logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Kalitta_Air_logo.svg",
+  "title": "Kalitta Air logo.svg",
+  "srcw": 263,
+  "srch": 22
+ },
+ "FBU": {
+  "status": "logo",
+  "qid": "Q23979091",
+  "label": "French Bee",
+  "file": "French Bee Logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:French_Bee_Logo.svg",
+  "title": "French Bee Logo.svg",
+  "srcw": 1024,
+  "srch": 202
+ },
+ "GJS": {
+  "status": "no-logo",
+  "qid": "Q1533365",
+  "label": "GoJet Airlines LLC"
+ },
+ "EJA": {
+  "status": "logo",
+  "qid": "Q1504132",
+  "label": "NetJets",
+  "file": "NetJets logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:NetJets_logo.svg",
+  "title": "NetJets logo.svg",
+  "srcw": 1024,
+  "srch": 212
+ },
+ "TWY": {
+  "status": "no-item"
+ },
+ "MXY": {
+  "status": "logo",
+  "qid": "Q55641146",
+  "label": "Breeze Airways",
+  "file": "BreezeAirwayslogo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:BreezeAirwayslogo.svg",
+  "title": "BreezeAirwayslogo.svg",
+  "srcw": 512,
+  "srch": 137
+ },
+ "XAA": {
+  "status": "no-item"
+ },
+ "EJM": {
+  "status": "no-item"
+ },
+ "LRT": {
+  "status": "no-logo",
+  "qid": "Q6541841",
+  "label": "Liberty Jet Management"
+ },
+ "VJA": {
+  "status": "no-item"
+ },
+ "LXJ": {
+  "status": "no-item"
+ },
+ "XEN": {
+  "status": "no-item"
+ },
+ "VXP": {
+  "status": "logo",
+  "qid": "Q8045045",
+  "label": "Avelo Airlines",
+  "file": "Logo of Avelo Airlines.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Logo_of_Avelo_Airlines.svg",
+  "title": "Logo of Avelo Airlines.svg",
+  "srcw": 512,
+  "srch": 196
+ },
+ "FDY": {
+  "status": "no-logo",
+  "qid": "Q7638188",
+  "label": "Sun Air International"
+ },
+ "XSR": {
+  "status": "no-item"
+ },
+ "ASH": {
+  "status": "logo",
+  "qid": "Q1922297",
+  "label": "Mesa Airlines",
+  "file": "MesaAirlinesLogo2.jpg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:MesaAirlinesLogo2.jpg",
+  "title": "MesaAirlinesLogo2.jpg",
+  "srcw": 180,
+  "srch": 180
+ },
+ "TRF": {
+  "status": "no-item"
+ },
+ "JSX": {
+  "status": "no-item"
+ },
+ "SLI": {
+  "status": "no-logo",
+  "qid": "Q381508",
+  "label": "Aeroméxico Connect"
+ },
+ "EFW": {
+  "status": "no-logo",
+  "qid": "Q118904309",
+  "label": "BA EuroFlyer"
+ },
+ "UZB": {
+  "status": "no-logo",
+  "qid": "Q610003",
+  "label": "Uzbekistan Airways"
+ },
+ "OMA": {
+  "status": "licence",
+  "qid": "Q860379",
+  "label": "Oman Air",
+  "file": "Oman Air logo.png",
+  "n_logos": 1,
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Oman_Air_logo.png",
+  "title": "Oman Air logo.png",
+  "srcw": 260,
+  "srch": 64
+ },
+ "IAW": {
+  "status": "logo",
+  "qid": "Q853937",
+  "label": "Iraqi Airways",
+  "file": "Iraqi Airways Logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Iraqi_Airways_Logo.svg",
+  "title": "Iraqi Airways Logo.svg",
+  "srcw": 300,
+  "srch": 197
+ },
+ "FDB": {
+  "status": "logo",
+  "qid": "Q1048495",
+  "label": "flydubai",
+  "file": "Fly Dubai logo 2010 03.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Fly_Dubai_logo_2010_03.svg",
+  "title": "Fly Dubai logo 2010 03.svg",
+  "srcw": 158,
+  "srch": 32
+ },
+ "ABY": {
+  "status": "logo",
+  "qid": "Q406798",
+  "label": "Air Arabia",
+  "file": "Air Arabia Logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Air_Arabia_Logo.svg",
+  "title": "Air Arabia Logo.svg",
+  "srcw": 383,
+  "srch": 141
+ },
+ "TGW": {
+  "status": "logo",
+  "qid": "Q1319404",
+  "label": "Scoot",
+  "file": "Scoot logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Scoot_logo.svg",
+  "title": "Scoot logo.svg",
+  "srcw": 476,
+  "srch": 420
+ },
+ "SJV": {
+  "status": "no-item"
+ },
+ "CTV": {
+  "status": "logo",
+  "qid": "Q1093383",
+  "label": "Citilink",
+  "file": "2012 Citilink Logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:2012_Citilink_Logo.svg",
+  "title": "2012 Citilink Logo.svg",
+  "srcw": 512,
+  "srch": 128
+ },
+ "BTK": {
+  "status": "no-logo",
+  "qid": "Q618960",
+  "label": "Batik Air"
+ },
+ "SFJ": {
+  "status": "logo",
+  "qid": "Q1344355",
+  "label": "StarFlyer",
+  "file": "StarFlyer logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:StarFlyer_logo.svg",
+  "title": "StarFlyer logo.svg",
+  "srcw": 1024,
+  "srch": 850
+ },
+ "SNJ": {
+  "status": "logo",
+  "qid": "Q1367476",
+  "label": "Solaseed Air",
+  "file": "Solaseed Air logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Solaseed_Air_logo.svg",
+  "title": "Solaseed Air logo.svg",
+  "srcw": 1024,
+  "srch": 255
+ },
+ "SKY": {
+  "status": "logo",
+  "qid": "Q735664",
+  "label": "Skymark Airlines",
+  "file": "Skymark Airlines Logo.svg",
+  "n_logos": 2,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Skymark_Airlines_Logo.svg",
+  "title": "Skymark Airlines Logo.svg",
+  "srcw": 1476,
+  "srch": 252
+ },
+ "NCA": {
+  "status": "logo",
+  "qid": "Q1364998",
+  "label": "Nippon Cargo Airlines",
+  "file": "Nippon Cargo Airlines Logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Nippon_Cargo_Airlines_Logo.svg",
+  "title": "Nippon Cargo Airlines Logo.svg",
+  "srcw": 382,
+  "srch": 176
+ },
+ "ADO": {
+  "status": "logo",
+  "qid": "Q948500",
+  "label": "Air Do",
+  "file": "Air Do.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Air_Do.svg",
+  "title": "Air Do.svg",
+  "srcw": 200,
+  "srch": 60
+ },
+ "CSS": {
+  "status": "logo",
+  "qid": "Q4253231",
+  "label": "SF Airlines",
+  "file": "SF Airlines logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:SF_Airlines_logo.svg",
+  "title": "SF Airlines logo.svg",
+  "srcw": 523,
+  "srch": 190
+ },
+ "ABL": {
+  "status": "logo",
+  "qid": "Q406932",
+  "label": "Air Busan",
+  "file": "Air Busan logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Air_Busan_logo.svg",
+  "title": "Air Busan logo.svg",
+  "srcw": 3427,
+  "srch": 1063
+ },
+ "JNA": {
+  "status": "no-logo",
+  "qid": "Q484872",
+  "label": "Jin Air"
+ },
+ "PTA": {
+  "status": "no-item"
+ },
+ "CDG": {
+  "status": "no-logo",
+  "qid": "Q1153602",
+  "label": "Shandong Airlines"
+ },
+ "TWB": {
+  "status": "ambiguous",
+  "items": [
+   [
+    "Q494775",
+    "Trinity Airways",
+    23
+   ],
+   [
+    "Q55735445",
+    "Q55735445",
+    1
+   ]
+  ]
+ },
+ "ASV": {
+  "status": "logo",
+  "qid": "Q24867828",
+  "label": "Air Seoul",
+  "file": "Logo of Air Seoul.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Logo_of_Air_Seoul.svg",
+  "title": "Logo of Air Seoul.svg",
+  "srcw": 512,
+  "srch": 71
+ },
+ "ESR": {
+  "status": "logo",
+  "qid": "Q489392",
+  "label": "Eastar Jet",
+  "file": "Eastar Jet Logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Eastar_Jet_Logo.svg",
+  "title": "Eastar Jet Logo.svg",
+  "srcw": 400,
+  "srch": 150
+ },
+ "EVY": {
+  "status": "no-item"
+ },
+ "RXA": {
+  "status": "logo",
+  "qid": "Q788906",
+  "label": "Rex Airlines",
+  "file": "Rex Airlines logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Rex_Airlines_logo.svg",
+  "title": "Rex Airlines logo.svg",
+  "srcw": 158,
+  "srch": 50
+ },
+ "CAR": {
+  "status": "no-item"
+ },
+ "QLK": {
+  "status": "no-logo",
+  "qid": "Q877284",
+  "label": "Sunstate Airlines"
+ },
+ "FJI": {
+  "status": "no-logo",
+  "qid": "Q407719",
+  "label": "Fiji Airways"
+ },
+ "PLC": {
+  "status": "no-item"
+ },
+ "GBA": {
+  "status": "no-item"
+ },
+ "GTI": {
+  "status": "licence",
+  "qid": "Q757135",
+  "label": "Atlas Air",
+  "file": "Atlas Air Worldwide logo.svg",
+  "n_logos": 1,
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Atlas_Air_Worldwide_logo.svg",
+  "title": "Atlas Air Worldwide logo.svg",
+  "srcw": 512,
+  "srch": 175
+ },
+ "STT": {
+  "status": "no-logo",
+  "qid": "Q20181105",
+  "label": "Alpha Star Aviation"
+ },
+ "NAC": {
+  "status": "logo",
+  "qid": "Q900942",
+  "label": "Northern Air Cargo",
+  "file": "Northern Air Cargo Logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Northern_Air_Cargo_Logo.svg",
+  "title": "Northern Air Cargo Logo.svg",
+  "srcw": 100,
+  "srch": 41
+ },
+ "CAO": {
+  "status": "no-logo",
+  "qid": "Q664721",
+  "label": "Air China Cargo"
+ },
+ "TOW": {
+  "status": "no-logo",
+  "qid": "Q4697690",
+  "label": "AirTanker Services Limited"
+ },
+ "SWP": {
+  "status": "no-item"
+ },
+ "MTC": {
+  "status": "no-item"
+ },
+ "CNS": {
+  "status": "logo",
+  "qid": "Q7200998",
+  "label": "PlaneSense",
+  "file": "PlaneSense.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:PlaneSense.svg",
+  "title": "PlaneSense.svg",
+  "srcw": 275,
+  "srch": 47
+ },
+ "SGX": {
+  "status": "no-item"
+ },
+ "JRE": {
+  "status": "no-item"
+ },
+ "VIV": {
+  "status": "no-logo",
+  "qid": "Q795990",
+  "label": "Viva"
+ },
+ "WUK": {
+  "status": "logo",
+  "qid": "Q55525155",
+  "label": "Wizz Air UK",
+  "file": "Wizz Air logo 2015.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Wizz_Air_logo_2015.svg",
+  "title": "Wizz Air logo 2015.svg",
+  "srcw": 130,
+  "srch": 60
+ },
+ "PGT": {
+  "status": "logo",
+  "qid": "Q1100424",
+  "label": "Pegasus Airlines",
+  "file": "Pegasus Airlines logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Pegasus_Airlines_logo.svg",
+  "title": "Pegasus Airlines logo.svg",
+  "srcw": 235,
+  "srch": 39
+ },
+ "TNU": {
+  "status": "no-logo",
+  "qid": "Q3537331",
+  "label": "TransNusa Air Services"
+ },
+ "APJ": {
+  "status": "logo",
+  "qid": "Q1376634",
+  "label": "Peach",
+  "file": "Peach Aviation Logo, March 2026.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Peach_Aviation_Logo,_March_2026.svg",
+  "title": "Peach Aviation Logo, March 2026.svg",
+  "srcw": 129,
+  "srch": 39
+ },
+ "OPS": {
+  "status": "no-item"
+ },
+ "VAN": {
+  "status": "no-item"
+ },
+ "CWX": {
+  "status": "no-item"
+ },
+ "SXS": {
+  "status": "logo",
+  "qid": "Q1137136",
+  "label": "SunExpress",
+  "file": "SunExpress Logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:SunExpress_Logo.svg",
+  "title": "SunExpress Logo.svg",
+  "srcw": 893,
+  "srch": 204
+ },
+ "PIA": {
+  "status": "logo",
+  "qid": "Q204887",
+  "label": "Pakistan International Airlines",
+  "file": "PakistanPIA2014Logo.jpg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:PakistanPIA2014Logo.jpg",
+  "title": "PakistanPIA2014Logo.jpg",
+  "srcw": 1617,
+  "srch": 465
+ },
+ "AXB": {
+  "status": "logo",
+  "qid": "Q407343",
+  "label": "Air India Express",
+  "file": "Air India Express logo.svg",
+  "n_logos": 2,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Air_India_Express_logo.svg",
+  "title": "Air India Express logo.svg",
+  "srcw": 512,
+  "srch": 155
+ },
+ "AWQ": {
+  "status": "logo",
+  "qid": "Q745971",
+  "label": "Indonesia AirAsia",
+  "file": "AirAsia New Logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:AirAsia_New_Logo.svg",
+  "title": "AirAsia New Logo.svg",
+  "srcw": 300,
+  "srch": 300
+ },
+ "PAS": {
+  "status": "logo",
+  "qid": "Q2197692",
+  "label": "Pelita Air Service",
+  "file": "Pelita Air (2022 Logo).png",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Pelita_Air_(2022_Logo).png",
+  "title": "Pelita Air (2022 Logo).png",
+  "srcw": 3365,
+  "srch": 553
+ },
+ "LNI": {
+  "status": "no-logo",
+  "qid": "Q1056794",
+  "label": "Lion Air"
+ },
+ "SJO": {
+  "status": "logo",
+  "qid": "Q11513792",
+  "label": "Spring Airlines Japan",
+  "file": "Spring Airlines Japan Logo.png",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Spring_Airlines_Japan_Logo.png",
+  "title": "Spring Airlines Japan Logo.png",
+  "srcw": 328,
+  "srch": 188
+ },
+ "XUM": {
+  "status": "logo",
+  "qid": "Q137707435",
+  "label": "SUM Air",
+  "file": "SUM Air Logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:SUM_Air_Logo.svg",
+  "title": "SUM Air Logo.svg",
+  "srcw": 512,
+  "srch": 137
+ },
+ "SKP": {
+  "status": "no-logo",
+  "qid": "Q499869",
+  "label": "SmartLynx Australia"
+ },
+ "SRY": {
+  "status": "no-item"
+ },
+ "VTE": {
+  "status": "ambiguous",
+  "items": [
+   [
+    "Q54933181",
+    "Contour Airlines",
+    4
+   ],
+   [
+    "Q5172412",
+    "Corporate Flight Management",
+    2
+   ]
+  ]
+ },
+ "HGO": {
+  "status": "no-logo",
+  "qid": "Q117851008",
+  "label": "One Air"
+ },
+ "TKJ": {
+  "status": "logo",
+  "qid": "Q483676",
+  "label": "AJet",
+  "file": "AJet logo.svg",
+  "n_logos": 2,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:AJet_logo.svg",
+  "title": "AJet logo.svg",
+  "srcw": 140,
+  "srch": 50
+ },
+ "QQE": {
+  "status": "no-logo",
+  "qid": "Q7267100",
+  "label": "Qatar Executive"
+ },
+ "APZ": {
+  "status": "logo",
+  "qid": "Q106504531",
+  "label": "Air Premia",
+  "file": "Air Premia logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Air_Premia_logo.svg",
+  "title": "Air Premia logo.svg",
+  "srcw": 220,
+  "srch": 25
+ },
+ "CFL": {
+  "status": "no-item"
+ },
+ "RED": {
+  "status": "no-item"
+ },
+ "BMA": {
+  "status": "no-item"
+ },
+ "JTL": {
+  "status": "no-item"
+ },
+ "UKP": {
+  "status": "no-item"
+ },
+ "GFA": {
+  "status": "logo",
+  "qid": "Q473231",
+  "label": "Gulf Air",
+  "file": "Gulf Air 2018 wordmark.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Gulf_Air_2018_wordmark.svg",
+  "title": "Gulf Air 2018 wordmark.svg",
+  "srcw": 500,
+  "srch": 71
+ },
+ "JJP": {
+  "status": "logo",
+  "qid": "Q117433",
+  "label": "Jetstar Japan",
+  "file": "Jetstar logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Jetstar_logo.svg",
+  "title": "Jetstar logo.svg",
+  "srcw": 183,
+  "srch": 51
+ },
+ "AIH": {
+  "status": "logo",
+  "qid": "Q11289522",
+  "label": "Air Incheon",
+  "file": "AirZeta logo 2025.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:AirZeta_logo_2025.svg",
+  "title": "AirZeta logo 2025.svg",
+  "srcw": 707,
+  "srch": 120
+ },
+ "CVA": {
+  "status": "no-logo",
+  "qid": "Q407001",
+  "label": "Air Chathams"
+ },
+ "BFF": {
+  "status": "no-logo",
+  "qid": "Q2560210",
+  "label": "Air Nunavut"
+ },
+ "CKK": {
+  "status": "no-logo",
+  "qid": "Q1073234",
+  "label": "China Cargo Airlines"
+ },
+ "SAF": {
+  "status": "no-item"
+ },
+ "CRN": {
+  "status": "no-item"
+ },
+ "ATN": {
+  "status": "no-logo",
+  "qid": "Q407859",
+  "label": "Air Transport International"
+ },
+ "ITY": {
+  "status": "logo",
+  "qid": "Q108251249",
+  "label": "ITA Airways",
+  "file": "ITA Airways Logo.svg",
+  "n_logos": 2,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:ITA_Airways_Logo.svg",
+  "title": "ITA Airways Logo.svg",
+  "srcw": 480,
+  "srch": 200
+ },
+ "CLX": {
+  "status": "logo",
+  "qid": "Q1036100",
+  "label": "Cargolux",
+  "file": "Cargolux logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Cargolux_logo.svg",
+  "title": "Cargolux logo.svg",
+  "srcw": 658,
+  "srch": 227
+ },
+ "MSC": {
+  "status": "logo",
+  "qid": "Q1147012",
+  "label": "Air Cairo",
+  "file": "Air Cairo logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Air_Cairo_logo.svg",
+  "title": "Air Cairo logo.svg",
+  "srcw": 100,
+  "srch": 16
+ },
+ "ALK": {
+  "status": "no-logo",
+  "qid": "Q853293",
+  "label": "SriLankan Airlines"
+ },
+ "TZP": {
+  "status": "logo",
+  "qid": "Q59186361",
+  "label": "ZIPAIR Tokyo",
+  "file": "ZIPAIR logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:ZIPAIR_logo.svg",
+  "title": "ZIPAIR logo.svg",
+  "srcw": 485,
+  "srch": 114
+ },
+ "KAC": {
+  "status": "logo",
+  "qid": "Q860389",
+  "label": "Kuwait Airways",
+  "file": "Kuwait Airways wordmark.svg",
+  "n_logos": 2,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Kuwait_Airways_wordmark.svg",
+  "title": "Kuwait Airways wordmark.svg",
+  "srcw": 500,
+  "srch": 378
+ },
+ "ECJ": {
+  "status": "no-item"
+ },
+ "GEC": {
+  "status": "logo",
+  "qid": "Q265138",
+  "label": "Lufthansa Cargo",
+  "file": "Lufthansa Cargo Logo 2018.svg",
+  "n_logos": 2,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Lufthansa_Cargo_Logo_2018.svg",
+  "title": "Lufthansa Cargo Logo 2018.svg",
+  "srcw": 512,
+  "srch": 60
+ },
+ "UCA": {
+  "status": "logo",
+  "qid": "Q528492",
+  "label": "CommuteAir",
+  "file": "Logo wordmark CommuteAir (2025).png",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Logo_wordmark_CommuteAir_(2025).png",
+  "title": "Logo wordmark CommuteAir (2025).png",
+  "srcw": 1475,
+  "srch": 312
+ },
+ "MXA": {
+  "status": "logo",
+  "qid": "Q118868077",
+  "label": "Aerolínea del Estado Mexicano (Mexicana)",
+  "file": "AEM Mexicana de Aviación logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:AEM_Mexicana_de_Aviaci%C3%B3n_logo.svg",
+  "title": "AEM Mexicana de Aviación logo.svg",
+  "srcw": 761,
+  "srch": 131
+ },
+ "STW": {
+  "status": "no-logo",
+  "qid": "Q113739147",
+  "label": "Southwind Airlines"
+ },
+ "RZO": {
+  "status": "no-logo",
+  "qid": "Q2205178",
+  "label": "Azores Airlines"
+ },
+ "ELY": {
+  "status": "logo",
+  "qid": "Q208489",
+  "label": "EL AL Israel Airlines Ltd.",
+  "file": "El Al logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:El_Al_logo.svg",
+  "title": "El Al logo.svg",
+  "srcw": 194,
+  "srch": 24
+ },
+ "AFL": {
+  "status": "logo",
+  "qid": "Q58707",
+  "label": "Aeroflot",
+  "file": "Aeroflot Russian Airlines logo (en).svg",
+  "n_logos": 3,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Aeroflot_Russian_Airlines_logo_(en).svg",
+  "title": "Aeroflot Russian Airlines logo (en).svg",
+  "srcw": 182,
+  "srch": 41
+ },
+ "ABQ": {
+  "status": "logo",
+  "qid": "Q310107",
+  "label": "airblue",
+  "file": "Airblue Logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Airblue_Logo.svg",
+  "title": "Airblue Logo.svg",
+  "srcw": 800,
+  "srch": 170
+ },
+ "LPE": {
+  "status": "logo",
+  "qid": "Q1145155",
+  "label": "LATAM Airlines Peru",
+  "file": "Latam-logo -v (Indigo).svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Latam-logo_-v_(Indigo).svg",
+  "title": "Latam-logo -v (Indigo).svg",
+  "srcw": 2670,
+  "srch": 630
+ },
+ "SKU": {
+  "status": "logo",
+  "qid": "Q1427299",
+  "label": "Sky Airline",
+  "file": "Sky Airline Logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Sky_Airline_Logo.svg",
+  "title": "Sky Airline Logo.svg",
+  "srcw": 500,
+  "srch": 180
+ },
+ "EZS": {
+  "status": "logo",
+  "qid": "Q1050862",
+  "label": "EasyJet Switzerland",
+  "file": "EasyJet logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:EasyJet_logo.svg",
+  "title": "EasyJet logo.svg",
+  "srcw": 512,
+  "srch": 115
+ },
+ "RUK": {
+  "status": "no-logo",
+  "qid": "Q60521096",
+  "label": "Ryanair UK"
+ },
+ "RYS": {
+  "status": "logo",
+  "qid": "Q55165235",
+  "label": "Buzz",
+  "file": "Buzz Poland wordmark.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Buzz_Poland_wordmark.svg",
+  "title": "Buzz Poland wordmark.svg",
+  "srcw": 1637,
+  "srch": 476
+ },
+ "WMT": {
+  "status": "logo",
+  "qid": "Q113637091",
+  "label": "Wizz Air Malta",
+  "file": "Wizz Air logo 2015.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Wizz_Air_logo_2015.svg",
+  "title": "Wizz Air logo 2015.svg",
+  "srcw": 130,
+  "srch": 60
+ },
+ "TRA": {
+  "status": "logo",
+  "qid": "Q246952",
+  "label": "Transavia",
+  "file": "Transavia 2025 logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Transavia_2025_logo.svg",
+  "title": "Transavia 2025 logo.svg",
+  "srcw": 500,
+  "srch": 88
+ },
+ "CFG": {
+  "status": "logo",
+  "qid": "Q312517",
+  "label": "Condor Flugdienst",
+  "file": "Condor logo 2022.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Condor_logo_2022.svg",
+  "title": "Condor logo 2022.svg",
+  "srcw": 512,
+  "srch": 89
+ },
+ "IBS": {
+  "status": "logo",
+  "qid": "Q1655820",
+  "label": "Iberia Express",
+  "file": "Iberia Express.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Iberia_Express.svg",
+  "title": "Iberia Express.svg",
+  "srcw": 595,
+  "srch": 126
+ },
+ "AEA": {
+  "status": "logo",
+  "qid": "Q332980",
+  "label": "Air Europa",
+  "file": "Air Europa Logo (2015).svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Air_Europa_Logo_(2015).svg",
+  "title": "Air Europa Logo (2015).svg",
+  "srcw": 334,
+  "srch": 66
+ },
+ "TAR": {
+  "status": "no-logo",
+  "qid": "Q692811",
+  "label": "Tunisair"
+ },
+ "EDW": {
+  "status": "logo",
+  "qid": "Q662050",
+  "label": "Edelweiss Air",
+  "file": "Edelweiss Air wordmark.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Edelweiss_Air_wordmark.svg",
+  "title": "Edelweiss Air wordmark.svg",
+  "srcw": 500,
+  "srch": 59
+ },
+ "BEL": {
+  "status": "logo",
+  "qid": "Q153571",
+  "label": "Brussels Airlines",
+  "file": "Brussels airlines logo 2021.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Brussels_airlines_logo_2021.svg",
+  "title": "Brussels airlines logo 2021.svg",
+  "srcw": 93,
+  "srch": 22
+ },
+ "CSA": {
+  "status": "logo",
+  "qid": "Q192653",
+  "label": "Czech Airlines",
+  "file": "Czech Airlines Logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Czech_Airlines_Logo.svg",
+  "title": "Czech Airlines Logo.svg",
+  "srcw": 512,
+  "srch": 170
+ },
+ "OAL": {
+  "status": "licence",
+  "qid": "Q583843",
+  "label": "Olympic Air",
+  "file": "Olympic Air logo.png",
+  "n_logos": 1,
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Olympic_Air_logo.png",
+  "title": "Olympic Air logo.png",
+  "srcw": 2000,
+  "srch": 523
+ },
+ "TVF": {
+  "status": "logo",
+  "qid": "Q1188990",
+  "label": "Transavia France",
+  "file": "Transavia logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Transavia_logo.svg",
+  "title": "Transavia logo.svg",
+  "srcw": 179,
+  "srch": 35
+ },
+ "BCS": {
+  "status": "no-logo",
+  "qid": "Q479159",
+  "label": "European Air Transport Leipzig"
+ },
+ "LOG": {
+  "status": "no-logo",
+  "qid": "Q934983",
+  "label": "Loganair"
+ },
+ "JAF": {
+  "status": "logo",
+  "qid": "Q526550",
+  "label": "TUI fly Belgium",
+  "file": "TUIfly Logo 2016.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:TUIfly_Logo_2016.svg",
+  "title": "TUIfly Logo 2016.svg",
+  "srcw": 715,
+  "srch": 246
+ },
+ "RJA": {
+  "status": "licence",
+  "qid": "Q824225",
+  "label": "Royal Jordanian",
+  "file": "Royal Jordanian logo.jpg",
+  "n_logos": 1,
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Royal_Jordanian_logo.jpg",
+  "title": "Royal Jordanian logo.jpg",
+  "srcw": 160,
+  "srch": 95
+ },
+ "MEA": {
+  "status": "logo",
+  "qid": "Q859510",
+  "label": "Middle East Airlines - Air Liban",
+  "file": "Logo Middle East Airlines (Lebanon).jpg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Logo_Middle_East_Airlines_(Lebanon).jpg",
+  "title": "Logo Middle East Airlines (Lebanon).jpg",
+  "srcw": 1995,
+  "srch": 793
+ },
+ "IRA": {
+  "status": "logo",
+  "qid": "Q461631",
+  "label": "Q461631",
+  "file": "Iran Air logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Iran_Air_logo.svg",
+  "title": "Iran Air logo.svg",
+  "srcw": 157,
+  "srch": 73
+ },
+ "SEJ": {
+  "status": "no-logo",
+  "qid": "Q943813",
+  "label": "SpiceJet"
+ },
+ "CEB": {
+  "status": "logo",
+  "qid": "Q995151",
+  "label": "Cebu Pacific",
+  "file": "Cebu Pacific logo.png",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Cebu_Pacific_logo.png",
+  "title": "Cebu Pacific logo.png",
+  "srcw": 320,
+  "srch": 85
+ },
+ "APG": {
+  "status": "ambiguous",
+  "items": [
+   [
+    "Q4204350",
+    "Air People International",
+    6
+   ],
+   [
+    "Q1319117",
+    "Philippines AirAsia",
+    20
+   ]
+  ]
+ },
+ "ANG": {
+  "status": "no-logo",
+  "qid": "Q407675",
+  "label": "Air Niugini"
+ },
+ "CSZ": {
+  "status": "no-logo",
+  "qid": "Q974899",
+  "label": "Shenzhen Airlines"
+ },
+ "CXA": {
+  "status": "ambiguous",
+  "items": [
+   [
+    "Q147208",
+    "Xiamen Airlines",
+    30
+   ],
+   [
+    "Q124161695",
+    "Air Road Cargo",
+    1
+   ]
+  ]
+ },
+ "CQH": {
+  "status": "no-logo",
+  "qid": "Q1340408",
+  "label": "Spring Airlines"
+ },
+ "CBJ": {
+  "status": "no-logo",
+  "qid": "Q302642",
+  "label": "Beijing Capital Airlines"
+ },
+ "CHB": {
+  "status": "no-logo",
+  "qid": "Q1073544",
+  "label": "West Air"
+ },
+ "CRK": {
+  "status": "no-logo",
+  "qid": "Q1035195",
+  "label": "Hong Kong Airlines"
+ },
+ "CIM": {
+  "status": "no-item"
+ },
+ "AIQ": {
+  "status": "logo",
+  "qid": "Q1148568",
+  "label": "Thai AirAsia",
+  "file": "AirAsia New Logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:AirAsia_New_Logo.svg",
+  "title": "AirAsia New Logo.svg",
+  "srcw": 300,
+  "srch": 300
+ },
+ "PAK": {
+  "status": "no-item"
+ },
+ "ANK": {
+  "status": "no-item"
+ },
+ "AWE": {
+  "status": "no-item"
+ },
+ "RLK": {
+  "status": "no-item"
+ },
+ "MAU": {
+  "status": "no-logo",
+  "qid": "Q407556",
+  "label": "Air Mauritius"
+ },
+ "SDM": {
+  "status": "logo",
+  "qid": "Q727452",
+  "label": "Rossiya",
+  "file": "Rossiya airlines logo 2016.png",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Rossiya_airlines_logo_2016.png",
+  "title": "Rossiya airlines logo 2016.png",
+  "srcw": 300,
+  "srch": 48
+ },
+ "UTA": {
+  "status": "logo",
+  "qid": "Q1065835",
+  "label": "UTair Aviation",
+  "file": "Utair logo.svg",
+  "n_logos": 2,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Utair_logo.svg",
+  "title": "Utair logo.svg",
+  "srcw": 170,
+  "srch": 62
+ },
+ "SBI": {
+  "status": "logo",
+  "qid": "Q740844",
+  "label": "Q740844",
+  "file": "S7 new logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:S7_new_logo.svg",
+  "title": "S7 new logo.svg",
+  "srcw": 884,
+  "srch": 286
+ },
+ "AUI": {
+  "status": "no-item"
+ },
+ "ASL": {
+  "status": "ambiguous",
+  "items": [
+   [
+    "Q460373",
+    "Air Serbia",
+    47
+   ],
+   [
+    "Q17310422",
+    "Aviolet",
+    7
+   ]
+  ]
+ },
+ "CAI": {
+  "status": "logo",
+  "qid": "Q669002",
+  "label": "Corendon Airlines",
+  "file": "Corendon Airlines Logo 2017.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Corendon_Airlines_Logo_2017.svg",
+  "title": "Corendon Airlines Logo 2017.svg",
+  "srcw": 512,
+  "srch": 156
+ },
+ "TRS": {
+  "status": "no-item"
+ },
+ "LLM": {
+  "status": "no-logo",
+  "qid": "Q1030192",
+  "label": "Yamal Airlines"
+ },
+ "FAL": {
+  "status": "no-item"
+ },
+ "TAI": {
+  "status": "no-logo",
+  "qid": "Q1139145",
+  "label": "Avianca El Salvador"
+ },
+ "EXY": {
+  "status": "no-item"
+ },
+ "DLA": {
+  "status": "logo",
+  "qid": "Q162174",
+  "label": "Air Dolomiti",
+  "file": "Air Dolomiti-Logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Air_Dolomiti-Logo.svg",
+  "title": "Air Dolomiti-Logo.svg",
+  "srcw": 744,
+  "srch": 166
+ },
+ "WIF": {
+  "status": "logo",
+  "qid": "Q28344",
+  "label": "Widerøe",
+  "file": "Wideroe logo 2002.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Wideroe_logo_2002.svg",
+  "title": "Wideroe logo 2002.svg",
+  "srcw": 255,
+  "srch": 75
+ },
+ "NSZ": {
+  "status": "logo",
+  "qid": "Q60456802",
+  "label": "Norwegian Air Sweden",
+  "file": "Norwegian Logo 2024.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Norwegian_Logo_2024.svg",
+  "title": "Norwegian Logo 2024.svg",
+  "srcw": 512,
+  "srch": 80
+ },
+ "EWE": {
+  "status": "no-item"
+ },
+ "LGL": {
+  "status": "logo",
+  "qid": "Q726813",
+  "label": "Luxair",
+  "file": "Luxair Logo 2007.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Luxair_Logo_2007.svg",
+  "title": "Luxair Logo 2007.svg",
+  "srcw": 77,
+  "srch": 24
+ },
+ "GWI": {
+  "status": "no-item"
+ },
+ "OHY": {
+  "status": "no-item"
+ },
+ "VKG": {
+  "status": "licence",
+  "qid": "Q1190358",
+  "label": "Sunclass Airlines",
+  "file": "Sunclass airlines logo 2.png",
+  "n_logos": 1,
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Sunclass_airlines_logo_2.png",
+  "title": "Sunclass airlines logo 2.png",
+  "srcw": 5366,
+  "srch": 2500
+ },
+ "DAT": {
+  "status": "no-item"
+ },
+ "BMS": {
+  "status": "no-item"
+ },
+ "GCR": {
+  "status": "no-logo",
+  "qid": "Q1436155",
+  "label": "Tianjin Airlines"
+ },
+ "CJT": {
+  "status": "no-logo",
+  "qid": "Q376186",
+  "label": "Cargojet"
+ },
+ "ABX": {
+  "status": "logo",
+  "qid": "Q1366724",
+  "label": "ABX Air",
+  "file": "Abx Air logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Abx_Air_logo.svg",
+  "title": "Abx Air logo.svg",
+  "srcw": 100,
+  "srch": 18
+ },
+ "PAC": {
+  "status": "logo",
+  "qid": "Q1186574",
+  "label": "Polar Air Cargo",
+  "file": "Polar Air Cargo logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Polar_Air_Cargo_logo.svg",
+  "title": "Polar Air Cargo logo.svg",
+  "srcw": 100,
+  "srch": 26
+ },
+ "BOX": {
+  "status": "logo",
+  "qid": "Q381509",
+  "label": "AeroLogic",
+  "file": "Logo AeroLogic.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Logo_AeroLogic.svg",
+  "title": "Logo AeroLogic.svg",
+  "srcw": 1024,
+  "srch": 191
+ },
+ "MPH": {
+  "status": "logo",
+  "qid": "Q426851",
+  "label": "Martinair",
+  "file": "Martinair logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Martinair_logo.svg",
+  "title": "Martinair logo.svg",
+  "srcw": 178,
+  "srch": 43
+ },
+ "SQC": {
+  "status": "no-item"
+ },
+ "DHK": {
+  "status": "logo",
+  "qid": "Q835482",
+  "label": "DHL Air UK",
+  "file": "DHL Logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:DHL_Logo.svg",
+  "title": "DHL Logo.svg",
+  "srcw": 176,
+  "srch": 39
+ },
+ "DHL": {
+  "status": "logo",
+  "qid": "Q298014",
+  "label": "Astar Air Cargo",
+  "file": "Astar Air Cargo Logo.gif",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Astar_Air_Cargo_Logo.gif",
+  "title": "Astar Air Cargo Logo.gif",
+  "srcw": 405,
+  "srch": 170
+ },
+ "TAY": {
+  "status": "logo",
+  "qid": "Q1066031",
+  "label": "ASL Airlines Belgium",
+  "file": "ASL Airlines Belgium Logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:ASL_Airlines_Belgium_Logo.svg",
+  "title": "ASL Airlines Belgium Logo.svg",
+  "srcw": 645,
+  "srch": 265
+ },
+ "SWG": {
+  "status": "no-item"
+ },
+ "MSX": {
+  "status": "no-logo",
+  "qid": "Q1319130",
+  "label": "EgyptAir Cargo"
+ },
+ "QAF": {
+  "status": "logo",
+  "qid": "Q2812546",
+  "label": "Qatar Amiri Flight",
+  "file": "Qatar Airways logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Qatar_Airways_logo.svg",
+  "title": "Qatar Airways logo.svg",
+  "srcw": 100,
+  "srch": 35
+ },
+ "NPT": {
+  "status": "logo",
+  "qid": "Q756290",
+  "label": "West Atlantic UK",
+  "file": "West atlantic logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:West_atlantic_logo.svg",
+  "title": "West atlantic logo.svg",
+  "srcw": 358,
+  "srch": 67
+ },
+ "NCR": {
+  "status": "logo",
+  "qid": "Q899774",
+  "label": "National Airlines",
+  "file": "National Airlines logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:National_Airlines_logo.svg",
+  "title": "National Airlines logo.svg",
+  "srcw": 185,
+  "srch": 40
+ },
+ "ICL": {
+  "status": "no-logo",
+  "qid": "Q1319103",
+  "label": "Challenge Airlines IL"
+ },
+ "JTA": {
+  "status": "logo",
+  "qid": "Q574659",
+  "label": "Japan Transocean Air",
+  "file": "JTA logo 2011.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:JTA_logo_2011.svg",
+  "title": "JTA logo 2011.svg",
+  "srcw": 608,
+  "srch": 168
+ },
+ "AZW": {
+  "status": "no-logo",
+  "qid": "Q407920",
+  "label": "Air Zimbabwe"
+ },
+ "TLM": {
+  "status": "no-logo",
+  "qid": "Q15043926",
+  "label": "Thai Lion Air"
+ },
+ "SLM": {
+  "status": "logo",
+  "qid": "Q1059033",
+  "label": "Surinam Airways",
+  "file": "SUR-MEDIUM-LOGO.png",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:SUR-MEDIUM-LOGO.png",
+  "title": "SUR-MEDIUM-LOGO.png",
+  "srcw": 336,
+  "srch": 75
+ },
+ "PVG": {
+  "status": "no-logo",
+  "qid": "Q7246305",
+  "label": "Privilege Style"
+ },
+ "CUA": {
+  "status": "no-logo",
+  "qid": "Q1073550",
+  "label": "China United Airlines"
+ },
+ "IJT": {
+  "status": "no-item"
+ },
+ "BGA": {
+  "status": "no-logo",
+  "qid": "Q408396",
+  "label": "Airbus Transport International"
+ },
+ "BRU": {
+  "status": "logo",
+  "qid": "Q815314",
+  "label": "Belavia",
+  "file": "Belavia logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Belavia_logo.svg",
+  "title": "Belavia logo.svg",
+  "srcw": 303,
+  "srch": 85
+ },
+ "PRY": {
+  "status": "no-item"
+ },
+ "AEL": {
+  "status": "no-item"
+ },
+ "SRR": {
+  "status": "logo",
+  "qid": "Q825150",
+  "label": "Star Air (Denmark)",
+  "file": "Star Air (Denmark) logo.png",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Star_Air_(Denmark)_logo.png",
+  "title": "Star Air (Denmark) logo.png",
+  "srcw": 257,
+  "srch": 130
+ },
+ "SKX": {
+  "status": "no-logo",
+  "qid": "Q85801489",
+  "label": "Sky Airline Peru"
+ },
+ "JAV": {
+  "status": "no-logo",
+  "qid": "Q616935",
+  "label": "Jordan Aviation"
+ },
+ "MAH": {
+  "status": "no-item"
+ },
+ "KMF": {
+  "status": "logo",
+  "qid": "Q597485",
+  "label": "Kam Air",
+  "file": "Kam Air Logo.png",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Kam_Air_Logo.png",
+  "title": "Kam Air Logo.png",
+  "srcw": 6012,
+  "srch": 1134
+ },
+ "TVJ": {
+  "status": "logo",
+  "qid": "Q23899316",
+  "label": "Thai Vietjet Air",
+  "file": "Vietjet Air Thailand logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Vietjet_Air_Thailand_logo.svg",
+  "title": "Vietjet Air Thailand logo.svg",
+  "srcw": 1057,
+  "srch": 276
+ },
+ "RBA": {
+  "status": "logo",
+  "qid": "Q1050783",
+  "label": "Royal Brunei Airlines",
+  "file": "Royal Brunei Airlines logo.svg",
+  "n_logos": 1,
+  "licence": "Public domain",
+  "source": "https://commons.wikimedia.org/wiki/File:Royal_Brunei_Airlines_logo.svg",
+  "title": "Royal Brunei Airlines logo.svg",
+  "srcw": 377,
+  "srch": 153
+ },
+ "SEY": {
+  "status": "no-logo",
+  "qid": "Q407783",
+  "label": "Air Seychelles"
+ },
+ "LIA": {
+  "status": "no-item"
+ },
+ "CPZ": {
+  "status": "no-item"
+ },
+ "SCX": {
+  "status": "no-logo",
+  "qid": "Q866289",
+  "label": "Sun Country Airlines"
+ }
+}

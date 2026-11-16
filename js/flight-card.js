@@ -7,11 +7,11 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { TIERS } from './flights.js?v=0.1.1621';
-import { typePhoto } from './type-photos.js?v=0.1.1621';
-import { airlinePhoto } from './airline-photos.js?v=0.1.1621';
-import { fitStyle } from './photo-fit.js?v=0.1.1621';
-import { hasAirlineCallsign, planeLine, levelWord } from './sky-stamps.js?v=0.1.1621';
+import { TIERS } from './flights.js?v=0.1.1629';
+import { typePhoto } from './type-photos.js?v=0.1.1629';
+import { airlinePhoto } from './airline-photos.js?v=0.1.1629';
+import { fitStyle } from './photo-fit.js?v=0.1.1629';
+import { hasAirlineCallsign, planeLine, levelWord } from './sky-stamps.js?v=0.1.1629';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
@@ -159,7 +159,7 @@ export function miniCardHtml({ kind, card: c, type, last, n = 1, stamps = 0, sta
   const gem = `<span class="sct-tier"><i aria-hidden="true">${TIERS[t].mark}</i>${TIERS[t].label.toUpperCase()}</span>`;
   const lvl = stampInfo?.level && stampInfo.level !== 'none' ? stampInfo.level : '';
   const medal = lvl ? `<span class="sct-lvl sct-lvl--${lvl}" title="${lvl} · ${stampInfo.count} stamps"><i>${stampInfo.count}</i><em>${lvl.toUpperCase()}</em></span>` : '';
-  const when = `<span class="sct-foot"><span>✓ ${dateShort(new Date(last))}</span><span>${n}×</span></span>`;
+  const when = last ? `<span class="sct-foot"><span>✓ ${dateShort(new Date(last))}</span><span>${n}×</span></span>` : '<span class="sct-foot"><span>NOT YET COLLECTED</span></span>'; /* the target ticket shows a card you don't have yet */
   if (kind === 'flight') {
     const air = !c.air ? '—' : c.air.h ? `${c.air.h}h${String(c.air.m).padStart(2, '0')}` : `${c.air.m} min`;
     return `<span class="sct-face sct--${t}${lvl ? ` sct-face--lvl sct-face--${lvl}` : ''}" style="--tier:${TIERS[t].color}"><span class="sct-in">

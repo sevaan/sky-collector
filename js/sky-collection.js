@@ -2,9 +2,10 @@
 // (localStorage 'skyCatches', written by js/sky-catch.js). Runs inside cards.html and takes over its main area; Space
 // Collector's satellite grid stays in the page, hidden. Design: canvas row D (cream mini cards, gold frames for Rare+).
 
-import { flightCardHtml, planeCardHtml, miniCardHtml } from './flight-card.js?v=0.1.1621';
-import { attachTilt } from './card.js?v=0.1.1621';
-import { flightStampInfo, planeStampInfo, hasAirlineCallsign } from './sky-stamps.js?v=0.1.1621';
+import { flightCardHtml, planeCardHtml, miniCardHtml } from './flight-card.js?v=0.1.1629';
+import { attachTilt } from './card.js?v=0.1.1629';
+import { flightStampInfo, planeStampInfo, hasAirlineCallsign } from './sky-stamps.js?v=0.1.1629';
+import { standing } from './sky-progress.js?v=0.1.1629';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -47,6 +48,16 @@ function tile(e) {
     kind: e.kind, card: c, type: c.type || e.seen.find((s) => s.type)?.type || '', last: e.seen.at(-1).time, n, stamps: e.stampInfo?.count ?? 0, stampInfo: e.stampInfo })}</button>`;
 }
 
+// Your rank at the top of the Collection, as Space Collector's (2026-11-15 alignment pass): its compact rank dial (the
+// ring filling to the next rank, the rank, XP and how far to go), drawn on card paper for the daylight look.
+function rankCard(list) {
+  let st; try { st = standing(list); } catch { return ''; }
+  const r = st.rank, into = r.next ? Math.max(0, Math.min(1, (st.xp - r.at) / (r.next - r.at))) : 1, pct = Math.round(into * 100);
+  return `<div class="logbook sky-rank"><div class="lb-top"><span>Spotter rank</span></div>
+    <div class="lb-dial"><span class="lbd-ring"><svg viewBox="0 0 74 74" aria-hidden="true"><circle cx="37" cy="37" r="32" fill="none" stroke="#d9e5ef" stroke-width="5"/><circle cx="37" cy="37" r="32" fill="none" stroke="#fa8127" stroke-width="5" stroke-linecap="round" stroke-dasharray="${(into * 201.06).toFixed(1)} 202" transform="rotate(-90 37 37)"/></svg><b>${pct}%<small>to next</small></b></span>
+    <span class="lbd-m"><span class="lbd-l"><span class="lbd-name">${esc(r.name)}</span><span class="lb-xp"><b>${st.xp.toLocaleString('en-US')}</b> XP</span></span>
+    <span class="lbd-to">${r.next ? `${(r.next - st.xp).toLocaleString('en-US')} XP to <b>${esc(r.nextName ?? 'the next rank')}</b>` : 'Top rank. Every catch still counts.'}</span></span></div></div>`;
+}
 function render() {
   const root = $('sky-col'); if (!root) return;
   const { flights, planes } = build(load());
@@ -56,7 +67,7 @@ function render() {
   if (state.filter !== 'all' && !groups.some(([g]) => g === state.filter)) state.filter = 'all';
   const shown = state.filter === 'all' ? all : all.filter((e) => (state.tab === 'flights' ? e.card.set : planeGroup(e)) === state.filter);
   const total = flights.length + planes.length;
-  root.innerHTML = `
+  root.innerHTML = `${rankCard(load())}
     <div class="scc-intro"><p class="eyebrow">YOUR SKY LOG</p><h1>Everything that’s<br>flown over you.</h1>
       <p>${total ? `${flights.length} flight${flights.length === 1 ? '' : 's'} and ${planes.length} plane${planes.length === 1 ? '' : 's'} caught.` : 'Point your phone at a plane and tap Collect.'}</p></div>
     <div class="scc-tabs" role="tablist" aria-label="Collection">
