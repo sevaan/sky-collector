@@ -96,13 +96,15 @@ export function datedCrossing(t, month, day, seed) {
 }
 
 // Dizzy: three full turns (1,080°) within 30 seconds.
+// A running sum (perf pass 2026-11-10: re-adding up to 30 s of samples every frame was ~8% of the sky's script), and a
+// still phone adds nothing.
 const turns = [];
-let lastHeading = null;
+let lastHeading = null, sum = 0, head = 0;
 export function dizzyStep(t, heading) {
-  if (lastHeading != null) { const dh = ((heading - lastHeading + 540) % 360) - 180; if (Math.abs(dh) < 40) turns.push([t, dh]); }
+  if (lastHeading != null) { const dh = ((heading - lastHeading + 540) % 360) - 180; if (Math.abs(dh) < 40 && dh !== 0) { turns.push([t, dh]); sum += dh; } }
   lastHeading = heading;
-  while (turns.length && t - turns[0][0] > 30000) turns.shift();
-  const sum = turns.reduce((a, [, d]) => a + d, 0);
-  if (Math.abs(sum) >= 1080) { turns.length = 0; return true; }
+  while (head < turns.length && t - turns[head][0] > 30000) sum -= turns[head++][1];
+  if (head > 512) { turns.splice(0, head); head = 0; }
+  if (Math.abs(sum) >= 1080) { turns.length = 0; head = 0; sum = 0; return true; }
   return false;
 }

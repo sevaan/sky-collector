@@ -462,7 +462,7 @@ body:has(#reveal:not([hidden])) #toasts, body:has(.overlay.panel:not([hidden])) 
    header, slider and switcher are already in place, and only the static target circle shows until the sky draws. */
 html.quick #start.booting { background: transparent; pointer-events: none; }
 html.quick .wc-loader { opacity: 1; animation: none; }
-html.quick .wc-loader .ld-orbit, html.quick .wc-loader .ld-orbit2, html.quick .wc-loader .ld-word, html.quick #ld-ret path[fill] { display: none; }
+html.quick .wc-loader .ld-orbit, html.quick .wc-loader .ld-orbit2, html.quick .wc-loader .ld-word { display: none; }
 html.quick #ld-ret circle[stroke-dasharray] { display: none; }
 /* …and the header, sky slider and switcher are on screen from the first paint, before the app script runs. */
 html.quick #hud[hidden] { display: block !important; }
@@ -3138,8 +3138,6 @@ body.ob-tour #radar-new { display: none !important; }
 .back-rand i { background-color: #01121c !important; background-position: center !important; background-size: contain !important; background-repeat: no-repeat !important; border-color: #c9c1a066 !important; }
 
 /* Night 2 welcome on the Tonight page (UX playtest 2026-10-28) */
-.tn-wx.night2 { border-color: #fa812755; background: radial-gradient(ellipse at 85% 0%, #fa81271f, transparent 70%), #0e1a29; }
-body.night .tn-wx.night2 { border-color: #ff6a5555; background: #0c0303; }
 /* Reminder sheet rows (2026-10-28, Sevaan: "Notifications are off in Settings" wrapped): the time column is only as wide as
    the time, and a row's answer stays on one line. */
 .pr-row .t { width: auto; min-width: 5.2em; }
@@ -3399,11 +3397,6 @@ body.night .mc { box-shadow: 0 0 0 1.5px #ff6a55; }
 .mc .art { flex: 0 1 auto; min-height: 40px; } /* the picture gives way a little when a title needs three lines */
 
 /* The Night 2 card speaks as the app: its icon on the left, like a message (2026-10-29, Sevaan) */
-.tn-wx.night2 { display: grid; grid-template-columns: 44px 1fr; column-gap: 14px; align-items: start; }
-.tn-wx.night2 .n2-icon { width: 44px; height: 44px; border-radius: 10px; box-shadow: 0 0 0 1px #ffffff1f, 0 2px 8px #0008; margin-top: 2px; }
-.tn-wx.night2 .n2-msg { min-width: 0; }
-.tn-wx.night2 > .acts { grid-column: 2; }
-body.night .tn-wx.night2 .n2-icon { filter: grayscale(1) sepia(1) saturate(4) hue-rotate(320deg) brightness(.8); }
 .mc b { -webkit-line-clamp: 4; } /* long goals ("Space Race: a Soviet object and an American one") get a fourth line; the picture gives way */
 
 /* Turn a card silver or gold: the picture shimmers in that metal (2026-10-29, Sevaan) */
@@ -3487,12 +3480,7 @@ body.col-modal #set-plus-sheet .set-sheet-card > .crew-top { display: flex !impo
 body.col-modal #set-plus-sheet .set-sheet-card { height: 100dvh !important; padding-top: 0 !important; }
 body.col-modal #set-plus-sheet .set-sheet-card > .starfield { height: 100dvh; margin-bottom: -100dvh; }
 /* Night 2 card's app icon a size smaller (2026-10-29, Sevaan) */
-.tn-wx.night2 { grid-template-columns: 32px 1fr; column-gap: 12px; }
-.tn-wx.night2 .n2-icon { width: 32px; height: 32px; border-radius: 8px; margin-top: 4px; }
 /* Night 2 card: the text runs the full width beside the icon (2026-10-29, Sevaan: it wrapped too early) */
-.tn-wx.night2 .n2-msg p, .tn-wx.night2 .n2-msg h3 { max-width: none; padding-right: 0; }
-.tn-wx.night2 { padding-right: 18px; }
-.tn-wx.night2 .n2-msg p { text-wrap: wrap; } /* "pretty" evened the lines and left a ragged gap on the right */
 /* A night part's drop-down: no lighter box (it read as a separate panel with its top cut off, 2026-10-29, Sevaan); its
    rows sit on the page, indented under the part with a thin line down the left */
 .tnx-list { margin: 2px 0 12px 26px; padding: 0 0 0 14px; background: none; border: 0; border-left: 2px solid #2c3d55; border-radius: 0; }
@@ -3596,7 +3584,7 @@ body.night #visible.tn-stale #tn-strip::before { color: #ff7f70; border-color: #
 @media (min-width: 600px) and (min-height: 1100px) and (orientation: portrait) {
   /* 78%: on a cloudy night the forecast card sits above the sky window too, and at 64% the missions fell below the fold
      (iPad playtest 2026-11-05); cards a little smaller (180px) so they fit with it */
-  #visible:not([hidden]) { grid-template-rows: fit-content(78dvh) 40px auto minmax(0, 1fr); }
+  #visible:not([hidden]) { grid-template-rows: fit-content(62dvh) 40px auto minmax(0, 1fr); } /* the top page scrolls; the run below gets a real page (iPad playtest 2026-11-12: it was a 118 pt sliver under the tab bar at 78dvh) */
   #tn-missions .mc-row { grid-template-columns: repeat(var(--n, 3), minmax(0, 180px)); gap: 16px; justify-content: center; }
 }
 /* The Sun / Moon check inside the object's card, in place of View card (2026-10-31, Sevaan). */
@@ -3617,3 +3605,105 @@ body.night #d-check small { color: #ff6a55; } body.night #d-check .mc-yes { back
 #set-plus-sheet .plus-links .auth-later, #set-plus-sheet .plus-links #plus-restore { display: block; margin: 0; padding: 9px 18px; }
 #set-plus-sheet .plus-links [hidden] { display: none; }
 
+
+/* The rarest find's name reads on any picture (playtest 2026-11-10: the caption sat on busy art). */
+#recap .rc-win { position: relative; }
+#recap .rc-win::after { content: ''; position: absolute; left: 0; right: 0; top: auto; bottom: 0; height: 62%; background: linear-gradient(to top, rgba(6,12,22,.92), rgba(6,12,22,.6) 45%, rgba(6,12,22,0)); pointer-events: none; z-index: 0; }
+#recap .rc-cap b, #recap .rc-cap small, #recap .rc-cap em { text-shadow: 0 1px 2px rgba(0,0,0,.9), 0 0 14px rgba(0,0,0,.75); }
+
+/* perf pass 2026-11-10: the mini cards under the circle sit under a drop-shadow filter and a rotation, so their art's twinkles
+   (con-tw, art-twinkle; up to 48 SVG animations) repainted the filtered card every frame, undoing the idle 30 fps. They hold still here. */
+.d-mini *, #tk-mini * { animation: none !important; }
+/* perf pass 2026-11-10: the Tonight and Settings pages keep their layout while hidden, so opening one reuses it instead of
+   laying out ~1,100 elements in the opening frame. content-visibility: hidden skips rendering them; visibility and
+   pointer-events keep the page out of sight, out of reach and out of the accessibility tree. .hidden stays the switch. */
+#visible[hidden], #debug[hidden] { display: block !important; content-visibility: hidden; translate: -300vw 0; animation: none !important; } /* moved off-screen rather than visibility/pointer-events: those are inherited, so every element restyled as the page opened (phone meter 2026-11-10). content-visibility: hidden keeps the contents out of the accessibility tree and unpainted. */
+/* (no descendant animation pause here: toggling it restyled the whole page on open; content-visibility: hidden doesn't paint them) */
+/* phone meter 2026-11-10 (iPhone 14: 228 ms the first time Tonight opened): the long blocks below the first screen are laid
+   out and painted only as they scroll into view; their last size is remembered so the scroll bar doesn't jump. */
+/* (tried 2026-11-10: content-visibility: auto on #tn-run and #tonight-list; on the phone it moved the cost into the scroll, a
+   363 ms frame as the run came into view, so it's gone. The hidden page is laid out ahead instead, see main.js 'bg Tonight layout'.) */
+/* Tonight's sky: a small weather icon in each night's box (2026-11-11, Sevaan), the same line icons as the week view */
+.tn-wx .nights .ico { display: block; width: 22px; height: 22px; margin: 5px auto 0; color: var(--text); opacity: .9; }
+.tn-wx .nights .ok .ico { color: #5fd08a; }
+body.night .tn-wx .nights .ico { color: var(--gold); }
+
+/* Settings under Observer stats or Send cards (2026-11-12, Sevaan: "I can scroll up and down on this page… it's the settings
+   in the background"): iOS passes a scroll that the page on top can't use through to Settings underneath, so Settings
+   holds still while it's covered (its place is kept for when it comes back). */
+body.stats-over-set #debug { overflow: hidden !important; overscroll-behavior: none; touch-action: none; }
+
+/* Red night mode: the circle's ticket mini card read almost black through the red multiply (Android playtest 2026-11-12) */
+body.night :is(#discover .d-ticket.has-mini .d-mini, #tk.has-mini #tk-mini, #plane .p-ticket .p-mini) { filter: brightness(1.7) drop-shadow(0 6px 12px #000c); }
+
+/* The lesson's Bronze / Silver / Gold sit together under the words (iPad playtest 2026-11-12: on a wide screen each tier took a
+   third of the screen) */
+#rv-teach .sp-cap { max-width: 460px; margin-inline: auto; }
+#rv-teach .sp-cap .tc-levels { max-width: 340px; margin-inline: auto; }
+
+/* 5 · Mission card titles in stamped gold foil, like the cards' names and the rank (2026-11-12) */
+.mc > b { background: linear-gradient(105deg, #d9c99a 0%, #fff8dc 18%, #b8a679 30%, #fffdf0 42%, #d6c58f 54%, #fff6d6 66%, #c4b07a 80%, #fff8dc 100%) 30% 0 / 320% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+body.night .mc > b { background: none; -webkit-text-fill-color: currentColor; color: inherit; }
+
+/* Setup cards at the same fidelity as the cards (2026-11-12, Sevaan): card stock grain, the title in stamped foil (gold on the
+   gold catch card), the picture set behind the print, a gloss coat across the top, and the main button raised with travel.
+   All still layers; the cards only move by transform, as before. */
+.tc { background-image: repeating-linear-gradient(0deg, #ffffff07 0 1px, transparent 1px 2.5px), repeating-linear-gradient(90deg, #00000016 0 1px, transparent 1px 2.5px); }
+.tc::after { content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: inherit;
+  background: linear-gradient(118deg, transparent 20%, #ffffff10 34%, #ffffff1c 42%, #ffffff06 50%, transparent 62%), linear-gradient(#ffffff0d, transparent 18%); }
+.tc h3 { background: linear-gradient(105deg, #d9c99a 0%, #fff8dc 18%, #b8a679 30%, #fffdf0 42%, #d6c58f 54%, #fff6d6 66%, #c4b07a 80%, #fff8dc 100%) 35% 0 / 320% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
+.tc.gold h3 { background-image: linear-gradient(105deg, #b8862a 0%, #ffe9a8 18%, #8f6a1c 30%, #fff4cf 42%, #c99a35 54%, #ffe08a 66%, #a87d22 80%, #ffe9a8 100%); }
+.tc .art::after { content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none; border-radius: inherit; box-shadow: inset 0 .45em .9em #000c, inset 0 -1px 0 #fff4d240; }
+.tc .acts .yes { background-image: linear-gradient(#ffffff2e, #ffffff00 55%, #00000022); box-shadow: inset 0 1px 0 #ffffff59, 0 3px 0 #9a6a12, 0 8px 16px #0008; transition: transform .08s ease-out, box-shadow .08s ease-out; }
+.tc .acts .yes:active { transform: translateY(3px); box-shadow: inset 0 1px 0 #ffffff40, inset 0 2px 6px #0000004d, 0 0 0 #9a6a12, 0 3px 6px #0007; }
+body.night .tc h3 { background: none; -webkit-text-fill-color: currentColor; color: inherit; }
+body.night .tc::after { display: none; }
+body.night .tc .acts .yes { background-image: none; box-shadow: 0 3px 0 #3a0b07, 0 6px 12px #0008; }
+@media (prefers-reduced-motion: reduce) { .tc .acts .yes:active { transform: none; } }
+
+/* Twinkling stars behind the tour cards' pictures (2026-11-13, Sevaan): js/main.js obStars adds a .starfield to .tc .art */
+.tc .art > .starfield { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; border-radius: inherit; }
+.tc .art > svg { position: relative; z-index: 1; }
+
+/* Night 2 as Sky Collector talking to you (2026-11-13, Sevaan; design/night2-chat.html B, js/main.js nightTwoCard):
+   the app's icon, a short thread of bubbles, the headliner attached as a small card, replies worded like answers. */
+.n2-chat { margin: 14px 0 4px; }
+.n2-who { font: 500 12.5px 'SC Label', sans-serif; letter-spacing: .2em; text-transform: uppercase; color: var(--ui-muted, #a9b3c2); margin: 0 0 5px 46px; }
+.n2-row { display: grid; grid-template-columns: 34px 1fr; column-gap: 10px; align-items: end; }
+.n2-av { width: 34px; height: 34px; border-radius: 9px; box-shadow: 0 0 0 1px #ffffff1f, 0 2px 8px #0008; }
+.n2-stack { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-width: 0; }
+.n2-b { position: relative; max-width: 100%; padding: 9px 14px; border-radius: 18px 18px 18px 6px; background: #13243a; box-shadow: inset 0 0 0 1px #ffffff14; font: 500 16.5px/1.32 'SC Label', sans-serif; color: #fff2b3; }
+.n2-b.big { font: 400 20px/1.15 'SC Display', sans-serif; padding: 10px 14px 11px; }
+.n2-b.dim { color: #c9c6ad; }
+.n2-b em { font-style: normal; color: #fa8127; }
+.n2-stack > :last-child { border-bottom-left-radius: 18px; }
+.n2-stack > .n2-b:last-child::before { content: ''; position: absolute; left: -6px; bottom: 0; width: 14px; height: 14px; background: #13243a; clip-path: path('M14 0 C14 8 10 14 0 14 L14 14 Z'); }
+.n2-att { display: grid; grid-template-columns: 54px 1fr auto; gap: 10px; align-items: center; width: 100%; max-width: 330px; padding: 8px 12px 8px 8px; border: 0; border-radius: 16px; background: #0b1626; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--t) 45%, transparent); color: #fff2b3; text-align: left; cursor: pointer; font: inherit; }
+.n2-att .th { width: 54px; height: 54px; border-radius: 10px; position: relative; overflow: hidden; background: #060b14 center / cover no-repeat; }
+.n2-att .th::before { content: ''; position: absolute; inset: -6px; background: inherit; filter: blur(3px) brightness(.55) saturate(.4); }
+.n2-att .th::after { content: '?'; position: absolute; inset: 0; display: grid; place-items: center; font: 400 22px 'SC Display', sans-serif; color: #fff2b3cc; }
+.n2-att .tx { min-width: 0; }
+.n2-att .tx b { display: block; font: 400 15px/1.1 'SC Display', sans-serif; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.n2-att .tx small { display: block; margin-top: 3px; font: 500 13.5px 'SC Label', sans-serif; color: #c9c6ad; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.n2-att .tm { font: 400 19px/1 'SC Display', sans-serif; color: #fa8127; text-align: right; white-space: nowrap; }
+.n2-att .tm small { display: block; margin-top: 4px; font: 500 12px 'SC Label', sans-serif; letter-spacing: .14em; color: #5fd08a; }
+.n2-replies { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 0 44px; }
+.n2-r { height: 36px; padding: 0 15px; border-radius: 99px; border: 1px solid #fa812799; background: #fa812714; color: #fa8127; font: 500 14px 'SC Label', sans-serif; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
+.n2-r.quiet { border-color: #ffffff2a; background: #ffffff0a; color: #c9c6ad; }
+.n2-r.on { border-color: #5fd08a88; background: #5fd08a14; color: #5fd08a; }
+.n2-chat.typing .n2-b, .n2-chat.typing .n2-att, .n2-chat.typing .n2-replies { opacity: 0; transform: translateY(8px) scale(.97); transform-origin: left bottom; animation: n2-pop .32s cubic-bezier(.2,.9,.3,1.15) forwards; }
+@keyframes n2-pop { to { opacity: 1; transform: none; } }
+body.night .n2-av { filter: grayscale(1) sepia(1) saturate(4) hue-rotate(320deg) brightness(.8); }
+/* the Tonight page's own type rules (centred, capitals, letter-spaced) must not reach the thread */
+.n2-chat, .n2-chat .n2-b { text-align: left; text-transform: none; letter-spacing: normal; }
+.n2-chat .n2-stack > * { width: fit-content; max-width: 100%; }
+.n2-chat .n2-stack > .n2-att { width: 100%; max-width: 330px; }
+/* the daily note's attached card: a tag (last chance / shiny time), cards you own show their art, level pips */
+.n2-att .tx .tag { display: inline-block; margin-top: 4px; padding: 1px 7px; border-radius: 99px; font: 500 11.5px 'SC Label', sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+.n2-att.fall { box-shadow: inset 0 0 0 1px #ff8a6b88; } .n2-att.fall .tag { color: #ff8a6b; box-shadow: inset 0 0 0 1px #ff8a6b77; }
+.n2-att.shiny { box-shadow: inset 0 0 0 1px #f2c14e99; } .n2-att.shiny .tag { color: #f2c14e; box-shadow: inset 0 0 0 1px #f2c14e77; }
+.n2-att.owned .th::before { filter: none; } .n2-att.owned .th::after { content: none; }
+.n2-pips { display: inline-flex; gap: 4px; vertical-align: middle; margin-left: 4px; }
+.n2-pips i { width: 16px; height: 5px; border-radius: 3px; background: #ffffff22; } .n2-pips i.on { background: #f2c14e; } .n2-pips i.now { background: transparent; box-shadow: inset 0 0 0 1.5px #f2c14e; }

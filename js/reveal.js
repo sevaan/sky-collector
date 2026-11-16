@@ -5,20 +5,15 @@
 //  Everything scales with rarity (Legendary dims the sky, shockwave, held breath, slow flip, fanfare).
 // Waits use timers, not animation.finished, so a paused tab can never freeze the sequence.
 
-import { sfx, loadSfx, heartbeat } from './sfx.js?v=0.1.1580';
-import { audioCtx } from './audio-ctx.js?v=0.1.1580';
-import { TIER_INFO } from './rarity.js?v=0.1.1580';
-import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype } from './card.js?v=0.1.1580';
-import { applyBack } from './card-backs.js?v=0.1.1580';
-import { addStarfield } from './starfield.js?v=0.1.1580';
+import { sfx, loadSfx } from './sfx.js?v=0.1.1582';
+import { audioCtx } from './audio-ctx.js?v=0.1.1582';
+import { TIER_INFO } from './rarity.js?v=0.1.1582';
+import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype } from './card.js?v=0.1.1582';
+import { applyBack } from './card-backs.js?v=0.1.1582';
+import { addStarfield } from './starfield.js?v=0.1.1582';
+import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1582';
 
-const FX = {
-  common:    { particles: 14,  flip: 520,  spin: 0,   dim: 0,   shock: false, notes: [880],                            hold: 0 },
-  uncommon:  { particles: 24,  flip: 560,  spin: 0,   dim: 0,   shock: false, notes: [784, 1175],                      hold: 0 },
-  rare:      { particles: 50,  flip: 650,  spin: 0,   dim: .25, shock: false, notes: [659, 988, 1319],                 hold: 300 },
-  epic:      { particles: 90,  flip: 800,  spin: 360, dim: .45, shock: true,  notes: [523, 784, 1047, 1568],           hold: 600 },
-  legendary: { particles: 160, flip: 1100, spin: 0,   dim: .7,  shock: true,  notes: [392, 523, 659, 784, 1047, 1319], hold: 1100 },
-};
+const FX = TIER_FX; /* one rarity table for every card moment (js/card-moment.js, 2026-11-11) */
 const NIGHT_MILESTONES = [3, 5, 10, 25, 50, 100, 200, 365], STAMP_MILESTONES = [5, 10, 25, 50, 100, 200, 300, 400];
 const LEVEL_NAME = { bronze: 'BRONZE', silver: 'SILVER', gold: 'GOLD' };
 const LEVEL_COLOR = { bronze: '#c98a4b', silver: '#dfe6ee', gold: '#f2c94c' };
@@ -33,7 +28,6 @@ const reduced = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').ma
 // Call from inside the tap handler, before any await, so iOS lets the sound play. The sounds themselves are the
 // designed set (js/sfx.js, 2026-10-11); the old oscillator tones are gone.
 export function primeReveal() { audioCtx(); loadSfx(); }
-const STINGER = { common: 'r_common', uncommon: 'r_uncommon', rare: 'r_rare', epic: 'r_epic', legendary: 'r_legend' };
 
 // ---------- particles ----------
 let parts = [], loopOn = false;
@@ -147,7 +141,30 @@ export const MILESTONES = [1, 10, 25, 50, 75, 100, 200, 300, 400, 500, 600, 700,
 // What the stamp used to say now goes out as a ticket toast (2026-10-05): main.js registers the renderer.
 let announce = null;
 export function onRevealNews(fn) { announce = fn; }
+// The rush starts on the tap (2026-11-11, Sevaan: "the moment you tap Collect"): the dot swells and flies at you while the
+// catch is saved and its XP and rank are worked out; playReveal then picks up where the rush is, instead of the tap waiting
+// ~50–90 ms on a phone for that work before anything moved.
+let rush = null;
+export function rushReveal({ origin, tier }) {
+  const tk = FX[tier] ? tier : 'common', fx = FX[tk], root = $('reveal');
+  root.style.setProperty('--fx', (TIER_INFO[tk] ?? TIER_INFO.common).color); root.classList.remove('rv-done');
+  $('reveal-eyebrow').textContent = ''; $('rv-news').replaceChildren(); setRank(null); $('reveal-card').replaceChildren(); $('rv-holder').style.opacity = 0;
+  for (const id of ['rv-dot', 'rv-dim']) $(id).getAnimations().forEach((a) => a.cancel());
+  $('rv-dim').style.opacity = 0;
+  const x = origin?.x ?? innerWidth / 2, y = origin?.y ?? innerHeight * .4, ms = reduced() ? 1 : 400;
+  $('rv-dot').style.left = `${x}px`; $('rv-dot').style.top = `${y}px`;
+  sfx('arrive');
+  if (fx.dim) $('rv-dim').animate([{ opacity: 0 }, { opacity: fx.dim }], { duration: 260, fill: 'forwards' });
+  $('rv-dot').animate([
+    { transform: 'translate(-50%,-50%) scale(1)', opacity: 1, easing: 'cubic-bezier(.2,.9,.3,1)' },
+    { transform: 'translate(-50%,-50%) scale(1.7)', opacity: 1, offset: .35, easing: 'cubic-bezier(.5,0,.8,.4)' },
+    { transform: 'translate(-50%,-50%) scale(5)', opacity: 0 },
+  ], { duration: ms, fill: 'forwards' });
+  rush = { t0: performance.now(), x, y, ms };
+}
+export function cancelRush() { rush = null; for (const id of ['rv-dot', 'rv-dim']) $(id).getAnimations().forEach((a) => a.cancel()); $('rv-dim').style.opacity = 0; }
 export async function playReveal({ card, o, seen, origin, fleet = null, progress = null, collected = 0, con = null, shiny = null, xp = 0, rank = null, earned = [] }) {
+  const rushed = rush && performance.now() - rush.t0 < 3000 ? rush : null; rush = null; /* already rushing since the tap */
   stopReveal();
   const my = run;
   const fresh = seen <= 1;
@@ -168,22 +185,24 @@ export async function playReveal({ card, o, seen, origin, fleet = null, progress
   setRank(xp > 0 ? rank : null);
   $('rv-news').replaceChildren(); earnedNow = earned;
   $('reveal-card').replaceChildren(card);
-  for (const id of ['rv-holder', 'rv-flipper', 'rv-dot', 'rv-dim', 'rv-flash', 'rv-shock']) $(id).getAnimations().forEach((a) => a.cancel());
+  for (const id of ['rv-holder', 'rv-flipper', ...(rushed ? [] : ['rv-dot', 'rv-dim']), 'rv-flash', 'rv-shock']) $(id).getAnimations().forEach((a) => a.cancel());
   $('rv-holder').style.opacity = 0; $('rv-holder').classList.remove('live');
   $('rv-flipper').style.transform = '';
   $('rv-back').classList.remove('glow');
-  $('rv-dim').style.opacity = 0;
+  if (!rushed) $('rv-dim').style.opacity = 0;
   // Safari doesn’t reliably hide the reverse face of a 3D card, so show one face at a time ourselves.
   { const rb = $('rv-back'); rb.className = rb.className.replace(/\btier-\w+|\bshiny\b|\bgold-foil\b/g, '').replace(/\s+/g, ' ').trim(); rb.classList.add(`tier-${tierKey}`); if (shiny) rb.classList.add('shiny'); if (card.classList.contains('gold-foil')) rb.classList.add('gold-foil'); }
   if (fresh) applyBack($('rv-back'), o);
   showFace(fresh ? 'back' : 'front');
   sizeCard(card);
-  const x = origin?.x ?? innerWidth / 2, y = origin?.y ?? innerHeight * .4;
-  $('rv-dot').style.left = `${x}px`; $('rv-dot').style.top = `${y}px`;
+  const x = rushed?.x ?? origin?.x ?? innerWidth / 2, y = rushed?.y ?? origin?.y ?? innerHeight * .4;
+  if (!rushed) { $('rv-dot').style.left = `${x}px`; $('rv-dot').style.top = `${y}px`; }
   $('rv-shock').style.left = `${x}px`; $('rv-shock').style.top = `${y}px`;
   const alive = () => my === run;
 
-  // 1. Pulled from orbit: the object swells and rushes at you. Flash, sparks.
+  // 1. Pulled from orbit: the object swells and rushes at you. Flash, sparks. (Started on the tap when rushed: wait out the rest.)
+  if (rushed) await sleep(Math.max(0, rushed.t0 + rushed.ms - performance.now()));
+  else {
   sfx('arrive');
   if (fx.dim) $('rv-dim').animate([{ opacity: 0 }, { opacity: fx.dim }], { duration: 260, fill: 'forwards' });
   await play($('rv-dot'), [
@@ -192,6 +211,7 @@ export async function playReveal({ card, o, seen, origin, fleet = null, progress
     { transform: 'translate(-50%,-50%) scale(1.7)', opacity: 1, offset: .35, easing: 'cubic-bezier(.5,0,.8,.4)' },
     { transform: 'translate(-50%,-50%) scale(5)', opacity: 0 }, // a quick pop into the flash, not a 40× blur (2026-10-08)
   ], { duration: reduced() ? 1 : 400, fill: 'forwards' });
+  }
   if (!alive()) return;
   $('rv-flash').style.setProperty('--fx-x', `${x}px`); $('rv-flash').style.setProperty('--fx-y', `${y}px`);
   $('rv-flash').animate([{ opacity: 0 }, { opacity: 1, offset: .25 }, { opacity: 0 }], { duration: 300, easing: 'ease-out' }); // short and bright, from where you caught it
@@ -220,15 +240,16 @@ export async function playReveal({ card, o, seen, origin, fleet = null, progress
     // It flips by itself after a second (2026-10-05: no more "tap to reveal"); a tap flips it sooner.
     let timer = 0;
     const beats = [];
-    onFlipTap = () => { clearTimeout(timer); beats.forEach(clearTimeout); $('rv-holder').removeEventListener('click', onFlipTap); onFlipTap = null; primeReveal(); resolve(); };
+    onFlipTap = () => { clearTimeout(timer); beats.forEach((f) => f()); $('rv-holder').removeEventListener('click', onFlipTap); onFlipTap = null; primeReveal(); resolve(); };
     $('rv-holder').addEventListener('click', onFlipTap);
     // A heartbeat before the big ones (2026-10-21, slick idea 05, Sevaan): for Epic and Legendary the wait is two slow
     // double beats (thump-thump, thump-thump): the sky dims a little more and the card's glow swells on each, and the
     // phone thumps in time; then it turns over. A tap still turns it at once.
     const big = !reduced() && ['epic', 'legendary'].includes(tierKey);
-    if (big) for (const [ms, strong] of [[120, false], [330, true], [980, false], [1190, true]]) beats.push(setTimeout(() => { if (!alive() || !onFlipTap) return; heartbeat(strong); dispatchEvent(new CustomEvent('sc:heartbeat', { detail: { strong } }));
+    const stopBeats = heartbeats(tierKey, (strong) => {
       $('rv-dim').animate([{ opacity: getComputedStyle($('rv-dim')).opacity }, { opacity: strong ? .9 : .8, offset: .25 }, { opacity: getComputedStyle($('rv-dim')).opacity }], { duration: 420, easing: 'ease-out' });
-      $('rv-holder').animate([{ transform: 'scale(1)', filter: 'none' }, { transform: `scale(${strong ? 1.05 : 1.03})`, filter: strong ? 'brightness(1.25)' : 'brightness(1.12)', offset: .2 }, { transform: 'scale(1)', filter: 'none' }], { duration: 360, easing: 'ease-out', composite: 'add' }); }, ms));
+      $('rv-holder').animate([{ transform: 'scale(1)', filter: 'none' }, { transform: `scale(${strong ? 1.05 : 1.03})`, filter: strong ? 'brightness(1.25)' : 'brightness(1.12)', offset: .2 }, { transform: 'scale(1)', filter: 'none' }], { duration: 360, easing: 'ease-out', composite: 'add' }); }, () => alive() && !!onFlipTap);
+    beats.push(stopBeats);
     timer = setTimeout(() => onFlipTap?.(), reduced() ? 400 : big ? 1700 : ['common', 'uncommon'].includes(tierKey) ? 700 : 1000); // the rare ones keep their second of suspense
   });
   if (!alive()) return;
@@ -236,27 +257,9 @@ export async function playReveal({ card, o, seen, origin, fleet = null, progress
   $('rv-back').classList.remove('glow');
   stopBack();
 
-  // 3. Legendary holds its breath; then the flip (Epic spins on the way).
-  if (fx.hold && !reduced()) await play($('rv-flipper'), [{ transform: 'rotate(0)' }, { transform: 'rotate(-1.5deg)' }, { transform: 'rotate(1.5deg)' }, { transform: 'rotate(0)' }], { duration: fx.hold, easing: 'ease-in-out' });
-  const flipMs = reduced() ? 1 : fx.flip;
-  sfx('flip');
-  const flipped = play($('rv-flipper'), [
-    { transform: 'rotateY(0) scale(1)', easing: 'cubic-bezier(.5,0,1,1)' },
-    { transform: `rotateY(${90 + fx.spin / 2}deg) scale(1.12)`, offset: .5, easing: 'cubic-bezier(0,0,.4,1)' },
-    { transform: `rotateY(${180 + fx.spin}deg) scale(1)` },
-  ], { duration: flipMs, easing: 'linear', fill: 'forwards' }); // per-keyframe easing: edge-on exactly at flipMs / 2
-  // Swap faces on the edge-on frame, read from the turn’s own clock (2026-10-17). Safari ignores backface-visibility
-  // here (the card’s children have their own transforms), so relying on it showed the front mirrored mid-turn; a
-  // plain half-time timer could drift a frame and flash.
-  // Epic and Legendary spin a whole extra turn on the way (540°), so one swap at half-time left the back showing from
-  // behind for a quarter turn (2026-10-24, Sevaan: the Golden Record flip was janky). Each frame shows whichever face
-  // is toward you, read from the card's actual angle (cos θ < 0: the front, which sits turned 180° inside the flipper).
-  { const a = $('rv-flipper').getAnimations().at(-1), fl = $('rv-flipper');
-    const tick = () => { if (!alive()) return; const done = !a || a.playState === 'finished';
-      if (done) { showFace('front'); return; }
-      const m = new DOMMatrix(getComputedStyle(fl).transform); showFace(m.m11 < 0 ? 'front' : 'back'); requestAnimationFrame(tick); };
-    requestAnimationFrame(tick); }
-  await flipped;
+  // 3. Legendary holds its breath; then the flip (Epic spins on the way). The shared flip (js/card-moment.js), also
+  // used by every pack: faces are chosen each frame from the actual angle (Safari ignores backface-visibility here).
+  await flipCard($('rv-flipper'), { tier: tierKey, faces: [$('rv-back'), $('reveal-card')], showFace: (f) => showFace(f ? 'front' : 'back'), alive });
   if (!alive()) return;
   showFace('front');
   retype(card);
@@ -323,10 +326,7 @@ async function finish({ fx, color, fresh, seen, level, levelUp, card, alive, fle
   // The haptic lands with the payoff, not when the sealed card arrives (UX room 2026-10-12): main.js listens.
   dispatchEvent(new CustomEvent('sc:payoff', { detail: { tier: Object.keys(FX).find((k) => FX[k] === fx) ?? 'common', fresh, levelUp, newStamp: !!newStamp } }));
   // The payoff: the rarity stinger for a new card, a soft tap for one you have; layers for level-up, stamp and shiny.
-  const tk = Object.keys(STINGER).find((k) => FX[k] === fx) ?? 'common';
-  sfx(fresh ? STINGER[tk] : newStamp ? 'stamp' : 'seen');
-  if (levelUp) sfx('levelup', { delay: 0.35 });
-  if (shiny) sfx('shiny', { delay: 0.25 }); // the loudest stinger (sfx.js NORM; it was quieter than a Common)
+  payoffSound(Object.keys(FX).find((k) => FX[k] === fx) ?? 'common', { fresh, newStamp, levelUp, shiny });
   burst(cx, cy, fx.particles + (levelUp ? 60 : 0) + (shiny ? 90 : 0), shiny ? '#ff8fd8' : color);
   if (shiny) setTimeout(() => { burst(cx, cy - 40, 70, '#8ff0ff'); burst(cx, cy + 40, 70, '#fff2b3'); }, 220);
   if (fx.particles > 60 || levelUp) setTimeout(() => burst(cx, cy - 60, fx.particles / 2 + 20, levelUp ? LEVEL_COLOR[level] : '#ffffff'), 180);

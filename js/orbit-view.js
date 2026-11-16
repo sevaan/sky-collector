@@ -4,11 +4,11 @@
 // the sky), seen from 35° above the orbit's own plane with the low point to the right, the Earth to scale in the middle
 // turning underneath (your spot marked), and the object moving round at its true relative speed, a lap in 4–14 s.
 // Parts of the ring behind the Earth are faint. Twinkling stars behind. Canvas only. Coastlines: js/coast.js.
-import { satrecFor, overEarth } from './orbit.js?v=0.1.1580';
-import * as sat from './lib/satellite.js?v=0.1.1580';
-import { useMiles } from './units.js?v=0.1.1580';
-import { placeName } from './geo.js?v=0.1.1580';
-import { COAST } from './coast.js?v=0.1.1580';
+import { satrecFor, overEarth } from './orbit.js?v=0.1.1582';
+import * as sat from './lib/satellite.js?v=0.1.1582';
+import { useMiles } from './units.js?v=0.1.1582';
+import { placeName } from './geo.js?v=0.1.1582';
+import { COAST } from './coast.js?v=0.1.1582';
 
 const RAD = Math.PI / 180, RE = 6371;
 const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
@@ -69,8 +69,13 @@ export function orbitGlobe(obj, host, me, { once = false, style } = {}) {
   let seed = (Number(obj.id) || 7) % 2147483646 + 1; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
   const stars = Array.from({ length: 70 }, () => ({ x: rnd(), y: rnd(), r: 0.4 + rnd() * 0.9, a: 0.25 + rnd() * 0.6, f: 500 + rnd() * 1400, p: rnd() * 6.3 }));
   let raf = 0; const start = performance.now();
+  /* 30 fps, and asleep while its card is out of sight (perf budget 2026-11-10: ~23 ms a frame, still running under a closed
+     viewer and during grid scrolling). */
+  let drawnAt = 0;
   const draw = (ts) => {
-    const W = host.clientWidth, H = host.clientHeight, dpr = Math.min(2, devicePixelRatio || 1);
+    if (!once && canvas.isConnected) { if (!canvas.offsetParent || document.hidden || document.documentElement.classList.contains('away') || canvas.checkVisibility?.({ visibilityProperty: true, opacityProperty: true }) === false) { /* also asleep face down in a pack (visibility hidden) or faded out (2026-11-11 jank audit) */ raf = 0; setTimeout(() => { if (canvas.isConnected) raf = requestAnimationFrame(draw); }, 500); return; }
+      if (drawnAt && ts - drawnAt < 30) { raf = requestAnimationFrame(draw); return; } drawnAt = ts; }
+    const W = host.clientWidth, H = host.clientHeight, dpr = Math.min(once ? 1.25 : 2, devicePixelRatio || 1); /* a tile's one-off still: a quarter of the pixels (perf budget 2026-11-10: 14 ms per debris tile while scrolling) */
     if (!W || !H) { if (!once && canvas.isConnected) raf = requestAnimationFrame(draw); return; }
     if (canvas.width !== Math.round(W * dpr) || canvas.height !== Math.round(H * dpr)) { canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr); }
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);

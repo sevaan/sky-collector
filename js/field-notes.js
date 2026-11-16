@@ -1,15 +1,15 @@
 // Anonymous usage and error reports (2026-10-24, Sevaan: "how do I know if people are coming back on other nights?").
 // A few game events (the install, each open, each night with a catch, the end of a session, the tour, motion, Line up,
 // Plus) and uncaught errors, tied only to a random ID made on this phone. No location, no names, no device IDs. They go in
-// small batches to the push val (relay/push.ts, POST /t); its /stats page shows the first-night catch rate and how many come
+// small batches to our server (functions/index.js, POST /api/t); its /stats page shows the first-night catch rate and how many come
 // back. Settings → Help → "Share anonymous usage" (pref 'share', on by default) stops them. File named to stay clear of
 // content blockers' lists (see CLAUDE.md: avoid push / ads / track / analytics / beacon in js/ file names).
-import { VERSION } from './version.js?v=0.1.1580';
-import { isNative } from './native.js?v=0.1.1580';
-import { TESTER } from './build-flavor.js?v=0.1.1580';
+import { VERSION } from './version.js?v=0.1.1582';
+import { isNative } from './native.js?v=0.1.1582';
+import { TESTER } from './build-flavor.js?v=0.1.1582';
 
-import { SERVER } from './server.js?v=0.1.1580';
-const URL_ = SERVER ? `${SERVER}/t` : 'https://sevaan--54192ae4c4ad11f18b0f1607ee4eb77e.web.val.run/t'; // our server once deployed (2026-10-25)
+import { SERVER } from './server.js?v=0.1.1582';
+const URL_ = SERVER ? `${SERVER}/t` : ''; // our server (2026-10-25)
 const ls = { get: (k) => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
 const on = () => !TESTER && ls.get('share') !== '0'; /* SC Tester never sends anything (2026-10-31, Sevaan: "Don't include SC Tester in those stats ever") */
 const platform = () => (isNative() ? (globalThis.Capacitor?.getPlatform?.() === 'android' ? 'android' : 'ios') : 'web');
@@ -33,7 +33,7 @@ export function note(name, data = {}) {
   if (queue.length >= 20) send();
 }
 export function send() {
-  if (!on() || !queue.length) return;
+  if (!on() || !URL_ || !queue.length) return;
   const body = JSON.stringify({ i: id, v: VERSION, p: platform(), x: testing() ? 1 : 0, e: queue.slice(0, 60) });
   const sent = queue.length; let ok = false;
   try { ok = navigator.sendBeacon?.(URL_, new Blob([body], { type: 'text/plain' })) ?? false; } catch {}

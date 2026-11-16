@@ -20,6 +20,10 @@ function closed(el) {
   const a = document.activeElement;
   if (back && back.isConnected && back !== document.body && (!a || a === document.body || el.contains(a))) { try { back.focus({ preventScroll: true }); } catch {} }
 }
-new MutationObserver((recs) => {
-  for (const r of recs) { const el = r.target; if (!el.matches?.(SEL)) continue; const wasHidden = r.oldValue !== null; if (wasHidden && !el.hidden) opened(el); else if (!wasHidden && el.hidden) closed(el); }
-}).observe(document.documentElement, { subtree: true, attributes: true, attributeFilter: ['hidden'], attributeOldValue: true });
+// Watch only the pages and sheets themselves, not the whole document: the sky loop sets `hidden` on HUD pieces many
+// times a second, and a document-wide watcher was woken for every one of them (perf review 2026-11-10).
+const mo = new MutationObserver((recs) => {
+  for (const r of recs) { const el = r.target, wasHidden = r.oldValue !== null; if (wasHidden && !el.hidden) opened(el); else if (!wasHidden && el.hidden) closed(el); }
+});
+const watch = () => { for (const el of document.querySelectorAll(SEL)) mo.observe(el, { attributes: true, attributeFilter: ['hidden'], attributeOldValue: true }); };
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', watch, { once: true }); else watch();

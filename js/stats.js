@@ -2,8 +2,8 @@
 // badges"). Your history under the sky, from the sighting log plus what the Collection page already knows (rank,
 // patches, constellations, stories, albums). computeStats(sightings, byKey, nightKey, year, ctx) -> numbers;
 // statsHtml(st) -> the panel. No network; the map uses js/geo.js’s coarse outlines.
-import { LAND } from './geo.js?v=0.1.1580';
-import { TIER_INFO, TIERS } from './rarity.js?v=0.1.1580';
+import { LAND } from './geo.js?v=0.1.1582';
+import { TIER_INFO, TIERS } from './rarity.js?v=0.1.1582';
 
 const RANK = { common: 0, uncommon: 1, rare: 2, epic: 3, legendary: 4 };
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -16,7 +16,7 @@ const day = (t, o = { month: 'short', day: 'numeric', year: 'numeric' }) => new 
 // ctx (optional): { cards, rank: { name, xp, next }, patches: [done, total], events, cons: [done, total],
 // stories: [done, total], albums: { bronze, silver, gold, total }, title(c), art(c) }
 export function computeStats(sightings, byKey, nightKey, year = null, ctx = {}) {
-  const list = sightings.filter((s) => !s.sim && (year == null || new Date(s.time).getFullYear() === year)).sort((a, b) => a.time - b.time);
+  const list = sightings.filter((s) => !s.sim && s.via !== 'gift' && (year == null || new Date(s.time).getFullYear() === year)).sort((a, b) => a.time - b.time);
   const nights = new Map(), first = new Map(), places = new Map(), months = new Array(12).fill(0), nightsOf = new Map();
   for (const s of list) {
     const nk = String(nightKey(s.time, s.lon ?? 0));

@@ -10,7 +10,7 @@
 // One cache per version (2026-10-10: a phone stuck on the loader). A shared cache could hand a slow-network fallback
 // page old files mixed with new ones that don't fit together. Now each deploy's worker (scripts/bump.mjs stamps the
 // version below) starts its own cache and deletes the others, so a page only ever meets files from its own version.
-const CACHE = 'sc-0.1.1580';
+const CACHE = 'sc-0.1.1582';
 // Data copies carry the time they were fetched (sw-at), so they're refreshed at most every 3 hours instead of on every
 // open, and a new version's worker takes the data over from the old cache instead of downloading the 4 MB catalogue
 // again (perf audit 2026-10-29).
@@ -64,14 +64,4 @@ self.addEventListener('fetch', (e) => {
     if (hit) { e.waitUntil(net.catch(() => {})); return hit; }
     return net;
   }));
-});
-
-// Pass alerts (2026-10-10, playtest #14; server: relay/push.ts). The payload is { title, body, tag, at }.
-self.addEventListener('push', (e) => {
-  let a = {}; try { a = e.data?.json() ?? {}; } catch { a = { title: 'Sky Collector', body: e.data?.text() ?? '' }; }
-  e.waitUntil(self.registration.showNotification(a.title || 'Sky Collector', { body: a.body || '', tag: a.tag || undefined, icon: 'icons/icon-192.png', badge: 'icons/icon-192.png', data: { at: a.at } }));
-});
-self.addEventListener('notificationclick', (e) => {
-  e.notification.close();
-  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((cs) => { const c = cs.find((x) => new URL(x.url).pathname.endsWith('/') || x.url.includes('index.html')); return c ? c.focus() : self.clients.openWindow('./'); }));
 });

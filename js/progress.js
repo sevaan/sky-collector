@@ -1,8 +1,8 @@
 // Player progress from the sighting log: XP and observer rank, tonight’s three missions, a weekly streak and
 // achievements. Everything is derived from the saved sightings (nothing extra is stored), so it can’t drift.
 // info(cardKey) -> { tier, type, owner, launch, natural, con } | null. No DOM.
-import { nightKey } from './observation.js?v=0.1.1580';
-import { fleetThresholds } from './card-model.js?v=0.1.1580';
+import { nightKey } from './observation.js?v=0.1.1582';
+import { fleetThresholds } from './card-model.js?v=0.1.1582';
 
 // A longer climb (2026-10-12, playtest room: three ranks on night 1, Mission Control in about two weeks), with two
 // prestige ranks past Mission Control. Nobody drops a rank they had on the old curve (rankFloor below).
@@ -65,7 +65,10 @@ const weekIndex = (ws) => { const d = new Date(ws); return Math.floor((Date.UTC(
 export const weekThemeFor = (ws, chosen = null) => WEEK_THEMES.find((x) => x.id === chosen?.[ws]) ?? WEEK_THEMES[weekIndex(ws) % WEEK_THEMES.length];
 const WEEKS_FROM = new Date(2026, 9, 26).getTime(); // weeks count from when they started (an update gave old weeks' XP at once)
 export function readWeekThemes() { try { return JSON.parse(localStorage.getItem('weekThemes')) || {}; } catch { return {}; } }
-const real = (sightings) => sightings.filter((s) => !s.sim).slice().sort((a, b) => a.time - b.time);
+const real = (sightings) => sightings.filter((s) => !s.sim && s.via !== 'gift').slice().sort((a, b) => a.time - b.time); /* cards you were sent are yours, but only your own sightings count toward XP, rank, missions, streak and patches (2026-11-11) */
+// The one-time carry for gifts opened before that rule (2026-11-11): the XP and patches they had given, kept so nobody
+// drops a rank. Worked out once by main.js (markOldGifts) and kept in localStorage 'giftCarry' = { xp, patches }.
+export function giftCarry() { try { const v = JSON.parse(localStorage.getItem('giftCarry') || 'null'); return { xp: Number(v?.xp) || 0, patches: Array.isArray(v?.patches) ? v.patches : [] }; } catch { return { xp: 0, patches: [] }; } }
 const year = (iso) => (iso ? Number(String(iso).slice(0, 4)) : null);
 const soviet = (i) => i?.owner === 'CIS';
 const american = (i) => i?.owner === 'US';
@@ -158,7 +161,7 @@ export function readDeals() { try { return JSON.parse(localStorage.getItem('miss
 // The one-time carry that keeps an existing player’s rank through the flatter XP (see TIER_XP): the XP needed to
 // reach the rank the old numbers gave them. Worked out once, the first time the new numbers run, and kept.
 export function xpCarry(sightings, info, opts = {}) {
-  return 0; /* retired before launch with rankFloor (2026-10-28) */
+  return giftCarry().xp; /* the old tier carry was retired before launch with rankFloor (2026-10-28); the gift carry uses its slot (2026-11-11) */
   try { const v = localStorage.getItem('xpCarry2'); if (v != null) return Number(v) || 0; } catch {} // v2: after the difficulty re-tier (2026-10-10)
   let carry = 0;
   if (real(sightings).length) {
@@ -249,7 +252,7 @@ export const ACHIEVEMENTS = [
   { id: 'close', name: 'Close Pass', text: 'Catch something within 450 km', icon: '450', done: (a) => a.closest != null && a.closest <= 450 },
   { id: 'far', name: 'Far Out', text: 'Catch something more than 2,000 km away', icon: '2k', done: (a) => a.farthest != null && a.farthest >= 2000 },
   // When you looked
-  { id: 'twilight', name: 'Early Bird', text: 'Log a sighting between 5 and 9 PM', icon: '21', done: (a) => a.hours.some((h) => h >= 17 && h < 21) },
+  { id: 'twilight', name: 'Dusk Patrol', text: 'Log a sighting between 5 and 9 PM', /* was 'Early Bird', earned at 6 pm (playtest 2026-11-10); pairs with Dawn Patrol */ icon: '21', done: (a) => a.hours.some((h) => h >= 17 && h < 21) },
   { id: 'owl', name: 'Night Owl', text: 'Log a sighting between 1 and 4 AM', icon: '☾', done: (a) => a.hours.some((h) => h >= 1 && h < 4) },
   { id: 'dawn', name: 'Dawn Patrol', text: 'Log a sighting between 4 and 7 AM', icon: '☀', done: (a) => a.hours.some((h) => h >= 4 && h < 7) },
   { id: 'marathon', name: 'Marathon', text: 'Log 10 sightings in one night', icon: '10/n', done: (a) => a.maxNight >= 10 },
@@ -314,7 +317,7 @@ export function streaks(sightings, now = Date.now(), cloudy = cloudyDays()) {
 }
 
 // constellations: [{ id, stars: [cardKey], zodiac }] for completion counts.
-export function progress(sightings, info, { constellations = [], albums = [], now = Date.now(), deals = null, carry = 0, tierXp = TIER_XP, lon = null, weekThemes = null } = {}) {
+export function progress(sightings, info, { constellations = [], albums = [], now = Date.now(), deals = null, carry = 0, tierXp = TIER_XP, lon = null, weekThemes = null, keep = true } = {}) {
   const list = real(sightings);
   const seenCard = new Set(), seenNight = new Set(), nights = new Map();
   let xp = 0;
@@ -422,5 +425,6 @@ export function progress(sightings, info, { constellations = [], albums = [], no
   // A filled album earns its own gold-foil patch (2026-10-10, playtest #17).
   for (const al of albums) { const have = al.keys.filter((k) => seenCard.has(k)).length; achievements.push({ id: `album-${al.id}`, album: al.id, name: al.name, sub: 'Gold album', icon: '', text: `Fill the ${al.name.replace(/^The /, "")} album to gold: ${al.goal.toLocaleString("en-US")} cards`, done: have >= al.goal, prog: [Math.min(have, al.goal), al.goal] }); }
   for (const th of WEEK_THEMES) achievements.push({ id: `week-${th.id}`, week: th.id, name: th.short, sub: 'Week badge', icon: th.icon, text: `${th.text.replace(/\.$/, '')} in one week`, done: a.weekThemes.has(th.id), prog: [a.weekThemes.has(th.id) ? 1 : 0, 1] });
+  if (keep) { const kept = new Set(giftCarry().patches); if (kept.size) for (const x of achievements) if (kept.has(x.id)) x.done = true; } /* patches past gifts gave (giftCarry) */
   return { xp, rank, missions, challenge, streak: st, achievements, cards: a.cards, week };
 }

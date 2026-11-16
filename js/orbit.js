@@ -1,9 +1,9 @@
 // Orbit math: where every object is in the observer’s sky, and whether it can be seen.
 // Pure functions, no DOM, so this module carries over unchanged to a native wrapper.
 
-import { expandFacts } from './catalog-facts.js?v=0.1.1580';
-import * as sat from './lib/satellite.js?v=0.1.1580';
-import { extinction, starlinkStdMag } from './sky-limit.js?v=0.1.1580';
+import { expandFacts } from './catalog-facts.js?v=0.1.1582';
+import * as sat from './lib/satellite.js?v=0.1.1582';
+import { extinction, starlinkStdMag } from './sky-limit.js?v=0.1.1582';
 
 const RAD = Math.PI / 180;
 const EARTH_RADIUS_KM = 6371;
@@ -20,9 +20,13 @@ export function setBinocularMode(on) { binoculars = !!on; }
 export function setSkyLimit(limit) { if (limit) { nakedLimit = limit.satellites; binoLimit = limit.binoculars; } }
 export const currentLimit = () => (binoculars ? binoLimit : nakedLimit);
 
+const btMark = (n) => { try { (globalThis.__bt ??= []).push([n, Math.round(performance.now())]); } catch {} }; /* startup timings (Testing tools) */
 export async function loadCatalog(url) {
+  btMark('catalogue: fetch');
   const res = await fetch(url, { cache: 'no-cache' });
+  btMark('catalogue: file read');
   const data = await res.json();
+  btMark('catalogue: JSON parsed');
   const objects = [];
   const families = data.families ?? {};
   for (const o of data.objects) {
@@ -40,6 +44,7 @@ export async function loadCatalog(url) {
   }
   // Shared with the Collection layer so it doesn’t download and parse the catalogue again (2026-10-08 performance).
   globalThis.__catalogShare = { generated: data.generated, source: data.source, families, objects };
+  btMark('catalogue: objects set up');
   return { generated: new Date(data.generated), families, objects };
 }
 
@@ -255,16 +260,19 @@ export class SkyModel {
   }
 
   // Forget everything (after a time jump or location change).
-  reset() { this.above.clear(); this.frames.clear(); this.cursor = 0; this.primed = false; }
+  reset() { this.above.clear(); this.frames.clear(); this.cursor = 0; this.primed = false; this.primeAt = 0; }
 
   // Full sweep at once, used right after a reset so the sky isn’t empty for 3 seconds.
+  // In eight slices over the first frames, not all at once (perf budget 2026-11-10: the full sweep, building every orbit
+  // record on first use, was ~30 ms of the first sky frame): the sky fills in within ~130 ms instead of 3 s.
   prime(date, obs) {
-    const f = frame(date, obs);
-    for (const o of this.objects) {
-      const l = look(o, f);
+    const f = frame(date, obs), n = this.objects.length, end = Math.min(n, (this.primeAt ?? 0) + Math.ceil(n / 8));
+    for (let i = this.primeAt ?? 0; i < end; i++) {
+      const o = this.objects[i], l = look(o, f);
       if (l && l.el > -3) this.add(o, date.getTime(), obs);
     }
-    this.primed = true;
+    this.primeAt = end;
+    if (end >= n) { this.primed = true; this.primeAt = 0; }
   }
 
   add(o, t, obs) {
@@ -278,7 +286,7 @@ export class SkyModel {
     const t = date.getTime();
     if (this.lastT !== null && Math.abs(t - this.lastT) > 5000) this.reset();
     this.lastT = t;
-    if (!this.primed) this.prime(date, obs);
+    if (!this.primed) { this.prime(date, obs); if (!this.primed) return; } /* the regular sweep starts once primed */
 
     // Sweep a slice of the catalogue for objects rising above the horizon.
     const n = this.objects.length;

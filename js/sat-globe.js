@@ -3,12 +3,12 @@
 // sky's own model, satellite.js), around a blueprint Earth (design/earth-styles.html C) that turns slowly, you marked.
 // Dots are in the card's rarity colour; the rarest few in view are named. Tap a dot to open its card. Draws only while
 // it's on screen. Fleet cards (Starlink and co.) aren't on it yet.
-import * as sat from './lib/satellite.js?v=0.1.1580';
-import { satrecFor } from './orbit.js?v=0.1.1580';
-import { COAST } from './coast.js?v=0.1.1580';
-import { TIER_INFO } from './rarity.js?v=0.1.1580';
-import { earthMap } from './orbit-view.js?v=0.1.1580';
-import { placeName } from './geo.js?v=0.1.1580';
+import * as sat from './lib/satellite.js?v=0.1.1582';
+import { satrecFor } from './orbit.js?v=0.1.1582';
+import { COAST } from './coast.js?v=0.1.1582';
+import { TIER_INFO } from './rarity.js?v=0.1.1582';
+import { earthMap } from './orbit-view.js?v=0.1.1582';
+import { placeName } from './geo.js?v=0.1.1582';
 
 const RAD = Math.PI / 180, RE = 6371, TILT = 20 * RAD;
 // A dot's name: whole words up to about 18 letters ("THOR AGENA D", not "THOR AGENA D ROCKET ST").
@@ -28,7 +28,14 @@ export function satGlobe(host, { me = null, onPick = null } = {}) {
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const io = new IntersectionObserver(([e]) => { shown = e.isIntersecting; if (shown && !raf) raf = requestAnimationFrame(draw); }, { threshold: 0.05 });
   io.observe(cv);
-  const away = () => document.hidden || document.documentElement.classList.contains('away');
+  let geo = null, gb = null, texAt = 0, px0 = null;
+  /* perf pass 2026-11-10: the globe ran at 60 fps for as long as the Collection was open, reading its size and querying
+     for dialogs every frame. Now 30 fps, size from a ResizeObserver, the dialog check twice a second, and a covered globe
+     waits on a 250 ms timer instead of a frame loop. */
+  let globeFont = '', dlgOpen = false, dlgAt = 0, cw = cv.clientWidth, ch = cv.clientHeight, drawnAt = 0;
+  try { new ResizeObserver(() => { cw = cv.clientWidth; ch = cv.clientHeight; }).observe(cv); } catch {}
+  const away = () => { const t = performance.now(); if (t - dlgAt > 500) { dlgAt = t; dlgOpen = !!document.querySelector('dialog[open]'); } return document.hidden || document.documentElement.classList.contains('away') || dlgOpen; }; /* covered by a dialog (Send cards, a card): nothing to draw */
+  const later = () => { raf = -1; setTimeout(() => { raf = 0; if (shown && cv.isConnected) raf = requestAnimationFrame(draw); }, 250); };
   function place(t) {
     const g = sat.gstime(new Date(t));
     { const sv = sat.sunPos(sat.jday(new Date(t))).rsun, n = Math.hypot(...sv) || 1, x = sv[0] / n, y = sv[1] / n; sunV = [x * Math.cos(g) + y * Math.sin(g), -x * Math.sin(g) + y * Math.cos(g), sv[2] / n]; } // the Sun over the turning Earth
@@ -37,8 +44,9 @@ export function satGlobe(host, { me = null, onPick = null } = {}) {
   }
   function draw(ts) {
     raf = 0; if (!shown || !cv.isConnected) return;
-    if (away()) { raf = requestAnimationFrame(draw); return; }
-    const W = cv.clientWidth, H = cv.clientHeight, d = Math.min(2, devicePixelRatio || 1);
+    if (away()) { later(); return; }
+    if (ts - drawnAt < 30) { raf = requestAnimationFrame(draw); return; } drawnAt = ts;
+    const W = cw, H = ch, d = Math.min(2, devicePixelRatio || 1);
     if (!W || !H) { raf = requestAnimationFrame(draw); return; }
     if (cv.width !== Math.round(W * d) || cv.height !== Math.round(H * d)) { cv.width = Math.round(W * d); cv.height = Math.round(H * d); }
     ctx.setTransform(d, 0, 0, d, 0, 0); ctx.clearRect(0, 0, W, H);
@@ -55,15 +63,35 @@ export function satGlobe(host, { me = null, onPick = null } = {}) {
     const map = earthMap();
     const glow = ctx.createRadialGradient(cx, cy, R * 0.96, cx, cy, R * 1.14); glow.addColorStop(0, 'rgba(120,170,255,.45)'); glow.addColorStop(0.35, 'rgba(120,170,255,.15)'); glow.addColorStop(1, 'rgba(120,170,255,0)'); ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(cx, cy, R * 1.14, 0, Math.PI * 2); ctx.fill();
     if (!map) { ctx.fillStyle = '#163a5e'; disc(); ctx.fill(); } else {
-      const N = Math.max(80, Math.min(320, Math.round(R * 2 * Math.min(1.5, d)))); if (!rc || rc.width !== N) { rc = document.createElement('canvas'); rc.width = rc.height = N; rimg = rc.getContext('2d').createImageData(N, N); }
-      const px = rimg.data, ct = Math.cos(TILT), st = Math.sin(TILT), r0 = rot * RAD;
-      for (let j = 0; j < N; j++) { const yv = 1 - (j + 0.5) / N * 2; for (let i = 0; i < N; i++) { const xv = (i + 0.5) / N * 2 - 1, rr = xv * xv + yv * yv, o = (j * N + i) * 4; if (rr > 1) { px[o + 3] = 0; continue; }
-        const zv = Math.sqrt(1 - rr), y0 = yv * ct + zv * st, z0 = -yv * st + zv * ct; // undo the tilt
-        const lat = Math.asin(Math.max(-1, Math.min(1, y0))), lon = r0 + Math.atan2(xv, z0);
-        const u = Math.floor(((lon / (2 * Math.PI) + 0.5) % 1 + 1) % 1 * map.w), v = Math.min(map.h - 1, Math.floor((0.5 - lat / Math.PI) * map.h)), q = (v * map.w + u) * 4;
-        const cl = Math.cos(lat), sun = cl * Math.cos(lon) * sunV[0] + cl * Math.sin(lon) * sunV[1] + Math.sin(lat) * sunV[2], day = Math.min(1, Math.max(0, (sun + 0.12) / 0.24)), lit = (0.34 + 0.66 * day) * (0.55 + 0.45 * zv); /* night side dimmed, not black: you see the continents at night too */
-        px[o] = map.d[q] * lit * (1 - 0.25 * (1 - day)); px[o + 1] = map.d[q + 1] * lit * (1 - 0.1 * (1 - day)); px[o + 2] = Math.min(255, map.d[q + 2] * lit + (1 - day) * 22); px[o + 3] = 255; } }
-      rc.getContext('2d').putImageData(rimg, 0, 0); ctx.save(); disc(); ctx.clip(); ctx.drawImage(rc, cx - R, cy - R, R * 2, R * 2); ctx.restore();
+      const N = Math.max(80, Math.min(256, Math.round(R * 2 * Math.min(1.5, d)))); /* 256 at most (perf budget 2026-11-10: the 320 texture cost up to 67 ms a redraw at 4x CPU) */ if (!rc || rc.width !== N) { rc = document.createElement('canvas'); rc.width = rc.height = N; rimg = rc.getContext('2d').createImageData(N, N); }
+      // Per-pixel geometry is fixed for a size, since the Earth only turns about its axis: work it out once, then each
+      // frame is a rotation (no trig per pixel) and a map lookup. The texture redraws ~10 times a second, not every frame
+      // (perf review 2026-11-10: the full asin/atan2/sqrt loop cost 22-35 ms a frame and held Collection near 30 fps).
+      /* Built a few rows a frame, ~4 ms each, with a plain disc meanwhile (perf budget 2026-11-10: in one go it was a
+         117 ms frame at 4x CPU as the Collection opened). */
+      if (!geo || geo.N !== N || geo.mw !== map.w) {
+        if (!gb || gb.N !== N || gb.mw !== map.w) gb = { N, mw: map.w, j: 0, idx: [], cb: [], sb: [], cl: [], sl: [], sh: [], row: [], b: [] };
+        const ct = Math.cos(TILT), st = Math.sin(TILT), t0 = performance.now();
+        for (; gb.j < N && performance.now() - t0 < 4; gb.j++) { const j = gb.j, yv = 1 - (j + 0.5) / N * 2; for (let i = 0; i < N; i++) { const xv = (i + 0.5) / N * 2 - 1, rr = xv * xv + yv * yv; if (rr > 1) continue;
+          const zv = Math.sqrt(1 - rr), y0 = yv * ct + zv * st, z0 = -yv * st + zv * ct, lat = Math.asin(Math.max(-1, Math.min(1, y0))), b = Math.atan2(xv, z0);
+          gb.idx.push((j * N + i) * 4); gb.cb.push(Math.cos(b)); gb.sb.push(Math.sin(b)); gb.cl.push(Math.cos(lat)); gb.sl.push(Math.sin(lat)); gb.sh.push(0.55 + 0.45 * zv);
+          gb.row.push(Math.min(map.h - 1, Math.floor((0.5 - lat / Math.PI) * map.h)) * map.w); gb.b.push(b); } }
+        if (gb.j < N) { ctx.fillStyle = '#163a5e'; disc(); ctx.fill(); }
+        else { geo = { N, mw: map.w, n: gb.idx.length, idx: Int32Array.from(gb.idx), cb: Float32Array.from(gb.cb), sb: Float32Array.from(gb.sb), cl: Float32Array.from(gb.cl), sl: Float32Array.from(gb.sl), sh: Float32Array.from(gb.sh), row: Int32Array.from(gb.row), b: Float32Array.from(gb.b) };
+          gb = null; px0 = rimg.data; px0.fill(0); texAt = 0; }
+      }
+      if (geo && geo.N === N && geo.mw === map.w) {
+      if (ts - texAt > 100 || !texAt) { texAt = ts;
+        const px = rimg.data, r0 = rot * RAD, cr = Math.cos(r0), sr = Math.sin(r0), TAU = 2 * Math.PI, mw = map.w, md = map.d;
+        for (let k = 0; k < geo.n; k++) {
+          const cL = geo.cb[k] * cr - geo.sb[k] * sr, sL = geo.sb[k] * cr + geo.cb[k] * sr; // cos/sin of (b + rot)
+          const f = ((r0 + geo.b[k]) / TAU + 0.5) % 1, u = Math.floor((f < 0 ? f + 1 : f) * mw), q = (geo.row[k] + u) * 4, o = geo.idx[k];
+          const sun = geo.cl[k] * (cL * sunV[0] + sL * sunV[1]) + geo.sl[k] * sunV[2], day = Math.min(1, Math.max(0, (sun + 0.12) / 0.24)), lit = (0.34 + 0.66 * day) * geo.sh[k]; /* night side dimmed, not black */
+          px[o] = md[q] * lit * (1 - 0.25 * (1 - day)); px[o + 1] = md[q + 1] * lit * (1 - 0.1 * (1 - day)); px[o + 2] = Math.min(255, md[q + 2] * lit + (1 - day) * 22); px[o + 3] = 255;
+        }
+        rc.getContext('2d').putImageData(rimg, 0, 0); }
+      ctx.save(); disc(); ctx.clip(); ctx.drawImage(rc, cx - R, cy - R, R * 2, R * 2); ctx.restore();
+      }
     }
     const at = ctx.createRadialGradient(cx, cy, R * 0.86, cx, cy, R * 1.01); at.addColorStop(0, 'rgba(120,180,255,0)'); at.addColorStop(1, 'rgba(140,195,255,.35)'); ctx.fillStyle = at; disc(); ctx.fill();
     let youAt = null;
@@ -76,7 +104,7 @@ export function satGlobe(host, { me = null, onPick = null } = {}) {
       ctx.beginPath(); ctx.arc(p.x, p.y, it.rank >= 3 ? 3.4 : it.rank >= 2 ? 2.8 : 2.1, 0, Math.PI * 2); ctx.fill();
       if (!p.behind && p.z > -0.2) front.push(it); }
     ctx.globalAlpha = 1;
-    ctx.font = '600 9.5px "SC Label", "Barlow Condensed", sans-serif'; ctx.fillStyle = '#fff2b3';
+    if (ctx.font !== globeFont) { ctx.font = '600 9.5px "SC Label", "Barlow Condensed", sans-serif'; globeFont = ctx.font; } ctx.fillStyle = '#fff2b3';
     const named = [];
     for (const it of front.sort((a, b) => b.rank - a.rank || b.icon - a.icon).slice(0, 8)) { if (named.length >= 3) break;
       if (named.some((n) => Math.abs(n.p.x - it.p.x) < 70 && Math.abs(n.p.y - it.p.y) < 14)) continue;

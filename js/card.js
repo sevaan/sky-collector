@@ -1,26 +1,26 @@
 // Retro space-age cards. Text remains live; the foil follows pointer or optional phone tilt.
-import { fallWords } from './last-chance.js?v=0.1.1580';
-import { useMiles } from './units.js?v=0.1.1580';
-import { feel } from './native.js?v=0.1.1580';
-import { sfx } from './sfx.js?v=0.1.1580';
-import { cardArt } from './art.js?v=0.1.1580';
-import { TIER_INFO } from './rarity.js?v=0.1.1580';
-import { SET_BY_ID } from './sets.js?v=0.1.1580';
-import { TYPE_LABEL, orbitStats, sizeLabel, formatDate, titleCase } from './facts.js?v=0.1.1580';
-import { FLEET_ABOUT, fleetAbout, factSourceUrl, debrisOf, roleOf, ownerWord, titleFor, factFor, yearsUp, lapsPerDay, thirdStat, richText, seriesKeyOf } from './lore.js?v=0.1.1580';
-import { artFileFor } from './art-keys.js?v=0.1.1580';
-import { ART_FILES, ART_STARS } from './art-files.js?v=0.1.1580';
+import { fallWords } from './last-chance.js?v=0.1.1582';
+import { useMiles } from './units.js?v=0.1.1582';
+import { feel } from './native.js?v=0.1.1582';
+import { sfx } from './sfx.js?v=0.1.1582';
+import { cardArt } from './art.js?v=0.1.1582';
+import { TIER_INFO } from './rarity.js?v=0.1.1582';
+import { SET_BY_ID } from './sets.js?v=0.1.1582';
+import { TYPE_LABEL, orbitStats, sizeLabel, formatDate, titleCase } from './facts.js?v=0.1.1582';
+import { FLEET_ABOUT, fleetAbout, factSourceUrl, debrisOf, roleOf, ownerWord, titleFor, factFor, yearsUp, lapsPerDay, thirdStat, richText, seriesKeyOf } from './lore.js?v=0.1.1582';
+import { artFileFor } from './art-keys.js?v=0.1.1582';
+import { ART_FILES, ART_STARS } from './art-files.js?v=0.1.1582';
 /* the orbit view (and its 66 KB coastline) loads when a card first needs it (perf audit 2026-10-29) */
-let orbitP = null; const orbitMod = () => (orbitP ??= import('./orbit-view.js?v=0.1.1580'));
-import { ART_SHARED } from './art-shared.js?v=0.1.1580';
-import { ART_CREDITS } from './art-credits.js?v=0.1.1580';
-import { stampsIn, fleetLevel, fleetThresholds, sightingKeys, MOON_PHASES, moonPhaseOf } from './card-model.js?v=0.1.1580';
-import { nightsIn } from './observation.js?v=0.1.1580';
-import { CON_BY_ID, conProgress } from './constellations.js?v=0.1.1580';
-import { SHINY } from './shiny.js?v=0.1.1580';
-import { conArt, cometArt } from './con-art.js?v=0.1.1580';
-import { CON_FIGURES } from './con-figures.js?v=0.1.1580';
-import { localText } from './localize.js?v=0.1.1580';
+let orbitP = null; const orbitMod = () => (orbitP ??= import('./orbit-view.js?v=0.1.1582'));
+import { ART_SHARED } from './art-shared.js?v=0.1.1582';
+import { ART_CREDITS } from './art-credits.js?v=0.1.1582';
+import { stampsIn, fleetLevel, fleetThresholds, sightingKeys, MOON_PHASES, moonPhaseOf } from './card-model.js?v=0.1.1582';
+import { nightsIn } from './observation.js?v=0.1.1582';
+import { CON_BY_ID, conProgress } from './constellations.js?v=0.1.1582';
+import { SHINY } from './shiny.js?v=0.1.1582';
+import { conArt, cometArt } from './con-art.js?v=0.1.1582';
+import { CON_FIGURES } from './con-figures.js?v=0.1.1582';
+import { localText } from './localize.js?v=0.1.1582';
 // The animal/symbol figure belongs to the completed (gold) constellation card only (2026-10-05): a single
 // star’s card draws just the star pattern with its star marked, so the figure is a reward for finishing the set.
 // A star card’s constellation figure comes into focus as you collect the constellation’s stars (design/con-focus.html B).
@@ -105,7 +105,7 @@ function asFragmentCard(el, o, mini) { // rearrange a rendered card into the tra
   art.remove(); face.querySelector('.card__identity')?.remove(); face.querySelector('.card__stats')?.remove(); face.querySelector('.temp-strip')?.remove();
   head.before(top); head.insertAdjacentHTML('afterend', fragReport(o, mini)); el.classList.add('card--frag');
   // its picture is the live globe of its orbit (2026-10-26, Sevaan: "for debris just use the globe"); one still frame on tiles
-  const box = el.querySelector('.frag-orbit-box'); orbitMod().then((m) => requestAnimationFrame(() => { if (box.isConnected) m.orbitGlobe(o, box, myPlace(), { once: mini }); }));
+  const box = el.querySelector('.frag-orbit-box'); orbitMod().then((m) => { const go = () => { if (box.isConnected) m.orbitGlobe(o, box, myPlace(), { once: mini }); }; if (mini && window.requestIdleCallback) requestIdleCallback(go, { timeout: 800 }); else requestAnimationFrame(go); }); /* a tile's one still globe waits for idle time, not the scroll's frames (2026-11-11 jank audit) */
 }
 // Real photos (2026-10-26, Sevaan: no "AI slop") carry a small credit and no added sparkles.
 function artStars(o) {
@@ -167,6 +167,7 @@ function lcMark(o) {
 }
 export function renderCard(o, opts = {}) {
   const sightings = (opts.sightings ?? []).filter((s) => !s.sim);
+  const own = sightings.filter((s) => s.via !== 'gift'); /* a card you were sent is yours but has no date, nights or level of yours (2026-11-11) */
   // A constellation card is earned by its stars: opts.ownedKeys = card keys you own; opts.sightings = theirs.
   const conCard = o.natural === 'constellation', prog = conCard ? conProgress(o, opts.ownedKeys ?? new Set()) : null;
   const caught = conCard ? prog.level === 'gold' : sightings.length > 0; // a constellation joins your collection only when complete
@@ -175,7 +176,7 @@ export function renderCard(o, opts = {}) {
   const AS = opts.mini ? 'small' : 'full'; // opts.mini: the same card shrunk into a Collection tile (small pictures, no sparkles)
   const extinct = opts.forceExtinct || !!o.decay;
   const fleet = !!o.launches, stamps = fleet ? stampsIn(sightings) : null;
-  const level = opts.forceLevel ?? (conCard ? prog.level : fleet ? fleetLevel(o.family, stamps.size) : cardLevel(sightings, o));
+  const level = opts.forceLevel ?? (conCard ? prog.level : fleet ? fleetLevel(o.family, stamps.size) : cardLevel(own, o));
   const tier = o.story ? { gem: '❖', label: 'Story', color: '#3fc7b5' } : TIER_INFO[o.tier] ?? TIER_INFO.common; // story cards (js/stories.js) wear their own teal label
   const set = SET_BY_ID[o.set] ?? { name: 'Field archive', color: '#d74730' };
   const stats = orbitStats(o), age = yearsUp(o.launches ? { launch: o.launches[0]?.launch } : o), laps = lapsPerDay(o); // a fleet’s age is from its FIRST launch, the date shown (Starlink said 6 years for 2019)
@@ -193,7 +194,7 @@ export function renderCard(o, opts = {}) {
   // A constellation is collected the day its last star was found: the latest of each star’s first sighting (QA 2026-10-08).
   const firstOf = (list) => Math.min(...list.map((s) => s.time));
   const byStar = new Map(); if (conCard) for (const s of sightings) byStar.set(s.cardKey, Math.min(byStar.get(s.cardKey) ?? Infinity, s.time));
-  const first = !caught ? null : conCard && byStar.size ? Math.max(...byStar.values()) : firstOf(sightings);
+  const first = !caught ? null : conCard && byStar.size ? Math.max(...byStar.values()) : own.length ? firstOf(own) : null;
   const firstDate = first != null ? new Date(first).toLocaleDateString(undefined, { month: 'short', day: '2-digit', year: 'numeric' }).toUpperCase() : '';
   const nat = !!o.natural;
   const identifier = nat ? o.code : o.members ? `${o.members.length.toLocaleString('en-US')} SATELLITES` : o.runOf > 1 && !debrisOf(o)?.group ? `NO. ${o.runNo} OF ${o.runOf}` : `NORAD ${o.id}`; /* a fragment counts its pieces in its own panel */
@@ -231,17 +232,17 @@ export function renderCard(o, opts = {}) {
   const four = secretStory ? [] : nat ? o.stats.map(([label, value, unit]) => [label, value, unit])
     : fleet ? [...orbitalCardStats(o), ['FIRST', o.launch?.slice(0, 4) ?? '—', ''], ['LAUNCHES', String(o.launches.length), '']]
     : [...orbitalCardStats(o), ['LAPS A DAY', laps ? laps.toFixed(laps < 10 ? 1 : 0) : '—', ''], [o.type === 'rocket-body' || o.type === 'debris' ? 'YEARS UP' : 'LAUNCHED', o.type === 'rocket-body' || o.type === 'debris' ? (age == null ? '—' : String(age)) : (o.launch?.slice(0, 4) ?? '—'), '']];
-  el.classList.add('card--mission'); if (moonCard) el.classList.add('mn-card'); // the phase row needs room: a shorter picture (css/cards.css)
+  el.classList.add('card--mission'); if (!opts.mini) el.classList.add('card--hifi'); /* thickness, gloss coat, foil name, recessed picture, grain (2026-11-12, Sevaan: all five of design/card-fidelity.html); not on the mini cards in tiles */ if (moonCard) el.classList.add('mn-card'); // the phase row needs room: a shorter picture (css/cards.css)
   el.innerHTML = `
-  <div class="card__rotator"><div class="card__face">
+  <div class="card__rotator">${opts.mini ? '' : '<i class="card__edge l"></i><i class="card__edge r"></i><i class="card__edge t"></i><i class="card__edge b"></i>'}<div class="card__face">
     <div class="card__art" data-art-slot aria-hidden="true">${lcMark(o)}${o.partners && caught && opts.ownedKeys && o.partners.some((k) => opts.ownedKeys.has(k)) ? '<span class="m-chip m-reunion">⇄ REUNITED</span>' : ''}${conCard && o.system ? (revealed && artImage(o) ? `<img class="card-art-image"${artTint(o)} src="${artImage(o, AS)}" alt="" decoding="async">${opts.mini ? '' : artStars(o)}` : lockedArt(o, revealed, set.color, opts.mini ? 'small' : undefined)) : conCard ? conArt(o.data, null, revealed ? conFig(o.con) : {}) : o.type === 'comet' && revealed ? cometArt(o.key) : o.type === 'deepsky' && revealed && !artImage(o) && CON_BY_ID.get(o.conId) ? conArt(CON_BY_ID.get(o.conId).data, null, { mark: o }) : o.con && !o.skyName && revealed && CON_BY_ID.get(o.con) ? conArt(CON_BY_ID.get(o.con).data, o.hip, conFocus(o, opts.ownedKeys)) : !revealed && o.con && !o.skyName && CON_BY_ID.get(o.con) ? `<span class="art-locked art-locked--chart">${conArt(CON_BY_ID.get(o.con).data, o.hip, conFocus(o, opts.ownedKeys))}</span>` : !revealed && o.type === 'deepsky' && !artImage(o) && CON_BY_ID.get(o.conId) ? `<span class="art-locked art-locked--chart">${conArt(CON_BY_ID.get(o.conId).data, null, { mark: o })}</span>` : revealed && artImage(o) ? `<img class="card-art-image"${artTint(o)} src="${artImage(o, AS)}" alt="" decoding="async">${opts.mini ? '' : artStars(o)}${moonCard && mLatest != null && mLatest !== 4 ? moonShade(mLatest) : ''}` : lockedArt(o, revealed, set.color, opts.mini ? 'small' : undefined)}${shinyOf ? `<span class="shiny-tag">✦ SHINY · ${esc(SHINY[shinyOf].label.toUpperCase())}</span>` : ''}<span class="m-chip m-tier card__tier"><i aria-hidden="true">${tier.gem}</i>${esc(tier.label.toUpperCase())}${o.icon ? '<b class="card__icon-badge">ICON</b>' : ''}</span><span class="m-chip m-set card__setbar"><span><span>${esc(set.name.toUpperCase())}</span></span></span><div class="card__foil"></div></div>
     <div class="card__heading"><h3 class="card__name">${esc(title)}</h3>
     <div class="card__identity"><span>${esc(sub)}</span><span class="card__mono">${esc(identifier)}</span></div></div>
     ${tempStrip(o)}
     <div class="card__stats m4" style="--n:${four.length}">${four.map(inUnits).map(([label, value, unit], i) => `<div><span class="card__label">${esc(localText(label))}</span><b${nat ? statClass(value, unit, i) : ''}>${esc(value).replace(/(\d)\.(\d)/g, '$1<i class="dp">.</i>$2') /* the display font's point nearly vanishes: 2.3 read 23 (web playtest 2026-10-22) */}${unit ? `<small>${esc(unit)}</small>` : ''}</b></div>`).join('')}</div>
     ${factBlock}
-    <div class="card__footer"><span class="card__status${caught ? ' is-collected' : ''}"><span class="card__status-icon" aria-hidden="true">${caught ? '✓' : ''}</span><span>${caught ? `COLLECTED · ${esc(firstDate)}` : 'NOT YET COLLECTED'}</span>${caught && !o.natural ? `<span class="card__seen-count">${seenLine(level, conCard || fleet ? 0 : nightsIn(sightings), sightings.length)}</span>` : ''}</span><span class="card__brand">${o.setNumber && o.setSize > 1 ? `<small class="card__no">${String(o.setNumber).padStart(String(o.setSize).length, '0')}/${o.setSize}</small>` : ''}SKY COLLECTOR</span></div>
-    <div class="card__shine"></div><div class="card__glare"></div>
+    <div class="card__footer"><span class="card__status${caught ? ' is-collected' : ''}"><span class="card__status-icon" aria-hidden="true">${caught ? '✓' : ''}</span><span>${caught ? (firstDate ? `COLLECTED · ${esc(firstDate)}` : 'COLLECTED') : 'NOT YET COLLECTED'}</span>${caught && !o.natural && (own.length || fleet) ? `<span class="card__seen-count">${seenLine(level, conCard || fleet ? 0 : nightsIn(own), fleet ? sightings.length : own.length)}</span>` : ''}</span><span class="card__brand">${o.setNumber && o.setSize > 1 ? `<small class="card__no">${String(o.setNumber).padStart(String(o.setSize).length, '0')}/${o.setSize}</small>` : ''}SKY COLLECTOR</span></div>
+    <div class="card__shine"></div><div class="card__glare"></div>${opts.mini ? '' : '<div class="card__grain"></div><div class="card__coat"></div>'}
     <div class="card__back" aria-hidden="true"><div class="back-holo"></div><div class="back-glare"></div></div>
     ${extinct ? `<div class="card__stamp">REENTERED${o.decay ? `<small>${esc(formatDate(o.decay)).toUpperCase()}</small>` : ''}</div>` : ''}
   </div></div>`;
@@ -362,12 +363,12 @@ export function renderCardTile(o, opts = {}) {
   tile.type = 'button';
   const conDone = (conCard && caught) || (!!o.launches && fleetLevel(o.family, stampsIn(sightings).size) === 'gold');
   const shinyTile = !o.launches && sightings.some((x) => x.shiny && SHINY[x.shiny]);
-  const lvl = caught && !conCard && !o.launches ? cardLevel(sightings, o) : null, lvlUp = lvl === 'silver' || lvl === 'gold'; // a level badge on the tile (collectors 2026-10-11)
+  const lvl = caught && !conCard && !o.launches ? cardLevel(sightings.filter((x) => x.via !== 'gift'), o) : null, lvlUp = lvl === 'silver' || lvl === 'gold'; // a level badge on the tile (collectors 2026-10-11)
   tile.className = `card-tile card-tile--retro${o.icon ? ' is-icon' : ''}${caught ? ' is-owned' : ''}${conDone ? ' gold-foil' : ''}${shinyTile ? ' shiny' : ''}${lvlUp ? ` lvl-${lvl}` : ''}`;
   tile.style.setProperty('--set', set.color); tile.style.setProperty('--tier', tier.color);
   const hide = o.story && !caught; // an unfound story stays a secret, read aloud too (QA 2026-10-16)
   tile.setAttribute('aria-label', `${hide ? 'Secret story' : title}, ${hide ? 'Story' : tier.label}, ${caught ? `collected, ${sightings.length} sightings` : 'not collected'}. View card`);
-  const status = caught ? (o.natural === 'constellation' ? `✓ ${new Set(sightings.map((x) => x.cardKey)).size} of ${o.stars.length} ${o.system ? 'worlds' : 'stars'}` : o.launches ? `✓ ${stampsIn(sightings).size} of ${o.launches.length} launches` : `✓ Collected ${new Date(Math.min(...sightings.map((s) => s.time))).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}`) : conCard && prog.have ? `${prog.have} of ${prog.total} ${o.system ? 'worlds' : 'stars'} found` : 'Not yet collected';
+  const status = caught ? (o.natural === 'constellation' ? `✓ ${new Set(sightings.map((x) => x.cardKey)).size} of ${o.stars.length} ${o.system ? 'worlds' : 'stars'}` : o.launches ? `✓ ${stampsIn(sightings).size} of ${o.launches.length} launches` : (sightings.some((s) => s.via !== 'gift') ? `✓ Collected ${new Date(Math.min(...sightings.filter((s) => s.via !== 'gift').map((s) => s.time))).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}` : '✓ Collected')) : conCard && prog.have ? `${prog.have} of ${prog.total} ${o.system ? 'worlds' : 'stars'} found` : 'Not yet collected';
   /* shell: just the classes, label, badge and status line, for a tile that becomes a mini card at once (Collection;
      perf audit 2026-10-29: the full tile, pictures and all, was built and thrown away for every card) */
   if (opts.shell) { tile.innerHTML = `${lvlUp ? `<span class="tile-lvl tile-lvl--${lvl}">${lvl.toUpperCase()}</span>` : ''}<span class="card-tile__status">${status}</span>`; return tile; }
@@ -536,7 +537,7 @@ export function turnCard(el, { from, to, ms = 520, lift = 1, back = el.querySele
     if (done) return; done = true;
     if (back) back.style.opacity = showEnd ? '1' : '';
     el.style.transform = to % 360 ? `perspective(1600px) rotateY(${to}deg)` : '';
-    a.cancel(); b?.cancel(); el.classList.remove('turning'); el.style.willChange = '';
+    a.cancel(); b?.cancel(); el.classList.remove('turning'); el.style.willChange = ''; el.classList.add('settling'); clearTimeout(el._settle); el._settle = setTimeout(() => el.classList.remove('settling'), 900); /* the shine and glare fade back in, not snap on (2026-11-12, Sevaan: jarring after the welcome flip) */
   };
   const finished = a.finished.then(settle, settle);
   return { finished, cancel: () => { settle(); } };
@@ -599,8 +600,8 @@ export function attachFlip(el, { onBack, onTap = orbitTap(el) } = {}) {
 
 // The real card, small (2026-10-13): returns a .mini-face element holding renderCard(o, { mini }) with `status` written
 // into its footer. Size it with --mini-s (width / 280) on it or any ancestor.
-export function miniCard(o, { sightings = [], ownedKeys, status = '', locked = false, preview = false } = {}) {
-  const card = renderCard(o, { sightings, ownedKeys, mini: true, preview }); // preview: show the real picture of a card you don’t have yet (the Now hero, 2026-10-21)
+export function miniCard(o, { sightings = [], ownedKeys, status = '', locked = false, preview = false, forceLevel } = {}) {
+  const card = renderCard(o, { sightings, ownedKeys, mini: true, preview, ...(forceLevel ? { forceLevel } : {}) }); // preview: show the real picture of a card you don’t have yet (the Now hero, 2026-10-21)
   const foot = card.querySelector('.card__footer');
   if (foot) foot.innerHTML = `<span class="mini-status">${esc(status)}</span>`;
   const face = document.createElement('span'); face.className = `mini-face${locked ? ' locked' : ''}`; face.appendChild(card);

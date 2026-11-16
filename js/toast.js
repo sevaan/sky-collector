@@ -14,6 +14,10 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '
 function stack() {
   let el = document.getElementById('toasts');
   if (!el) { el = document.createElement('div'); el.id = 'toasts'; el.setAttribute('aria-live', 'polite'); document.body.append(el); }
+  /* A modal dialog (Send cards, the card viewer) is drawn above everything else on the page, so a notice raised while one
+     is open lives inside it, or it would sit hidden underneath ("Couldn't make the link" was never seen; the deep review,
+     2026-11-12). Back to the page when the dialog closes. */
+  try { const home = document.querySelector('dialog:modal') ?? document.body; if (el.parentNode !== home) home.append(el); } catch {}
   watchPush(el);
   return el;
 }
@@ -44,17 +48,18 @@ export const ICONS = {
   target: '<circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="2.4"/><path d="M12 1.8v3M12 19.2v3M1.8 12h3M19.2 12h3"/>', alert: '<path d="M12 3.5l9 16H3z"/><path d="M12 10v4.5M12 17.3v.2"/>',
   meteor: '<path d="M20 4l-9.5 9.5M17 3.5l-8 8M20.5 7l-8 8"/><circle cx="8" cy="16" r="3.2"/>', update: '<path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4.5v4h-4"/>',
   calendar: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 9.5h16M8.5 3v4M15.5 3v4"/><path d="M8.5 13.5h.01M12 13.5h.01M15.5 13.5h.01M8.5 16.8h.01M12 16.8h.01"/>',
+  cards: '<rect x="8" y="4.5" width="11" height="15" rx="1.8"/><path d="M5.5 7.5v11.2A1.8 1.8 0 0 0 7.3 20.5H15"/>', /* a stack of cards (the morning pack, the recap, gifts; 2026-11-11: it fell back to info) */
   info: '<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 7.8v.2"/>', check: '<circle cx="12" cy="12" r="8.5"/><path d="M8.3 12.3l2.6 2.5 4.9-5.3"/>',
 };
 const KIND_ICON = { mission: 'diamond', rank: 'chevrons', event: 'star', xp: 'stamp', patch: 'card', compass: 'compass', info: 'info', error: 'alert', shiny: 'sparkle' };
 const KIND_TONE = { mission: 'orange', rank: 'orange', patch: 'orange', compass: 'orange', event: 'gold', xp: 'steel', info: 'info', error: 'red', shiny: 'shiny' };
 export const iconSvg = (name) => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[name] ?? ICONS.info}</svg>`;
-export function ticket({ kind = 'info', eyebrow = '', line = '', sub = '', icon = '', tone = '', xp = 0, ms = 3000, href = null, html = false, delay = 0, id = null, art = '', celebrate = false, sticky = false, action = null, go = null, unasked = false, onShow = null }) {
+export function ticket({ kind = 'info', eyebrow = '', line = '', sub = '', icon = '', tone = '', xp = 0, ms = 3000, href = null, html = false, delay = 0, id = null, art = '', celebrate = false, sticky = false, action = null, go = null, unasked = false, onShow = null, tuck = true }) {
   if (id && toastPending(id)) dropToast(id); // the same message again replaces the old one
   // Only a direct answer to something done on an open page (a reminder set there, an error) may show over it. Progress from a
   // catch (worlds, stars, patches, missions) waits for the page to close, even if it was queued before it opened (iOS playtest 2026-10-19).
   const inPanel = !delay && !unasked /* an unasked notice is never a page's answer (returning playtest 2026-10-25) */ && !['xp', 'rank', 'mission', 'event', 'patch', 'shiny', 'milestone', 'complete'].includes(kind) && !!document.querySelector('.overlay.panel:not([hidden]), .set-sheet:not([hidden])'); /* a sheet's own answers (a failed purchase) still show on it */
-  queue.push({ kind, eyebrow, line, sub, icon, tone, xp, ms, href, html, id, art, celebrate, sticky, action, go, inPanel, unasked, onShow, made: Date.now(), at: Date.now() + delay });
+  queue.push({ kind, eyebrow, line, sub, icon, tone, xp, ms, href, html, id, art, celebrate, sticky, action, go, inPanel, unasked, onShow, tuck, made: Date.now(), at: Date.now() + delay });
   pump();
 }
 // A notice made on a page answers something done there, so it goes when you leave that page or open something over it
@@ -96,7 +101,7 @@ function tray() {
   return el;
 }
 function stackSeen() {
-  if (document.querySelector('.patch-coins, #start:not([hidden])') || document.body.classList.contains('col-open')) return false;
+  if (document.querySelector('.patch-coins, #start:not([hidden]), #gift') || document.body.classList.contains('col-open')) return false; /* #gift: a pack covers the notices, so their clock waits */
   const cs = getComputedStyle(stack()); return cs.visibility !== 'hidden' && cs.display !== 'none' && Number(cs.opacity) > 0.3;
 }
 // Up top, the stack never reaches down over the circle (2026-10-18 playtest: on an SE two notices covered half of it).
@@ -127,7 +132,7 @@ function pump() {
   // Never over a card reveal or a patch moment (2026-10-08 playtest: toasts covered the new card); they wait their turn.
   // A sheet covers all of that, so its own messages go straight up (2026-10-16 playtest: "Try Plus free" said nothing,
   // its toast waiting behind the Plus sheet for whatever sat in the circle to leave).
-  if (!document.querySelector('.set-sheet.in') && !(t.inPanel && document.querySelector('.overlay.panel:not([hidden])')) /* a page's own answer shows on it, whatever waits on the sky (web QA 2026-10-24) */ && document.querySelector('#start:not([hidden]), #reveal:not([hidden]), .patch-moment, .patch-coins, body.patch-waiting, #ob-done:not([hidden]), body.first-catch, #help-card:not([hidden])')) { /* #help-card: the "Nothing caught yet?" card (2026-10-25) */ /* body.first-catch: the first catch after the tour (main.js) */ busy = true; setTimeout(() => { busy = false; pump(); }, 500); return; }
+  if (!document.querySelector('.set-sheet.in') && !(t.inPanel && document.querySelector('.overlay.panel:not([hidden])')) /* a page's own answer shows on it, whatever waits on the sky (web QA 2026-10-24) */ && document.querySelector('#start:not([hidden]), #gift, #reveal:not([hidden]), .patch-moment, .patch-coins, body.patch-waiting, #ob-done:not([hidden]), body.first-catch, #help-card:not([hidden])')) { /* #help-card: the "Nothing caught yet?" card (2026-10-25) */ /* body.first-catch: the first catch after the tour (main.js) */ busy = true; setTimeout(() => { busy = false; pump(); }, 500); return; }
   // One sticky on screen at a time (2026-10-13 playtest: two stacked stickies covered 40% of an SE). A new one shows
   // straight away and the older one is shelved until it goes (2026-10-18 playtest: NEW RANK waited forever behind TONIGHT).
   const [cur] = queue.splice(qi, 1); if (cur.unasked) lastUnasked = Date.now(); return show(cur);
@@ -183,7 +188,7 @@ function show(t) {
   // back already tucked, never shown as a banner).
   let tuckT = 0;
   const tuckLater = () => { clearInterval(tuckT); let seen = 0; tuckT = setInterval(() => { if (!stackSeen() || getComputedStyle(el).display === 'none' || !el.classList.contains('in')) return; if ((seen += 250) >= 6000) tuck(); }, 250); };
-  function tuck() { clearInterval(tuckT); if (gone || el.classList.contains('tucked')) return; el.classList.remove('in'); el.classList.add('tucked'); tray().append(el); requestAnimationFrame(() => el.classList.add('in')); }
+  function tuck() { clearInterval(tuckT); if (gone || t.tuck === false || el.classList.contains('tucked')) return; /* tuck: false stays a full banner until opened or ✕ (the morning pack, 2026-11-12, Sevaan: no mini chip) */ el.classList.remove('in'); el.classList.add('tucked'); tray().append(el); requestAnimationFrame(() => el.classList.add('in')); }
   function untuck() { el.classList.remove('tucked', 'in'); stack().append(el); requestAnimationFrame(() => { el.classList.add('in'); fitStack(); }); tuckLater(); shelf.forEach((o) => { if (o !== el) o.tuck?.(); }); }
   el.tuck = tuck;
   if (t.sticky) {

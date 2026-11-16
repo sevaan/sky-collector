@@ -1,17 +1,18 @@
 // Canvas renderer for the sky view. Gnomonic (pinhole camera) projection around where the phone points.
-import { extinction } from './sky-limit.js?v=0.1.1580';
+import { extinction } from './sky-limit.js?v=0.1.1582';
 // Two themes: 'glass' (ink, cream and orange celestial chart) and 'night' (all red, keeps dark adaptation).
-import { createMilkyGL } from './milkyway-gl.js?v=0.1.1580';
+import { pmTime } from './perf-meter.js?v=0.1.1582';
+import { createMilkyGL } from './milkyway-gl.js?v=0.1.1582';
 
-import { enuFromAzEl, compassPoint } from './orbit.js?v=0.1.1580';
-import { createCloudGL } from './clouds-gl.js?v=0.1.1580';
+import { enuFromAzEl, compassPoint } from './orbit.js?v=0.1.1582';
+import { createCloudGL } from './clouds-gl.js?v=0.1.1582';
 // Cloud colours by light: sunlit tops, shadowed bellies, and the horizon haze they melt into (0–1 RGB).
 const CLOUD_LIGHT = {
   day: { lit: [1, 1, 1], shade: [0.62, 0.68, 0.77], haze: [0.82, 0.87, 0.93] },
   dusk: { lit: [1, 0.8, 0.68], shade: [0.36, 0.33, 0.42], haze: [0.62, 0.5, 0.52] },
   night: { lit: [0.22, 0.25, 0.31], shade: [0.1, 0.12, 0.16], haze: [0.14, 0.15, 0.2] },
 };
-import { TIER_INFO } from './rarity.js?v=0.1.1580';
+import { TIER_INFO } from './rarity.js?v=0.1.1582';
 
 const RAD = Math.PI / 180;
 const SECRET_PX = { santa: 24, roadster: 12.4, voyager: 14.5, voyager2: 14.5, pioneer10: 11.7, pioneer11: 11.7, newhorizons: 6.4, arecibo: 6.9, halley: 8.6, pillars: 9, hdf: 8, m87bh: 8, crab: 8, kepler: 10, sputnik: 11.2, laika: 13.3, wow: 9.8 };
@@ -151,6 +152,11 @@ function inkIsDark(c) {
 // A rarity colour as [r, g, b] for glow(), cached.
 const TIER_RGB = new Map();
 function tierRgb(tier) { if (!TIER_RGB.has(tier)) { const h = (TIER_INFO[tier]?.color ?? '#fa8127').replace('#', ''); TIER_RGB.set(tier, [0, 2, 4].map((k) => parseInt(h.slice(k, k + 2), 16))); } return TIER_RGB.get(tier); }
+// Setting a canvas font makes the browser resolve styles first, so a font set while the page has pending style changes
+// costs a style pass (perf pass 2026-11-10: 5-10 ms a frame at 4x after a page closed). Set it only when it differs.
+const FONT_NORM = new Map();
+function setFont(c, f) { const n = FONT_NORM.get(f); if (n !== undefined && c.font === n) return; c.font = f; if (n === undefined) FONT_NORM.set(f, c.font); }
+
 export class SkyView {
   constructor(canvas) {
     this.canvas = canvas;
@@ -204,12 +210,12 @@ export class SkyView {
   glLayer(name, key, render) {
     const b = this.basis, sig = `${key}|${this.w}|${this.h}|${this.f.toFixed(2)}|${this.cx.toFixed(1)}|${this.cy.toFixed(1)}|${b.back.map((v) => v.toFixed(5))}|${b.up.map((v) => v.toFixed(5))}`;
     const L = (this._gl ??= {})[name] ??= { cv: document.createElement('canvas'), sig: null, ok: false };
-    if (sig !== L.sig) { L.sig = sig; L.ok = false; return render(); }
+    if (sig !== L.sig) { L.sig = sig; L.ok = false; const t0 = performance.now(), r = render(); pmTime(`${name} layer render`, performance.now() - t0); return r; }
     if (!L.ok) {
-      const out = render(), c = L.cv;
+      const t0 = performance.now(), out = render(), c = L.cv;
       if (c.width !== out.width || c.height !== out.height) { c.width = out.width; c.height = out.height; }
       const x = c.getContext('2d'); if (!x) return out; // out of canvas memory: keep drawing from WebGL
-      x.clearRect(0, 0, c.width, c.height); x.drawImage(out, 0, 0); L.ok = true;
+      x.clearRect(0, 0, c.width, c.height); x.drawImage(out, 0, 0); L.ok = true; pmTime(`${name} layer render + copy`, performance.now() - t0);
     }
     return L.cv;
   }
@@ -301,6 +307,20 @@ export class SkyView {
     return sprite;
   }
   soft(x, y, radius, rgb, alpha) { const ctx = this.ctx; ctx.save(); ctx.globalAlpha *= alpha; ctx.drawImage(this.softSprite(rgb), x - radius, y - radius, radius * 2, radius * 2); ctx.restore(); }
+  /* 6 · A faint four-point glint for the brightest things, like a lens (2026-11-12, Sevaan: all six of design/ui-fidelity.html).
+     One cached sprite per colour, drawn with drawImage like the glow: no gradients per frame. */
+  glintSprite(rgb) {
+    const key = `glint:${rgb.join(',')}`;
+    if (this.sprites.has(key)) return this.sprites.get(key);
+    const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d');
+    for (const v of [0, 1]) { const gr = v ? g.createLinearGradient(64, 0, 64, 128) : g.createLinearGradient(0, 64, 128, 64);
+      gr.addColorStop(0, `rgba(${rgb},0)`); gr.addColorStop(.5, `rgba(${rgb},.9)`); gr.addColorStop(1, `rgba(${rgb},0)`); g.fillStyle = gr;
+      if (v) g.fillRect(63.25, 0, 1.5, 128); else g.fillRect(0, 63.25, 128, 1.5); }
+    this.sprites.set(key, c); if (this.sprites.size > 48) this.sprites.delete(this.sprites.keys().next().value);
+    return c;
+  }
+  glint(x, y, len, rgb, alpha) { if (alpha <= .02) return; const ctx = this.ctx; ctx.save(); ctx.globalAlpha *= alpha; ctx.drawImage(this.glintSprite(rgb), x - len, y - len, len * 2, len * 2); ctx.restore(); }
+
   glow(x, y, radius, rgb, alpha = 1) {
     const ctx = this.ctx;
     ctx.save();
@@ -319,11 +339,11 @@ export class SkyView {
 
   // Settings → Sky labels (2026-10-21): 'all', 'new' (only cards you don't have yet) or 'off'. main sets ownedObj/ownedName.
   labelOk(o, name) { const m = this.labelMode ?? 'all'; if (m === 'all') return true; if (m === 'off') return false; return o ? !this.ownedObj?.(o) : !this.ownedName?.(name); }
-  queueLabel(text, p, { color = this.theme.labelDim, size = 12, weight = 600, gap = 9, priority = 0, align = 'auto' } = {}) {
+  queueLabel(text, p, { color = this.theme.labelDim, size = 12, weight = 600, gap = 9, priority = 0, align = 'auto', keep = false } = {}) {
     if (!text || !this.inSky(p)) return;
     // Keep the area around a new find clear so its name and "tap to collect" are easy to read.
     const z = this.clearZone;
-    if (z && p.x > z.left && p.x < z.right && p.y > z.top && p.y < z.bottom) return;
+    if (!keep && z && p.x > z.left && p.x < z.right && p.y > z.top && p.y < z.bottom) return;
     this.labelQueue.push({ text, p, color, size, weight, gap, priority, align });
   }
 
@@ -345,7 +365,7 @@ export class SkyView {
     for (const label of this.labelQueue.sort((a, b) => b.priority - a.priority)) {
       const { p, color, size, weight, gap, align } = label;
       if (p.x < -4 || p.x > this.w + 4 || p.y < -4 || p.y > this.h + 4) continue; // off screen: its edge arrow names it (iPhone 14 check 2026-10-30: "MoMoon")
-      ctx.font = `${weight} ${size}px ${FONT}`;
+      setFont(ctx, `${weight} ${size}px ${FONT}`);
       let text = label.text;
       const maxWidth = Math.min(170, this.w * 0.43);
       while (text.length > 3 && ctx.measureText(text).width > maxWidth) text = text.slice(0, -2) + '…';
@@ -629,7 +649,7 @@ export class SkyView {
         // Still view: the deck drifts slowly, so it's re-rendered 4 times a second, not every frame (perf audit 2026-10-29).
         const q = Math.floor(sec * 4), out = this.glLayer('cloud', `${q}|${cover.toFixed(3)}|${f.toFixed(3)}|${sun.map((v) => v.toFixed(3))}`, () => this.cloudGL.render({ basis: this.basis, w: this.w, h: this.h, f: this.f, cx: this.cx, cy: this.cy, scale: 0.5, sun,
           wind: [q / 4 * 0.012, q / 4 * 0.004], cover, alpha: f > 0 ? 0.95 : 0.7, ...L }));
-        ctx.drawImage(out, 0, 0, this.w, this.h);
+        { const t0 = performance.now(); ctx.drawImage(out, 0, 0, this.w, this.h); pmTime('cloud layer onto the sky', performance.now() - t0); }
       } else {
         const n = Math.round(10 + cover * 30), rgb = f > 0.5 ? [245, 248, 250] : f > 0 ? [120, 110, 120] : [40, 50, 66];
         for (let i = 0; i < n; i++) {
@@ -670,7 +690,7 @@ export class SkyView {
     if (this.cloudGL !== undefined) return;
     try { this.cloudGL = createCloudGL(); this.cloudGL?.render({ basis: { right: [1, 0, 0], up: [0, 0, 1], back: [0, -1, 0] }, w: 8, h: 8, f: 8, cx: 4, cy: 4, scale: 1, sun: [0, -0.5, 0.5], wind: [0, 0], cover: 0.5, alpha: 0, ...CLOUD_LIGHT.night }); } catch { this.cloudGL = null; }
   }
-  warmMilky() { if (this.mwGL === undefined) { try { this.mwGL = createMilkyGL('assets/sky/milkyway.webp?v=2'); } catch { this.mwGL = null; } } }
+  warmMilky() { if (this.mwGL === undefined) { try { (globalThis.__bt ??= []).push(['Milky Way: making its WebGL', Math.round(performance.now())]); this.mwGL = createMilkyGL('assets/sky/milkyway.webp?v=2'); } catch { this.mwGL = null; } } }
   drawMilkyWay(milky) {
     if (!milky?.spine) return;
     // The real thing (2026-10-08): ESO’s all-sky photograph, mapped onto your view by js/milkyway-gl.js. The
@@ -813,7 +833,7 @@ export class SkyView {
       ctx.fillStyle = `rgb(${mix(92, 58) - Math.round(down * 34)}, ${mix(72, 42) - Math.round(down * 26)}, ${mix(52, 48) - Math.round(down * 20)})`; ctx.fillRect(0, 0, this.w, this.h);
       // The soil texture is drawn once into an offscreen layer and reused until you’ve turned enough to move it by
       // about a pixel (2026-10-08 performance): 1,100 pebbles and 70 gradients a frame were the heaviest part of the sky.
-      const bb = this.basis, key = [bb.back, bb.up].flat().map((v) => Math.round(v * 2000)).join(',') + `|${this.w}x${this.h}|${Math.round(dayF * 20)}`;
+      const bb = this.basis, key = [bb.back, bb.up].flat().map((v) => Math.round(v * 2000)).join(',') + `|${this.w}x${this.h}|${Math.round(dayF * 20)}|${Math.round(this.cx)},${Math.round(this.cy)}`; /* the centre too (as the landscape) */
       const dpr = this.canvas.width / this.w;
       // If the layer can't be made (an iPhone out of canvas memory returns no context) or drawing it fails, the ground
       // is just its plain colour for a while: never a half-drawn layer, and the sky always goes back to the screen.
@@ -875,7 +895,30 @@ export class SkyView {
     ctx.restore();
   }
 
+  // The hills and trees drawn once into a layer and reused until the view turns about a pixel, the light changes or the
+  // size does (perf pass 2026-11-10: ~12% of the sky's script and 600 KB of garbage every 8 s, redrawn on still frames too).
+  // Same pattern and same fallback as the soil layer: if the layer can't be made, it's drawn straight to the screen.
   drawLandscape() {
+    if (Date.now() < (this.landOffUntil ?? 0)) return this.drawLandscape0();
+    const bb = this.basis, dF = this.theme === THEMES.night ? 0 : (this.dayF ?? 0);
+    const key = bb ? [bb.back, bb.up].flat().map((v) => Math.round(v * 2000)).join(',') + `|${this.w}x${this.h}|${this.canvas.width}|${Math.round(dF * 50)}|${this.camera ? 1 : 0}|${this.theme === THEMES.night ? 1 : 0}|${Math.round(this.f)}|${Math.round(this.cx)},${Math.round(this.cy)}` : null; /* the centre too: the tour lifts the circle and glides it back with the view unchanged (playtest 2026-11-12: trees floated mid-sky) */
+    if (!key) return this.drawLandscape0();
+    const main = this.ctx, base = main.globalAlpha;
+    if (!this.land || this.land.key !== key) {
+      try {
+        const layer = this.land?.canvas ?? (typeof OffscreenCanvas !== 'undefined' ? new OffscreenCanvas(1, 1) : document.createElement('canvas'));
+        if (layer.width !== this.canvas.width || layer.height !== this.canvas.height) { layer.width = this.canvas.width; layer.height = this.canvas.height; }
+        const lctx = layer.getContext('2d'); if (!lctx) throw new Error('no 2d context for the landscape layer');
+        const dpr = this.canvas.width / this.w;
+        lctx.setTransform(1, 0, 0, 1, 0, 0); lctx.clearRect(0, 0, layer.width, layer.height); lctx.setTransform(dpr, 0, 0, dpr, 0, 0); lctx.globalAlpha = 1;
+        this.ctx = lctx; this.drawLandscape0();
+        this.land = { key, canvas: layer };
+      } catch (e) { this.land = null; this.landOffUntil = Date.now() + 10000; this.ctx = main; console.warn('landscape layer skipped', e?.message ?? e); return this.drawLandscape0(); }
+      finally { this.ctx = main; }
+    }
+    main.save(); main.setTransform(1, 0, 0, 1, 0, 0); main.globalAlpha = base; main.drawImage(this.land.canvas, 0, 0); main.restore();
+  }
+  drawLandscape0() {
     const ctx = this.ctx, t = this.theme;
     ctx.save(); const base = ctx.globalAlpha; // camera view draws the whole landscape see-through
     // Haze glowing just above the horizon (a touch of distant light pollution).
@@ -979,7 +1022,7 @@ export class SkyView {
       ctx.globalAlpha = fade;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.font = `800 24px ${FONT}`;
+      setFont(ctx, `800 24px ${FONT}`);
       for (const [az, letter] of [[0, 'N'], [90, 'E'], [180, 'S'], [270, 'W']]) {
         const p = this.project(enuFromAzEl(az, -24));
         if (!this.onScreen(p) || p.y > this.h - 110) continue; // not under the switcher at the bottom edge
@@ -1061,7 +1104,7 @@ export class SkyView {
       const hidden = ['voyager', 'voyager2', 'pioneer10', 'pioneer11', 'newhorizons', 'wow', 'arecibo', 'halley', 'pillars', 'hdf', 'm87bh', 'crab', 'kepler'].includes(s.kind);
       if (s.xray && !s.inCircle) { // testing: where it is, found or not (Show items that aren't visible)
         ctx.save(); ctx.strokeStyle = s.color ?? '#e2b53c'; ctx.globalAlpha = s.done ? .45 : .9; ctx.setLineDash([3, 3]); ctx.lineWidth = 1.2; ctx.beginPath(); ctx.arc(p.x, p.y, 9, 0, Math.PI * 2); ctx.stroke();
-        ctx.setLineDash([]); ctx.fillStyle = s.color ?? '#e2b53c'; ctx.font = '600 11px "SC Label", "Arial Narrow", sans-serif'; ctx.textAlign = 'left'; ctx.fillText(`${s.title ?? s.kind}${s.done ? ' · found' : ''}`, p.x + 13, p.y + 4); ctx.restore();
+        ctx.setLineDash([]); ctx.fillStyle = s.color ?? '#e2b53c'; setFont(ctx, '600 11px "SC Label", "Arial Narrow", sans-serif'); ctx.textAlign = 'left'; ctx.fillText(`${s.title ?? s.kind}${s.done ? ' · found' : ''}`, p.x + 13, p.y + 4); ctx.restore();
         if (hidden || s.done) continue;
       }
       if (hidden && !s.inCircle) continue;
@@ -1177,7 +1220,7 @@ export class SkyView {
       ctx.strokeStyle = ink + (az % 45 === 0 ? '.45)' : '.25)');
       ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.stroke();
     }
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = `400 14px ${DISPLAY_FONT}`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; setFont(ctx, `400 14px ${DISPLAY_FONT}`);
     for (const [az, letter] of [[0, 'N'], [90, 'E'], [180, 'S'], [270, 'W']]) {
       const q = at(az, EL - 1.4); if (!q) continue;
       ctx.fillStyle = az === 0 ? t.groundNorth : ink + '.55)'; ctx.fillText(letter, q.x, q.y);
@@ -1210,7 +1253,7 @@ export class SkyView {
       const lm = mem.get(name) ?? {};
       let align = u[0] > 0.35 ? 'left' : u[0] < -0.35 ? 'right' : 'center';
       if (lm.align === 'left' && u[0] > 0.2) align = 'left'; else if (lm.align === 'right' && u[0] < -0.2) align = 'right'; else if (lm.align === 'center' && Math.abs(u[0]) < 0.5) align = 'center';
-      ctx.font = `600 12px ${FONT}`; const w1 = ctx.measureText(name).width; ctx.font = `500 11px ${FONT}`; const w2 = ctx.measureText(sub).width, w = Math.max(w1, w2);
+      setFont(ctx, `600 12px ${FONT}`); const w1 = ctx.measureText(name).width; setFont(ctx, `500 11px ${FONT}`); const w2 = ctx.measureText(sub).width, w = Math.max(w1, w2);
       const gap = m.length > 1 ? 22 : 14;
       const place = (i, al = align) => {
         const s1 = at(az, EL + SPOKES[i]); if (!s1) return null;
@@ -1233,11 +1276,11 @@ export class SkyView {
       ctx.setLineDash([]); ctx.globalAlpha = a;
       const s0 = at(az, EL + 0.3), s1 = pick.s1; if (!s0) continue;
       ctx.lineWidth = top.isNew ? 2.5 : 1.6; ctx.beginPath(); ctx.moveTo(s0.x, s0.y); ctx.lineTo(s1.x, s1.y); ctx.stroke(); ctx.lineWidth = 1;
-      if (m.length > 1) { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(s1.x + u[0] * 9, s1.y + u[1] * 9, 8, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#05090f'; ctx.font = `600 11px ${FONT}`; ctx.textAlign = 'center'; ctx.fillText(String(m.length), s1.x + u[0] * 9, s1.y + u[1] * 9 + 0.5); }
+      if (m.length > 1) { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(s1.x + u[0] * 9, s1.y + u[1] * 9, 8, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#05090f'; setFont(ctx, `600 11px ${FONT}`); ctx.textAlign = 'center'; ctx.fillText(String(m.length), s1.x + u[0] * 9, s1.y + u[1] * 9 + 0.5); }
       const { box, ly } = pick, x0 = Math.max(10, Math.min(this.w - 10 - w, box.x));
       ctx.textAlign = 'left'; ctx.shadowColor = 'rgba(0,0,0,.7)'; ctx.shadowBlur = 4;
-      ctx.font = `600 12px ${FONT}`; ctx.fillStyle = col; ctx.fillText(name, x0 + (align === 'right' ? w - w1 : align === 'center' ? (w - w1) / 2 : 0), ly - 6);
-      ctx.font = `500 11px ${FONT}`; ctx.fillStyle = ink + '.6)'; ctx.fillText(sub, x0 + (align === 'right' ? w - w2 : align === 'center' ? (w - w2) / 2 : 0), ly + 8);
+      setFont(ctx, `600 12px ${FONT}`); ctx.fillStyle = col; ctx.fillText(name, x0 + (align === 'right' ? w - w1 : align === 'center' ? (w - w1) / 2 : 0), ly - 6);
+      setFont(ctx, `500 11px ${FONT}`); ctx.fillStyle = ink + '.6)'; ctx.fillText(sub, x0 + (align === 'right' ? w - w2 : align === 'center' ? (w - w2) / 2 : 0), ly + 8);
       ctx.shadowBlur = 0;
     }
     ctx.restore();
@@ -1273,16 +1316,16 @@ export class SkyView {
       // Label on a dark pill so it reads over lines, stars and other labels.
       const name = g.more ? `${g.name} + ${g.more} more` : g.name;
       const when = g.mins <= 1 ? 'rising now' : `rises in ${g.mins} min`;
-      ctx.font = `600 12px ${FONT}`;
+      setFont(ctx, `600 12px ${FONT}`);
       const w = Math.max(ctx.measureText(name).width, (ctx.font = `500 11px ${FONT}`, ctx.measureText(when).width)) + 16;
       const top = g.y + 12, h = 36;
       const x = Math.max(8 + w / 2, Math.min(this.w - 8 - w / 2, g.x));
       ctx.fillStyle = t.ghostPill ?? 'rgba(5, 12, 24, 0.82)';
       ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(x - w / 2, top, w, h, 4); else ctx.rect(x - w / 2, top, w, h); ctx.fill();
       ctx.strokeStyle = t.groundInk; ctx.lineWidth = 1; ctx.stroke();
-      ctx.font = `600 12px ${FONT}`; ctx.fillStyle = t.ghost;
+      setFont(ctx, `600 12px ${FONT}`); ctx.fillStyle = t.ghost;
       ctx.fillText(name, x, top + 12);
-      ctx.font = `500 11px ${FONT}`; ctx.fillStyle = t.ghostText;
+      setFont(ctx, `500 11px ${FONT}`); ctx.fillStyle = t.ghostText;
       ctx.fillText(when, x, top + 26);
     }
     ctx.restore();
@@ -1304,7 +1347,7 @@ export class SkyView {
     this.path(hz);
 
     ctx.fillStyle = t.compass;
-    ctx.font = `600 14px ${FONT}`;
+    setFont(ctx, `600 14px ${FONT}`);
     ctx.textAlign = 'center';
     for (let az = 0; az < 360; az += 45) {
       const p = this.project(enuFromAzEl(az, 7));
@@ -1468,6 +1511,7 @@ export class SkyView {
         if ((this.dayF ?? 0) > 0.3 && (b.illum ?? 1) < 0.15) continue;
         const radius = 12;
         this.glow(p.x, p.y, 34, t.starRGB, 0.2);
+        if ((this.dayF ?? 0) < .3) this.glow(p.x, p.y, 80, t.starRGB, 0.07 + 0.08 * (b.illum ?? 1)); /* a wide soft bloom at night */
         this.drawMoon(p, radius, sun ? this.brightLimbAngle(b.enu, sun.enu, p) : 0, b.phaseAngle);
         if (this.labelOk(null, 'Moon')) this.queueLabel('Moon', p, { color: t.body, size: 14, weight: 500, gap: radius + 10, priority: 8 });
       } else if (b.kind === 'sun') {
@@ -1490,6 +1534,7 @@ export class SkyView {
         if (dayK <= 0.02) continue;
         const radius = Math.max(0.9, Math.min(3.4, 2.3 - 0.3 * m)), a = Math.max(0.3, Math.min(1, 1 - 0.1 * m)) * dayK;
         if (m < 0.5) this.glow(p.x, p.y, radius * (m < -2 ? 5 : 3.2), t.starRGB, (m < -2 ? 0.34 : 0.16) * dayK);
+        if (m < -1) this.glint(p.x, p.y, radius * (m < -3 ? 9 : 6.5), t.starRGB, (m < -3 ? .5 : .32) * dayK * (1 - Math.min(1, (this.dayF ?? 0) / .3)));
         ctx.save(); ctx.globalAlpha *= a; ctx.fillStyle = t.planet;
         ctx.beginPath(); ctx.arc(p.x, p.y, radius, 0, Math.PI * 2); ctx.fill(); ctx.restore();
         if (this.labelOk(null, b.name)) this.queueLabel(b.name, p, { color: t.body, size: 14, weight: 500, gap: radius + 10, priority: 8 });
@@ -1545,7 +1590,7 @@ export class SkyView {
 
   // safeTop/safeBottom are HUD insets in CSS pixels; centerY is an optional pixel
   // override. Projection and the reticle always share the same cx/cy.
-  draw(basis, items, { showDim, sky, bodies, milky, lines = true, targetId = null, time = 0, safeTop = 150, safeBottom = 230, centerY, centerX, starLimit = null, naturalTargetName = null, quietTarget = false, below = null, belowSats = null, daySats = null, deep = null, belowStarLimit = 6.5, ownedTarget = false, sunEl = -90, ghosts = null, weather = null, newFind = false, rising = null, landscape = false, lockedOn = null, planes = null, planeHit = null, planeTrail = null, naturalTarget = null, feet = null, fossil = null, ufo = null, secrets = null } = {}) {
+  draw(basis, items, { showDim, sky, bodies, milky, lines = true, targetId = null, time = 0, safeTop = 150, safeBottom = 230, centerY, centerX, starLimit = null, naturalTargetName = null, guideMark = null, quietTarget = false, below = null, belowSats = null, daySats = null, deep = null, belowStarLimit = 6.5, ownedTarget = false, sunEl = -90, ghosts = null, weather = null, newFind = false, rising = null, landscape = false, lockedOn = null, planes = null, planeHit = null, planeTrail = null, naturalTarget = null, feet = null, fossil = null, ufo = null, secrets = null } = {}) {
     // Every frame starts on the screen's own canvas with a clean state (2026-10-20, Sevaan's phone: a failed daytime
     // ground layer once left the sky drawing into that hidden layer, and the screen filled with stale frames).
     this.ctx = this.mainCtx; this.ctx.setTransform(this.canvas.width / this.w, 0, 0, this.canvas.width / this.w, 0, 0); this.ctx.globalAlpha = 1; this.ctx.globalCompositeOperation = 'source-over'; this.ctx.shadowBlur = 0; this.ctx.filter = 'none';
@@ -1644,6 +1689,7 @@ export class SkyView {
       if (it.obj.id === this.ghostId && (look.visible || isTarget)) this.glow(p.x, p.y, radius * (isTarget ? 7 : 5), this.theme === THEMES.night ? [255, 106, 85] : [125, 255, 176], this.reducedMotion ? 0.7 : 0.55 + 0.3 * Math.sin(time / 380)); // Halloween: the ghost shimmers green
       if (fresh) { const rgb = this.theme === THEMES.night || !it.obj.tier || it.obj.tier === 'common' ? t.satGlow : tierRgb(it.obj.tier); this.glow(p.x, p.y, radius * 4.6, rgb, this.reducedMotion ? 0.62 : 0.55 + 0.2 * Math.sin(time / 650 + (it.obj.id % 7))); }
       else if (look.visible || isTarget) this.glow(p.x, p.y, radius * (isTarget ? 2.5 : 1.6), t.satGlow, isTarget ? 0.36 : 0.13);
+      if (look.visible && (look.mag ?? 9) < 1.5 && (this.dayF ?? 0) < .3) this.glint(p.x, p.y, radius * 3.6, t.satGlow, Math.min(.45, (1.5 - look.mag) * .18));
       // Locked on: the object takes its rarity colour (matching its label); Common stays cream.
       const tierColor = isTarget && this.theme !== THEMES.night && it.obj.tier && it.obj.tier !== 'common' ? TIER_INFO[it.obj.tier]?.color : null;
       this.drawIcon(this.iconKind(it.obj), p.x, p.y, size, look.visible || isTarget ? (tierColor ?? (isTarget ? t.satHot : t.sat)) : t.dim);
@@ -1673,6 +1719,8 @@ export class SkyView {
       // Off screen: the same pulsing edge arrow a satellite gets (2026-10-06: consistent guidance, e.g. in the tour).
       if ((!p || !this.inSky(p, 10)) && !this.nearRing(p)) offscreen.push({ it: { label: naturalTargetName ?? '', obj: { name: naturalTargetName ?? '' }, look: { mag: -9 } }, c: this.cam(naturalTarget), isTarget: true });
     }
+    // The tour's catch while another find has the circle: its pulsing edge arrow stays (2026-11-12, Sevaan).
+    if (guideMark) { const p = this.project(guideMark.enu); if ((!p || !this.inSky(p, 10)) && !this.nearRing(p)) offscreen.push({ it: { label: guideMark.name, obj: { name: guideMark.name, id: 'guide-mark' }, look: { mag: -10 } }, c: this.cam(guideMark.enu), isTarget: true }); }
     if (planeTrail) this.drawPlaneTrail(planeTrail);
     const planeAt = this.drawPlanes(planes, planeHit);
     if (!this.holdArrows) this.drawOffscreen(offscreen, targetId); // no edge arrows while the compass wakes (main.js compassSettling)
@@ -1711,7 +1759,7 @@ export class SkyView {
     let hitAt = null;
     for (const a of planes) {
       const p = this.project(a.enu);
-      if (!this.onScreen(p, 10)) continue;
+      if (!this.onScreen(p, 20)) continue;
       // Direction of travel on screen: project a point 1 km further along its track.
       const tr = a.plane.track * RAD, k = a.rangeKm;
       const w = [a.enu[0] * k + Math.sin(tr), a.enu[1] * k + Math.cos(tr), a.enu[2] * k], L = Math.hypot(...w);
@@ -1721,7 +1769,7 @@ export class SkyView {
       ctx.translate(p.x, p.y);
       if (q) ctx.rotate(Math.atan2(q.y - p.y, q.x - p.x));
       ctx.globalAlpha = hit ? 1 : 0.85; /* was .55: too dim (2026-10-30, Sevaan) */
-      this.drawIcon(a.plane.heli ? 'heli' : 'plane', 0, 0, hit ? 20 : 10, hit ? t.plane : t.planeDim); // same scale as satellites (9–12, ×1.3 when targeted)
+      this.drawIcon(a.plane.heli ? 'heli' : 'plane', 0, 0, hit ? 27 : (a.plane.heli ? 17 : 15), hit ? t.plane : t.planeDim); // Sky Collector: planes are the game now, so bigger than satellites were (2026-11-15, Sevaan)
       ctx.restore();
       if (hit) hitAt = { x: p.x, y: p.y };
     }
@@ -1764,7 +1812,7 @@ export class SkyView {
         ctx.beginPath(); ctx.moveTo(-4, -5); ctx.lineTo(2, 0); ctx.lineTo(-4, 5); ctx.stroke();
       }
       ctx.restore();
-      this.queueLabel(it.label ?? shortName(it.obj.name), { x: x - dx * (isTarget ? 24 : 14), y: y - dy * (isTarget ? 24 : 14) }, { color: isTarget ? t.label : t.labelDim, size: 13, weight: 500, gap: 10, priority: isTarget ? 10 : 3 });
+      this.queueLabel(it.label ?? shortName(it.obj.name), { x: x - dx * (isTarget ? 52 : 14), y: y - dy * (isTarget ? 52 : 14) }, /* the target's name clear of its pulsing disc (playtest 2026-11-10: 'Sun' sat on the arrow) */ { color: isTarget ? t.label : t.labelDim, size: 13, weight: 500, gap: 10, priority: isTarget ? 10 : 3, keep: isTarget }); /* the name of the one you're steered to stays, even beside a new find's ticket (playtest 2026-11-12) */
     }
   }
 
@@ -1795,7 +1843,7 @@ export class SkyView {
     ctx.beginPath(); ctx.arc(ring.x, ring.y, r, -Math.PI / 2, -Math.PI / 2 + Math.max(0.02, left / total) * Math.PI * 2); ctx.stroke();
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.shadowColor = 'rgba(0,0,0,.7)'; ctx.shadowBlur = 4;
     if ('letterSpacing' in ctx) ctx.letterSpacing = '2px';
-    ctx.font = `600 ${now ? 13 : 11}px ${FONT}`; ctx.fillStyle = gold; // inside the circle, at the bottom: the name sits above it, the button below
+    setFont(ctx, `600 ${now ? 13 : 11}px ${FONT}`); ctx.fillStyle = gold; // inside the circle, at the bottom: the name sits above it, the button below
     ctx.fillText(now ? 'NOW!' : `FADES IN ${Math.ceil(left)}S`, ring.x, ring.y + ring.r - 13);
     ctx.restore();
   }
@@ -1847,9 +1895,9 @@ export class SkyView {
     if (best) {
       const x = best.p.x, y = best.top; this.shadowBox = { x: x - 116, y: y - 2, w: 232, h: 32 }; // sky names keep off it (iPad playtest 2026-10-24: Saturn sat on it)
       ctx.textAlign = 'center'; if ('letterSpacing' in ctx) ctx.letterSpacing = '1.5px';
-      ctx.fillStyle = red ? 'rgba(255,110,90,.85)' : 'rgba(255,201,61,.85)'; ctx.font = `600 11px ${FONT}`; ctx.fillText(this.shadowLabel?.[0] ?? "EARTH’S SHADOW", x, y + 11);
+      ctx.fillStyle = red ? 'rgba(255,110,90,.85)' : 'rgba(255,201,61,.85)'; setFont(ctx, `600 11px ${FONT}`); ctx.fillText(this.shadowLabel?.[0] ?? "EARTH’S SHADOW", x, y + 11);
       if ('letterSpacing' in ctx) ctx.letterSpacing = '0.5px';
-      ctx.fillStyle = red ? 'rgba(255,110,90,.65)' : 'rgba(255,242,179,.65)'; ctx.font = `500 11px ${FONT}`; ctx.fillText(this.shadowLabel?.[1] ?? 'Satellites past this line go dark', x, y + 25);
+      ctx.fillStyle = red ? 'rgba(255,110,90,.65)' : 'rgba(255,242,179,.65)'; setFont(ctx, `500 11px ${FONT}`); ctx.fillText(this.shadowLabel?.[1] ?? 'Satellites past this line go dark', x, y + 25);
     }
     ctx.restore();
   }
@@ -1890,6 +1938,18 @@ export class SkyView {
     ctx.strokeStyle = ink; ctx.lineWidth = locked ? 2.25 : 1.5;
     ctx.beginPath(); ctx.arc(cx, cy, radius, 0, Math.PI * 2); ctx.stroke();
     ctx.shadowBlur = 0; ctx.lineCap = 'butt';
+    /* Etched glass (2026-11-12, Sevaan: all six of design/ui-fidelity.html): a faint lens edge inside the ring, a fine inner
+       hairline, ticks engraved every 10° (longer every 30°), and a highlight on the upper left. One path each, no blur. */
+    { const g = ctx.createRadialGradient(cx, cy, radius * .7, cx, cy, radius);
+      g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(.85, 'rgba(159,208,255,.05)'); g.addColorStop(1, 'rgba(255,255,255,.11)');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, radius, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = locked ? .55 : .35; ctx.strokeStyle = ink; ctx.lineWidth = .7;
+      ctx.beginPath(); ctx.arc(cx, cy, radius - 4, 0, Math.PI * 2);
+      for (let d = 10; d < 360; d += 10) { if (d % 90 === 0) continue; const a = d * RAD, l = d % 30 === 0 ? 7 : 4, c = Math.cos(a), sn = Math.sin(a); ctx.moveTo(cx + c * (radius - 1), cy + sn * (radius - 1)); ctx.lineTo(cx + c * (radius - 1 - l), cy + sn * (radius - 1 - l)); }
+      ctx.stroke();
+      ctx.globalAlpha = .4; ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.3; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.arc(cx, cy, radius - 7, Math.PI * 1.12, Math.PI * 1.36); ctx.stroke();
+      ctx.globalAlpha = 1; ctx.lineCap = 'butt'; }
     for (const angle of [0, 90, 180, 270]) {
       const a = angle * RAD, inner = radius + 6, outer = radius + 18;
       ctx.strokeStyle = 'rgba(8,15,27,.28)'; ctx.lineWidth = 5;

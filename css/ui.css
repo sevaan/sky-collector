@@ -630,3 +630,98 @@ html.text-big .sc-switch__item { letter-spacing: .08em; }
 /* The rate link under the weekly recap (2026-11-09). */
 #recap .rc-rate { background: none; border: 0; padding: 8px 12px; min-height: 36px; color: var(--ui-gold, #fa8127); font: 500 13px var(--label, 'SC Label', sans-serif); letter-spacing: .14em; text-transform: uppercase; cursor: pointer; }
 body.night #recap .rc-rate { color: #ff6a55; }
+
+.pm-out { margin: 0 16px 12px; padding: 10px 12px; border-radius: 10px; background: #0b1626; border: 1px solid #2a3f5e; color: #dfe7f0; font: 12px/1.45 ui-monospace, Menlo, monospace; white-space: pre-wrap; user-select: text; -webkit-user-select: text; } /* Testing tools' performance meter */
+/* A picture in a tucked notice stays inside its 26 px box (2026-11-11: the morning pack's art blew up to full size). */
+#toast-tray .tn-ic.art { overflow: hidden; padding: 0; background: #0b1626; }
+#toast-tray .tn-ic.art img, #toast-tray .tn-ic.art .tn-pack { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* The morning pack's notice: a tiny sealed pack that rattles now and then (design/morning-pack.html 01). */
+.tn-pack { position: relative; display: block; width: 100%; height: 100%; border-radius: 4px; overflow: hidden; background: #0b1626 url('../assets/art/backs/back-collector.webp') 50% 45% / 150% auto no-repeat; box-shadow: inset 0 0 0 1px #f2c14e66; transform-origin: 50% 80%; animation: tnRattle 5s ease-in-out 1s infinite; }
+.tn-pack::before { content: ''; position: absolute; left: 0; right: 0; top: 18%; border-top: 1px dashed #f7d77acc; }
+@keyframes tnRattle { 0%, 84%, 100% { transform: none; } 87% { transform: rotate(-9deg); } 90% { transform: rotate(7deg); } 93% { transform: rotate(-5deg); } 96% { transform: rotate(3deg); } }
+@media (prefers-reduced-motion: reduce) { .tn-pack { animation: none; } }
+#toasts .tn-ic.art:has(.tn-pack) { padding: 3px 7px; background: #0b1626; }
+
+/* The morning pack ticket (2026-11-12, Sevaan: "put the shaking pack in that"): the pack itself, upright, unboxed and not
+   clipped, crimped top and bottom with its tear line, shaking every few seconds like the real pack */
+#toasts .ticket .tn-ic.art:has(.tn-pack) { width: 30px; height: 44px; padding: 0; border: 0; border-radius: 0; background: none; overflow: visible; align-self: center; }
+#toasts .ticket .tn-pack { border-radius: 2px; background-size: 170% auto; box-shadow: inset 0 0 0 1px #f2c14e99, 0 4px 10px #000a; animation: tnPackShake 3.4s ease-in-out .8s infinite; transform-origin: 50% 90%;
+  -webkit-mask: conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) top / 5px 3px repeat-x, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 5px 3px repeat-x, linear-gradient(#000 0 0) center / 100% calc(100% - 5px) no-repeat;
+          mask: conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) top / 5px 3px repeat-x, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 5px 3px repeat-x, linear-gradient(#000 0 0) center / 100% calc(100% - 5px) no-repeat; }
+#toasts .ticket .tn-pack::before { top: 16%; }
+@keyframes tnPackShake { 0%, 78%, 100% { transform: none; } 81% { transform: rotate(-10deg) translateY(-1px); } 84% { transform: rotate(8deg); } 87% { transform: rotate(-6deg); } 90% { transform: rotate(4deg); } 93% { transform: rotate(-2deg); } }
+@media (prefers-reduced-motion: reduce) { #toasts .ticket .tn-pack { animation: none; } }
+
+/* The tab bar over pages (2026-11-12, Sevaan picked A of design/switcher-pages.html): over Tonight and the Collection the
+   dark bar blended into the dark page, so it gets a faint orange edge and glow there. Over the sky (Explore) it's unchanged. The glow goes the moment Explore is tapped (the tab marker moves at once; the page classes only clear after the slide), fading in .15 s (2026-11-12, Sevaan). */
+.sc-switch { transition: background-position .26s cubic-bezier(.3,1.25,.5,1), box-shadow .15s ease-out !important; } /* keeps the marker's slide (line ~397) */
+.sc-switch.no-anim { transition: none !important; } /* an instant marker move really is instant (the marker is the bar's own background now) */
+@media (prefers-reduced-motion: reduce) { .sc-switch { transition: none !important; } }
+body:is(.sky-open, .col-open) .sc-switch:not([data-side='mid']) { box-shadow: 0 0 0 1px #fa812759, 0 0 16px #fa812733, inset 0 0 2px #fa812766, 0 10px 24px #00000080 !important; }
+body.night:is(.sky-open, .col-open) .sc-switch:not([data-side='mid']), html[data-theme='night'] body:is(.sky-open, .col-open) .sc-switch:not([data-side='mid']) { box-shadow: 0 0 0 1px #ff6a5559, 0 0 16px #ff6a5533, inset 0 0 2px #ff6a5566, 0 10px 24px #00000080 !important; }
+
+/* ===== Interface fidelity (2026-11-12, Sevaan picked all six of design/ui-fidelity.html) ===== */
+/* 2 · Tickets are ticket stubs: a perforated tear line down the left, a fine paper grain, a lit top edge. Background images
+   only (the drop shadows stay, a mask would clip them); nothing moves. */
+.tk-card, #toasts .ticket:not(.tone-shiny) { background-image: radial-gradient(circle, #ffffff33 0 .9px, transparent 1.3px), repeating-linear-gradient(0deg, #ffffff06 0 1px, transparent 1px 3px), repeating-linear-gradient(90deg, #00000014 0 1px, transparent 1px 3px), linear-gradient(#ffffff0d, transparent 40%) !important;
+  background-size: 3px 6px, auto, auto, auto !important; background-position: 7px 4px, 0 0, 0 0, 0 0 !important; background-repeat: repeat-y, repeat, repeat, no-repeat !important; }
+#toasts .ticket:not(.tone-shiny) { background-color: rgba(9, 16, 28, .96) !important; }
+.tk-card { background-color: var(--tk-bg) !important; }
+body.night :is(.tk-card, #toasts .ticket:not(.tone-shiny)) { background-image: radial-gradient(circle, #ff6a5533 0 .9px, transparent 1.3px) !important; background-size: 3px 6px !important; background-position: 7px 4px !important; background-repeat: repeat-y !important; }
+/* 3 · The tab bar as glass: a lit top edge, a soft sheen across its upper half and a darker underside (inset shadows only:
+   the bar's background layers carry the sliding marker, and it stays solid so nothing shows through) */
+.sc-switch { box-shadow: inset 0 1px 0 #ffffff24, inset 0 18px 22px -16px #ffffff12, inset 0 -1px 0 #00000080, 0 0 0 1px #fff2b31f, 0 12px 26px rgba(0, 0, 0, .45), 0 2px 4px #0008 !important; }
+body.night .sc-switch, html[data-theme='night'] .sc-switch { box-shadow: inset 0 1px 0 #ff6a5526, inset 0 -1px 0 #00000080, 0 0 0 1px #ff6a5526, 0 12px 26px rgba(0, 0, 0, .45) !important; }
+body:is(.sky-open, .col-open) .sc-switch:not([data-side='mid']) { box-shadow: inset 0 1px 0 #ffffff24, inset 0 18px 22px -16px #ffffff12, inset 0 -1px 0 #00000080, 0 0 0 1px #fa812759, 0 0 16px #fa812733, inset 0 0 2px #fa812766, 0 12px 26px #00000080 !important; }
+body.night:is(.sky-open, .col-open) .sc-switch:not([data-side='mid']), html[data-theme='night'] body:is(.sky-open, .col-open) .sc-switch:not([data-side='mid']) { box-shadow: inset 0 1px 0 #ff6a5526, 0 0 0 1px #ff6a5559, 0 0 16px #ff6a5533, inset 0 0 2px #ff6a5566, 0 12px 26px #00000080 !important; }
+
+/* 4 · Buttons with travel: the main buttons sit raised with a glossy rim and sink when pressed, then spring back */
+:is(#discover .d-ticket #d-cta, .tn-btn, .plus-cta, .ui-btn--primary, #ob-explore, .od-go, .tc .acts .yes) { transition: transform .08s ease-out, box-shadow .08s ease-out, filter .08s !important; }
+#discover .d-ticket #d-cta:not(.owned-btn), .plus-cta, .ui-btn--primary {
+  background-image: linear-gradient(#ffffff2e, #ffffff00 55%, #00000026) !important; box-shadow: inset 0 1px 0 #ffffff59, inset 0 -2px 0 #0000002e, 0 3px 0 #9a4310, 0 8px 16px #0008 !important; }
+#discover .d-ticket #d-cta:not(.owned-btn):active, .plus-cta:active, .ui-btn--primary:active { transform: translateY(3px) !important; box-shadow: inset 0 1px 0 #ffffff40, inset 0 2px 6px #0000004d, 0 0 0 #9a4310, 0 3px 6px #0007 !important; }
+#discover.owned .d-ticket #d-cta { box-shadow: inset 0 1px 0 #ffffff1c, 0 0 0 1px #2b4058, 0 3px 0 #050a12, 0 8px 16px #0008 !important; }
+#discover.owned .d-ticket #d-cta:active { transform: translateY(3px) !important; box-shadow: inset 0 2px 6px #0009, 0 0 0 1px #2b4058, 0 0 0 #050a12, 0 3px 6px #0007 !important; }
+body.night #discover .d-ticket #d-cta { background-image: none !important; box-shadow: 0 3px 0 #3a0b07, 0 6px 12px #0008 !important; }
+@media (prefers-reduced-motion: reduce) { :is(#discover .d-ticket #d-cta, .plus-cta, .ui-btn--primary):active { transform: none !important; } }
+
+/* ── Button system (2026-11-14, Sevaan: "the orange button after your first card isn't styled like Collect… make sure our
+   buttons and toggles look exceptionally good"). Every solid action button is the raised, glossy Collect button: a lit top
+   rim, a darker lip underneath that it sinks into when pressed, weight 600. Every secondary button is the same shape in dark
+   glass (like View card). Selectors sit in :where() (no specificity) so state rules such as .d-cta.done still win. Colours stay per job: orange = go, blue = the Moon/Sun check's yes, red = delete. ── */
+:where(.d-cta.o, .tn-btn.solid, #help-card .hc-show, #calib .cb-b.p, .tc .acts .yes, :is(#moon-check, #sun-check, #d-check) .mc-yes, #gh-remind, #confirm-sheet .cf-danger) {
+  --lip: #9a4310; border-color: transparent !important; font-weight: 600 !important;
+  background-image: linear-gradient(#ffffff2e, #ffffff00 55%, #00000026) !important;
+  box-shadow: inset 0 1px 0 #ffffff59, inset 0 -2px 0 #0000002e, 0 3px 0 var(--lip), 0 8px 16px #0008 !important;
+  transition: transform .08s ease-out, box-shadow .08s ease-out, filter .08s !important; }
+:where(:is(#moon-check, #sun-check, #d-check) .mc-yes, #gh-remind) { --lip: #3c5f96; }
+#confirm-sheet .cf-danger { --lip: #7a1e17; }
+:where(.d-cta.o, .tn-btn.solid, #help-card .hc-show, #calib .cb-b.p, .tc .acts .yes, :is(#moon-check, #sun-check, #d-check) .mc-yes, #gh-remind, #confirm-sheet .cf-danger):active {
+  transform: translateY(3px) !important; box-shadow: inset 0 1px 0 #ffffff40, inset 0 2px 6px #0000004d, 0 0 0 var(--lip), 0 3px 6px #0007 !important; }
+
+:where(.d-cta.ghost, #help-card > span button:not(.hc-show), :is(#moon-check, #sun-check, #d-check) .mc-off, #sm-done, #calib .cb-b:not(.p), #v-preview) {
+  background-color: #14223a !important; background-image: linear-gradient(#ffffff0f, #ffffff00 55%) !important; border-color: transparent !important;
+  color: var(--text) !important; font-weight: 600 !important;
+  box-shadow: inset 0 1px 0 #ffffff1c, 0 0 0 1px #2b4058, 0 3px 0 #050a12, 0 8px 16px #0008 !important;
+  transition: transform .08s ease-out, box-shadow .08s ease-out !important; }
+:where(.d-cta.ghost, #help-card > span button:not(.hc-show), :is(#moon-check, #sun-check, #d-check) .mc-off, #sm-done, #calib .cb-b:not(.p), #v-preview):active {
+  transform: translateY(3px) !important; box-shadow: inset 0 2px 6px #0009, 0 0 0 1px #2b4058, 0 0 0 #050a12, 0 3px 6px #0007 !important; }
+#ob-done.nt #ob-explore { background-color: var(--glass-strong) !important; } /* over the bad-weather art it stays see-through glass */
+
+/* Toggles: a recessed track and a knob that sits on it */
+#debug .set-tog { box-shadow: inset 0 1px 3px #0009, inset 0 0 0 1px #ffffff0d !important; }
+#debug .set-tog:checked { box-shadow: inset 0 1px 3px #0000004d, inset 0 0 0 1px #ffffff26 !important; }
+#debug .set-tog::before { box-shadow: 0 1px 3px #0009, inset 0 1px 0 #ffffff59; }
+
+body.night :where(.d-cta.o, .tn-btn.solid, #help-card .hc-show, #calib .cb-b.p, .tc .acts .yes, :is(#moon-check, #sun-check, #d-check) .mc-yes, #gh-remind, #confirm-sheet .cf-danger) {
+  background-image: none !important; box-shadow: 0 3px 0 #3a0b07, 0 6px 12px #0008 !important; }
+body.night :where(.d-cta.ghost, #help-card > span button:not(.hc-show), :is(#moon-check, #sun-check, #d-check) .mc-off, #sm-done, #calib .cb-b:not(.p), #v-preview) {
+  background-color: #1a0907 !important; background-image: none !important; color: #ff7f70 !important; box-shadow: 0 0 0 1px #ff6a5540, 0 3px 0 #000, 0 6px 12px #0008 !important; }
+@media (prefers-reduced-motion: reduce) { :where(.d-cta.o, .tn-btn.solid, .d-cta.ghost, .tc .acts button, #sm-done, #v-preview):active { transform: none !important; } }
+/* Tour cards (2026-11-14, Sevaan: "Allow looks weird, shouldn't be smaller than the secondary option"): the main button was
+   a fixed 50px holding 20px type, so the words nearly touched its edges, and a wrapped label made it a different height on
+   each card. It is now one height on every card (58px) with 17px type and room around it; the text link under it stays smaller. */
+.tc .acts:not(.pick) .yes { height: auto !important; min-height: 58px; padding: 0 16px; font-size: 17px !important; line-height: 1.1 !important; letter-spacing: .16em !important; white-space: nowrap !important; }
+@container (max-width: 300px) { .tc .acts:not(.pick) .yes { font-size: 15px !important; letter-spacing: .1em !important; } }
+.tc .acts:not(.pick) .no { font-size: 13px !important; letter-spacing: .12em !important; margin-top: 6px; }
+.tc .acts:not(.pick) { gap: 4px; }

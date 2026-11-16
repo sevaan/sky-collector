@@ -1,14 +1,14 @@
-import { isNative, shareFile } from './native.js?v=0.1.1580';
+import { isNative, shareFile } from './native.js?v=0.1.1582';
 // Share a card as an image (1080 × 1350, Instagram portrait): the card on screen, drawn as it looks (js/dom-snap.js, so
 // the image always matches the card's design; 2026-10-31, Sevaan), on a starry background with the game's web address under
 // it (was the observer rank; 2026-11-02, Sevaan), then handed to the share sheet (navigator.share with a file) or downloaded.
-import { snapElement } from './dom-snap.js?v=0.1.1580';
+import { snapElement } from './dom-snap.js?v=0.1.1582';
 const W = 1080, H = 1350, INK = '#fff2b3', MUTED = '#bdbea9';
 // Left out of the picture: the tilt glare and foil (they depend on how the phone was held), twinkles, the back face, the
 // fact's Source link and the "Tap for its orbit" hint.
 const SKIP = '.card__glare, .card__foil, .card__shine, .art-stars, .card__back, .back-holo, .back-glare, .card__fact .src';
 
-export async function drawShareCard(el) {
+export async function drawShareCard(el, { rootExtra = '', extra = null } = {}) {
   const doc = el.ownerDocument, html = doc.documentElement, body = doc.body;
   // A shared card is never red: red night mode is lifted while the card is copied (the copy is made before snapElement's first await).
   const theme = html.dataset.theme, night = body.classList.contains('night');
@@ -18,7 +18,7 @@ export async function drawShareCard(el) {
   const snap = snapElement(el, { scale: s, pad,
     skip: (n) => n.matches(SKIP),
     skipPseudo: (n, p) => p === '::after' && n.classList.contains('card__art'),
-    extra: (n) => n.classList.contains('card__rotator') ? 'transform:none;' : '' });
+    extra: (n) => (n === el && rootExtra ? rootExtra : '') + (n.classList.contains('card__rotator') ? 'transform:none;' : '') + (extra?.(n) ?? '') });
   if (theme === 'night') html.dataset.theme = theme; if (night) body.classList.add('night');
   const card = await snap;
   await Promise.all(['500 30px "SC Label"'].map((f) => document.fonts?.load(f).catch(() => {})));
@@ -53,5 +53,12 @@ export async function shareCard(canvas, filename, title) {
 export async function shareCardEl(el, c, { title }) {
   const canvas = await drawShareCard(el);
   // Readable file names with the game’s name (2026-10-12, Sevaan): "Sky Collector - Arcturus.png".
+  return shareCard(canvas, `Sky Collector - ${title.replace(/[\\/:*?"<>|]+/g, '').trim()}.png`, `${title} · Sky Collector`);
+}
+
+// Share any card-shaped element on screen as the same kind of picture (2026-11-11: the morning pack's summary card).
+// rootExtra: styles for the copied element itself (e.g. lifting it out of its on-screen centring).
+export async function shareElementPicture(el, title, { rootExtra = '', extra = null } = {}) {
+  const canvas = await drawShareCard(el, { rootExtra, extra });
   return shareCard(canvas, `Sky Collector - ${title.replace(/[\\/:*?"<>|]+/g, '').trim()}.png`, `${title} · Sky Collector`);
 }

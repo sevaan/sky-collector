@@ -48,6 +48,9 @@ export function addSighting(s) {
   return tx('readwrite', (store) => store.add(s));
 }
 
+/* open the database now, so iOS's slow first answer (~440 ms on an iPhone 14) overlaps the catalogue work at launch
+   (2026-11-11 startup timings) */
+export function warmStore() { db().catch(() => {}); }
 export function allSightings() {
   return tx('readonly', (store) => store.getAll()).then((list) => list.sort((a, b) => b.time - a.time));
 }

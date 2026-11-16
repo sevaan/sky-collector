@@ -48,10 +48,19 @@ export function cloudsHtml(amount, { dark = false, side = null } = {}) {
   const inner = `<div class="wx-clouds"><div class="wx-layer" style="--d:34s">${layer(amount, dark, 1, 4, 0.75)}</div><div class="wx-layer" style="--d:22s;animation-direction:alternate-reverse">${layer(amount * 0.8, dark, 1.8, 11, 0.6)}</div></div>`;
   return side ? `<div class="wx-side">${inner}</div>` : inner;
 }
-// Draw the cloud pictures ahead of time (idle after boot), so the first Tonight open doesn't pay for them.
-export function warmClouds() {
-  const todo = []; for (let a = 0.35; a <= 1.001; a += 0.05) { todo.push([a, true, 1, 4], [a * 0.8, true, 1.8, 11]); }
-  const step = () => { const t = todo[0]; if (!t) return; if (!document.querySelector('.overlay.panel:not([hidden]), #reveal:not([hidden])') && !document.body.classList.contains('col-open')) { todo.shift(); cloudPic(...t); } setTimeout(step, 300); }; /* one picture every 300 ms, and never while a page, card or the Collection is up */
+// Draw the cloud pictures ahead of time, so a Tonight open doesn't pay for them. Only the looks this forecast will
+// show (perf pass 2026-11-10: warming all 28 levels cost 14-67 ms each through the first seconds of sky), one at a
+// time, and only when `gate()` says now is a good moment (main.js: the view is still and nothing is open).
+const warmTodo = []; let warming = false, warmGate = () => true;
+const picKey = (t) => `${Math.round(t[0] * 20)}|${t[1] ? 1 : 0}|${t[2]}|${t[3]}`;
+export function warmClouds(amounts = [], gate) {
+  if (gate) warmGate = gate;
+  const want = amounts.filter((a) => a >= 0.35).map((a) => Math.min(1, a));
+  if (want.length) want.push(0.85, 1); /* the Tonight page's own cloud deck on a bad night */
+  const queued = new Set(warmTodo.map(picKey));
+  for (const a of want) for (const t of [[a, true, 1, 4], [a * 0.8, true, 1.8, 11]]) { const k = picKey(t); if (!queued.has(k) && !pics.has(k)) { queued.add(k); warmTodo.push(t); } }
+  if (warming) return; warming = true;
+  const step = () => { const t = warmTodo[0]; if (!t) { warming = false; return; } if (warmGate()) { warmTodo.shift(); const pm = globalThis.__pm; if (pm) pm.span('cloud picture', () => cloudPic(...t)); else cloudPic(...t); } setTimeout(step, 250); };
   step();
 }
 export function rainHtml(n = 90) {

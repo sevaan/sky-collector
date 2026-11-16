@@ -1,34 +1,34 @@
-import { pullToClose } from './pull-close.js?v=0.1.1580';
-import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1580';
-import { computeStats, statsHtml } from './stats.js?v=0.1.1580';
-import { nightKey } from './observation.js?v=0.1.1580';
-import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1580';
-import { sfx } from './sfx.js?v=0.1.1580';
-import { expandFacts } from './catalog-facts.js?v=0.1.1580';
-import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned } from './patches.js?v=0.1.1580';
-import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1580';
-import { ticket } from './toast.js?v=0.1.1580';
-import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1580';
-import { satGlobe } from './sat-globe.js?v=0.1.1580';
-import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1580';
-import { cardArt } from './art.js?v=0.1.1580';
-import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1580';
-import { applyBack } from './card-backs.js?v=0.1.1580';
-import { SETS, assignSets, albumGoals, albumList } from './sets.js?v=0.1.1580';
-import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1580';
-import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1580';
-import { STORIES } from './stories.js?v=0.1.1580';
-import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1580';
-import { conArt } from './con-art.js?v=0.1.1580';
-import { RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1580';
-import { eventBadges, nextEvent } from './events.js?v=0.1.1580';
-import { shareCardEl } from './share-card.js?v=0.1.1580';
-import { forgetSighting } from './cloud-backup.js?v=0.1.1580';
-import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1580';
-import { allSightings, deleteSighting } from './store.js?v=0.1.1580';
-import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1580';
-import { SECRET_PATCHES, hasPatch } from './secrets.js?v=0.1.1580';
-import { localText } from './localize.js?v=0.1.1580';
+import { pullToClose } from './pull-close.js?v=0.1.1582';
+import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1582';
+import { computeStats, statsHtml } from './stats.js?v=0.1.1582';
+import { nightKey } from './observation.js?v=0.1.1582';
+import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1582';
+import { sfx } from './sfx.js?v=0.1.1582';
+import { expandFacts } from './catalog-facts.js?v=0.1.1582';
+import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned } from './patches.js?v=0.1.1582';
+import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1582';
+import { ticket } from './toast.js?v=0.1.1582';
+import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1582';
+import { satGlobe } from './sat-globe.js?v=0.1.1582';
+import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1582';
+import { cardArt } from './art.js?v=0.1.1582';
+import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1582';
+import { applyBack } from './card-backs.js?v=0.1.1582';
+import { SETS, assignSets, albumGoals, albumList } from './sets.js?v=0.1.1582';
+import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1582';
+import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1582';
+import { STORIES } from './stories.js?v=0.1.1582';
+import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1582';
+import { conArt } from './con-art.js?v=0.1.1582';
+import { RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1582';
+import { eventBadges, nextEvent } from './events.js?v=0.1.1582';
+import { shareCardEl } from './share-card.js?v=0.1.1582';
+import { forgetSighting } from './cloud-backup.js?v=0.1.1582';
+import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1582';
+import { allSightings, deleteSighting } from './store.js?v=0.1.1582';
+import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1582';
+import { SECRET_PATCHES, hasPatch } from './secrets.js?v=0.1.1582';
+import { localText } from './localize.js?v=0.1.1582';
 
 const $ = (id) => document.getElementById(id);
 const state = { raw: [], cards: [], byKey: new Map(), sightingsByKey: new Map(), seenMembers: new Map(), view: 'owned', query: '', set: 'all', rarity: 'all', list: [], index: 0, preview: false, ready: false };
@@ -97,12 +97,15 @@ function ingest(sightings) {
     }
   }
 }
+let refreshWanted = false;
 async function refreshSightings() {
-  if (!state.ready) return;
+  if (!state.ready) { refreshWanted = true; return; } /* a catch made while this page was still loading: read it once ready (it was dropped, so Send cards said "No cards yet" and Mine was a card short; found 2026-11-12) */
   try { ingest(await allSightings()); linkConstellations();
     // Hidden behind a fresh reveal: rebuild a little later, in idle time, not in the reveal’s first frames (jank playtest
     // 2026-10-17); showing the Collection before then renders straight away (awayDirty).
-    if (document.documentElement.classList.contains('away')) { awayDirty = true; setTimeout(() => (window.requestIdleCallback ?? setTimeout)(() => { if (awayDirty && document.documentElement.classList.contains('away')) { awayDirty = false; render(); } }, { timeout: 3000 }), 2200); }
+    /* ...and only once Explore is quiet: the reveal closed and the view still (perf pass 2026-11-10: on iOS 'idle' is a plain
+       timer, so this 50-200 ms rebuild landed during the reveal). Checked every second for up to a minute. */
+    if (document.documentElement.classList.contains('away')) { awayDirty = true; let tries = 0; const go = () => { if (!awayDirty || !document.documentElement.classList.contains('away')) return; let quiet = true; try { quiet = window.parent.__scQuiet?.() ?? true; } catch {} if (!quiet && ++tries < 60) { setTimeout(go, 1000); return; } const pm = (n, f) => { try { const P = window.parent.__pm; return P ? P.span(n, f) : f(); } catch { return f(); } }; try { pm('Collection rank card (hidden)', renderLogbook); skipLbOnce = true; } catch {} /* awayDirty stays set until the grid is really drawn, and no rAF: a hidden frame on iOS gets none, so the grid never caught up (sim playtest 2026-11-11: header 2 cards, Mine 1) */ setTimeout(() => { if (!awayDirty) { skipLbOnce = false; return; } awayDirty = false; pm('Collection grid (hidden)', render); setTimeout(pauseAway, 300); }, 16); }; setTimeout(go, 2200); }
     else render(); } catch {}
 }
 async function boot() {
@@ -125,8 +128,11 @@ async function boot() {
   linkConstellations();
   if (catalogueResult.status === 'rejected') notice('The catalogue could not load. Your saved field records are still shown. Refresh to try again.');
   if (sightingResult.status === 'rejected') notice('Your saved sightings could not be opened. You can explore the field guide; refresh to retry your collection.');
+  /* loading hidden behind Explore: the first render is its own task, after a frame (perf budget 2026-11-10: data + render was one 45 ms block) */
+  if (document.documentElement.classList.contains('away')) await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0)));
   state.ready = true;
-  render();
+  if (refreshWanted) { refreshWanted = false; setTimeout(refreshSightings, 0); }
+  { let P = null; try { P = window.parent.__pm; } catch {} if (P) P.span('Collection first render', render); else render(); } setTimeout(pauseAway, 500); /* loaded hidden: its animations rest too */
   if (window.parent !== window) window.parent.postMessage({ sc: 'ready' }, location.origin); // the shell can fade us in now
   let key = '';
   try { key = decodeURIComponent(location.hash.slice(1)); } catch {}
@@ -138,15 +144,17 @@ async function boot() {
   else if (key) notice('That card is not in this catalogue or your saved collection. Search the field guide to find another target.');
 }
 
+// A search word matches the start of a word, so "iss" finds the ISS and not every "missile" in a fact (playtest 2026-11-10).
+const wordHit = (h, w) => !w || new RegExp(`(^|[^a-z0-9])${w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`).test(h);
 function matches(c) {
   if (state.query && c.story && !hasSightings(c)) return false; // searching can’t find a story you haven’t found
   if (state.view === 'owned' && !hasSightings(c)) return false;
-  if (state.view === 'find') { if (!state.query) return true; const h = `${titleFor(c)} ${c.name} ${c.id} ${c.cospar ?? ''} ${c.type ?? ''} ${SETS.find((s) => s.id === c.set)?.name ?? ''}`.toLowerCase(); return state.query.split(/\s+/).every((w) => h.includes(w)); }
+  if (state.view === 'find') { if (!state.query) return true; const h = `${titleFor(c)} ${c.name} ${c.id} ${c.cospar ?? ''} ${c.type ?? ''} ${SETS.find((s) => s.id === c.set)?.name ?? ''}`.toLowerCase(); return state.query.split(/\s+/).every((w) => wordHit(h, w)); }
   if (state.set === 'tonight') { if (!state.planKeys?.has(c.key)) return false; } else if (state.set !== 'all' && c.set !== state.set) return false;
   if (state.rarity !== 'all' && c.tier !== state.rarity) return false;
   if (state.query) {
     const haystack = `${titleFor(c)} ${c.name} ${c.id} ${c.cospar ?? ''} ${factFor(c)} ${SETS.find((s) => s.id === c.set)?.name ?? ''}`.toLowerCase();
-    if (!haystack.includes(state.query)) return false;
+    if (!state.query.split(/\s+/).every((w) => wordHit(haystack, w))) return false;
   }
   return true;
 }
@@ -169,7 +177,7 @@ function fitTileName(tile) {
 // One scale for every tile: tile width / the card’s natural 280 px, kept on the grid as --mini-s.
 let miniS = '', miniRaf = 0;
 const miniScale = () => { miniRaf = 0; const t = document.querySelector('.card-tile--mini, #grid .card-slot'); const w = t?.offsetWidth; if (!w) return; const v = (w / 280).toFixed(4); if (v !== miniS) { miniS = v; document.getElementById('grid')?.style.setProperty('--mini-s', v); } };
-const queueMiniScale = () => { miniRaf ||= requestAnimationFrame(miniScale); }; // once a frame, however many tiles were built (jank playtest 2026-10-17)
+const queueMiniScale = () => { if (miniS) return; miniRaf ||= requestAnimationFrame(miniScale); }; /* measured once per width (resize clears miniS), not after every tile: each read laid the grid out mid-scroll (perf budget 2026-11-10) */ // once a frame, however many tiles were built (jank playtest 2026-10-17)
 addEventListener('resize', () => { miniS = ''; queueMiniScale(); });
 // Wide screens (iPhone Duo unfolded, iPads; 2026-10-22, design/duo-layouts.html Collection A; Sevaan: "go with your
 // picks"): the grid is one page and the card you tap opens on the other at full size, beside the grid (upright: below
@@ -209,9 +217,15 @@ function revealTile(smooth = true) {
 }
 $('viewer').addEventListener('close', () => { if (!redocking) document.querySelectorAll('.tile-slot.shown').forEach((t) => t.classList.remove('shown')); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && isDocked() && !$('stats-view').open && !$('patch-view').open) closeViewer(); }); // a docked viewer isn’t modal, so Escape is ours
+const faceCache = new Map();
 function miniFace(tile, c) {
   const status = (tile.querySelector('.card-tile__status')?.textContent ?? '').replace(/^✓\s*Collected\s*/, '✓ '), badge = tile.querySelector('.tile-lvl');
-  const face = miniCard(c, { sightings: state.sightingsByKey.get(c.key) ?? [], ownedKeys: c.natural === 'constellation' || c.partners ? ownedKeys() : undefined, status, locked: !tile.classList.contains('is-owned') });
+  /* Built once per card and look, then copied (perf budget 2026-11-10: a full card render per tile, again on every scroll-back
+     and after every catch). Cards whose face is live or async (constellations, partners, fragments' globes) are always built. */
+  const sg = state.sightingsByKey.get(c.key) ?? [], locked = !tile.classList.contains('is-owned'), live = c.natural === 'constellation' || c.partners || c.type === 'debris' || c.frag;
+  const fk = live ? null : `${c.key}|${sg.length}|${sg[0]?.time ?? 0}|${locked ? 1 : 0}|${status}`;
+  let face = fk && faceCache.get(fk)?.cloneNode(true);
+  if (!face) { face = miniCard(c, { sightings: sg, ownedKeys: c.natural === 'constellation' || c.partners ? ownedKeys() : undefined, status, locked }); if (fk && !face.querySelector('.frag-orbit-box, canvas')) { faceCache.set(fk, face.cloneNode(true)); if (faceCache.size > 600) faceCache.delete(faceCache.keys().next().value); } }
   tile.classList.add('card-tile--mini');
   tile.replaceChildren(...(badge ? [badge] : []), face);
   stickerOn(tile, c);
@@ -253,18 +267,20 @@ let cascadeLeft = 24; // the first screenful cascades in on open (2026-10-08 pol
 const buildQ = new Set(); let buildRaf = 0, gridGen = 0;
 function pumpBuild() {
   buildRaf = 0; const t = performance.now(), mid = innerHeight / 2;
-  const list = [...buildQ].filter((el) => el.isConnected).map((el) => [el, Math.abs(el.getBoundingClientRect().top - mid)]).sort((a, b) => a[1] - b[1]);
+  /* nearest first, by where the observer last saw each slot (scrollY-adjusted), not a getBoundingClientRect per slot per frame:
+     that forced a layout on every frame of a scroll (2026-11-11 jank audit) */
+  const y = scrollY, list = [...buildQ].filter((el) => el.isConnected).map((el) => [el, Math.abs((el._seenTop ?? 0) - (y - (el._seenY ?? y)) - mid)]).sort((a, b) => a[1] - b[1]);
   buildQ.clear();
   for (let i = 0; i < list.length; i++) {
-    if (i && performance.now() - t > 8) { for (let j = i; j < list.length; j++) buildQ.add(list[j][0]); break; }
+    if (i && performance.now() - t > 4) { for (let j = i; j < list.length; j++) buildQ.add(list[j][0]); break; }
     if (!list[i][0].firstElementChild) buildTile(list[i][0]);
   }
   if (buildQ.size) buildRaf = requestAnimationFrame(pumpBuild);
 }
 const observer = new IntersectionObserver((entries) => {
-  for (const { isIntersecting, target } of entries) {
+  for (const { isIntersecting, target, boundingClientRect } of entries) {
     if (!isIntersecting) continue;
-    observer.unobserve(target); buildQ.add(target);
+    observer.unobserve(target); target._seenTop = boundingClientRect.top; target._seenY = scrollY; buildQ.add(target);
   }
   if (buildQ.size && !buildRaf) buildRaf = requestAnimationFrame(pumpBuild);
 }, { root: document, rootMargin: '500px 0px' });
@@ -369,6 +385,11 @@ function remindStreak() {
 }
 // Observer stats (free for everyone, 2026-10-12): a link under the rank card opens #stats-view.
 function openStats({ instant = false } = {}) { /* instant: already there under Settings, no slide (2026-10-24) */
+  /* the page opens first and its numbers are worked out on the next frame (2026-11-11 jank audit: 88 ms before it moved) */
+  const d0 = $('stats-view'); if (!d0.open) { d0.classList.toggle('instant', instant); d0.showModal(); if (instant) d0.addEventListener('close', () => d0.classList.remove('instant'), { once: true }); requestAnimationFrame(() => setTimeout(() => { if (d0.open) fillStats(); }, 0)); return; }
+  fillStats();
+}
+function fillStats() {
   if ($('stats-body')) $('stats-body').scrollTop = 0; // always opens at the top (iPad playtest 2026-10-24: it reopened at Rarest finds)
   // Everything the Collection already knows, for the stats page (2026-10-16 redesign).
   const info = (k) => { const c = state.byKey.get(k); return c ? { tier: c.tier, tier0: c.tier0, type: c.type, owner: c.owner, launch: c.launch, natural: c.natural, con: c.con, reunion: c.reunion, role: c.type === 'rocket-body' ? 'stage' : 'payload' } : null; };
@@ -385,7 +406,6 @@ function openStats({ instant = false } = {}) { /* instant: already there under S
     stories: [STORIES.filter((st) => state.sightingsByKey.has(st.key)).length, STORIES.length],
     albums: { bronze: lv.filter((a) => a.level >= 1).length, silver: lv.filter((a) => a.level >= 2).length, gold: lv.filter((a) => a.level >= 3).length, total: lv.length } };
   $('stats-body').innerHTML = statsHtml(computeStats(state.raw, state.byKey, nightKey, null, ctx));
-  const d = $('stats-view'); d.classList.toggle('instant', instant); if (!d.open) d.showModal(); if (instant) d.addEventListener('close', () => d.classList.remove('instant'), { once: true }); /* not on a timer: taking it off restarted the slide-up, a second stats page over the first (2026-10-28, Sevaan) */
 }
 $('stats-open')?.addEventListener('click', openStats);
 // It slides up over the Collection and back down, like the app’s other pages (2026-10-17, Sevaan).
@@ -412,7 +432,8 @@ const firstSeen = (c) => { const ss = state.sightingsByKey?.get(c.key); return s
 let freshKeys = (() => { try { return new Set(JSON.parse(localStorage.getItem('colFresh') ?? '[]')); } catch { return new Set(); } })(); // caught since a visit, not opened yet (bug test 2026-10-21: comparing to the last visit lost them after one more visit)
 const saveFresh = () => { try { localStorage.setItem('colFresh', JSON.stringify([...freshKeys].slice(-400))); } catch {} };
 const isFreshTile = (c) => freshKeys.has(c.key) && !peeled.has(c.key);
-function saveVisit() { if (!lbLast) return; try { localStorage.setItem('colVisit', JSON.stringify({ at: Date.now(), xp: lbLast.xp })); } catch {} }
+let shownOnce = false; /* the Collection loads hidden in the background: a visit only counts once it has been shown (iOS playtest 2026-11-12: '+85 XP since last time' on the first visit) */
+function saveVisit() { if (!lbLast || !shownOnce) return; try { localStorage.setItem('colVisit', JSON.stringify({ at: Date.now(), xp: lbLast.xp })); } catch {} }
 function stickerOn(tile, c) { if (!isFreshTile(c) || tile.querySelector('.tile-new')) return; const t = document.createElement('span'); t.className = 'tile-new'; t.textContent = 'NEW'; tile.append(t); }
 function peelSticker(c) {
   if (!c || !isFreshTile(c)) return; peeled.add(c.key); freshKeys.delete(c.key); saveFresh();
@@ -503,7 +524,7 @@ function renderLogbook() {
     <div class="lb-events">${ev.map((e) => `<span class="ui-chip ui-chip--earned">✦ <b>${esc(e.name.replace(/\s*\d{4}$/, ''))}</b></span>`).join('')}${nx ? `<span class="ui-chip"><span class="ui-chip__k">Next:</span><b>${esc(nx.name.replace(/\s*\d{4}$/, ''))}</b><span class="ui-chip__k">· ${new Date(nx.day ?? nx.start + 30 * 3600e3).toLocaleDateString([], { month: 'short', day: 'numeric' })}</span></span>` : ''}</div></div>`;
   state.achievements = p.achievements;
   lbLast = { xp: p.xp, into, at: p.rank.at, next: p.rank.next };
-  renderSatCard();
+  if (document.documentElement.classList.contains('away')) requestAnimationFrame(() => setTimeout(renderSatCard, 0)); else renderSatCard(); /* hidden: the globe's orbits are their own task (perf budget 2026-11-10) */
   requestAnimationFrame(tabsPin);
 }
 
@@ -523,7 +544,7 @@ function renderSatCard() {
   const n = satG.set(owned.map((c) => ({ ...c, title: titleFor(c) })));
   const few = new Set(state.raw.filter((s) => !s.sim).map((s) => String(s.cardKey))).size < 5; /* day one: only the rank, compact (UX 2026-10-28) */
   sec.hidden = !n || few; $('lb-deck').classList.toggle('two', !!n);
-  $('sg-title').textContent = `Your ${n.toLocaleString()} collected object${n === 1 ? '' : 's'}`; /* the count in the title, the globe takes the rest (2026-10-27, Sevaan) */
+  $('sg-title').textContent = `Your ${n.toLocaleString()} in orbit`; /* 'in orbit', not 'collected objects': the header above counts every card, stars and planets too, so 63 cards over '60 collected objects' read as a mistake (playtest 2026-11-10) */ /* the count in the title, the globe takes the rest (2026-10-27, Sevaan) */
   if (!deckSet) { deckSet = true; deckWire(); deckPick(); }
 }
 let deckSet = false, deckBusy = false;
@@ -658,9 +679,11 @@ function render() {
   renderView();
   if (k && !upHold) { const i = state.list.findIndex((c) => c.key === k); if (i >= 0) { state.index = i; $('v-position').textContent = `${i + 1} / ${state.list.length.toLocaleString()}`; } }
 }
+{ let lastS = 0; addEventListener('scroll', () => { const t = performance.now(); if (t - lastS > 400) { try { window.parent.__pm?.mark('scroll Collection'); } catch {} } lastS = t; }, { passive: true }); } /* the phone meter's scroll mark */
+let skipLbOnce = false; /* the background rebuild draws the rank card as its own task first (perf budget 2026-11-10) */
 function renderView() {
   if (upHold) { upHold = 'again'; return; } // the viewer is showing Up tonight’s own list: redraw once it closes (QA 2026-10-16)
-  renderLogbook(); markFilters(); // every tab, Find too (iPhone 14 playtest 2026-10-30: the dot stayed on after an album)
+  if (skipLbOnce) skipLbOnce = false; else renderLogbook(); markFilters(); // every tab, Find too (iPhone 14 playtest 2026-10-30: the dot stayed on after an album)
   { const n = state.cards.filter(hasSightings).length.toLocaleString(); if ($('owned-count').textContent !== n) $('owned-count').textContent = n; } // on every tab (round-2 playtest 2026-10-30: Mine said 20 under a 21-card header on Patches)
   $('grid').classList.toggle('find-mode', state.view === 'find');
   if (state.view === 'find') { renderAlbumHead(); /* clears an album's header (iPhone 14 playtest 2026-10-30: The Wanderers sat over Find results) */ $('patch-wall').hidden = true; $('grid').hidden = false; document.body.classList.remove('patches-view', 'albums-view'); renderFind(); return; }
@@ -872,12 +895,13 @@ function showCard() {
   else renderUpPanel(c, null);
   $('v-history').replaceChildren();
   // (The cream passport block is gone, 2026-10-06: each sighting row names its launch instead.)
-  if (sightings.length) {
+  const seenBy = sightings.filter((s) => s.via !== 'gift'); /* a card you were sent has no sighting of yours to list (2026-11-11) */
+  if (seenBy.length) {
     const heading = document.createElement('h2');
-    heading.textContent = c.launches && sightings.length > 1 ? `Every sighting · ${sightings.length}` : sightings.length === 1 ? 'When you saw it' : `When you saw it · ${sightings.length} times`;
+    heading.textContent = c.launches && seenBy.length > 1 ? `Every sighting · ${seenBy.length}` : seenBy.length === 1 ? 'When you saw it' : `When you saw it · ${seenBy.length} times`;
     $('v-history').append(heading);
     const points = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
-    for (const s of [...sightings].sort((a, b) => b.time - a.time)) {
+    for (const s of [...seenBy].sort((a, b) => b.time - a.time)) {
       const row = document.createElement('p');
       const when = `${dateLabel(s.time)} · ${hm(s.time)}`;
       const where = s.el != null ? `${Math.round(s.el)}° up in the ${DIR_WORD[points[Math.round(((s.az % 360) + 360) % 360 / 45) % 8]] ?? points[Math.round(((s.az % 360) + 360) % 360 / 45) % 8]}` : '';
@@ -1111,7 +1135,7 @@ addStarfield($('viewer'));
   document.body.classList.toggle('sky-tone', document.documentElement.dataset.theme !== 'night' && !document.body.classList.contains('night'));
 })();
 attachTileTilt($('grid'));
-$('viewer').addEventListener('close', () => { if ($('v-sheet')) { $('v-sheet').classList.remove('on'); $('v-sheet').hidden = true; } if (redocking) return; stopEffects(); document.body.style.overflow = ''; lastFocus?.focus({ preventScroll: true }); });
+$('viewer').addEventListener('close', () => { if (redocking) return; /* a rotate or unfold re-docks the viewer: its share sheet stays */ if ($('v-sheet')) { $('v-sheet').classList.remove('on'); $('v-sheet').hidden = true; } stopEffects(); document.body.style.overflow = ''; lastFocus?.focus({ preventScroll: true }); });
 $('slot').addEventListener('pointerdown', askMotion);
 $('v-preview').addEventListener('click', () => { state.preview = !state.preview; showCard(); });
 // Share the card on screen as an image (js/share-card.js), reading what it shows so the image matches.
@@ -1127,11 +1151,10 @@ initSend({
 let sendFromSettings = false;
 // One Share icon, two ways (2026-11-07, Sevaan: the picture and the paper plane looked alike, and nobody would find the pack).
 // The sheet sits inside the dialog (top layer). Picture = the card image; Send = the Send cards flow with just this card.
-const PIC_SVG = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7.5 7.5 12 3l4.5 4.5"/><path d="M8 10H6a1.5 1.5 0 0 0-1.5 1.5v8A1.5 1.5 0 0 0 6 21h12a1.5 1.5 0 0 0 1.5-1.5v-8A1.5 1.5 0 0 0 18 10h-2"/></svg>';
 const shareSheet = (on) => { const sh = $('v-sheet'); if (!sh) return;
   if (on) { const c = state.list[state.index]; /* the two choices as pictures: this card, and the sealed gold pack from the Send page (2026-11-07, Sevaan: the plain rows could look better) */
-    $('v-opts').innerHTML = `<button type="button" class="v-opt" id="v-opt-pic"><span class="v-opt-vis v-opt-pic"><span class="v-opt-mini"></span><i class="v-opt-badge">${PIC_SVG}</i></span><b>A picture</b><small>For messages and social.</small></button>`
-      + `<button type="button" class="v-opt" id="v-opt-send"><span class="v-opt-vis v-opt-pack"><span class="sv-pk"><span class="sv-bag"><span class="sv-pk-base"></span><span class="sv-pk-art"></span><span class="sv-pk-crimp t"></span><span class="sv-pk-crimp b"></span><span class="sv-pk-sheen"></span><span class="sv-pk-count"><b>1</b>card</span></span></span></span><b>Send the card</b><small>Opens as a pack on their phone. They keep it, you keep yours.</small></button>`;
+    $('v-opts').innerHTML = `<button type="button" class="v-opt" id="v-opt-pic"><span class="v-opt-vis v-opt-pic"><span class="v-opt-mini"></span></span><b>A picture</b><small>To post or text</small></button>`
+      + `<button type="button" class="v-opt" id="v-opt-send"><span class="v-opt-vis v-opt-pack"><span class="sv-pk"><span class="sv-bag"><span class="sv-pk-base"></span><span class="sv-pk-art"></span><span class="sv-pk-lines"></span><span class="sv-pk-pillow"></span><span class="sv-pk-pinch"></span><span class="sv-pk-crimp t"></span><span class="sv-pk-crimp b"></span><span class="sv-pk-seam"></span><span class="sv-pk-sheen"></span><span class="sv-pk-edges"></span><span class="sv-pk-count"><b>1</b>card</span></span></span></span><b>Send the card</b><small>They get a copy too</small></button>`;
     if (c) { try { $('v-opts').querySelector('.v-opt-mini').appendChild(miniCard(c, { sightings: state.sightingsByKey.get(c.key) ?? [], ownedKeys: c.natural === 'constellation' || c.partners ? ownedKeys() : undefined, status: '' })); } catch {} } /* the card itself, small, like the Send page's peeks */
     sh.hidden = false; requestAnimationFrame(() => sh.classList.add('on')); }
   else { sh.classList.remove('on'); setTimeout(() => { if (!sh.classList.contains('on')) sh.hidden = true; }, 260); } };
@@ -1221,16 +1244,22 @@ if (EMBED) {
     }
     if (e.data.sc === 'refresh') refreshSightings();
     // Hidden behind the sky, its animations (twinkles, shimmers, drift) pause (2026-10-16 perf sweep).
-    if (e.data.sc === 'away') { statsFromSettings = false; if (sendFromSettings || sendOpen()) { sendFromSettings = false; window.parent.postMessage({ sc: 'stats', on: false }, location.origin); } saveVisit(); closePeek(); clearTimeout(awayT); document.documentElement.classList.add('away'); for (const id of ['viewer', 'stats-view', 'patch-view', 'send-view']) { const d = $(id); if (d?.open && !d.classList.contains('docked')) { d.classList.remove('leaving'); d.close(); } } if (returnView) backFromBorrowed(); } // leaving the Collection closes whatever was open in it (bug hunt 2026-10-17: after Show me the viewer stayed open, clipped under the header)
+    if (e.data.sc === 'away') { statsFromSettings = false; if (sendFromSettings || sendOpen()) { sendFromSettings = false; window.parent.postMessage({ sc: 'stats', on: false }, location.origin); } saveVisit(); closePeek(); clearTimeout(awayT); document.documentElement.classList.add('away'); setTimeout(pauseAway, 600); for (const id of ['viewer', 'stats-view', 'patch-view', 'send-view']) { const d = $(id); if (d?.open && !d.classList.contains('docked')) { d.classList.remove('leaving'); d.close(); } } if (returnView) backFromBorrowed(); } // leaving the Collection closes whatever was open in it (bug hunt 2026-10-17: after Show me the viewer stayed open, clipped under the header)
     if ((e.data.sc === 'open' || e.data.sc === 'show') && nightPending != null) { setNight(nightPending); nightPending = null; }
+    if (e.data.sc === 'open' || e.data.sc === 'show') shownOnce = true;
     if ((e.data.sc === 'open' || e.data.sc === 'show') && awayDirty) { awayDirty = false; if (state.ready) render(); }
     if (e.data.sc === 'open' || e.data.sc === 'show') { if (state.ready) primeSince(); setTimeout(() => { if (state.ready) replaySince(); }, 480); }
     if ((e.data.sc === 'open' || e.data.sc === 'show') && deckSet) deckPick(); /* a different card on top some visits (2026-10-27, Sevaan) */
-    if (e.data.sc === 'open' || e.data.sc === 'show') { clearTimeout(awayT); awayT = setTimeout(() => document.documentElement.classList.remove('away'), 460); } // after the slide-up lands (2026-10-17 perf): restarting every twinkle and shimmer mid-slide hitched
+    if (e.data.sc === 'open' || e.data.sc === 'show') { clearTimeout(awayT); awayT = setTimeout(() => { document.documentElement.classList.remove('away'); resumeAway(); if (awayDirty && state.ready) { awayDirty = false; render(); } /* a refresh that finished while the slide-up was still landing (Fable pack hunt 2026-11-13: "See them in your collection" showed the Collection without the friend's cards) */ }, 460); } // after the slide-up lands (2026-10-17 perf): restarting every twinkle and shimmer mid-slide hitched
     if (e.data.sc === 'tonight') { state.plan = readPlan(); if (state.ready && state.view === 'find' && !state.query) { findSuggest = null; renderFind(); } if (state.ready && ['owned', 'discover'].includes(state.view)) { if (document.documentElement.classList.contains('away')) awayDirty = true; else render(); } } // hidden: render when shown (jank playtest 2026-10-17)
   });
 }
 let returnView = null, awayT = 0, awayDirty = false;
+// Animations rest while the Collection is hidden behind Explore: paused one by one (Web Animations), not by a universal CSS
+// rule, which restyled every element each time the Collection opened or closed (perf budget 2026-11-10).
+const awayPaused = new Set();
+function pauseAway() { if (!document.documentElement.classList.contains('away')) return; try { for (const a of document.getAnimations()) if (a.playState === 'running') { a.pause(); awayPaused.add(a); } } catch {} }
+function resumeAway() { for (const a of awayPaused) { try { if (a.playState === 'paused') a.play(); } catch {} } awayPaused.clear(); }
 function backFromBorrowed() { if (!returnView) return; const v = returnView; returnView = null; setView(v); }
 $('viewer').addEventListener('close', () => { if (!redocking) setTimeout(backFromBorrowed, 0); });
 function openKey(key) {
@@ -1279,6 +1308,9 @@ function earnedDates() {
     const p = progress(list.slice(0, i + 1), info, { constellations: cons, albums: state.albums, now: list[i].time, deals: readDeals(), weekThemes: readWeekThemes(), carry: xpCarry(state.raw, info, { constellations: cons, deals: readDeals() }) });
     for (const a of p.achievements) if (a.done && want.has(a.id)) { dates[a.id] = list[i].time; want.delete(a.id); }
   }
+  /* worked out once, then kept with the ones Explore records (2026-11-11 jank audit: the replay ran a full progress() per
+     sighting on every Patches open, 239 ms at phone speed) */
+  if (Object.keys(dates).length) { try { localStorage.setItem('patchDates', JSON.stringify({ ...dates, ...stored })); } catch {} }
   Object.assign(dates, stored);
   earnedCache = { n, dates }; return dates;
 }
@@ -1443,6 +1475,6 @@ if (window.parent === window) addEventListener('pagehide', saveVisit);
    dialog, a tap in the header band is sent up to Explore, which presses the header button under it (and the cards
    scrolled behind the header never get it). */
 let embedTop = 0;
-const inHeader = (e) => document.documentElement.classList.contains('embedded') && !document.querySelector('dialog[open]:not(.docked):not(#stats-view)') && e.clientY < embedTop + 80;
+const inHeader = (e) => document.documentElement.classList.contains('embedded') && !document.querySelector('dialog[open]:not(.docked):not(#stats-view):not(#send-view)') && e.clientY < embedTop + 80;
 for (const ev of ['pointerdown', 'pointerup', 'touchstart', 'touchend', 'mousedown', 'mouseup']) document.addEventListener(ev, (e) => { if (inHeader(e.changedTouches?.[0] ?? e)) e.stopPropagation(); }, true);
 document.addEventListener('click', (e) => { if (!inHeader(e)) return; e.preventDefault(); e.stopPropagation(); window.parent.postMessage({ sc: 'header-tap', x: e.clientX, y: e.clientY }, location.origin); }, true);

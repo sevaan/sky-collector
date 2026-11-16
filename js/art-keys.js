@@ -1,6 +1,6 @@
-import { ART_FILES } from './art-files.js?v=0.1.1580';
-import { debrisOf } from './lore.js?v=0.1.1580';
-import { PHOTO_MAP } from './art-photo-map.js?v=0.1.1580';
+import { ART_FILES } from './art-files.js?v=0.1.1582';
+import { debrisOf } from './lore.js?v=0.1.1582';
+import { PHOTO_MAP } from './art-photo-map.js?v=0.1.1582';
 // Which illustration each card uses. The illustrator’s brief (scripts/art-brief.py) is generated from this
 // table, and when the art arrives the card renderer can load assets/art/cards/<key>.webp, falling back to
 // the drawn art in js/art.js. Every card maps to exactly one key. Order of rules matters.
@@ -124,12 +124,17 @@ const SERIES = { 'strela-1': 'strela-1m', 'strela-1m': 'strela-1m', 'strela-2m':
   sfera: 'geodetic', 'geo-ik': 'geodetic', 'ds-p1-m': 'asat-target', 'is-a': 'asat-interceptor', i2p: 'asat-interceptor', 'taifun-1': 'taifun',
   'bars-m': 'russian-recon', persona: 'russian-recon', 'lotos-s': 'russian-recon' };
 
+// Cosmos satellites by their real programme (Wikipedia's Kosmos lists, 2026-11-12 art pass): the ones whose programme
+// already has a picture but weren't in data/series.json. Lotos→russian-recon Meteor→meteor Tselina-2→tselina Tselina-D→tselina Tselina-R→tselina US-K→draw-oko-us-k
+const COSMOS_ART = { 876: 'meteor', 10095: 'tselina', 10539: 'tselina', 13295: 'draw-oko-us-k', 16181: 'tselina', 17191: 'tselina', 17589: 'tselina', 20465: 'tselina', 20663: 'draw-oko-us-k', 25327: 'draw-oko-us-k', 40358: 'russian-recon' };
+
 // card: a card from buildCards. seriesOf: NORAD id -> series key (data/series.json members), optional.
 export function artKeyFor(card, seriesOf = {}) {
   if (card.natural === 'story') return `story-${card.art}`;
   if (card.natural) return card.system ? 'solar-system' : card.type === 'sun' ? 'sun' : card.type === 'moon' ? 'moon' : card.type === 'earth' ? 'planet-earth' : card.type === 'planet' ? `planet-${card.name.toLowerCase()}` : card.type === 'deepsky' ? `deep-${card.key.split(':')[1]}` : `star-${card.key.split(':')[1]}`;
   if (card.launches) return { GLOBALSTAR: 'globalstar', ORBCOMM: 'orbcomm', IRIDIUM: 'iridium' }[card.family] ?? `fleet-${card.family.toLowerCase()}`; // the newer fleets use their satellite’s picture
   if (NAMED[card.id]) return NAMED[card.id];
+  if (COSMOS_ART[card.id]) return COSMOS_ART[card.id]; // a Cosmos whose programme already has a picture
   if (PHOTO_MAP[card.id]) return PHOTO_MAP[card.id]; // its own photo or official illustration (js/art-photo-map.js)
   if (card.issDeploy && /^ISS OBJECT/.test(String(card.name ?? ''))) return 'smallsat'; // an unidentified CubeSat from the ISS
   const n = String(card.name ?? '').toUpperCase();

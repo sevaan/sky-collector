@@ -3,13 +3,10 @@
 // know who sent it; 2026-11-07, Sevaan).
 // Sharing only copies: the cards stay on this phone too (2026-11-07, Sevaan: "we don't need Move as a concept... I don't
 // see anyone getting rid of cards they've collected"). Built by cards-page.js, which hands in what it knows (ctx).
-import { packGift, giftCode, giftLink, packLink, plural, MAX_LINK } from './gift.js?v=0.1.1580';
-import { nightKey } from './observation.js?v=0.1.1580';
-import { plugin } from './native.js?v=0.1.1580';
-import { SERVER } from './server.js?v=0.1.1580';
-import { backupBid } from './cloud-backup.js?v=0.1.1580';
-import { readDeals, readWeekThemes } from './progress.js?v=0.1.1580';
-import { TIER_INFO } from './rarity.js?v=0.1.1580';
+import { plural, ownSightings } from './gift.js?v=0.1.1582';
+import { nightKey } from './observation.js?v=0.1.1582';
+import { TIER_INFO } from './rarity.js?v=0.1.1582';
+import { packLinkFor, shareLink } from './pack-share.js?v=0.1.1582';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const day = (t) => new Date(t).toLocaleDateString([], { weekday: 'short', day: 'numeric', month: 'short' });
@@ -25,7 +22,7 @@ export function initSend(c) { ctx = c; view = $('send-view'); if (!view) return;
 const real = () => ctx.sightings().filter((s) => !s.sim);
 function nights() {
   const m = new Map();
-  for (const s of real()) { const k = nightKey(s.time, s.lon ?? 0); const n = m.get(k) ?? m.set(k, { k, list: [], eve: eveningOf(s) }).get(k); n.list.push(s); if (s.time < n.list[0].time) n.eve = eveningOf(s); }
+  for (const s of ownSightings(ctx.sightings())) { /* your own nights only: cards you were sent carry the sender's dates (the deep review, 2026-11-12) */ const k = nightKey(s.time, s.lon ?? 0); const n = m.get(k) ?? m.set(k, { k, list: [], eve: eveningOf(s) }).get(k); n.list.push(s); if (s.time < n.list[0].time) n.eve = eveningOf(s); }
   return [...m.values()].sort((a, b) => b.k - a.k);
 }
 function owned() {
@@ -47,9 +44,10 @@ export function openSend(opts = {}) {
   clearTimeout(closeT); /* reopened within the 300 ms close: the old timer must not close the new page (review 2026-11-07) */
   if (!view.open) view.showModal();
   view.classList.remove('leaving');
-  if (sel.only) openSheet();
-  else renderPick();
-  view.scrollTop = 0;
+  /* the page opens now and fills on the next frame (2026-11-11 jank audit: building every tile first held the slide-up for
+     ~220 ms at phone speed) */
+  const fill = () => { if (!view.open) return; if (sel.only) openSheet(); else renderPick(); view.scrollTop = 0; };
+  if (sel.only) fill(); else requestAnimationFrame(() => setTimeout(fill, 0));
 }
 export function closeSend() {
   if (!view?.open || view.classList.contains('leaving')) return;
@@ -70,7 +68,7 @@ function head(eyebrow, title, { back = false } = {}) {
   return `${back ? '<button class="sv-backlink" type="button" data-act="back">‹ Change what to share</button>' : ''}<div class="sv-head">${back ? '<button class="sv-back" type="button" data-act="back" aria-label="Back">‹</button>' : ''}<div class="sv-t"><span class="ui-eyebrow">${esc(eyebrow)}</span><h2>${esc(title)}</h2></div><button class="close x-close" type="button" data-act="close" aria-label="Close">✕</button></div>`;
 }
 function renderPick() {
-  view.dataset.step = 'pick';
+  view.dataset.step = 'pick'; sendRun++; sending = false;
   const tabs = `<div class="sv-tabs" role="tablist"><button type="button" role="tab" data-tab="card" aria-selected="${sel.tab === 'card'}">By card</button><button type="button" role="tab" data-tab="night" aria-selected="${sel.tab === 'night'}">By night</button></div>`;
   view.innerHTML = `<div class="sv-page">${head('Pick what to share', 'Send cards')}${tabs}<div id="sv-body"></div></div><div class="sv-bar" id="sv-bar"></div>`;
   renderBody(); renderBar();
@@ -86,12 +84,15 @@ function renderBody() {
     /* the first screens are built now, the rest as they scroll near (2026-11-07 playtest: 1,000 cards took seconds to open) */
     const fill = (t) => { if (t._filled) return; t._filled = true; const x = byKey.get(t.dataset.card); try { t.querySelector('.sv-art').replaceChildren(ctx.mini(x.card, x.list)); } catch {} };
     tileIO?.disconnect(); tileIO = null;
-    tiles.slice(0, 30).forEach(fill);
-    if (tiles.length > 30) { if ('IntersectionObserver' in window) { tileIO = new IntersectionObserver((es) => { for (const e of es) if (e.isIntersecting) { fill(e.target); tileIO.unobserve(e.target); } }, { rootMargin: '900px 0px' }); tiles.slice(30).forEach((t) => tileIO.observe(t)); } else tiles.slice(30).forEach(fill); }
+    /* the first screenful now; the rest a few a frame (2026-11-11 jank audit: 30 mini cards at once held the page ~230 ms at phone speed) */
+    const q = [], pump = () => { const t0 = performance.now(); while (q.length && performance.now() - t0 < 6) fill(q.shift()); if (q.length) requestAnimationFrame(pump); };
+    const want = (t) => { if (!t._filled && !t._queued) { t._queued = true; q.push(t); if (q.length === 1) requestAnimationFrame(pump); } };
+    tiles.slice(0, 9).forEach(fill); tiles.slice(9, 30).forEach(want);
+    if (tiles.length > 30) { if ('IntersectionObserver' in window) { tileIO = new IntersectionObserver((es) => { for (const e of es) if (e.isIntersecting) { want(e.target); tileIO.unobserve(e.target); } }, { rootMargin: '900px 0px' }); tiles.slice(30).forEach((t) => tileIO.observe(t)); } else tiles.slice(30).forEach(want); }
     fitMini(grid);
   } else {
     const ns = nights(), all = ns.length && ns.every((n) => sel.nights.has(n.k));
-    let html = `<div class="sv-selrow"><span>Tick the nights the ${ctx.PH} wasn’t yours</span>${ns.length ? `<button type="button" class="sv-sa" data-act="all-nights">${all ? 'Select none' : 'Select all'}</button>` : ''}</div><div class="sv-nights">`;
+    let html = `<div class="sv-selrow"><span>Tick the nights to send</span>${ns.length ? `<button type="button" class="sv-sa" data-act="all-nights">${all ? 'Select none' : 'Select all'}</button>` : ''}</div><div class="sv-nights">`;
     let month = '';
     const gap = gapNights(ns);
     for (const n of ns) {
@@ -128,8 +129,8 @@ function gapChip(g) {
 function renderBar() {
   const bar = $('sv-bar'); if (!bar) return;
   const p = picked(), cards = new Set(p.map((s) => s.cardKey)).size;
-  const sub = sel.tab === 'card' ? 'every sighting of each' : (() => { const ns = [...sel.nights].sort((a, b) => a - b); if (!ns.length) return 'pick a night'; const n = nights().filter((x) => sel.nights.has(x.k)).sort((a, b) => a.k - b.k); return n.length === 1 ? day(n[0].eve) : `${day(n[0].eve)} to ${day(n.at(-1).eve)} · ${plural(n.length, 'night')}`; })();
-  bar.innerHTML = `<span class="sv-n">${p.length ? `${plural(cards, 'card')} · ${plural(p.length, 'sighting')}` : 'Nothing picked yet'}<small>${esc(sub)}</small></span><button type="button" class="sv-btn o" data-act="next"${p.length ? '' : ' disabled'}>Next</button>`;
+  const sub = sel.tab === 'card' ? '' /* no second line (2026-11-12, Sevaan didn't like 'every sighting of each') */ : (() => { const ns = [...sel.nights].sort((a, b) => a - b); if (!ns.length) return 'pick a night'; const n = nights().filter((x) => sel.nights.has(x.k)).sort((a, b) => a.k - b.k); return n.length === 1 ? day(n[0].eve) : `${day(n[0].eve)} to ${day(n.at(-1).eve)} · ${plural(n.length, 'night')}`; })();
+  bar.innerHTML = `<span class="sv-n">${p.length ? `${plural(cards, 'card')} · ${plural(p.length, 'sighting')}` : 'Nothing picked yet'}${sub ? `<small>${esc(sub)}</small>` : ''}</span><button type="button" class="sv-btn o" data-act="next"${p.length ? '' : ' disabled'}>Next</button>`;
 }
 
 // ---------- step 2: the pack you're sending (design/send-sheet/c-game-moment.html, Sevaan's pick 2026-11-07) ----------
@@ -149,12 +150,12 @@ function renderSheet() {
   view.innerHTML = `<div class="sv-page sv-pack-page">${head(single ?? plural(n, 'card'), single ? 'Share a card' : 'Share cards', { back: !sel.only })}
     <div class="sv-stage"><div class="sv-glow"></div><div class="sv-stage-in">
       ${peeks.map((x, i) => `<div class="sv-peek p${peeks.length === 1 ? 3 : i + 1}" data-i="${i}" style="--c:${(TIER_INFO[x.card.tier] ?? TIER_INFO.common).color}"></div>`).join('')}
-      <div class="sv-pk"><div class="sv-bag"><div class="sv-pk-base"></div><div class="sv-pk-art"></div><div class="sv-pk-crimp t"></div><div class="sv-pk-crimp b"></div><div class="sv-pk-sheen"></div>
+      <div class="sv-pk"><div class="sv-bag"><div class="sv-pk-base"></div><div class="sv-pk-art"></div><div class="sv-pk-lines"></div><div class="sv-pk-pillow"></div><div class="sv-pk-pinch"></div><div class="sv-pk-crimp t"></div><div class="sv-pk-crimp b"></div><div class="sv-pk-seam"></div><div class="sv-pk-sheen"></div><div class="sv-pk-edges"></div>
         <div class="sv-pk-count"><b>${n}</b>${n === 1 ? 'card' : 'cards'}</div></div>
         <div class="sv-stamp">Sealed</div></div></div></div>
     <div class="sv-manifest"><div class="hd"><span>In the pack</span><span>${esc(dates)}</span></div>
       <div class="row"><span class="sv-thumbs">${thumbs.map((x, i) => `<i data-t="${i}"></i>`).join('')}${more > 0 ? `<i class="more">+${more}</i>` : ''}</span>
-        <span class="lbl">${esc(plural(n, 'card'))}<small>${esc(plural(p.length, 'sighting'))}, each with its night and place</small></span></div></div>
+        <span class="lbl">${esc(plural(n, 'card'))}<small>${esc(plural(p.length, 'sighting'))}, ${p.length === 1 ? 'with the night it was seen' : 'each with the night it was seen'}</small></span></div></div>
     <p class="sv-plain">They get a copy to keep. Yours stay right here.</p>
     <button type="button" class="sv-btn o w" data-act="send">Share ${esc(single ? single : plural(n, 'card'))}</button></div>`;
   // the real mini cards: big ones sticking out of the pack, small ones in the manifest
@@ -180,34 +181,22 @@ function seal() {
 }
 
 // ---------- sending ----------
-async function shareLink(link, title) {
-  const share = plugin('Share');
-  if (share) {
-    /* the link alone (no text): with text too, iOS Copy put only the text on the clipboard (iPhone 14 simulator 2026-11-07) */
-    try { const r = await share.share({ title, url: link, dialogTitle: title }); const via = viaName(r?.activityType); return { ok: true, via, copied: via === 'copied' }; }
-    catch (e) { return { ok: false, cancelled: /cancel/i.test(e?.message ?? '') }; }
-  }
-  if (navigator.share) {
-    try { await navigator.share({ title, url: link }); return { ok: true, via: '' }; }
-    catch (e) { return { ok: false, cancelled: e?.name === 'AbortError' }; }
-  }
-  try { await navigator.clipboard.writeText(link); return { ok: true, via: 'copied', copied: true }; } catch { return { ok: false }; }
-}
-const viaName = (a = '') => (/CopyToPasteboard/i.test(a) ? 'copied' : '');
-let sending = false;
+let sending = false, sendRun = 0;
 async function send() {
   if (sending) return; sending = true;
-  const btn = view.querySelector('[data-act="send"]'); if (btn) btn.disabled = true;
+  /* leaving the pack page (back link, ✕) drops this share: the link used to arrive later and open the share sheet over
+     another page, and Share stayed dead until then (the deep review, 2026-11-12) */
+  const run = ++sendRun, stale = () => run !== sendRun || !view.open || view.dataset.step !== 'sheet';
+  const btn = view.querySelector('[data-act="send"]'), was = btn?.textContent; if (btn) { btn.disabled = true; btn.textContent = 'Making the link…'; }
   try {
     const p = picked(), cards = new Set(p.map((s) => s.cardKey)).size;
-    const code = await giftCode(packGift(p, { bid: backupBid(), deals: readDeals(), themes: readWeekThemes() }));
-    /* a short link: the pack waits on our server; offline, a small pack still fits in the link itself */
-    let link = null;
-    try { const r = await fetch(`${SERVER}/pack`, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: code, signal: AbortSignal.timeout(10000) }); if (r.ok) { const { id } = await r.json(); if (/^[A-Za-z0-9]{7}$/.test(id)) link = packLink(id); } } catch {}
-    if (!link && code.length <= 6000) link = giftLink(code);
+    const link = await packLinkFor(p); /* js/pack-share.js, shared with Share my night */
+    if (stale()) return;
+    if (btn) btn.textContent = was;
     if (!link) { ctx.ticket({ kind: 'error', eyebrow: 'NO CONNECTION', line: 'Couldn’t make the link', sub: 'Check you’re online and try again.' }); return; }
     const title = `${plural(cards, 'card')} · Sky Collector`;
     await seal();
+    if (stale()) return;
     const r = await shareLink(link, title);
     if (!r.ok) { view.querySelector('.sv-stage')?.classList.remove('sealing'); if (!r.cancelled) ctx.ticket({ kind: 'error', line: 'Couldn’t share the link', sub: 'Try again.', ms: 2600 }); return; }
     closeSend(); ctx.feel('success');
@@ -215,8 +204,8 @@ async function send() {
     ctx.note?.('copy', cards);
   } catch (e) {
     console.warn('send failed', e);
-    ctx.ticket({ kind: 'error', eyebrow: 'COULDN’T SHARE', line: 'Something went wrong making the link', sub: 'Try again.' });
-  } finally { sending = false; if (btn?.isConnected) btn.disabled = false; }
+    if (!stale()) ctx.ticket({ kind: 'error', eyebrow: 'COULDN’T SHARE', line: 'Something went wrong making the link', sub: 'Try again.' });
+  } finally { if (run === sendRun) sending = false; if (btn?.isConnected) { btn.disabled = false; if (was) btn.textContent = was; } }
 }
 
 // ---------- events ----------

@@ -5,6 +5,7 @@
 // and reads the photo there, so the band’s shape, the Great Rift, the star clouds and the Magellanic Clouds land
 // exactly where they are in your sky. js/sky.js draws the result into the 2D sky with a screen blend.
 // No DOM beyond an offscreen canvas.
+import { pmTime } from './perf-meter.js?v=0.1.1582';
 
 const VS = `attribute vec2 p; void main() { gl_Position = vec4(p, 0.0, 1.0); }`;
 // FS: at the photo's l = ±180° seam the texture x jumps 1 → 0 and the GPU picks a tiny, dark mipmap there (a blocky
@@ -55,7 +56,7 @@ export function createMilkyGL(src) {
   let lost = false;
   canvas.addEventListener?.('webglcontextlost', () => { lost = true; ready = false; });
   const upload = (pic) => {
-    if (gl.isContextLost()) return;
+    if (gl.isContextLost()) return; const pmT = performance.now();
     const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, pic);
     gl.generateMipmap(gl.TEXTURE_2D); // 4096 × 2048: powers of two, so it can repeat across l = ±180° and use mipmaps
@@ -67,6 +68,7 @@ export function createMilkyGL(src) {
     // One throwaway 1 × 1 draw and read-back now, so the first real frame doesn’t pay for the GPU’s first use of the
     // texture (a ~50 ms hitch on the sky’s first frame, playtest 2026-10-09).
     try { if (canvas.width < 1) canvas.width = canvas.height = 1; gl.viewport(0, 0, 1, 1); gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(4)); } catch {}
+    pmTime('Milky Way photo upload', performance.now() - pmT);
     ready = true;
     pic.close?.();
   };
