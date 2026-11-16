@@ -1,5 +1,5 @@
-// Sky Collector plane relay for Val Town (2026-11-15). Paste this whole file into a new HTTP val on Sevaan's personal
-// Val Town account. The plane feeds don't allow websites to read them directly, so the test site asks this instead.
+// Sky Collector plane relay (2026-11-15): the request handler, served by relay/deno-planes.ts on Deno Deploy.
+// The plane feeds don't allow websites to read them directly, so the test site asks this instead.
 //   GET /?lat&lon&dist  live aircraft near a point: adsb.lol first (ODbL), then adsb.fi, then airplanes.live.
 // Only rounded coordinates are sent upstream. Commercial-use terms are still to be checked (docs/RESEARCH-PLAN.md).
 const ALLOWED = [/^https:\/\/sevaan\.github\.io$/, /^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/, /^capacitor:\/\/localhost$/, /^https:\/\/localhost$/];
