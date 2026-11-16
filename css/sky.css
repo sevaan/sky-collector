@@ -479,3 +479,201 @@ body.sky-only #reveal a#reveal-view, body.sky-only.night #reveal a#reveal-view {
    (satellite pass search) come back once plane sets exist (docs/PROJECT-PLAN.md task 13). */
 html.sky-cards #tab-albums, html.sky-cards #tab-discover { display:none !important; }
 html.sky-cards .collection-tabs { justify-content:flex-start; gap:28px; }
+
+/* ============================================================================================================
+   Sky Collection, daylight (2026-11-15, design "Light Touch, daylight" row D).
+   The Collection page is Space Collector's cards.html (js/cards-page.js adds html.sky-cards in Sky mode). Same layout,
+   sizes and spacing as the night page; only colours, backgrounds, borders, shadows and text colours change here:
+   sky-blue page, cream card-paper panels (#fffdf6, #c9b98a / #e7dcbd), navy ink (#0d2238, muted #4a6178),
+   orange accent (#fa8127; text uses the darker #c2560a so it passes AA on paper). The cards (.card--sky / .fc) are untouched.
+   ============================================================================================================ */
+html.sky-cards:root { color-scheme:light; --bg:#eef5fb; --panel:#fffdf6; --text:#0d2238; --muted:#4a6178; --line:#c9d9e6; --accent:#c2560a;
+  --ink:#0d2238; --gold:#c2560a; --cream:#0d2238; --cyan:#2b6a99; --edge:#c9b98a; --glass-strong:#fffdf6;
+  --h-text:#0d2238; --h-muted:#23405c; --h-edge:#7fa6c6; --h-glass:#ffffffd9;
+  --ui-ink:#0d2238; --ui-muted:#4a6178; --ui-link-ink:#23405c; --ui-gold:#c2560a; --ui-edge:#c9b98a; --ui-edge-soft:#c9d9e6; --ui-glass:#ffffffd9; --ui-bar:#fffdf6;
+  --day-sky:linear-gradient(180deg,#8cc2ec 0%,#cfe5f6 55%,#eef5fb 100%); }
+html.sky-cards, html.sky-cards body, html.sky-cards body.sky-tone { background:#eef5fb !important; color:#0d2238; }
+html.sky-cards body, html.sky-cards body.sky-tone { background:linear-gradient(180deg,#8cc2ec 0,#cfe5f6 220px,#eef5fb 400px) #eef5fb !important; }
+html.sky-cards.embedded body, html.sky-cards.embedded body.sky-tone { background:#eef5fb !important; }
+
+/* header */
+html.sky-cards .collection-header .wordmark { color:#0d2238; }
+html.sky-cards .collection-header .wordmark span { color:#23405c; }
+html.sky-cards .collection-header::after { border-block-color:#5c86a8; opacity:.5; }
+html.sky-cards .collection-header .icon-button, html.sky-cards .collection-header .icon-button .ico { color:#0d2238; }
+html.sky-cards .icon-button[aria-pressed="true"] { color:#c2560a; }
+html.sky-cards .collection-intro h1 { color:#0d2238; }
+html.sky-cards .eyebrow, html.sky-cards .collection-intro .eyebrow { color:#c2560a; }
+html.sky-cards #count { color:#23405c; }
+html.sky-cards .stats-link, html.sky-cards .ui-link { color:#23405c !important; }
+
+/* rank card (#logbook): same layout, a light sky panel for the ladder, orange progress */
+html.sky-cards .logbook, html.sky-cards .lb-rot { background:#fffdf6; border-color:#c9b98a; color:#0d2238;
+  box-shadow:inset 0 0 0 1px #e7dcbd, 0 6px 18px rgba(13,34,56,.12); }
+html.sky-cards #logbook .lb-rot { box-shadow:inset 0 0 0 1px #e7dcbd, 0 6px 18px rgba(13,34,56,.12); }
+html.sky-cards .lb-top { color:#0d2238; border-bottom-color:#c9b98a; }
+html.sky-cards .lb-top .lb-streak, html.sky-cards .lb-streak { color:#c2560a; }
+html.sky-cards .lb-pic { background:linear-gradient(180deg,#8cc2ec 0%,#cfe5f6 70%,#e4f1fa 100%); border-bottom-color:#c9b98a; }
+html.sky-cards .lb-ladder .lb-tw { fill:#ffffff; }
+html.sky-cards .lb-ladder path[stroke="#344654"] { stroke:#5c86a8; }
+html.sky-cards .lb-ladder text[fill="#fff2b3"] { fill:#0d2238; }
+html.sky-cards .lb-ladder text[fill="#bdbea9"] { fill:#23405c; }
+html.sky-cards .lb-ladder text[fill="#fa8127"] { fill:#a64808; }
+html.sky-cards .lb-ladder circle[fill="#0b1626"] { fill:#fffdf6; }
+html.sky-cards .lb-ladder circle[stroke="#fff2b3"] { stroke:#0d2238; }
+html.sky-cards .lb-more, html.sky-cards .lbd-more, html.sky-cards .logbook .lb-pic .lb-more { color:#a64808; }
+html.sky-cards .lb-prog, html.sky-cards .lb-foot { border-color:#c9b98a; }
+html.sky-cards .lb-name, html.sky-cards .lbd-name { color:#0d2238; }
+html.sky-cards .lb-rankrow .lb-name, html.sky-cards .lb-dial .lb-name, html.sky-cards .st-rank .lb-name { background:none; color:#0d2238; -webkit-text-fill-color:#0d2238; }
+html.sky-cards .lb-xp, html.sky-cards .lb-rankrow .lb-xp { color:#4a6178; }
+html.sky-cards .lb-xp b, html.sky-cards .lb-rankrow .lb-xp b { color:#c2560a; }
+html.sky-cards .lb-bar { background:#dce8f2; }
+html.sky-cards .lb-bar i { background:linear-gradient(90deg,#fa8127,#ffb35c); }
+html.sky-cards .lb-prog .lb-bar em { background:#0d2238; }
+html.sky-cards .lb-to, html.sky-cards .lb-sub, html.sky-cards .lb-prog .lb-sub, html.sky-cards .lbd-to, html.sky-cards .lb-label { color:#4a6178; }
+html.sky-cards .lb-to b, html.sky-cards .lbd-to b, html.sky-cards .lb-prog .lb-sub span:last-child { color:#0d2238; }
+html.sky-cards .lb-prog .lb-sub b { color:#c2560a; }
+html.sky-cards .lbd-ring circle[stroke="#24344a"] { stroke:#dce8f2; }
+html.sky-cards .lbd-ring g[stroke] { stroke:#0d223855; }
+html.sky-cards .lbd-ring b { color:#0d2238; } html.sky-cards .lbd-ring b small { color:#4a6178; }
+html.sky-cards .lb-head, html.sky-cards .logbook .lb-head { color:#a64808; } html.sky-cards .lb-head span { color:#4a6178; }
+html.sky-cards .lb-mission { border-bottom-color:#e7dcbd; color:#0d2238; }
+html.sky-cards .lb-mission i { border-color:#8a7a4a; }
+html.sky-cards .lb-mission.done { color:#4a6178; text-decoration-color:#fa8127; }
+html.sky-cards .lb-mission.done i { background:#fa8127; border-color:#fa8127; }
+html.sky-cards .lb-mission small { color:#4a6178; }
+html.sky-cards .lb-badge span { border-color:#c9b98a; color:#4a6178; } html.sky-cards .lb-badge small { color:#4a6178; }
+html.sky-cards .lb-badge.done span { color:#0d2238; }
+html.sky-cards .lb-remind { color:#a64808; border-color:#c2560a; }
+html.sky-cards .lb-since { background:#fa81271f; color:#a64808; }
+html.sky-cards .lb-glare { mix-blend-mode:soft-light; }
+html.sky-cards .ui-chip { background:#fffdf6 !important; border-color:#c9b98a !important; color:#0d2238; }
+html.sky-cards .ui-chip b { color:#a64808; } html.sky-cards .ui-chip--earned b { color:#a64808; } html.sky-cards .ui-chip__k { color:#4a6178; }
+html.sky-cards .ui-eyebrow { color:#23405c; }
+
+/* slim rank bar (folds in on scroll) and the live "objects" card */
+html.sky-cards .lb-slim { background:#eef5fb; border-bottom-color:#c9d9e6; }
+html.sky-cards .lbs-name { color:#0d2238; } html.sky-cards .lbs-main small { color:#4a6178; }
+html.sky-cards .lbs-bar { background:#dce8f2; } html.sky-cards .lbs-m { color:#a64808; }
+html.sky-cards .sg-pic { background:linear-gradient(180deg,#8cc2ec,#e4f1fa); border-bottom-color:#c9b98a; }
+html.sky-cards .sg-live, html.sky-cards .sg-live i { color:#1d7a46; } html.sky-cards .sg-live i { background:#1d7a46; box-shadow:none; }
+
+/* tabs, search, filters, results */
+html.sky-cards .collection-tabs, html.sky-cards .collection-tabs::before { background:#eef5fb; }
+html.sky-cards .collection-tabs { box-shadow:0 0 0 100vmax #eef5fb; border-bottom-color:#c9d9e6; }
+html.sky-cards .collection-tabs button { color:#4a6178; }
+html.sky-cards .collection-tabs button[aria-pressed="true"] { color:#0d2238; }
+html.sky-cards .collection-tabs .tab-ink { background:#fa8127; }
+html.sky-cards #owned-count { background:#fffdf6; color:#a64808; box-shadow:inset 0 0 0 1px #e7dcbd; }
+html.sky-cards .collection-tools, html.sky-cards .collection-tools::before { background:#eef5fb; }
+html.sky-cards .collection-tools { box-shadow:0 10px 14px -10px rgba(13,34,56,.18); }
+html.sky-cards .search, html.sky-cards .collection-tools .search { background:#fffdf6; border-color:#c9b98a; color:#4a6178; }
+html.sky-cards .search input { color:#0d2238; }
+html.sky-cards .search input::placeholder { color:#4a6178; }
+html.sky-cards .filters-btn { background:#fffdf6; border-color:#c9b98a; color:#0d2238; }
+html.sky-cards .filters-btn[aria-expanded="true"] { border-color:#c2560a; color:#a64808; }
+html.sky-cards .filters-btn.active::after { background:#fa8127; }
+html.sky-cards .filter select { background:#fffdf6; border-color:#c9b98a; color:#0d2238; }
+html.sky-cards .filter select option { background:#fffdf6; color:#0d2238; }
+html.sky-cards .result-row, html.sky-cards #results { color:#23405c; }
+html.sky-cards #reset-filters { color:#a64808; }
+html.sky-cards .collection-notice { background:#fffdf6; border-color:#c9b98a; color:#23405c; }
+html.sky-cards .grid .tile-slot:empty { background:#dbe9f5; background-clip:content-box; } html.sky-cards .tile-slot:not(:empty) { background:transparent; }
+html.sky-cards .grid-head.up-next-head { border-top-color:#c9d9e6; }
+html.sky-cards .up-next-head b { color:#a64808; } html.sky-cards .up-next-head span { color:#4a6178; }
+html.sky-cards .loading { color:#4a6178; }
+
+/* empty states */
+html.sky-cards .empty:not(.album) { border-color:#9bb8d0; background:#ffffff66; }
+html.sky-cards .empty h2 { color:#0d2238; } html.sky-cards .empty p { color:#4a6178; }
+html.sky-cards .empty__orbit { color:#c2560a; }
+html.sky-cards .empty a, html.sky-cards .empty button { background:#fa8127; color:#0d2238; }
+html.sky-cards .empty .secondary { background:none; color:#a64808; }
+html.sky-cards .pw-empty { border-color:#9bb8d0; color:#4a6178; } html.sky-cards .pw-empty .empty__orbit { color:#c2560a; }
+html.sky-cards .storage-note { color:#4a6178; }
+
+/* albums header strip (if reachable) */
+html.sky-cards .album-head { background:#fffdf6; border-color:#c9b98a; border-left-color:var(--set); color:#0d2238; }
+html.sky-cards .album { background:#fffdf6; border-color:#c9b98a; box-shadow:inset 0 0 0 1px #e7dcbd; color:#0d2238; }
+html.sky-cards .album__count, html.sky-cards .album__sub { color:#4a6178; } html.sky-cards .album__count b { color:#0d2238; }
+html.sky-cards .album__next { color:#a64808; } html.sky-cards .album-bar { background:#dce8f2; } html.sky-cards .album-bar b { background:#9bb8d0; }
+
+/* Patches wall and patch detail */
+html.sky-cards .pw-chip.on { border-color:#c2560a; background:#fa81271f; }
+html.sky-cards .pw-chip:not(.on) b { color:#0d2238; }
+html.sky-cards .pw-item span { color:#23405c; } html.sky-cards .pw-item.locked span { color:#6a8196; }
+html.sky-cards .pw-start > span { color:#a64808; } html.sky-cards .pw-start .pw-grid .pw-item span { color:#0d2238; }
+html.sky-cards .pw-start .pw-item small { color:#4a6178; }
+html.sky-cards .pw-item.new::after { background:#fa8127; color:#0d2238; }
+html.sky-cards #patch-view { background:var(--day-sky); background-color:#eef5fb; color:#0d2238; }
+html.sky-cards #patch-view::backdrop { background:rgba(13,34,56,.55); }
+html.sky-cards .pv-patch { filter:drop-shadow(0 14px 22px rgba(13,34,56,.3)); }
+html.sky-cards .pv-body h2 { color:#0d2238; } html.sky-cards .pv-body p { color:#23405c; }
+
+/* card viewer (#viewer) */
+html.sky-cards #viewer, html.sky-cards body.sky-tone #viewer { background:var(--day-sky); background-color:#eef5fb; color:#0d2238; }
+html.sky-cards #viewer::backdrop, html.sky-cards #stats-view::backdrop, html.sky-cards dialog::backdrop { background:rgba(13,34,56,.55); }
+html.sky-cards #viewer.docked, html.sky-cards #viewer.docked .viewer-scroll { background:#eef5fb !important; }
+html.sky-cards #v-position, html.sky-cards .viewer-header .ui-eyebrow { color:#23405c; }
+html.sky-cards #viewer .close, html.sky-cards .x-close, html.sky-cards #viewer .v-share { color:#0d2238; }
+html.sky-cards #viewer .close:focus-visible, html.sky-cards #stats-view .close:focus-visible { border-color:#0d2238; }
+html.sky-cards #viewer button:not(.ui-btn):not(.x-close):not(.ui-link):not(.v-up__remind):not(.v-up__show) { background:#fffdf6; border-color:#c9b98a; color:#0d2238; }
+html.sky-cards #viewer .close, html.sky-cards #viewer .v-share { background:transparent !important; }
+html.sky-cards .viewer-status, html.sky-cards .viewer-hint { color:#23405c; }
+html.sky-cards .v-where { color:#0d2238; } html.sky-cards .v-where::before { color:#c2560a; }
+html.sky-cards .viewer-history { border-top-color:#9bb8d0; }
+html.sky-cards .viewer-history h2 { color:#a64808; }
+html.sky-cards .viewer-history p { color:#23405c; } html.sky-cards .viewer-history p span:first-child, html.sky-cards .viewer-history p.with-launch .h-main span:first-child { color:#0d2238; }
+html.sky-cards .viewer-history p.with-launch .h-launch { color:#a64808; }
+html.sky-cards #viewer .history-delete { color:#4a6178; }
+html.sky-cards .v-up { background:#fffdf6; border-color:#c9b98a; }
+html.sky-cards .v-up__when, html.sky-cards .v-up__cloud { color:#23405c; } html.sky-cards .v-up__when b, html.sky-cards .v-up__soon { color:#a64808; }
+html.sky-cards #viewer .v-up .v-up__remind { background:#fa8127; color:#0d2238; }
+html.sky-cards #viewer .v-up .v-up__remind.on { background:#fffdf6; color:#0d2238; box-shadow:inset 0 0 0 1.5px #c2560a; }
+html.sky-cards #viewer .v-up .v-up__show { background:#eaf3fa; color:#0d2238; }
+html.sky-cards .v-next { background:#fffdf6; border-color:#c9b98a; }
+html.sky-cards .fd-pass, html.sky-cards .fd-pass .fd-when { color:#4a6178; } html.sky-cards .fd-pass .fd-when b { color:#0d2238; } html.sky-cards .fd-pass .fd-when .soon, html.sky-cards .fd-pill.new { color:#a64808; }
+html.sky-cards .fd-pill { background:#0d223812; color:#0d2238; } html.sky-cards .fd-pill.own { color:#4a6178; }
+html.sky-cards .ui-btn { background:#fffdf6; border-color:#0d2238; color:#0d2238; }
+html.sky-cards .ui-btn--primary { background:#fa8127; border-color:#fa8127; color:#0d2238; box-shadow:0 3px 0 #c2560a; }
+html.sky-cards .ui-btn--accent { border-color:#c2560a; color:#a64808; }
+/* swipe hints / peeks / dock */
+html.sky-cards .peek { background:rgba(13,34,56,.3); }
+html.sky-cards #dock-empty { color:#4a6178; } html.sky-cards #dock-empty .de-card { border-color:#9bb8d0; color:#6a8196; }
+/* share sheet */
+html.sky-cards #viewer .v-sheet-scrim { background:rgba(13,34,56,.5); }
+html.sky-cards #viewer .v-sheet-card { background:#fffdf6; border-color:#c9b98a; }
+html.sky-cards #viewer .v-sheet-title, html.sky-cards #viewer .v-sheet-cancel, html.sky-cards #viewer .v-opt > small { color:#4a6178; }
+html.sky-cards #viewer .v-opt { background:#f6f1e2; border-color:#e7dcbd; color:#0d2238; }
+html.sky-cards #viewer .v-opt-vis { background:linear-gradient(180deg,#cfe5f6,#eef5fb); }
+html.sky-cards #viewer .v-opt-badge { background:#fa8127; color:#0d2238; }
+
+/* toasts */
+html.sky-cards .ticket { background:#fffdf6; color:#0d2238; border-color:#c9b98a; border-left-color:#c9b98a; box-shadow:0 8px 24px rgba(13,34,56,.22); }
+html.sky-cards .ticket__eyebrow, html.sky-cards .ticket__xp small { color:#4a6178; }
+html.sky-cards .ticket--mission, html.sky-cards .ticket--achievement, html.sky-cards .ticket--rank { border-left-color:#fa8127; }
+html.sky-cards .ticket--mission .ticket__eyebrow, html.sky-cards .ticket--achievement .ticket__eyebrow, html.sky-cards .ticket--rank .ticket__eyebrow, html.sky-cards .ticket__xp { color:#a64808; }
+html.sky-cards .ticket--xp .ticket__eyebrow, html.sky-cards .ticket--xp .ticket__xp, html.sky-cards .ticket__go { color:#2b6a99; }
+
+/* observer stats view */
+html.sky-cards #stats-view, html.sky-cards #send-view { background:#eef5fb; color:#0d2238; }
+html.sky-cards #stats-view .st-rank { background:#fffdf6; border-color:#c9b98a; box-shadow:inset 0 0 0 1px #e7dcbd; }
+html.sky-cards #stats-view .st-sec { background:#fffdf6; border-color:#c9b98a; }
+html.sky-cards #stats-view .st-head { color:#a64808; } html.sky-cards #stats-view .st-head .st-since, html.sky-cards #stats-view .st-head .st-big { color:#4a6178; }
+html.sky-cards #stats-view :is(.st-goal, .st-tile) { background:#f6f1e2; border-color:#e7dcbd; }
+html.sky-cards #stats-view .st-tb { background:#dce8f2; } html.sky-cards #stats-view .st-bar span { background:#bcd2e4; }
+html.sky-cards #stats-view .st-hls > * + *, html.sky-cards #stats-view .st-rare > * + * { border-top-color:#e7dcbd; }
+html.sky-cards #stats-view .st-rank small, html.sky-cards #stats-view .st-rank .lb-xp, html.sky-cards #stats-view .st-rank .lbd-ring b small { color:#4a6178; }
+html.sky-cards #stats-view .st-rank b, html.sky-cards #stats-view .st-rank .lbd-to b, html.sky-cards #stats-view .st-rank .lbd-ring b { color:#0d2238; }
+html.sky-cards #stats-view .st-rank .lb-xp b { color:#c2560a; }
+html.sky-cards .week-lock b { color:#0d2238; } html.sky-cards .week-lock p { color:#4a6178; }
+
+/* bottom switcher (Explore | Collection) */
+html.sky-cards .sc-switch { background-color:#fffdf6 !important; box-shadow:0 0 0 1px #c9b98a, 0 10px 24px rgba(13,34,56,.2) !important; }
+html.sky-cards .sc-switch__item { color:#4a6178 !important; }
+html.sky-cards .sc-switch[data-side='left'] .sc-switch__item:first-child, html.sky-cards .sc-switch[data-side='right'] .sc-switch__item:last-child { color:#a64808 !important; }
+/* stats view: cream numbers and labels to navy, coloured tier labels darkened to stay readable on paper */
+html.sky-cards #stats-view :is(.st-head .st-big b, .st-tn, .st-goal b, .st-hl b, .st-tile b, .st-rare b, .st-bar em) { color:#0d2238; }
+html.sky-cards #stats-view :is(.st-goal span, .st-goal em, .st-goal small, .st-hl small, .st-hl span, .st-tile small, .st-bar small, .st-rare small, .st-tn small) { color:#4a6178; }
+html.sky-cards #stats-view .st-bar.now small { color:#a64808; }
+html.sky-cards #stats-view :is(.st-tl, .st-rt, .st-hl em[style], .st-rare em[style]) { filter:brightness(.55) saturate(1.3); }
