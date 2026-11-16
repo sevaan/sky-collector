@@ -3,10 +3,10 @@
 // know who sent it; 2026-11-07, Sevaan).
 // Sharing only copies: the cards stay on this phone too (2026-11-07, Sevaan: "we don't need Move as a concept... I don't
 // see anyone getting rid of cards they've collected"). Built by cards-page.js, which hands in what it knows (ctx).
-import { plural, ownSightings } from './gift.js?v=0.1.1603';
-import { nightKey } from './observation.js?v=0.1.1603';
-import { TIER_INFO } from './rarity.js?v=0.1.1603';
-import { packLinkFor, shareLink } from './pack-share.js?v=0.1.1603';
+import { plural, ownSightings } from './gift.js?v=0.1.1606';
+import { nightKey } from './observation.js?v=0.1.1606';
+import { TIER_INFO } from './rarity.js?v=0.1.1606';
+import { packLinkFor, shareLink } from './pack-share.js?v=0.1.1606';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const day = (t) => new Date(t).toLocaleDateString([], { weekday: 'short', day: 'numeric', month: 'short' });
@@ -16,7 +16,7 @@ const eveningOf = (s) => new Date(s.time - (new Date(s.time).getHours() < 12 ? 8
 let ctx = null, view = null, sel = null;
 const $ = (id) => document.getElementById(id);
 
-export function initSend(c) { ctx = c; view = $('send-view'); if (!view) return; try { new Image().src = 'assets/art/backs/back-sky-mask.webp'; } catch {} /* the pack's gold artwork is ready before the pack shows */ view.addEventListener('cancel', (e) => { e.preventDefault(); closeSend(); }); view.addEventListener('click', onClick); view.addEventListener('input', onInput); }
+export function initSend(c) { ctx = c; view = $('send-view'); if (!view) return; try { new Image().src = 'assets/art/pack-cheatline.webp'; } catch {} /* the pack's gold artwork is ready before the pack shows */ view.addEventListener('cancel', (e) => { e.preventDefault(); closeSend(); }); view.addEventListener('click', onClick); view.addEventListener('input', onInput); }
 
 // ---------- data ----------
 const real = () => ctx.sightings().filter((s) => !s.sim);
