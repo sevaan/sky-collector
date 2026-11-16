@@ -381,7 +381,7 @@ function remindStreak() {
   let ahead = (6 - d.getDay() + 7) % 7; if (ahead === 0 && d.getTime() < Date.now()) ahead = 7; // this Saturday, unless 8 pm has passed
   d.setDate(d.getDate() + ahead);
   (isNative() ? notifyAt(d.getTime(), 'Tonight · Keep your streak going', 'One catch before midnight counts for this week.', { id: 7140, link: 'spacecollector://tonight' }) /* one fixed id: tapping twice replaces it instead of stacking two (bug hunt 2026-10-20) */ : Promise.resolve('app-only'))
-    .then((r) => ticket({ kind: 'mission', tone: 'steel', icon: 'bell', eyebrow: 'STREAK', line: r === 'on' ? `We’ll remind you Saturday at ${hm(d)}.` /* the phone's clock (US/UK playtest 2026-10-25) */ : r === 'app-only' ? 'Reminders work in the Space Collector app.' : r === 'denied' ? 'Notifications are off for Space Collector.' : 'Couldn’t set a reminder here.', ms: 4000 }));
+    .then((r) => ticket({ kind: 'mission', tone: 'steel', icon: 'bell', eyebrow: 'STREAK', line: r === 'on' ? `We’ll remind you Saturday at ${hm(d)}.` /* the phone's clock (US/UK playtest 2026-10-25) */ : r === 'app-only' ? 'Reminders work in the Sky Collector app.' : r === 'denied' ? 'Notifications are off for Sky Collector.' : 'Couldn’t set a reminder here.', ms: 4000 }));
 }
 // Observer stats (free for everyone, 2026-10-12): a link under the rank card opens #stats-view.
 function openStats({ instant = false } = {}) { /* instant: already there under Settings, no slide (2026-10-24) */
@@ -758,7 +758,7 @@ function renderUpPanel(c, up, find = false) {
   const when = !find ? 'Up tonight' : today ? 'Tonight' : tmr ? 'Tomorrow' : d.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
   el.innerHTML = `<p class="v-up__when">${esc(when)}&nbsp;· <b>${esc(hm(up.start))}</b><span class="nw">&nbsp;· ${esc(where)}</span></p>${up.cloud ? '<p class="v-up__cloud">Cloud is forecast then; watch for a break.</p>' : ''}
     <div class="v-up__btns">${far ? `<button type="button" class="v-up__remind${on ? ' on' : ''}" aria-pressed="${on}">${BEL}<span>${on ? 'Reminder on' : 'Set reminder'}</span></button>` : '<span class="v-up__soon">Starting soon: look now</span>'}<button type="button" class="v-up__show">${TGT}<span>Show me</span></button></div>`;
-  const send = (sc) => { if (!EMBED) { ticket({ kind: 'info', line: sc.endsWith('remind') ? 'Reminders work in the Space Collector app.' : 'Open Explore to be shown where to look.', ms: 3500 }); return; }
+  const send = (sc) => { if (!EMBED) { ticket({ kind: 'info', line: sc.endsWith('remind') ? 'Reminders work in the Sky Collector app.' : 'Open Explore to be shown where to look.', ms: 3500 }); return; }
     window.parent.postMessage(find ? { sc, pass: up } : { sc, id: up.id, start: up.start }, location.origin); };
   el.querySelector('.v-up__remind')?.addEventListener('click', () => send(find ? 'find-remind' : 'up-remind'));
   el.querySelector('.v-up__show').addEventListener('click', () => send(find ? 'find-show' : 'up-show'));
@@ -1361,7 +1361,7 @@ function openPatch(id, from = null) {
     <h2>${esc(a.name)}</h2><p>${esc(localText(a.text))}</p>
     ${!a.done && a.prog && a.prog[1] > 1 ? `<div class="pv-prog"><div class="pv-prog__bar"><i style="width:${Math.min(100, (a.prog[0] / a.prog[1]) * 100).toFixed(1)}%"></i></div><span><b>${a.prog[0].toLocaleString()}</b> of ${a.prog[1].toLocaleString()}</span></div>` : ''}
     <div class="pv-meta">${f ? `<span class="ui-chip"><b>${f === 'gold' ? 'Gold foil' : 'Holo'}</b></span>` : ''}${a.secret ? '<span class="ui-chip"><b>Secret</b></span>' : ''}${['catalogue', 'curator', 'months12', 'anniversary', 'streak12', 'cons44'].includes(a.id) && !a.done ? '<span class="ui-chip"><b>Legendary goal</b><span class="ui-chip__k">years, not weeks</span></span>' : ''}</div>
-    <div class="pv-foot"><span>${a.done ? (date ? fmtEarned(date) : 'EARNED') : 'NOT YET EARNED'}</span><b>SPACE COLLECTOR</b></div></div>
+    <div class="pv-foot"><span>${a.done ? (date ? fmtEarned(date) : 'EARNED') : 'NOT YET EARNED'}</span><b>SKY COLLECTOR</b></div></div>
     <span class="pv-hint" aria-hidden="true">Swipe up to put it away</span>`;
   addStarfield($('pv-body').querySelector('.pv-card'), 46); // twinkling stars inside the patch card (2026-10-25, Sevaan)
   const d = $('patch-view'); if (!d.open) d.showModal();

@@ -255,7 +255,7 @@ export function playPack(o) {
       el.innerHTML = `<div class="gp-sum" role="group" aria-label="${esc(from)}"><div class="gp-sbar"><span>${esc(from)}</span><span>${esc(o.dateLabel ?? '')}</span></div>
         <h2>${o.count} card${o.count === 1 ? '' : 's'}</h2><p>${o.subHtml ?? `${o.newCount ? `<b>${o.newCount} new</b> to you` : 'None new to you'}${upd ? ` · <b>${upd}</b> you have, with more` : ''}`}</p>
         <div class="gp-fan"></div><div class="gp-stats"${o.stats?.length ? '' : ' hidden'}>${statsHtml(o.stats)}</div><div class="gp-patches" hidden></div>
-        <div class="gp-sfoot"><span>${esc(o.footLeft ?? '')}</span><span>Space Collector</span></div></div>
+        <div class="gp-sfoot"><span>${esc(o.footLeft ?? '')}</span><span>Sky Collector</span></div></div>
         <div class="gp-btns">${o.rowHtml ? `<button class="gp-row" type="button">${o.rowHtml}</button>` : ''}<button class="go" type="button">${esc(o.goLabel ?? 'See them in your collection')}</button><button class="later" type="button">${esc(o.laterLabel ?? 'Done')}</button></div>`;
       root.appendChild(el); sfx('complete', 0.9);
       /* The night's best five as a fan in the middle (2026-11-11, Sevaan), best in front and centre, "+N more" under it when

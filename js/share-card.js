@@ -53,12 +53,12 @@ export async function shareCard(canvas, filename, title) {
 export async function shareCardEl(el, c, { title }) {
   const canvas = await drawShareCard(el);
   // Readable file names with the game’s name (2026-10-12, Sevaan): "Space Collector - Arcturus.png".
-  return shareCard(canvas, `Space Collector - ${title.replace(/[\\/:*?"<>|]+/g, '').trim()}.png`, `${title} · Space Collector`);
+  return shareCard(canvas, `Sky Collector - ${title.replace(/[\\/:*?"<>|]+/g, '').trim()}.png`, `${title} · Sky Collector`);
 }
 
 // Share any card-shaped element on screen as the same kind of picture (2026-11-11: the morning pack's summary card).
 // rootExtra: styles for the copied element itself (e.g. lifting it out of its on-screen centring).
 export async function shareElementPicture(el, title, { rootExtra = '', extra = null } = {}) {
   const canvas = await drawShareCard(el, { rootExtra, extra });
-  return shareCard(canvas, `Space Collector - ${title.replace(/[\\/:*?"<>|]+/g, '').trim()}.png`, `${title} · Space Collector`);
+  return shareCard(canvas, `Sky Collector - ${title.replace(/[\\/:*?"<>|]+/g, '').trim()}.png`, `${title} · Sky Collector`);
 }

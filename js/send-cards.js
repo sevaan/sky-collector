@@ -194,7 +194,7 @@ async function send() {
     if (stale()) return;
     if (btn) btn.textContent = was;
     if (!link) { ctx.ticket({ kind: 'error', eyebrow: 'NO CONNECTION', line: 'Couldn’t make the link', sub: 'Check you’re online and try again.' }); return; }
-    const title = `${plural(cards, 'card')} · Space Collector`;
+    const title = `${plural(cards, 'card')} · Sky Collector`;
     await seal();
     if (stale()) return;
     const r = await shareLink(link, title);

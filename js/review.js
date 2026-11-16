@@ -220,13 +220,13 @@ const setSize = () => document.documentElement.style.setProperty('--mini-s', $('
 $('size').addEventListener('input', setSize); setSize();
 $('copy').addEventListener('click', async () => {
   const lines = [...stars.values()].map((s) => `- ${s.art ? `art "${s.art}"` : 'drawn art'} · ${s.name} (${s.type}, ${s.tier}, key ${s.key})`);
-  const text = `Space Collector cards to redo (${lines.length}):\n${lines.join('\n')}`;
+  const text = `Sky Collector cards to redo (${lines.length}):\n${lines.join('\n')}`;
   try { await navigator.clipboard.writeText(text); toast(`Copied ${lines.length} starred`); } catch { prompt('Copy this list:', text); }
 });
 $('copy-frames').textContent = `Copy framing (${Object.keys(frames).length})`;
 $('copy-frames').addEventListener('click', async () => {
   const n = Object.keys(frames).length; if (!n) { toast('No framing saved yet'); return; }
-  const text = `Space Collector framing (${n}):\n${JSON.stringify(frames)}`;
+  const text = `Sky Collector framing (${n}):\n${JSON.stringify(frames)}`;
   try { await navigator.clipboard.writeText(text); toast(`Copied framing for ${n} picture${n === 1 ? '' : 's'}`); } catch { prompt('Copy this:', text); }
 });
 $('clear').addEventListener('click', () => { if (stars.size && confirm(`Clear all ${stars.size} stars?`)) { stars.clear(); saveStars(); render(); } });

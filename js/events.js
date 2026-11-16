@@ -55,7 +55,7 @@ export function eventBadges(sightings) {
 export function passIcs({ title, start, end, description }) {
   const fmt = (ms) => new Date(ms).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
   const esc = (t) => String(t).replace(/([,;\\])/g, '\\$1').replace(/\n/g, '\\n');
-  return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Space Collector//EN', 'BEGIN:VEVENT', `UID:${start}-${Math.random().toString(36).slice(2)}@space-collector`,
+  return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Sky Collector//EN', 'BEGIN:VEVENT', `UID:${start}-${Math.random().toString(36).slice(2)}@space-collector`,
     `DTSTAMP:${fmt(Date.now())}`, `DTSTART:${fmt(start)}`, `DTEND:${fmt(Math.max(end, start + 120000))}`, `SUMMARY:${esc(title)}`, `DESCRIPTION:${esc(description)}`,
     'BEGIN:VALARM', 'TRIGGER:-PT10M', 'ACTION:DISPLAY', `DESCRIPTION:${esc(title)}`, 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
 }

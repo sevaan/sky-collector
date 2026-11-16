@@ -9,9 +9,9 @@ import { plugin, isNative, onNative } from './native.js?v=0.1.1672';
 // appl_ / goog_ keys from RevenueCat → Project settings → API keys once the store apps are connected.
 // RevenueCat public SDK keys (safe to ship). iOS is the real App Store key (2026-10-19); Android the real Play key
 // (2026-11-05, app.spacecollector). TEST_KEY is used anywhere when Testing tools → "RevenueCat Test Store" is on.
-const TEST_KEY = 'test_JraFtXiozFSxozSuydeJskzEQGO';
-const RC_KEYS = { ios: 'appl_kcCLaPloJiZyAENoVFnxOxyhGVY', android: 'goog_kzvEVYbcfivjiBzgohQFzqnoKND' };
-const ENTITLEMENT = 'space_collector_plus'; // RevenueCat → Entitlements (display name Space Collector Plus)
+const TEST_KEY = ''; // Sky Collector has no RevenueCat project yet
+const RC_KEYS = { ios: '', android: '' }; // Sky Collector has no store apps yet
+const ENTITLEMENT = 'sky_collector_plus'; // RevenueCat → Entitlements (display name Sky Collector Plus)
 const listeners = new Set();
 const ls = { get: (k) => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
 const testing = () => ls.get('plusTest') === '1';

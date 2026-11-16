@@ -25,6 +25,13 @@ Every Sky change to a Space Collector file must be one of three things, and noth
 Plane-only code lives in its own modules and is copied over unchanged. The Sky layer is kept as a small, readable set of
 changes so the next sync from Space Collector is a re-apply, not a re-port.
 
+## Sevaan's asks to build in (2026-11-16)
+
+- Today's top card is Space Collector's Tonight hero card (`.tn` hero), with its weather: live clouds and rain from the
+  forecast (js/weather-art.js cloudsHtml / rainHtml), not a plain gradient.
+- Every orange in Sky becomes red: one accent variable in the theme (labels, chart bars, tab indicator, links, chips), not
+  per-element overrides.
+
 ## Base
 
 Space Collector at its latest commit (`fc2de46b`, 2026-11-15), committed files only (`git archive`), excluding store/,
