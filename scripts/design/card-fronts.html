@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Card fronts</title>
+<!-- Review board for Sky Collector's flight and plane card fronts (2026-11-15 fidelity pass). Renders real examples with the
+     app's own renderers (js/flight-card.js). Serve the repo root and open /scripts/design/card-fronts.html. -->
+<base href="../../">
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/cards.css">
+<link rel="stylesheet" href="css/ui.css">
+<link rel="stylesheet" href="css/reveal.css">
+<link rel="stylesheet" href="css/sky.css">
+<style>
+  html, body { margin:0; background:linear-gradient(180deg,#a9d2f0 0, #e4f1fa 600px, #eef5fb 1200px); color:#0d2238; font-family:Inter, system-ui, sans-serif; }
+  main { width:388px; box-sizing:border-box; margin:0; padding:18px 16px 60px; display:flex; flex-direction:column; align-items:center; gap:10px; }
+  h1 { font:400 22px/1.1 'SC Display','Russo One',sans-serif; margin:4px 0 0; align-self:stretch; }
+  .k { align-self:stretch; margin:18px 0 2px; font:600 13px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.2em; color:#c2560a; }
+  .tilt { display:contents; }
+  .grid { align-self:stretch; }
+  .pair { display:flex; gap:10px; align-self:stretch; justify-content:center; --cf:6px; } .pair > * { flex:none; }
+  .mock-back { width:calc(28 * var(--cf)); border-radius:calc(1.15 * var(--cf)); background:#0d2238; border:calc(.25 * var(--cf)) solid #1f5fbf; box-sizing:border-box; color:#fffdf6; display:grid; place-items:center; font:600 11px 'SC Label',sans-serif; letter-spacing:.2em; }
+  #dbg { align-self:stretch; font:12px/1.4 ui-monospace,monospace; white-space:pre-wrap; }
+</style>
+</head>
+<body>
+<main id="board">
+  <h1>Card fronts</h1>
+</main>
+<script type="module">
+import { flightCardHtml, planeCardHtml, miniCardHtml } from './js/flight-card.js';
+import { attachTilt } from './js/card.js';
+
+const ap = (icao, iata, city, cc) => ({ icao, iata, city, cc });
+const YYZ = ap('CYYZ', 'YYZ', 'Toronto', 'CA'), YTZ = ap('CYTZ', 'YTZ', 'Toronto', 'CA'), YOW = ap('CYOW', 'YOW', 'Ottawa', 'CA');
+const CUN = ap('MMUN', 'CUN', 'Cancún', 'MX'), LGW = ap('EGKK', 'LGW', 'London', 'GB'), MEM = ap('KMEM', 'MEM', 'Memphis', 'US'), DXB = ap('OMDB', 'DXB', 'Dubai', 'AE');
+const fact = (a, b, km, h, m, plane) => `${a.city} to ${b.city} is **${km} km** as the crow flies: about ${h ? `${h}\u00a0h ${String(m).padStart(2, '0')}\u00a0m` : `${m} minutes`} in the air, on a ${plane}.`;
+const flight = (o) => ({ kind: 'flight', key: `F:${o.callsign.slice(0, 3)}:${o.from.icao}-${o.to.icao}`, ...o, kmText: o.km.toLocaleString('en-US'), air: { h: o.h, m: o.m },
+  fact: o.fact ?? fact(o.from, o.to, o.km.toLocaleString('en-US'), o.h, o.m, o.typeName) });
+
+const F = {
+  common: flight({ from: YTZ, to: YOW, airline: 'Porter Airlines', callsign: 'POE141', km: 351, h: 0, m: 55, set: 'Across Canada', tier: 'common', type: 'DH8D', typeName: 'De Havilland Dash 8-400' }),
+  uncommon: flight({ from: YYZ, to: CUN, airline: 'Air Canada Rouge', callsign: 'ROU1630', km: 2530, h: 3, m: 40, set: 'Sun Destinations', tier: 'uncommon', type: 'A321', typeName: 'Airbus A321' }),
+  rare: flight({ from: YYZ, to: LGW, airline: 'WestJet', callsign: 'WJA2', km: 5720, h: 7, m: 40, set: 'Across the Atlantic', tier: 'rare', type: 'B789', typeName: 'Boeing 787-9' }),
+  epic: flight({ from: MEM, to: YYZ, airline: 'FedEx Express', callsign: 'FDX1290', km: 1124, h: 1, m: 55, set: 'Cargo', tier: 'epic', type: 'MD11', typeName: 'McDonnell Douglas MD-11',
+    fact: 'FedEx flies its parcels through **Memphis** every night: this MD-11 left the hub with the overnight sort, **1,124 km** from Toronto.' }),
+  legendary: flight({ from: YYZ, to: DXB, airline: 'Emirates', callsign: 'UAE242', km: 11120, h: 14, m: 25, set: 'Around the World', tier: 'legendary', type: 'A388', typeName: 'Airbus A380' }),
+};
+const P = {
+  photo: { kind: 'plane', key: 'P:B38M', name: 'Boeing 737 MAX', type: 'B38M', glyph: 'jet', tier: 'common', stamp: 'WestJet', reg: 'C-FNWD' },
+  a380: { kind: 'plane', key: 'P:A388', name: 'Airbus A380', type: 'A388', glyph: 'jet', tier: 'epic', stamp: 'Emirates', reg: 'A6-EOE' },
+  none: { kind: 'plane', key: 'P:B06', name: 'Bell 206 JetRanger', type: 'B06', glyph: 'heli', tier: 'rare', stamp: '', reg: 'C-GORA' },
+  prop: { kind: 'plane', key: 'P:DA40', name: 'Diamond DA40', type: 'DA40', glyph: 'prop', tier: 'common', stamp: '', reg: 'C-GKWD' },
+};
+const day = (d) => new Date(2026, 10, d, 19, 40);
+const board = document.getElementById('board');
+const add = (label, html, tilt) => {
+  board.insertAdjacentHTML('beforeend', `<p class="k">${label}</p>`);
+  const w = document.createElement('div'); w.innerHTML = html; const card = w.firstElementChild;
+  if (tilt) for (const [k, v] of Object.entries(tilt)) card.style.setProperty(k, v);
+  board.append(card); attachTilt(card, { scroll: true });
+};
+const lit = (x) => ({ '--o': '1', '--mx': `${x}%`, '--my': '35%', '--bgx': `${37 + x * .26}%`, '--bgy': '45%', '--hyp': '.5' });
+add('COMMON FLIGHT · SHORT HOP', flightCardHtml(F.common, { caughtAt: day(12), heightFt: 6240, sightings: 1, eager: true }));
+add('RARE FLIGHT', flightCardHtml(F.rare, { caughtAt: day(14), heightFt: 33975, sightings: 2, eager: true }), lit(35));
+add('EPIC CARGO FLIGHT', flightCardHtml(F.epic, { caughtAt: day(9), heightFt: 24100, sightings: 1, eager: true }), lit(40));
+add('LEGENDARY FLIGHT', flightCardHtml(F.legendary, { caughtAt: day(15), heightFt: 37000, sightings: 1, eager: true }), lit(45));
+add('PLANE CARD · PHOTO', planeCardHtml(P.photo, { caughtAt: day(3), heightFt: 11800, speedKmh: 612, awayKm: 9, sightings: 6, stamps: 3, eager: true }));
+add('PLANE CARD · NO PHOTO (GLYPH)', planeCardHtml(P.none, { caughtAt: day(8), heightFt: 1450, speedKmh: 190, awayKm: 2, sightings: 1, stamps: 0, eager: true }), lit(30));
+board.insertAdjacentHTML('beforeend', '<p class="k">COLLECTION MINI CARDS</p>');
+const tiles = [
+  { kind: 'flight', card: F.legendary, last: +day(15), n: 1 }, { kind: 'flight', card: F.rare, last: +day(14), n: 2 }, { kind: 'flight', card: F.uncommon, last: +day(13), n: 3 },
+  { kind: 'flight', card: F.common, last: +day(12), n: 1 }, { kind: 'flight', card: F.epic, last: +day(9), n: 1 }, { kind: 'plane', card: P.a380, last: +day(15), n: 2, stamps: 1 },
+  { kind: 'plane', card: P.photo, last: +day(3), n: 6, stamps: 3 }, { kind: 'plane', card: P.none, last: +day(8), n: 1, stamps: 0 }, { kind: 'plane', card: P.prop, last: +day(2), n: 1, stamps: 0 },
+];
+board.insertAdjacentHTML('beforeend', `<div class="scc-grid grid">${tiles.map((e) => `<button type="button" class="sct">${miniCardHtml(e)}</button>`).join('')}</div>`);
+// The reveal: the card inside #reveal-card at the reveal's --cf, beside a stand-in for the sealed back (#rv-back is the
+// holder's size: 28 × --cf wide, as tall as the card measured at --cf 12px / 12, like js/reveal.js sizeCard).
+board.insertAdjacentHTML('beforeend', '<p class="k">IN THE REVEAL · BACK BESIDE FRONT (--cf 6px)</p>');
+const pair = document.createElement('div'); pair.className = 'pair';
+pair.innerHTML = `<div class="mock-back">BACK</div><div id="reveal-card"><div class="sky-rv">${flightCardHtml(F.rare, { caughtAt: day(14), heightFt: 33975, sightings: 2, eager: true })}</div></div>`;
+board.append(pair);
+const rc = pair.querySelector('.sky-rv'); pair.style.setProperty('--cf', '12px'); const ch = rc.getBoundingClientRect().height / 12; pair.style.setProperty('--cf', '6px');
+pair.querySelector('.mock-back').style.height = `calc(${ch} * var(--cf))`;
+const dbg = document.createElement('div'); dbg.id = 'dbg';
+dbg.textContent = [...document.querySelectorAll('.fc')].map((c) => `${c.closest('.pair') ? 'reveal' : 'card'} ${(c.getBoundingClientRect().width / parseFloat(getComputedStyle(c).fontSize)).toFixed(2)} x ${(c.getBoundingClientRect().height / parseFloat(getComputedStyle(c).fontSize)).toFixed(2)} em  in-scroll ${[...c.querySelectorAll('.fc-in')].map((i) => i.scrollHeight - i.clientHeight).join()}`).join('\n') + `\nreveal --ch ${ch.toFixed(2)}`;
+board.append(dbg);
+</script>
+</body>
+</html>

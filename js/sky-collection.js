@@ -2,8 +2,8 @@
 // (localStorage 'skyCatches', written by js/sky-catch.js). Runs inside cards.html and takes over its main area; Space
 // Collector's satellite grid stays in the page, hidden. Design: canvas row D (cream mini cards, gold frames for Rare+).
 
-import { flightCardHtml, planeCardHtml, glyphSvg } from './flight-card.js?v=0.1.1602';
-import { TIERS } from './flights.js?v=0.1.1602';
+import { flightCardHtml, planeCardHtml, miniCardHtml } from './flight-card.js?v=0.1.1603';
+import { attachTilt } from './card.js?v=0.1.1603';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -34,25 +34,13 @@ const state = { tab: 'flights', filter: 'all', open: null };
 const FLIGHT_SETS = ['Across Canada', 'North America', 'Across the Atlantic', 'Sun Destinations', 'Around the World', 'Cargo'];
 const planeGroup = (e) => (e.card.glyph === 'heli' ? 'Helicopters' : e.card.glyph === 'prop' ? 'Propellers' : 'Jets');
 
-function tierFrame(tier) { return ['rare', 'epic', 'legendary'].includes(tier) ? 'gold' : 'steel'; }
-function tierPill(tier) { const T = TIERS[tier] ?? TIERS.common; return `<span class="sct-tier" style="color:${T.color}">${T.mark} ${T.label.toUpperCase()}</span>`; }
-
+// A grid tile is a real mini card (js/flight-card.js miniCardHtml): frame by rarity, photo, title, stats, footer.
+// Older catches kept the aircraft type only on the catch record, so it's passed along for the photo.
 function tile(e) {
-  const c = e.card, last = e.seen.at(-1).time, n = e.seen.length;
-  if (e.kind === 'flight') {
-    return `<button type="button" class="sct sct--${tierFrame(c.tier)}" data-key="${esc(e.key)}" aria-label="${esc(`${c.from.city} to ${c.to.city}, ${c.airline}`)}"><span class="sct-in">
-      <span class="sct-art sct-art--route">${tierPill(c.tier)}<span class="sct-arc"><span></span></span><span class="sct-dot sct-dot--a"></span><span class="sct-dot sct-dot--b"></span><span class="sct-code">${esc(c.to.iata || c.to.icao)}</span></span>
-      <span class="sct-name">${esc(c.to.city)}</span>
-      <span class="sct-sub">${esc(c.airline)}</span>
-      <span class="sct-row"><span>${esc(c.from.iata || c.from.icao)} → ${esc(c.to.iata || c.to.icao)}</span><span>${esc(c.kmText)} km</span></span>
-      <span class="sct-when">✓ ${day(last)}${n > 1 ? ` · ${n}×` : ''}</span></span></button>`;
-  }
-  return `<button type="button" class="sct sct--${tierFrame(c.tier)}" data-key="${esc(e.key)}" aria-label="${esc(c.name)}"><span class="sct-in">
-    <span class="sct-art sct-art--plane">${tierPill(c.tier)}${glyphSvg(c.glyph, 'sct-glyph')}</span>
-    <span class="sct-name">${esc(c.name)}</span>
-    <span class="sct-sub">${e.stamps.size ? `${e.stamps.size} airline${e.stamps.size === 1 ? '' : 's'}` : esc(c.type || 'Aircraft')}</span>
-    <span class="sct-row"><span>${esc(c.type)}</span><span>${n}×</span></span>
-    <span class="sct-when">✓ ${day(last)}</span></span></button>`;
+  const c = e.card, n = e.seen.length;
+  const label = e.kind === 'flight' ? `${c.from.city} to ${c.to.city}, ${c.airline}` : c.name;
+  return `<button type="button" class="sct" data-key="${esc(e.key)}" aria-label="${esc(`${label}, ${c.tier}, seen ${n} ${n === 1 ? 'time' : 'times'}`)}">${miniCardHtml({
+    kind: e.kind, card: c, type: c.type || e.seen.find((s) => s.type)?.type || '', last: e.seen.at(-1).time, n, stamps: e.stamps?.size ?? 0 })}</button>`;
 }
 
 function render() {
@@ -84,13 +72,17 @@ function openCard(e) {
   if (!e) return;
   const last = e.seen.at(-1), dlg = $('sky-viewer');
   const html = e.kind === 'flight'
-    ? flightCardHtml(e.card, { caughtAt: new Date(e.seen[0].time), heightFt: last.altFt, sightings: e.seen.length })
-    : planeCardHtml(e.card, { caughtAt: new Date(e.seen[0].time), heightFt: last.altFt, speedKmh: Math.round((last.gsKt ?? 0) * 1.852), awayKm: Math.round(last.rangeKm ?? 0), sightings: e.seen.length });
+    ? flightCardHtml(e.card, { caughtAt: new Date(e.seen[0].time), heightFt: last.altFt, sightings: e.seen.length, type: e.seen.find((s) => s.type)?.type, planeName: last.plane?.name, eager: true })
+    : planeCardHtml(e.card, { caughtAt: new Date(e.seen[0].time), heightFt: last.altFt, speedKmh: Math.round((last.gsKt ?? 0) * 1.852), awayKm: Math.round(last.rangeKm ?? 0), sightings: e.seen.length, stamps: e.stamps.size, eager: true });
   const rows = [...e.seen].reverse().slice(0, 30).map((s) => `<li><span>${esc(when(s.time))}</span><span>${esc([s.callsign, s.reg, s.altFt ? `${Math.round(s.altFt / 100) * 100} ft` : ''].filter(Boolean).join(' · '))}</span></li>`).join('');
   const stamps = e.kind === 'plane' && e.stamps.size ? `<p class="scv-k">AIRLINE STAMPS · ${e.stamps.size}</p><p class="scv-stamps">${[...e.stamps].map((a) => `<span>${esc(a)}</span>`).join('')}</p>` : '';
+  viewerTilt?.destroy(); viewerTilt = null;
   dlg.querySelector('.scv-body').innerHTML = `<div class="scv-card">${html}</div>${stamps}<p class="scv-k">WHEN YOU SAW IT · ${e.seen.length} ${e.seen.length === 1 ? 'TIME' : 'TIMES'}</p><ul class="scv-list">${rows}</ul>`;
+  // The card tilts under the finger, its foil and glare following (the page still scrolls).
+  const card = dlg.querySelector('.scv-card .fc'); if (card) viewerTilt = attachTilt(card, { scroll: true });
   if (!dlg.open) dlg.showModal();
 }
+let viewerTilt = null;
 
 function init() {
   if (!$('sky-col')) return;

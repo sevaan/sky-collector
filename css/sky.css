@@ -35,42 +35,156 @@
 .fcatch-strip { width:min(350px,100%); display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:12px; background:#fff; border:1px solid var(--sc-line); }
 .fcatch-strip-art { width:46px; height:46px; flex:none; border-radius:8px; background:linear-gradient(180deg,#78b3e3,#d8eaf8); display:grid; place-items:center; }
 .fcatch-strip-art svg { width:34px; height:34px; fill:#fff; stroke:var(--sc-ink); stroke-width:1.4; }
+.fcatch-strip-art { overflow:hidden; box-shadow:0 0 0 1px var(--sc-line); } .fcatch-strip-art.has-photo img { width:100%; height:100%; object-fit:cover; display:block; }
 .fcatch-strip-t { display:flex; flex-direction:column; gap:2px; }
 .fcatch-strip-k { font:600 12px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.16em; color:var(--sc-orange-ink); }
 .fcatch-strip-n { font:400 15px/1.1 'SC Display','Russo One',sans-serif; }
 .fcatch-done { margin-top:auto; width:min(350px,100%); height:52px; border-radius:12px; border:2px solid var(--sc-ink); color:var(--sc-ink);
   font:600 16px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.2em; }
 
-/* ---- The card ---- */
-.fc { width:min(330px, calc(100vw - 40px)); padding:6px; border-radius:18px; background:#b8c6d2; box-shadow:0 14px 34px rgba(13,34,56,.22); color:var(--sc-ink); }
-.fc--rare, .fc--epic, .fc--legendary { background:var(--sc-gold); box-shadow:0 14px 34px rgba(13,34,56,.22), 0 0 24px rgba(242,182,50,.35); }
-.fc-in { background:var(--sc-paper); border-radius:13px; border:1.5px solid #c9d4dd; padding:10px; display:flex; flex-direction:column; gap:8px; }
-.fc-art { position:relative; height:176px; border-radius:8px; overflow:hidden; }
-.fc-art--route { background-color:#d7eaf8; background-image:linear-gradient(rgba(13,34,56,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(13,34,56,.07) 1px,transparent 1px); background-size:28px 28px; }
-.fc-art--plane { background:linear-gradient(180deg,#78b3e3,#d8eaf8); display:grid; place-items:center; }
-.fc-glyph { width:150px; height:150px; fill:#fff; stroke:var(--sc-ink); stroke-width:1.2; transform:rotate(-20deg); }
-.fc-tier { position:absolute; left:8px; top:8px; z-index:1; background:#fff; border-radius:6px; padding:3px 7px; font:600 12px/1.2 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.14em; }
-.fc-set { position:absolute; right:10px; top:10px; z-index:1; font:600 12px/1.2 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.16em; }
-.fc-arc { position:absolute; left:12%; right:12%; top:48px; height:80px; overflow:hidden; }
-.fc-arc div { height:160px; border-radius:50%; border:2.5px dashed var(--sc-orange-ink); }
-.fc-dot { position:absolute; top:121px; width:14px; height:14px; border-radius:50%; border:3px solid #fff; transform:translateX(-50%); }
-.fc-dot--a { left:12%; background:var(--sc-ink); } .fc-dot--b { left:88%; background:var(--sc-orange-ink); }
-.fc-code { position:absolute; top:144px; transform:translateX(-50%); font:400 15px/1 'SC Display','Russo One',sans-serif; }
-.fc-code--a { left:12%; } .fc-code--b { left:88%; }
-.fc-name { margin:0; font:400 25px/1.02 'SC Display','Russo One',sans-serif; text-transform:uppercase; }
-.fc-id { display:flex; justify-content:space-between; align-items:center; gap:8px; font:500 15px/1.2 'SC Label','Barlow Condensed',sans-serif; }
-.fc-id-r { border-left:1.5px solid var(--sc-ink); padding-left:8px; letter-spacing:.06em; white-space:nowrap; }
-.fc-stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); border-top:1px solid var(--sc-rule); }
-.fc-stat { display:flex; flex-direction:column; gap:3px; padding:6px 6px 0; border-right:1px solid var(--sc-rule); }
+/* ---- The card (2026-11-15 fidelity pass, js/flight-card.js) ----
+   28 × 42em like Space Collector's retro cards, so inside #reveal-card it sizes off the reveal's --cf and lines up with
+   the sealed back it flips from; elsewhere --fc-u (default: fits the screen, max 11.8px). The photo takes whatever height
+   the words leave, so every card is the same shape. Layers, back to front: a metal frame by rarity
+   (.fc-face), cream card stock with grain and a double rule (.fc-in), a recessed photo window, then foil, gloss and glare
+   over the whole card. Tilt values come from js/card.js attachTilt on the card or an ancestor, so every var() here has a
+   fallback and the card never sets them itself (that would block the inherited ones). */
+.fc, .sct-face {
+  --paper:#fffdf6; --ink:#0d2238; --ink2:#1b3047; --muted:#4a6178; --rule:#cdbb8c; --orange:#fa8127; --orange-ink:#c2560a;
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 .05 0 0 0 0 .13 0 0 0 0 .22 0 0 0 .32 -.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --glitter:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='1' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 11 -7.6'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --sparkle:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.3' numOctaves='1' seed='9'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 9 -5.4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E");
+  --holo:linear-gradient(115deg, transparent 38%, hsla(350,100%,72%,.55) 41%, hsla(32,100%,66%,.6) 43.5%, hsla(56,100%,64%,.6) 46%, hsla(130,80%,62%,.55) 48.5%, hsla(185,95%,62%,.6) 51%, hsla(220,95%,70%,.6) 53.5%, hsla(270,90%,74%,.55) 56%, hsla(320,90%,74%,.4) 58.5%, transparent 62%);
+  --streak:linear-gradient(115deg, transparent 47%, rgba(255,255,255,.5) 49.2%, rgba(255,255,255,.85) 50%, rgba(255,255,255,.5) 50.8%, transparent 53%);
+}
+/* Metals by rarity: steel, sage steel, gold, iridescent pearl, gold foil */
+.fc--common, .sct--common { --tier-ink:#3d5266; --frame:linear-gradient(150deg,#f4f7f9 0%,#aab7c3 18%,#e6ecf1 36%,#8495a6 55%,#d9e1e8 74%,#71839a 100%); --edge:#5d6f82; }
+.fc--uncommon, .sct--uncommon { --tier-ink:#18693f; --frame:linear-gradient(150deg,#f1f8f2 0%,#9dbca8 18%,#e0eee4 36%,#6f9a80 55%,#d2e5d8 74%,#5b8169 100%); --edge:#4f735d; }
+.fc--rare, .sct--rare { --tier-ink:#1a52a6; --frame:linear-gradient(150deg,#fff4c4 0%,#e3ac2f 18%,#ffe594 36%,#b47d17 55%,#ffd866 74%,#9c6a12 100%); --edge:#9a6a12; }
+.fc--epic, .sct--epic { --tier-ink:#6a31ae; --frame:linear-gradient(125deg,#ffc9ea 0%,#ac8cff 14%,#7fdfe6 28%,#ffe48a 42%,#f592c8 56%,#8fa6ff 70%,#9be8c4 84%,#e4b8ff 100%); --edge:#7a58ad; }
+.fc--legendary, .sct--legendary { --tier-ink:#7a5200; --frame:linear-gradient(150deg,#fff8d6 0%,#e9b53a 16%,#fff0b0 30%,#c48a1c 46%,#ffe07a 62%,#a87414 80%,#ffeaa0 100%); --edge:#8f6210; }
+
+.fc { --u:var(--fc-u, min(11.8px, calc((100vw - 40px) / 28))); font-size:var(--u); width:28em; flex:none; color:var(--ink); text-align:left;
+  -webkit-user-select:none; user-select:none; perspective:90em; font-family:Inter,'Helvetica Neue',Helvetica,Arial,sans-serif; }
+.fc *, .fc *::before, .fc *::after { box-sizing:border-box; }
+#reveal-card .fc { --fc-u:var(--cf); }
+.fc-rot { position:relative; border-radius:1.45em; transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) scale(calc(1 + var(--o,0) * .015)); transform-style:preserve-3d;
+  box-shadow:0 calc(.9em + var(--o,0) * .8em) calc(2.2em + var(--o,0) * 1.6em) rgba(13,34,56,.26), 0 .15em .4em rgba(13,34,56,.2); }
+.fc--gilt .fc-rot { box-shadow:0 calc(.9em + var(--o,0) * .8em) calc(2.2em + var(--o,0) * 1.6em) rgba(13,34,56,.26), 0 .15em .4em rgba(13,34,56,.2), 0 0 2.2em rgba(242,182,50,.32); }
+.fc--epic .fc-rot { box-shadow:0 calc(.9em + var(--o,0) * .8em) calc(2.2em + var(--o,0) * 1.6em) rgba(13,34,56,.26), 0 .15em .4em rgba(13,34,56,.2), 0 0 2.2em rgba(170,140,255,.35); }
+/* The frame: metal with a bevel (light top-left lip, dark lower edge) and a hairline where it meets the paper */
+.fc-face { position:relative; border-radius:1.45em; padding:.62em; height:42em; display:flex; background:var(--frame);
+  box-shadow:inset .08em .08em 0 rgba(255,255,255,.85), inset -.08em -.1em 0 rgba(0,0,0,.28), inset 0 0 0 .3em rgba(255,255,255,.08); }
+.fc--epic .fc-face { background:var(--frame) calc(100% - var(--mx,50%)) var(--my,50%) / 260% 260%; }
+.fc--legendary .fc-face { background:linear-gradient(110deg, transparent 38%, rgba(255,255,255,.95) 48%, rgba(255,246,200,.6) 52%, transparent 62%) 0 0 / 320% 100% no-repeat, var(--frame);
+  animation:fc-sweep 3.8s cubic-bezier(.45,.05,.55,.95) infinite; }
+.fc-face::before { content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none; padding:.62em;
+  background:repeating-linear-gradient(90deg, rgba(255,255,255,.16) 0 .06em, transparent .06em .2em), repeating-linear-gradient(0deg, rgba(0,0,0,.05) 0 .05em, transparent .05em .26em);
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask:linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+.fc--gilt .fc-face::before { background:repeating-linear-gradient(45deg, rgba(255,255,255,.18) 0 .07em, transparent .07em .32em), repeating-linear-gradient(-45deg, rgba(120,70,0,.1) 0 .07em, transparent .07em .32em); }
+.fc--legendary .fc-face::before { padding:.78em; }
+@keyframes fc-sweep { 0% { background-position:130% 0, 0 0; } 55%, 100% { background-position:-30% 0, 0 0; } }
+/* Card stock: cream, a fine grain, a soft light from top-left, a double rule printed just inside the edge */
+.fc-in { position:relative; flex:1; min-height:0; overflow:hidden; display:flex; flex-direction:column; border-radius:.95em; padding:.78em .8em .62em;
+  background:radial-gradient(ellipse 90% 60% at 15% 0%, rgba(255,255,255,.9), transparent 70%), var(--grain), var(--paper);
+  box-shadow:0 0 0 .07em color-mix(in srgb, var(--edge) 70%, #000), inset 0 .1em .25em rgba(13,34,56,.18); }
+.fc-in::before { content:''; position:absolute; inset:.3em; border-radius:.72em; pointer-events:none;
+  box-shadow:inset 0 0 0 .07em color-mix(in srgb, var(--edge) 55%, transparent), inset 0 0 0 .2em var(--paper), inset 0 0 0 .26em color-mix(in srgb, var(--rule) 70%, transparent); }
+.fc-in > * { position:relative; }
+
+/* The picture window: recessed under the print, with the rarity pill and set chip over it */
+.fc-art { flex:1 1 0; min-height:13em; display:flex; flex-direction:column; border-radius:.6em; overflow:hidden; background:#0d2238; box-shadow:0 0 0 .08em color-mix(in srgb, var(--edge) 80%, #000), 0 .1em 0 rgba(255,255,255,.9); }
+.fc-pic { position:relative; flex:1 1 0; min-height:8em; overflow:hidden; background:linear-gradient(180deg,#5f9fd6,#bcdaf2); }
+.fc-pic::after { content:''; position:absolute; inset:0; z-index:2; pointer-events:none; box-shadow:inset 0 .5em .9em rgba(13,34,56,.38), inset 0 -.3em .6em rgba(13,34,56,.18); }
+.fc-photo { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; -webkit-user-drag:none; }
+.fc-holo { position:absolute; inset:0; z-index:1; pointer-events:none; }
+.fc-tier { position:absolute; z-index:3; left:.6em; top:.6em; display:flex; align-items:center; gap:.45em; padding:.28em .65em .26em .5em; border-radius:.45em;
+  background:rgba(255,253,246,.95); border:.09em solid var(--tier); color:var(--tier-ink); box-shadow:0 .15em .4em rgba(13,34,56,.2);
+  font:600 .86em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.16em; }
+.fc-tier i { font-style:normal; color:var(--tier); font-size:1.05em; letter-spacing:0; }
+.fc-set { position:absolute; z-index:3; right:.6em; top:.6em; padding:.36em .6em .32em; border-radius:.4em; background:rgba(13,34,56,.8); color:#fffdf6;
+  font:600 .78em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.18em; -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px); }
+.fc-credit { position:absolute; z-index:3; right:.5em; bottom:.45em; max-width:70%; padding:.18em .45em; border-radius:.3em; background:rgba(13,34,56,.66); color:#fff;
+  font:500 .64em/1.2 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.04em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+/* No photo: a daylight panel with cloud banks and the silhouette crossing it */
+.fc-sky { position:absolute; inset:0; display:grid; place-items:center; overflow:hidden;
+  background:radial-gradient(ellipse 70% 50% at 70% 20%, rgba(255,255,255,.55), transparent 70%), linear-gradient(180deg,#4f93d0 0%,#8fc0e8 55%,#d6e9f7 100%); }
+.fc-sky::before { content:''; position:absolute; inset:0; opacity:.35; background-image:linear-gradient(rgba(255,255,255,.35) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.35) 1px,transparent 1px); background-size:2.4em 2.4em; }
+.fc-cloud { position:absolute; border-radius:50%; background:radial-gradient(ellipse at 50% 60%, rgba(255,255,255,.95), rgba(255,255,255,.55) 45%, transparent 70%); filter:blur(.15em); }
+.fc-cloud--a { width:60%; height:32%; left:-12%; bottom:6%; } .fc-cloud--b { width:48%; height:26%; right:-10%; top:18%; opacity:.8; }
+.fc-glyph { position:relative; width:52%; height:auto; aspect-ratio:1; fill:#fffdf6; stroke:var(--ink); stroke-width:1.1; transform:rotate(-28deg); filter:drop-shadow(1.2em 1.6em .5em rgba(13,34,56,.28)); }
+.fc-sky--big .fc-glyph { width:58%; }
+.fc-sky-mark { position:absolute; left:.25em; bottom:-.12em; font:400 5.2em/1 'SC Display','Russo One',sans-serif; letter-spacing:-.02em; color:transparent; -webkit-text-stroke:.022em rgba(255,255,255,.75); }
+.fc-sky-ring { position:absolute; left:50%; top:50%; width:72%; aspect-ratio:1; transform:translate(-50%,-50%); border-radius:50%; border:.1em dashed rgba(255,255,255,.6); box-shadow:0 0 0 2.4em rgba(255,255,255,.07), inset 0 0 0 2.4em rgba(255,255,255,.07); }
+/* The route: a boarding-pass strip under the photo, perforated along its top */
+.fc-route { position:relative; display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:.6em; padding:.55em .8em .5em; background:linear-gradient(180deg,#132d49,#0d2238); color:#fffdf6; }
+.fc-route::before { content:''; position:absolute; left:0; right:0; top:-.22em; height:.44em; background:radial-gradient(circle at 50% 50%, #0d2238 .14em, transparent .16em) 0 0 / .62em .44em repeat-x; }
+.fc-route-end { display:flex; flex-direction:column; gap:.12em; min-width:0; }
+.fc-route-end--b { align-items:flex-end; text-align:right; }
+.fc-route-end b { font:400 1.55em/1 'SC Display','Russo One',sans-serif; letter-spacing:.02em; }
+.fc-route-end small { font:500 .74em/1.1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.1em; text-transform:uppercase; color:#c3d3e2; max-width:8em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.fc-route-mid { position:relative; height:2.6em; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; }
+.fc-route-mid > svg:first-child { position:absolute; left:0; right:0; top:.1em; width:100%; height:1.7em; overflow:visible; }
+.fc-route-arc { fill:none; stroke:var(--orange); stroke-width:1.6; stroke-dasharray:4 4; vector-effect:non-scaling-stroke; }
+.fc-route-a { fill:#fffdf6; } .fc-route-b { fill:var(--orange); }
+.fc-route-plane { position:absolute; left:50%; top:-.05em; width:1.15em; height:1.15em; transform:translateX(-50%) rotate(90deg); fill:#fffdf6; }
+.fc-route-mid small { font:500 .7em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; text-transform:uppercase; color:#c3d3e2; white-space:nowrap; }
+
+/* Title, identity, stats, fact, footer: Space Collector's hierarchy in navy ink */
+.fc-name { margin:.62em 0 0; display:flex; flex-direction:column; font:400 2.5em/.98 'SC Display','Russo One',sans-serif; letter-spacing:-.02em; text-transform:uppercase; color:var(--ink); overflow-wrap:anywhere; }
+.fc-name--long { font-size:2.05em; }
+.fc-name i { font-style:normal; color:var(--orange-ink); }
+.fc--gilt .fc-name > span, .fc--epic .fc-name > span { background:linear-gradient(105deg, #0d2238 0 45%, #33598a 48.5%, #5a7fa8 50%, #33598a 51.5%, #0d2238 55% 100%) var(--mx,50%) 0 / 320% 100%;
+  -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent; }
+.fc--gilt .fc-name i, .fc--epic .fc-name i { -webkit-text-fill-color:var(--orange-ink); }
+.fc--legendary .fc-name > span { background-image:linear-gradient(105deg, #2a1d00 0 44%, #7a5200 47.5%, #b88a2a 50%, #7a5200 52.5%, #2a1d00 56% 100%); }
+.fc-id { display:flex; justify-content:space-between; align-items:center; gap:.7em; margin-top:.45em; padding-top:.42em; border-top:.08em solid var(--rule);
+  font:500 1.02em/1.2 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.06em; color:var(--ink2); }
+.fc-id-l { min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.fc-id-r { flex:none; border-left:.12em solid var(--ink); padding-left:.7em; letter-spacing:.12em; white-space:nowrap; color:var(--ink); }
+.fc-stats { display:grid; grid-template-columns:1.2fr 1.05fr 1.05fr .7fr; margin-top:.5em; padding:.5em 0 .55em; border-top:.08em solid var(--rule); border-bottom:.08em solid var(--rule); }
+.fc-stat { display:flex; flex-direction:column; gap:.35em; padding:0 .55em; border-right:.08em solid var(--rule); min-width:0; }
 .fc-stat:first-child { padding-left:0; } .fc-stat:last-child { border-right:0; padding-right:0; }
-.fc-stat-l { font:600 10px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; color:#5c6a78; }
-.fc-stat-v { font:400 16px/1.1 'SC Display','Russo One',sans-serif; white-space:nowrap; }
-.fc-stat-v small { font:500 10px 'SC Label','Barlow Condensed',sans-serif; margin-left:1px; }
-.fc-fact { margin:4px 0 0; border-left:2px solid var(--sc-orange); padding-left:10px; font:400 13.5px/1.45 Georgia,'Times New Roman',serif; letter-spacing:.03em; color:#1b3047; }
-.fc-foot { display:flex; align-items:center; gap:8px; border-top:1px solid var(--sc-rule); padding-top:7px; font:500 12px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; }
-.fc-check { width:20px; height:20px; border-radius:50%; border:1.2px solid var(--sc-ink); display:grid; place-items:center; font-size:11px; }
-.fc-foot-t { flex:1; }
-.fc-brand { border-left:1px solid var(--sc-rule); padding-left:8px; font:400 10px/1 'SC Display','Russo One',sans-serif; letter-spacing:0; }
+.fc-stat-l { font:600 .74em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; color:var(--muted); padding-bottom:.35em; border-bottom:.1em solid var(--rule); white-space:nowrap; }
+.fc-stat-v { font:400 1.42em/1.05 'SC Display','Russo One',sans-serif; letter-spacing:-.03em; white-space:nowrap; color:var(--ink); }
+.fc-stat-v small { font:500 .56em 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.02em; margin-left:.15em; color:var(--ink2); }
+.fc-fact { margin:.62em 0 .2em; border-left:.22em solid var(--orange); padding:.05em 0 .05em .85em; font:400 .9em/1.45 Georgia,'Times New Roman',serif; letter-spacing:.02em; color:var(--ink2); }
+.fc-fact b { color:var(--ink); }
+.fc-foot { display:flex; align-items:center; gap:.6em; margin-top:auto; padding-top:.5em; border-top:.08em solid var(--rule); font:500 .8em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.11em; color:var(--ink); }
+.fc-check { width:1.9em; height:1.9em; flex:none; border-radius:50%; border:.1em solid var(--ink); display:grid; place-items:center; font:600 1.05em/1 Arial,sans-serif; }
+.fc-foot-t { white-space:nowrap; }
+.fc-foot-n { border-left:.1em solid var(--rule); padding-left:.6em; white-space:nowrap; flex:1; }
+.fc-brand { display:flex; flex-direction:column; gap:.25em; border-left:.1em solid var(--rule); padding:.15em 0 .15em .75em; font:400 1.05em/1 'SC Display','Russo One',sans-serif; letter-spacing:-.03em; white-space:nowrap; }
+.fc-brand small { font:500 .74em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; color:var(--muted); }
+
+/* Over the print: foil by rarity, a gloss coat that slides against the tilt, a soft glare under the finger */
+.fc-foil, .fc-coat, .fc-glare { position:absolute; inset:0; border-radius:1.45em; pointer-events:none; }
+.fc-coat { background:linear-gradient(118deg, transparent 26%, rgba(255,255,255,.22) 40%, rgba(255,255,255,.42) 47%, rgba(255,255,255,.1) 55%, transparent 66%) calc(100% - var(--mx,50%)) 0 / 260% 100% no-repeat;
+  mix-blend-mode:soft-light; }
+.fc-glare { background:radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(255,255,255,.75) 0, rgba(255,255,255,.2) 20%, transparent 45%); mix-blend-mode:soft-light; opacity:calc(var(--o,0) * .8); }
+.fc--uncommon .fc-foil { background:linear-gradient(115deg, transparent 25%, hsla(165,70%,80%,.6) 40%, hsla(60,90%,82%,.55) 50%, hsla(200,80%,84%,.6) 60%, transparent 75%) var(--bgx,50%) var(--bgy,50%) / 300% 300%;
+  mix-blend-mode:multiply; opacity:calc(.25 + var(--o,0) * .3); }
+.fc--rare .fc-holo, .fc--epic .fc-holo { background:var(--streak) var(--bgx,50%) var(--bgy,50%) / 300% 300%, var(--holo) var(--bgx,50%) var(--bgy,50%) / 300% 300%; mix-blend-mode:screen; opacity:calc(.12 + var(--o,0) * .28); }
+.fc--epic .fc-foil { background:var(--holo) var(--bgx,50%) var(--bgy,50%) / 300% 300%; mix-blend-mode:multiply; opacity:calc(.28 + var(--o,0) * .22); }
+/* Epic and Legendary frames carry glitter in the metal itself (a ring mask leaves the paper clear) */
+.fc--epic .fc-face::after, .fc--legendary .fc-face::after { content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none; padding:.62em;
+  background:var(--sparkle) var(--bgx,50%) var(--bgy,50%) / 7em 7em; mix-blend-mode:normal; opacity:calc(.5 + var(--o,0) * .4);
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask:linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+.fc--legendary .fc-face, .fc--legendary .fc-face::after { padding:.78em; }
+.fc--legendary { --paper:#fffaf0; --rule:#d7b46a; }
+.fc--legendary .fc-tier { background:linear-gradient(150deg,#fff6d0,#f2c44e 45%,#ffe591 70%,#d9a12c); border-color:#8f6210; color:#3d2a00; }
+.fc--legendary .fc-tier i { color:#3d2a00; }
+.fc--epic .fc-holo::after, .fc--legendary .fc-holo::after { content:''; position:absolute; inset:0; background:var(--glitter) calc(100% - var(--bgx,50%)) calc(100% - var(--bgy,50%)) / 14em 14em;
+  -webkit-mask:linear-gradient(115deg, transparent 36%, #000 46%, #000 54%, transparent 64%) var(--bgx,50%) var(--bgy,50%) / 300% 300%; mask:linear-gradient(115deg, transparent 36%, #000 46%, #000 54%, transparent 64%) var(--bgx,50%) var(--bgy,50%) / 300% 300%; opacity:.7; }
+.fc--legendary .fc-holo { background:linear-gradient(115deg, transparent 42%, rgba(255,214,120,.6) 47%, rgba(255,250,225,.9) 50%, rgba(255,214,120,.6) 53%, transparent 58%) var(--bgx,50%) var(--bgy,50%) / 300% 300%; mix-blend-mode:screen; opacity:calc(.5 + var(--o,0) * .35); }
+.fc--legendary .fc-foil { background:linear-gradient(115deg, transparent 40%, rgba(255,205,90,.55) 47%, rgba(255,236,170,.7) 50%, rgba(255,205,90,.55) 53%, transparent 60%) 0 0 / 300% 100% no-repeat;
+  mix-blend-mode:multiply; animation:fc-glint 5.5s ease-in-out infinite; }
+@keyframes fc-glint { 0%, 30% { background-position:120% 0; } 75%, 100% { background-position:-20% 0; } }
+.fc-rot.turning :is(.fc-foil, .fc-coat, .fc-glare), .turning .fc :is(.fc-foil, .fc-coat, .fc-glare) { opacity:0 !important; }
+@media (prefers-reduced-motion: reduce) {
+  .fc-rot { transform:none; }
+  .fc--legendary .fc-face, .fc--legendary .fc-foil { animation:none; }
+}
 
 /* ---- Loading screen and welcome (2026-11-15): light sky like the rest of Sky Collector ---- */
 #start { background:linear-gradient(180deg,#8cc2ec 0%,#cfe5f6 55%,#eef5fb 100%); color:var(--sc-ink); }
@@ -130,24 +244,45 @@ body:not(.sky-col-mode) #sky-col { display:none; }
 .scc-chips { display:flex; gap:6px; flex-wrap:wrap; margin-top:12px; }
 .scc-chip { border:1px solid var(--sc-line); background:#fff; color:var(--sc-ink); border-radius:14px; padding:6px 11px; min-height:32px; font:600 12px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.1em; text-transform:uppercase; }
 .scc-chip[aria-pressed="true"] { background:var(--sc-ink); color:#fff; border-color:var(--sc-ink); }
-.scc-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(104px, 1fr)); gap:8px; margin-top:12px; }
-.sct { display:block; padding:2.5px; border:0; border-radius:9px; background:#b8c6d2; box-shadow:0 3px 8px rgba(13,34,56,.1); text-align:left; color:var(--sc-ink); }
-.sct--gold { background:var(--sc-gold); }
-.sct-in { display:flex; flex-direction:column; gap:3px; background:var(--sc-paper); border-radius:7px; padding:4px; min-height:164px; box-sizing:border-box; }
-.sct-art { position:relative; display:block; height:62px; border-radius:4px; overflow:hidden; }
-.sct-art--route { background-color:#d7eaf8; background-image:linear-gradient(rgba(13,34,56,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(13,34,56,.07) 1px,transparent 1px); background-size:12px 12px; }
-.sct-art--plane { background:linear-gradient(180deg,#78b3e3,#d8eaf8); display:grid; place-items:center; }
-.sct-glyph { width:46px; height:46px; fill:#fff; stroke:var(--sc-ink); stroke-width:1.6; transform:rotate(-20deg); }
-.sct-tier { position:absolute; left:3px; top:3px; z-index:1; background:#fff; border-radius:3px; padding:0 3px; font:700 10px/1.4 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.06em; }
-.sct-arc { position:absolute; left:10px; right:10px; top:20px; height:26px; overflow:hidden; }
-.sct-arc span { display:block; height:52px; box-sizing:border-box; border-radius:50%; border:1.5px dashed var(--sc-orange-ink); }
-.sct-dot { position:absolute; top:42px; width:8px; height:8px; border-radius:50%; }
-.sct-dot--a { left:6px; background:var(--sc-ink); } .sct-dot--b { right:6px; background:var(--sc-orange-ink); }
-.sct-code { position:absolute; left:0; right:0; bottom:3px; text-align:center; font:400 15px/1 'SC Display','Russo One',sans-serif; }
-.sct-name { font:400 12px/1.05 'SC Display','Russo One',sans-serif; text-transform:uppercase; }
-.sct-sub { font:500 11px/1.1 'SC Label','Barlow Condensed',sans-serif; border-bottom:1px solid var(--sc-rule); padding-bottom:2px; }
-.sct-row { display:flex; justify-content:space-between; font:600 11px/1 'SC Label','Barlow Condensed',sans-serif; }
-.sct-when { margin-top:auto; font:500 10px/1 'SC Label','Barlow Condensed',sans-serif; color:var(--sc-muted); }
+.scc-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(106px, 1fr)); gap:10px 8px; margin-top:12px; }
+/* Mini cards (js/flight-card.js miniCardHtml): the full card's frame, photo, rarity, title and footer at grid size, 5:7 */
+.sct { display:block; width:100%; aspect-ratio:5 / 7; padding:0; border:0; border-radius:10px; background:none; color:var(--sc-ink); text-align:left; font:inherit; cursor:pointer;
+  -webkit-tap-highlight-color:transparent; transition:transform .15s; }
+.sct:active { transform:scale(.97); }
+.sct:focus-visible { outline:3px solid var(--sc-orange-ink); outline-offset:2px; }
+.sct-face { position:relative; display:block; height:100%; padding:3px; border-radius:10px; background:var(--frame); overflow:hidden;
+  box-shadow:inset 1px 1px 0 rgba(255,255,255,.85), inset -1px -1px 0 rgba(0,0,0,.25), 0 4px 10px rgba(13,34,56,.16), 0 1px 2px rgba(13,34,56,.18); }
+.sct-face.sct--rare, .sct-face.sct--legendary { box-shadow:inset 1px 1px 0 rgba(255,255,255,.85), inset -1px -1px 0 rgba(0,0,0,.25), 0 4px 12px rgba(201,143,28,.3), 0 1px 2px rgba(13,34,56,.18); }
+.sct-face.sct--epic { background:var(--frame) 30% 50% / 220% 220%; box-shadow:inset 1px 1px 0 rgba(255,255,255,.85), inset -1px -1px 0 rgba(0,0,0,.2), 0 4px 12px rgba(150,120,230,.32), 0 1px 2px rgba(13,34,56,.18); }
+.sct-face.sct--legendary { background:linear-gradient(110deg, transparent 38%, rgba(255,255,255,.95) 48%, transparent 60%) 0 0 / 320% 100% no-repeat, var(--frame); animation:fc-sweep 3.8s cubic-bezier(.45,.05,.55,.95) infinite; }
+.sct-in { display:flex; flex-direction:column; gap:2px; height:100%; padding:4px 5px 4px; border-radius:7.5px; overflow:hidden;
+  background:radial-gradient(ellipse 90% 60% at 15% 0%, rgba(255,255,255,.9), transparent 70%), var(--grain), var(--paper); box-shadow:0 0 0 1px color-mix(in srgb, var(--edge) 70%, #000); }
+.sct-art { position:relative; display:block; flex:1 1 0; min-height:38px; margin:-1px -2px 2px; border-radius:5px; overflow:hidden; background:linear-gradient(180deg,#5f9fd6,#bcdaf2);
+  box-shadow:0 0 0 1px color-mix(in srgb, var(--edge) 80%, #000); }
+.sct-art::after { content:''; position:absolute; inset:0; pointer-events:none; box-shadow:inset 0 3px 6px rgba(13,34,56,.35); }
+.sct-photo { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
+.sct-sky .fc-glyph { width:58%; filter:drop-shadow(5px 7px 2px rgba(13,34,56,.25)); }
+.sct-sky::before { background-size:12px 12px; }
+.sct-tier { position:absolute; z-index:1; left:3px; top:3px; display:flex; align-items:center; gap:2px; padding:1px 4px 1px 3px; border-radius:3px; background:rgba(255,253,246,.95);
+  border:1px solid var(--tier); color:var(--tier-ink); font:700 10px/1.25 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.06em; }
+.sct-tier i { font-style:normal; color:var(--tier); }
+.sct-route { position:absolute; z-index:1; left:0; right:0; bottom:0; display:flex; align-items:center; gap:3px; padding:2px 5px 2px; background:rgba(13,34,56,.86); color:#fffdf6; }
+.sct-route b { font:400 11px/1.2 'SC Display','Russo One',sans-serif; letter-spacing:.02em; }
+.sct-route svg { flex:1; height:7px; overflow:visible; }
+.sct-route path { fill:none; stroke:var(--sc-orange); stroke-width:1.3; stroke-dasharray:2.5 2.5; vector-effect:non-scaling-stroke; }
+.sct-name { flex:none; font:400 12px/1.04 'SC Display','Russo One',sans-serif; letter-spacing:-.01em; text-transform:uppercase; color:var(--ink);
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; overflow-wrap:anywhere; }
+.sct-sub { flex:none; padding-bottom:2px; border-bottom:1px solid var(--rule); font:500 11px/1.15 'SC Label','Barlow Condensed',sans-serif; color:var(--ink2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sct-stats { flex:none; display:grid; grid-template-columns:1fr 1fr; }
+.sct-stats > span { display:flex; flex-direction:column; min-width:0; font:400 11px/1.1 'SC Display','Russo One',sans-serif; letter-spacing:-.02em; white-space:nowrap; overflow:hidden; color:var(--ink); }
+.sct-stats > span + span { border-left:1px solid var(--rule); padding-left:4px; }
+.sct-stats small { font:600 10px/1.1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.08em; color:var(--muted); }
+.sct-foot { flex:none; display:flex; justify-content:space-between; padding-top:2px; border-top:1px solid var(--rule); font:600 10px/1.1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.06em; color:var(--ink2); }
+.sct-shine { position:absolute; inset:0; border-radius:10px; pointer-events:none; }
+.sct--epic .sct-shine { background:var(--holo) 30% 30% / 300% 300%; mix-blend-mode:multiply; opacity:.22; }
+.sct--rare .sct-shine { background:linear-gradient(115deg, transparent 40%, rgba(255,255,255,.7) 50%, transparent 60%) 20% 0 / 300% 100% no-repeat; mix-blend-mode:soft-light; }
+.sct--legendary .sct-shine { background:linear-gradient(115deg, transparent 40%, rgba(255,205,90,.5) 50%, transparent 60%) 0 0 / 300% 100% no-repeat; mix-blend-mode:multiply; animation:fc-glint 5.5s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .sct-face.sct--legendary, .sct--legendary .sct-shine { animation:none; } }
 .scc-empty { margin:28px 4px; text-align:center; }
 .scc-empty h2 { font:400 22px/1.1 'SC Display','Russo One',sans-serif; margin:0 0 8px; }
 .scc-empty p { color:var(--sc-muted); margin:0 0 16px; }
@@ -167,7 +302,7 @@ body:not(.sky-col-mode) #sky-col { display:none; }
 .scv-list li span:last-child { color:var(--sc-muted); text-align:right; }
 html:has(body.sky-col-mode) { background:#eef5fb; }
 body.sky-col-mode { --bg:#eef5fb; --text:#0d2238; }
-#rv-news .sky-rv-strip .fcatch-strip-n { color:var(--sc-ink); } #rv-news .sky-rv-strip { max-width:340px; }
+
 #wc-holder .wc-a-title { background:none !important; -webkit-text-fill-color:var(--sc-ink) !important; color:var(--sc-ink) !important; text-shadow:none !important; } /* the newer gold-foil title is unreadable on cream */
 
 /* ---- Packs in the light look (2026-11-15, Sevaan: "dark looks too much like the space app"). The opener, gift and
