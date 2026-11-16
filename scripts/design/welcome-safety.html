@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Welcome card · safety card options</title>
+<style>
+@font-face { font-family:'Russo'; src:url('../../fonts/RussoOne-Regular.woff2') format('woff2'); }
+@font-face { font-family:'Barlow'; src:url('../../fonts/BarlowCondensed-Medium.woff2') format('woff2'); }
+@font-face { font-family:'Inter'; src:url('../../fonts/Inter-latin.woff2') format('woff2'); font-weight:100 900; }
+@font-face { font-family:'Plex'; src:url('../../fonts/IBMPlexMono-latin-500.woff2') format('woff2'); }
+:root { --navy:#0d2238; --ink2:#23405c; --orange:#f07a1c; --oink:#c2560a; --sky:#cfe5f6; --cream:#fffdf6; }
+* { box-sizing:border-box; margin:0; }
+body { background:#dfe9f2; font-family:Inter, sans-serif; color:var(--navy); padding:28px; }
+.row { display:flex; gap:28px; align-items:flex-start; }
+.opt { width:360px; }
+.lbl { font:500 20px Barlow; letter-spacing:.14em; text-transform:uppercase; margin:0 0 10px 4px; color:#23405c; }
+.lbl b { color:var(--oink); }
+.stage { width:360px; height:720px; border-radius:26px; background:linear-gradient(180deg,#8cc2ec 0%,#cfe5f6 55%,#eef5fb 100%); display:grid; place-items:center; padding:22px 18px; }
+.card { width:100%; border-radius:16px; overflow:hidden; box-shadow:0 18px 40px rgba(13,34,56,.28); }
+svg { display:block; }
+.pic { stroke:var(--navy); stroke-width:3; stroke-linecap:round; stroke-linejoin:round; fill:none; }
+.fillN { fill:var(--navy); stroke:none; } .fillO { fill:var(--orange); stroke:none; } .fillW { fill:#fff; }
+
+/* A · Seat-pocket card: laminated, airline header band, three numbered pictogram panels, do/don't strip */
+.A { background:#fff; border:1px solid #c9d6e2; }
+.A .band { background:var(--navy); color:#fff; display:flex; justify-content:space-between; align-items:center; padding:10px 14px; font:500 13px Barlow; letter-spacing:.18em; }
+.A .band b { font:15px Russo; letter-spacing:.02em; }
+.A .stripe { height:6px; background:repeating-linear-gradient(90deg,var(--orange) 0 26px,#f6b26b 26px 52px); }
+.A h1 { font:23px/1.05 Russo; padding:14px 16px 4px; }
+.A .sub { font:500 13px Barlow; letter-spacing:.16em; color:var(--oink); padding:0 16px 10px; }
+.A .grid { display:grid; grid-template-columns:1fr 1fr 1fr; border-top:2px solid var(--navy); border-bottom:2px solid var(--navy); }
+.A .cell { border-right:2px solid var(--navy); padding:8px 6px 10px; position:relative; }
+.A .cell:last-child { border-right:0; }
+.A .n { position:absolute; left:6px; top:6px; width:22px; height:22px; border-radius:50%; background:var(--navy); color:#fff; font:14px/22px Russo; text-align:center; }
+.A .cap { font:500 14px/1.15 Barlow; text-align:center; margin-top:4px; letter-spacing:.02em; }
+.A .dd { display:grid; grid-template-columns:1fr 1fr; gap:0; }
+.A .dd > div { display:flex; gap:8px; align-items:center; padding:10px 12px; font:500 13px/1.15 Barlow; }
+.A .dd > div + div { border-left:2px solid var(--navy); }
+.A .foot { background:var(--navy); color:#fff; display:flex; justify-content:space-between; padding:10px 14px; font:500 13px Barlow; letter-spacing:.2em; }
+.A .foot b { color:#ffb36b; }
+
+/* B · Retro 70s card: cream, mustard and orange, big rounded panels, people pictograms, IN CASE OF PLANES */
+.B { background:#fbf3df; border:3px solid #e2a937; }
+.B .hd { background:#e2a937; padding:12px 14px 10px; display:flex; justify-content:space-between; align-items:flex-end; }
+.B .hd b { font:22px/1 Russo; color:#3b2610; } .B .hd span { font:500 12px Barlow; letter-spacing:.2em; color:#5a3a14; text-align:right; }
+.B .title { padding:12px 14px 8px; font:500 15px Barlow; letter-spacing:.22em; color:#b4451a; }
+.B .title b { display:block; font:26px/1.02 Russo; letter-spacing:0; color:#3b2610; margin-top:2px; }
+.B .panels { display:grid; gap:10px; padding:4px 12px 12px; }
+.B .p { display:grid; grid-template-columns:96px 1fr; gap:10px; align-items:center; background:#fff8e8; border:2px solid #3b2610; border-radius:14px; padding:6px 10px 6px 6px; }
+.B .p .num { font:30px/1 Russo; color:#e2672a; }
+.B .p .t { font:500 16px/1.15 Barlow; color:#3b2610; }
+.B .p .pic { stroke:#3b2610; } .B .p .fillN { fill:#3b2610; } .B .p .fillO { fill:#e2672a; }
+.B .ft { display:flex; justify-content:space-between; align-items:center; border-top:3px solid #3b2610; margin:2px 12px 0; padding:10px 2px 12px; font:500 13px Barlow; letter-spacing:.2em; color:#b4451a; }
+.B .ft b { font:14px Russo; letter-spacing:0; color:#3b2610; }
+
+/* C · Fold-out brochure: two pages side by side folded, comic-strip pictograms with arrows, bilingual-style icon captions */
+.C { background:var(--cream); border:1px solid #d9cfb4; }
+.C .top { display:flex; align-items:center; gap:10px; padding:12px 14px; border-bottom:1px solid #e3d8bc; }
+.C .logo { width:34px; height:34px; border-radius:8px; background:var(--navy); display:grid; place-items:center; }
+.C .top b { font:16px Russo; } .C .top small { display:block; font:500 12px Barlow; letter-spacing:.18em; color:var(--oink); }
+.C h1 { font:24px/1.05 Russo; padding:12px 14px 2px; }
+.C p.lead { font:15px/1.4 Georgia, serif; color:#33475c; padding:4px 14px 10px; }
+.C .strip { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; padding:0 10px; }
+.C .fr { background:#fff; border:2px solid var(--navy); border-radius:6px; aspect-ratio:3/4; position:relative; }
+.C .fr .k { position:absolute; left:-2px; top:-2px; background:var(--orange); color:#fff; font:13px/1 Russo; padding:5px 7px 4px; border-radius:6px 0 6px 0; }
+.C .arrow { position:absolute; right:-11px; top:44%; z-index:2; }
+.C .caps { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; padding:6px 10px 0; font:500 13px/1.15 Barlow; text-align:center; }
+.C .icons { display:flex; justify-content:center; gap:16px; padding:12px 0 6px; }
+.C .icons span { width:40px; height:40px; border-radius:50%; border:2px solid var(--navy); display:grid; place-items:center; }
+.C .bot { margin-top:6px; padding:10px 14px; background:repeating-linear-gradient(-45deg,var(--navy) 0 10px,#22405f 10px 20px); color:#fff; display:flex; justify-content:space-between; font:500 13px Barlow; letter-spacing:.2em; }
+.C .bot b { color:#ffb36b; }
+
+/* D · Modern Euro card: white, single orange, huge step numerals, giant pictograms, minimal words */
+.D { background:#fff; }
+.D .head { display:flex; justify-content:space-between; padding:14px 16px 0; font:500 12px Plex; letter-spacing:.06em; color:#5a6e82; }
+.D .head b { color:var(--navy); }
+.D h1 { font:30px/.98 Russo; padding:10px 16px 12px; letter-spacing:-.01em; }
+.D h1 em { font-style:normal; color:var(--orange); }
+.D .step { display:grid; grid-template-columns:54px 1fr 104px; align-items:center; gap:8px; padding:8px 16px; border-top:1px solid #e4e9ef; }
+.D .big { font:46px/1 Russo; color:var(--orange); }
+.D .w { font:500 18px/1.1 Barlow; }
+.D .w small { display:block; font:12px/1.3 Inter; color:#5a6e82; margin-top:3px; }
+.D .tail { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-top:6px solid var(--navy); font:500 13px Barlow; letter-spacing:.2em; color:var(--oink); }
+.D .tail b { font:14px Russo; letter-spacing:0; color:var(--navy); }
+</style></head><body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <!-- airliner, top view, nose up -->
+    <path id="jet" d="M32 4c2 0 3.2 2.4 3.2 6v14l20 11v5l-20-6v13l6 4v4l-9-2-9 2v-4l6-4V34l-20 6v-5l20-11V10c0-3.6 1.2-6 3.8-6z"/>
+    <!-- person looking up with phone raised (side) -->
+    <g id="spotter">
+      <circle cx="30" cy="34" r="8"/>
+      <path d="M26 44c-6 4-8 14-8 26M34 44c4 3 6 8 7 13l10-17M18 70h26M24 70l-3 22M38 70l3 22"/>
+      <rect x="47" y="18" width="10" height="18" rx="2" transform="rotate(25 52 27)"/>
+    </g>
+  </defs>
+</svg>
+<div class="row">
+
+<!-- ================= A ================= -->
+<div class="opt"><p class="lbl"><b>A</b> · Seat-pocket card</p><div class="stage"><div class="card A">
+  <div class="band"><b>SKY COLLECTOR</b><span>CATCH INFORMATION · 7 OVERHEAD</span></div><div class="stripe"></div>
+  <h1>The sky is yours to collect.</h1><p class="sub">PLEASE READ BEFORE YOUR FIRST CATCH</p>
+  <div class="grid">
+    <div class="cell"><span class="n">1</span><svg viewBox="0 0 100 100" class="pic"><use href="#spotter" transform="translate(14 4)"/><g transform="translate(64 6) scale(.42)"><use href="#jet" class="fillN"/></g><path d="M66 32l6-8" stroke-dasharray="3 4"/></svg><p class="cap">Point your phone at a plane</p></div>
+    <div class="cell"><span class="n">2</span><svg viewBox="0 0 100 100" class="pic"><circle cx="50" cy="52" r="30" stroke="var(--orange)" stroke-width="4"/><path d="M50 14v10M50 80v10M12 52h10M78 52h10" stroke="var(--orange)" stroke-width="4"/><g transform="translate(36 38) scale(.44) rotate(40 32 32)"><use href="#jet" class="fillN"/></g></svg><p class="cap">Line it up in the circle</p></div>
+    <div class="cell"><span class="n">3</span><svg viewBox="0 0 100 100" class="pic"><rect x="26" y="14" width="48" height="70" rx="6" stroke-width="3.5"/><rect x="32" y="20" width="36" height="24" rx="2" class="fillO"/><path d="M34 54h30M34 62h22M34 70h26"/><path d="M60 78l10 10 18-22" stroke="#1f9d55" stroke-width="5"/></svg><p class="cap">Tap Collect. The flight is yours</p></div>
+  </div>
+  <div class="dd">
+    <div><svg width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" fill="#1f9d55"/><path d="M8 15l5 5 9-10" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/></svg>Every plane is a card: its flight and the plane flying it</div>
+    <div><svg width="30" height="30" viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" fill="none" stroke="#d23b2a" stroke-width="3"/><path d="M6 24L24 6" stroke="#d23b2a" stroke-width="3"/><circle cx="15" cy="15" r="5" fill="#f2b632"/></svg>Never point at the Sun</div>
+  </div>
+  <div class="foot"><span>↑ SWIPE UP TO BEGIN</span><b>CARD SC-01</b></div>
+</div></div></div>
+
+<!-- ================= B ================= -->
+<div class="opt"><p class="lbl"><b>B</b> · Retro 1970s card</p><div class="stage"><div class="card B">
+  <div class="hd"><b>SKY COLLECTOR</b><span>SAFETY &amp; CATCH<br>INSTRUCTIONS</span></div>
+  <p class="title">IN CASE OF PLANES<b>Look up. Catch it.<br>Keep the card.</b></p>
+  <div class="panels">
+    <div class="p"><svg viewBox="0 0 100 80" class="pic"><g transform="translate(6 -10) scale(.95)"><use href="#spotter"/></g><g transform="translate(66 2) scale(.4)"><use href="#jet" class="fillO"/></g></svg><div><span class="num">1</span><p class="t">Point your phone at a plane overhead.</p></div></div>
+    <div class="p"><svg viewBox="0 0 100 80" class="pic"><circle cx="50" cy="40" r="26" stroke-width="4"/><path d="M50 6v10M50 64v10M16 40h10M74 40h10" stroke-width="4"/><g transform="translate(37 27) scale(.4) rotate(40 32 32)"><use href="#jet" class="fillO"/></g></svg><div><span class="num">2</span><p class="t">Line it up inside the circle.</p></div></div>
+    <div class="p"><svg viewBox="0 0 100 80" class="pic"><rect x="30" y="6" width="40" height="60" rx="5" stroke-width="3.5"/><rect x="35" y="11" width="30" height="20" class="fillO"/><path d="M36 40h26M36 47h18M36 54h22"/><path d="M68 62l7 7 14-17" stroke-width="5"/></svg><div><span class="num">3</span><p class="t">Tap Collect. The flight and the plane are your cards.</p></div></div>
+  </div>
+  <div class="ft"><span>↑ SWIPE UP TO BEGIN</span><b>7 OVERHEAD NOW</b></div>
+</div></div></div>
+
+<!-- ================= C ================= -->
+<div class="opt"><p class="lbl"><b>C</b> · Fold-out comic strip</p><div class="stage"><div class="card C">
+  <div class="top"><span class="logo"><svg width="22" height="22" viewBox="0 0 64 64"><use href="#jet" fill="#fff"/></svg></span><div><b>Sky Collector</b><small>YOUR FIRST MISSION · 7 OVERHEAD</small></div></div>
+  <h1>The sky is yours to collect.</h1>
+  <p class="lead">Every plane up there is a card: the flight and where it’s headed, and the plane flying it.</p>
+  <div class="strip">
+    <div class="fr"><span class="k">1</span><svg viewBox="0 0 90 120" class="pic"><g transform="translate(4 18)"><use href="#spotter"/></g><g transform="translate(56 6) scale(.42)"><use href="#jet" class="fillN"/></g></svg><svg class="arrow" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="10" fill="var(--orange)"/><path d="M7 5l6 5-6 5" stroke="#fff" stroke-width="2.5" fill="none"/></svg></div>
+    <div class="fr"><span class="k">2</span><svg viewBox="0 0 90 120" class="pic"><rect x="17" y="18" width="56" height="88" rx="9" stroke-width="3.5"/><circle cx="45" cy="60" r="18" stroke="var(--orange)" stroke-width="3.5"/><g transform="translate(35 50) scale(.32) rotate(40 32 32)"><use href="#jet" class="fillN"/></g></svg><svg class="arrow" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="10" fill="var(--orange)"/><path d="M7 5l6 5-6 5" stroke="#fff" stroke-width="2.5" fill="none"/></svg></div>
+    <div class="fr"><span class="k">3</span><svg viewBox="0 0 90 120" class="pic"><rect x="17" y="18" width="56" height="88" rx="9" stroke-width="3.5"/><rect x="25" y="28" width="40" height="36" rx="4" class="fillO"/><path d="M27 74h36M27 82h26M27 90h30"/><path d="M48 46h6" stroke="#fff"/></svg></div>
+  </div>
+  <div class="caps"><span>Point at a plane</span><span>Line it up</span><span>Tap Collect</span></div>
+  <div class="icons">
+    <span title="Flights"><svg width="22" height="22" viewBox="0 0 64 64"><use href="#jet" class="fillN"/></svg></span>
+    <span title="Helicopters"><svg width="24" height="24" viewBox="0 0 24 24" class="pic" style="stroke-width:2"><path d="M3 5h18M12 5v4"/><ellipse cx="11" cy="13" rx="6" ry="4"/><path d="M17 13h5M7 18l-2 2M15 18l2 2M4 20h16"/></svg></span>
+    <span title="Patches"><svg width="22" height="22" viewBox="0 0 24 24" class="pic" style="stroke-width:2"><path d="M12 2l3 6 6 1-4.5 4.5 1 6.5-5.5-3-5.5 3 1-6.5L3 9l6-1z"/></svg></span>
+  </div>
+  <div class="bot"><span>↑ SWIPE UP TO BEGIN</span><b>SC · 01</b></div>
+</div></div></div>
+
+<!-- ================= D ================= -->
+<div class="opt"><p class="lbl"><b>D</b> · Modern minimal card</p><div class="stage"><div class="card D">
+  <div class="head"><span><b>SKY COLLECTOR</b> · FIRST MISSION</span><span>● 7 OVERHEAD</span></div>
+  <h1>The sky is<br>yours to <em>collect.</em></h1>
+  <div class="step"><span class="big">1</span><p class="w">Point at a plane<small>Hold your phone up to the sky.</small></p><svg viewBox="0 0 100 90" class="pic"><g transform="translate(8 -6)"><use href="#spotter"/></g><g transform="translate(62 2) scale(.38)"><use href="#jet" class="fillO"/></g></svg></div>
+  <div class="step"><span class="big">2</span><p class="w">Line it up<small>Bring it inside the circle.</small></p><svg viewBox="0 0 100 90" class="pic"><circle cx="50" cy="45" r="28" stroke-width="3.5"/><path d="M50 8v10M50 72v10M14 45h10M76 45h10" stroke-width="3.5"/><g transform="translate(37 32) scale(.4) rotate(40 32 32)"><use href="#jet" class="fillO"/></g></svg></div>
+  <div class="step"><span class="big">3</span><p class="w">Tap Collect<small>Its flight and its plane are now cards.</small></p><svg viewBox="0 0 100 90" class="pic"><rect x="22" y="8" width="40" height="62" rx="5"/><rect x="38" y="18" width="40" height="62" rx="5" fill="#fff"/><rect x="43" y="23" width="30" height="22" class="fillO"/><path d="M44 54h28M44 62h20"/></svg></div>
+  <div class="tail"><span>↑ SWIPE UP TO BEGIN</span><b>SC-01</b></div>
+</div></div></div>
+
+</div></body></html>

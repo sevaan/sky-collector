@@ -677,3 +677,35 @@ html.sky-cards #stats-view :is(.st-head .st-big b, .st-tn, .st-goal b, .st-hl b,
 html.sky-cards #stats-view :is(.st-goal span, .st-goal em, .st-goal small, .st-hl small, .st-hl span, .st-tile small, .st-bar small, .st-rare small, .st-tn small) { color:#4a6178; }
 html.sky-cards #stats-view .st-bar.now small { color:#a64808; }
 html.sky-cards #stats-view :is(.st-tl, .st-rt, .st-hl em[style], .st-rare em[style]) { filter:brightness(.55) saturate(1.3); }
+
+/* Tour card titles match the welcome card's (2026-11-15, Sevaan: "your card titles are gold and hard to see. Match the card
+   titles colouring and effect"): navy ink under the card's own gloss, not Space Collector's gold foil on cream. */
+body.sky-only .tc h3, body.sky-only .tc.gold h3 { background:none !important; -webkit-text-fill-color:var(--sc-ink) !important; color:var(--sc-ink) !important; text-shadow:none !important; }
+
+/* ===== Buttons and chrome (2026-11-15, Sevaan: "the orange buttons in Sky Collector don't match the buttons in Space
+   Collector. Also instead of orange make them red. And make the rest of the app light mode (the header and stuff) but make
+   the header dark on Explore at night so it matches the sky.") ===== */
+body.sky-only, html.sky-cards { --sky-red:#d7362b; --sky-red-hi:#e8493c; --sky-red-edge:#8c1c14; --sky-red-ink:#b42a20; }
+
+/* Space Collector's primary button (the tour's Yes: a solid fill with a gloss, a darker edge underneath and a drop
+   shadow, pressed down on tap), in red. */
+body.sky-only .tc .acts .yes, body.sky-only .td-show {
+  background:var(--sky-red) linear-gradient(#ffffff2e, #ffffff00 55%, #00000022) !important; color:#fff !important; border:0 !important;
+  box-shadow:inset 0 1px 0 #ffffff59, 0 3px 0 var(--sky-red-edge), 0 8px 16px rgba(13,34,56,.28) !important; text-shadow:0 1px 0 #0000002e;
+  transition:transform .08s ease-out, box-shadow .08s ease-out; }
+body.sky-only .tc .acts .yes:active, body.sky-only .td-show:active { transform:translateY(3px); box-shadow:inset 0 1px 0 #ffffff40, inset 0 2px 6px #0000004d, 0 0 0 var(--sky-red-edge), 0 3px 6px rgba(13,34,56,.3) !important; }
+body.sky-only .td-show { height:50px; border-radius:12px; font:500 15px/1 var(--label,'SC Label'); letter-spacing:.18em; }
+body.sky-only .tc .acts .no, body.sky-only .tc .acts .later { color:var(--sky-red-ink) !important; }
+/* Collect under the circle: Space Collector's pill, in red */
+body.sky-only #discover:not(.owned) #d-cta { color:#ff6a5c; background:rgba(215,54,43,.16); box-shadow:inset 0 0 0 1px rgba(215,54,43,.55); }
+body.sky-only #discover:not(.owned) #d-cta:active, body.sky-only #discover:not(.owned) #d-cta.tapped { background:var(--sky-red); color:#fff; box-shadow:0 0 0 1px var(--sky-red), 0 0 22px rgba(215,54,43,.55); }
+body.sky-only.day #discover:not(.owned) #d-cta { color:var(--sky-red-ink); background:rgba(215,54,43,.12); }
+
+/* Light header and tabs everywhere, except Explore at night, where the dark header belongs to the sky. */
+body.sky-only:is(:not([data-page="explore"]), .day) #sky-header { --bg:#eef5fb; --text:#0d2238; --muted:#4a6178; --edge:#b8c6d2; color:#0d2238; }
+body.sky-only:is(:not([data-page="explore"]), .day) #sky-header .wordmark { color:#0d2238; background:none; -webkit-text-fill-color:currentColor; }
+body.sky-only:is(:not([data-page="explore"]), .day) #sky-header .wordmark span { color:#4a6178; -webkit-text-fill-color:currentColor; }
+body.sky-only:is(:not([data-page="explore"]), .day) #sky-header :is(button, .icon-button) { color:#0d2238; }
+body.sky-only:is(:not([data-page="explore"]), .day) #nav.sc-switch { background-color:#fffdf6 !important; box-shadow:0 0 0 1px #c9b98a, 0 10px 24px rgba(13,34,56,.2) !important; }
+body.sky-only:is(:not([data-page="explore"]), .day) #nav .sc-switch__item { color:#4a6178 !important; }
+body.sky-only:is(:not([data-page="explore"]), .day) #nav .sc-switch__item[aria-current="page"], body.sky-only:is(:not([data-page="explore"]), .day) #nav .sc-switch__item.on { color:#a64808 !important; }
