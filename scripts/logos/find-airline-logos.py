@@ -63,11 +63,18 @@ def main():
     for c in codes:
         cur = [it for it in items.get(c, {}).values() if not it['end'] or it['end'] > today]
         if not cur: res[c] = {'status': 'no-item'}; continue
-        if len(cur) > 1: res[c] = {'status': 'ambiguous', 'items': [(x['qid'], x['label'], x['links']) for x in cur]}; continue
+        tie = None
+        if len(cur) > 1:
+            cur.sort(key=lambda x: -x['links'])
+            # Several current items share the code (cargo arm, sub-brand, regional): only the clear leader by Wikipedia
+            # articles (>= 2x the runner-up) is taken, and it is flagged so the contact-sheet check looks hard at it.
+            if cur[0]['links'] < 2 * max(1, cur[1]['links']): res[c] = {'status': 'ambiguous', 'items': [(x['qid'], x['label'], x['links']) for x in cur]}; continue
+            tie = [(x['qid'], x['label'], x['links']) for x in cur]
         it = cur[0]; ls = [l for l in it['logos'] if l['rank'] != 'DeprecatedRank' and (not l['lend'] or l['lend'] > today)]
         if not ls: res[c] = {'status': 'no-logo', 'qid': it['qid'], 'label': it['label']}; continue
         ls.sort(key=lambda l: (l['rank'] == 'PreferredRank', l['lstart']), reverse=True)
         res[c] = {'status': 'logo', 'qid': it['qid'], 'label': it['label'], 'file': ls[0]['file'], 'n_logos': len(ls)}
+        if tie: res[c]['tiebreak'] = tie
     files = sorted({r['file'] for r in res.values() if r['status'] == 'logo'})
     lic = {}
     for i in range(0, len(files), 40):

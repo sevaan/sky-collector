@@ -7,11 +7,12 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { TIERS } from './flights.js?v=0.1.1629';
-import { typePhoto } from './type-photos.js?v=0.1.1629';
-import { airlinePhoto } from './airline-photos.js?v=0.1.1629';
-import { fitStyle } from './photo-fit.js?v=0.1.1629';
-import { hasAirlineCallsign, planeLine, levelWord } from './sky-stamps.js?v=0.1.1629';
+import { TIERS } from './flights.js?v=0.1.1631';
+import { typePhoto } from './type-photos.js?v=0.1.1631';
+import { airlinePhoto } from './airline-photos.js?v=0.1.1631';
+import { airlineLogo } from './airline-logos.js?v=0.1.1631';
+import { fitStyle } from './photo-fit.js?v=0.1.1631';
+import { hasAirlineCallsign, planeLine, levelWord } from './sky-stamps.js?v=0.1.1631';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
@@ -39,6 +40,15 @@ export function photoFor(type) { return type ? typePhoto(String(type).toUpperCas
 // A flight's photo: that type in the airline's own livery (js/airline-photos.js) when we have one, else the type photo.
 // The airline is the callsign's ICAO prefix (older saved catches only carry it in the key, F:ACA:CYYZ-KLAX).
 const airlineIcao = (f) => f?.airlineIcao || (/^F:([A-Z]{3}):/.exec(f?.key || '') || [])[1] || (f?.callsign || '').slice(0, 3);
+// The airline's logo beside its name (2026-11-15, Sevaan: "the cards need the airline logos too"). Logos only identify the
+// airline: they sit next to its name and nowhere else, come from Wikimedia Commons in the public domain (js/airline-logos.js,
+// scripts/logos/), and Settings → Airline logos hides them all (localStorage 'skyLogos' = 'off').
+const logosOn = () => { try { return localStorage.getItem('skyLogos') !== 'off'; } catch { return true; } };
+// The airline as its logo when we have one (the logo is the name: a wordmark next to the same name read twice), else its name.
+function airlineMark(f, cls) {
+  const lg = logosOn() ? airlineLogo(airlineIcao(f)) : null;
+  return lg ? `<img class="${cls}" src="${esc(lg.url)}" alt="${esc(f.airline)}" title="${esc(f.airline)}" width="${lg.w}" height="${lg.h}" decoding="async" draggable="false">` : `<span>${esc(f.airline)}</span>`;
+}
 export function flightPhotoFor(f, type) { return (type && airlinePhoto(airlineIcao(f), type)) || photoFor(type); }
 const credit = (ph) => `<span class="fc-credit">Photo: ${esc(ph.credit)}, ${esc(ph.licence)}</span>`;
 // The whole aircraft always shows (2026-11-15, Sevaan: "planes can't be cropped"). Each photo carries the box the plane
@@ -118,7 +128,7 @@ export function flightCardHtml(f, opts = {}) {
       ${routeStrip(f, typeName)}
     </div>
     <h2 class="fc-name${long ? ' fc-name--long' : ''}"><span>${esc(f.from.city)} <i aria-label="to">→</i></span><span>${esc(f.to.city)}</span></h2>
-    <div class="fc-id"><span class="fc-id-l">${esc(f.airline)}</span><span class="fc-id-r">FLIGHT ${esc(f.callsign || '—')}</span></div>
+    <div class="fc-id"><span class="fc-id-l">${airlineMark(f, 'fc-logo')}</span><span class="fc-id-r">FLIGHT ${esc(f.callsign || '—')}</span></div>
     <div class="fc-stats">${stat('DISTANCE', f.kmText, 'km')}${stat('IN THE AIR', air)}${stat('CAUGHT AT', feet(opts.heightFt), 'ft')}${stat('SEEN', opts.sightings ?? 1, '×')}</div>
     ${passport(opts.stampInfo, { newest: opts.newStamp })}
     <p class="fc-fact">${rich(f.fact)}</p>
@@ -165,7 +175,7 @@ export function miniCardHtml({ kind, card: c, type, last, n = 1, stamps = 0, sta
     return `<span class="sct-face sct--${t}${lvl ? ` sct-face--lvl sct-face--${lvl}` : ''}" style="--tier:${TIERS[t].color}"><span class="sct-in">
       <span class="sct-art${ph ? '' : ' sct-art--sky'}">${pic}${gem}${medal}<span class="sct-route"><b>${esc(code(c.from))}</b><svg viewBox="0 0 40 10" preserveAspectRatio="none" aria-hidden="true"><path d="M2 9 Q20 -3 38 9"/></svg><b>${esc(code(c.to))}</b></span></span>
       <span class="sct-name">${esc(c.to.city)}</span>
-      <span class="sct-sub">${esc(c.airline)}</span>
+      <span class="sct-sub">${kind === 'flight' ? airlineMark(c, 'sct-logo') : `<span>${esc(c.airline)}</span>`}</span>
       <span class="sct-stats"><span><small>KM</small>${esc(c.kmText)}</span><span><small>AIR</small>${air}</span></span>
       ${when}</span><span class="sct-shine" aria-hidden="true"></span></span>`;
   }

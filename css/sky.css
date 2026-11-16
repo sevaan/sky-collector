@@ -457,3 +457,9 @@ body.sky-only #reveal a#reveal-view, body.sky-only.night #reveal a#reveal-view {
 #sky-col .sky-rank .lbd-to b { color:var(--sc-ink); }
 #sky-col .sky-rank .lb-xp, #sky-col .sky-rank .lb-xp b { color:var(--sc-orange-ink); font:500 15px var(--label,'SC Label'); letter-spacing:.06em; }
 #sky-col .sky-rank .lb-xp b { font:400 22px var(--display,'Russo One'); }
+
+/* Airline logos beside the airline's name (2026-11-15): sized to the name's cap height, never bigger than the name. */
+.fc-id-l { display:inline-flex; align-items:center; gap:.45em; min-width:0; }
+.fc-logo { height:1.5em; width:auto; max-width:6.5em; object-fit:contain; flex:none; }
+.sct-sub { display:flex; align-items:center; gap:4px; min-width:0; } .sct-sub > span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.sct-logo { height:13px; width:auto; max-width:72px; object-fit:contain; flex:none; }
