@@ -2,14 +2,14 @@
 // Collect does. Catches are kept in localStorage ('skyCatches') for now, apart from Space Collector's sightings, so the
 // old collection code never meets a flight. The Collection screen reads them in a later step.
 
-import { aircraftName, isHelicopter } from './planes.js?v=0.1.1600';
-import { lookupRoute } from './routes.js?v=0.1.1600';
-import { cardsFor, TIERS } from './flights.js?v=0.1.1600';
-import { glyphSvg, showCatch } from './flight-card.js?v=0.1.1600';
+import { aircraftName, isHelicopter } from './planes.js?v=0.1.1602';
+import { lookupRoute } from './routes.js?v=0.1.1602';
+import { cardsFor, TIERS } from './flights.js?v=0.1.1602';
+import { glyphSvg, showCatch } from './flight-card.js?v=0.1.1602';
 
-const KEY = 'skyCatches';
-export function catches() { try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { return []; } }
-function save(list) { try { localStorage.setItem(KEY, JSON.stringify(list.slice(-2000))); } catch {} }
+import { allCatches, addCatch } from './catch-store.js?v=0.1.1602';
+// Catches live in js/catch-store.js (IndexedDB, with a localStorage mirror the Collection page reads).
+export function catches() { return allCatches(); }
 const seenCount = (list, key) => list.filter((c) => c.key === key || c.planeKey === key).length;
 
 const ft = (p) => (Math.round(p.hKm * 3280.84 / 100) * 100).toLocaleString('en-US');
@@ -40,13 +40,13 @@ export async function collect(el, { onDone, show = showCatch } = {}) {
     const p = hit.plane, route = el._route;
     const full = route?.full ?? (await lookupRoute(p.callsign).catch(() => null));
     const { flight, plane } = cardsFor(p, full, route?.airline || '');
-    const list = catches();
+    const list = [...catches()];
     const isNewFlight = flight ? seenCount(list, flight.key) === 0 : false;
     const isNewPlane = seenCount(list, plane.key) === 0;
-    list.push({ key: flight?.key ?? plane.key, planeKey: plane.key, time: Date.now(), hex: p.hex, callsign: p.callsign, reg: p.reg,
+    const entry = { key: flight?.key ?? plane.key, planeKey: plane.key, time: Date.now(), hex: p.hex, callsign: p.callsign, reg: p.reg,
       type: p.type, altFt: Math.round(p.hKm * 3280.84), gsKt: p.gs, rangeKm: Math.round(hit.rangeKm * 10) / 10, airline: route?.airline || '',
-      flight, plane });
-    save(list);
+      flight, plane };
+    list.push(entry); await addCatch(entry);
     await show({ flight, plane, isNewFlight, isNewPlane, heightFt: Math.round(p.hKm * 3280.84), speedKmh: Math.round(p.gs * 1.852),
       awayKm: Math.round(hit.rangeKm), flightSeen: flight ? seenCount(list, flight.key) : 0, planeSeen: seenCount(list, plane.key) });
   } finally { busy = false; onDone?.(); }

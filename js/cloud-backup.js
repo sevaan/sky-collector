@@ -6,9 +6,10 @@
 //   iCloud key 'sc-backup' = { v: 1, s: [sightings], gone: [ids deleted], st: { progress keys }, at }
 // Sync merges both ways and never loses anything earned: sightings are a union by a stable id (time + card + object),
 // minus ids someone deleted; progress keys merge as in the old account sync.
-import { allSightings, addSighting, deleteSighting } from './store.js?v=0.1.1600';
-import { plugin, onNative, isNative } from './native.js?v=0.1.1600';
-import { backupId } from './gift.js?v=0.1.1600';
+import { allSightings, addSighting, deleteSighting } from './store.js?v=0.1.1602';
+import { allCatches, restoreCatches } from './catch-store.js?v=0.1.1602';
+import { plugin, onNative, isNative } from './native.js?v=0.1.1602';
+import { backupId } from './gift.js?v=0.1.1602';
 export { backupId };
 
 const KEY = 'sc-backup';
@@ -53,9 +54,13 @@ export function backupNow() {
     for (const [id, s] of theirs) if (!here.has(id) && !gone.has(id)) { await addSighting(s); added++; }
     const merged = new Map([...theirs].filter(([id]) => !gone.has(id))); for (const [id, s] of here) merged.set(id, strip(s));
     const st = mergeState(cloud.st ?? {});
+    // Sky Collector catches (2026-11-15): restore what this phone is missing, then send the union back (newest 1,500).
+    added += await restoreCatches(cloud.c ?? []);
+    const cm = new Map(); for (const c of [...(cloud.c ?? []), ...allCatches()]) { const { id, ...rest } = c; cm.set(`${c.time}:${c.hex ?? ''}`, rest); }
+    const catchesOut = [...cm.values()].sort((a, b) => a.time - b.time).slice(-1500);
     /* an id for this iCloud account's collection, so a pack sent between two phones on the same Apple ID can say so (2026-11-07) */
     const bid = cloud.bid ?? ls.get('backupBid') ?? `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`; ls.set('backupBid', bid);
-    const out = { v: 1, bid, s: [...merged.values()], gone: [...gone].slice(-2000), st, at: Date.now() };
+    const out = { v: 1, bid, s: [...merged.values()], c: catchesOut, gone: [...gone].slice(-2000), st, at: Date.now() };
     try { await store.set({ key: KEY, value: JSON.stringify(out) }); failed = false; ls.set('backupGone', null); ls.set('backupBack', null); ls.set('backupAt', String(Date.now())); }
     catch (e) { failed = true; console.warn('icloud write failed', e?.message ?? e); }
     if (added) listeners.forEach((fn) => { try { fn({ added }); } catch {} });
