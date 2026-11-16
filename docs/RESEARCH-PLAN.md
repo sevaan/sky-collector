@@ -115,10 +115,28 @@ Route cards are put together from parts; the research goes into the parts.
 **Airlines (about 800; start with the top 200 by Phase 0 traffic):**
 - Name, country, founding year, hub, alliance, and the callsign word it uses on the radio ("SPEEDBIRD" for British Airways).
   That last one makes a good short fact.
-- **Logos: yes, to say which airline it is** (checked 2026-11-15; see Phase 6). Get them from a licensed logo set
-  (Airhex or Duffel), not copied from Wikipedia. Show them where a flight tracker would, on the card next to the
-  airline's name. Don't make the logo itself the prize. Keep one switch that hides logos everywhere, in case an app
-  store objects.
+- **Logos: yes, to say which airline it is** (checked 2026-11-15; see Phase 6). Show them where a flight tracker
+  would, on the card next to the airline's name. Don't make the logo itself the prize. Keep one switch that hides
+  logos everywhere, in case an app store objects.
+- **Source: Wikimedia Commons via Wikidata (decided 2026-11-15, Sevaan).**
+  - Wikidata's "logo image" (P154) only links files on Commons, and Commons only keeps files that are free to reuse.
+    So this route gives logos we may copy and ship inside the app, which also works offline.
+  - **Test on 72 airlines from every region:**
+    - 63 had a logo, all marked **public domain**, and the quality is good.
+    - Missing: Cargojet, China Southern, China Eastern, Thai, Garuda, Airlink, Air Peace (and two code mix-ups).
+  - **About 1 in 10 matched the wrong logo**, because several Wikidata items share an ICAO code: cargo arms
+    (Malaysia → MASkargo, Emirates → SkyCargo), sub-brands (Turkish → AJet, TAP → TAP Express, SAS → SAS
+    Commuter), or old logos (LATAM → LAN, Jazz).
+  - **The match rule to use:**
+    - prefer the item that is an airline (not a subsidiary) and has the most Wikipedia articles
+    - take the logo with preferred rank and no end date
+    - then a human check of every logo before it ships
+  - Gaps get the airline's name in its colour, or a later Airhex quote.
+  - Files whose Commons licence isn't public domain or CC0 are left out. Record file name, licence and source URL
+    for each, like Space Collector's `scripts/art-photos.json`.
+  - English-Wikipedia-only logos (fair use) are never copied.
+  - Rejected: Brandfetch (free, but logos must load live from them and may not be stored, so no offline cards).
+    Airhex (custom quote) is the fallback.
 
 **Routes (computed, not researched):**
 - Distance, time in the air and sets come from the parts.
