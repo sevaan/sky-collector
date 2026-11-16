@@ -2,8 +2,8 @@
 // e.g. Icelandair Toronto → Reykjavík), and every catch also counts toward PLANES (the aircraft type). Anything with no
 // route (helicopters, light planes, balloons, private jets) is a Planes card only. No DOM here.
 
-import { aircraftName, isHelicopter } from './planes.js?v=0.1.1595';
-import { routeKm } from './routes.js?v=0.1.1595';
+import { aircraftName, isHelicopter } from './planes.js?v=0.1.1598';
+import { routeKm } from './routes.js?v=0.1.1598';
 
 export const TIERS = {
   common: { label: 'Common', mark: '●', color: '#4a6178' },
