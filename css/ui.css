@@ -2,7 +2,8 @@
    thing). Loaded by index.html and cards.html after their page styles, so a component looks the same everywhere.
    Page CSS may place a component (top/bottom/z-index); it should not restyle it. */
 :root {
-  --ui-link-ink: #bdbea9; --ui-ink: #fff2b3; --ui-muted: rgba(255, 242, 179, .55); --ui-gold: #fa8127; --ui-edge: #627a8b; --ui-edge-soft: #344654;
+  --gold: #fa8127; /* the accent, on every page (the Collection has no app.css); themes re-point it */
+  --ui-link-ink: #bdbea9; --ui-ink: #fff2b3; --ui-muted: rgba(255, 242, 179, .55); --ui-gold: var(--gold); --ui-edge: #627a8b; --ui-edge-soft: #344654;
   --ui-glass: rgba(12, 23, 37, .95); --ui-bar: rgba(8, 15, 27, .78);
   --ui-medal: #ffc93d; --ui-label: 'SC Label', 'Arial Narrow', sans-serif; --ui-display: 'SC Display', Impact, sans-serif;
   --nav-w: calc(28 * max(7px, min(14px, calc((var(--vws, 100vw) - 58px) / 28), calc((100dvh - 120px) / 39.2)))); /* = a full card's width */
@@ -16,7 +17,7 @@
 .sc-switch__item { display: flex; flex-direction: row; justify-content: center; align-items: center; width: auto; min-height: 0; gap: 0; border: 0; border-radius: 99px;
   background: transparent; color: var(--ui-muted); text-decoration: none; font: 500 14px/1 var(--ui-label); letter-spacing: .14em; text-transform: uppercase; cursor: pointer; }
 .sc-switch__item > span, .sc-switch__item .ico { display: none; }
-.sc-switch__item[aria-current] { color: var(--ui-gold); background: rgba(250, 129, 39, .14); box-shadow: inset 0 0 0 1px rgba(250, 129, 39, .45); }
+.sc-switch__item[aria-current] { color: var(--ui-gold); background: color-mix(in srgb, var(--gold) 14%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gold) 45%, transparent); }
 .sc-switch__item:focus-visible { outline: 2px solid var(--ui-gold); outline-offset: 2px; }
 
 /* ✕: every close in the app (bare glyph, see "Bare icons" below). */
@@ -34,7 +35,7 @@
 :where(#toasts) { position: fixed; z-index: 30; left: 50%; transform: translateX(-50%); width: var(--nav-w); max-width: var(--nav-w); margin: 0;
   bottom: calc(var(--safe-bottom, env(safe-area-inset-bottom, 0px)) + 84px); display: flex; flex-direction: column-reverse; gap: 8px; pointer-events: none; }
 :root { --ticket-event:#e2b53c; --ticket-event-text:#f4d27a; }
-html[data-theme=night],body.night { --ticket-event:var(--gold, #fa8127); --ticket-event-text:var(--gold, #fa8127); }
+html[data-theme=night],body.night { --ticket-event:var(--gold, var(--gold)); --ticket-event-text:var(--gold, var(--gold)); }
 .ticket { pointer-events:auto; display:flex; align-items:center; gap:12px; min-height:52px; padding:8px 12px 8px 14px; border:1px solid var(--edge, #627a8b); border-left:4px solid var(--edge, #627a8b); border-radius:10px; background:var(--glass-strong, #0c1725); color:var(--text, #fff2b3); box-shadow:0 8px 24px rgba(0,0,0,.5);
   /* Like a phone notification (2026-10-06): drops in from above the screen with a little spring, slides back up to leave. */
   opacity:0; transform:translateY(calc(-100% - var(--safe-top) - 80px)) scale(.96); transition:transform .3s cubic-bezier(.5,0,.9,.5), opacity .3s ease-in; }
@@ -67,17 +68,17 @@ html[data-theme=night],body.night { --ticket-event:var(--gold, #fa8127); --ticke
 .ticket__body { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
 .ticket__eyebrow { font:500 12px/1.2 var(--label, 'SC Label','Arial Narrow',sans-serif); letter-spacing:.18em; color:var(--muted, #bdbea9); }
 .ticket__line { font:500 15px/1.15 var(--label, 'SC Label','Arial Narrow',sans-serif); letter-spacing:.02em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.ticket__xp { flex:none; font:400 15px/1 var(--display, 'SC Display',Impact,sans-serif); color:var(--gold, #fa8127); }
+.ticket__xp { flex:none; font:400 15px/1 var(--display, 'SC Display',Impact,sans-serif); color:var(--gold, var(--gold)); }
 .ticket__xp small { font:500 12px/1 var(--label, 'SC Label','Arial Narrow',sans-serif); letter-spacing:.1em; color:var(--muted, #bdbea9); margin-left:3px; }
 .ticket__go { flex:none; font:500 12px/1 var(--label, 'SC Label','Arial Narrow',sans-serif); letter-spacing:.12em; color:var(--cyan, #8fb3cf); }
-.ticket--mission, .ticket--achievement, .ticket--rank { border-left-color:var(--gold, #fa8127); } .ticket--mission .ticket__eyebrow, .ticket--achievement .ticket__eyebrow, .ticket--rank .ticket__eyebrow { color:var(--gold, #fa8127); }
-.ticket--mission .ticket__mark, .ticket--achievement .ticket__mark, .ticket--rank .ticket__mark { transform:rotate(45deg); background:var(--gold, #fa8127); }
+.ticket--mission, .ticket--achievement, .ticket--rank { border-left-color:var(--gold, var(--gold)); } .ticket--mission .ticket__eyebrow, .ticket--achievement .ticket__eyebrow, .ticket--rank .ticket__eyebrow { color:var(--gold, var(--gold)); }
+.ticket--mission .ticket__mark, .ticket--achievement .ticket__mark, .ticket--rank .ticket__mark { transform:rotate(45deg); background:var(--gold, var(--gold)); }
 .ticket--xp { border-left-color:var(--cyan, #8fb3cf); } .ticket--xp .ticket__eyebrow { color:var(--cyan, #8fb3cf); } .ticket--xp .ticket__xp { color:var(--cyan, #8fb3cf); }
 .ticket--xp .ticket__mark { border-radius:50%; border:2px solid var(--cyan, #8fb3cf); box-sizing:border-box; }
 .ticket--event { border-color:var(--ticket-event); border-left-color:var(--ticket-event); } .ticket--event .ticket__eyebrow, .ticket--event .ticket__go { color:var(--ticket-event-text); }
 .ticket--event .ticket__mark { border-radius:50%; background:radial-gradient(circle at 35% 30%, #fff1c2, var(--ticket-event) 60%, #9a7420); }
 .ticket--info { border-left-color:var(--edge, #627a8b); } .ticket--info .ticket__mark { display:none; } .ticket--info .ticket__line { white-space:normal; font:400 14px/1.35 var(--label, 'SC Label','Arial Narrow',sans-serif); }
-.ticket--info .big-line { display:block; color:var(--gold, #fa8127); font:400 17px/1.3 var(--display, 'SC Display',Impact,sans-serif); margin-bottom:3px; }
+.ticket--info .big-line { display:block; color:var(--gold, var(--gold)); font:400 17px/1.3 var(--display, 'SC Display',Impact,sans-serif); margin-bottom:3px; }
 .ticket--info .ticket__line:has(.tk-art) { display:flex; align-items:center; gap:12px; }
 .ticket--info .tk-art { flex:none; line-height:0; } .ticket--info .tk-text { min-width:0; }
 @media (prefers-reduced-motion: reduce) { .tk-art animateMotion, .tk-art animateTransform { display:none; } }
@@ -89,10 +90,10 @@ html[data-theme=night],body.night { --ticket-event:var(--gold, #fa8127); --ticke
 /* Leaving: a quick fade and 8px drop, instead of sliding back down through the slider and switcher */
 .ticket.out { transform:translateY(8px) !important; opacity:0 !important; transition:transform .18s ease-in, opacity .18s ease-in !important; }
 @media (prefers-reduced-motion: reduce) { .ticket.in { transition:opacity .2s; } }
-.ticket--standing { border-left-color:var(--gold, #fa8127); }
-.ticket--standing .ticket__go { color:var(--gold, #fa8127); font-size:20px; }
-.ticket--compass { border-left-color:var(--gold, #fa8127); } .ticket--compass .ticket__mark { display:none; }
-.ticket--compass .ticket__eyebrow { color:var(--gold, #fa8127); grid-column:2; grid-row:1; }
+.ticket--standing { border-left-color:var(--gold, var(--gold)); }
+.ticket--standing .ticket__go { color:var(--gold, var(--gold)); font-size:20px; }
+.ticket--compass { border-left-color:var(--gold, var(--gold)); } .ticket--compass .ticket__mark { display:none; }
+.ticket--compass .ticket__eyebrow { color:var(--gold, var(--gold)); grid-column:2; grid-row:1; }
 .ticket--compass .ticket__body { display:grid; grid-template-columns:auto 1fr; column-gap:10px; align-items:center; }
 .ticket--compass .ticket__line { display:contents; }
 .ticket--compass .tk-art { grid-column:1; grid-row:1 / 3; line-height:0; }
@@ -167,7 +168,7 @@ select, .filter select, .search { border: 1px solid var(--ui-edge); border-radiu
 .ui-range::-webkit-slider-thumb { -webkit-appearance: none; width: 26px; height: 26px; margin-top: -11.5px; border-radius: 50%; background: #080f1b; border: 2.5px solid color-mix(in srgb, var(--ui-gold) 45%, #080f1b);
   box-shadow: 0 0 0 5px rgba(8, 15, 27, .6), 0 2px 8px #0008; }
 .ui-range::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: #080f1b; border: 2px solid color-mix(in srgb, var(--ui-gold) 45%, #080f1b); }
-.ui-range:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(250, 129, 39, .35); }
+.ui-range:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px color-mix(in srgb, var(--gold) 35%, transparent); }
 
 /* Bare icons (2026-10-07, Sevaan): no circle around the header buttons or any ✕; the 44px tap area stays. */
 .icon-button, .x-close, .pill.x-close, #viewer .close { border: 0 !important; background: transparent !important; box-shadow: none !important; }
@@ -182,7 +183,7 @@ select, .filter select, .search { border: 1px solid var(--ui-edge); border-radiu
 /* The switcher's pill slides (2026-10-07, Sevaan): one orange pill under the buttons, moved by data-side, rather than
    each button lighting up. Tap → the pill glides across, then the view changes. */
 .sc-switch::before { content: ''; position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 6px); border-radius: 99px; pointer-events: none;
-  background: rgba(250, 129, 39, .14); box-shadow: inset 0 0 0 1px rgba(250, 129, 39, .45); transition: transform .26s cubic-bezier(.3, 1.25, .5, 1); }
+  background: color-mix(in srgb, var(--gold) 14%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gold) 45%, transparent); transition: transform .26s cubic-bezier(.3, 1.25, .5, 1); }
 .sc-switch[data-side='right']::before { transform: translateX(calc(100% + 4px)); }
 .sc-switch.no-anim::before, .sc-switch.no-anim .sc-switch__item { transition: none !important; }
 .sc-switch__item { position: relative; z-index: 1; transition: color .22s ease; }
@@ -294,7 +295,7 @@ dialog.leaving { animation: ui-fade-in var(--m-norm) var(--ease-out) reverse for
 .pc-disc { width: 58px; flex: none; aspect-ratio: 1; filter: drop-shadow(0 6px 12px #000a); opacity: 0; transform: translateY(46px) scale(.2) rotate(-200deg); }
 .pc-disc .patch, .pc-disc svg { display: block; width: 100%; height: 100%; }
 .pc-tag { margin-left: 8px; padding: 6px 10px; border-radius: 8px; background: #0c1725ee; border: 1px solid #344654; white-space: nowrap; opacity: 0; transform: translateX(-12px); transition: opacity .3s ease, transform .35s ease; }
-.pc-tag small { display: block; color: var(--gold, #fa8127); font: 500 12px/1 var(--label, 'SC Label', sans-serif); letter-spacing: .18em; text-transform: uppercase; }
+.pc-tag small { display: block; color: var(--gold, var(--gold)); font: 500 12px/1 var(--label, 'SC Label', sans-serif); letter-spacing: .18em; text-transform: uppercase; }
 .pc-tag b { display: block; margin-top: 3px; color: var(--text, #fff2b3); font: 400 13px/1 var(--display, 'SC Display', sans-serif); text-transform: uppercase; }
 .pc-coin.in .pc-disc { animation: pc-pop .55s cubic-bezier(.2,1.4,.4,1) forwards; }
 .pc-coin.in .pc-tag { opacity: 1; transform: none; transition-delay: .25s; }
@@ -303,7 +304,7 @@ dialog.leaving { animation: ui-fade-in var(--m-norm) var(--ease-out) reverse for
 .pc-coin.out .pc-disc { animation: pc-roll .6s cubic-bezier(.5,0,.75,.4) forwards; }
 @keyframes pc-roll { 0% { opacity: 1; transform: none; } 85% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(.25) rotate(160deg); } }
 .pc-more { margin-left: 4px; color: var(--muted, #bdbea9); font: 500 12px/1 var(--label, sans-serif); letter-spacing: .16em; text-transform: uppercase; }
-.pc-badge { position: fixed; z-index: 41; min-width: 24px; height: 24px; padding: 0 7px; border-radius: 12px; background: var(--gold, #fa8127); color: #080f1b; font: 400 12px/24px var(--display, 'SC Display', sans-serif); text-align: center; pointer-events: none; animation: pc-badge 2.4s ease forwards; }
+.pc-badge { position: fixed; z-index: 41; min-width: 24px; height: 24px; padding: 0 7px; border-radius: 12px; background: var(--gold, var(--gold)); color: #080f1b; font: 400 12px/24px var(--display, 'SC Display', sans-serif); text-align: center; pointer-events: none; animation: pc-badge 2.4s ease forwards; }
 @keyframes pc-badge { 0% { opacity: 0; transform: scale(.4); } 12% { opacity: 1; transform: scale(1.25); } 20%, 80% { opacity: 1; transform: scale(1); } 100% { opacity: 0; } }
 :where(html[data-theme='night'], body.night) .pc-disc { filter: grayscale(1) brightness(.55) sepia(1) saturate(5) hue-rotate(318deg) drop-shadow(0 6px 12px #000a); }
 @media (prefers-reduced-motion: reduce) { .pc-coin.in .pc-disc { animation: none; opacity: 1; transform: none; } .pc-coin.out .pc-disc { animation: pc-fade .3s forwards; } @keyframes pc-fade { to { opacity: 0; } } }
@@ -359,7 +360,7 @@ body:has(#gh-remind:not([hidden])) #toasts { opacity: 0; pointer-events: none; t
    is a solid button in that colour and ✕ is a soft square. --tkc is the kind's colour. ---------- */
 .ticket { --tkc: #c9cbb6; gap: 12px !important; min-height: 52px; padding: 9px 10px 9px 14px !important; border: 0 !important; border-top: 3px solid var(--tkc) !important; border-radius: 14px !important;
   background: rgba(8, 15, 27, .9) !important; box-shadow: 0 10px 22px rgba(0, 0, 0, .3) !important; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); color: #fff2b3; text-shadow: none; }
-.ticket--mission, .ticket--compass, .ticket--standing { --tkc: #fa8127; }
+.ticket--mission, .ticket--compass, .ticket--standing { --tkc: var(--gold); }
 .ticket--rank, .ticket--event, .ticket--achievement { --tkc: #ffc93d; }
 .ticket--xp { --tkc: #8fb3cf; }
 .ticket--patch { --tkc: #e46ad6; }
@@ -394,13 +395,13 @@ body:has(#gh-remind:not([hidden])) #toasts { opacity: 0; pointer-events: none; t
 /* The orange edge is part of the bar's own background (2026-10-17, Sevaan: the full width of its half). As a ::before
    it poked out above the bar on iOS; a background is always clipped by the rounded corners. */
 .sc-switch::before { display: none !important; }
-.sc-switch { --edge: #fa8127; background: linear-gradient(var(--edge), var(--edge)) no-repeat 0 0 / 50% 3px, rgba(8, 15, 27, .9) !important; transition: background-position .26s cubic-bezier(.3,1.25,.5,1); }
+.sc-switch { --edge: var(--gold); background: linear-gradient(var(--edge), var(--edge)) no-repeat 0 0 / 50% 3px, rgba(8, 15, 27, .9) !important; transition: background-position .26s cubic-bezier(.3,1.25,.5,1); }
 .sc-switch[data-side='right'] { background-position: 100% 0, 0 0 !important; }
 :where(html[data-theme='night'], body.night) .sc-switch { --edge: #ff6a55; background-color: rgba(12, 3, 3, .92) !important; }
 .sc-switch { width: var(--nav-w) !important; padding: 0 !important; gap: 0 !important; border: 0 !important; border-radius: 18px !important; overflow: hidden; box-shadow: 0 10px 24px rgba(0, 0, 0, .35); }
 .sc-switch__item { flex-direction: column !important; gap: 5px !important; border-radius: 0 !important; color: #c9cbb6; font: 600 12px/1 var(--ui-label, 'SC Label', sans-serif) !important; letter-spacing: .2em !important; }
 .sc-switch__item .ico { display: inline-block !important; width: 22px; height: 22px; flex: none; }
-.sc-switch[data-side='left'] .sc-switch__item:first-child, .sc-switch[data-side='right'] .sc-switch__item:last-child, .sc-switch:not([data-side]) .sc-switch__item[aria-current] { color: #fa8127 !important; }
+.sc-switch[data-side='left'] .sc-switch__item:first-child, .sc-switch[data-side='right'] .sc-switch__item:last-child, .sc-switch:not([data-side]) .sc-switch__item[aria-current] { color: var(--gold) !important; }
 :where(html[data-theme='night'], body.night) .sc-switch__item { color: #a8463b !important; }
 :where(html[data-theme='night'], body.night) .sc-switch[data-side='left'] .sc-switch__item:first-child, :where(html[data-theme='night'], body.night) .sc-switch[data-side='right'] .sc-switch__item:last-child { color: #ff6a55 !important; }
 /* One close ✕ everywhere (2026-10-18, Sevaan: "use the view card one"): the reveal's, drawn in the app's label font, not
@@ -413,9 +414,9 @@ body:has(#gh-remind:not([hidden])) #toasts { opacity: 0; pointer-events: none; t
 #toasts .ticket { --k: #c9cbb6; display: grid !important; grid-template-columns: 32px minmax(0, 1fr) auto; column-gap: 10px; align-items: start; min-height: 0 !important;
   padding: 10px 10px 11px !important; border: 0 !important; border-top: 3px solid var(--k) !important; border-radius: 14px !important;
   background: rgba(9, 16, 28, .96) !important; box-shadow: 0 10px 24px rgba(0, 0, 0, .38), inset 0 0 0 1px rgba(255, 255, 255, .05) !important; color: #fff2b3; }
-#toasts .ticket.tone-orange { --k: #fa8127; } #toasts .ticket.tone-gold { --k: #f1c04e; } #toasts .ticket.tone-steel { --k: #8fb3cf; }
+#toasts .ticket.tone-orange { --k: var(--gold); } #toasts .ticket.tone-gold { --k: #f1c04e; } #toasts .ticket.tone-steel { --k: #8fb3cf; }
 #toasts .ticket.tone-info { --k: #c9cbb6; } #toasts .ticket.tone-red { --k: #ff7a64; } #toasts .ticket.tone-shiny { --k: #ffcf7a; }
-#toasts .ticket.tone-shiny { border-top: 3px solid transparent !important; background: linear-gradient(rgba(9,16,28,.96), rgba(9,16,28,.96)) padding-box, linear-gradient(90deg, #fff2b3, #ffcf7a, #fa8127, #ffb3a1) border-box !important; }
+#toasts .ticket.tone-shiny { border-top: 3px solid transparent !important; background: linear-gradient(rgba(9,16,28,.96), rgba(9,16,28,.96)) padding-box, linear-gradient(90deg, #fff2b3, #ffcf7a, var(--gold), #ffb3a1) border-box !important; }
 #toasts .ticket .ticket__mark, #toasts .ticket .ticket__art, #toasts .ticket .ticket__go { display: none !important; }
 #toasts .tn-ic { width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; color: var(--k); background: color-mix(in srgb, var(--k) 15%, transparent); overflow: hidden; }
 #toasts .tn-ic svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
@@ -456,7 +457,7 @@ body:has(#discover:not([hidden])) #toast-tray #banner:not([hidden]) { display: f
 #toast-tray { top: calc(var(--safe-top, env(safe-area-inset-top, 0px)) + 101px); } /* level with the top of the radar: the Next chip it used to sit under is gone (2026-10-24), but it is only CSS-hidden, so the old :not([hidden]) test always pushed the chips 42px lower */
 #toast-tray .ticket { --k: #c9cbb6; pointer-events: auto; display: flex; align-items: center; gap: 8px; padding: 5px 12px 5px 5px; border: 0; border-top: 2px solid var(--k); border-radius: 12px; background: rgba(9, 16, 28, .94); box-shadow: 0 6px 16px rgba(0,0,0,.35); cursor: pointer; opacity: 0; transform: translateX(16px); transition: opacity .25s ease, transform .35s cubic-bezier(.2,.9,.3,1.1); }
 #toast-tray .ticket.in { opacity: 1; transform: none; }
-#toast-tray .ticket.tone-orange { --k: #fa8127; } #toast-tray .ticket.tone-gold { --k: #f1c04e; } #toast-tray .ticket.tone-steel { --k: #8fb3cf; } #toast-tray .ticket.tone-red { --k: #ff7a64; }
+#toast-tray .ticket.tone-orange { --k: var(--gold); } #toast-tray .ticket.tone-gold { --k: #f1c04e; } #toast-tray .ticket.tone-steel { --k: #8fb3cf; } #toast-tray .ticket.tone-red { --k: #ff7a64; }
 #toast-tray .tn-ic { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; color: var(--k); background: color-mix(in srgb, var(--k) 15%, transparent); }
 #toast-tray .tn-ic svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 #toast-tray .ticket__eyebrow { font: 500 11px/1 var(--label, 'SC Label', sans-serif); letter-spacing: .16em; text-transform: uppercase; color: var(--k); white-space: nowrap; }
@@ -486,7 +487,7 @@ body:has(#event-banner:not([hidden])):has(#nextpass:not([hidden])) #toast-tray {
 
 /* ---------- Navigation prototypes (2026-10-21, Testing tools → Navigation prototype) ---------- */
 .sc-switch[data-side='mid'] { background-position: 50% 0, 0 0 !important; }
-.sc-switch[data-side='mid'] .sc-switch__item:nth-child(2) { color: #fa8127 !important; }
+.sc-switch[data-side='mid'] .sc-switch__item:nth-child(2) { color: var(--gold) !important; }
 body:is(.nav-tabs, .nav-lens).sky-open #nav { z-index: 70; visibility: visible !important; }
 body:is(.nav-tabs, .nav-lens) #visible { padding-bottom: calc(var(--safe-bottom, 0px) + 110px); }
 /* A · three equal parts with a live Sky tab */
@@ -497,16 +498,16 @@ body.nav-tabs #nav-sky .nav-sky-t { font-variant-numeric: tabular-nums; white-sp
 @keyframes sky-out-left { from { transform: none; } to { transform: translateX(-100%); } }
 /* B · wings and a raised round Explore lens */
 body.nav-lens .sc-switch { overflow: visible !important; background: rgba(8, 15, 27, .92) !important; display: grid !important; grid-template-columns: 1fr 84px 1fr; align-items: center; }
-body.nav-lens #nav-explore { width: 76px; height: 76px; margin-top: -26px; border-radius: 50% !important; justify-self: center; background: #0e1828; box-shadow: 0 0 0 3px #fa8127, 0 10px 20px rgba(0,0,0,.5); font-size: 10px !important; letter-spacing: .12em !important; gap: 3px !important; }
-body.nav-lens .sc-switch[data-side='mid'] #nav-explore { background: #fa8127; color: #0b1018 !important; }
-body.nav-lens .sc-switch[data-side='left'] #nav-sky, body.nav-lens .sc-switch[data-side='right'] #nav-collection { color: #fa8127 !important; }
+body.nav-lens #nav-explore { width: 76px; height: 76px; margin-top: -26px; border-radius: 50% !important; justify-self: center; background: #0e1828; box-shadow: 0 0 0 3px var(--gold), 0 10px 20px rgba(0,0,0,.5); font-size: 10px !important; letter-spacing: .12em !important; gap: 3px !important; }
+body.nav-lens .sc-switch[data-side='mid'] #nav-explore { background: var(--gold); color: #0b1018 !important; }
+body.nav-lens .sc-switch[data-side='left'] #nav-sky, body.nav-lens .sc-switch[data-side='right'] #nav-collection { color: var(--gold) !important; }
 body.nav-lens .sc-switch[data-side='left'] .sc-switch__item:first-child:not(#nav-sky) { color: inherit; }
 body.nav-lens #nav-sky .nav-sky-t { font-size: 11px; letter-spacing: .14em; }
 /* C · a live strip at the top of Explore; the sky page drops from the top */
 #sky-strip { position: fixed; z-index: 3; top: calc(var(--safe-top) + 92px); left: 132px; right: 12px; min-height: 44px; display: flex; align-items: center; gap: 9px; padding: 8px 12px; border-radius: 14px; border: 1px solid #34466a; background: rgba(8, 15, 27, .82); color: #fff2b3; font: 500 13.5px/1.2 var(--label); letter-spacing: .04em; text-align: left; box-shadow: 0 8px 18px rgba(0,0,0,.35); }
 #sky-strip[hidden] { display: none; }
-#sky-strip .ss-dot { width: 8px; height: 8px; border-radius: 50%; background: #fa8127; flex: none; box-shadow: 0 0 0 4px #fa812733; }
-#sky-strip .ss-t { flex: 1; min-width: 0; font-variant-numeric: tabular-nums; } #sky-strip .ss-c { color: #fa8127; font-size: 16px; }
+#sky-strip .ss-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); flex: none; box-shadow: 0 0 0 4px color-mix(in srgb, var(--gold) 20%, transparent); }
+#sky-strip .ss-t { flex: 1; min-width: 0; font-variant-numeric: tabular-nums; } #sky-strip .ss-c { color: var(--gold); font-size: 16px; }
 body.nav-stack #nextpass { display: none !important; }
 body.ob-tour #sky-strip, body.col-open #sky-strip { display: none; }
 @keyframes sky-in-top { from { transform: translateY(-100%); } to { transform: none; } }
@@ -516,7 +517,7 @@ body.nav-stack #visible.leaving { animation: sky-out-top .3s cubic-bezier(.5, 0,
 body.night #sky-strip { color: #ff7f70; border-color: #5a1d18; } body.night #sky-strip .ss-dot { background: #ff6a55; }
 #nav-sky .nav-sky-t { display: inline !important; }
 body.nav-lens #nav-explore { background: #0e1828 !important; }
-body.nav-lens .sc-switch[data-side='mid'] #nav-explore { background: #fa8127 !important; }
+body.nav-lens .sc-switch[data-side='mid'] #nav-explore { background: var(--gold) !important; }
 body:is(.nav-tabs, .nav-lens).sky-open .sc-switch { background-color: #0b1220 !important; } body.nav-lens.sky-open .sc-switch { background: #0b1220 !important; }
 /* Three tabs are the navigation now (2026-10-21): Up in your sky rises like the other pages, not from the left. */
 /* A dark soft fade behind the tabs over the sky page, so its rows don't show through. Its own element (2026-10-21):
@@ -530,7 +531,7 @@ body.nav-tabs.sky-open #tab-fade { height: calc(var(--safe-bottom, 0px) + 175px)
 body.nav-tabs #nav-sky { position: relative; }
 body.nav-tabs #nav-sky .nav-sky-v { position: absolute; left: 0; right: 0; bottom: 7px; font: 600 10px/1 var(--label, 'SC Label'), sans-serif; letter-spacing: .12em; text-transform: uppercase; color: #8f9aa6; font-variant-numeric: tabular-nums; white-space: nowrap; text-align: center; }
 body.nav-tabs #nav-sky .nav-sky-v:empty { display: none; }
-.sc-switch[data-side='left'] #nav-sky .nav-sky-v { color: #fa8127; opacity: .8; }
+.sc-switch[data-side='left'] #nav-sky .nav-sky-v { color: var(--gold); opacity: .8; }
 body.night #nav-sky .nav-sky-v { color: #c4584a; }
 /* Notices out from under the header (2026-10-21, Sevaan picked design/notices-under-header.html A). The stack sits just
    below the header's double line; anything above that line is clipped, so a notice slides in from behind the header and
@@ -628,7 +629,7 @@ body:not(.night) #set-version { color: #9fb0c6 !important; } /* the version line
 html.text-big .sc-switch__item { letter-spacing: .08em; }
 
 /* The rate link under the weekly recap (2026-11-09). */
-#recap .rc-rate { background: none; border: 0; padding: 8px 12px; min-height: 36px; color: var(--ui-gold, #fa8127); font: 500 13px var(--label, 'SC Label', sans-serif); letter-spacing: .14em; text-transform: uppercase; cursor: pointer; }
+#recap .rc-rate { background: none; border: 0; padding: 8px 12px; min-height: 36px; color: var(--ui-gold, var(--gold)); font: 500 13px var(--label, 'SC Label', sans-serif); letter-spacing: .14em; text-transform: uppercase; cursor: pointer; }
 body.night #recap .rc-rate { color: #ff6a55; }
 
 .pm-out { margin: 0 16px 12px; padding: 10px 12px; border-radius: 10px; background: #0b1626; border: 1px solid #2a3f5e; color: #dfe7f0; font: 12px/1.45 ui-monospace, Menlo, monospace; white-space: pre-wrap; user-select: text; -webkit-user-select: text; } /* Testing tools' performance meter */
@@ -657,7 +658,7 @@ body.night #recap .rc-rate { color: #ff6a55; }
 .sc-switch { transition: background-position .26s cubic-bezier(.3,1.25,.5,1), box-shadow .15s ease-out !important; } /* keeps the marker's slide (line ~397) */
 .sc-switch.no-anim { transition: none !important; } /* an instant marker move really is instant (the marker is the bar's own background now) */
 @media (prefers-reduced-motion: reduce) { .sc-switch { transition: none !important; } }
-body:is(.sky-open, .col-open) .sc-switch:not([data-side='mid']) { box-shadow: 0 0 0 1px #fa812759, 0 0 16px #fa812733, inset 0 0 2px #fa812766, 0 10px 24px #00000080 !important; }
+body:is(.sky-open, .col-open) .sc-switch:not([data-side='mid']) { box-shadow: 0 0 0 1px color-mix(in srgb, var(--gold) 35%, transparent), 0 0 16px color-mix(in srgb, var(--gold) 20%, transparent), inset 0 0 2px color-mix(in srgb, var(--gold) 40%, transparent), 0 10px 24px #00000080 !important; }
 body.night:is(.sky-open, .col-open) .sc-switch:not([data-side='mid']), html[data-theme='night'] body:is(.sky-open, .col-open) .sc-switch:not([data-side='mid']) { box-shadow: 0 0 0 1px #ff6a5559, 0 0 16px #ff6a5533, inset 0 0 2px #ff6a5566, 0 10px 24px #00000080 !important; }
 
 /* ===== Interface fidelity (2026-11-12, Sevaan picked all six of design/ui-fidelity.html) ===== */
@@ -672,7 +673,7 @@ body.night :is(.tk-card, #toasts .ticket:not(.tone-shiny)) { background-image: r
    the bar's background layers carry the sliding marker, and it stays solid so nothing shows through) */
 .sc-switch { box-shadow: inset 0 1px 0 #ffffff24, inset 0 18px 22px -16px #ffffff12, inset 0 -1px 0 #00000080, 0 0 0 1px #fff2b31f, 0 12px 26px rgba(0, 0, 0, .45), 0 2px 4px #0008 !important; }
 body.night .sc-switch, html[data-theme='night'] .sc-switch { box-shadow: inset 0 1px 0 #ff6a5526, inset 0 -1px 0 #00000080, 0 0 0 1px #ff6a5526, 0 12px 26px rgba(0, 0, 0, .45) !important; }
-body:is(.sky-open, .col-open) .sc-switch:not([data-side='mid']) { box-shadow: inset 0 1px 0 #ffffff24, inset 0 18px 22px -16px #ffffff12, inset 0 -1px 0 #00000080, 0 0 0 1px #fa812759, 0 0 16px #fa812733, inset 0 0 2px #fa812766, 0 12px 26px #00000080 !important; }
+body:is(.sky-open, .col-open) .sc-switch:not([data-side='mid']) { box-shadow: inset 0 1px 0 #ffffff24, inset 0 18px 22px -16px #ffffff12, inset 0 -1px 0 #00000080, 0 0 0 1px color-mix(in srgb, var(--gold) 35%, transparent), 0 0 16px color-mix(in srgb, var(--gold) 20%, transparent), inset 0 0 2px color-mix(in srgb, var(--gold) 40%, transparent), 0 12px 26px #00000080 !important; }
 body.night:is(.sky-open, .col-open) .sc-switch:not([data-side='mid']), html[data-theme='night'] body:is(.sky-open, .col-open) .sc-switch:not([data-side='mid']) { box-shadow: inset 0 1px 0 #ff6a5526, 0 0 0 1px #ff6a5559, 0 0 16px #ff6a5533, inset 0 0 2px #ff6a5566, 0 12px 26px #00000080 !important; }
 
 /* 4 · Buttons with travel: the main buttons sit raised with a glossy rim and sink when pressed, then spring back */

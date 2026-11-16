@@ -1,8 +1,8 @@
 // Player progress from the sighting log: XP and observer rank, tonight’s three missions, a weekly streak and
 // achievements. Everything is derived from the saved sightings (nothing extra is stored), so it can’t drift.
 // info(cardKey) -> { tier, type, owner, launch, natural, con } | null. No DOM.
-import { nightKey } from './observation.js?v=0.1.1672';
-import { fleetThresholds } from './card-model.js?v=0.1.1672';
+import { nightKey } from './observation.js?v=0.1.1673';
+import { fleetThresholds } from './card-model.js?v=0.1.1673';
 
 // A longer climb (2026-10-12, playtest room: three ranks on night 1, Mission Control in about two weeks), with two
 // prestige ranks past Mission Control. Nobody drops a rank they had on the old curve (rankFloor below).
@@ -124,7 +124,7 @@ export const CHALLENGES = [
   { id: 'brightstar', text: 'Find a bright named star', done: (n) => n.some((s) => /^star:(?!hip)/.test(s.cardKey)) },
   { id: 'wanderer', text: 'See a planet again', done: (n) => n.some((s) => !s.first && s.info?.type === 'planet') },
 ];
-export function challengeFor(night) { let h = 7; for (const c of String(night)) h = Math.imul(h ^ c.charCodeAt(0), 2246822519) >>> 0; return CHALLENGES[h % CHALLENGES.length]; }
+export function challengeFor(night) { let h = 7; for (const c of String(night)) h = Math.imul(h ^ c.charCodeAt(0), 2246822519) >>> 0; const C = SKY ? SKY_CHALLENGES : CHALLENGES; return C[h % C.length]; }
 
 // A player’s first night gets a fixed starter set a beginner can finish (playtest 2026-10-09: the random three were
 // debris, pre-1980 and a rocket stage, and the first catch left them 0 / 3).
@@ -133,7 +133,47 @@ export const STARTER = [
   { id: 'satellite', text: 'Catch a satellite', done: (n) => n.some((s) => s.info && !s.info.natural) },
   MISSIONS.find((m) => m.id === 'planet'),
 ];
-const MISSION_BY_ID = new Map([...MISSIONS, ...RETIRED, ...STARTER].map((m) => [m.id, m]));
+// Sky Collector (Milestone 1.5, 2026-11-15): the same missions, patches, streaks and ranks, with plane missions and the
+// patches that make sense for planes. main.js and cards-page.js switch it on (setSkyProgress). Plane sightings carry their
+// card as cardSnapshot (js/sky-cards.js), so these read it there.
+const snap = (s) => s.cardSnapshot ?? {};
+const WIDE = /^(A3[3-9]|A35|A38|B74|B76|B77|B78|IL96|A30)/;
+const PROP = /^(DH8|AT[4-7]|C208|PC12|SF34|B190|DHC|JS4|D228|SW4|C130|E120|BE[0-9]|C1[5-9]|C2[0-9]|PA[0-9])/;
+const firstFlight = (s) => s.first && snap(s).sky === 'flight';
+export const SKY_MISSIONS = [
+  { id: 'wide', text: 'Catch a wide-body jet', done: (n) => n.some((s) => WIDE.test(s.typeCode ?? '')) },
+  { id: 'heli', text: 'Catch a helicopter', done: (n) => n.some((s) => snap(s).heli || snap(s).glyph === 'heli') },
+  { id: 'prop', text: 'Catch a propeller plane', done: (n) => n.some((s) => PROP.test(s.typeCode ?? '')) },
+  { id: 'far', text: 'Catch a flight going more than 3,000 km', done: (n) => n.some((s) => (snap(s).km ?? 0) > 3000) },
+  { id: 'short', text: 'Catch a hop under 500 km', done: (n) => n.some((s) => snap(s).sky === 'flight' && snap(s).km != null && snap(s).km < 500) },
+  { id: 'abroad', text: 'Catch a flight to another country', done: (n) => n.some((s) => snap(s).sky === 'flight' && snap(s).from?.country && snap(s).to?.country && snap(s).from.country !== snap(s).to.country) },
+  { id: 'airlines3', text: 'Catch three different airlines', done: (n) => new Set(n.filter((s) => /^[A-Z]{3}\d/.test(s.callsign ?? '')).map((s) => s.callsign.slice(0, 3))).size >= 3 },
+  { id: 'high', text: 'Catch a plane above 35,000 ft', done: (n) => n.some((s) => (s.altFt ?? 0) >= 35000) },
+  { id: 'low', text: 'Catch a plane below 5,000 ft', done: (n) => n.some((s) => s.altFt != null && s.altFt < 5000) },
+  { id: 'rarenew', text: 'Collect a new Rare card or better', done: (n) => n.some((s) => s.first && ['rare', 'epic', 'legendary'].includes(s.info?.tier ?? snap(s).tier)) },
+  { id: 'newflights2', text: 'Collect two new flights', done: (n) => n.filter(firstFlight).length >= 2 },
+  { id: 'again', text: 'Stamp a card you own on a new day', done: (n) => n.some((s) => !s.first) },
+];
+export const SKY_STARTER = [
+  { id: 'firstcard', text: 'Collect your first card', done: (n) => n.some((s) => s.first) },
+  { id: 'firstflight', text: 'Collect a flight: a plane with a route', done: (n) => n.some(firstFlight) },
+  { id: 'types2', text: 'Catch two different kinds of aircraft', done: (n) => new Set(n.map((s) => s.typeCode).filter(Boolean)).size >= 2 },
+];
+export const SKY_CHALLENGES = [
+  { id: 'revisit3', text: 'Stamp 3 cards you own again', done: (n) => n.filter((s) => !s.first).length >= 3 },
+  { id: 'pair10', text: 'Catch two planes in 10 minutes', done: (n) => { const t = n.map((s) => s.time).sort((a, b) => a - b); return t.some((x, i) => i && x - t[i - 1] <= 600000); } },
+  { id: 'levelup', text: 'Turn a card silver or gold', done: (n) => n.some((s) => s.lv) },
+];
+// The patches that mean the same for planes (cards, rarity, time of day, streaks, missions); the rest are about satellites.
+const SKY_PATCHES = new Set(['first', 'ten', 'twentyfive', 'fifty', 'hundred', 'archivist', 'curator', 'catalogue', 'sightings100', 'legend', 'epic', 'spectrum', 'legends5', 'legends25',
+  'twilight', 'owl', 'dawn', 'marathon', 'double', 'hattrick', 'months3', 'months12', 'streak4', 'streak12', 'anniversary', 'roadtrip', 'missions10', 'fullhouse', 'missions50']);
+let SKY = false;
+const RANK_NAMES = RANKS.map((r) => r[1]), SKY_RANK_NAMES = ['Spotter', 'Plane Spotter', 'Tracker', 'Navigator', 'Air Traffic Controller', 'Chief Pilot', 'Ace', 'Sky Legend'];
+export function setSkyProgress(on) { SKY = !!on; RANKS.forEach((r, i) => { r[1] = (SKY ? SKY_RANK_NAMES : RANK_NAMES)[i] ?? r[1]; }); } /* Sky Collector's rank names, same thresholds */
+export const isSkyProgress = () => SKY;
+const activeMissions = () => (SKY ? SKY_MISSIONS : MISSIONS);
+export const activeAchievements = () => (SKY ? ACHIEVEMENTS.filter((x) => SKY_PATCHES.has(x.id)) : ACHIEVEMENTS);
+const MISSION_BY_ID = new Map([...MISSIONS, ...RETIRED, ...STARTER, ...SKY_MISSIONS, ...SKY_STARTER].map((m) => [m.id, m]));
 // Seeded by the night (a day index from nightKey): integer mixing with Math.imul, so the picks spread evenly
 // from one night to the next. (The old float LCG overflowed 2^53 and kept dealing the same few missions.)
 // possible (optional): a Set of mission ids that can be done tonight from here (main.js asks the tonight worker
@@ -141,15 +181,15 @@ const MISSION_BY_ID = new Map([...MISSIONS, ...RETIRED, ...STARTER].map((m) => [
 export function missionsFor(night, possible = null) {
   let h = 0; for (const c of String(night)) h = Math.imul(h ^ c.charCodeAt(0), 2654435761) >>> 0;
   const next = () => { h = (h + 0x6d2b79f5) >>> 0; let t = Math.imul(h ^ (h >>> 15), 1 | h); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0); };
-  const ok = possible ? MISSIONS.filter((m) => possible.has(m.id)) : [];
-  const pick = [], pool = (ok.length >= 3 ? ok : MISSIONS).slice();
+  const M = activeMissions(), ok = possible ? M.filter((m) => possible.has(m.id)) : [];
+  const pick = [], pool = (ok.length >= 3 ? ok : M).slice();
   while (pick.length < 3) pick.push(pool.splice(next() % pool.length, 1)[0]);
   return pick;
 }
 // The missions a night actually had: the starter set on a first night, else a stored deal (main.js saves tonight’s
 // once, from the sky), else the plain draw. Everywhere that shows or scores missions goes through this.
 function missionsOf(night, { first = false, deals = null } = {}) {
-  if (first) return STARTER;
+  if (first) return SKY ? SKY_STARTER : STARTER;
   const ids = deals?.[night];
   if (ids?.length === 3 && ids.every((id) => MISSION_BY_ID.has(id))) return ids.map((id) => MISSION_BY_ID.get(id));
   return missionsFor(night);
@@ -416,7 +456,7 @@ export function progress(sightings, info, { constellations = [], albums = [], no
   let ri = 0; for (let k = 0; k < RANKS.length; k++) if (xp >= RANKS[k][0]) ri = k;
   ri = Math.max(ri, rankFloor(xp));
   const rank = { name: RANKS[ri][1], index: ri, at: RANKS[ri][0], next: RANKS[ri + 1]?.[0] ?? null, nextName: RANKS[ri + 1]?.[1] ?? null };
-  const achievements = ACHIEVEMENTS.map((x) => ({ id: x.id, name: x.name, text: x.text, icon: x.icon, done: x.done(a), prog: PROG[x.id]?.(a) }));
+  const achievements = activeAchievements().map((x) => ({ id: x.id, name: x.name, text: x.text, icon: x.icon, done: x.done(a), prog: PROG[x.id]?.(a) }));
   // Every constellation is its own mission patch (2026-10-09, Sevaan: they replace the gold constellation cards),
   // and so is the Solar System. The patch art is the stick figure (js/patches.js).
   for (const c of constellations) achievements.push({ id: `con-${c.id}`, con: c.id, name: c.system ? 'Solar System' : c.name, sub: c.system ? 'Home system' : c.nick.replace(/^part of /, ''), icon: '',

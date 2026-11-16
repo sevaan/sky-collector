@@ -1,4 +1,4 @@
-:root { --safe-l: env(safe-area-inset-left, 0px); --safe-r: env(safe-area-inset-right, 0px); --vws: calc(100vw - 2 * max(var(--safe-l), var(--safe-r))); --label: 'SC Label', 'Arial Narrow', sans-serif; --display: 'SC Display', Impact, sans-serif; color-scheme: dark; --bg: #080f18; --panel: #111d29; --text: #f3ecd4; --muted: #bdbea9; --line: #2a3a48; --accent: #fa8127; /* card palette (2026-10-05): orange accent, cream ink; the old mint #99d0cc is gone */ --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px); }
+:root { --safe-l: env(safe-area-inset-left, 0px); --safe-r: env(safe-area-inset-right, 0px); --vws: calc(100vw - 2 * max(var(--safe-l), var(--safe-r))); --label: 'SC Label', 'Arial Narrow', sans-serif; --display: 'SC Display', Impact, sans-serif; color-scheme: dark; --bg: #080f18; --panel: #111d29; --text: #f3ecd4; --muted: #bdbea9; --line: #2a3a48; --accent: var(--gold); /* card palette (2026-10-05): orange accent, cream ink; the old mint #99d0cc is gone */ --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px); }
 html.standalone { --safe-bottom: max(6px, calc(env(safe-area-inset-bottom, 0px) - 20px)); } /* no Safari bars: sit lower (2026-10-11) */
 html.standalone.android { --safe-bottom: env(safe-area-inset-bottom, 0px); } /* Android's navigation bar takes taps: nothing may sit in it (Android playtest 2026-11-01: Preview artwork opened Recents) */
 :root[data-theme="night"] { --bg: #0c0303; --panel: #160707; --text: #ff7f70; --muted: #e8705f; --line: #361719; --accent: #f2654f; } /* the same reds as Explore (app.css), not the older dimmer set (visual playtest 2026-10-17) */
@@ -22,7 +22,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .icon-button .ico { width: 22px; height: 22px; }
 .ico { display: inline-block; width: 22px; height: 22px; background: currentColor; flex: none; -webkit-mask: var(--m) center / contain no-repeat; mask: var(--m) center / contain no-repeat; }
 [data-ico="sliders"] { --m: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'%3E%3Cpath d='M4 7h10M18 7h2M4 17h4M12 17h8'/%3E%3Ccircle cx='16' cy='7' r='2'/%3E%3Ccircle cx='10' cy='17' r='2'/%3E%3C/svg%3E"); }
-.icon-button[aria-pressed="true"] { border-color: #fa8127; color: #fa8127; }
+.icon-button[aria-pressed="true"] { border-color: var(--gold); color: var(--gold); }
 @media (max-width: 360px) { .collection-header { padding-inline: 16px; } .wordmark span { letter-spacing: .1em; } }
 main { max-width: 1024px; margin: auto; padding: 0 24px calc(var(--safe-bottom) + 160px); } /* room for the size slider and switcher */
 .collection-intro { padding-top: 29px; }
@@ -115,9 +115,9 @@ body.albums-view .collection-tools { display: none; }
 .album__name { display: block; font: 400 15px/1.15 'SC Display', Impact, sans-serif; text-transform: uppercase; }
 .album__count { display: block; font: 500 13px/1.2 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .1em; color: #bdbea9; }
 .album__count b { color: #fff2b3; font-weight: 500; }
-.album__next { font: 500 12px/1.2 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .08em; color: #fa8127; }
+.album__next { font: 500 12px/1.2 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .08em; color: var(--gold); }
 .album-bar { position: relative; height: 6px; border-radius: 3px; background: #1c2a3a; margin: 4px 0 2px; }
-.album-bar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; background: linear-gradient(90deg, #fa8127, #ffcf5a); }
+.album-bar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; background: linear-gradient(90deg, var(--gold), #ffcf5a); }
 .album-bar b { position: absolute; top: -3px; width: 4px; height: 12px; margin-left: -2px; border-radius: 2px; background: #344654; }
 .album-bar b.hit.g0 { background: #c98a4b; } .album-bar b.hit.g1 { background: #dfe6ee; } .album-bar b.hit.g2 { background: #f2c94c; }
 .album.gold, .album-head.gold { border-color: #e2b53c; box-shadow: inset 0 0 0 1px #7a5a14, 0 0 16px rgba(232, 195, 90, .3); color: #f4d27a;
@@ -131,15 +131,15 @@ body.albums-view .collection-tools { display: none; }
 .lb-rank { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; }
 .lb-label, .lb-head { display: block; font: 500 12px/1.2 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .16em; color: #bdbea9; }
 .lb-name { display: block; font: 400 22px/1.1 'SC Display', Impact, sans-serif; text-transform: uppercase; margin-top: 4px; }
-.lb-xp { font: 500 14px/1 'SC Label', sans-serif; letter-spacing: .1em; color: #bdbea9; } .lb-xp b { font: 400 20px/1 'SC Display', Impact, sans-serif; color: #fa8127; }
+.lb-xp { font: 500 14px/1 'SC Label', sans-serif; letter-spacing: .1em; color: #bdbea9; } .lb-xp b { font: 400 20px/1 'SC Display', Impact, sans-serif; color: var(--gold); }
 .lb-bar { position: relative; height: 7px; margin: 10px 0 6px; border-radius: 4px; background: #1c2a3a; overflow: hidden; }
-.lb-bar i { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, #fa8127, #ffcf5a); border-radius: 4px; }
+.lb-bar i { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, var(--gold), #ffcf5a); border-radius: 4px; }
 .lb-sub { font: 500 13px/1.3 'SC Label', sans-serif; letter-spacing: .06em; color: #bdbea9; }
-.lb-head { margin: 16px 0 6px; color: #fa8127; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 2px 12px; cursor: default; white-space: nowrap; } /* wraps as two lines on narrow phones, never mid-label */
+.lb-head { margin: 16px 0 6px; color: var(--gold); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 2px 12px; cursor: default; white-space: nowrap; } /* wraps as two lines on narrow phones, never mid-label */
 .lb-head span { color: #bdbea9; }
 .lb-mission { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid #1d2a3c; font: 500 15px/1.25 'SC Label', sans-serif; letter-spacing: .04em; }
 .lb-mission i { width: 10px; height: 10px; flex: none; transform: rotate(45deg); border: 1.5px solid #bcb585; }
-.lb-mission.done { color: #bdbea9; text-decoration: line-through; text-decoration-color: #fa8127; } .lb-mission.done i { background: #fa8127; border-color: #fa8127; }
+.lb-mission.done { color: #bdbea9; text-decoration: line-through; text-decoration-color: var(--gold); } .lb-mission.done i { background: var(--gold); border-color: var(--gold); }
 .lb-ach summary { list-style: none; cursor: pointer; } .lb-ach summary::-webkit-details-marker { display: none; }
 .lb-ach summary::after { content: '›'; color: #bdbea9; margin-left: 8px; } .lb-ach[open] summary::after { content: '⌄'; }
 .lb-badges { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; padding: 6px 0 4px; }
@@ -170,13 +170,13 @@ body.albums-view .collection-tools { display: none; }
   #rotate span { font:500 14px/1.3 'SC Label', 'Arial Narrow', sans-serif; letter-spacing:.14em; text-transform:uppercase; color:#bdbea9; }
 }
 
-.lb-remind { margin-left: 8px; padding: 3px 10px; border: 1px solid #fa8127; border-radius: 99px; background: none; color: #fa8127; font: 500 12px/1 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .12em; text-transform: uppercase; vertical-align: middle; }
+.lb-remind { margin-left: 8px; padding: 3px 10px; border: 1px solid var(--gold); border-radius: 99px; background: none; color: var(--gold); font: 500 12px/1 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .12em; text-transform: uppercase; vertical-align: middle; }
 
 /* Sighting rows on fleet cards carry their launch on a second line; the × stays at the right across both lines. */
 .viewer-history p.with-launch { display: grid; grid-template-columns: 1fr auto; column-gap: 10px; row-gap: 3px; align-items: center; }
 .viewer-history p.with-launch .h-main { grid-column: 1; display: flex; justify-content: space-between; gap: 10px; }
 .viewer-history p.with-launch .h-main span:first-child { color: var(--text); }
-.viewer-history p.with-launch .h-launch { grid-column: 1; font: 500 12px/1.3 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .08em; text-transform: uppercase; color: #fa8127; }
+.viewer-history p.with-launch .h-launch { grid-column: 1; font: 500 12px/1.3 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); }
 .viewer-history p.with-launch .history-delete { grid-column: 2; grid-row: 1; align-self: center; } /* beside the time line */
 
 /* The page wears Explore's current sky (js/cards-page.js applySkyTone), fixed behind everything. */
@@ -225,7 +225,7 @@ body.patches-view .collection-tools, body.patches-view .album-head { display: no
 .collection-tabs { overflow-x: auto; scrollbar-width: none; } .collection-tabs::-webkit-scrollbar { display: none; }
 .lb-patches { width: 100%; background: none; border: 0; padding: 0; cursor: pointer; text-align: left; margin-top: 16px; }
 .pw-chips { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding: 2px 0 14px; margin: 0 -4px; } .pw-chips::-webkit-scrollbar { display: none; }
-.pw-chip { flex: none; cursor: pointer; } .pw-chip.on { border-color: rgba(250, 129, 39, .6); background: rgba(250, 129, 39, .14); }
+.pw-chip { flex: none; cursor: pointer; } .pw-chip.on { border-color: color-mix(in srgb, var(--gold) 60%, transparent); background: color-mix(in srgb, var(--gold) 14%, transparent); }
 .pw-chip:not(.on) b { color: rgba(255, 242, 179, .8); }
 .pw-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 12px; }
 @media (min-width: 700px) { .pw-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
@@ -255,7 +255,7 @@ body.patches-view .collection-tools, body.patches-view .album-head { display: no
 /* The grid cascades in on first open. */
 .tile-slot.cascade > * { animation: ui-rise var(--m-norm) var(--ease-out) both; animation-delay: calc(var(--i, 0) * 22ms); }
 /* Patch wall: unseen earned patches shimmer softly with a NEW stitch tag until opened. */
-.pw-item.new .patch::before { content: ''; position: absolute; inset: -4px; border-radius: 50%; box-shadow: 0 0 0 2px rgba(250,129,39,.55), 0 0 18px rgba(250,129,39,.45); animation: ldPulseNew 2.2s ease-in-out infinite; pointer-events: none; }
+.pw-item.new .patch::before { content: ''; position: absolute; inset: -4px; border-radius: 50%; box-shadow: 0 0 0 2px color-mix(in srgb, var(--gold) 55%, transparent), 0 0 18px color-mix(in srgb, var(--gold) 45%, transparent); animation: ldPulseNew 2.2s ease-in-out infinite; pointer-events: none; }
 .pw-item.new::after { content: 'NEW'; position: absolute; margin-top: -6px; padding: 2px 6px; border-radius: 4px; background: var(--accent); color: #0b1120; font: 500 11px 'SC Label', sans-serif; letter-spacing: .14em; }
 .pw-item { position: relative; }
 @keyframes ldPulseNew { 50% { opacity: .35; } }
@@ -309,7 +309,7 @@ main { padding-bottom: calc(var(--safe-bottom) + 210px) !important; } /* the las
 /* Rank card front (2026-10-08, design/rank-card.html D3). */
 .lb-face { padding: 0 !important; }
 .lb-top { display: flex; justify-content: space-between; padding: 10px 14px 8px; border-bottom: 1px solid #bcb58588; font: 500 12px/1.2 'SC Label', sans-serif; letter-spacing: .18em; text-transform: uppercase; color: #fff2b3; }
-.lb-top .lb-streak { color: #fa8127; }
+.lb-top .lb-streak { color: var(--gold); }
 .lb-pic { height: 160px; flex: none; border-bottom: 1px solid #bcb58588; background: radial-gradient(ellipse at 50% 110%, #1d3350, #070d18 70%); overflow: hidden; }
 .lb-ladder { width: 100%; height: 100%; display: block; }
 .lb-prog { padding: 12px 14px 10px; border-bottom: 1px solid #bcb58588; }
@@ -319,7 +319,7 @@ main { padding-bottom: calc(var(--safe-bottom) + 210px) !important; } /* the las
 .lb-prog .lb-bar i { border-radius: 5px; }
 .lb-prog .lb-bar em { position: absolute; top: -3px; width: 2px; height: 15px; margin-left: -1px; background: #fff2b3; border-radius: 1px; }
 .lb-prog .lb-sub { display: flex; justify-content: space-between; font: 500 12px/1.2 'SC Label', sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #bdbea9; }
-.lb-prog .lb-sub b { color: #fa8127; font-weight: 500; } .lb-prog .lb-sub span:last-child { color: #fff2b3; }
+.lb-prog .lb-sub b { color: var(--gold); font-weight: 500; } .lb-prog .lb-sub span:last-child { color: #fff2b3; }
 .lb-face > .lb-head { margin: 10px 14px 2px !important; padding-top: 0 !important; }
 .lb-face > .lb-mission { margin: 0 14px; }
 .lb-face > .lb-events { margin-top: auto; padding: 10px 14px 12px; }
@@ -365,7 +365,7 @@ body.albums-view .album__count { flex: none; font-size: 14px; }
 .pv-card { width: min(100%, 330px, calc((100dvh - 190px) * 5 / 7)); aspect-ratio: 5 / 7; justify-content: space-between; border-radius: 16px; border: 2px solid #adbcc8; box-shadow: inset 0 0 0 1px #657786, 0 24px 50px #000a; background: radial-gradient(ellipse at 50% 30%, #13233a, #080f1b 70%); padding: 0 0 0; display: flex; flex-direction: column; align-items: center; touch-action: none; user-select: none; -webkit-user-select: none; }
 .pv-bar, .pv-foot { align-self: stretch; display: flex; justify-content: space-between; align-items: center; gap: 10px; font: 500 12px/1 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .18em; text-transform: uppercase; color: #fff2b3; }
 .pv-bar { margin-bottom: auto; padding: 13px 16px 11px; border-bottom: 1px solid #bcb58566; }
-.pv-bar span:last-child { color: #fa8127; }
+.pv-bar span:last-child { color: var(--gold); }
 .pv-card p { padding: 0 20px; }
 .pv-card .pv-meta { margin-top: 12px; min-height: 0; }
 .pv-card .pv-meta:empty { display: none; }
@@ -378,22 +378,22 @@ body.albums-view .album__count { flex: none; font-size: 14px; }
 :where(html[data-theme="night"], body.night) .pv-card { background: #130606; border-color: #52221f; box-shadow: none; }
 /* Progress toward a locked patch, in its detail card (playtest 2026-10-09). */
 .pv-prog { display: flex; align-items: center; gap: 10px; width: calc(100% - 56px); margin-top: 16px; font: 500 12px/1 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .12em; text-transform: uppercase; color: rgba(255, 242, 179, .6); }
-.pv-prog b { color: #fa8127; font-weight: 500; }
+.pv-prog b { color: var(--gold); font-weight: 500; }
 .pv-prog__bar { flex: 1; height: 6px; border-radius: 3px; background: #1c2a3a; overflow: hidden; }
-.pv-prog__bar i { display: block; height: 100%; border-radius: 3px; background: linear-gradient(90deg, #fa8127, #ffcf5a); }
+.pv-prog__bar i { display: block; height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--gold), #ffcf5a); }
 .card-tile__sub { display: block; margin: -3px 0 6px; font: 500 12px/1.2 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .08em; text-transform: uppercase; color: #bdbea9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 /* Tonight's sky challenge, the bonus fourth goal (playtest 2026-10-09). */
-.lb-challenge i { border-color: #fa8127; border-radius: 50%; transform: none; }
-.lb-challenge small { margin-left: auto; flex: none; font: 500 12px/1 'SC Label', sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #fa8127; text-decoration: none; }
+.lb-challenge i { border-color: var(--gold); border-radius: 50%; transform: none; }
+.lb-challenge small { margin-left: auto; flex: none; font: 500 12px/1 'SC Label', sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); text-decoration: none; }
 /* "Up tonight" slots in a small collection (playtest 2026-10-09): uncollected tiles with when and where. */
 .up-next__tile { opacity: .82; border-style: dashed !important; position: relative; }
-.up-next__when { position: absolute; left: 6px; right: 6px; top: 34%; z-index: 3; padding: 4px 6px 3px; border-radius: 99px; background: #080f1bdd; border: 1px solid #fa812788; color: #fa8127; font: 500 12px/1 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .1em; text-transform: uppercase; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.up-next__when { position: absolute; left: 6px; right: 6px; top: 34%; z-index: 3; padding: 4px 6px 3px; border-radius: 99px; background: #080f1bdd; border: 1px solid color-mix(in srgb, var(--gold) 53%, transparent); color: var(--gold); font: 500 12px/1 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .1em; text-transform: uppercase; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 /* "12 cards · not backed up · Sign in ›" (2026-10-11, design/auth-moments.html 3) */
-.backup-line { display:flex; align-items:center; gap:10px; width:100%; box-sizing:border-box; height:44px; margin:14px 0 16px; /* clear of the header's double rule (2026-10-16, Sevaan) */ padding:0 14px; border-radius:12px; background:#0e1a29; border:1px solid rgba(250,129,39,.45); cursor:pointer;
+.backup-line { display:flex; align-items:center; gap:10px; width:100%; box-sizing:border-box; height:44px; margin:14px 0 16px; /* clear of the header's double rule (2026-10-16, Sevaan) */ padding:0 14px; border-radius:12px; background:#0e1a29; border:1px solid color-mix(in srgb, var(--gold) 45%, transparent); cursor:pointer;
   font:500 15px/1 'SC Label', 'Barlow Condensed', sans-serif; letter-spacing:.1em; text-transform:uppercase; color:#fff2b3; }
 .backup-line[hidden] { display:none; }
-.backup-line svg { width:18px; height:18px; flex:none; color:#fa8127; }
-.backup-line b { margin-left:auto; font-weight:500; color:#fa8127; }
+.backup-line svg { width:18px; height:18px; flex:none; color:var(--gold); }
+.backup-line b { margin-left:auto; font-weight:500; color:var(--gold); }
 body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; } input, textarea { -webkit-user-select: text; user-select: text; } /* QA 2026-10-11 */
 /* Red night mode, guaranteed (2026-10-11, QA: clouds, card backs, chips and the loader leaked white, blue and orange):
    one fixed layer multiplies everything on screen by pure red, so no blue or green light reaches the eye. */
@@ -410,9 +410,9 @@ body.night::after { content: ''; position: fixed; inset: 0; z-index: 2147483646;
 .st-rank { display:flex; justify-content:space-between; align-items:flex-end; gap:12px; padding:16px 18px; margin:4px 0 14px; border-radius:16px; border:1px solid #2a3a48; background:radial-gradient(120% 140% at 0% 0%, #1b2f48, #0e1a29 60%); }
 .st-rank small { display:block; font:500 12px/1 'SC Label', sans-serif; letter-spacing:.2em; text-transform:uppercase; color:#bdbea9; margin-bottom:6px; }
 .st-rank b { font:400 28px/1 'SC Display', 'Russo One', sans-serif; color:#fff2b3; }
-.st-xp { text-align:right; } .st-xp b { color:#fa8127; font-size:24px; display:block; } .st-xp small { margin:4px 0 0; letter-spacing:.12em; }
+.st-xp { text-align:right; } .st-xp b { color:var(--gold); font-size:24px; display:block; } .st-xp small { margin:4px 0 0; letter-spacing:.12em; }
 .st-sec { border:1px solid #22344a; border-radius:16px; background:#0b1524; padding:14px 16px 16px; margin:0 0 12px; }
-.st-head { display:flex; justify-content:space-between; align-items:baseline; gap:10px; font:500 13px/1.2 'SC Label', sans-serif; letter-spacing:.18em; text-transform:uppercase; color:#fa8127; margin:0 0 12px; }
+.st-head { display:flex; justify-content:space-between; align-items:baseline; gap:10px; font:500 13px/1.2 'SC Label', sans-serif; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); margin:0 0 12px; }
 .st-since { font:500 12px/1.2 'SC Label', sans-serif; letter-spacing:.12em; color:#bdbea9; text-transform:uppercase; }
 .st-big { color:#bdbea9; letter-spacing:.08em; } .st-big b { font:400 20px/1 'SC Display', 'Russo One', sans-serif; color:#fff2b3; letter-spacing:0; }
 .st-tiers { display:grid; gap:9px; }
@@ -425,7 +425,7 @@ body.night::after { content: ''; position: fixed; inset: 0; z-index: 2147483646;
 .st-goal b { font:400 24px/1 'SC Display', 'Russo One', sans-serif; color:#fff2b3; font-variant-numeric:tabular-nums; } .st-goal b small { font-size:15px; color:#bdbea9; }
 .st-goal span { font:500 13px/1.2 'SC Label', sans-serif; letter-spacing:.12em; text-transform:uppercase; color:#e6e2c4; }
 .st-goal em { font:500 12px/1.2 'SC Label', sans-serif; letter-spacing:.04em; color:#bdbea9; font-style:normal; }
-.st-goal i { position:absolute; left:0; bottom:0; height:3px; width:calc(var(--p) * 100%); background:#fa8127; }
+.st-goal i { position:absolute; left:0; bottom:0; height:3px; width:calc(var(--p) * 100%); background:var(--gold); }
 .st-hls { display:grid; gap:10px; }
 .st-hl { display:grid; grid-template-columns:64px minmax(0,1fr); gap:12px; align-items:center; }
 .st-hl img, .st-noart { width:64px; height:48px; object-fit:cover; border-radius:8px; background:#0a1220; box-shadow:0 0 0 1px #2a3a48; }
@@ -441,8 +441,8 @@ body.night::after { content: ''; position: fixed; inset: 0; z-index: 2147483646;
 .st-bar { display:flex; flex-direction:column; align-items:center; height:100%; justify-content:flex-end; gap:3px; }
 .st-bar em { font:500 11px/1 'SC Label', sans-serif; color:#fff2b3; font-style:normal; min-height:11px; }
 .st-bar span { width:100%; min-height:2px; border-radius:4px 4px 1px 1px; background:#2a3a50; }
-.st-bar.now span, .st-bar span[style*="height:"]:not([style*="height:0%"]) { background:linear-gradient(#fa8127,#c9622a); }
-.st-bar small { font:500 11px 'SC Label', sans-serif; color:#bdbea9; } .st-bar.now small { color:#fa8127; }
+.st-bar.now span, .st-bar span[style*="height:"]:not([style*="height:0%"]) { background:linear-gradient(var(--gold),#c9622a); }
+.st-bar small { font:500 11px 'SC Label', sans-serif; color:#bdbea9; } .st-bar.now small { color:var(--gold); }
 .st-map { width:100%; height:auto; display:block; }
 .st-rare { display:grid; gap:8px; } .st-rare div { display:grid; grid-template-columns:48px auto minmax(0,1fr) auto; gap:10px; align-items:center; }
 .st-rare img, .st-rare .st-noart { width:48px; height:36px; object-fit:cover; border-radius:6px; }
@@ -455,7 +455,7 @@ html.embedded .bottom-nav { visibility: hidden; }
    opened (rank and XP; missions, ladder and events on "Missions ›"). */
 body.has-cards .collection-intro { display: none; }
 .logbook.compact :is(.lb-pic, .lb-mission, .lb-foot, .lb-events, .lb-challenge) { display: none; }
-.lb-more { float: right; margin: 0 0 0 10px; padding: 6px 2px; background: none; border: 0; color: var(--accent, #fa8127); font: 500 13px/1 'SC Label', sans-serif; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; position: relative; z-index: 3; }
+.lb-more { float: right; margin: 0 0 0 10px; padding: 6px 2px; background: none; border: 0; color: var(--accent, var(--gold)); font: 500 13px/1 'SC Label', sans-serif; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; position: relative; z-index: 3; }
 .logbook:not(.compact) .lb-more::after { content: ''; }
 .logbook.compact .lb-rot { min-height: 0; }
 .lb-more { float: none; align-self: flex-end; margin: 8px 16px -4px auto; }
@@ -466,7 +466,7 @@ body.has-cards .collection-intro { display: none; }
 .grid .tile-slot { aspect-ratio: 28 / 42; }
 
 /* A drawn magnifier (2026-10-13, Sevaan: the ⌕ glyph looked poor): lens, handle, a dotted orbit inside it. */
-.empty__search { display: inline-grid; place-items: center; color: var(--ui-gold, #fa8127); }
+.empty__search { display: inline-grid; place-items: center; color: var(--ui-gold, var(--gold)); }
 
 /* Rank card, redesigned (2026-10-13, Sevaan: "I thought we had a nice card that showed where you were and how far to
    the next level"): no tilt or glare; the ladder picture shows even when compact (shorter), with a progress bar and
@@ -475,7 +475,7 @@ body.has-cards .collection-intro { display: none; }
 .logbook .lb-rot { transform: none !important; }
 .logbook.compact .lb-pic { display: block; height: 96px; }
 .lb-bar { height: 6px; margin: 2px 16px 6px; border-radius: 99px; background: #22344a; overflow: hidden; }
-.lb-bar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #c4621c, #fa8127); }
+.lb-bar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #c4621c, var(--gold)); }
 .lb-to { display: flex; justify-content: space-between; gap: 10px; margin: 0 16px 12px; font: 500 13px/1.2 var(--label, 'Barlow Condensed', sans-serif); letter-spacing: .06em; color: #bdbea9; }
 .lb-to b { color: #fff2b3; font-weight: 600; }
 .logbook .lb-more { position: absolute; right: 16px; margin: 0; z-index: 2; }
@@ -487,7 +487,7 @@ body.has-cards .collection-intro { display: none; }
 
 /* Find (2026-10-13): a search-first list. */
 .grid.find-mode { display: grid; grid-template-columns: minmax(0, 1fr) !important; gap: 8px; }
-.find-head { font: 600 13px/1 var(--label, 'Barlow Condensed', sans-serif); letter-spacing: .16em; text-transform: uppercase; color: var(--ui-gold, #fa8127); margin: 4px 0 2px; }
+.find-head { font: 600 13px/1 var(--label, 'Barlow Condensed', sans-serif); letter-spacing: .16em; text-transform: uppercase; color: var(--ui-gold, var(--gold)); margin: 4px 0 2px; }
 .find-none { color: #bdbea9; text-align: center; padding: 30px 10px; }
 .find-row { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 12px; border-radius: 14px; background: #0e1a29; border: 1px solid #22344a; border-left: 3px solid var(--c); cursor: pointer; }
 .fd-art { width: 52px; height: 52px; border-radius: 10px; overflow: hidden; background: radial-gradient(circle at 50% 40%, #1a2b40, #0a1220); }
@@ -498,7 +498,7 @@ body.has-cards .collection-intro { display: none; }
 .fd-pass { font: 500 13px/1.25 var(--label, 'Barlow Condensed', sans-serif); color: #c9d6e3; } .fd-pass b { color: #fff2b3; font-weight: 600; } .fd-wait { color: #627a8b; }
 .fd-acts { display: flex; gap: 6px; }
 .fd-acts .ic { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; border: 1px solid #22344a; background: #0a1220; color: #e6ecf5; cursor: pointer; }
-.fd-acts .ic.on { border-color: #fa8127; color: #fa8127; }
+.fd-acts .ic.on { border-color: var(--gold); color: var(--gold); }
 .fd-art > * { width: 100%; height: 100%; }
 .logbook.compact .lb-pic { height: 160px; } /* the full ladder picture, compact or not (2026-10-13, Sevaan: see the ranks better) */
 /* Find rows: the hidden art stays inside its 52px square (2026-10-13: it spread over the whole screen). */
@@ -522,8 +522,8 @@ body.has-cards .collection-intro { display: none; }
 .search .search-ic { display: grid; place-items: center; font-size: 0; color: var(--muted); }
 .filters-btn { display: inline-flex; align-items: center; gap: 6px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--text); font: 500 15px/1 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
 .filters-btn i { width: 7px; height: 7px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg) translateY(-2px); transition: transform .25s ease; }
-.filters-btn[aria-expanded="true"] { border-color: #fa8127aa; color: #fa8127; } .filters-btn[aria-expanded="true"] i { transform: rotate(-135deg) translate(-2px, -1px); }
-.filters-btn.active::after { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #fa8127; }
+.filters-btn[aria-expanded="true"] { border-color: color-mix(in srgb, var(--gold) 67%, transparent); color: var(--gold); } .filters-btn[aria-expanded="true"] i { transform: rotate(-135deg) translate(-2px, -1px); }
+.filters-btn.active::after { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--gold); }
 .filter-row { overflow: hidden; max-height: 0; opacity: 0; margin-top: 0; transition: max-height .3s ease, opacity .25s ease, margin-top .3s ease; }
 .filter-row.open { max-height: 80px; opacity: 1; margin-top: 8px; }
 @media (prefers-reduced-motion: reduce) { .filter-row, .filters-btn i { transition: none; } }
@@ -539,7 +539,7 @@ body.albums-view .album__name { overflow-wrap: normal; }
 .orbit-globe { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; }
 .card__art.orbiting > img, .card__art.orbiting > .card-art-stars { visibility: hidden; }
 .v-where { margin: 10px auto 0; text-align: center; font: 600 13px/1.3 var(--label, 'SC Label', sans-serif); letter-spacing: .06em; color: #fff2b3; max-width: 34ch; }
-.v-where::before { content: '●'; color: #fa8127; margin-right: 6px; }
+.v-where::before { content: '●'; color: var(--gold); margin-right: 6px; }
 .can-orbit .card__art::after { content: 'Tap for its orbit'; position: absolute; right: .8em; bottom: .7em; z-index: 3; font: 600 .95em/1 var(--label, 'Barlow Condensed', sans-serif); letter-spacing: .14em; color: #fff2b3cc; background: #050a12aa; padding: .3em .55em; border-radius: .4em; pointer-events: none; }
 .can-orbit .card__art.orbiting::after { content: 'TAP FOR THE PICTURE'; }
 /* Target and bell centred in their buttons (2026-10-14, Sevaan): the viewer's button padding pushed them off. */
@@ -560,17 +560,17 @@ body.albums-view .album__name { overflow-wrap: normal; }
 /* Up tonight (2026-10-16, design/upnext-remind.html A + 1, Sevaan). A: the tile's pill sits at the top of the picture,
    just under the set name. 1: the viewer's pass panel under the card, with a big Remind me and Show me. */
 .up-next__when { top: calc(2.1em + 8px) !important; }
-.v-up { width: min(100%, var(--card-w, 340px)); box-sizing: border-box; margin: 14px auto 0; padding: 12px 14px; border-radius: 14px; border: 1px solid #fa812766; background: #0e1a29; display: grid; gap: 10px; }
+.v-up { width: min(100%, var(--card-w, 340px)); box-sizing: border-box; margin: 14px auto 0; padding: 12px 14px; border-radius: 14px; border: 1px solid color-mix(in srgb, var(--gold) 40%, transparent); background: #0e1a29; display: grid; gap: 10px; }
 .v-up[hidden] { display: none; }
 .v-up__when { margin: 0; font: 600 13px/1.25 'SC Label', 'Barlow Condensed', sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--muted, #bdbea9); }
-.v-up__when b { color: #fa8127; font-weight: 600; }
+.v-up__when b { color: var(--gold); font-weight: 600; }
 .v-up__btns { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
 #viewer .v-up .v-up__btns button, .v-up__soon { min-height: 44px; border-radius: 10px; padding: 0 14px; font: 600 13px/1 'SC Label', 'Barlow Condensed', sans-serif; letter-spacing: .14em; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 8px; border: 0; cursor: pointer; }
-#viewer .v-up .v-up__remind { background: #fa8127; color: #1a0f05; border: 0; }
+#viewer .v-up .v-up__remind { background: var(--gold); color: #1a0f05; border: 0; }
 #viewer .v-up .v-up__remind.on { background: #0c1725; color: #fff2b3; box-shadow: inset 0 0 0 1.5px #ffc93d; }
 .v-up__remind svg { width: 16px; height: 16px; }
 #viewer .v-up .v-up__show { background: #14202f; color: #fff2b3; border: 0; }
-.v-up__soon { color: #fa8127; background: transparent; padding: 0; justify-content: flex-start; }
+.v-up__soon { color: var(--gold); background: transparent; padding: 0; justify-content: flex-start; }
 /* With the Up tonight panel showing, the card shrinks so the panel's buttons fit on screen without scrolling. */
 #viewer:has(#v-up:not([hidden])) #slot .card { font-size: min(14px, calc((var(--vws) - 40px) / 28 * .95), calc((100dvh - 330px) / 42)); }
 /* Constellations album: stars as a quiet second line under the constellations count (2026-10-16). */
@@ -639,7 +639,7 @@ body.night dialog::backdrop { background: rgba(12, 3, 3, .82); }
 .pw-item { content-visibility: auto; contain-intrinsic-size: auto 132px; }
 /* "Up tonight" suggestions on Mine get their own labelled row under your cards (2026-10-18 playtest). */
 .grid-head.up-next-head { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 10px; margin: 14px 0 2px; padding-top: 14px; border-top: 1px solid #22344a; }
-.up-next-head b { font: 500 13px/1 'SC Label', sans-serif; letter-spacing: .2em; text-transform: uppercase; color: var(--accent, #fa8127); }
+.up-next-head b { font: 500 13px/1 'SC Label', sans-serif; letter-spacing: .2em; text-transform: uppercase; color: var(--accent, var(--gold)); }
 .up-next-head span { font: 500 13px/1.2 'SC Label', sans-serif; letter-spacing: .06em; color: #8fa3b8; }
 #stats-view .close:focus-visible { outline: none; border-color: #fff2b3; } /* same quiet cue as the viewer: the dialog focuses it on open (iOS playtest 2026-10-19) */
 
@@ -696,7 +696,7 @@ html.embedded, html.embedded body { overscroll-behavior: none; }
   #rotate .rt-sub { margin-top: 12px; font: 500 12px/1 'SC Label', 'Arial Narrow', sans-serif; letter-spacing: .26em; text-transform: uppercase; color: #bdbea9; animation: ldPulse 1.8s ease-in-out infinite; }
 }
 @keyframes rtTurn { 0%, 18% { transform: rotate(-90deg); } 52%, 100% { transform: rotate(0deg); } }
-@keyframes rtRing { 0%, 45% { stroke: rgba(255,242,179,.66); } 55%, 88% { stroke: #fa8127; } 100% { stroke: rgba(255,242,179,.66); } }
+@keyframes rtRing { 0%, 45% { stroke: rgba(255,242,179,.66); } 55%, 88% { stroke: var(--gold); } 100% { stroke: rgba(255,242,179,.66); } }
 @media (prefers-reduced-motion: reduce) { #rotate .rt-phone, #rotate .rt-ring, #rotate .rt-sub { animation: none; } }
 html.embedded #rotate { display: none !important; }
 @keyframes ldPulse { 50% { opacity:.55; } }
@@ -714,24 +714,24 @@ html.embedded #rotate { display: none !important; }
 html.embedded .lb-slim { top: calc(var(--safe-top) + 80px); }
 .lb-slim.on { transform: none; opacity: 1; pointer-events: auto; }
 body:not(.has-cards) .lb-slim, body[data-view]:not([data-view="owned"]) .lb-slim { display: none; }
-.lbs-dot { width: 26px; height: 26px; flex: none; border-radius: 50%; border: 2px solid #fa8127; display: grid; place-items: center; } .lbs-dot i { width: 8px; height: 8px; border-radius: 50%; background: #fa8127; }
+.lbs-dot { width: 26px; height: 26px; flex: none; border-radius: 50%; border: 2px solid var(--gold); display: grid; place-items: center; } .lbs-dot i { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
 .lbs-main { flex: 1; min-width: 0; display: grid; gap: 3px; }
 .lbs-name { font: 400 15px/1 var(--display, "SC Display"); color: var(--ink, #fff2b3); text-transform: uppercase; }
-.lbs-bar { display: block; height: 3px; border-radius: 2px; background: #22324a; overflow: hidden; } .lbs-bar i { display: block; height: 100%; background: #fa8127; }
+.lbs-bar { display: block; height: 3px; border-radius: 2px; background: #22324a; overflow: hidden; } .lbs-bar i { display: block; height: 100%; background: var(--gold); }
 .lbs-main small { display: flex; justify-content: space-between; gap: 8px; font: 500 11px/1.2 var(--label, 'SC Label'); letter-spacing: .06em; color: var(--muted, #bdbea9); white-space: nowrap; }
-.lbs-m { flex: none; min-height: 44px; padding: 0 2px 0 8px; border: 0; background: none; color: #fa8127; font: 500 12px var(--label, 'SC Label'); letter-spacing: .14em; text-transform: uppercase; cursor: pointer; }
+.lbs-m { flex: none; min-height: 44px; padding: 0 2px 0 8px; border: 0; background: none; color: var(--gold); font: 500 12px var(--label, 'SC Label'); letter-spacing: .14em; text-transform: uppercase; cursor: pointer; }
 :where(html[data-theme="night"], body.night) .lb-slim { border-color: #58272b; } :where(html[data-theme="night"], body.night) :is(.lbs-dot, .lbs-m) { color: #ff7f70; border-color: #ff6a55; } :where(html[data-theme="night"], body.night) :is(.lbs-dot i, .lbs-bar i) { background: #ff6a55; } :where(html[data-theme="night"], body.night) .lbs-name { color: #ff7f70; }
 @media (prefers-reduced-motion: reduce) { .lb-slim { transition: opacity .15s; } }
 /* What changed since you were here (2026-10-21): the NEW sticker on cards caught since your last visit, with a glint;
    it peels off when you open the card. "+N XP since last time" on the rank card. */
-.tile-new { position: absolute; z-index: 6; top: 6%; right: -4px; padding: 3px 7px 3px 8px; border-radius: 4px 2px 2px 4px; background: #fa8127; color: #0b1018; font: 700 calc(26px * var(--mini-s, .4)) / 1 var(--label, 'SC Label'); font-size: max(10px, calc(26px * var(--mini-s, .4))); letter-spacing: .12em; transform: rotate(6deg); box-shadow: 0 2px 6px rgba(0,0,0,.45); overflow: hidden; pointer-events: none; }
+.tile-new { position: absolute; z-index: 6; top: 6%; right: -4px; padding: 3px 7px 3px 8px; border-radius: 4px 2px 2px 4px; background: var(--gold); color: #0b1018; font: 700 calc(26px * var(--mini-s, .4)) / 1 var(--label, 'SC Label'); font-size: max(10px, calc(26px * var(--mini-s, .4))); letter-spacing: .12em; transform: rotate(6deg); box-shadow: 0 2px 6px rgba(0,0,0,.45); overflow: hidden; pointer-events: none; }
 .tile-new::after { content: ''; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.75) 50%, transparent 70%); transform: translateX(-120%); animation: tileGlint 3.6s ease-in-out infinite; }
 @keyframes tileGlint { 0%, 70% { transform: translateX(-120%); } 90%, 100% { transform: translateX(120%); } }
 .tile-new.peel { animation: tilePeel .6s cubic-bezier(.5,0,.8,.4) forwards; transform-origin: 100% 0; }
 @keyframes tilePeel { 0% { transform: rotate(6deg); } 35% { transform: rotate(-14deg) translate(-2px, -3px); } 100% { transform: rotate(40deg) translate(10px, 60px); opacity: 0; } }
 :where(html[data-theme="night"], body.night) .tile-new { background: #ff6a55; color: #120606; }
 @media (prefers-reduced-motion: reduce) { .tile-new::after { animation: none; } .tile-new.peel { animation: none; opacity: 0; } }
-.lb-since { position: absolute; z-index: 3; top: 10px; left: 50%; translate: -50% 0; padding: 4px 9px; border-radius: 6px; background: #fa812722; color: #fa8127; font: 600 11px/1.3 var(--label, 'SC Label'); letter-spacing: .1em; text-transform: uppercase; animation: lbSince .5s cubic-bezier(.2,.9,.3,1.3) both; transition: opacity .5s; }
+.lb-since { position: absolute; z-index: 3; top: 10px; left: 50%; translate: -50% 0; padding: 4px 9px; border-radius: 6px; background: color-mix(in srgb, var(--gold) 13%, transparent); color: var(--gold); font: 600 11px/1.3 var(--label, 'SC Label'); letter-spacing: .1em; text-transform: uppercase; animation: lbSince .5s cubic-bezier(.2,.9,.3,1.3) both; transition: opacity .5s; }
 .lb-since.out { opacity: 0; } @keyframes lbSince { from { transform: scale(.6); opacity: 0; } }
 :where(html[data-theme="night"], body.night) .lb-since { color: #ff7f70; background: #2a0d0a; }
 /* Press and hold to peek (2026-10-21): the card lifts out over a blurred grid. */
@@ -777,7 +777,7 @@ dialog[open] { padding-left: var(--safe-l) !important; padding-right: var(--safe
   #viewer.docked { bottom: calc(var(--safe-bottom) + 96px) !important; }
   #viewer.docked .viewer-header { height: 44px; min-height: 0; padding: 0 4px 0 16px; }
   #viewer.docked #slot { padding: 0; }
-  .grid .tile-slot.shown { outline: 2px solid #fa8127; outline-offset: 3px; border-radius: calc(14px * var(--mini-s, .5) + 3px); } /* the card open on the other page */
+  .grid .tile-slot.shown { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: calc(14px * var(--mini-s, .5) + 3px); } /* the card open on the other page */
   #dock-empty { position: fixed; z-index: 2; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding-bottom: calc(var(--safe-bottom) + 90px); color: var(--muted); font: 500 14px/1.3 var(--label, 'SC Label'), 'Barlow Condensed', sans-serif; letter-spacing: .16em; text-transform: uppercase; text-align: center; pointer-events: none; }
   #dock-empty .de-card { width: min(46%, 220px); aspect-ratio: 28 / 42; border: 2px dashed #2b3c55; border-radius: 14px; display: grid; place-items: center; color: #3c516f; font-size: 30px; }
 }
@@ -947,13 +947,13 @@ body.night .find-row::before { background: #ff6a55; }
 .fd-main b { font: 600 15.5px/1.15 var(--label, 'SC Label', sans-serif); }
 .fd-pass { display: grid; gap: 2px; font: 500 13px/1.25 var(--label, 'SC Label', sans-serif); color: var(--muted); }
 .fd-pass .fd-w em { font-style: normal; color: var(--c); }
-.fd-pass .fd-when { color: var(--muted); } .fd-pass .fd-when b { color: var(--text); font-weight: 600; } .fd-pass .fd-when .soon { color: #fa8127; }
+.fd-pass .fd-when { color: var(--muted); } .fd-pass .fd-when b { color: var(--text); font-weight: 600; } .fd-pass .fd-when .soon { color: var(--gold); }
 .fd-pills { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
 .fd-pill { display: inline-flex; align-items: center; padding: 3px 7px; border-radius: 6px; background: #ffffff0f; font: 600 12px/1.15 var(--label, 'SC Label', sans-serif); letter-spacing: .03em; color: var(--text); white-space: nowrap; }
-.fd-pill.new { color: #fa8127; } .fd-pill.own { color: var(--muted); } .fd-pill.lc { color: #ff8f7a; background: #ff6a5520; }
+.fd-pill.new { color: var(--gold); } .fd-pill.own { color: var(--muted); } .fd-pill.lc { color: #ff8f7a; background: #ff6a5520; }
 .fd-acts { gap: 4px; }
 .fd-acts .ic { width: 44px; height: 44px; border: 1px solid #22344a; background: #ffffff08; color: var(--text); }
-.fd-acts .ic.on { border-color: #fa8127; color: #fa8127; }
+.fd-acts .ic.on { border-color: var(--gold); color: var(--gold); }
 body.night .fd-pass .fd-w em, body.night .fd-pill.new, body.night .fd-pass .fd-when .soon { color: #ff7f70 !important; }
 .fd-pass .fd-when { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .fd-pass .fd-when b { font: 600 14px/1.25 var(--label, 'SC Label', sans-serif); }
 .fd-pass b { display: inline !important; -webkit-line-clamp: unset; } /* ".fd-main b" (the name's two-line clamp) also caught the time and made it a block */
@@ -1013,8 +1013,8 @@ body.few-cards .logbook :is(.lb-pic, .lb-rankrow, .lb-bar, .lb-to) { display: no
 .lbd-name { font: 400 23px/1 var(--display, 'Russo One'); text-transform: uppercase; color: var(--ink, #fff2b3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
 .lb-dial .lb-xp { white-space: nowrap; }
 .lbd-to { font-size: 14px; color: var(--muted, #bdbea9); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; } .lbd-to b { color: var(--ink, #fff2b3); font-weight: 500; }
-.lbd-more { flex: none; background: none; border: 0; padding: 6px 0; min-height: 32px; color: var(--gold, #fa8127); font: 500 13px var(--label); letter-spacing: .16em; text-transform: uppercase; cursor: pointer; }
-:where(html[data-theme="night"], body.night) .lbd-ring circle[stroke="#fa8127"] { stroke: #ff6a55; }
+.lbd-more { flex: none; background: none; border: 0; padding: 6px 0; min-height: 32px; color: var(--gold, var(--gold)); font: 500 13px var(--label); letter-spacing: .16em; text-transform: uppercase; cursor: pointer; }
+:where(html[data-theme="night"], body.night) .lbd-ring circle[stroke="var(--gold)"] { stroke: #ff6a55; }
 /* content-visibility clips each patch at its own box: give it room for the NEW tag and the glow ring (2026-10-28, Sevaan) */
 .pw-item { padding: 16px; margin: -16px; }
 /* Find with nothing typed: no empty results row above the list (2026-10-28, Sevaan: a big gap under the search box) */
@@ -1024,15 +1024,15 @@ body[data-view="find"] .grid.find-mode > .find-head:first-child { margin-top: 18
 /* ===== Observer stats restyled like the rest of the app (2026-10-28, Sevaan: "looks different to the other pages") =====
    Same sections, Tonight/Settings language: each section's label sits above a quiet panel (#0e1a29, soft edge, 14px), the
    rank is a hero like Tonight's, tiles inside a panel are flat, bars are the Tonight strip's slate and orange. */
-#stats-view .st-rank { border-radius: 14px; border: 1px solid #fa812755; background: radial-gradient(ellipse at 85% 0%, #fa81271f, transparent 70%), #0e1a29; box-shadow: none; padding: 16px; margin: 6px 0 4px; }
+#stats-view .st-rank { border-radius: 14px; border: 1px solid color-mix(in srgb, var(--gold) 33%, transparent); background: radial-gradient(ellipse at 85% 0%, color-mix(in srgb, var(--gold) 12%, transparent), transparent 70%), #0e1a29; box-shadow: none; padding: 16px; margin: 6px 0 4px; }
 #stats-view .st-sec { position: relative; margin: 40px 0 0; padding: 14px; border-radius: 14px; border: 1px solid #22344a; background: #0e1a29; }
-#stats-view .st-head { position: absolute; left: 2px; right: 2px; top: -26px; margin: 0; font: 500 13px/1.1 'SC Label', sans-serif !important; letter-spacing: .16em; text-transform: uppercase; color: #fa8127; }
+#stats-view .st-head { position: absolute; left: 2px; right: 2px; top: -26px; margin: 0; font: 500 13px/1.1 'SC Label', sans-serif !important; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); }
 #stats-view .st-head .st-since, #stats-view .st-head .st-big { letter-spacing: .1em; color: #bdbea9; }
 #stats-view .st-head .st-big b { font-size: 14px; }
 #stats-view :is(.st-goal, .st-tile) { background: #ffffff06; border: 1px solid #ffffff0f; border-radius: 10px; }
 #stats-view .st-tb { height: 5px; background: #22324a; }
 #stats-view .st-bar span { background: #2d4058; border-radius: 3px 3px 0 0; }
-#stats-view .st-bar.now span, #stats-view .st-bar span[style*="height:"]:not([style*="height:0%"]) { background: #fa8127; }
+#stats-view .st-bar.now span, #stats-view .st-bar span[style*="height:"]:not([style*="height:0%"]) { background: var(--gold); }
 #stats-view .st-hls > * + *, #stats-view .st-rare > * + * { border-top: 1px solid #ffffff12; padding-top: 10px; }
 #stats-view .st-hl img, #stats-view .st-noart { border-radius: 6px; }
 #stats-body > :last-child { margin-bottom: 28px; }
@@ -1042,7 +1042,7 @@ body[data-view="find"] .grid.find-mode > .find-head:first-child { margin-top: 18
 #stats-view .st-rank.lb-dial { display: flex; align-items: center; justify-content: flex-start; gap: 14px; padding: 14px 16px; }
 #stats-view .st-rank .lbd-name { font-size: 23px; }
 #stats-view .st-rank .lbd-to b { font: 500 14px/1.2 'SC Label', sans-serif; color: #fff2b3; text-transform: none; letter-spacing: 0; }
-#stats-view .st-rank .lb-xp { font: 500 14px/1 'SC Label', sans-serif; letter-spacing: .1em; color: #bdbea9; } #stats-view .st-rank .lb-xp b { font: 400 22px/1 'SC Display', 'Russo One', sans-serif; color: #fa8127; }
+#stats-view .st-rank .lb-xp { font: 500 14px/1 'SC Label', sans-serif; letter-spacing: .1em; color: #bdbea9; } #stats-view .st-rank .lb-xp b { font: 400 22px/1 'SC Display', 'Russo One', sans-serif; color: var(--gold); }
 #stats-view .st-rank .lbd-ring b { font: 400 15px/1 'SC Display', 'Russo One', sans-serif; color: #fff2b3; }
 #stats-view .st-rank .lbd-ring b small { margin: 4px 0 0; font: 500 10px/1 'SC Label', sans-serif; letter-spacing: .14em; color: #bdbea9; }
 /* The last line under a card ("Not yet collected · record a live sighting…") clears the home bar (iOS playtest 2026-10-29) */
@@ -1084,7 +1084,7 @@ body[data-view="find"] .grid.find-mode > .find-head:first-child { margin-top: 18
 #viewer .v-opt:active { background: #ffffff1a; transform: scale(.98); }
 #viewer .v-opt-vis { position: relative; display: block; height: 152px; margin-bottom: 10px; border-radius: 10px; overflow: hidden; background: radial-gradient(ellipse at 50% 30%, #13243a, #070d18 80%); }
 #viewer .v-opt-mini { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); --mini-s: .32; filter: drop-shadow(0 6px 12px #0009); }
-#viewer .v-opt-badge { position: absolute; right: 8px; bottom: 8px; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #fa8127; color: #080f1b; box-shadow: 0 4px 12px #0008; }
+#viewer .v-opt-badge { position: absolute; right: 8px; bottom: 8px; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--gold); color: #080f1b; box-shadow: 0 4px 12px #0008; }
 #viewer .v-opt-pack .sv-pk { position: absolute; left: 50%; top: 50%; width: 140px; height: 210px; transform: translate(-50%, -50%) scale(.64); animation: none; } /* exactly the mini card's size beside it, 89.6 × 134.4 (2026-11-10, Sevaan: the two should match) */
 #viewer .v-opt-pack .sv-bag > span { position: absolute; inset: 0; display: block; }
 #viewer .v-opt > b { display: block; font: 500 14px/1.2 'SC Label', sans-serif; letter-spacing: .08em; text-transform: uppercase; }

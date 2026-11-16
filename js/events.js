@@ -2,7 +2,7 @@
 // peak nights to earn that year’s badge (Logbook). Peak dates are the usual annual ones (International
 // Meteor Organization calendar); the window runs from the evening before the peak to the morning after.
 // No DOM.
-import { SKY_EVENTS } from './sky-events-data.js?v=0.1.1672';
+import { SKY_EVENTS } from './sky-events-data.js?v=0.1.1673';
 const SHOWERS = [
   { id: 'quadrantids', name: 'Quadrantids', month: 1, day: 3, rate: 'up to 80 an hour, in a short peak' },
   { id: 'lyrids', name: 'Lyrids', month: 4, day: 22, rate: 'up to 18 an hour' },
@@ -55,7 +55,7 @@ export function eventBadges(sightings) {
 export function passIcs({ title, start, end, description }) {
   const fmt = (ms) => new Date(ms).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
   const esc = (t) => String(t).replace(/([,;\\])/g, '\\$1').replace(/\n/g, '\\n');
-  return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Sky Collector//EN', 'BEGIN:VEVENT', `UID:${start}-${Math.random().toString(36).slice(2)}@space-collector`,
+  return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Sky Collector//EN', 'BEGIN:VEVENT', `UID:${start}-${Math.random().toString(36).slice(2)}@sky-collector`,
     `DTSTAMP:${fmt(Date.now())}`, `DTSTART:${fmt(start)}`, `DTEND:${fmt(Math.max(end, start + 120000))}`, `SUMMARY:${esc(title)}`, `DESCRIPTION:${esc(description)}`,
     'BEGIN:VALARM', 'TRIGGER:-PT10M', 'ACTION:DISPLAY', `DESCRIPTION:${esc(title)}`, 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
 }

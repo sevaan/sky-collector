@@ -77,7 +77,7 @@ body.night #reveal { background: #000; }
 #reveal.rv-done #rv-rank { opacity: 1; }
 .rv-rank-row { display: flex; justify-content: space-between; margin-bottom: 5px; font: 500 12px/1.2 var(--label); letter-spacing: .18em; text-transform: uppercase; color: var(--muted, #bdbea9); font-variant-numeric: tabular-nums; }
 .rv-bar { position: relative; height: 4px; border-radius: 3px; background: #1c2a3a; overflow: hidden; }
-.rv-bar i { position: absolute; inset: 0 auto 0 0; width: 0; border-radius: 3px; background: linear-gradient(90deg, var(--gold, #fa8127), #ffcf5a); }
+.rv-bar i { position: absolute; inset: 0 auto 0 0; width: 0; border-radius: 3px; background: linear-gradient(90deg, var(--gold, var(--gold)), #ffcf5a); }
 /* With the rank bar the card rides up a little so the bar and the link still fit without scrolling. */
 #reveal.has-rank { --rv-y: -12px; }
 #reveal.has-rank #reveal-view { top: calc(50% + var(--rv-y, 22px) + var(--ch, 39.2) * var(--cf) / 2 + 40px); }
@@ -94,9 +94,9 @@ body.night #reveal { background: #000; }
 #rv-news { position: absolute; z-index: 4; left: 16px; right: 16px; top: calc(var(--safe-top, 0px) + 58px); display: flex; flex-wrap: nowrap; overflow: hidden; gap: 6px; pointer-events: none; }
 .rv-chip { flex: none; display: inline-flex; align-items: center; gap: 5px; height: 26px; padding: 0 9px; border-radius: 13px; white-space: nowrap; background: #0e1a29e6; border: 1px solid var(--edge, #627a8b); color: var(--text, #fff2b3); font: 500 12.5px/1 var(--label, 'SC Label', sans-serif); letter-spacing: .05em; text-transform: uppercase; opacity: 0; transform: translateY(-6px); transition: opacity .25s ease-out, transform .3s cubic-bezier(.2,1.1,.3,1); }
 .rv-chip.in { opacity: 1; transform: none; }
-.rv-chip i { font-style: normal; color: var(--gold, #fa8127); }
-.rv-chip b { font-weight: 500; color: var(--gold, #fa8127); margin-left: 2px; }
-.rv-chip--rank { border-color: color-mix(in srgb, var(--gold, #fa8127) 60%, transparent); }
+.rv-chip i { font-style: normal; color: var(--gold, var(--gold)); }
+.rv-chip b { font-weight: 500; color: var(--gold, var(--gold)); margin-left: 2px; }
+.rv-chip--rank { border-color: color-mix(in srgb, var(--gold, var(--gold)) 60%, transparent); }
 @media (prefers-reduced-motion: reduce) { .rv-chip { transition: opacity .2s; transform: none; } }
 /* Layout without dead space (2026-10-12, Sevaan: "empty space at the bottom… the card appears up too high"). Two zones:
    header and chips at the top, rank bar and "View in collection" pinned near the bottom; the card is centred between them. */
@@ -146,7 +146,7 @@ body.night .rv-chip--reunion { color: #ff7f70; border-color: #ff7f7066; }
 #rv-teach .tc-mini { display: block; width: 52px; aspect-ratio: 28 / 39.2; border-radius: 6px; overflow: hidden; background: #12233a; border: 2px solid #b8834f; opacity: .55; filter: saturate(.6); animation: tcLight .5s ease-out forwards; }
 #rv-teach .tc-lv.silver .tc-mini { border-color: #d6dde6; box-shadow: 0 0 0 1px #d6dde6; animation-delay: .5s; }
 #rv-teach .tc-lv.gold .tc-mini { border-color: #ffc93d; box-shadow: 0 0 10px #ffc93d88; animation-delay: 1s; }
-#rv-teach .tc-lv.bronze .tc-mini { animation-delay: 0s; outline: 1.5px dashed #fa8127; outline-offset: 3px; }
+#rv-teach .tc-lv.bronze .tc-mini { animation-delay: 0s; outline: 1.5px dashed var(--gold); outline-offset: 3px; }
 #rv-teach .tc-mini img { width: 100%; height: 62%; object-fit: cover; display: block; }
 @keyframes tcLight { to { opacity: 1; filter: none; } }
 #rv-teach .tc-lv b { font: 500 11px/1 var(--label); letter-spacing: .16em; text-transform: uppercase; color: #e3c7a8; }
@@ -157,9 +157,9 @@ body.night .rv-chip--reunion { color: #ff7f70; border-color: #ff7f7066; }
 #rv-teach .tc-moons svg { width: 100%; max-width: 30px; aspect-ratio: 1; }
 #rv-teach .tc-moons circle { fill: #1c2a3e; stroke: #fff2b344; }
 #rv-teach .tc-moons path { fill: #e8e2c4; }
-#rv-teach .tc-moons span.now circle { stroke: #fa8127; stroke-width: 2; }
+#rv-teach .tc-moons span.now circle { stroke: var(--gold); stroke-width: 2; }
 #rv-teach .tc-moons i { font: 500 9px/1 var(--label); font-style: normal; letter-spacing: .06em; text-transform: uppercase; color: #aab3bf; white-space: nowrap; }
-#rv-teach .tc-moons span.now i { color: #fa8127; }
+#rv-teach .tc-moons span.now i { color: var(--gold); }
 #rv-teach .tc-ok { display: block; width: 100%; min-height: 44px; border: 0; border-radius: 12px; background: #1d2a3c; color: #fff2b3; font: 500 13px/1 var(--label); letter-spacing: .16em; text-transform: uppercase; cursor: pointer; }
 #reveal.teaching #rv-rank, #reveal.teaching #reveal-view { visibility: hidden; }
 body.night #rv-teach { border-top-color: #ff6a55; color: #ff7f70; } body.night #rv-teach > small, body.night #rv-teach .tc-lv b { color: #ff6a55 !important; }
@@ -168,14 +168,14 @@ body.night #rv-teach { border-top-color: #ff6a55; color: #ff7f70; } body.night #
 
 /* Style audit (2026-10-28): the chip row starts on the 20px margin and fades out at the right instead of cutting a word. */
 #rv-news { left: calc(20px + var(--safe-l, 0px)); right: calc(20px + var(--safe-r, 0px)); -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); }
-.rv-roll > span { color: var(--gold, #fa8127); } /* XP is orange everywhere */
+.rv-roll > span { color: var(--gold, var(--gold)); } /* XP is orange everywhere */
 /* Reveal eyebrow: even space around the dot; the top row on the 20px gutter. */
 .rv-dot { font-style: normal; color: currentColor; margin: 0 .35em 0 .25em; }
 #rv-top { left: calc(20px + var(--safe-l, 0px)) !important; right: calc(20px + var(--safe-r, 0px)) !important; }
 
 /* The first catch: Continue is the main button (UX playtest 2026-10-28) */
 #reveal.rv-tour #reveal-view { left: 50%; right: auto; width: min(var(--nav-w, 335px), calc(100vw - 40px)); translate: -50% 0; height: 44px; display: grid; place-items: center;
-  background: #fa8127; color: #0b1018; border-radius: 12px; font: 600 15px/1 var(--label, 'SC Label'), sans-serif; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; box-shadow: 0 6px 18px #0008; }
+  background: var(--gold); color: #0b1018; border-radius: 12px; font: 600 15px/1 var(--label, 'SC Label'), sans-serif; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; box-shadow: 0 6px 18px #0008; }
 body.night #reveal.rv-tour #reveal-view { background: #ff6a55; color: #120606; }
 #reveal.rv-tour #rv-rank { bottom: calc(var(--safe-bottom, 0px) + 62px); }
 /* Silver, then gold, glimmer once each after they light (2026-10-29, Sevaan): a bright band sweeps across the mini card */

@@ -85,3 +85,20 @@ start, and any hard-coded colour turned into a variable.
 2. Next: set-up (user-visible names only, Space Collector's server / RevenueCat / Action off), then re-apply each plane
    branch by a three-way merge of main's change to that file onto the fresh file, reviewing every hunk against the rule
    (theme variable, plane branch, or copy; anything else is dropped), then the theme file.
+3. Done (2026-11-16): plane branches re-applied by three-way merge, every hunk reviewed: old unconditional changes now
+   `SKY_ONLY ? plane : Space Collector's original`; renderPlane → renderSkyPlane branch; dead old reveal removed; Sky's
+   storage names kept (IndexedDB `sky-collector`, `sky-collector.explore`, `skycollector://`, skycollector.app) so the
+   phone's existing catches carry over (checked: 15 sightings, 11 plane cards found). sky.js gets `planesFirst` and uses
+   its own `showShadow`; progress.js applies Sky's rank names only in Sky mode.
+4. Done: every hard-coded orange in Space Collector's CSS (384, plus 74 with transparency) reads `--gold`; `--gold` has a
+   default on every page (ui.css). css/sky-theme.css re-points it to red and carries the daylight look;
+   css/sky-cards.css holds Sky's own components (card face, Today, stamps, logos, photo framing, hidden satellite UI).
+5. Runs: starts, finds old catches, planes in the sky, light chrome by day, red accent.
+
+## Space Collector features the rebuild brings that need plane content (found on first run)
+
+- Weekly recap ("Your week"): works with plane cards; its picture is a satellite and "Coming up" is an astronomy event.
+- Last night's pack ("Your night, in a pack"): works with plane catches; the ticket art is Space Collector's pack.
+- Sky event tickets (meteor showers, the Moon meets Jupiter): astronomy, not planes. Hide in Sky or make plane events.
+- Still to check: secrets/stories, Tonight's notifications and reminders, Send cards (gifting), patches page, Plus sheet,
+  share pictures, morning notification, 9 PM notes.
