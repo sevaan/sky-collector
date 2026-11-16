@@ -7,22 +7,13 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-<<<<<<< HEAD
-import { TIERS } from './flights.js?v=0.1.1653';
-import { typePhoto } from './type-photos.js?v=0.1.1653';
-import { airlinePhoto } from './airline-photos.js?v=0.1.1653';
-import { airlineLogo } from './airline-logos.js?v=0.1.1653';
-import { fitStyle } from './photo-fit.js?v=0.1.1653';
-import { hasAirlineCallsign, planeLine, levelWord } from './sky-stamps.js?v=0.1.1653';
-=======
-import { TIERS } from './flights.js?v=0.1.1653';
-import { typePhoto } from './type-photos.js?v=0.1.1653';
-import { housePhoto } from './house-photos.js?v=0.1.1653';
-import { airlinePhoto } from './airline-photos.js?v=0.1.1653';
-import { airlineLogo } from './airline-logos.js?v=0.1.1653';
-import { fitStyle } from './photo-fit.js?v=0.1.1653';
-import { hasAirlineCallsign, planeLine, levelWord } from './sky-stamps.js?v=0.1.1653';
->>>>>>> 86b01232 (Cards never show another airline's paint: maker's-livery photos for 64 aircraft types (Commons), nearest-type fallback, else the drawn sky panel)
+import { TIERS } from './flights.js?v=0.1.1654';
+import { typePhoto } from './type-photos.js?v=0.1.1654';
+import { housePhoto } from './house-photos.js?v=0.1.1654';
+import { airlinePhoto } from './airline-photos.js?v=0.1.1654';
+import { airlineLogo } from './airline-logos.js?v=0.1.1654';
+import { fitStyle } from './photo-fit.js?v=0.1.1654';
+import { hasAirlineCallsign, planeLine, levelWord } from './sky-stamps.js?v=0.1.1654';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');

@@ -1,28 +1,28 @@
 // Retro space-age cards. Text remains live; the foil follows pointer or optional phone tilt.
-import { fallWords } from './last-chance.js?v=0.1.1653';
-import { useMiles } from './units.js?v=0.1.1653';
-import { feel } from './native.js?v=0.1.1653';
-import { sfx } from './sfx.js?v=0.1.1653';
-import { cardArt } from './art.js?v=0.1.1653';
-import { TIER_INFO } from './rarity.js?v=0.1.1653';
-import { SET_BY_ID } from './sets.js?v=0.1.1653';
-import { TYPE_LABEL, orbitStats, sizeLabel, formatDate, titleCase } from './facts.js?v=0.1.1653';
-import { FLEET_ABOUT, fleetAbout, factSourceUrl, debrisOf, roleOf, ownerWord, titleFor, factFor, yearsUp, lapsPerDay, thirdStat, richText, seriesKeyOf } from './lore.js?v=0.1.1653';
-import { artFileFor } from './art-keys.js?v=0.1.1653';
-import { ART_FILES, ART_STARS } from './art-files.js?v=0.1.1653';
+import { fallWords } from './last-chance.js?v=0.1.1654';
+import { useMiles } from './units.js?v=0.1.1654';
+import { feel } from './native.js?v=0.1.1654';
+import { sfx } from './sfx.js?v=0.1.1654';
+import { cardArt } from './art.js?v=0.1.1654';
+import { TIER_INFO } from './rarity.js?v=0.1.1654';
+import { SET_BY_ID } from './sets.js?v=0.1.1654';
+import { TYPE_LABEL, orbitStats, sizeLabel, formatDate, titleCase } from './facts.js?v=0.1.1654';
+import { FLEET_ABOUT, fleetAbout, factSourceUrl, debrisOf, roleOf, ownerWord, titleFor, factFor, yearsUp, lapsPerDay, thirdStat, richText, seriesKeyOf } from './lore.js?v=0.1.1654';
+import { artFileFor } from './art-keys.js?v=0.1.1654';
+import { ART_FILES, ART_STARS } from './art-files.js?v=0.1.1654';
 /* the orbit view (and its 66 KB coastline) loads when a card first needs it (perf audit 2026-10-29) */
-let orbitP = null; const orbitMod = () => (orbitP ??= import('./orbit-view.js?v=0.1.1653'));
-import { ART_SHARED } from './art-shared.js?v=0.1.1653';
-import { ART_CREDITS } from './art-credits.js?v=0.1.1653';
-import { stampsIn, fleetLevel, fleetThresholds, sightingKeys, MOON_PHASES, moonPhaseOf } from './card-model.js?v=0.1.1653';
-import { nightsIn } from './observation.js?v=0.1.1653';
-import { CON_BY_ID, conProgress } from './constellations.js?v=0.1.1653';
-import { SHINY } from './shiny.js?v=0.1.1653';
-import { conArt, cometArt } from './con-art.js?v=0.1.1653';
-import { CON_FIGURES } from './con-figures.js?v=0.1.1653';
-import { localText } from './localize.js?v=0.1.1653';
-import { isSkyCard, skyStampInfo, skyTypeCode } from './sky-cards.js?v=0.1.1653';
-import { flightCardHtml, planeCardHtml } from './flight-card.js?v=0.1.1653';
+let orbitP = null; const orbitMod = () => (orbitP ??= import('./orbit-view.js?v=0.1.1654'));
+import { ART_SHARED } from './art-shared.js?v=0.1.1654';
+import { ART_CREDITS } from './art-credits.js?v=0.1.1654';
+import { stampsIn, fleetLevel, fleetThresholds, sightingKeys, MOON_PHASES, moonPhaseOf } from './card-model.js?v=0.1.1654';
+import { nightsIn } from './observation.js?v=0.1.1654';
+import { CON_BY_ID, conProgress } from './constellations.js?v=0.1.1654';
+import { SHINY } from './shiny.js?v=0.1.1654';
+import { conArt, cometArt } from './con-art.js?v=0.1.1654';
+import { CON_FIGURES } from './con-figures.js?v=0.1.1654';
+import { localText } from './localize.js?v=0.1.1654';
+import { isSkyCard, skyStampInfo, skyTypeCode } from './sky-cards.js?v=0.1.1654';
+import { flightCardHtml, planeCardHtml } from './flight-card.js?v=0.1.1654';
 // The animal/symbol figure belongs to the completed (gold) constellation card only (2026-10-05): a single
 // star’s card draws just the star pattern with its star marked, so the figure is a reward for finishing the set.
 // A star card’s constellation figure comes into focus as you collect the constellation’s stars (design/con-focus.html B).
