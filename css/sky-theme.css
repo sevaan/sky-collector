@@ -54,10 +54,19 @@ body.sky-only, html.sky-cards { --sc-ink:#0d2238; --sc-muted:#4a6178; --sc-paper
 
 
 /* ---- Packs in the light look (2026-11-15, Sevaan: "dark looks too much like the space app"). The opener, gift and
-   daily packs share #gift (css/gift.css): sky background, a pale sky-foil pack, the seal in metallic navy with an
-   orange glint, navy words. ---- */
-html body #gift { background:linear-gradient(180deg,#8cc2ec 0%,#cfe5f6 55%,#eef5fb 100%); color:var(--sc-ink); }
-html body #gift .gp-stars { display:none; }
+   daily packs share #gift (css/gift.css). Since 2026-11-16 (Sevaan: "navy foil on cream … not a night sky … realistic
+   moving clouds"): Space Collector's pack exactly, with Flight Plan's linework (back-flight-plan-mask.webp, cut by
+   scripts/art/back-mask.py) in navy foil on cream, opened over a daylight sky where Space Collector has its starry night:
+   a sky gradient and Tonight's drifting noise clouds in white (js/gift-pack.js), no painting. ---- */
+html body #gift { background:linear-gradient(180deg,#5d97cf 0%,#86b6e0 40%,#b9d5ee 75%,#dbe9f5 100%); color:var(--sc-ink); }
+html body #gift.bare::before { background:linear-gradient(180deg,#5d97cf 0%,#86b6e0 40%,#b9d5ee 75%,#dbe9f5 100%); } /* the first-run opener: the same sky, fading to the app as there */
+html body #gift .gp-stars { display:block; position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+html body #gift .gp-cl { position:absolute; left:0; right:0; }
+html body #gift .gp-cl.hi { top:-2%; height:44%; }
+html body #gift .gp-cl.mid { top:28%; height:44%; opacity:.55; -webkit-mask:linear-gradient(transparent, #000 35%, #000 65%, transparent); mask:linear-gradient(transparent, #000 35%, #000 65%, transparent); } /* soft on both edges: no line where it starts */
+html body #gift .gp-cl.lo { bottom:-2%; height:46%; transform:scaleY(-1); } /* the noise fades downward, so the low deck is the same layer upside down, fading upward */
+html body #gift .gp-cl .wx-clouds { top:0; height:100%; -webkit-mask:linear-gradient(#000 30%, transparent 95%); mask:linear-gradient(#000 30%, transparent 95%); }
+
 html body #gift .gp-head .k { color:var(--sc-orange-ink); }
 html body #gift .gp-head h1 { color:var(--sc-ink); }
 html body #gift .gp-head p, #gift .gp-hint .sub { color:#23405c; }
@@ -66,12 +75,18 @@ html body #gift .gp-hint b { color:var(--sc-orange-ink); }
 html body #gift .gp-hint button { border-color:var(--sc-line); background:#ffffffcc; color:var(--sc-ink); }
 html body #gift .gp-x { color:var(--sc-ink); }
 html body #gift .gp-piece { filter:drop-shadow(0 18px 30px rgba(13,34,56,.35)); }
-/* The pack (2026-11-15, Sevaan: "a new pack design based on the new card back"): its own painted face in Cheatline's style
-   (assets/art/pack-cheatline.webp, prompt scripts/art/back-prompts/pack-windows.txt; Sevaan picked it over the climbing jet, scripts/art/pack-option-climb.webp) between navy seals like the back's frame. */
-html body #gift .gp-base { background:#f3ead2; }
-html body #gift .gp-art { background:linear-gradient(#0d2238 0 8.5%, #f3ead2 8.5% calc(8.5% + 1.5px), #0000 calc(8.5% + 1.5px) calc(91.5% - 1.5px), #f3ead2 calc(91.5% - 1.5px) 91.5%, #0d2238 91.5%), url('../assets/art/pack-cheatline.webp') 50% 25% / auto 95% no-repeat, #e9dcbc; -webkit-mask:none; mask:none; opacity:1; }
-html body .sv-pk-base { background:#f3ead2; }
-html body .sv-pk-art { background:linear-gradient(#0d2238 0 9%, #0000 9% 91%, #0d2238 91%), url('../assets/art/pack-cheatline.webp') 50% 25% / auto 95% no-repeat, #e9dcbc; -webkit-mask:none; mask:none; animation:none; }
+/* The pack: Space Collector's foil, navy on cream; the shimmer follows the tilt (--mx) as there. */
+html body #gift .gp-base, html body .sv-pk-base { background:radial-gradient(ellipse at 50% 40%,#fbf5e6,#efe4c8 80%); }
+html body #gift .gp-art { background:linear-gradient(120deg,#0d2238,#3d6a98 30%,#10283f 45%,#7aa4cc 55%,#173554 70%,#2d5882) calc(var(--mx, 50) * 1%) 0 / 260% 100%;
+  -webkit-mask:url('../assets/art/backs/back-flight-plan-mask.webp') 50% 52% / 118% auto no-repeat; mask:url('../assets/art/backs/back-flight-plan-mask.webp') 50% 52% / 118% auto no-repeat; opacity:1; }
+html body .sv-pk-art { background:linear-gradient(120deg,#0d2238,#3d6a98 30%,#10283f 45%,#7aa4cc 55%,#173554 70%,#2d5882) 0 0 / 260% 100%;
+  -webkit-mask:url('../assets/art/backs/back-flight-plan-mask.webp') 50% 52% / 118% auto no-repeat; mask:url('../assets/art/backs/back-flight-plan-mask.webp') 50% 52% / 118% auto no-repeat; }
+html body .sv-pk-crimp { background:repeating-linear-gradient(90deg,#0d223822 0 1.5px,#ffffff55 1.5px 4px); }
+/* the small pack on the night-pack ticket and toasts: Flight Plan, not Mission Control */
+html body .tn-pack { background:#f3ead2 url('../assets/art/backs/back-flight-plan.webp') 50% 45% / 150% auto no-repeat; box-shadow:inset 0 0 0 1px #0d223866; }
+html body .tn-pack::before { border-top-color:#0d2238aa; }
+html body #toasts .tn-ic.art:has(.tn-pack) { background:#f3ead2; }
+html body #toasts .ticket .tn-pack { box-shadow:inset 0 0 0 1px #0d223866, 0 4px 10px #0d223855; }
 html body #gift .gp-lines { background:repeating-linear-gradient(0deg,#0d223806 0 1px,transparent 1px 3px); }
 html body #gift .gp-glow { background:radial-gradient(circle at calc(var(--mx, 50) * 1%) calc(var(--my, 40) * 1%),#ffffffaa,transparent 45%); mix-blend-mode:soft-light; }
 html body #gift .gp-seam { background:repeating-linear-gradient(90deg,#0d223866 0 6px,transparent 6px 11px); }

@@ -7,7 +7,7 @@
 // WebKit (Safari's engine, what iOS ships) at 390x844 with 2,000 seeded cards, a fixed evening and a routed forecast, once
 // clear and once cloudy. The numbers are desktop numbers: an iPhone is roughly 2x slower, which the limits allow for.
 // Headless browsers have no GPU, so raster and compositing aren't measured; check the feel on a phone too.
-import { open } from './harness.mjs';
+import { open, URL0 } from './harness.mjs';
 
 const AT = '2026-11-10T19:40:00-05:00', N = 2000, CR = process.argv.includes('--cr');
 const LIMITS = {
@@ -29,10 +29,10 @@ const skyRaf = (r) => r.cbs.filter(([k]) => /^raf main\.js/.test(k)).sort((a, b)
 async function webkitPass(wx) {
   const T = await open('webkit', { at: AT, wx });
   const { p, W, hud, seed, window_, report, errs } = T;
-  await p.goto('http://localhost:8765/'); await W(2500); await seed(N);
+  await p.goto(URL0); await W(2500); await seed(N);
   // boot with a cached plan: load once so the plan is saved, then measure the second start
-  await p.goto('http://localhost:8765/'); await hud(); await W(8000);
-  await p.goto('http://localhost:8765/'); const t0 = Date.now(); await hud(); const hudMs = Date.now() - t0;
+  await p.goto(URL0); await hud(); await W(8000);
+  await p.goto(URL0); const t0 = Date.now(); await hud(); const hudMs = Date.now() - t0;
   const [bootLong, bootWhy] = await p.evaluate(() => { const l = [...window.__long].sort((a, b) => b[1] - a[1]); return [l[0]?.[1] ?? 0, l.slice(0, 4).map((x) => `${x[2]} ${Math.round(x[1])}`).join(' | ')]; });
   let st = await window_(); await W(45000); let r = await report(st, 30);
   await p.evaluate(() => document.querySelectorAll('dialog[open]').forEach((d) => d.close()));
@@ -76,8 +76,8 @@ async function webkitPass(wx) {
 async function chromiumPass() {
   const T = await open('chromium', { at: AT, wx: 'partial' });
   const { p, W, hud, seed, window_, report, throttle, metrics } = T;
-  await p.goto('http://localhost:8765/'); await W(2500); await seed(600);
-  await p.goto('http://localhost:8765/'); await hud(); await W(12000);
+  await p.goto(URL0); await W(2500); await seed(600);
+  await p.goto(URL0); await hud(); await W(12000);
   await throttle(4);
   for (const [name, js, ms] of [['Tonight open', "document.getElementById('nav-sky').click()", 1500], ['Tonight close', "document.getElementById('nav-explore').click()", 1200], ['Settings open', "document.getElementById('nav-more').click()", 1200], ['Settings close', "document.getElementById('nav-more').click()", 1200], ['Collection open', "document.getElementById('nav-collection').click()", 2500], ['Collection close', "document.getElementById('nav-explore').click()", 1500]]) {
     const s = await window_(); await p.evaluate(js); await W(ms); const q = await report(s, 8); const sk = skyRaf(q); check(`[cr 4x] ${name}: script (sky loop excluded)`, (q.cpu?.script ?? 0) - (sk?.[2] ?? 0), LIMITS.crScriptMs, 'ms', `style ${q.cpu?.style} layout ${q.cpu?.layout} | ${why(q)}`);

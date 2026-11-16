@@ -16,14 +16,14 @@ function vnoise(x, y, seed) {
 }
 function fbm(x, y, seed) { let v = 0, amp = 0.5, f = 1; for (let o = 0; o < 5; o++) { v += amp * vnoise(x * f, y * f, seed + o * 131); amp *= 0.5; f *= 2; } return v; }
 // One cloud layer as a PNG data URL (240 × 128; it's shown blurred-soft by scaling up). null without a canvas.
-function cloudPic(amount, dark, scale, seed) {
-  const key = `${Math.round(amount * 20)}|${dark ? 1 : 0}|${scale}|${seed}`;
+function cloudPic(amount, dark, scale, seed, tint = null) {
+  const key = `${Math.round(amount * 20)}|${dark ? 1 : 0}|${scale}|${seed}${tint ? `|${tint}` : ''}`;
   if (pics.has(key)) return pics.get(key);
   let url = null;
   try {
     const W = 240, H = 128, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
     const ctx = cv.getContext('2d'), img = ctx.createImageData(W, H), px = img.data;
-    const [r, g, b] = dark ? [43, 51, 64] : [64, 77, 97], slope = 2.4, intercept = -1.24 + amount * 0.95; /* a touch denser than the SVG's -1.3: value noise sits a little lower than feTurbulence (checked side by side 2026-11-07) */
+    const [r, g, b] = tint ?? (dark ? [43, 51, 64] : [64, 77, 97]), slope = 2.4, intercept = -1.24 + amount * 0.95; /* a touch denser than the SVG's -1.3: value noise sits a little lower than feTurbulence (checked side by side 2026-11-07) */
     const fx = 0.006 * scale * 600 / W, fy = 0.014 * scale * 320 / H; // the SVG's base frequencies, in our pixels
     for (let y = 0; y < H; y++) { const yy = y / H, mask = yy < 0.55 ? 1 : 1 - (yy - 0.55) / 0.45 * 1; // the SVG's vertical mask: full to 55 %, gone at the bottom
       for (let x = 0; x < W; x++) { const n = fbm(x * fx, y * fy, seed), a = Math.max(0, Math.min(1, slope * n + intercept)) * mask, i = (y * W + x) * 4; px[i] = r; px[i + 1] = g; px[i + 2] = b; px[i + 3] = Math.round(a * 255); } }
@@ -31,8 +31,8 @@ function cloudPic(amount, dark, scale, seed) {
   } catch { url = null; }
   pics.set(key, url); return url;
 }
-function layer(amount, dark, scale, seed, op) {
-  const pic = cloudPic(amount, dark, scale, seed);
+function layer(amount, dark, scale, seed, op, tint = null) {
+  const pic = cloudPic(amount, dark, scale, seed, tint);
   if (pic) return `<img src="${pic}" alt="" decoding="async" draggable="false" style="position:absolute;inset:0;width:100%;height:100%;opacity:${op}">`;
   const id = `wxc${cid++}`, slope = 2.4, intercept = -1.3 + amount * 0.95;
   const [r, g, b] = dark ? [0.17, 0.2, 0.25] : [0.25, 0.3, 0.38];
@@ -44,8 +44,10 @@ function layer(amount, dark, scale, seed, op) {
     <g mask="url(#${id}k)"><rect width="600" height="320" filter="url(#${id})"/></g></svg>`;
 }
 // amount 0..1 cloud cover; side: 'right' to have it creep in from one side (clouding over).
-export function cloudsHtml(amount, { dark = false, side = null } = {}) {
-  const inner = `<div class="wx-clouds"><div class="wx-layer" style="--d:34s">${layer(amount, dark, 1, 4, 0.75)}</div><div class="wx-layer" style="--d:22s;animation-direction:alternate-reverse">${layer(amount * 0.8, dark, 1.8, 11, 0.6)}</div></div>`;
+// tint [r, g, b] (2026-11-16, Sky Collector's daytime pack sky): the cloud colour, white for a sunny sky; without it the
+// night-sky grey. Same noise, same drift.
+export function cloudsHtml(amount, { dark = false, side = null, tint = null } = {}) {
+  const inner = `<div class="wx-clouds"><div class="wx-layer" style="--d:34s">${layer(amount, dark, 1, 4, 0.75, tint)}</div><div class="wx-layer" style="--d:22s;animation-direction:alternate-reverse">${layer(amount * 0.8, dark, 1.8, 11, 0.6, tint)}</div></div>`;
   return side ? `<div class="wx-side">${inner}</div>` : inner;
 }
 // Draw the cloud pictures ahead of time, so a Tonight open doesn't pay for them. Only the looks this forecast will

@@ -4,7 +4,13 @@
 // - a frame recorder (rAF timestamps), longtask observer (Chromium), body/#start class transition times
 import { chromium, webkit } from '../../node_modules/playwright/index.mjs';
 export const OUT = new URL('./out', import.meta.url).pathname; // git-ignored
-export const URL0 = 'http://localhost:8765/';
+// Sky Collector (2026-11-16): PERF_URL picks the server (the Space Collector base on :8767, Sky on :8766), and PERF_SKY=1
+// runs the Sky pass: Toronto Pearson as the place, a recorded plane feed (fixtures/planes-yyz.json, its clock moved to the
+// shifted time) instead of the live relay, and plane cards seeded instead of satellites.
+export const URL0 = process.env.PERF_URL || 'http://localhost:8765/';
+export const SKY = process.env.PERF_SKY === '1';
+import { readFileSync } from 'node:fs';
+const FEED = SKY ? JSON.parse(readFileSync(new URL('./fixtures/planes-yyz.json', import.meta.url))) : null;
 
 const instr = ({ at, attrib }) => {
   if (at) {
@@ -52,18 +58,33 @@ export async function open(eng = 'webkit', o = {}) {
   const [w, h] = (o.size ?? '390x844').split('x').map(Number);
   const args = eng === 'chromium' ? ['--enable-precise-memory-info', '--js-flags=--expose-gc'] : [];
   const b = await (eng === 'webkit' ? webkit : chromium).launch({ args });
-  const ctx = await b.newContext({ viewport: { width: w, height: h }, hasTouch: true, isMobile: eng !== 'firefox', deviceScaleFactor: o.dsf ?? 2, reducedMotion: o.reduced ? 'reduce' : 'no-preference', geolocation: { latitude: 44.3, longitude: -78.3 }, permissions: ['geolocation'], timezoneId: 'America/Toronto', locale: 'en-CA', serviceWorkers: 'block' });
+  const ctx = await b.newContext({ viewport: { width: w, height: h }, hasTouch: true, isMobile: eng !== 'firefox', deviceScaleFactor: o.dsf ?? 2, reducedMotion: o.reduced ? 'reduce' : 'no-preference', geolocation: SKY ? { latitude: 43.66, longitude: -79.58 } : { latitude: 44.3, longitude: -78.3 }, permissions: ['geolocation'], timezoneId: 'America/Toronto', locale: 'en-CA', serviceWorkers: 'block' });
   if (o.returning !== false) await ctx.addInitScript(() => { if (!localStorage.getItem('started')) { localStorage.setItem('started', 'true'); localStorage.setItem('tourDone', 'true'); localStorage.setItem('fingerChosen', '1'); localStorage.setItem('dev', '1'); localStorage.setItem('radarTip', '1'); localStorage.setItem('recapWeek', '9e15'); localStorage.setItem('tonightDay', new Date().toDateString()); } });
   await ctx.addInitScript(instr, { at: o.at ? new Date(o.at).getTime() : 0, attrib: o.attrib !== false });
   const p = await ctx.newPage(); const errs = [];
   p.on('pageerror', (e) => { if (!/setPointerCapture|NotFoundError|InvalidPointerId|object can not be found here/.test(e.message)) errs.push('PAGEERROR ' + e.message.slice(0, 200)); });
   if (o.wx) await routeWx(p, o.wx, o.at);
   await p.route(/adsb|api\.adsb|val\.run\/.*plane|adsbdb/, (r) => r.abort());
+  if (SKY) { const shift = (o.at ? new Date(o.at).getTime() : Date.now()) - Date.now(); await p.route(/web\.val\.run/, (r) => r.fulfill({ status: 200, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify({ ...FEED, now: Date.now() + shift }) })); }
   let cdp = null; if (eng === 'chromium') { cdp = await ctx.newCDPSession(p); await cdp.send('Performance.enable'); }
   const W = (ms) => p.waitForTimeout(ms);
   const hud = () => p.waitForFunction(() => document.body.classList.contains('hud-ready'), null, { timeout: 90000 });
   const throttle = async (r) => { if (cdp) await cdp.send('Emulation.setCPUThrottlingRate', { rate: r }); };
-  const seed = (n) => p.evaluate(async (n) => { const { addSightings } = await import('/js/store.js'); const { cardKeyFor, stampKeyFor } = await import('/js/card-model.js'); const cat = await (await fetch('/data/catalog.json')).json(); const objs = cat.objects.filter((o) => o.tier); const days = Math.max(12, Math.ceil(n / 25)); const t0 = Date.now() - days * 86400e3; const list = []; for (let i = 0; i < n; i++) { const o = objs[(i * 13) % objs.length], t = t0 + Math.floor(i / Math.max(1, n / days)) * 86400e3 + 7200e3 + (i % 50) * 60e3; const s = { objectId: o.id, cardKey: cardKeyFor(o), name: o.name, type: o.type, time: t, loggedAt: t, lat: 44.3, lon: -78.3, az: 100, el: 40, mag: 3, sim: false }; const sk = stampKeyFor(o, t); if (sk) s.stampKey = sk; list.push(s); } for (const k of ['moon', 'planet:jupiter', 'sun']) { const t = Date.now() - 3 * 86400e3; list.push({ objectId: k, cardKey: k, name: k, type: 'planet', time: t, loggedAt: t, lat: 44.3, lon: -78.3, az: 100, el: 40, mag: 2, sim: false }); } await addSightings(list); return list.length; }, n);
+  const seedSky = (n) => p.evaluate(async ({ n, ac }) => {
+    // n sightings from n/2 catches of the recorded planes on varied routes: each catch makes a flight card and a plane card.
+    const { addSightings } = await import('/js/store.js'); const { cardsFor } = await import('/js/flights.js'); const { catchSightings } = await import('/js/sky-cards.js');
+    const AP = [['CYYZ', 'Toronto', 'CA', 43.68, -79.63], ['CYUL', 'Montreal', 'CA', 45.47, -73.74], ['CYVR', 'Vancouver', 'CA', 49.19, -123.18], ['CYYC', 'Calgary', 'CA', 51.13, -114.01], ['KJFK', 'New York', 'US', 40.64, -73.78], ['KORD', 'Chicago', 'US', 41.98, -87.9], ['KLAX', 'Los Angeles', 'US', 33.94, -118.41], ['KATL', 'Atlanta', 'US', 33.64, -84.43], ['KMIA', 'Miami', 'US', 25.79, -80.29], ['EGLL', 'London', 'GB', 51.47, -0.45], ['LFPG', 'Paris', 'FR', 49.01, 2.55], ['EDDF', 'Frankfurt', 'DE', 50.03, 8.56], ['EHAM', 'Amsterdam', 'NL', 52.31, 4.76], ['LEMD', 'Madrid', 'ES', 40.47, -3.56], ['MMMX', 'Mexico City', 'MX', 19.44, -99.07], ['RJTT', 'Tokyo', 'JP', 35.55, 139.78], ['OMDB', 'Dubai', 'AE', 25.25, 55.36], ['SBGR', 'São Paulo', 'BR', -23.43, -46.47]].map(([icao, city, cc, lat, lon]) => ({ icao, iata: icao.slice(1), city, cc, lat, lon, name: city }));
+    const planes = ac.filter((a) => a.t), days = Math.max(12, Math.ceil(n / 50)), t0 = Date.now() - days * 86400e3, list = [];
+    for (let i = 0; i < n / 2; i++) {
+      const a = planes[i % planes.length], cs = (a.flight || '').trim() || `TST${i}`, from = AP[(i * 5) % AP.length]; let to = AP[(i * 7 + 3) % AP.length]; if (to === from) to = AP[(i * 7 + 4) % AP.length];
+      const pl = { hex: a.hex, callsign: cs, reg: a.r || '', type: a.t, desc: a.desc || '', category: a.category || '' };
+      const { flight, plane } = cardsFor(pl, { from, to, callsign: cs }, '');
+      const t = t0 + Math.floor(i / Math.max(1, n / 2 / days)) * 86400e3 + 7200e3 + (i % 50) * 60e3;
+      list.push(...catchSightings({ time: t, hex: i % 3 ? a.hex : `${a.hex}${i}`, callsign: cs, reg: pl.reg, type: pl.type, altFt: 30000, gsKt: 450, rangeKm: 20, lat: 43.66, lon: -79.58, flight, plane }).map((s) => ({ ...s, loggedAt: t, sim: false })));
+    }
+    await addSightings(list); return list.length;
+  }, { n, ac: FEED.ac });
+  const seed = SKY ? seedSky : (n) => p.evaluate(async (n) => { const { addSightings } = await import('/js/store.js'); const { cardKeyFor, stampKeyFor } = await import('/js/card-model.js'); const cat = await (await fetch('/data/catalog.json')).json(); const objs = cat.objects.filter((o) => o.tier); const days = Math.max(12, Math.ceil(n / 25)); const t0 = Date.now() - days * 86400e3; const list = []; for (let i = 0; i < n; i++) { const o = objs[(i * 13) % objs.length], t = t0 + Math.floor(i / Math.max(1, n / days)) * 86400e3 + 7200e3 + (i % 50) * 60e3; const s = { objectId: o.id, cardKey: cardKeyFor(o), name: o.name, type: o.type, time: t, loggedAt: t, lat: 44.3, lon: -78.3, az: 100, el: 40, mag: 3, sim: false }; const sk = stampKeyFor(o, t); if (sk) s.stampKey = sk; list.push(s); } for (const k of ['moon', 'planet:jupiter', 'sun']) { const t = Date.now() - 3 * 86400e3; list.push({ objectId: k, cardKey: k, name: k, type: 'planet', time: t, loggedAt: t, lat: 44.3, lon: -78.3, az: 100, el: 40, mag: 2, sim: false }); } await addSightings(list); return list.length; }, n);
   // reset callback stats + frame mark; returns a stop() that reports
   const subs = () => p.frames().filter((f) => f !== p.mainFrame());
   const window_ = async () => { for (const f of subs()) await f.evaluate(() => { window.__cb?.clear(); }).catch(() => {}); const i0 = await p.evaluate(() => { window.__cb.clear(); window.__lt.length = 0; window.__long.length = 0; return window.__fr.length; }); const m0 = cdp ? await metrics() : null; return { i0, m0 }; };
@@ -81,6 +102,13 @@ export async function open(eng = 'webkit', o = {}) {
 }
 
 export async function routeWx(p, wx, at) {
+  // Sky Collector has no server, so its forecast comes straight from Open-Meteo: the same hours, in Open-Meteo's shape (2026-11-16).
+  await p.route(/api\.open-meteo\.com\/v1\/forecast/, (route) => {
+    const base = at ? new Date(at).getTime() : Date.now(); const now = Math.floor(base / 3600e3) * 3600; const time = [], cloud = [], code = [], temp = [], wind = [];
+    for (let i = -24; i < 7 * 24; i++) { let c = 0, k = 0; if (wx === 'cloudy') { c = 95; k = 3; } else if (wx === 'rain') { c = 100; k = 61; } else if (wx === 'partial') { c = 50; k = 2; } if (i > 48) { c = 5; k = 0; } time.push(now + i * 3600); cloud.push(c); code.push(k); temp.push(4); wind.push(10); }
+    const cur = wx === 'cloudy' ? 95 : wx === 'rain' ? 100 : wx === 'partial' ? 50 : 0;
+    route.fulfill({ status: 200, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify({ current: { cloud_cover: cur, weather_code: wx === 'rain' ? 61 : cur > 80 ? 3 : 0 }, hourly: { time, cloud_cover: cloud, weather_code: code, temperature_2m: temp, wind_speed_10m: wind } }) });
+  });
   await p.route(/\/wx\?lat=/, (route) => {
     const base = at ? new Date(at).getTime() : Date.now(); const now = Math.floor(base / 3600e3) * 3600; const hours = [];
     for (let i = -24; i < 7 * 24; i++) { const t = now + i * 3600; let c = 0, k = 0; if (wx === 'cloudy') { c = 95; k = 3; } else if (wx === 'rain') { c = 100; k = 61; } else if (wx === 'partial') { c = 50; k = 2; } if (i > 48) { c = 5; k = 0; } hours.push({ t: t * 1000, cloud: c, code: k, temp: 2, wind: 8 }); }

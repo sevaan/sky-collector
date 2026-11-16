@@ -7,13 +7,13 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { TIERS } from './flights.js?v=0.1.1676';
-import { typePhoto } from './type-photos.js?v=0.1.1676';
-import { housePhoto } from './house-photos.js?v=0.1.1676';
-import { airlinePhoto } from './airline-photos.js?v=0.1.1676';
-import { airlineLogo } from './airline-logos.js?v=0.1.1676';
-import { fitStyle } from './photo-fit.js?v=0.1.1676';
-import { hasAirlineCallsign, planeLine, levelWord } from './sky-stamps.js?v=0.1.1676';
+import { TIERS } from './flights.js?v=0.1.1677';
+import { typePhoto } from './type-photos.js?v=0.1.1677';
+import { housePhoto } from './house-photos.js?v=0.1.1677';
+import { airlinePhoto } from './airline-photos.js?v=0.1.1677';
+import { airlineLogo } from './airline-logos.js?v=0.1.1677';
+import { fitStyle } from './photo-fit.js?v=0.1.1677';
+import { hasAirlineCallsign, planeLine, levelWord } from './sky-stamps.js?v=0.1.1677';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');

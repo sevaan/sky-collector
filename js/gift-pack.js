@@ -6,8 +6,9 @@
 //         renderCard, attachTilt, artImage, applyBack, sfx, feel, tierColor }
 const wait = (ms, reduced) => new Promise((r) => setTimeout(r, reduced ? Math.min(ms, 120) : ms));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-import { TIERS, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1676';
-import { attachGyro } from './card.js?v=0.1.1676';
+import { TIERS, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1677';
+import { attachGyro } from './card.js?v=0.1.1677';
+import { cloudsHtml } from './weather-art.js?v=0.1.1677';
 // Cards turn with the catch reveal's own flip and rarity table (js/card-moment.js, 2026-11-11): one turn for a catch, a
 // gift and the morning pack.
 // A tap that answers on the finger lifting, like main.js tapOn: the pack animates every frame, and WebKit drops a click
@@ -52,7 +53,11 @@ export function playPack(o) {
       <div class="gp-count2 gone"></div>`;
     document.body.appendChild(root);
     const q = (s) => root.querySelector(s), pk = q('.gp-pk'), cap = q('.gp-cap'), main = q('.gp-main'), tearPath = q('.gp-tear path');
-    { const s = q('.gp-stars'); for (let i = 0; i < 80; i++) { const e = document.createElement('i'); e.style.left = `${Math.random() * 100}%`; e.style.top = `${Math.random() * 100}%`; e.style.animationDelay = `${-Math.random() * 3}s`; s.appendChild(e); } }
+    /* Sky Collector (2026-11-16, Sevaan: "realistic moving clouds … use the weather effects from Space Collector"): the
+       pack opens over a daylight sky (css/sky-theme.css) with Tonight's drifting noise clouds in white, three decks,
+       where Space Collector twinkles stars. */
+    if (document.body.classList.contains('sky-only')) q('.gp-stars').innerHTML = `<div class="gp-cl hi">${cloudsHtml(0.75, { tint: [255, 255, 255] })}</div><div class="gp-cl mid">${cloudsHtml(0.5, { tint: [250, 252, 255] })}</div><div class="gp-cl lo">${cloudsHtml(0.8, { tint: [255, 255, 255] })}</div>`;
+    else { const s = q('.gp-stars'); for (let i = 0; i < 80; i++) { const e = document.createElement('i'); e.style.left = `${Math.random() * 100}%`; e.style.top = `${Math.random() * 100}%`; e.style.animationDelay = `${-Math.random() * 3}s`; s.appendChild(e); } }
     let phase = 'sealed', tearing = false, prog = 0, lastMove = 0, closed = false, auto = false;
     const finish = (how) => { if (closed) return; closed = true; root.classList.remove('in'); root.classList.add('out'); setTimeout(() => root.remove(), 300); stopGyro(); clearInterval(rattleT); resolve(how); };
     root._dismiss = () => finish('later'); /* for whoever put the pack up (the opener, when the sky starts without it) */
