@@ -168,3 +168,4 @@ body:not(.sky-col-mode) #sky-col { display:none; }
 html:has(body.sky-col-mode) { background:#eef5fb; }
 body.sky-col-mode { --bg:#eef5fb; --text:#0d2238; }
 #rv-news .sky-rv-strip .fcatch-strip-n { color:var(--sc-ink); } #rv-news .sky-rv-strip { max-width:340px; }
+#wc-holder .wc-a-title { background:none !important; -webkit-text-fill-color:var(--sc-ink) !important; color:var(--sc-ink) !important; text-shadow:none !important; } /* the newer gold-foil title is unreadable on cream */

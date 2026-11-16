@@ -1,18 +1,17 @@
-import { SETS, goldAlbums } from './sets.js?v=0.1.1588';
-import { isPlus } from './plus.js?v=0.1.1588';
+import { SETS, goldAlbums } from './sets.js?v=0.1.1591';
+import { isPlus } from './plus.js?v=0.1.1591';
 // Card backs you can choose (2026-10-16, design/card-backs.html, Sevaan liked all six). Mission Control is everyone’s;
 // Plus unlocks the rest; two can also be earned free: Golden Record (find the Pale Blue Dot story) and Star Chart
 // (complete 10 constellations); main.js writes what’s been earned to localStorage 'backEarned'. The choice is
 // localStorage 'cardBack': a back’s id, or 'random' for a different unlocked one each time a card turns over.
 export const CARD_BACKS = [
-  { id: 'sky', bg: '#8cc2ec', name: 'Sky Collector', url: 'assets/art/backs/back-sky.webp', title: 'middle', free: true }, // Sky Collector's own back (2026-11-15; scripts/art/card-back-sky.html)
-  { id: 'mission-control', bg: '#01121c', name: 'Mission Control', url: 'assets/art/backs/back-collector.webp', title: 'middle', free: true },
-  { id: 'golden-record', bg: '#031622', name: 'Golden Record', url: 'assets/art/backs/back-golden-record.webp', title: 'middle', earn: 'Find the Pale Blue Dot story' },
-  { id: 'star-chart', bg: '#02151e', name: 'Star Chart', url: 'assets/art/backs/back-star-chart.webp', title: 'middle', earn: 'Complete 10 constellations' },
-  { id: 'mission-patch', bg: '#071723', name: 'Mission Patch', url: 'assets/art/backs/back-mission-patch.webp', title: 'middle' },
-  { id: 'blueprint', bg: '#124e87', name: 'Blueprint', url: 'assets/art/backs/back-blueprint.webp', title: 'middle' },
-  { id: 'aurora', bg: '#021520', name: 'Northern Lights', url: 'assets/art/backs/back-aurora.webp', title: 'middle' },
-  { id: 'nebula-foil', bg: '#152338', name: 'Nebula Foil', url: 'assets/art/backs/back-nebula-foil.webp', title: 'middle' },
+  // Sky Collector's backs (2026-11-15, Sevaan): painted with Nano Banana Pro like Space Collector's (scripts/art/gen-back.py,
+  // prompts in scripts/art/back-prompts/). The Daylight Seal is everyone's; the rest come with Plus.
+  { id: 'sky', bg: '#8bb2c3', name: 'Daylight Seal', url: 'assets/art/backs/back-sky.webp', title: 'middle', free: true },
+  { id: 'golden-age', bg: '#0c1c34', name: 'Golden Age', url: 'assets/art/backs/back-golden-age.webp', title: 'middle' },
+  { id: 'wings', bg: '#010e1a', name: 'Pilot Wings', url: 'assets/art/backs/back-wings.webp', title: 'middle' },
+  { id: 'altimeter', bg: '#051723', name: 'Altimeter', url: 'assets/art/backs/back-altimeter.webp', title: 'middle' },
+  { id: 'sky-blueprint', bg: '#164f86', name: 'Blueprint', url: 'assets/art/backs/back-sky-blueprint.webp', title: 'middle' },
 ];
 const read = (k, d) => { try { return localStorage.getItem(k) ?? d; } catch { return d; } };
 export const backEarned = () => { try { return new Set(JSON.parse(read('backEarned', '[]'))); } catch { return new Set(); } };
