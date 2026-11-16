@@ -1,28 +1,28 @@
 // Retro space-age cards. Text remains live; the foil follows pointer or optional phone tilt.
-import { fallWords } from './last-chance.js?v=0.1.1638';
-import { useMiles } from './units.js?v=0.1.1638';
-import { feel } from './native.js?v=0.1.1638';
-import { sfx } from './sfx.js?v=0.1.1638';
-import { cardArt } from './art.js?v=0.1.1638';
-import { TIER_INFO } from './rarity.js?v=0.1.1638';
-import { SET_BY_ID } from './sets.js?v=0.1.1638';
-import { TYPE_LABEL, orbitStats, sizeLabel, formatDate, titleCase } from './facts.js?v=0.1.1638';
-import { FLEET_ABOUT, fleetAbout, factSourceUrl, debrisOf, roleOf, ownerWord, titleFor, factFor, yearsUp, lapsPerDay, thirdStat, richText, seriesKeyOf } from './lore.js?v=0.1.1638';
-import { artFileFor } from './art-keys.js?v=0.1.1638';
-import { ART_FILES, ART_STARS } from './art-files.js?v=0.1.1638';
+import { fallWords } from './last-chance.js?v=0.1.1640';
+import { useMiles } from './units.js?v=0.1.1640';
+import { feel } from './native.js?v=0.1.1640';
+import { sfx } from './sfx.js?v=0.1.1640';
+import { cardArt } from './art.js?v=0.1.1640';
+import { TIER_INFO } from './rarity.js?v=0.1.1640';
+import { SET_BY_ID } from './sets.js?v=0.1.1640';
+import { TYPE_LABEL, orbitStats, sizeLabel, formatDate, titleCase } from './facts.js?v=0.1.1640';
+import { FLEET_ABOUT, fleetAbout, factSourceUrl, debrisOf, roleOf, ownerWord, titleFor, factFor, yearsUp, lapsPerDay, thirdStat, richText, seriesKeyOf } from './lore.js?v=0.1.1640';
+import { artFileFor } from './art-keys.js?v=0.1.1640';
+import { ART_FILES, ART_STARS } from './art-files.js?v=0.1.1640';
 /* the orbit view (and its 66 KB coastline) loads when a card first needs it (perf audit 2026-10-29) */
-let orbitP = null; const orbitMod = () => (orbitP ??= import('./orbit-view.js?v=0.1.1638'));
-import { ART_SHARED } from './art-shared.js?v=0.1.1638';
-import { ART_CREDITS } from './art-credits.js?v=0.1.1638';
-import { stampsIn, fleetLevel, fleetThresholds, sightingKeys, MOON_PHASES, moonPhaseOf } from './card-model.js?v=0.1.1638';
-import { nightsIn } from './observation.js?v=0.1.1638';
-import { CON_BY_ID, conProgress } from './constellations.js?v=0.1.1638';
-import { SHINY } from './shiny.js?v=0.1.1638';
-import { conArt, cometArt } from './con-art.js?v=0.1.1638';
-import { CON_FIGURES } from './con-figures.js?v=0.1.1638';
-import { localText } from './localize.js?v=0.1.1638';
-import { isSkyCard, skyStampInfo, skyTypeCode } from './sky-cards.js?v=0.1.1638';
-import { flightCardHtml, planeCardHtml } from './flight-card.js?v=0.1.1638';
+let orbitP = null; const orbitMod = () => (orbitP ??= import('./orbit-view.js?v=0.1.1640'));
+import { ART_SHARED } from './art-shared.js?v=0.1.1640';
+import { ART_CREDITS } from './art-credits.js?v=0.1.1640';
+import { stampsIn, fleetLevel, fleetThresholds, sightingKeys, MOON_PHASES, moonPhaseOf } from './card-model.js?v=0.1.1640';
+import { nightsIn } from './observation.js?v=0.1.1640';
+import { CON_BY_ID, conProgress } from './constellations.js?v=0.1.1640';
+import { SHINY } from './shiny.js?v=0.1.1640';
+import { conArt, cometArt } from './con-art.js?v=0.1.1640';
+import { CON_FIGURES } from './con-figures.js?v=0.1.1640';
+import { localText } from './localize.js?v=0.1.1640';
+import { isSkyCard, skyStampInfo, skyTypeCode } from './sky-cards.js?v=0.1.1640';
+import { flightCardHtml, planeCardHtml } from './flight-card.js?v=0.1.1640';
 // The animal/symbol figure belongs to the completed (gold) constellation card only (2026-10-05): a single
 // star’s card draws just the star pattern with its star marked, so the figure is a reward for finishing the set.
 // A star card’s constellation figure comes into focus as you collect the constellation’s stars (design/con-focus.html B).
@@ -385,7 +385,7 @@ export function renderCardTile(o, opts = {}) {
   tile.type = 'button';
   const conDone = (conCard && caught) || (!!o.launches && fleetLevel(o.family, stampsIn(sightings).size) === 'gold');
   const shinyTile = !o.launches && sightings.some((x) => x.shiny && SHINY[x.shiny]);
-  const lvl = caught && !conCard && !o.launches ? cardLevel(sightings.filter((x) => x.via !== 'gift'), o) : null, lvlUp = lvl === 'silver' || lvl === 'gold'; // a level badge on the tile (collectors 2026-10-11)
+  const lvl = caught && isSkyCard(o) ? skyStampInfo(o, sightings).level : caught && !conCard && !o.launches ? cardLevel(sightings.filter((x) => x.via !== 'gift'), o) : null, lvlUp = lvl === 'silver' || lvl === 'gold'; // a level badge on the tile (collectors 2026-10-11)
   tile.className = `card-tile card-tile--retro${o.icon ? ' is-icon' : ''}${caught ? ' is-owned' : ''}${conDone ? ' gold-foil' : ''}${shinyTile ? ' shiny' : ''}${lvlUp ? ` lvl-${lvl}` : ''}`;
   tile.style.setProperty('--set', set.color); tile.style.setProperty('--tier', tier.color);
   const hide = o.story && !caught; // an unfound story stays a secret, read aloud too (QA 2026-10-16)
