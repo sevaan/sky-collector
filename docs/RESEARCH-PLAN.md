@@ -115,8 +115,10 @@ Route cards are put together from parts; the research goes into the parts.
 **Airlines (about 800; start with the top 200 by Phase 0 traffic):**
 - Name, country, founding year, hub, alliance, and the callsign word it uses on the radio ("SPEEDBIRD" for British Airways).
   That last one makes a good short fact.
-- **No logos.** Airline logos and liveries are trademarks; see Phase 6. Stamps use the airline's name, country and a
-  colour we choose, not its logo.
+- **Logos: yes, to say which airline it is** (checked 2026-11-15; see Phase 6). Get them from a licensed logo set
+  (Airhex or Duffel), not copied from Wikipedia. Show them where a flight tracker would, on the card next to the
+  airline's name. Don't make the logo itself the prize. Keep one switch that hides logos everywhere, in case an app
+  store objects.
 
 **Routes (computed, not researched):**
 - Distance, time in the air and sets come from the parts.
@@ -182,8 +184,34 @@ The hardest design problem. It needs Phase 0's numbers first.
   - CC BY-SA attribution for photos.
   - Wikipedia text: CC BY-SA, so facts are **written fresh**, not copied.
   - CC0 data needs no credit, but we credit it anyway.
-- **Trademarks:** we can name airlines and aircraft makers to describe what's flying ("an Air Canada flight"). Logos,
-  livery art and "official"-looking marks are out. Confirm with a short legal read for app stores in Canada, the US and the EU.
+- **Trademarks: airline logos, checked 2026-11-15.**
+  - **Wikipedia isn't a source.** Most logos there are shown under fair use for that one article only. A few
+    lettering-only ones are public domain on Commons for copyright, but they're still trademarks.
+  - **The industry uses logos to identify airlines:**
+    - Flightradar24 shows airline logos on its map and in its apps.
+    - Logo services sell licensed sets for apps: Airhex has 920+ airlines and Duffel 600+, and Duffel calls its set
+      "brand compliant". Airhex licenses the logo files it makes, not the airlines' trademarks themselves.
+  - **The legal footing is "nominative fair use":** using a brand to say what something is. Courts look harder at
+    logos than at names. Putting someone's logo on your own product, as merchandise, is generally not covered.
+  - **The closest real case:** American Airlines sued The Points Guy (2022) over its name and graphics in a points
+    app. It survived a motion to dismiss, then American dropped it in November 2022, with no ruling on the merits.
+  - **Apple guideline 5.2.1** rejects apps using third-party trademarks without permission. Developers report
+    rejections even after removing logos (over sports team names), and reviewers may ask for proof of permission.
+  - **Verdict:** showing a logo to identify the airline on a flight card is the same use flight trackers make, and is
+    likely fine. Using logos as collectible stamps or patches drifts toward merchandise, so avoid that.
+  - **Before launch:**
+    - get a written logo licence (Airhex or Duffel)
+    - have the hide-logos switch ready
+    - give App Review a short note explaining the use
+    - a lawyer's half hour is worth it before selling Plus
+
+  Sources: [Flightradar24 label options](https://www.flightradar24.com/blog/inside-flightradar24/new-flightradar24-com-label-options/),
+  [Duffel airline logos](https://duffel.com/blog/get-high-quality-brand-compliant-airline-logos-in-our-flights-api),
+  [Airhex logo API](https://airhex.com/de/api/logos/),
+  [Points Guy suit dropped (Law360)](https://law360.com/articles/1547330),
+  [Fordham IPLJ on the suit](https://fordhamiplj.org/2022/05/03/the-points-guy-just-wants-to-fly-american-airlines-sues-over-trademark-infringement/),
+  [Apple forums: 5.2.1 rejection over team names](https://developer.apple.com/forums/thread/718427),
+  [Nominative use](https://www.wikipedia.org/wiki/Nominative_use).
 - **Privacy:**
   - **Private aircraft:** a registration identifies the owner. Respect FAA LADD/PIA (blocked and privacy-programme
     aircraft) and the EU's GDPR position on registrations.
