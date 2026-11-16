@@ -1,0 +1,85 @@
+<!doctype html>
+<!-- Sky Collector card back option 2, "Compass" (refined copy of scripts/art/card-back-sky.html, 2026-11-15).
+     Changes: clouds and flight arcs clipped inside the inner frame, arcs pass under the compass disc instead of
+     through the wordmark, each arc ends in a plane. Light look (canvas row D): sky blue, navy line work,
+     orange accents, the four kinds of things you catch in the corners. -->
+<html><head><meta charset="utf-8">
+<style>
+@font-face { font-family:'RO'; src:url('../../../fonts/RussoOne-Regular.woff2') format('woff2'); }
+@font-face { font-family:'BC'; src:url('../../../fonts/BarlowCondensed-Medium.woff2') format('woff2'); }
+html,body { margin:0; width:900px; height:1359px; overflow:hidden; }
+body { background:linear-gradient(180deg,#8cc2ec 0%,#b9dbf3 46%,#e4f1fa 100%); position:relative; font-family:'BC',sans-serif; color:#0d2238; }
+.clouds { position:absolute; left:53px; top:53px; width:794px; height:1253px; border-radius:21px; overflow:hidden; }
+.cloud { position:absolute; border-radius:50%; background:#fff; filter:blur(22px); opacity:.55; }
+svg { position:absolute; inset:0; }
+.word { position:absolute; left:0; right:0; top:610px; text-align:center; font-family:'RO',sans-serif; font-size:92px; line-height:.96; letter-spacing:.01em;
+  color:#0d2238; text-shadow:0 0 0 #fff, 4px 4px 0 #fffdf6, -4px -4px 0 #fffdf6, 4px -4px 0 #fffdf6, -4px 4px 0 #fffdf6, 0 6px 0 #fffdf6, 0 -6px 0 #fffdf6, 6px 0 0 #fffdf6, -6px 0 0 #fffdf6; }
+.sub span { background:#c6e1f5; padding:2px 6px 2px 18px; }
+.sub { position:absolute; left:0; right:0; top:812px; text-align:center; font-size:30px; letter-spacing:.42em; color:#23405c; }
+</style></head>
+<body>
+<div class="clouds"><div class="cloud" style="left:-130px;top:130px;width:520px;height:120px"></div>
+<div class="cloud" style="left:370px;top:960px;width:560px;height:130px"></div>
+<div class="cloud" style="left:10px;top:1130px;width:420px;height:100px;opacity:.4"></div></div>
+<svg viewBox="0 0 900 1359" width="900" height="1359">
+  <defs>
+    <path id="jet" d="M32 3c2.2 0 3.4 3 3.4 6.5V24l22.6 12.2v4.3L35.4 34v15.2l7.2 5.6v3.6L32 55.6l-10.6 2.8v-3.6l7.2-5.6V34L6 40.5v-4.3L28.6 24V9.5C28.6 6 29.8 3 32 3z"/>
+    <g id="heli"><ellipse cx="32" cy="27" rx="7" ry="11"/><rect x="30.5" y="36" width="3" height="20" rx="1.5"/><rect x="25" y="53" width="14" height="3" rx="1.5"/><path d="M9 12L55 42M55 12L9 42" fill="none" stroke-width="2.6" stroke-linecap="round"/></g>
+    <g id="prop"><path d="M30 7h4l1 9v32l7 5v3H22v-3l7-5V16z"/><rect x="4" y="17" width="56" height="7" rx="3"/></g>
+    <g id="blimp"><ellipse cx="29" cy="30" rx="24" ry="10"/><path d="M49 25l10-7v24l-10-7z"/><rect x="22" y="39" width="11" height="5" rx="2"/></g>
+  </defs>
+  <!-- frame -->
+  <rect x="34" y="34" width="832" height="1291" rx="34" fill="none" stroke="#0d2238" stroke-width="3"/>
+  <rect x="52" y="52" width="796" height="1255" rx="22" fill="none" stroke="#0d2238" stroke-width="1.2" stroke-opacity=".55"/>
+  <clipPath id="innerclip"><rect x="54" y="54" width="792" height="1251" rx="20"/></clipPath>
+  <!-- flight paths: dashed great-circle arcs, kept inside the inner frame; they run under the compass disc -->
+  <g clip-path="url(#innerclip)">
+  <g fill="none" stroke="#c2560a" stroke-width="3" stroke-dasharray="10 12" stroke-linecap="round" opacity=".85">
+    <path id="arcA" d="M96 1010 Q 330 330 760 470"/>
+    <path id="arcB" d="M140 380 Q 560 1150 790 900"/>
+  </g>
+  </g>
+  <!-- planes at the heads of the arcs -->
+  <g fill="#0d2238">
+    <use href="#jet" transform="translate(782 478) rotate(80) translate(-18 -18) scale(.5625)"/>
+    <use href="#jet" transform="translate(800 888) rotate(-32) translate(-18 -18) scale(.5625)"/>
+  </g>
+  <!-- compass disc: hides the arcs behind the wordmark -->
+  <circle cx="450" cy="690" r="299" fill="#c6e1f5"/>
+  <!-- compass rose around the wordmark -->
+  <g transform="translate(450 690)" fill="none" stroke="#0d2238">
+    <circle r="300" stroke-width="2" stroke-opacity=".55"/>
+    <circle r="262" stroke-width="1" stroke-opacity=".45" stroke-dasharray="3 9"/>
+    <circle r="200" stroke-width="2" stroke-opacity=".7"/>
+    <g stroke-width="2" stroke-opacity=".65">
+      <path d="M0 -300 V -340 M0 300 V 340 M-300 0 H -340 M300 0 H 340"/>
+      <path d="M212 -212 l22 -22 M-212 -212 l-22 -22 M212 212 l22 22 M-212 212 l-22 22" stroke-opacity=".45"/>
+    </g>
+  </g>
+  <g font-family="BC" font-size="30" fill="#0d2238" text-anchor="middle" letter-spacing="4">
+    <text x="450" y="330">N</text><text x="450" y="1076">S</text><text x="83" y="701">W</text><text x="817" y="701">E</text>
+  </g>
+  <!-- the reticle: the game's target circle with a plane in it, top -->
+  <g transform="translate(450 470)">
+    <circle r="54" fill="#fffdf6" fill-opacity=".7" stroke="#c2560a" stroke-width="4"/>
+    <path d="M0 -64 V -76 M0 64 V 76 M-64 0 H -76 M64 0 H 76" stroke="#c2560a" stroke-width="4" stroke-linecap="round"/>
+    <use href="#jet" transform="translate(-26 -26) scale(.8125) rotate(45 32 32)" fill="#fffdf6" stroke="#0d2238" stroke-width="2"/>
+  </g>
+  <!-- the four kinds of catch, one per corner -->
+  <g fill="#fffdf6" stroke="#0d2238" stroke-width="2.2" stroke-linejoin="round">
+    <g transform="translate(96 96)"><circle cx="58" cy="58" r="66" fill="#fffdf6" fill-opacity=".6" stroke-width="1.5"/><use href="#jet" transform="translate(16 16) scale(1.3) rotate(45 32 32)"/></g>
+    <g transform="translate(672 96)"><circle cx="66" cy="58" r="66" fill="#fffdf6" fill-opacity=".6" stroke-width="1.5"/><use href="#heli" transform="translate(24 16) scale(1.3) rotate(-30 32 32)"/></g>
+    <g transform="translate(96 1130)"><circle cx="58" cy="66" r="66" fill="#fffdf6" fill-opacity=".6" stroke-width="1.5"/><use href="#prop" transform="translate(16 24) scale(1.3) rotate(30 32 32)"/></g>
+    <g transform="translate(672 1130)"><circle cx="66" cy="66" r="66" fill="#fffdf6" fill-opacity=".6" stroke-width="1.5"/><use href="#blimp" transform="translate(26 30) scale(1.25)"/></g>
+  </g>
+  <!-- small orange stars, as on Space Collector's backs -->
+  <g fill="#c2560a">
+    <path d="M450 210 l6 16 16 6 -16 6 -6 16 -6 -16 -16 -6 16 -6z"/>
+    <path d="M450 1120 l6 16 16 6 -16 6 -6 16 -6 -16 -16 -6 16 -6z"/>
+    <path d="M190 690 l5 13 13 5 -13 5 -5 13 -5 -13 -13 -5 13 -5z" opacity=".8"/>
+    <path d="M710 690 l5 13 13 5 -13 5 -5 13 -5 -13 -13 -5 13 -5z" opacity=".8"/>
+  </g>
+</svg>
+<div class="word">SKY<br>COLLECTOR</div>
+<div class="sub"><span>CATCH WHAT FLIES</span></div>
+</body></html>

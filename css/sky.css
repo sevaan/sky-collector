@@ -112,3 +112,58 @@
 .tc .acts .yes { background:var(--sc-orange); color:var(--sc-ink); }
 .tc .acts .no { background:#eef3f8; color:var(--sc-ink); }
 .tc.stack .acts .no { background:none; color:var(--sc-orange-ink); }
+
+/* ---- Collection (cards.html): Flights and Planes (2026-11-15, canvas row D) ---- */
+body.sky-col-mode { background:#eef5fb; color:var(--sc-ink); }
+body.sky-col-mode #collection-main > :not(#sky-col) { display:none !important; }
+body:not(.sky-col-mode) #sky-col { display:none; }
+#sky-col { padding:0 16px calc(var(--nav-h, 112px) + 40px); max-width:720px; margin:0 auto; }
+.scc-intro { padding:8px 4px 4px; }
+.scc-intro .eyebrow { margin:0; font:600 12px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.2em; color:var(--sc-orange-ink); }
+.scc-intro h1 { margin:6px 0 4px; font:400 28px/1.05 'SC Display','Russo One',sans-serif; color:var(--sc-ink); }
+.scc-intro p:last-child { margin:0; color:var(--sc-muted); font-size:14px; }
+.scc-tabs { display:flex; gap:24px; margin-top:14px; border-bottom:1px solid var(--sc-line); }
+.scc-tabs button { border:0; background:none; padding:10px 0; font:500 15px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.18em; text-transform:uppercase; color:var(--sc-ink); border-bottom:3px solid transparent; }
+.scc-tabs button[aria-selected="true"] { color:var(--sc-orange-ink); border-bottom-color:var(--sc-orange); }
+.scc-tabs button span { font-size:12px; background:#dde8f1; border-radius:6px; padding:1px 6px; margin-left:4px; letter-spacing:0; }
+.scc-tabs button[aria-selected="true"] span { background:#ffe6d3; }
+.scc-chips { display:flex; gap:6px; flex-wrap:wrap; margin-top:12px; }
+.scc-chip { border:1px solid var(--sc-line); background:#fff; color:var(--sc-ink); border-radius:14px; padding:6px 11px; min-height:32px; font:600 12px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.1em; text-transform:uppercase; }
+.scc-chip[aria-pressed="true"] { background:var(--sc-ink); color:#fff; border-color:var(--sc-ink); }
+.scc-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(104px, 1fr)); gap:8px; margin-top:12px; }
+.sct { display:block; padding:2.5px; border:0; border-radius:9px; background:#b8c6d2; box-shadow:0 3px 8px rgba(13,34,56,.1); text-align:left; color:var(--sc-ink); }
+.sct--gold { background:var(--sc-gold); }
+.sct-in { display:flex; flex-direction:column; gap:3px; background:var(--sc-paper); border-radius:7px; padding:4px; min-height:164px; box-sizing:border-box; }
+.sct-art { position:relative; display:block; height:62px; border-radius:4px; overflow:hidden; }
+.sct-art--route { background-color:#d7eaf8; background-image:linear-gradient(rgba(13,34,56,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(13,34,56,.07) 1px,transparent 1px); background-size:12px 12px; }
+.sct-art--plane { background:linear-gradient(180deg,#78b3e3,#d8eaf8); display:grid; place-items:center; }
+.sct-glyph { width:46px; height:46px; fill:#fff; stroke:var(--sc-ink); stroke-width:1.6; transform:rotate(-20deg); }
+.sct-tier { position:absolute; left:3px; top:3px; z-index:1; background:#fff; border-radius:3px; padding:0 3px; font:700 10px/1.4 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.06em; }
+.sct-arc { position:absolute; left:10px; right:10px; top:20px; height:26px; overflow:hidden; }
+.sct-arc span { display:block; height:52px; box-sizing:border-box; border-radius:50%; border:1.5px dashed var(--sc-orange-ink); }
+.sct-dot { position:absolute; top:42px; width:8px; height:8px; border-radius:50%; }
+.sct-dot--a { left:6px; background:var(--sc-ink); } .sct-dot--b { right:6px; background:var(--sc-orange-ink); }
+.sct-code { position:absolute; left:0; right:0; bottom:3px; text-align:center; font:400 15px/1 'SC Display','Russo One',sans-serif; }
+.sct-name { font:400 12px/1.05 'SC Display','Russo One',sans-serif; text-transform:uppercase; }
+.sct-sub { font:500 11px/1.1 'SC Label','Barlow Condensed',sans-serif; border-bottom:1px solid var(--sc-rule); padding-bottom:2px; }
+.sct-row { display:flex; justify-content:space-between; font:600 11px/1 'SC Label','Barlow Condensed',sans-serif; }
+.sct-when { margin-top:auto; font:500 10px/1 'SC Label','Barlow Condensed',sans-serif; color:var(--sc-muted); }
+.scc-empty { margin:28px 4px; text-align:center; }
+.scc-empty h2 { font:400 22px/1.1 'SC Display','Russo One',sans-serif; margin:0 0 8px; }
+.scc-empty p { color:var(--sc-muted); margin:0 0 16px; }
+.scc-empty a { display:inline-flex; align-items:center; min-height:44px; padding:0 18px; border-radius:10px; background:var(--sc-orange); color:var(--sc-ink); text-decoration:none; font:600 14px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.16em; text-transform:uppercase; }
+.sky-viewer { position:fixed; inset:0; width:100%; height:100%; max-width:none; max-height:none; margin:0; border:0; padding:0; background:linear-gradient(180deg,#a9d2f0 0%,#e4f1fa 45%,#f6fafd 100%); color:var(--sc-ink); overflow-y:auto; }
+.sky-viewer::backdrop { background:rgba(13,34,56,.4); }
+.scv-head { display:flex; justify-content:space-between; align-items:center; padding:var(--col-top, calc(env(safe-area-inset-top,0px) + 14px)) 12px 4px 20px; }
+.scv-head .ui-eyebrow { color:var(--sc-ink); }
+.scv-x { width:44px; height:44px; border:0; background:none; color:var(--sc-ink); font-size:18px; }
+.scv-body { display:flex; flex-direction:column; align-items:center; padding:0 20px calc(env(safe-area-inset-bottom,0px) + 30px); }
+.scv-card { margin:4px 0 16px; }
+.scv-k { align-self:stretch; max-width:360px; margin:10px auto 4px; width:100%; font:600 13px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.2em; color:var(--sc-orange-ink); }
+.scv-stamps { display:flex; flex-wrap:wrap; gap:6px; max-width:360px; width:100%; margin:0 auto; }
+.scv-stamps span { border:1px solid var(--sc-line); background:#fff; border-radius:12px; padding:4px 10px; font:500 13px/1.2 'SC Label','Barlow Condensed',sans-serif; }
+.scv-list { list-style:none; margin:0 auto; padding:0; max-width:360px; width:100%; }
+.scv-list li { display:flex; justify-content:space-between; gap:10px; padding:8px 0; border-top:1px solid var(--sc-line); font:500 14px/1.2 'SC Label','Barlow Condensed',sans-serif; }
+.scv-list li span:last-child { color:var(--sc-muted); text-align:right; }
+html:has(body.sky-col-mode) { background:#eef5fb; }
+body.sky-col-mode { --bg:#eef5fb; --text:#0d2238; }

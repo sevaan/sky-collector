@@ -1,0 +1,120 @@
+<!doctype html>
+<!-- Sky Collector card back option 4, "Chart" (2026-11-15). Aeronautical-chart back: graticule with minute ticks,
+     VOR compass rose (5-degree ticks, headings every 30), airways, waypoints, a restricted-area boundary,
+     a runway with 09/27 numbers and piano keys, and an orange departure track. Family frame. 900x1359. -->
+<html><head><meta charset="utf-8">
+<style>
+@font-face { font-family:'RO'; src:url('../../../fonts/RussoOne-Regular.woff2') format('woff2'); }
+@font-face { font-family:'BC'; src:url('../../../fonts/BarlowCondensed-Medium.woff2') format('woff2'); }
+html,body { margin:0; width:900px; height:1359px; overflow:hidden; background:#0b2140; }
+svg { display:block; }
+</style></head>
+<body>
+<svg id="s" viewBox="0 0 900 1359" width="900" height="1359" xmlns="http://www.w3.org/2000/svg"></svg>
+<script>
+const W = 900, H = 1359, CX = 450, CY = 640;
+const CREAM = '#fff2b3', INK = '#fffdf6', OR = '#fa8127', BG = '#0b2140';
+const out = []; const add = s => out.push(s);
+const rad = d => d * Math.PI / 180;
+const P = (r, deg) => [CX + r * Math.sin(rad(deg)), CY - r * Math.cos(rad(deg))];
+function star(x, y, r, col, k = .18) {
+  const p = [[0,-r],[r*k,-r*k],[r,0],[r*k,r*k],[0,r],[-r*k,r*k],[-r,0],[-r*k,-r*k]].map(([a,b]) => `${(x+a).toFixed(1)},${(y+b).toFixed(1)}`).join(' ');
+  return `<polygon points="${p}" fill="${col}"/>`;
+}
+add(`<defs>
+  <radialGradient id="bg" cx="50%" cy="47%" r="65%"><stop offset="0" stop-color="#123059"/><stop offset="1" stop-color="#091a33"/></radialGradient>
+  <clipPath id="inner"><rect x="24" y="84" width="852" height="1191"/></clipPath>
+  <pattern id="hatch" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V10" stroke="${OR}" stroke-width="2" opacity=".35"/></pattern>
+  <path id="jet" d="M32 3c2.2 0 3.4 3 3.4 6.5V24l22.6 12.2v4.3L35.4 34v15.2l7.2 5.6v3.6L32 55.6l-10.6 2.8v-3.6l7.2-5.6V34L6 40.5v-4.3L28.6 24V9.5C28.6 6 29.8 3 32 3z"/>
+</defs>`);
+add(`<rect width="${W}" height="${H}" fill="url(#bg)"/>`);
+add(`<g clip-path="url(#inner)">`);
+// graticule: lines every 90px with minute ticks every 15px
+let g = '';
+for (let x = 45; x < W; x += 90) {
+  g += `<path d="M${x} 0 V${H}" stroke="${CREAM}" stroke-width="1" opacity=".16"/>`;
+  for (let y = 0; y < H; y += 15) g += `<path d="M${x - (y % 90 ? 4 : 8)} ${y} H${x + (y % 90 ? 4 : 8)}" stroke="${CREAM}" stroke-width="1" opacity=".22"/>`;
+}
+for (let y = 50; y < H; y += 90) {
+  g += `<path d="M0 ${y} H${W}" stroke="${CREAM}" stroke-width="1" opacity=".16"/>`;
+  for (let x = 0; x < W; x += 15) g += `<path d="M${x} ${y - 4} V${y + 4}" stroke="${CREAM}" stroke-width="1" opacity=".18"/>`;
+}
+add(g);
+// restricted-area boundary in the top-right corner
+add(`<circle cx="905" cy="80" r="250" fill="url(#hatch)" stroke="${OR}" stroke-width="2.4" opacity=".9"/>`);
+add(`<circle cx="905" cy="80" r="236" fill="${BG}" fill-opacity=".85" stroke="none"/>`);
+add(`<circle cx="-20" cy="1300" r="200" fill="none" stroke="${CREAM}" stroke-width="1.6" stroke-dasharray="14 6 2 6" opacity=".45"/>`);
+// airways: radials from the station
+for (const deg of [38, 128, 218, 308, 172]) {
+  const [x, y] = P(1000, deg);
+  add(`<path d="M${CX} ${CY} L${x.toFixed(1)} ${y.toFixed(1)}" stroke="${CREAM}" stroke-width="16" opacity=".06"/>`);
+  add(`<path d="M${CX} ${CY} L${x.toFixed(1)} ${y.toFixed(1)}" stroke="${CREAM}" stroke-width="1.4" opacity=".5"/>`);
+}
+// waypoints (triangles) and obstacles on/near the airways
+for (const [r, deg] of [[400, 38], [430, 308], [390, 218], [470, 128]]) {
+  const [x, y] = P(r, deg);
+  add(`<path d="M${x} ${y - 12} L${x + 11} ${y + 8} L${x - 11} ${y + 8} Z" fill="${BG}" stroke="${INK}" stroke-width="2"/><circle cx="${x}" cy="${y + 1}" r="2.4" fill="${INK}"/>`);
+}
+for (const [x, y] of [[118, 420], [790, 760], [160, 930], [700, 300]]) {
+  add(`<path d="M${x - 9} ${y + 9} L${x} ${y - 13} L${x + 9} ${y + 9}" fill="none" stroke="${CREAM}" stroke-width="2" stroke-linejoin="round" opacity=".8"/><circle cx="${x}" cy="${y + 12}" r="2.6" fill="${CREAM}" opacity=".8"/>`);
+}
+// small airport symbols in two corners
+for (const [x, y, rot] of [[130, 190, 30], [770, 1180, -40]]) {
+  add(`<g transform="translate(${x} ${y}) rotate(${rot})" opacity=".85"><circle r="22" fill="none" stroke="${CREAM}" stroke-width="2.4"/><rect x="-4" y="-32" width="8" height="64" rx="1" fill="${CREAM}"/>
+    <path d="M0 -26 V-32 M0 26 V32 M-26 0 H-32 M26 0 H32" stroke="${CREAM}" stroke-width="2.4" transform="rotate(45)"/></g>`);
+}
+add(`</g>`);
+
+// VOR compass rose
+add(`<circle cx="${CX}" cy="${CY}" r="340" fill="#0b1f3a" fill-opacity=".9" stroke="${CREAM}" stroke-width="2.6"/>`);
+add(`<circle cx="${CX}" cy="${CY}" r="236" fill="none" stroke="${CREAM}" stroke-width="1.2" opacity=".55"/>`);
+let t = '';
+for (let d = 0; d < 360; d += 5) {
+  const L = d % 30 === 0 ? 30 : d % 10 === 0 ? 19 : 11;
+  const [x1, y1] = P(340, d), [x2, y2] = P(340 - L, d);
+  t += `<path d="M${x1.toFixed(1)} ${y1.toFixed(1)} L${x2.toFixed(1)} ${y2.toFixed(1)}" stroke="${CREAM}" stroke-width="${d % 30 ? 1.6 : 2.6}"/>`;
+}
+for (let d = 0; d < 360; d += 30) {
+  const [x, y] = P(288, d);
+  t += `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" transform="rotate(${d} ${x.toFixed(1)} ${y.toFixed(1)})" font-family="BC" font-size="34" fill="${INK}" text-anchor="middle" dominant-baseline="central">${d / 10}</text>`;
+}
+add(t);
+// north arrow
+add(`<path d="M${CX} ${CY - 388} L${CX + 14} ${CY - 350} L${CX} ${CY - 358} L${CX - 14} ${CY - 350} Z" fill="${OR}"/>`);
+
+// runway 09/27
+add(`<g transform="translate(${CX} 1132) rotate(-12)">
+  <rect x="-300" y="-34" width="600" height="68" fill="#16243c" stroke="${CREAM}" stroke-width="2.4"/>
+  <path d="M-300 -42 H300 M-300 42 H300" stroke="${CREAM}" stroke-width="1" opacity=".35"/>
+  <g fill="${INK}">${[...Array(6)].map((_, i) => `<rect x="-292" y="${-28 + i * 9.6}" width="26" height="5.4"/><rect x="266" y="${-28 + i * 9.6}" width="26" height="5.4"/>`).join('')}</g>
+  <text x="-226" y="0" transform="rotate(90 -226 0)" font-family="RO" font-size="40" fill="${INK}" text-anchor="middle" dominant-baseline="central">09</text>
+  <text x="226" y="0" transform="rotate(-90 226 0)" font-family="RO" font-size="40" fill="${INK}" text-anchor="middle" dominant-baseline="central">27</text>
+  <path d="M-180 0 H180" stroke="${INK}" stroke-width="3" stroke-dasharray="24 16"/>
+  <g fill="${INK}"><rect x="-150" y="-24" width="34" height="10"/><rect x="-150" y="14" width="34" height="10"/><rect x="116" y="-24" width="34" height="10"/><rect x="116" y="14" width="34" height="10"/></g>
+</g>`);
+// departure track: from the 27 end, climbing round the rose; plane at its head
+add(`<path d="M745 1066 C 860 930 862 420 690 268" fill="none" stroke="${OR}" stroke-width="3.4" stroke-dasharray="12 10" stroke-linecap="round"/>`);
+{ const hd = Math.atan2(268 - 420, 690 - 862) * 180 / Math.PI + 90;
+  add(`<g transform="translate(676 254) rotate(${hd.toFixed(1)}) translate(-24 -24) scale(.75)"><use href="#jet" fill="${OR}" stroke="${INK}" stroke-width="1.6"/></g>`); }
+add(`<path d="M155 1205 C 60 1060 70 900 140 820" fill="none" stroke="${CREAM}" stroke-width="2" stroke-dasharray="4 8" stroke-linecap="round" opacity=".6"/>`);
+
+// wordmark box
+add(`<rect x="${CX - 268}" y="${CY - 116}" width="536" height="220" rx="10" fill="#0a1a31" stroke="${CREAM}" stroke-width="2.6"/>`);
+add(`<rect x="${CX - 258}" y="${CY - 106}" width="516" height="200" rx="5" fill="none" stroke="${CREAM}" stroke-width="1" opacity=".5"/>`);
+add(`<text x="${CX}" y="${CY - 4}" font-family="RO" font-size="134" text-anchor="middle" fill="${INK}" textLength="290" lengthAdjust="spacingAndGlyphs">SKY</text>`);
+add(`<text x="${CX}" y="${CY + 78}" font-family="RO" font-size="80" text-anchor="middle" fill="${OR}" textLength="452" lengthAdjust="spacingAndGlyphs">COLLECTOR</text>`);
+
+// family frame + chart-border minute ticks
+let fr = '';
+for (let y = 96; y < 1270; y += 12) { const L = (y - 96) % 60 === 0 ? 12 : 6; fr += `<path d="M22 ${y} H${22 + L} M878 ${y} H${878 - L}" stroke="${CREAM}" stroke-width="1.2" opacity=".7"/>`; }
+add(fr);
+add(`<g fill="none" stroke="${CREAM}">
+  <rect x="22" y="22" width="856" height="1315" rx="30" stroke-width="2.6"/>
+  <path d="M22 82 H878 M22 1277 H878" stroke-width="1.8"/>
+  <path d="M62 52 H392 M508 52 H838 M62 1307 H392 M508 1307 H838" stroke-width="1.8"/>
+  <path d="M410 38 V66 M490 38 V66 M410 1293 V1321 M490 1293 V1321" stroke-width="2"/>
+</g>`);
+add(star(CX, 52, 20, OR) + star(CX, 1307, 20, OR));
+document.getElementById('s').innerHTML = out.join('\n');
+</script>
+</body></html>

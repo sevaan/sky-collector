@@ -1,0 +1,191 @@
+<!doctype html>
+<!-- Sky Collector card back option 1, "Mission Control, Sky edition" (2026-11-15).
+     Vector sibling of Space Collector's default back (back-collector.webp): dark navy, cream/gold frame,
+     concentric rings, corner medallions, chrome wordmark. Orbits -> great-circle flight paths,
+     satellites -> jet / helicopter / prop / airship, stars -> navigation-beacon stars. 900x1359. -->
+<html><head><meta charset="utf-8">
+<style>
+@font-face { font-family:'RO'; src:url('../../../fonts/RussoOne-Regular.woff2') format('woff2'); }
+@font-face { font-family:'BC'; src:url('../../../fonts/BarlowCondensed-Medium.woff2') format('woff2'); }
+html,body { margin:0; width:900px; height:1359px; overflow:hidden; background:#080f1b; }
+svg { display:block; }
+</style></head>
+<body>
+<svg id="s" viewBox="0 0 900 1359" width="900" height="1359" xmlns="http://www.w3.org/2000/svg"></svg>
+<script>
+const W = 900, H = 1359, CX = 450, CY = 680;
+const CREAM = '#fff2b3', INK = '#fffdf6', OR = '#fa8127', OR2 = '#c2560a', BLUE = '#5f81ab', BG = '#080f1b';
+let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const out = [];
+const add = s => out.push(s);
+// 4-point star (pointy), optional beacon ring
+function star(x, y, r, col, o = {}) {
+  const k = o.k ?? .16, ry = o.ry ?? r;
+  const p = [[0,-ry],[r*k,-r*k],[r,0],[r*k,r*k],[0,ry],[-r*k,r*k],[-r,0],[-r*k,-r*k]].map(([a,b]) => `${(x+a).toFixed(1)},${(y+b).toFixed(1)}`).join(' ');
+  let s = `<polygon points="${p}" fill="${col}"/>`;
+  if (o.ring) s += `<circle cx="${x}" cy="${y}" r="${(r*.55).toFixed(1)}" fill="none" stroke="${col}" stroke-width="${o.ringW ?? 1.4}" opacity=".8"/>`;
+  return s;
+}
+const dot = (x, y, r = 10) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${OR}"/><circle cx="${x}" cy="${y}" r="${r*.42}" fill="${INK}"/>`;
+
+add(`<defs>
+  <radialGradient id="bg" cx="50%" cy="50%" r="60%"><stop offset="0" stop-color="#10203a"/><stop offset=".7" stop-color="#0a1426"/><stop offset="1" stop-color="#070d18"/></radialGradient>
+  <linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#fffdf6"/><stop offset=".46" stop-color="#fff2b3"/><stop offset=".5" stop-color="#d8bf7c"/>
+    <stop offset=".62" stop-color="#f6e4a6"/><stop offset="1" stop-color="#fffdf6"/></linearGradient>
+  <linearGradient id="hull" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffb46e"/><stop offset=".5" stop-color="${OR}"/><stop offset="1" stop-color="${OR2}"/></linearGradient>
+  <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9fb4d0"/><stop offset="1" stop-color="#5f7699"/></linearGradient>
+  <g id="cjet" stroke="${INK}" stroke-width="1.1" stroke-linejoin="round">
+    <path fill="url(#panel)" d="M32 3c2.2 0 3.4 3 3.4 6.5V24l22.6 12.2v4.3L35.4 34v15.2l7.2 5.6v3.6L32 55.6l-10.6 2.8v-3.6l7.2-5.6V34L6 40.5v-4.3L28.6 24V9.5C28.6 6 29.8 3 32 3z"/>
+    <rect x="28.6" y="5" width="6.8" height="48" rx="3.4" fill="url(#hull)"/>
+    <circle cx="32" cy="10" r="1.6" fill="${BG}" stroke="none"/>
+  </g>
+  <g id="cheli" stroke="${INK}" stroke-width="1.1" stroke-linejoin="round">
+    <rect x="30.5" y="36" width="3" height="20" rx="1.5" fill="url(#panel)"/><rect x="25" y="53" width="14" height="3" rx="1.5" fill="url(#panel)"/>
+    <ellipse cx="32" cy="27" rx="7" ry="11" fill="url(#hull)"/>
+    <path d="M9 12L55 42M55 12L9 42" fill="none" stroke="${INK}" stroke-width="2.6" stroke-linecap="round"/>
+    <circle cx="32" cy="27" r="2.4" fill="${BG}" stroke="none"/>
+  </g>
+  <g id="cprop" stroke="${INK}" stroke-width="1.1" stroke-linejoin="round">
+    <rect x="4" y="17" width="56" height="7" rx="3" fill="url(#panel)"/>
+    <path d="M30 7h4l1 9v32l7 5v3H22v-3l7-5V16z" fill="url(#hull)"/>
+    <path d="M24 5h16" stroke="${INK}" stroke-width="1.6" stroke-linecap="round"/>
+  </g>
+  <g id="cblimp" stroke="${INK}" stroke-width="1.1" stroke-linejoin="round">
+    <path d="M49 25l10-7v24l-10-7z" fill="url(#panel)"/>
+    <ellipse cx="29" cy="30" rx="24" ry="10" fill="url(#hull)"/>
+    <path d="M9 30h40" stroke="${INK}" stroke-width=".8" opacity=".7"/>
+    <rect x="22" y="39" width="11" height="5" rx="2" fill="url(#panel)"/>
+  </g>
+  <path id="jet" d="M32 3c2.2 0 3.4 3 3.4 6.5V24l22.6 12.2v4.3L35.4 34v15.2l7.2 5.6v3.6L32 55.6l-10.6 2.8v-3.6l7.2-5.6V34L6 40.5v-4.3L28.6 24V9.5C28.6 6 29.8 3 32 3z"/>
+  <clipPath id="inner"><rect x="24" y="82" width="852" height="1195"/></clipPath>
+</defs>`);
+add(`<rect width="${W}" height="${H}" fill="url(#bg)"/>`);
+
+// dust: tiny stars inside the frame
+let dust = '';
+for (let i = 0; i < 300; i++) {
+  const x = 40 + rnd() * 820, y = 95 + rnd() * 1170;
+  dust += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(.5 + rnd() * 1.1).toFixed(2)}" fill="${INK}" opacity="${(.18 + rnd() * .5).toFixed(2)}"/>`;
+}
+add(`<g clip-path="url(#inner)">${dust}`);
+
+// outer crescents (blue-grey), like Space Collector's
+for (const side of [-1, 1]) {
+  const x0 = CX + side * 95;
+  for (const [y1, y2] of [[175, 665], [695, 1185]]) {
+    const ry = (y2 - y1) / 2;
+    const sw = side < 0 ? 0 : 1;
+    add(`<path d="M${x0} ${y1} A ${305} ${ry} 0 0 ${sw} ${x0} ${y2} A ${276} ${ry} 0 0 ${1 - sw} ${x0} ${y1} Z" fill="${BLUE}" opacity=".75"/>`);
+  }
+}
+// faint outer dashed ring
+add(`<circle cx="${CX}" cy="${CY}" r="398" fill="none" stroke="${CREAM}" stroke-width="1.3" stroke-dasharray="3 9" opacity=".45"/>`);
+
+// axes
+add(`<path d="M${CX} 92 V1267" stroke="${CREAM}" stroke-width="1.6" opacity=".75"/>`);
+add(`<path d="M44 ${CY} H856" stroke="${CREAM}" stroke-width="1.6" opacity=".75"/>`);
+for (const t of [-500, -470, -440, 440, 470, 500]) add(`<circle cx="${CX}" cy="${CY + t}" r="3.4" fill="${CREAM}"/>`);
+
+// great-circle flight paths: two long tilted ellipses (the "orbits") with an aircraft riding each
+const loops = [{ rot: -60, t: 2.25 }, { rot: 60, t: -0.9 }];
+for (const L of loops) {
+  const rx = 490, ry = 175;
+  add(`<ellipse cx="${CX}" cy="${CY}" rx="${rx}" ry="${ry}" transform="rotate(${L.rot} ${CX} ${CY})" fill="none" stroke="${CREAM}" stroke-width="3.2"/>`);
+  add(`<ellipse cx="${CX}" cy="${CY}" rx="${rx - 18}" ry="${ry - 14}" transform="rotate(${L.rot} ${CX} ${CY})" fill="none" stroke="${CREAM}" stroke-width="1" stroke-dasharray="2 8" opacity=".55"/>`);
+}
+// rings + tick ring
+add(`<circle cx="${CX}" cy="${CY}" r="338" fill="#0b1629" stroke="${CREAM}" stroke-width="3.4"/>`);
+{ let d=''; for (let i=0;i<70;i++){ const a=rnd()*6.283, r=Math.sqrt(rnd())*300; d+=`<circle cx="${(CX+r*Math.cos(a)).toFixed(1)}" cy="${(CY+r*Math.sin(a)).toFixed(1)}" r="${(.5+rnd()).toFixed(2)}" fill="${INK}" opacity="${(.2+rnd()*.5).toFixed(2)}"/>`;} add(d); }
+add(`<circle cx="${CX}" cy="${CY}" r="322" fill="none" stroke="${CREAM}" stroke-width="18" stroke-dasharray="1.4 4.9" opacity=".75"/>`);
+add(`<circle cx="${CX}" cy="${CY}" r="306" fill="none" stroke="${CREAM}" stroke-width="2"/>`);
+add(`<circle cx="${CX}" cy="${CY}" r="282" fill="none" stroke="${BLUE}" stroke-width="2.2"/>`);
+add(`<circle cx="${CX}" cy="${CY}" r="244" fill="none" stroke="${CREAM}" stroke-width="1.5" stroke-dasharray="3 7" opacity=".8"/>`);
+add(`<circle cx="${CX}" cy="${CY}" r="206" fill="none" stroke="${BLUE}" stroke-width="1.4" stroke-dasharray="6 6"/>`);
+// inner great-circle arcs above and below the wordmark, grey waypoint dots at their ends
+for (const s of [-1, 1]) {
+  const y = CY + s * 112, yc = CY + s * 262;
+  add(`<path d="M${CX - 262} ${y} Q ${CX} ${yc} ${CX + 262} ${y}" fill="none" stroke="${CREAM}" stroke-width="1.4" stroke-dasharray="5 6" opacity=".8"/>`);
+  add(`<path d="M${CX - 196} ${y + s * 40} Q ${CX} ${yc - s * 10} ${CX + 196} ${y + s * 40}" fill="none" stroke="${BLUE}" stroke-width="1.4"/>`);
+  for (const sx of [-1, 1]) add(`<circle cx="${CX + sx * 196}" cy="${y + s * 40}" r="8" fill="#a9b6c6"/>`);
+}
+add(`</g>`);
+
+// aircraft riding the flight paths (outside the rings)
+for (const L of loops) {
+  const rx = 490, ry = 175, a = L.rot * Math.PI / 180;
+  const ex = rx * Math.cos(L.t), ey = ry * Math.sin(L.t);
+  const tx = -rx * Math.sin(L.t), ty = ry * Math.cos(L.t);
+  const x = CX + ex * Math.cos(a) - ey * Math.sin(a), y = CY + ex * Math.sin(a) + ey * Math.cos(a);
+  const dx = tx * Math.cos(a) - ty * Math.sin(a), dy = tx * Math.sin(a) + ty * Math.cos(a);
+  const hd = Math.atan2(dy, dx) * 180 / Math.PI + 90;
+  add(`<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${hd.toFixed(1)}) translate(-22 -22) scale(.69)"><circle cx="32" cy="32" r="34" fill="${BG}"/><use href="#jet" fill="${INK}"/></g>`);
+}
+
+// orange waypoint dots
+for (const [x, y] of [[CX, CY - 338], [CX, CY + 338], [CX - 338, CY], [CX + 338, CY], [62, CY], [838, CY]]) add(dot(x, y, 12));
+for (const [x, y] of [[CX - 300, CY - 290], [CX + 300, CY - 290], [CX - 300, CY + 290], [CX + 300, CY + 290]]) add(dot(x, y, 10));
+// chevrons on the tick ring (like the satellite back's arrows)
+for (const ang of [-38, 38, 142, 218]) {
+  const r = 322, a = ang * Math.PI / 180, x = CX + r * Math.sin(a), y = CY - r * Math.cos(a);
+  add(`<path d="M-7 -6 L0 6 L7 -6" transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${ang + 90})" fill="none" stroke="${INK}" stroke-width="2.6" stroke-linejoin="round"/>`);
+}
+
+// beacon stars above and below the wordmark (big), with orange beacon arcs
+for (const s of [-1, 1]) {
+  const y = CY + s * 222;
+  add(`<path d="M${CX - 46} ${y - 22} A 52 52 0 0 1 ${CX - 46} ${y + 22} M${CX + 46} ${y - 22} A 52 52 0 0 0 ${CX + 46} ${y + 22}" transform="rotate(0)" fill="none" stroke="${OR}" stroke-width="3.2"/>`);
+  add(`<path d="M${CX - 22} ${y - 46} A 52 52 0 0 1 ${CX + 22} ${y - 46}" fill="none" stroke="${OR}" stroke-width="3.2" opacity="0"/>`);
+  add(star(CX, y, 34, INK, { ry: 74, k: .13 }));
+  add(`<circle cx="${CX}" cy="${y}" r="5" fill="${OR}"/>`);
+}
+// scattered navigation-beacon stars
+const bstars = [
+  [255, 140, 22, OR], [645, 140, 22, OR], [255, 1219, 22, OR], [645, 1219, 22, OR],
+  [70, 300, 22, INK], [830, 300, 22, INK], [70, 1060, 22, INK], [830, 1060, 22, INK],
+  [CX - 125, CY - 245, 14, INK], [CX + 125, CY - 245, 14, INK], [CX - 125, CY + 245, 14, INK], [CX + 125, CY + 245, 14, INK],
+  [CX - 222, CY - 155, 10, '#a9b6c6'], [CX + 222, CY - 155, 10, '#a9b6c6'], [CX - 222, CY + 155, 10, '#a9b6c6'], [CX + 222, CY + 155, 10, '#a9b6c6'],
+  [300, 380, 12, INK], [600, 380, 12, INK], [300, 980, 12, INK], [600, 980, 12, INK],
+  [178, 470, 9, '#a9b6c6'], [722, 470, 9, '#a9b6c6'], [178, 890, 9, '#a9b6c6'], [722, 890, 9, '#a9b6c6'],
+];
+for (const [x, y, r, c] of bstars) add(star(x, y, r, c, { ring: r >= 12, ringW: r > 18 ? 1.8 : 1.2 }));
+
+// wordmark plate (pill) + chrome wordmark
+add(`<rect x="${CX - 286}" y="${CY - 128}" width="572" height="256" rx="74" fill="${BG}" stroke="${CREAM}" stroke-width="3"/>`);
+add(`<rect x="${CX - 276}" y="${CY - 118}" width="552" height="236" rx="64" fill="none" stroke="${CREAM}" stroke-width="1.1" opacity=".55"/>`);
+const word = (txt, y, size, len) => {
+  const common = `x="${CX}" y="${y}" font-family="RO" font-size="${size}" text-anchor="middle" textLength="${len}" lengthAdjust="spacingAndGlyphs"`;
+  return `<text ${common} transform="translate(0 6)" fill="#000" opacity=".7" stroke="#000" stroke-width="10" stroke-linejoin="round">${txt}</text>
+    <text ${common} fill="url(#chrome)" stroke="${BG}" stroke-width="9" stroke-linejoin="round" paint-order="stroke">${txt}</text>`;
+};
+add(word('SKY', CY - 2, 150, 300));
+add(word('COLLECTOR', CY + 92, 88, 486));
+
+// corner medallions with the four kinds of catch
+const med = [
+  [138, 205, 'cjet', 45], [762, 205, 'cheli', -35], [138, 1154, 'cprop', 40], [762, 1154, 'cblimp', 35],
+];
+for (const [x, y, g, rot] of med) {
+  add(`<g transform="translate(${x} ${y})">
+    <circle r="92" fill="${BG}" stroke="${CREAM}" stroke-width="1.8"/>
+    <circle r="78" fill="none" stroke="${CREAM}" stroke-width="1" stroke-dasharray="3 6" opacity=".7"/>
+    <path d="M0 -92 V-104 M0 92 V104 M-92 0 H-104 M92 0 H104" stroke="${CREAM}" stroke-width="2"/>
+    <path d="M-70 0 H-58 M58 0 H70 M0 -70 V-58 M0 58 V70" stroke="${CREAM}" stroke-width="1.2" opacity=".6"/>
+    ${dot(-65, -65, 6.5)}${dot(65, 65, 6.5)}
+    <g transform="rotate(${rot}) translate(-58 -58) scale(1.8125)"><use href="#${g}"/></g>
+  </g>`);
+}
+
+// frame + header/footer bars (family frame)
+add(`<g fill="none" stroke="${CREAM}">
+  <rect x="22" y="22" width="856" height="1315" rx="30" stroke-width="2.6"/>
+  <path d="M22 82 H878 M22 1277 H878" stroke-width="1.8"/>
+  <path d="M62 52 H392 M508 52 H838 M62 1307 H392 M508 1307 H838" stroke-width="1.8"/>
+  <path d="M410 38 V66 M490 38 V66 M410 1293 V1321 M490 1293 V1321" stroke-width="2"/>
+</g>`);
+add(star(CX, 52, 20, OR, { k: .18 }));
+add(star(CX, 1307, 20, OR, { k: .18 }));
+
+document.getElementById('s').innerHTML = out.join('\n');
+</script>
+</body></html>
