@@ -1,15 +1,15 @@
 // Sharing cards as a pack link (2026-11-11): Send cards and "Share my night" both make the link here and hand it to the
 // phone's share sheet. The pack waits on our server (functions/index.js /api/pack, 90 days) and the link carries only its
 // id; offline, a small pack still fits in the link itself.
-import { packGift, giftCode, giftLink, packLink } from './gift.js?v=0.1.1679';
-import { plugin } from './native.js?v=0.1.1679';
-import { SERVER } from './server.js?v=0.1.1679';
-import { backupBid } from './cloud-backup.js?v=0.1.1679';
+import { packGift, giftCode, giftLink, packLink } from './gift.js?v=0.1.1680';
+import { plugin } from './native.js?v=0.1.1680';
+import { SERVER } from './server.js?v=0.1.1680';
+import { backupBid } from './cloud-backup.js?v=0.1.1680';
 
 // The link for these sightings, or null with no connection and too many cards to fit in the link.
 export async function packLinkFor(sightings, { kind = '' } = {}) {
   const code = await giftCode(packGift(sightings, { bid: backupBid(), kind }));
-  try { const r = await fetch(`${SERVER}/pack`, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: code, signal: AbortSignal.timeout(10000) }); if (r.ok) { const { id } = await r.json(); if (/^[A-Za-z0-9]{7}$/.test(id)) return packLink(id); } } catch {}
+  if (SERVER) try { const r = await fetch(`${SERVER}/pack`, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: code, signal: AbortSignal.timeout(10000) }); if (r.ok) { const { id } = await r.json(); if (/^[A-Za-z0-9]{7}$/.test(id)) return packLink(id); } } catch {}
   return code.length <= 6000 ? giftLink(code) : null;
 }
 const viaName = (a = '') => (/CopyToPasteboard/i.test(a) ? 'copied' : '');
