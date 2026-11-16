@@ -342,10 +342,83 @@ body.sky-only #discover:not(.owned) #d-cta:active, body.sky-only #discover:not(.
 body.sky-only.day #discover:not(.owned) #d-cta { color:var(--sky-red-ink); background:rgba(215,54,43,.12); }
 
 /* Light header and tabs everywhere, except Explore at night, where the dark header belongs to the sky. */
-body.sky-only:is(:not([data-page="explore"]), .day) #sky-header { --bg:#eef5fb; --text:#0d2238; --muted:#4a6178; --edge:#b8c6d2; color:#0d2238; }
+body.sky-only:is(:not([data-page="explore"]), .day) #sky-header { --bg:#eef5fb; --text:#0d2238; --ink:#0d2238; --muted:#4a6178; --edge:#b8c6d2; color:#0d2238; }
 body.sky-only:is(:not([data-page="explore"]), .day) #sky-header .wordmark { color:#0d2238; background:none; -webkit-text-fill-color:currentColor; }
 body.sky-only:is(:not([data-page="explore"]), .day) #sky-header .wordmark span { color:#4a6178; -webkit-text-fill-color:currentColor; }
 body.sky-only:is(:not([data-page="explore"]), .day) #sky-header :is(button, .icon-button) { color:#0d2238; }
 body.sky-only:is(:not([data-page="explore"]), .day) #nav.sc-switch { background-color:#fffdf6 !important; box-shadow:0 0 0 1px #c9b98a, 0 10px 24px rgba(13,34,56,.2) !important; }
 body.sky-only:is(:not([data-page="explore"]), .day) #nav .sc-switch__item { color:#4a6178 !important; }
 
+
+/* ---- Settings and every bottom sheet in light mode, at any hour (2026-11-16, Sevaan: "settings need to be light mode
+   too"). Space Collector colours these through its variables, so they're re-pointed here inside the panels; the places it
+   hard-codes a dark colour follow, one rule each. Red night-vision mode (body.night) keeps Space Collector's own. ---- */
+body.sky-only:not(.night) :is(#debug, .set-sheet, #recap) {
+  --bg:#eef5fb; --text:#0d2238; --muted:#4a6178; --glass:#fffffff2; --glass-strong:#ffffff; --edge:#9fb3c6; --edge-soft:#d5e2ee; --rule:#c9d9e6;
+  --ui-ink:#0d2238; --ui-muted:#4a6178; --ui-link-ink:#23405c; --ui-edge:#9fb3c6; --ui-edge-soft:#d5e2ee; --ui-glass:#fffffff2; --ui-bar:#ffffffd9; --ink:#0d2238; --ink-on-gold:#fff;
+  color:#0d2238; }
+body.sky-only:not(.night) #debug { background:#eef5fb; }
+body.sky-only:not(.night) #debug .panel-head { background:#eef5fb; }
+body.sky-only:not(.night) #debug .panel-head :is(h2, .x-close, .sub, small), body.sky-only:not(.night) .set-sheet :is(h2, h3, .x-close) { color:#0d2238; }
+body.sky-only:not(.night) #debug .set-card { background:#ffffff !important; border:1px solid #c9d9e6 !important; outline:none; box-shadow:0 1px 2px rgba(13,34,56,.06) !important; }
+body.sky-only:not(.night) #debug .set-bar { background:#f6f9fc; border-bottom-color:#d5e2ee; }
+body.sky-only:not(.night) #debug .set-bar :is(h3, b) { color:var(--sc-orange-ink); }
+body.sky-only:not(.night) #debug :is(.set-card .set-row, .set-card .set-slider--row, .set-card > .set-row:first-of-type), body.sky-only:not(.night) #test-tools .set-test > .set-row { border-top-color:#e3ecf4 !important; }
+body.sky-only:not(.night) :is(.set-group) { background:#ffffff; border-color:#c9d9e6; }
+body.sky-only:not(.night) .set-row { border-top-color:#e3ecf4; color:#0d2238; }
+body.sky-only:not(.night) #debug .set-ic { color:#23405c; }
+body.sky-only:not(.night) :is(.set-chev, .set-sl-note, .set-version, #set-version) { color:#6a7f93 !important; }
+body.sky-only:not(.night) .set-ok { color:#18693f; }
+body.sky-only:not(.night) #debug .set-tog { background:#cfdbe6 !important; box-shadow:inset 0 1px 2px rgba(13,34,56,.18) !important; }
+body.sky-only:not(.night) #debug .set-tog:checked { background:var(--gold) !important; }
+body.sky-only:not(.night) #debug .set-tog::before, body.sky-only:not(.night) #debug .set-tog:checked::before { background:#ffffff !important; box-shadow:0 1px 3px rgba(13,34,56,.3); }
+body.sky-only:not(.night) #debug :is(.set-seg, .set-select, #retry-motion), body.sky-only:not(.night) #debug .set-seg button { box-shadow:inset 0 0 0 1px #9fb3c6; }
+body.sky-only:not(.night) #debug .set-seg button + button { box-shadow:inset 1px 0 0 #9fb3c6; }
+body.sky-only:not(.night) #debug :is(.set-range, .set-sl-thin)::-webkit-slider-runnable-track { background:linear-gradient(90deg, var(--gold) var(--p, 50%), #cfdbe6 var(--p, 50%)); }
+body.sky-only:not(.night) #debug :is(.set-range, .set-sl-thin)::-webkit-slider-thumb { background:#ffffff; box-shadow:0 0 0 1px #9fb3c6, 0 1px 3px rgba(13,34,56,.3); }
+body.sky-only:not(.night) .set-step, body.sky-only:not(.night) .set-chip span { border-color:#9fb3c6; }
+body.sky-only:not(.night) .set-sheet.in { background:rgba(13,34,56,.35); }
+body.sky-only:not(.night) .set-sheet-card, body.sky-only:not(.night) :is(#set-plus-sheet, #set-credits-sheet) .set-sheet-card { background:#f6f9fc; border-top-color:#c9d9e6; color:#0d2238; }
+body.sky-only:not(.night) .set-grab { background:#c9d9e6; }
+body.sky-only:not(.night) .set-prev { background:linear-gradient(180deg,#8cc2ec,#e4f1fa); }
+body.sky-only:not(.night) .set-ix { border-color:#d5e2ee; }
+body.sky-only:not(.night) .set-ix > b { border-color:#c9d9e6; color:var(--sc-orange-ink); }
+body.sky-only:not(.night) #set-acct-sheet :is(input[type="email"], input[type="url"]) { border-color:#9fb3c6; background:#ffffff; color:#0d2238; }
+body.sky-only:not(.night) .set-back-thumb { box-shadow:0 0 0 1px #9fb3c6, 0 2px 6px rgba(13,34,56,.2); }
+/* Plus */
+body.sky-only:not(.night) :is(.plus-pr, .plus-price) { background:#ffffff; border-color:#c9d9e6; }
+body.sky-only:not(.night) :is(.plus-pr.on, .plus-price.o) { background:color-mix(in srgb, var(--gold) 10%, #ffffff); border-color:var(--gold); }
+body.sky-only:not(.night) :is(.plus-pr b, .plus-price b) { color:#0d2238; }
+body.sky-only:not(.night) .plus-host .member-patch { filter:drop-shadow(0 .2em .4em rgba(13,34,56,.35)); }
+body.sky-only:not(.night) .plus-cta { color:#ffffff; }
+/* Card backs */
+body.sky-only:not(.night) .back-art { box-shadow:0 0 0 1px #9fb3c6; }
+body.sky-only:not(.night) .back-lock { background:#ffffffd9; border-color:#9fb3c6; color:#0d2238; }
+body.sky-only:not(.night) .back-rand i { border-color:#9fb3c6 !important; }
+body.sky-only:not(.night) .back-fan { background:rgba(13,34,56,.35); }
+/* How to play */
+body.sky-only:not(.night) .ht-pic { border-color:#c9d9e6; box-shadow:inset 0 0 0 3px #f6f9fc, inset 0 0 0 4px #c9d9e6; background:linear-gradient(180deg,#8cc2ec,#e4f1fa); }
+body.sky-only:not(.night) .ht-dots i { background:#c9d9e6; }
+body.sky-only:not(.night) .ht-dots i.on { background:var(--gold); }
+/* The weekly recap: a light page and the card in cream with navy ink, like the tour cards */
+body.sky-only:not(.night) #recap { background:linear-gradient(180deg,#8cc2ec 0%,#cfe5f6 55%,#eef5fb 100%); }
+body.sky-only:not(.night) #recap .rc-card { background:#fffdf6; color:#0d2238; border-color:#b8c6d2; box-shadow:0 18px 40px rgba(13,34,56,.25); }
+body.sky-only:not(.night) #recap .rc-card::before { box-shadow:inset 0 0 0 1.5px #c9b98a88, inset 0 0 0 3px #fffdf6; }
+body.sky-only:not(.night) :is(.rc-bar, .rc-foot) { border-color:#c9b98a; }
+body.sky-only:not(.night) :is(.rc-stats, .rc-stats div + div) { border-color:#c9b98a88; }
+body.sky-only:not(.night) :is(.rc-big b, .rc-stats b, .rc-foot b) { color:#0d2238; }
+body.sky-only:not(.night) :is(.rc-big span, .rc-stats span, .rc-best small, .rc-foot) { color:#4a6178; }
+body.sky-only:not(.night) .rc-plus { color:var(--sc-orange-ink); }
+body.sky-only:not(.night) .rc-go { background:#ffffff; color:#0d2238; box-shadow:inset 0 0 0 1px #9fb3c6; }
+body.sky-only:not(.night) #recap .rc-rate { color:var(--sc-orange-ink); }
+/* Plus ("Join the crew"): its header band, kit tiles and words */
+body.sky-only:not(.night) .crew-top { background:#f6f9fc; box-shadow:0 8px 12px #f6f9fc; }
+body.sky-only:not(.night) :is(.crew-top b, .crew-big, .crew-kit b) { color:#0d2238; }
+body.sky-only:not(.night) .crew-body { color:#23405c; }
+body.sky-only:not(.night) .crew-why { background:color-mix(in srgb, var(--gold) 8%, #ffffff); border-color:color-mix(in srgb, var(--gold) 30%, #ffffff); color:var(--sc-orange-ink); }
+body.sky-only:not(.night) .crew-sec::after { background:#d5e2ee; }
+body.sky-only:not(.night) .crew-kit .kt { background:#ffffff; border-color:#c9d9e6; box-shadow:0 1px 2px rgba(13,34,56,.06); }
+body.sky-only:not(.night) .crew-kit .kt-i { color:var(--gold); }
+body.sky-only:not(.night) .crew-kit small { color:#4a6178; }
+body.sky-only:not(.night) :is(.crew-patch, .kt-patch) { filter:drop-shadow(0 6px 14px rgba(13,34,56,.3)); }
+body.sky-only:not(.night) .kt-fan img { border-color:#ffffff; box-shadow:0 3px 8px rgba(13,34,56,.3); }

@@ -1,10 +1,10 @@
 // Shared catalogue → card mapping. Fleets (Starlink, OneWeb, Qianfan, Kuiper, Globalstar, Orbcomm, Iridium) are one fleet
 // card each; every launch in the fleet is a stamp on that card. Other objects are one card each.
-import { assignSets } from './sets.js?v=0.1.1677';
-import { tierFor } from './rarity.js?v=0.1.1677';
-import { fallAt, bumpTier } from './last-chance.js?v=0.1.1677';
-import { NATURAL } from './natural.js?v=0.1.1677';
-import { skyStampKey } from './sky-cards.js?v=0.1.1677';
+import { assignSets } from './sets.js?v=0.1.1678';
+import { tierFor } from './rarity.js?v=0.1.1678';
+import { fallAt, bumpTier } from './last-chance.js?v=0.1.1678';
+import { NATURAL } from './natural.js?v=0.1.1678';
+import { skyStampKey } from './sky-cards.js?v=0.1.1678';
 
 // Fleet members carry their launch key in the catalogue (`card` = 'STARLINK:2024-012'). That’s the
 // stamp; the card itself is the fleet ('STARLINK').

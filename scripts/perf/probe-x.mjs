@@ -1,0 +1,7 @@
+import { open, URL0 } from './harness.mjs';
+const T = await open('webkit', { at: '2026-11-10T19:40:00-05:00', wx: 'clear' }); const { p, W, hud, seed } = T;
+await p.goto(URL0); await W(2500); await seed(50); await p.goto(URL0); await hud(); await W(3000); await p.keyboard.press('Escape'); await W(500);
+await p.evaluate(() => document.getElementById('nav-more').click()); await W(1500);
+console.log(await p.evaluate(() => { const n = document.getElementById('nav-more'); const all = [n, ...n.querySelectorAll('*')].map((e) => `${e.tagName}.${[...e.classList].join('.')} c:${getComputedStyle(e).color} bg:${getComputedStyle(e).backgroundColor} img:${getComputedStyle(e).backgroundImage.slice(0, 40)} m:${getComputedStyle(e).webkitMaskImage?.slice(0, 30)} st:${getComputedStyle(e).stroke} f:${getComputedStyle(e).fill}`); return { page: document.body.dataset.page, cls: document.body.className, all }; }));
+console.log(await p.evaluate(() => { const x = document.querySelector('#debug .x-close'), r = x.getBoundingClientRect(); const at = document.elementsFromPoint(r.x + r.width / 2, r.y + r.height / 2).slice(0, 4).map((e) => `${e.tagName}.${[...e.classList].join('.')}#${e.id} color:${getComputedStyle(e).color} bg:${getComputedStyle(e).backgroundImage.slice(0, 60)} mask:${getComputedStyle(e).webkitMaskImage?.slice(0, 50)}`); const cs = getComputedStyle(x); return { at, text: JSON.stringify(x.textContent), fill: cs.webkitTextFillColor, op: cs.opacity, filter: cs.filter, ts: cs.textShadow, rect: [r.x, r.y, r.width, r.height] }; }));
+await T.b.close();

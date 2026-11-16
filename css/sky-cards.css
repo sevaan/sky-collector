@@ -301,7 +301,7 @@ body.sky-only #btn-ufo, body.sky-only #btn-santa, body.sky-only #btn-meteor, bod
 
 /* Photos never crop the plane (2026-11-15): js/flight-card.js fitPhoto. When no crop can hold the whole aircraft the photo is
    shown whole (contain) over a blurred, enlarged copy of itself, so the frame still fills with that sky. */
-.ph-blur { display:none; position:absolute; inset:-8%; width:116%; height:116%; object-fit:cover; filter:blur(14px) saturate(1.1); transform:translateZ(0); pointer-events:none; }
+.ph-blur { display:none; position:absolute; inset:-8%; width:116%; height:116%; object-fit:cover; pointer-events:none; } /* a 32 px copy stretched (assets/photos/*/tiny): soft with no live filter (2026-11-16 scroll pass) */
 .ph-contain > .ph-blur { display:block; }
 
 /* The mini card in the target ticket (2026-11-15 alignment pass): drawn at its Collection size (112 × 157) and scaled
@@ -330,3 +330,7 @@ body.night #discover.sky-plane .d-mini { filter:drop-shadow(0 6px 12px #000c); }
 html.sky-cards #tab-albums, html.sky-cards #tab-discover { display:none !important; }
 html.sky-cards .collection-tabs { justify-content:flex-start; gap:28px; }
 
+/* Small faces in grids (2026-11-16 scroll pass): no live filters, as Space Collector's tiles have none. The sky panel's
+   clouds are already soft at this size; the plane's drop shadow is drawn flat. */
+.mini-face .fc-cloud { filter:none; }
+.mini-face .fc-glyph { filter:none; }

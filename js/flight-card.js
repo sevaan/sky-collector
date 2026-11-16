@@ -7,13 +7,13 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { TIERS } from './flights.js?v=0.1.1677';
-import { typePhoto } from './type-photos.js?v=0.1.1677';
-import { housePhoto } from './house-photos.js?v=0.1.1677';
-import { airlinePhoto } from './airline-photos.js?v=0.1.1677';
-import { airlineLogo } from './airline-logos.js?v=0.1.1677';
-import { fitStyle } from './photo-fit.js?v=0.1.1677';
-import { hasAirlineCallsign, planeLine, levelWord } from './sky-stamps.js?v=0.1.1677';
+import { TIERS } from './flights.js?v=0.1.1678';
+import { typePhoto } from './type-photos.js?v=0.1.1678';
+import { housePhoto } from './house-photos.js?v=0.1.1678';
+import { airlinePhoto } from './airline-photos.js?v=0.1.1678';
+import { airlineLogo } from './airline-logos.js?v=0.1.1678';
+import { fitStyle } from './photo-fit.js?v=0.1.1678';
+import { hasAirlineCallsign, planeLine, levelWord } from './sky-stamps.js?v=0.1.1678';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
@@ -75,7 +75,10 @@ const credit = (ph) => `<span class="fc-credit">Photo: ${esc(ph.credit)}, ${esc(
 // The whole aircraft always shows (2026-11-15, Sevaan: "planes can't be cropped"). Each photo carries the box the plane
 // sits in (scripts/photos/photo_common.py); once the frame has a size, fitPhoto picks a cover crop that keeps the box, or shows
 // the whole photo over a blurred copy of itself when the frame is too wide or tall for any crop to hold the plane.
-const photoImg = (ph, cls, eager) => `${ph.box ? `<img class="ph-blur" src="${esc(ph.url)}" alt="" aria-hidden="true" decoding="async" draggable="false">` : ''}<img class="${cls}" src="${esc(ph.url)}" alt="" ${eager ? '' : 'loading="lazy" '}decoding="async" draggable="false"${ph.box ? ` data-box="${ph.box.join(',')}" data-w="${ph.w}" data-h="${ph.h}"` : ''}>`;
+// Sizes (2026-11-16, Collection scroll gap): small faces (grid tiles, minis) load sm/ (480 px) like Space Collector's 440 px
+// tile art; the soft sides behind a contained photo are tiny/ (32 px) stretched, a blur with no live CSS filter.
+const sized = (url, size) => String(url).replace(/\/([^/]+)$/, `/${size}/$1`);
+const photoImg = (ph, cls, eager, small = false) => `${ph.box ? `<img class="ph-blur" src="${esc(sized(ph.url, 'tiny'))}" alt="" aria-hidden="true" decoding="async" draggable="false">` : ''}<img class="${cls}" src="${esc(small ? sized(ph.url, 'sm') : ph.url)}" alt="" ${eager ? '' : 'loading="lazy" '}decoding="async" draggable="false"${ph.box ? ` data-box="${ph.box.join(',')}" data-w="${ph.w}" data-h="${ph.h}"` : ''}>`;
 function fitPhoto(img) {
   const f = img.parentElement, fw = f?.offsetWidth, fh = f?.offsetHeight; if (!fw || !fh) return false;
   const st = fitStyle(img.dataset.box.split(',').map(Number), +img.dataset.w, +img.dataset.h, fw, fh);
@@ -142,7 +145,7 @@ export function flightCardHtml(f, opts = {}) {
   const type = f.type || opts.type || '', ph = flightPhotoFor(f, type), typeName = f.typeName || opts.planeName || '';
   const air = !f.air ? '—' : f.air.h ? `${f.air.h} h ${String(f.air.m).padStart(2, '0')}` : `${f.air.m} min`;
   const long = Math.max(f.from.city.length, f.to.city.length) > 11;
-  const art = ph ? `${photoImg(ph, 'fc-photo', opts.eager)}${credit(ph)}` : skyPanel('jet', 'fc-sky', type);
+  const art = ph ? `${photoImg(ph, 'fc-photo', opts.eager, opts.small)}${credit(ph)}` : skyPanel('jet', 'fc-sky', type);
   const inner = `
     <div class="fc-art${ph ? '' : ' fc-art--sky'}">
       <div class="fc-pic">${art}<span class="fc-holo" aria-hidden="true"></span>${tierPill(f.tier)}<span class="fc-set">${esc(f.set.toUpperCase())}</span></div>
@@ -164,7 +167,7 @@ const planeFact = (p) => p.fact || (p.glyph === 'heli' ? 'Helicopters fly low an
 // opts: { caughtAt, heightFt, speedKmh, awayKm, sightings, stampInfo (planeStampInfo), newStamp, callsign (the registration is hidden unless it's an airline's), eager }
 export function planeCardHtml(p, opts = {}) {
   const ph = photoFor(p.type), long = (p.name || '').length > 16;
-  const art = ph ? `${photoImg(ph, 'fc-photo', opts.eager)}${credit(ph)}` : skyPanel(p.glyph, 'fc-sky fc-sky--big', p.type);
+  const art = ph ? `${photoImg(ph, 'fc-photo', opts.eager, opts.small)}${credit(ph)}` : skyPanel(p.glyph, 'fc-sky fc-sky--big', p.type);
   const si = opts.stampInfo, stamps = si?.count ?? opts.stamps ?? (p.stamp ? 1 : 0);
   const showReg = p.reg && hasAirlineCallsign(opts.callsign ?? p.callsign);
   const inner = `
@@ -186,7 +189,7 @@ export function planeCardHtml(p, opts = {}) {
 export function miniCardHtml({ kind, card: c, type, last, n = 1, stamps = 0, stampInfo = null }) {
   const t = tierOf(c.tier), ty = c.type || type || '', ph = kind === 'flight' ? flightPhotoFor(c, ty) : photoFor(ty);
   const glyph = kind === 'plane' ? c.glyph : 'jet';
-  const pic = ph ? photoImg(ph, 'sct-photo') : skyPanel(glyph, 'fc-sky sct-sky');
+  const pic = ph ? photoImg(ph, 'sct-photo', false, true) : skyPanel(glyph, 'fc-sky sct-sky');
   const gem = `<span class="sct-tier"><i aria-hidden="true">${TIERS[t].mark}</i>${TIERS[t].label.toUpperCase()}</span>`;
   const lvl = stampInfo?.level && stampInfo.level !== 'none' ? stampInfo.level : '';
   const medal = lvl ? `<span class="sct-lvl sct-lvl--${lvl}" title="${lvl} · ${stampInfo.count} stamps"><i>${stampInfo.count}</i><em>${lvl.toUpperCase()}</em></span>` : '';
