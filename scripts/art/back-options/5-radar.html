@@ -1,0 +1,130 @@
+<!doctype html>
+<!-- Sky Collector card back option 5, "Radar" (2026-11-15). An air-traffic radar scope in the family's night
+     palette: range rings, bearing bezel, an orange sweep, and the four kinds of catch as blips with history
+     trails and blank data tags; the blip the sweep just passed glows orange. Family frame. 900x1359. -->
+<html><head><meta charset="utf-8">
+<style>
+@font-face { font-family:'RO'; src:url('../../../fonts/RussoOne-Regular.woff2') format('woff2'); }
+@font-face { font-family:'BC'; src:url('../../../fonts/BarlowCondensed-Medium.woff2') format('woff2'); }
+html,body { margin:0; width:900px; height:1359px; overflow:hidden; background:#080f1b; }
+svg { display:block; }
+</style></head>
+<body>
+<svg id="s" viewBox="0 0 900 1359" width="900" height="1359" xmlns="http://www.w3.org/2000/svg"></svg>
+<script>
+const W = 900, H = 1359, CX = 450, CY = 650, R = 350;
+const CREAM = '#fff2b3', INK = '#fffdf6', OR = '#fa8127', BG = '#080f1b';
+let seed = 5; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const out = []; const add = s => out.push(s);
+const rad = d => d * Math.PI / 180;
+const P = (r, deg) => [CX + r * Math.sin(rad(deg)), CY - r * Math.cos(rad(deg))];
+function star(x, y, r, col, o = {}) {
+  const k = o.k ?? .16;
+  const p = [[0,-r],[r*k,-r*k],[r,0],[r*k,r*k],[0,r],[-r*k,r*k],[-r,0],[-r*k,-r*k]].map(([a,b]) => `${(x+a).toFixed(1)},${(y+b).toFixed(1)}`).join(' ');
+  let s = `<polygon points="${p}" fill="${col}"/>`;
+  if (o.ring) s += `<circle cx="${x}" cy="${y}" r="${(r*.55).toFixed(1)}" fill="none" stroke="${col}" stroke-width="1.4" opacity=".8"/>`;
+  return s;
+}
+add(`<defs>
+  <radialGradient id="bg" cx="50%" cy="48%" r="62%"><stop offset="0" stop-color="#0f1f38"/><stop offset="1" stop-color="#070d18"/></radialGradient>
+  <radialGradient id="scope" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#11284a"/><stop offset="1" stop-color="#0a1830"/></radialGradient>
+  <linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#fffdf6"/><stop offset=".46" stop-color="#fff2b3"/><stop offset=".5" stop-color="#d8bf7c"/>
+    <stop offset=".62" stop-color="#f6e4a6"/><stop offset="1" stop-color="#fffdf6"/></linearGradient>
+  <filter id="glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="4"/></filter>
+  <clipPath id="sc"><circle cx="${CX}" cy="${CY}" r="${R}"/></clipPath>
+  <path id="jet" d="M32 3c2.2 0 3.4 3 3.4 6.5V24l22.6 12.2v4.3L35.4 34v15.2l7.2 5.6v3.6L32 55.6l-10.6 2.8v-3.6l7.2-5.6V34L6 40.5v-4.3L28.6 24V9.5C28.6 6 29.8 3 32 3z"/>
+  <g id="heli"><ellipse cx="32" cy="27" rx="7" ry="11"/><rect x="30.5" y="36" width="3" height="20" rx="1.5"/><rect x="25" y="53" width="14" height="3" rx="1.5"/><path d="M9 12L55 42M55 12L9 42" fill="none" stroke-width="3.4" stroke-linecap="round"/></g>
+  <g id="prop"><path d="M30 7h4l1 9v32l7 5v3H22v-3l7-5V16z"/><rect x="4" y="17" width="56" height="7" rx="3"/></g>
+  <g id="blimp"><ellipse cx="29" cy="30" rx="24" ry="10"/><path d="M49 25l10-7v24l-10-7z"/><rect x="22" y="39" width="11" height="5" rx="2"/></g>
+</defs>`);
+add(`<rect width="${W}" height="${H}" fill="url(#bg)"/>`);
+let d = '';
+for (let i = 0; i < 220; i++) d += `<circle cx="${(40 + rnd() * 820).toFixed(1)}" cy="${(95 + rnd() * 1170).toFixed(1)}" r="${(.5 + rnd()).toFixed(2)}" fill="${INK}" opacity="${(.15 + rnd() * .45).toFixed(2)}"/>`;
+add(d);
+
+// bezel and bearing ticks
+add(`<circle cx="${CX}" cy="${CY}" r="${R + 46}" fill="none" stroke="${CREAM}" stroke-width="1.2" opacity=".5"/>`);
+add(`<circle cx="${CX}" cy="${CY}" r="${R + 34}" fill="#0b1629" stroke="${CREAM}" stroke-width="3.2"/>`);
+let t = '';
+for (let a = 0; a < 360; a += 5) {
+  const L = a % 30 === 0 ? 22 : a % 10 === 0 ? 14 : 8;
+  const [x1, y1] = P(R + 2, a), [x2, y2] = P(R + 2 + L, a);
+  t += `<path d="M${x1.toFixed(1)} ${y1.toFixed(1)} L${x2.toFixed(1)} ${y2.toFixed(1)}" stroke="${CREAM}" stroke-width="${a % 30 ? 1.5 : 2.6}"/>`;
+}
+add(t);
+for (const a of [0, 90, 180, 270]) { const [x, y] = P(R + 46, a); add(`<circle cx="${x}" cy="${y}" r="11" fill="${OR}"/><circle cx="${x}" cy="${y}" r="4.6" fill="${INK}"/>`); }
+
+// scope face
+add(`<circle cx="${CX}" cy="${CY}" r="${R}" fill="url(#scope)"/>`);
+add(`<g clip-path="url(#sc)">`);
+// sweep: trailing wedge of thin slices fading toward the beam at 312 degrees
+const BEAM = 334, SPAN = 84, N = 42;
+let w = '';
+for (let i = 0; i < N; i++) {
+  const a0 = BEAM - SPAN + i * SPAN / N, a1 = BEAM;
+  const [x0, y0] = P(R + 4, a0), [x1, y1] = P(R + 4, a1);
+  w += `<path d="M${CX} ${CY} L${x0.toFixed(1)} ${y0.toFixed(1)} A${R + 4} ${R + 4} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)} Z" fill="${OR}" opacity=".016"/>`;
+}
+add(w);
+for (const r of [82, 165, 248]) add(`<circle cx="${CX}" cy="${CY}" r="${r}" fill="none" stroke="${CREAM}" stroke-width="1.4" opacity=".45" stroke-dasharray="${r === 165 ? '0' : '4 6'}"/>`);
+add(`<path d="M${CX - R} ${CY} H${CX + R} M${CX} ${CY - R} V${CY + R}" stroke="${CREAM}" stroke-width="1.2" opacity=".35"/>`);
+for (const a of [30, 60, 120, 150, 210, 240, 300, 330]) { const [x, y] = P(R, a); add(`<path d="M${CX} ${CY} L${x.toFixed(1)} ${y.toFixed(1)}" stroke="${CREAM}" stroke-width=".8" opacity=".18"/>`); }
+// beam line
+{ const [x, y] = P(R, BEAM); add(`<path d="M${CX} ${CY} L${x.toFixed(1)} ${y.toFixed(1)}" stroke="#ffc48c" stroke-width="3" />`); }
+add(`</g>`);
+
+// blips: [range, bearing, glyph, heading, scale, hot]
+const blips = [
+  [268, 322, 'jet', 50, .82, true],
+  [268, 36, 'blimp', -80, .74, false],
+  [268, 144, 'prop', 300, .74, false],
+  [268, 216, 'heli', 20, .74, false],
+];
+for (const [r, b, g, hd, sc, hot] of blips) {
+  const [x, y] = P(r, b), col = hot ? OR : CREAM;
+  // history dots behind the heading
+  let hist = '';
+  for (let i = 1; i <= 5; i++) {
+    const back = rad(hd + 180), dx = Math.sin(back) * (18 + i * 15), dy = -Math.cos(back) * (18 + i * 15);
+    hist += `<circle cx="${(x + dx).toFixed(1)}" cy="${(y + dy).toFixed(1)}" r="${(3.6 - i * .45).toFixed(1)}" fill="${col}" opacity="${(.8 - i * .13).toFixed(2)}"/>`;
+  }
+  add(hist);
+  if (hot) add(`<circle cx="${x}" cy="${y}" r="26" fill="${OR}" opacity=".55" filter="url(#glow)"/><circle cx="${x}" cy="${y}" r="30" fill="none" stroke="${OR}" stroke-width="2.4"/>`);
+  const rot = g === 'blimp' ? hd + 90 : hd;
+  add(`<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${rot}) scale(${sc}) translate(-32 -32)" fill="${hot ? INK : CREAM}" stroke="${hot ? INK : CREAM}" stroke-width="0"><use href="#${g}"/></g>`);
+  // blank data tag (leader line + two bars, no text)
+  const sx = x < CX ? -1 : 1, tx = x + sx * 34, ty = y - 30;
+  add(`<path d="M${x + sx * 18} ${y - 14} L${tx} ${ty}" stroke="${col}" stroke-width="1.6" opacity=".8"/>
+    <rect x="${sx > 0 ? tx : tx - 46}" y="${ty - 14}" width="46" height="5" rx="2" fill="${col}" opacity=".85"/>
+    <rect x="${sx > 0 ? tx : tx - 30}" y="${ty - 5}" width="30" height="5" rx="2" fill="${col}" opacity=".55"/>`);
+}
+
+// wordmark plate
+add(`<rect x="${CX - 286}" y="${CY - 128}" width="572" height="256" rx="74" fill="${BG}" stroke="${CREAM}" stroke-width="3"/>`);
+add(`<rect x="${CX - 276}" y="${CY - 118}" width="552" height="236" rx="64" fill="none" stroke="${CREAM}" stroke-width="1.1" opacity=".55"/>`);
+const word = (txt, y, size, len) => {
+  const common = `x="${CX}" y="${y}" font-family="RO" font-size="${size}" text-anchor="middle" textLength="${len}" lengthAdjust="spacingAndGlyphs"`;
+  return `<text ${common} transform="translate(0 6)" fill="#000" opacity=".7" stroke="#000" stroke-width="10" stroke-linejoin="round">${txt}</text>
+    <text ${common} fill="url(#chrome)" stroke="${BG}" stroke-width="9" stroke-linejoin="round" paint-order="stroke">${txt}</text>`;
+};
+add(word('SKY', CY - 2, 150, 300));
+add(word('COLLECTOR', CY + 92, 88, 486));
+add(`<text x="${CX}" y="${CY + R + 118}" font-family="BC" font-size="32" letter-spacing="12" text-anchor="middle" fill="${CREAM}">CATCH WHAT FLIES</text>`);
+
+// corner beacon stars and screen corner brackets
+for (const [x, y, r, c] of [[110, 150, 20, OR], [790, 150, 20, OR], [110, 1210, 20, OR], [790, 1210, 20, OR], [200, 230, 12, INK], [700, 230, 12, INK], [200, 1135, 12, INK], [700, 1135, 12, INK]]) add(star(x, y, r, c, { ring: true }));
+add(`<g fill="none" stroke="${CREAM}" stroke-width="2.2" opacity=".75">
+  <path d="M56 140 V112 H84 M844 140 V112 H816 M56 1219 V1247 H84 M844 1219 V1247 H816"/></g>`);
+
+// family frame
+add(`<g fill="none" stroke="${CREAM}">
+  <rect x="22" y="22" width="856" height="1315" rx="30" stroke-width="2.6"/>
+  <path d="M22 82 H878 M22 1277 H878" stroke-width="1.8"/>
+  <path d="M62 52 H392 M508 52 H838 M62 1307 H392 M508 1307 H838" stroke-width="1.8"/>
+  <path d="M410 38 V66 M490 38 V66 M410 1293 V1321 M490 1293 V1321" stroke-width="2"/>
+</g>`);
+add(star(CX, 52, 20, OR, { k: .18 }) + star(CX, 1307, 20, OR, { k: .18 }));
+document.getElementById('s').innerHTML = out.join('\n');
+</script>
+</body></html>
