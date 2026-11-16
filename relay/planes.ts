@@ -1,4 +1,4 @@
-// Sky Collector plane relay (2026-11-15): the request handler, served by relay/deno-planes.ts on Deno Deploy.
+// Sky Collector plane relay (2026-11-15): the request handler. Runs on Val Town (val sevaan/sky-collector-planes); relay/deno-planes.ts serves it on Deno if needed.
 // The plane feeds don't allow websites to read them directly, so the test site asks this instead.
 //   GET /?lat&lon&dist  live aircraft near a point: adsb.lol first (ODbL), then adsb.fi, then airplanes.live.
 // Only rounded coordinates are sent upstream. Commercial-use terms are still to be checked (docs/RESEARCH-PLAN.md).

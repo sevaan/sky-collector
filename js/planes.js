@@ -3,14 +3,15 @@
 // on the website, because adsb.lol doesn’t allow browser requests directly. The airline comes from the callsign's prefix.
 // No DOM here. Positions are extrapolated between fetches using ground speed, track and climb rate.
 
-import { SERVER } from './server.js?v=0.1.1577';
-import { plugin } from './native.js?v=0.1.1577';
-import { lookupRoute } from './routes.js?v=0.1.1577';
+import { SERVER } from './server.js?v=0.1.1578';
+import { plugin } from './native.js?v=0.1.1578';
+import { lookupRoute } from './routes.js?v=0.1.1578';
 // Empty = feature off. localStorage 'planeRelay' overrides it (testing). Our server's /planes (adsb.lol only) once it's
 // deployed; until then the Val Town relay (relay/handler.ts).
 // Sky Collector (2026-11-15): Space Collector's Val Town relay is turned away by adsb.lol now, so the website needs Sky
-// Collector's own relay (worker/, a Cloudflare Worker). SKY_RELAY is its address once it's deployed.
-const SKY_RELAY = '';
+// Collector's own relay: relay/planes.ts on Val Town (val sevaan/sky-collector-planes, 2026-11-15). Only the website
+// needs it; the phone apps will ask the plane feed directly, like Space Collector's apps.
+const SKY_RELAY = 'https://sevaan--a2362084e15311f195931607ee4eb77e.web.val.run';
 const RELAY = SERVER ? `${SERVER}/planes` : SKY_RELAY;
 const POLL_MS = 10000;
 const RADIUS_NM = 40;    // ~75 km: an airliner at cruise height is ~8° up at that distance
