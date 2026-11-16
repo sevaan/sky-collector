@@ -174,6 +174,46 @@ first tasks of Milestone 2.
 
 ---
 
+## Milestone 1.5: one game engine (Sevaan, 2026-11-15: "the gameplay should pretty much be identical to Space Collector")
+
+**Why.** Sky Collector's cards, Collection, viewer and catch were built as new modules beside Space Collector's
+(`flight-card.js` `.fc` cards, `sky-collection.js`, `sky-catch.js`, `sky-progress.js`, `sky-today.js`). None of
+Space Collector's card behaviour reaches them: flip, swipe, share, flick-to-close, binder fly-in, milestones, missions,
+albums, patches. docs/PARITY-AUDIT.md lists 27 gaps with one root cause. Sevaan also wants improvements to port both ways,
+so the two games must share code, not copy it. Rule: docs memory "Sky Collector builds on Space Collector".
+
+**The move.** Flights and planes become a new kind of object in Space Collector's own model. Everything downstream
+(Explore ticket, reveal, Collection, viewer, progress) is then Space Collector's code with a planes branch where it must
+differ. What stays Sky-only: live plane data, routes, airlines, photos, logos, the card face artwork.
+
+1. **Objects and keys.** A plane catch maps to a Space Collector object: `{ id, kind: 'flight'|'plane', name, tier, set,
+   ... }` held in a plane catalogue beside `state.catalog`. `cardKeyFor` / `stampKeyFor` (js/card-model.js) learn the two
+   kinds: a flight's stamp is the local day; a plane type's stamp is the aircraft (hex), exactly Space Collector's fleet
+   cards. Fleet levels take per-kind thresholds (flights 1/5/15, types 1/10/50).
+2. **Sightings.** Plane catches are saved through Space Collector's sighting store (`recordSighting`, `state.sightings`,
+   its iCloud backup) with a one-time import from `sky-catches`. js/catch-store.js and js/sky-progress.js retire.
+3. **Card render.** `renderCard` / `renderCardTile` / `miniCard` (js/card.js) get a flight and plane branch that wraps the
+   existing Sky face (flight-card.js) in Space Collector's `.card` shell, so `.card__back`, glare, foil, tilt, flip, spin,
+   share capture and level frames all apply. flight-card.js becomes face templates only.
+4. **Catch and reveal.** Collect goes through Space Collector's capture path (the same call a satellite Collect makes:
+   immediate sound and rush, `showCardReveal`, binder fly-in, milestones, `progressGain` toasts, View card via `viewOwned`).
+   `skyReveal` and `collectPlane` retire; the daylight reveal CSS stays.
+5. **Collection.** cards-page.js renders the Collection for planes too: Mine (Flights / Planes as its tabs), Albums = the
+   Sky sets, the rank card with missions and streak, search / sort / filter, the full viewer (swipe, share, keys, flick,
+   Back). sky-collection.js retires.
+6. **Progress.** js/progress.js (XP, ranks, missions, streaks, patches) counts plane sightings, with plane XP values and a
+   first set of plane missions; Milestone 2 tasks 14 and 16 then fill in missions and patches on that same system.
+7. **Today.** Today stays its own page (planes are minutes, not a night's passes) but its rows open cards with
+   `showTonightCard` / `playView`, as Tonight's do.
+8. **Settings sweep.** How to play rewritten for planes; satellite-only rows and test tools hidden; feedback subject.
+
+**Order and checks.** 1→2→3 first (nothing visible changes but cards gain flip / share / tilt), then 4, 5, 6, 7, 8. Each
+step: Space Collector's own behaviour verified on a plane in the browser at 390 × 844 against Space Collector side by side,
+tests no worse, pushed. Opus does the main.js / card.js / cards-page.js surgery; Sonnet does the import, the plane
+missions list and the Settings sweep. Checkpoint A (outdoors) can happen before or after: it tests positions, not cards.
+
+---
+
 ## Milestone 2: reasons to come back
 
 **9. Read the study.** Sonnet runs it, Opus reads it.
