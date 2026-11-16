@@ -1,10 +1,11 @@
-import { SETS, goldAlbums } from './sets.js?v=0.1.1578';
-import { isPlus } from './plus.js?v=0.1.1578';
+import { SETS, goldAlbums } from './sets.js?v=0.1.1580';
+import { isPlus } from './plus.js?v=0.1.1580';
 // Card backs you can choose (2026-10-16, design/card-backs.html, Sevaan liked all six). Mission Control is everyone’s;
 // Plus unlocks the rest; two can also be earned free: Golden Record (find the Pale Blue Dot story) and Star Chart
 // (complete 10 constellations); main.js writes what’s been earned to localStorage 'backEarned'. The choice is
 // localStorage 'cardBack': a back’s id, or 'random' for a different unlocked one each time a card turns over.
 export const CARD_BACKS = [
+  { id: 'sky', bg: '#8cc2ec', name: 'Sky Collector', url: 'assets/art/backs/back-sky.webp', title: 'middle', free: true }, // Sky Collector's own back (2026-11-15; scripts/art/card-back-sky.html)
   { id: 'mission-control', bg: '#01121c', name: 'Mission Control', url: 'assets/art/backs/back-collector.webp', title: 'middle', free: true },
   { id: 'golden-record', bg: '#031622', name: 'Golden Record', url: 'assets/art/backs/back-golden-record.webp', title: 'middle', earn: 'Find the Pale Blue Dot story' },
   { id: 'star-chart', bg: '#02151e', name: 'Star Chart', url: 'assets/art/backs/back-star-chart.webp', title: 'middle', earn: 'Complete 10 constellations' },
@@ -16,7 +17,7 @@ export const CARD_BACKS = [
 const read = (k, d) => { try { return localStorage.getItem(k) ?? d; } catch { return d; } };
 export const backEarned = () => { try { return new Set(JSON.parse(read('backEarned', '[]'))); } catch { return new Set(); } };
 export const backUnlocked = (b) => !!b && (b.free || isPlus() || backEarned().has(b.id));
-export const chosenBack = () => read('cardBack', 'mission-control');
+export const chosenBack = () => read('cardBack', 'sky');
 export function chooseBack(id) { try { localStorage.setItem('cardBack', id); } catch {} last = null; next = pick(); preload(next); }
 const pool = () => { const c = chosenBack(); if (c === 'random') { const u = CARD_BACKS.filter(backUnlocked); return u.length ? u : [CARD_BACKS[0]]; } const b = CARD_BACKS.find((x) => x.id === c); return [backUnlocked(b) ? b : CARD_BACKS[0]]; };
 let last = null;

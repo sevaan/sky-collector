@@ -71,3 +71,44 @@
 .fc-check { width:20px; height:20px; border-radius:50%; border:1.2px solid var(--sc-ink); display:grid; place-items:center; font-size:11px; }
 .fc-foot-t { flex:1; }
 .fc-brand { border-left:1px solid var(--sc-rule); padding-left:8px; font:400 10px/1 'SC Display','Russo One',sans-serif; letter-spacing:0; }
+
+/* ---- Loading screen and welcome (2026-11-15): light sky like the rest of Sky Collector ---- */
+#start { background:linear-gradient(180deg,#8cc2ec 0%,#cfe5f6 55%,#eef5fb 100%); color:var(--sc-ink); }
+#start > .starfield { display:none; }
+#start .wc-loader .ld-word { color:var(--sc-ink); }
+#start .wc-loader .ld-sub { color:#23405c; }
+#start .wc-swipe { color:var(--sc-orange-ink); }
+#start #btn-start.text-button { color:var(--sc-ink); }
+#start .wc-hint, #start #start-note { color:#23405c; }
+
+/* The mission card in cream with navy ink (2026-11-15, canvas row D) */
+#wc-holder .card.wc-mission .card__face { background:#fffdf6 !important; }
+#wc-holder .card.wc-mission .card__shine, #wc-holder .card.wc-mission .card__glare { opacity:.35; }
+#wc-holder .wc-a, #wc-holder .wc-a-title, #wc-holder .wc-a-steps b { color:var(--sc-ink); }
+#wc-holder .wc-a-top .hot { color:var(--sc-orange-ink); }
+#wc-holder .wc-a-text { color:#1b3047; }
+#wc-holder .wc-a-text b { color:var(--sc-ink); }
+#wc-holder .wc-a-pic { background:linear-gradient(180deg,#8cc2ec,#e4f1fa); }
+#wc-holder .wc-a-pic i { background:var(--sc-orange); color:var(--sc-ink); }
+#wc-holder .wc-a-foot { border-top-color:var(--sc-rule); }
+#wc-holder .wc-a-foot > span:first-child { color:var(--sc-orange-ink); }
+#ob-pips i:nth-child(3) { display:none; } /* Sky Collector: two steps, then the first catch */
+
+/* Tour cards in cream with navy ink (2026-11-15, canvas row D). The art keeps its drawings; their cream strokes and
+   fills turn navy so they read on a daylight panel. */
+.tc { background:#fffdf6; border-color:#b8c6d2; box-shadow:inset 0 0 0 5px #fffdf6, inset 0 0 0 6px #c9b98a88, 0 -14px 50px rgba(13,34,56,.35); }
+.tc.gold { border-color:#f2b632; box-shadow:inset 0 0 0 5px #fffdf6, inset 0 0 0 6px #f2b63266, 0 -14px 50px rgba(13,34,56,.35); }
+.tc.under { filter:brightness(.9); } .tc.under2 { filter:brightness(.8); }
+.tc .bar { color:var(--sc-ink); border-bottom-color:#c9b98a; }
+.tc .bar .tier { color:var(--sc-orange-ink); }
+.tc h3 { color:var(--sc-ink); }
+.tc .sub { color:var(--sc-muted); border-bottom-color:#c9b98a66; }
+.tc .art { border-color:var(--sc-line); background:linear-gradient(180deg,#8cc2ec,#e4f1fa); }
+.tc .art [stroke="#fff2b3"] { stroke:#0d2238; }
+.tc .art [fill="#fff2b3"] { fill:#0d2238; }
+.tc .art [fill="#0c1725"] { fill:#fffdf6; }
+.tc .art [stroke="#627a8b"] { stroke:#23405c; }
+.tc p { color:#1b3047; }
+.tc .acts .yes { background:var(--sc-orange); color:var(--sc-ink); }
+.tc .acts .no { background:#eef3f8; color:var(--sc-ink); }
+.tc.stack .acts .no { background:none; color:var(--sc-orange-ink); }

@@ -2,7 +2,7 @@
 // card anatomy (gold frame, four stats, Georgia fact, collected footer) in cream with navy ink. The art is the route:
 // a dashed arc from the origin airport to the destination. Plane cards show a top-down silhouette until real photos.
 
-import { TIERS } from './flights.js?v=0.1.1578';
+import { TIERS } from './flights.js?v=0.1.1580';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
