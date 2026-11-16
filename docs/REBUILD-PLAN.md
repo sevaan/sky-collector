@@ -51,6 +51,8 @@ sky-cards.js, sky-stamps.js, sky-today.js; relay/; assets (card backs, pack, pla
 - cards-page.js: no satellite catalogue; plane cards from your catches; Albums and Find hidden until plane sets exist.
 - progress.js: plane missions, starter, challenges and patch list.
 
+**Card back:** Engine is the default (Sevaan, 2026-11-15); the other Sky backs are Plus.
+
 **Theme:** daylight palette, red (#d7362b) for buttons and primary actions, light header and tabs everywhere except Explore
 at night.
 
@@ -67,3 +69,12 @@ start, and any hard-coded colour turned into a variable.
 - Performance: Space Collector's performance meter and startup timings on both; Sky no slower.
 - Tests: Space Collector's suite plus Sky's module tests.
 - Old catches import and show; card backs, logos, photos and stamps as today.
+
+## Progress
+
+1. Done: `rebuild` branch = Space Collector `fc2de46b` (committed files, same exclusions) + Sky's plane modules, assets,
+   scripts, relay and tests; planes.js = Sky's (relay list, feed status, airline table, routes) + Space Collector's new
+   worldwide airline names. Dropped: sky-collection.js, sky-progress.js, css/sky.css. Nothing wired yet.
+2. Next: set-up (user-visible names only, Space Collector's server / RevenueCat / Action off), then re-apply each plane
+   branch by a three-way merge of main's change to that file onto the fresh file, reviewing every hunk against the rule
+   (theme variable, plane branch, or copy; anything else is dropped), then the theme file.

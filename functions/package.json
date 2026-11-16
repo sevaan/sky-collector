@@ -1,5 +1,5 @@
 {
-  "name": "sky-collector-api",
+  "name": "space-collector-api",
   "type": "module",
   "main": "index.js",
   "engines": { "node": "22" },

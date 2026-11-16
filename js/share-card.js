@@ -1,8 +1,8 @@
-import { isNative, shareFile } from './native.js?v=0.1.1651';
+import { isNative, shareFile } from './native.js?v=0.1.1672';
 // Share a card as an image (1080 × 1350, Instagram portrait): the card on screen, drawn as it looks (js/dom-snap.js, so
 // the image always matches the card's design; 2026-10-31, Sevaan), on a starry background with the game's web address under
 // it (was the observer rank; 2026-11-02, Sevaan), then handed to the share sheet (navigator.share with a file) or downloaded.
-import { snapElement } from './dom-snap.js?v=0.1.1651';
+import { snapElement } from './dom-snap.js?v=0.1.1672';
 const W = 1080, H = 1350, INK = '#fff2b3', MUTED = '#bdbea9';
 // Left out of the picture: the tilt glare and foil (they depend on how the phone was held), twinkles, the back face, the
 // fact's Source link and the "Tap for its orbit" hint.
@@ -34,7 +34,7 @@ export async function drawShareCard(el, { rootExtra = '', extra = null } = {}) {
   ctx.drawImage(card, (W - card.width) / 2, (H - 60 - card.height) / 2);
   // Under the card: where to get the game.
   ctx.letterSpacing = '4px'; ctx.font = '500 26px "SC Label", sans-serif'; ctx.fillStyle = MUTED; ctx.textAlign = 'center';
-  ctx.fillText('www.skycollector.app', W / 2, H - 34);
+  ctx.fillText('www.spacecollector.app', W / 2, H - 34);
   return c;
 }
 
@@ -52,13 +52,13 @@ export async function shareCard(canvas, filename, title) {
 // Returns 'shared' | 'cancelled' | 'downloaded'.
 export async function shareCardEl(el, c, { title }) {
   const canvas = await drawShareCard(el);
-  // Readable file names with the game’s name (2026-10-12, Sevaan): "Sky Collector - Arcturus.png".
-  return shareCard(canvas, `Sky Collector - ${title.replace(/[\\/:*?"<>|]+/g, '').trim()}.png`, `${title} · Sky Collector`);
+  // Readable file names with the game’s name (2026-10-12, Sevaan): "Space Collector - Arcturus.png".
+  return shareCard(canvas, `Space Collector - ${title.replace(/[\\/:*?"<>|]+/g, '').trim()}.png`, `${title} · Space Collector`);
 }
 
 // Share any card-shaped element on screen as the same kind of picture (2026-11-11: the morning pack's summary card).
 // rootExtra: styles for the copied element itself (e.g. lifting it out of its on-screen centring).
 export async function shareElementPicture(el, title, { rootExtra = '', extra = null } = {}) {
   const canvas = await drawShareCard(el, { rootExtra, extra });
-  return shareCard(canvas, `Sky Collector - ${title.replace(/[\\/:*?"<>|]+/g, '').trim()}.png`, `${title} · Sky Collector`);
+  return shareCard(canvas, `Space Collector - ${title.replace(/[\\/:*?"<>|]+/g, '').trim()}.png`, `${title} · Space Collector`);
 }

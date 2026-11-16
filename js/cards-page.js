@@ -1,37 +1,34 @@
-import { pullToClose } from './pull-close.js?v=0.1.1651';
-import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1651';
-import { computeStats, statsHtml } from './stats.js?v=0.1.1651';
-import { nightKey } from './observation.js?v=0.1.1651';
-import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1651';
-import { sfx } from './sfx.js?v=0.1.1651';
-import { expandFacts } from './catalog-facts.js?v=0.1.1651';
-import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned } from './patches.js?v=0.1.1651';
-import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1651';
-import { ticket } from './toast.js?v=0.1.1651';
-import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1651';
-import { satGlobe } from './sat-globe.js?v=0.1.1651';
-import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1651';
-import { cardArt } from './art.js?v=0.1.1651';
-import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1651';
-import { applyBack } from './card-backs.js?v=0.1.1651';
-import { SETS, assignSets, albumGoals, albumList } from './sets.js?v=0.1.1651';
-import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1651';
-import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1651';
-import { STORIES } from './stories.js?v=0.1.1651';
-import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1651';
-import { conArt } from './con-art.js?v=0.1.1651';
-import { setSkyProgress, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1651';
-import { eventBadges, nextEvent } from './events.js?v=0.1.1651';
-import { shareCardEl } from './share-card.js?v=0.1.1651';
-import { forgetSighting } from './cloud-backup.js?v=0.1.1651';
-import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1651';
-import { allSightings, deleteSighting } from './store.js?v=0.1.1651';
-import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1651';
-import { SECRET_PATCHES, hasPatch } from './secrets.js?v=0.1.1651';
-import { localText } from './localize.js?v=0.1.1651';
-// Sky Collector (Milestone 1.5): the same Collection, with plane cards from your catches and no satellite catalogue.
-const SKY = (() => { try { return !!window.parent?.__skyOnly; } catch { return false; } })() || /[?&]sky\b/.test(location.search);
-if (SKY) { document.documentElement.classList.add('sky-cards'); setSkyProgress(true); }
+import { pullToClose } from './pull-close.js?v=0.1.1672';
+import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1672';
+import { computeStats, statsHtml } from './stats.js?v=0.1.1672';
+import { nightKey } from './observation.js?v=0.1.1672';
+import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1672';
+import { sfx } from './sfx.js?v=0.1.1672';
+import { expandFacts } from './catalog-facts.js?v=0.1.1672';
+import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned } from './patches.js?v=0.1.1672';
+import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1672';
+import { ticket } from './toast.js?v=0.1.1672';
+import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1672';
+import { satGlobe } from './sat-globe.js?v=0.1.1672';
+import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1672';
+import { cardArt } from './art.js?v=0.1.1672';
+import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1672';
+import { applyBack } from './card-backs.js?v=0.1.1672';
+import { SETS, assignSets, albumGoals, albumList } from './sets.js?v=0.1.1672';
+import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1672';
+import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1672';
+import { STORIES } from './stories.js?v=0.1.1672';
+import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1672';
+import { conArt } from './con-art.js?v=0.1.1672';
+import { RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1672';
+import { eventBadges, nextEvent } from './events.js?v=0.1.1672';
+import { shareCardEl } from './share-card.js?v=0.1.1672';
+import { forgetSighting } from './cloud-backup.js?v=0.1.1672';
+import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1672';
+import { allSightings, deleteSighting } from './store.js?v=0.1.1672';
+import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1672';
+import { SECRET_PATCHES, hasPatch } from './secrets.js?v=0.1.1672';
+import { localText } from './localize.js?v=0.1.1672';
 
 const $ = (id) => document.getElementById(id);
 const state = { raw: [], cards: [], byKey: new Map(), sightingsByKey: new Map(), seenMembers: new Map(), view: 'owned', query: '', set: 'all', rarity: 'all', list: [], index: 0, preview: false, ready: false };
@@ -94,8 +91,8 @@ function ingest(sightings) {
     // A saved card stays in the collection after it leaves the current orbital catalogue.
     if (!state.byKey.has(key)) {
       const saved = s.cardSnapshot ?? { id: s.objectId, name: s.name ?? `Object ${s.objectId}`, type: s.type ?? 'satellite', year: s.year, tier: 'common' };
-      const card = { ...saved, key, archived: !saved.sky }; /* a plane card isn't an old satellite: it lives in your catches */
-      if (!card.set && !saved.sky) assignSets([card]);
+      const card = { ...saved, key, archived: true };
+      if (!card.set) assignSets([card]);
       state.cards.push(card); state.byKey.set(key, card);
     }
   }
@@ -120,10 +117,10 @@ async function boot() {
     loadConstellations(),
     loadComets(),
   ]);
-  const cat = SKY ? { objects: [] } : catalogueResult.status === 'fulfilled' ? catalogueResult.value : { objects: [] };
+  const cat = catalogueResult.status === 'fulfilled' ? catalogueResult.value : { objects: [] };
   // One card per key: a star in two constellations (Dubhe: Big Dipper and Ursa Major) showed twice and was counted twice
   // in Mine (collectors 2026-10-11).
-  { const seen = new Set(); state.cards = SKY ? [] : buildCards(cat).filter((c) => !seen.has(c.key) && seen.add(c.key)); } /* Sky: plane cards come from your catches (ingest) */
+  { const seen = new Set(); state.cards = buildCards(cat).filter((c) => !seen.has(c.key) && seen.add(c.key)); }
   state.byKey = new Map(state.cards.map((c) => [c.key, c]));
   const keyOfId = new Map(cat.objects.map((o) => [String(o.id), cardKeyFor(o)])); state.keyOfId = keyOfId;
   const sightings = sightingResult.status === 'fulfilled' ? sightingResult.value : [];
@@ -383,8 +380,8 @@ function remindStreak() {
   const d = new Date(); d.setHours(20, 0, 0, 0);
   let ahead = (6 - d.getDay() + 7) % 7; if (ahead === 0 && d.getTime() < Date.now()) ahead = 7; // this Saturday, unless 8 pm has passed
   d.setDate(d.getDate() + ahead);
-  (isNative() ? notifyAt(d.getTime(), 'Tonight · Keep your streak going', 'One catch before midnight counts for this week.', { id: 7140, link: 'skycollector://tonight' }) /* one fixed id: tapping twice replaces it instead of stacking two (bug hunt 2026-10-20) */ : Promise.resolve('app-only'))
-    .then((r) => ticket({ kind: 'mission', tone: 'steel', icon: 'bell', eyebrow: 'STREAK', line: r === 'on' ? `We’ll remind you Saturday at ${hm(d)}.` /* the phone's clock (US/UK playtest 2026-10-25) */ : r === 'app-only' ? 'Reminders work in the Sky Collector app.' : r === 'denied' ? 'Notifications are off for Sky Collector.' : 'Couldn’t set a reminder here.', ms: 4000 }));
+  (isNative() ? notifyAt(d.getTime(), 'Tonight · Keep your streak going', 'One catch before midnight counts for this week.', { id: 7140, link: 'spacecollector://tonight' }) /* one fixed id: tapping twice replaces it instead of stacking two (bug hunt 2026-10-20) */ : Promise.resolve('app-only'))
+    .then((r) => ticket({ kind: 'mission', tone: 'steel', icon: 'bell', eyebrow: 'STREAK', line: r === 'on' ? `We’ll remind you Saturday at ${hm(d)}.` /* the phone's clock (US/UK playtest 2026-10-25) */ : r === 'app-only' ? 'Reminders work in the Space Collector app.' : r === 'denied' ? 'Notifications are off for Space Collector.' : 'Couldn’t set a reminder here.', ms: 4000 }));
 }
 // Observer stats (free for everyone, 2026-10-12): a link under the rank card opens #stats-view.
 function openStats({ instant = false } = {}) { /* instant: already there under Settings, no slide (2026-10-24) */
@@ -761,7 +758,7 @@ function renderUpPanel(c, up, find = false) {
   const when = !find ? 'Up tonight' : today ? 'Tonight' : tmr ? 'Tomorrow' : d.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' });
   el.innerHTML = `<p class="v-up__when">${esc(when)}&nbsp;· <b>${esc(hm(up.start))}</b><span class="nw">&nbsp;· ${esc(where)}</span></p>${up.cloud ? '<p class="v-up__cloud">Cloud is forecast then; watch for a break.</p>' : ''}
     <div class="v-up__btns">${far ? `<button type="button" class="v-up__remind${on ? ' on' : ''}" aria-pressed="${on}">${BEL}<span>${on ? 'Reminder on' : 'Set reminder'}</span></button>` : '<span class="v-up__soon">Starting soon: look now</span>'}<button type="button" class="v-up__show">${TGT}<span>Show me</span></button></div>`;
-  const send = (sc) => { if (!EMBED) { ticket({ kind: 'info', line: sc.endsWith('remind') ? 'Reminders work in the Sky Collector app.' : 'Open Explore to be shown where to look.', ms: 3500 }); return; }
+  const send = (sc) => { if (!EMBED) { ticket({ kind: 'info', line: sc.endsWith('remind') ? 'Reminders work in the Space Collector app.' : 'Open Explore to be shown where to look.', ms: 3500 }); return; }
     window.parent.postMessage(find ? { sc, pass: up } : { sc, id: up.id, start: up.start }, location.origin); };
   el.querySelector('.v-up__remind')?.addEventListener('click', () => send(find ? 'find-remind' : 'up-remind'));
   el.querySelector('.v-up__show').addEventListener('click', () => send(find ? 'find-show' : 'up-show'));
@@ -1364,7 +1361,7 @@ function openPatch(id, from = null) {
     <h2>${esc(a.name)}</h2><p>${esc(localText(a.text))}</p>
     ${!a.done && a.prog && a.prog[1] > 1 ? `<div class="pv-prog"><div class="pv-prog__bar"><i style="width:${Math.min(100, (a.prog[0] / a.prog[1]) * 100).toFixed(1)}%"></i></div><span><b>${a.prog[0].toLocaleString()}</b> of ${a.prog[1].toLocaleString()}</span></div>` : ''}
     <div class="pv-meta">${f ? `<span class="ui-chip"><b>${f === 'gold' ? 'Gold foil' : 'Holo'}</b></span>` : ''}${a.secret ? '<span class="ui-chip"><b>Secret</b></span>' : ''}${['catalogue', 'curator', 'months12', 'anniversary', 'streak12', 'cons44'].includes(a.id) && !a.done ? '<span class="ui-chip"><b>Legendary goal</b><span class="ui-chip__k">years, not weeks</span></span>' : ''}</div>
-    <div class="pv-foot"><span>${a.done ? (date ? fmtEarned(date) : 'EARNED') : 'NOT YET EARNED'}</span><b>SKY COLLECTOR</b></div></div>
+    <div class="pv-foot"><span>${a.done ? (date ? fmtEarned(date) : 'EARNED') : 'NOT YET EARNED'}</span><b>SPACE COLLECTOR</b></div></div>
     <span class="pv-hint" aria-hidden="true">Swipe up to put it away</span>`;
   addStarfield($('pv-body').querySelector('.pv-card'), 46); // twinkling stars inside the patch card (2026-10-25, Sevaan)
   const d = $('patch-view'); if (!d.open) d.showModal();

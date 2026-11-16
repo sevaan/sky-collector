@@ -7,20 +7,20 @@ const N = (d, h = 20) => Date.UTC(2026, 10, d, h + 5, 10); // evening in Toronto
 const sight = (key, t, extra = {}) => ({ objectId: key, cardKey: key, time: t, lat: 44.3123, lon: -78.3456, az: 120.4, el: 41.6, mag: 1.23, rangeKm: 612.7, name: key.toUpperCase(), type: 'satellite', sim: false, key: Math.random(), ...extra });
 const levelOf = (list, card) => { if (card?.natural) return list.length ? 'bronze' : 'none'; const n = new Set(list.map((s) => Math.floor(s.time / 86400e3))).size; return n >= 10 ? 'gold' : n >= 3 ? 'silver' : n ? 'bronze' : 'none'; };
 
-test('a pack survives the link: same ids, places to ~10 km, nothing local leaks', async () => {
+test('a pack survives the link: same ids, no places, no missions, nothing local leaks', async () => {
   const list = [sight('25544', N(1), { shiny: 'eclipse' }), sight('moon', N(2), { stampKey: 'MOON:4', phase: 'Full Moon' }), sight('STARLINK', N(3), { objectId: '61001', stampKey: 'STARLINK:2026-166' })];
   const code = await giftCode(packGift(list, { from: 'Dad', bid: 'abc', deals: { [String(Math.floor((N(1) - 78.3456 / 15 * 3600e3 - 12 * 3600e3) / 86400e3))]: ['m1'] } }));
   assert.match(code, /^g1[A-Za-z0-9~-]+$/); // no underscores: chats eat them
   assert.equal(codeFrom(giftLink(code)), code);
-  assert.equal(codeFrom(`skycollector://c#${code}`), code);
+  assert.equal(codeFrom(`spacecollector://c#${code}`), code);
   const g = await readGiftCode(code);
   assert.equal(g.from, 'Dad'); assert.equal(g.bid, 'abc');
   assert.deepEqual(g.sightings.map(backupId), list.slice().sort((a, b) => a.time - b.time).map(backupId)); // the same sightings everywhere
   const iss = g.sightings.find((s) => s.cardKey === '25544');
-  assert.equal(iss.lat, 44.3); assert.equal(iss.lon, -78.3); assert.equal(iss.shiny, 'eclipse'); assert.equal(iss.from, 'Dad'); assert.equal(iss.key, undefined);
+  assert.equal(iss.lat, undefined); assert.equal(iss.lon, undefined); assert.equal(iss.az, undefined); assert.equal(iss.shiny, 'eclipse'); /* a sent card is a card, not the sender's night (2026-11-11) */ assert.equal(iss.from, 'Dad'); assert.equal(iss.key, undefined);
   assert.equal(g.sightings.find((s) => s.cardKey === 'moon').stampKey, 'MOON:4');
   assert.equal(g.sightings.find((s) => s.cardKey === 'STARLINK').objectId, '61001');
-  assert.equal(Object.keys(g.deals).length, 1);
+  assert.equal(Object.keys(g.deals).length, 0);
 });
 
 test('a code whose data starts with a digit still reads', async () => {
@@ -40,7 +40,7 @@ test('a big collection still fits in a link', async () => {
   assert.ok(code.length < 30000, `1,700 sightings: ${code.length} characters`);
 });
 
-test('receiving: duplicates and the same moment are skipped, the rest added', () => {
+test('receiving: duplicates, the same moment and cards that add nothing are skipped; the rest arrive as gifts', () => {
   const mine = [sight('25544', N(1)), sight('20580', N(2))];
   const incoming = [
     { ...mine[0] },                                  // the very same sighting (opened twice)
@@ -50,7 +50,8 @@ test('receiving: duplicates and the same moment are skipped, the rest added', ()
     sight('48274', N(3)),                            // twice in the link
   ];
   const p = planImport(mine, incoming);
-  assert.equal(p.dup, 2); assert.equal(p.same, 1); assert.equal(p.add.length, 2);
+  assert.equal(p.dup, 2); assert.equal(p.same, 1); assert.equal(p.have, 1); assert.equal(p.add.length, 1);
+  assert.equal(p.add[0].via, 'gift'); assert.equal(p.add[0].lat, undefined); assert.equal(p.add[0].el, undefined);
 });
 
 test('receiving: what each card gains, and its tags', () => {
@@ -58,10 +59,10 @@ test('receiving: what each card gains, and its tags', () => {
   const add = [sight('jup', N(3)), sight('moon', N(3), { stampKey: 'MOON:3' }), sight('moon', N(4), { stampKey: 'MOON:4' }), sight('new', N(3)), sight('hst', N(3), { shiny: 'eclipse' })];
   const sum = summarizeImport(mine, add, { cardOf: (k) => ({ key: k, tier: k === 'new' ? 'rare' : 'common', natural: k === 'moon' ? 'moon' : undefined }), levelOf });
   const by = Object.fromEntries(sum.map((x) => [x.key, x]));
-  assert.deepEqual(giftTags(by.jup), [['up', '+1 night'], ['up', 'Now Silver']]);
+  assert.deepEqual(giftTags(by.jup), []); /* no nights or levels from a gift */
   assert.deepEqual(giftTags(by.moon), [['up', '+2 phases']]);
   assert.deepEqual(giftTags(by.new), [['new', 'New']]);
-  assert.deepEqual(giftTags(by.hst), [['up', '+1 night'], ['shiny', 'Shiny']]);
+  assert.deepEqual(giftTags(by.hst), [['shiny', 'Shiny']]);
   assert.equal(pickHighlights(sum).at(-1).key, 'new'); // the best card comes last
 });
 
@@ -72,9 +73,31 @@ test('a fleet card never turns shiny, and gains launches', () => {
 
 test('short links: the pack id from any form of the link', () => {
   assert.equal(packIdFrom(packLink('HWqmCPZ')), 'HWqmCPZ');
-  assert.equal(packIdFrom('https://skycollector.app/c/HWqmCPZ?app=tester'), 'HWqmCPZ');
+  assert.equal(packIdFrom('https://spacecollector.app/c/HWqmCPZ?app=tester'), 'HWqmCPZ');
   assert.equal(packIdFrom('sctester://c/HWqmCPZ'), 'HWqmCPZ');
-  assert.equal(packIdFrom('skycollector://c?p=HWqmCPZ'), 'HWqmCPZ');
-  assert.equal(packIdFrom('https://skycollector.app/c/#g1abc'), null);
-  assert.equal(packIdFrom('https://skycollector.app/c/HWqmCPZx'), null);
+  assert.equal(packIdFrom('spacecollector://c?p=HWqmCPZ'), 'HWqmCPZ');
+  assert.equal(packIdFrom('https://spacecollector.app/c/#g1abc'), null);
+  assert.equal(packIdFrom('https://spacecollector.app/c/HWqmCPZx'), null);
+});
+
+test('a card is a card: received sightings never count as yours', async () => {
+  const { isGift, ownSightings, looksReceived, asGift } = await import('../js/gift.js');
+  const caught = sight('25544', N(1), { loggedAt: N(1) + 2000 }), oldGift = sight('20580', N(1), { loggedAt: N(4) }), story = sight('story:x', N(1), { type: 'story', loggedAt: N(4) });
+  assert.equal(looksReceived(caught), false); assert.equal(looksReceived(oldGift), true); assert.equal(looksReceived(story), false);
+  const g = asGift(oldGift); assert.ok(isGift(g)); assert.equal(g.lat, undefined); assert.equal(g.time, oldGift.time);
+  assert.deepEqual(ownSightings([caught, g]).map((s) => s.cardKey), ['25544']);
+});
+
+test('a card you were sent adds no XP, missions or streak', async () => {
+  const { progress } = await import('../js/progress.js');
+  const info = () => ({ tier: 'rare', type: 'satellite' });
+  const mine = [sight('25544', N(1))], sent = { ...sight('20580', N(2)), via: 'gift' };
+  const a = progress(mine, info), b = progress([...mine, sent], info);
+  assert.equal(b.xp, a.xp); assert.equal(b.cards, a.cards); assert.deepEqual(b.streak, a.streak);
+});
+
+test('a shared night says so through the link', async () => {
+  const g = await readGiftCode(await giftCode(packGift([sight('25544', N(1))], { kind: 'night' })));
+  assert.equal(g.kind, 'night');
+  assert.equal((await readGiftCode(await giftCode(packGift([sight('25544', N(1))])))).kind, '');
 });

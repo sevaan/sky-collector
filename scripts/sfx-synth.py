@@ -1,4 +1,4 @@
-# Sky Collector designed sound set (2026-10-11): one soft family in G major pentatonic (the key of "Permafrost",
+# Space Collector designed sound set (2026-10-11): one soft family in G major pentatonic (the key of "Permafrost",
 # the background music). Glass bells, mallets, kalimba, felt taps, filtered-noise breaths, a warm pad and a choir-ish
 # pad, through one gentle synthetic reverb, with the top end rolled off. Run:  python3 scripts/sfx-synth.py <outdir>
 # It renders every variant from the sound board (<outdir>/<event>/dN.mp3). The app ships Sevaan's picks as

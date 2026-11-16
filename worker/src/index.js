@@ -1,4 +1,4 @@
-// Sky Collector server on Cloudflare Workers (2026-10-25, Sevaan: free for commercial use, before selling Plus).
+// Space Collector server on Cloudflare Workers (2026-10-25, Sevaan: free for commercial use, before selling Plus).
 // Replaces the Val Town relays for everything the apps need; all free-tier (100k requests/day, D1 5 GB).
 //   GET  /wx?lat&lon        tonight's weather from MET Norway (api.met.no, CC BY 4.0, "Data from MET Norway"), cached
 //                           30 min per 0.1° square, reshaped for js/weather.js: { now: { cloud, code }, hours: [{ t, cloud, code, temp, wind }] }
@@ -9,9 +9,9 @@
 //   POST /t                 anonymous usage and error reports (same format as before), kept in D1.
 //   GET  /stats             the dashboard. ?all=1 includes test builds.
 // Deploy: cd worker && npx wrangler deploy  (personal Cloudflare account only, never Roundtrip's).
-const ALLOWED = [/^https:\/\/sevaan\.github\.io$/, /^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/, /^capacitor:\/\/localhost$/, /^https:\/\/localhost$/, /^https:\/\/skycollector\.app$/];
-const UA = 'SkyCollector/1.0 (https://skycollector.app; hello@skycollector.app)';
-const REPO_RAW = 'https://raw.githubusercontent.com/sevaan/sky-collector/main/';
+const ALLOWED = [/^https:\/\/sevaan\.github\.io$/, /^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/, /^capacitor:\/\/localhost$/, /^https:\/\/localhost$/, /^https:\/\/spacecollector\.app$/];
+const UA = 'SpaceCollector/1.0 (https://spacecollector.app; hello@spacecollector.app)';
+const REPO_RAW = 'https://raw.githubusercontent.com/sevaan/space-collector/main/';
 
 export default {
   async fetch(req, env, ctx) {
@@ -35,7 +35,7 @@ export default {
 
 // A response cached at the edge under a synthetic key, so nearby players share one upstream request.
 async function cached(key, ttl, ctx, make) {
-  const c = caches.default, k = new Request(`https://cache.skycollector/${key}`);
+  const c = caches.default, k = new Request(`https://cache.spacecollector/${key}`);
   const hit = await c.match(k); if (hit) return hit;
   const body = await make(); if (body == null) return null;
   const res = new Response(body, { headers: { 'Content-Type': 'application/json', 'Cache-Control': `public, max-age=${ttl}` } });
@@ -138,10 +138,10 @@ async function stats(env, all) {
   const esc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const row = (k, v, sub = "") => `<tr><th>${k}</th><td>${v}</td><td class="m">${sub}</td></tr>`;
   const e = (ends[0] ?? [0, 0, 0, 0]).map((n) => Number(n) || 0);
-  const html = `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sky Collector · usage</title>
+  const html = `<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Space Collector · usage</title>
 <style>body{margin:0;padding:24px 16px;background:#080f1b;color:#e8eef6;font:15px/1.45 -apple-system,system-ui,sans-serif}h1{font-size:22px;color:#fff2b3;margin:0 0 4px}h2{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:#fa8127;margin:26px 0 8px}
 table{border-collapse:collapse;width:100%;max-width:760px}th,td{text-align:left;padding:7px 10px;border-bottom:1px solid #22324a;vertical-align:top}th{font-weight:500;color:#c9d3de;width:46%}td{color:#fff2b3;font-variant-numeric:tabular-nums}.m{color:#9fb0c6;font-size:13px}p{color:#9fb0c6;max-width:760px}a{color:#fa8127}</style>
-<h1>Sky Collector · usage</h1><p>Anonymous: a random ID per install, no places or names. ${all ? 'Including test builds · <a href="?">players only</a>' : 'Players only (test builds left out) · <a href="?all=1">include test builds</a>'}. Updated ${new Date().toUTCString()}.</p>
+<h1>Space Collector · usage</h1><p>Anonymous: a random ID per install, no places or names. ${all ? 'Including test builds · <a href="?">players only</a>' : 'Players only (test builds left out) · <a href="?all=1">include test builds</a>'}. Updated ${new Date().toUTCString()}.</p>
 <h2>The first night</h2><table>${row("New installs", String(installs))}${row("Caught a card on their first night", pct(firstNight, installs), `${firstNight} of ${installs}`)}${row("Finished the tour", esc(tour.map((r) => `${r[0]}: ${r[1]}`).join(" · ") || "–"))}${row("Motion", esc(motion.map((r) => `${r[0]}: ${r[1]}`).join(" · ") || "–"), "live = the phone steers; drag = finger; none = no sensors")}</table>
 <h2>The tour</h2><table>${row("Location", esc(list(tLoc)), "own = shared it; tz = the time-zone city")}${row("Set the day-one reminder", pct(tRemind, tFin), `${tRemind} of ${tFin} who finished`)}${row("Big first target, outside at night", esc(list(tRare)), `${tRareCaught} caught a card that night`)}${row("Match your sky", pct(Number(mDone[0]?.[0] ?? 0), mShown), `${mDone[0]?.[0] ?? 0} of ${mShown} shown${mDone[0]?.[1] ? ` · average ${Number(mDone[0][1]).toFixed(1)}` : ""}`)}</table>
 <h2>Compass</h2><table>${row("Lined up the sky", String(Number(cal[0]) || 0), `${Number(cal[1]) || 0} installs · against: ${esc(list(calRef))}`)}${row("Average turn", cal[4] ? `${Math.round(Number(cal[2]))}°` : "–", "how far people turned the sky to match the real one")}${row("Turned 20° or more", pct(Number(cal[3]) || 0, Number(cal[4]) || 0), "a big turn means a poor compass")}${row("Moon check", esc(list(moonChk)), "moon-off = the drawn Moon was off")}</table>

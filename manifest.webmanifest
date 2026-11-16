@@ -1,6 +1,6 @@
 {
-  "name": "Sky Collector",
-  "short_name": "Sky Collector",
+  "name": "Space Collector",
+  "short_name": "Space Collector",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

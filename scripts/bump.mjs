@@ -23,6 +23,19 @@ for (const f of readdirSync(new URL('js/', root))) {
   if (out !== s) writeFileSync(p, out);
 }
 
+// index.html: <link rel="modulepreload"> for every module main.js imports (statically, all the way down), between the
+// modulepreload markers, so the app loads them in parallel instead of one import level at a time (2026-11-11 startup
+// timings on an iPhone 14: ~280 ms from the page starting to main.js running). Stamped with ?v= below like any js href.
+{ const seen = [], stack = ['main.js'];
+  while (stack.length) { const f = stack.pop(); if (seen.includes(f)) continue; seen.push(f);
+    let src = ''; try { src = readFileSync(new URL(`js/${f}`, root), 'utf8'); } catch { continue; }
+    const dir = f.includes('/') ? f.slice(0, f.lastIndexOf('/') + 1) : '';
+    for (const m of src.matchAll(/^\s*import\s(?:[^;'"]*?\sfrom\s)?['"]\.\/([\w./-]+\.js)(?:\?v=[^'"]*)?['"]/gm)) stack.push(dir + m[1]); }
+  const p = new URL('index.html', root), s = readFileSync(p, 'utf8');
+  const block = `<!-- modulepreload:start -->\n${seen.filter((f) => f !== 'main.js').map((f) => `  <link rel="modulepreload" href="js/${f}">`).join('\n')}\n  <!-- modulepreload:end -->`;
+  const out = s.replace(/<!-- modulepreload:start -->[\s\S]*?<!-- modulepreload:end -->/, block);
+  if (out !== s) writeFileSync(p, out); }
+
 // <script src="js/x.js"> and <link href="css/x.css">  →  ?v=NEXT
 for (const f of readdirSync(root)) {
   if (!f.endsWith('.html')) continue;

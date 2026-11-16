@@ -2089,5 +2089,1349 @@
    "SpaceX V1.5 / V2 / V3 comparison render (shape described in words, not fed to the model)"
   ],
   "description": "Starlink V2 Mini: thin dark slab body with corner domes, two long flat solar wings in line; a faint train behind"
+ },
+ "draw-tsiklon": {
+  "ids": [
+   3047,
+   3229,
+   4070,
+   4138,
+   4369,
+   4578,
+   4799,
+   5238,
+   5683,
+   5846,
+   6019,
+   6148,
+   6350,
+   6707,
+   6828,
+   7008,
+   7094,
+   7349,
+   7476,
+   8645,
+   8873,
+   9061,
+   9737,
+   10459,
+   10731,
+   10991,
+   2801,
+   4783
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/Tsiklon_(satellite)",
+   "https://www.fplib.org/partners/mwade/craftfam/kaur1.htm",
+   "https://en.wikipedia.org/wiki/Kosmos_381"
+  ],
+  "description": "Soviet \"Tsiklon\" navigation satellite (1967-78), on the KAUR bus. A squat sealed cylinder about 2 metres across and 3 metres long, its whole curved side covered in dark-blue solar cells mounted directly on the body (NO fold-out solar wings or panels at all), with bands of small silver thermal-control louvre shutters around it. From one flat end a single long thin gravity-gradient boom sticks straight out, about three times the body's length, with a small weight at its tip. On the opposite, Earth-facing end: a few short whip antennas and small stub antennas. Silver-grey metal end caps.",
+  "drawn": "2026-11-12 Cosmos art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-geo-ik-2": {
+  "ids": [
+   41579
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/Geo-IK-2",
+   "https://space.skyrocket.de/doc_sdat/geo-ik-2.htm (text only)"
+  ],
+  "description": "Russian Geo-IK-2 geodetic satellite (2016). Core: a pressurised silver-grey cylinder about 1.3 m across and 1.3 m long, with thermal-control shutters and flat honeycomb radiator panels on its sides. EXACTLY TWO solar wings in total: one single long rectangular dark-blue solar wing on the left and one on the right, each on a short arm, in one straight line through the body (not four panels, not two per side). The Earth-facing flat round end (\"astroplate\") points down toward the Earth and clearly carries: one small parabolic radar-altimeter dish in the centre, a ring of small round laser retroreflectors around it, and two small navigation antennas.",
+  "drawn": "2026-11-12 Cosmos art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-auos-z": {
+  "ids": [
+   17241,
+   20261,
+   21819
+  ],
+  "refs": [
+   "https://russianspaceweb.com/auos.html",
+   "https://www.fplib.org/partners/mwade/craft/auos.htm",
+   "https://usd.wdcb.ru/kosmos1809en.html"
+  ],
+  "description": "Soviet AUOS-Z ionospheric research satellite (Kosmos 1809, 1986; same family as the Interkosmos satellites of the 1970s-80s). A cylindrical body about 1.5 m across and 1.8 m long. From its upper end, EIGHT narrow rectangular solar panels (dark blue cells) are hinged and splay outward and down at about 30 degrees, like the petals of a flower or a skirt around the body. A single long thin gravity-stabilisation boom sticks straight up from the top centre. A smaller cylindrical instrument module is bolted to the lower end, with two very long thin wire dipole antennas stretching out in opposite directions.",
+  "drawn": "2026-11-12 Cosmos art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-plazma-a": {
+  "ids": [
+   17369,
+   18187
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/Kosmos_1818",
+   "https://thespacereview.com/article/3809/1"
+  ],
+  "description": "Soviet Plazma-A reactor test satellite (Kosmos 1818 / 1867, 1987). A long slender vehicle about 9 m long and about 1.3 m wide, like a stack on a stick: at one end a compact cylindrical nuclear reactor sitting on a tapered shadow shield; below it a long section covered in thin radiator fins (pipes and fins along its length); then a plain cylindrical equipment section at the other end with a few small plasma thruster nozzles (small round ports, NO flames or exhaust). No solar panels, no radar antenna. Grey and silver metal.",
+  "drawn": "2026-11-12 Cosmos art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-eks": {
+  "ids": [
+   41032
+  ],
+  "refs": [
+   "https://russianspaceweb.com/eks-tundra.html",
+   "https://en.wikipedia.org/wiki/EKS_(satellite)"
+  ],
+  "description": "Russian EKS \"Tundra\" missile early-warning satellite (2015). A box-shaped, three-axis-stabilised bus about 2 m across, covered in gold-foil thermal blanket, with flat silver radiator panels on two sides. Two long deployable solar wings, each made of three dark-blue rectangular sections end to end, stick straight out from opposite sides. On top sits a cylindrical infrared telescope module pointing at the Earth, with a round sun shade (a short open tube) around its aperture. A couple of small dish and flat panel antennas on the bus.",
+  "drawn": "2026-11-12 Cosmos art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-zhongxing": {
+  "ids": [
+   44493
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/DFH-4",
+   "https://en.wikipedia.org/wiki/ChinaSat"
+  ],
+  "description": "DFH-4 geostationary comsat bus. Rectangular box body about 2.4 x 2.1 x 3.6 m, wrapped in gold/amber MLI foil with white radiator panels on the north and south faces. Two long solar-array wings on opposite sides, each a straight row of 3 to 4 dark-blue rectangular panels on a short yoke (about 30 m tip to tip). Earth-facing deck carries several antennas: two large deployed dish reflectors on the east and west sides, plus smaller feed horns and dishes on top. A liquid apogee engine nozzle sits on the anti-Earth face.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-soical-cone": {
+  "ids": [
+   4132
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/soical-cone.htm"
+  ],
+  "description": "Passive radar-calibration target: a plain right circular cone, 55.9 cm base diameter and 66 cm long, with no solar cells, antennas or appendages (no power system). Metallic or bare-aluminium finish (assumed).",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-ao-40": {
+  "ids": [
+   26609
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/amsat-p3d.htm",
+   "https://en.wikipedia.org/wiki/OSCAR_40"
+  ],
+  "description": "AMSAT Phase 3D (AO-40): a large flat hexagonal-prism body (squat, roughly 2 m across), with body-mounted solar cells on the side faces and two deployable fixed solar panels. High-gain directional antennas (dishes and helix/patch arrays) on one hexagonal face, omni whip antennas at the other end, and a 400 N liquid motor nozzle on the axis. Silver and gold thermal blanketing.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-zhuhai-1": {
+  "ids": [
+   44538
+  ],
+  "refs": [
+   "https://spaceflight101.com/?p=49208",
+   "https://space.skyrocket.de/doc_sdat/zhuhai-1_ohs-2.htm"
+  ],
+  "description": "Zhuhai-1 OHS-2 (03D) hyperspectral smallsat from Orbita: a small box body about 0.5 x 0.4 x 0.4 m (80 to 100 kg), with a telescope aperture on one face. Two deployable solar-array wings, each 2 to 3 dark-blue panels, about 1 m span deployed. The body is wrapped in gold/black MLI.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-corvus-micro": {
+  "ids": [
+   48951
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/tenzing.htm"
+  ],
+  "description": "Astro Digital Corvus-Micro smallsat, 35 kg (Tenzing / Tanker-001 for Orbit Fab): compact rectangular box bus (roughly 0.3 x 0.3 x 0.5 m) with body-mounted and/or small deployed dark-blue solar panels. On one end is Orbit Fab's RAFTI refuelling port: a round docking/fill-drain valve adapter on top of an auxiliary propellant tank. Two small stereo cameras sit beside the port.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-sherpa-ltc": {
+  "ids": [
+   53754
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/sherpa-ltc.htm",
+   "https://en.wikipedia.org/wiki/SHERPA_(space_tug)"
+  ],
+  "description": "Spaceflight Inc. Sherpa-LTC2 tug, 180 kg: a short squat ring-shaped structure (ESPA-class ring heritage) with a flat ring/deck where Boeing's Varuna payload modules mount as two boxes. A Benchmark green-bipropellant system sits inside: spherical/cylindrical tanks plus four small 22 N thrusters on the aft face. Solar cells on the exterior panels. Grey and black aluminium.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-outpost-mission": {
+  "ids": [
+   58334
+  ],
+  "refs": [
+   "https://www.nanosats.eu/sat/outpost-mission-2"
+  ],
+  "description": "A 3U CubeSat (10 x 10 x 34 cm) carrying Outpost's GasPak demo payload. Black-anodised aluminium frame with dark-blue solar cells on the long faces and short deployable UHF tape antennas.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-taijing-2": {
+  "ids": [
+   58820
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/taijing-2.htm",
+   "https://satsearch.co/products/minospace-mn50-platform"
+  ],
+  "description": "MinoSpace MN50 smallsat (55 to 80 kg) for medium-resolution optical imaging: a compact box body with a camera aperture on the Earth face. Two deployable dark-blue solar panels fold out from opposite sides like small wings. Gold/black MLI on the body.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-ion-scv": {
+  "ids": [
+   62628
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/ION_Satellite_Carrier"
+  ],
+  "description": "D-Orbit ION Satellite Carrier: a cube-like body about 60 cm per side (about 160 kg). One or more faces are CubeSat dispenser bays with rectangular hinged doors, and body-mounted dark solar panels sit on the other faces. A small thruster sits on the aft face. Silver/black structure with D-Orbit branding on the panels.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-s80-t": {
+  "ids": [
+   22078,
+   22827,
+   22829,
+   26385
+  ],
+  "refs": [
+   "https://www.sstl.co.uk/space-portfolio/launched-missions/1990-1999/s80-t-launched-1992",
+   "https://space.skyrocket.de/doc_sdat/s80t.htm"
+  ],
+  "description": "SSTL Microsat-70 class (UoSAT bus), about 50 kg, built for CNES: a stack of square trays forming a tall rectangular box about 0.36 x 0.36 x 0.69 m, with dark-blue solar cells covering the four long side faces. A 6 m gravity-gradient mast with a small tip mass extends from the top, and short VHF/UHF whip antennas stick out of the base.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-temisat": {
+  "ids": [
+   22783
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/temisat.htm",
+   "https://www.fplib.org/partners/mwade/craft/temisat.htm"
+  ],
+  "description": "Telespazio microsat, 42 kg: a cube 35 x 35 x 35 cm with solar cells covering the faces (spin-stabilised, so body-mounted). Short whip antennas at the corners or base.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-haiyang-1": {
+  "ids": [
+   27430,
+   31113
+  ],
+  "refs": [
+   "https://www.eoportal.org/satellite-missions/hy-1a",
+   "https://www.eoportal.org/satellite-missions/hy-1b",
+   "https://space.skyrocket.de/doc_sdat/hy-1.htm"
+  ],
+  "description": "Chinese Haiyang-1 ocean-colour satellite (HY-1A/1B, about 400 kg), CAST968 bus: a box body about 1.4 x 1.1 x 0.95 m wrapped in gold multilayer insulation foil, with TWO solar-array wings (one each side, about 4 m total span, dark-blue cells) on a single-axis drive. The ocean colour scanner and a small imager look down from the Earth-facing face.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-magion": {
+  "ids": [
+   20281,
+   21835
+  ],
+  "refs": [
+   "https://www.ufa.cas.cz/html/magion/mt.html",
+   "https://en.wikipedia.org/wiki/Magion_satellite_series",
+   "https://keeptrack.space/satellite/21835"
+  ],
+  "description": "Czech Magion subsatellite, about 52 kg: an octagonal-cylinder/polyhedral body about 0.6 m in diameter and 0.9 m long, faced with dark solar cells. Four fold-out panels and folding sensor booms, plus two antennas.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-faisat": {
+  "ids": [
+   23465,
+   24954
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/faisat-2v.htm",
+   "https://keeptrack.space/satellite/24954"
+  ],
+  "description": "Final Analysis LEO comsat, about 115 kg: an octagonal cylinder about 0.5 to 0.6 m in diameter and 0.9 to 1.1 m long, its sides covered in dark-blue solar cells. Long whip/boom antennas give a total span of about 3 m (FAISAT) to 6 m (FAISAT-2V).",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-stsat-1": {
+  "ids": [
+   27945
+  ],
+  "refs": [
+   "https://eoportal.org/satellite-missions/stsat-1",
+   "https://eoportal.org/satellite-missions/stsat-3",
+   "https://satrec.kaist.ac.kr/e_02_04.php"
+  ],
+  "description": "Korean STSAT-1 science microsatellite (106 kg): a box 0.67 x 0.55 x 0.83 m wrapped in gold and black thermal foil, with fixed (non-deploying) solar panels on its sides, and a far-ultraviolet imaging spectrograph aperture (a small round telescope opening) on one face.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-stsat-3": {
+  "ids": [
+   39422
+  ],
+  "refs": [
+   "https://eoportal.org/satellite-missions/stsat-1",
+   "https://eoportal.org/satellite-missions/stsat-3",
+   "https://satrec.kaist.ac.kr/e_02_04.php"
+  ],
+  "description": "Korean STSAT-3 (about 160 kg): a box about 1.0 x 1.0 x 0.9 m wrapped in gold and black foil, with TWO deployable rectangular solar-array wings (dark-blue cells) on opposite sides, and two camera apertures on the Earth-facing face (an infrared camera and an imager).",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-sds": {
+  "ids": [
+   33497,
+   38339
+  ],
+  "refs": [
+   "https://eoportal.org/satellite-missions/sds-1",
+   "https://eoportal.org/satellite-missions/sds-4"
+  ],
+  "description": "JAXA small demonstration sats. SDS-1 (about 100 kg): a box about 0.7 x 0.7 x 0.6 m with two solar panels that deploy in orbit. SDS-4 (about 50 kg): a near-cube 0.5 x 0.5 x 0.45 m with two deployable fixed solar arrays. Gold/black MLI with dark-blue cell panels.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-zheda-pixing": {
+  "ids": [
+   37166,
+   37167
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/zdps-1.htm",
+   "https://nanosats.eu/sat/zdps-1a"
+  ],
+  "description": "Zhejiang University ZDPS-1A picosatellite: a 15 cm cube (3.5 kg) with dark triple-junction solar cells on every face, a small panoramic CMOS camera lens on one face and short whip antennas.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-kazeosat-2": {
+  "ids": [
+   40010
+  ],
+  "refs": [
+   "https://www.eoportal.org/satellite-missions/kazeosat-1",
+   "https://www.eoportal.org/satellite-missions/kazeosat-2",
+   "https://spaceflight101.com/spacecraft/kazeosat-2/"
+  ],
+  "description": "Kazakh KazEOSat-2 (180 kg, SSTL-150 platform): a compact box about 1 m across with dark-blue solar cells covering three of its sides (body-mounted, no wings), gold foil elsewhere, and a wide-swath camera with several small lenses on the Earth-facing face.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-hodoyoshi": {
+  "ids": [
+   40011,
+   40015
+  ],
+  "refs": [
+   "https://www.eoportal.org/satellite-missions/hodoyoshi-3-4",
+   "https://spaceflight101.com/spacecraft/?p=1960"
+  ],
+  "description": "University of Tokyo microsat, 60 to 66 kg: a rectangular box about 0.5 x 0.5 x 0.65 m (Hodoyoshi-3) to 0.8 m (Hodoyoshi-4), with body-mounted solar cells and two deployable solar panels (about 100 W). Camera lens on the Earth face. Hodoyoshi-4 has an ion thruster nozzle.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-chubusat": {
+  "ids": [
+   41338,
+   41339
+  ],
+  "refs": [
+   "https://mail.amsat.org/archives/pipermail/amsat-bb/2016-February/057207.html",
+   "https://eoportal.org/satellite-missions/chubusat-1"
+  ],
+  "description": "Nagoya University / MHI 50 kg microsat: a near-cube box about 0.6 x 0.5 x 0.6 m with body-mounted solar cells on its faces, a debris-observing camera (ChubuSat-3 has a high-resolution camera) and amateur-radio antennas.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-h3-r-b": {
+  "ids": [
+   62877,
+   100271
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/H3_(rocket)",
+   "https://www.mhi.com/business/products-services/space-defense/rocket-engines-testing/h3-h2a-h2b-second-stage-engine-le-5b"
+  ],
+  "description": "H3 second stage as it is in orbit: a wide cylinder about 5.2 m in diameter and 12 m long. A large liquid-hydrogen tank section sits over a liquid-oxygen tank, covered in light-coloured foam insulation. A single LE-5B-3 engine (about 2.8 m long) with a bell nozzle sits at the aft end, and the payload adapter cone/ring is on the forward dome. No fairing or boosters.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-dodecapole": {
+  "ids": [
+   1510
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/dodecapole-1.htm"
+  ],
+  "description": "NRL passive radar-calibration satellite: a small 26 cm metal sphere with 12 straight telescoping hollow rods (each 7.62 m long, 1.27 cm thick) sticking out radially, one normal to each face of an imaginary regular dodecahedron. It looks like a spiky sea urchin about 15 m across.",
+  "confidence": "high",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-isis": {
+  "ids": [
+   3669
+  ],
+  "refs": [
+   "https://publications.gc.ca/collections/collection_2020/isde-ised/Co24/Co24-3-7-1218-1971-eng.pdf",
+   "https://en.wikipedia.org/wiki/ISIS_(satellite)",
+   "https://asc-csa.gc.ca/eng/satellites/isis.asp"
+  ],
+  "description": "Canadian ionospheric sounder (RCA Montreal/SPAR), 241 kg: an oblate spheroid body about 1.27 m in diameter and 1.19 m high, its facets covered in dark-blue solar cells. Two crossed dipole sounder antennas (STEM tapes) extend from the equator: one 73 m and one 18.7 m tip to tip, very long and thin. Smaller probes and booms are on top.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-rigidsphere": {
+  "ids": [
+   5398
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/lcs-1.htm",
+   "https://keeptrack.space/satellite/05398"
+  ],
+  "description": "Lincoln Calibration Sphere (LCS 4): a hollow, polished bare-aluminium sphere about 1.13 m in diameter with no appendages, antennas or solar cells. Mirror-like metal finish.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-triad": {
+  "ids": [
+   6173
+  ],
+  "refs": [
+   "https://eoportal.org/satellite-missions/transit",
+   "https://dcmpx.remotevs.com/com/astronautix/www/PL/t/tip.html",
+   "https://secwww.jhuapl.edu/techdigest/Content/techdigest/pdf/V05-N04/05-04-Danchik.pdf"
+  ],
+  "description": "Tall three-part 'stack' joined by thin extendable booms, about 7-8 m long overall when deployed, hanging vertically (gravity-gradient). Bottom (Earth-facing): the satellite body, a squat octagonal drum roughly 0.5 m across with gold/silver thermal blanketing and a short helical/quadrifilar navigation antenna pointing down. Middle: the DISCOS drag-free unit, a small cylinder (the 'ball-in-a-box' proof-mass housing) with tiny cold-gas thruster nozzles. Top: a finned cylindrical radioisotope power generator (RTG), dark grey with radial cooling fins. Small solar paddles on the bottom body are possible but not confirmed; leave them off or keep them small.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-ume": {
+  "ids": [
+   8709
+  ],
+  "refs": [
+   "https://global.jaxa.jp/projects/sat/iss/index.html",
+   "https://global.sharp/solar/en/history/1976_1.html",
+   "https://www.fplib.org/partners/mwade/craft/jiss.htm"
+  ],
+  "description": "Spin-stabilised drum: a short polygonal cylinder about 0.94 m in diameter and about 0.8 m tall, its sides completely covered in dark blue-black solar cells (about 4,900 Sharp cells) with thin silver bands at top and bottom. Four very long thin wire antennas stick straight out radially from the drum's equator at 90-degree spacing (two crossed dipoles for the ionospheric sounder, each arm many metres long, drawn as fine lines running off the card). A couple of short whip antennas on the top deck. Mass ~139 kg.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-tansei-3": {
+  "ids": [
+   9841
+  ],
+  "refs": [
+   "https://www.isas.jaxa.jp/en/missions/spacecraft/past/tansei-3.html",
+   "https://keeptrack.space/satellite/9841"
+  ],
+  "description": "Squat many-sided prism (near-cylinder) about 0.93 m across the flats and 0.8 m tall, 129 kg. Sides tiled with dark blue solar cells in panels; top and bottom decks silver/aluminium. A few short whip antennas on the top and bottom decks and small cold-gas jet nozzles at the rim (it tested spin-axis control by cold gas jet). Spin-stabilised, no deployable arrays.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-transat": {
+  "ids": [
+   10457
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/transat.htm",
+   "https://eoportal.org/satellite-missions/transit",
+   "https://www.globalsecurity.org/space/systems/transit.htm"
+  ],
+  "description": "Transit 'Oscar' navigation satellite (modified Oscar-11, 92 kg): an octagonal drum about 0.5 m across and 0.25-0.3 m tall, silver/gold, with four flat rectangular solar panels deployed outward from the body like a windmill/cross (dark blue cells). A long thin gravity-gradient boom (tens of metres, drawn as a fine line) rises from the top to a small end mass; a short helical navigation antenna points down at Earth from the bottom face.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-kiku": {
+  "ids": [
+   12295
+  ],
+  "refs": [
+   "https://global.jaxa.jp/projects/sat/ets4/index.html",
+   "https://keeptrack.space/satellite/12295"
+  ],
+  "description": "Large spin-stabilised cylinder about 2.1 m in diameter, roughly 2.8 m tall including antennas, 638 kg. The drum's sides are covered in dark blue body-mounted solar cells; silver/gold thermal bands at the top and bottom rims. A short antenna mast/telemetry antenna cluster on top, and an exposed rocket-adapter ring at the base. No deployable panels.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-orizuru": {
+  "ids": [
+   20479
+  ],
+  "refs": [
+   "https://www.fplib.org/partners/mwade/craft/debut.htm",
+   "https://core.ac.uk/download/32553033.pdf",
+   "https://global.jaxa.jp/projects/rockets/h1/"
+  ],
+  "description": "Small 50 kg battery-powered test satellite (no solar arrays). A compact box/drum body roughly 0.5 m across. Its two showpieces: an extendable/retractable lattice mast (boom) several metres long sticking out from one face, and a folding umbrella-like aerodynamic brake: a circle of thin ribs carrying a light membrane, opened like an umbrella. Silver/aluminium body with a couple of short whip antennas.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-tubsat-a": {
+  "ids": [
+   21577
+  ],
+  "refs": [
+   "https://space.jpl.nasa.gov/msl/QuickLooks/tubsataQL.html",
+   "https://www.eoportal.org/satellite-missions/tubsat"
+  ],
+  "description": "Small cube about 38 cm on a side, ~35 kg, built by TU Berlin. All faces tiled with dark blue body-mounted solar cells around a silver aluminium frame; a few short whip antennas from the corners and a small attitude-test reaction wheel inside (not visible). No deployables.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-sara": {
+  "ids": [
+   21578
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/sara.htm",
+   "https://keeptrack.space/satellite/21578",
+   "https://digitalcommons.usu.edu/smallsat/1991/all1991/8"
+  ],
+  "description": "Small cube about 45-50 cm on a side, 18-26 kg, built by French students (ESIEESPACE). Faces covered with body-mounted solar cells. Six long thin wire antennas (~10 m each) stick straight out, one from the centre of each face, forming three perpendicular dipoles (3D cross), for listening to Jupiter's radio bursts.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-astrid": {
+  "ids": [
+   23464
+  ],
+  "refs": [
+   "https://space.jpl.nasa.gov/msl/QuickLooks/astridQL.html",
+   "https://space.skyrocket.de/doc_sdat/astrid-1.htm",
+   "https://www.irf.se/en/i-rymden/astrid-1/"
+  ],
+  "description": "Tiny 27 kg Swedish microsat on the Freja-C bus: a small box about 42 x 35 x 29 cm, silver/gold, with four flat deployable solar panels sticking out in a cross (span ~1.2 m), dark blue cells. Spin-stabilised; a few short instrument booms/antennas and small particle-detector apertures on the box.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-maqsat-h": {
+  "ids": [
+   25023
+  ],
+  "refs": [
+   "https://www.esa.int/ESA_Multimedia/Images/1998/01/Maqsat-H_the_Ariane-502_upper_passenger",
+   "https://spacelaunchnow.me/launch/ariane-5-g-maqsat-h-teamsat-maqsat-b-yes"
+  ],
+  "description": "Ariane 5 test-flight mass dummy (2,300 kg, ~5 m tall): a tall cylindrical metal structure the size of a large communications satellite, mostly bare aluminium/grey with ribs and sensor boxes, plus one flat simulated solar panel (dark grey/blue rectangle) fixed to its side. Built by Kayser-Threde.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-maqsat-b": {
+  "ids": [
+   25024
+  ],
+  "refs": [
+   "https://www.fplib.org/partners/mwade/craft/maqsat.htm",
+   "https://spacelaunchnow.me/launch/ariane-5-g-maqsat-h-teamsat-maqsat-b-yes"
+  ],
+  "description": "Smaller Ariane 502 dummy payload (~1,400 kg) from the lower bay of the SPELTRA dual-launch adapter: an inverted cone-shaped bare metal structure (wide at top, narrow at the base), grey aluminium with ribbing and instrument boxes; no solar panels or antennas.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-ariane-5g-maqsat": {
+  "ids": [
+   25503
+  ],
+  "refs": [
+   "https://keeptrack.space/launch/1998-062",
+   "https://www.fplib.org/partners/mwade/craft/maqsat.htm"
+  ],
+  "description": "Ariane 5G upper stage (EPS, 'Etage a Propergols Stockables') as it sits in orbit with a mass dummy still attached: a squat, wide ring-shaped stage about 3.9-4 m across and ~3.4 m tall, with four large spherical/cylindrical propellant tanks around a central Aestus engine bell underneath; on top sits the vehicle-equipment-bay ring and the MaqSat-3 dummy payload, a plain grey metal cylinder on an adapter cone. Bare aluminium, white and grey.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-dlr-tubsat": {
+  "ids": [
+   25757
+  ],
+  "refs": [
+   "https://www.eoportal.org/satellite-missions/tubsat",
+   "https://www.raumfahrttechnik.tu-berlin.de/tubsat/",
+   "https://en.wikipedia.org/wiki/DLR-Tubsat",
+   "https://space.skyrocket.de/doc_sdat/dlr-tubsat.htm"
+  ],
+  "description": "32 cm cube, ~45 kg (TU Berlin bus). Four sides covered in dark blue body-mounted solar cells, silver frame edges. On one face, the black lens barrels of its cameras, one with a long telephoto tube (~1 m focal length lens) projecting slightly; short whip antennas at the corners.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-saci": {
+  "ids": [
+   25941
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/SACI-1",
+   "https://www.abcm.org.br/anais/encit/2000/arquivos/s29/s29p14.pdf"
+  ],
+  "description": "60 kg Brazilian scientific microsat, spin-stabilised: a compact box/prism about 0.5 m across with three deployable rectangular solar panels (about 57 x 44 cm, dark blue cells) plus a fourth similar-looking panel for balance, all hinged out from the body like a pinwheel. Instrument sensors and short whip antennas on the top deck.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-falconsat": {
+  "ids": [
+   26064
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/FalconSAT"
+  ],
+  "description": "US Air Force Academy cadet-built small satellite (~50 kg): a compact box roughly 45 cm on a side, faces covered with dark blue body-mounted solar cells, silver edges, short whip antennas.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-asusat": {
+  "ids": [
+   26065
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/asusat.htm",
+   "https://en.wikipedia.org/wiki/ASUSat-1",
+   "https://www.nanosats.eu/sat/asusat-1"
+  ],
+  "description": "Very small (~6 kg) Arizona State student satellite: a short cylinder/hexagonal prism about 30 cm across, sides tiled with dark blue solar cells, two small camera lenses on one face, and four thin whip antennas.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-lre": {
+  "ids": [
+   26898
+  ],
+  "refs": [
+   "https://ilrs.cddis.eosdis.nasa.gov/missions/satellite_missions/past_missions/lre__general.html",
+   "https://global.jaxa.jp/projects/rockets/h2a/f1/index.html"
+  ],
+  "description": "Passive laser-ranging ball from the first H-IIA flight: a quasi-spherical body 47 cm across studded with 126 small corner-cube retroreflectors (glinting glass hexagon/circle facets) and 24 larger flat-ish curved mirror plates for reflecting sunlight. Silver/aluminium surface between the reflectors. No antennas, no solar cells.",
+  "confidence": "high",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-kompass": {
+  "ids": [
+   27002
+  ],
+  "refs": [
+   "https://www.eoportal.org/satellite-missions/compass-2",
+   "https://keeptrack.space/satellite/27002",
+   "https://www.russianspaceweb.com/compass.html"
+  ],
+  "description": "Small Russian (IZMIRAN) earthquake-precursor research satellite: an inverted truncated-pyramid body about 0.5-0.6 m across, silver/white, with two deployable solar-panel wings (about 1 m2 total, dark blue cells) opening upward on either side, and a few short whip antennas from the base.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-maroc-tubsat": {
+  "ids": [
+   27004
+  ],
+  "refs": [
+   "https://www.eoportal.org/satellite-missions/tubsat",
+   "https://www.raumfahrttechnik.tu-berlin.de/tubsat/",
+   "https://idw-online.de/en/news773029"
+  ],
+  "description": "TU Berlin microsat (~47 kg) for Morocco, a sibling of DLR-TUBSAT: a box about 32-45 cm on a side, sides covered in dark blue body-mounted solar cells, silver frame edges, a camera lens on one face and short whip antennas at the corners.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-most": {
+  "ids": [
+   27843
+  ],
+  "refs": [
+   "https://www.edp-open.org/images/stories/books/contents/corot/cI_4.pdf",
+   "https://astro-canada.ca/le_telescope_spatial_most-the_most_space_telescope-eng"
+  ],
+  "description": "Canada's 'suitcase' space telescope: a flat box about 60 x 60 x 24-30 cm, 54 kg. Large faces covered with dark blue body-mounted solar cells (one face stays sun-lit); on one edge a short black telescope baffle tube for the 15 cm aperture; small S-band patch antennas; silver/gold trim. No deployables.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-scisat": {
+  "ids": [
+   27858
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/SCISAT-1",
+   "https://www.eoportal.org/satellite-missions/scisat-1",
+   "https://nordicspace.net/wp-content/uploads/2013/07/NSA112.pdf"
+  ],
+  "description": "Canadian atmospheric-chemistry satellite: a hexagonal/near-cylindrical body about 1.1 m across and ~1 m tall, gold/silver thermal blankets, with a single fixed rectangular solar panel deployed out to one side (dark blue cells). Sun-viewing aperture of the ACE-FTS spectrometer and a small star/sun tracker on one face, S-band antennas.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-naxing": {
+  "ids": [
+   28221
+  ],
+  "refs": [
+   "https://keeptrack.space/satellite/28221",
+   "https://www.tsinghua.edu.cn/info/1987/77223.htm"
+  ],
+  "description": "Tsinghua University 25 kg nanosatellite: a small cube roughly 30-35 cm on a side (~0.04 m3), faces covered in dark blue body-mounted solar cells, a small CMOS camera lens on one face, and short whip antennas.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-parasol": {
+  "ids": [
+   28498
+  ],
+  "refs": [
+   "https://www.eoportal.org/satellite-missions/parasol",
+   "https://cnes.fr/projets/parasol/satellite-charge-utile",
+   "https://www.eoportal.org/satellite-missions/myriade"
+  ],
+  "description": "CNES Myriade microsat (120 kg): a compact box about 60 x 60 x 80 cm, gold/black thermal blankets, with two deployable rectangular solar panels forming a single wing on one side (dark blue cells). On the Earth-facing face, the wide-angle POLDER camera lens; small S-band antennas.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-ariane-5-eca-maqsat": {
+  "ids": [
+   28545
+  ],
+  "refs": [
+   "https://newsroom.arianespace.com/?p=16170",
+   "https://keeptrack.space/satellite/28545"
+  ],
+  "description": "Ariane 5 ECA cryogenic upper stage (ESC-A) in orbit with the MaqSat-B2 dummy still attached: a wide white cylindrical stage about 5.4 m across and ~4.7 m tall, the LOX tank below and the larger LH2 tank above, with the small HM7B engine bell underneath; on top the equipment-bay ring and the MaqSat dummy, a plain grey metal box/cylinder.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-hamsat": {
+  "ids": [
+   28650
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/HAMSAT",
+   "https://www.amsat.org/vo-52-hamsat/"
+  ],
+  "description": "ISRO amateur-radio microsat (42.5 kg, spin-stabilised): a cube-like box roughly 60 cm on a side with gallium-arsenide body-mounted solar panels (dark blue) on its sides, silver frame; VHF and UHF turnstile antennas (four thin whips each, arranged in a cross) on the top and bottom faces.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-beijing-1": {
+  "ids": [
+   28890
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/china-dmc.htm",
+   "https://a-a-r-s.org/proceeding/ACRS2011/Session/Paper/P_526_9-9-12.pdf",
+   "https://www.gim-international.com/content/news/british-company-delivers-beijing-1-eo-satellite"
+  ],
+  "description": "SSTL-built Earth-imaging microsat (DMC+4): a box about 60 x 60 x 60 cm with body-mounted GaAs solar panels (dark blue) on three sides, white/silver elsewhere. On the Earth-facing face, the multispectral camera apertures and a larger panchromatic telescope barrel; S-band patch and short whip antennas.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-topsat": {
+  "ids": [
+   28891
+  ],
+  "refs": [
+   "https://eoportal.org/satellite-missions/topsat",
+   "https://en.wikipedia.org/wiki/TopSat"
+  ],
+  "description": "QinetiQ/SSTL high-resolution imaging microsat (~115-120 kg): an aluminium box about 0.8 m tall with three body-mounted GaAs solar panels (dark blue) on its sides; a large telescope camera (RAL) with a black/silver baffle opening on the Earth-facing end; small antennas.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-sinah-1": {
+  "ids": [
+   28893
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/sina-1.htm",
+   "https://keeptrack.space/satellite/28893",
+   "https://en.wikipedia.org/wiki/Sina-1"
+  ],
+  "description": "Iran's first satellite (Russian Polyot Sterkh bus, ~160-170 kg): a box-and-half-cylinder body about 1.6 m long and 0.8 m across, silver/white, with two deployable rectangular solar arrays (dark blue) on either side and short antennas at one end.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-sseti-express": {
+  "ids": [
+   28894
+  ],
+  "refs": [
+   "https://esa.int/Education/SSETI_Express/Technical_facts",
+   "https://www.esa.int/Education/SSETI_Express/SSETI_Express_sub-systems",
+   "https://en.wikipedia.org/wiki/SSETI_Express_(satellite)"
+  ],
+  "description": "European student satellite about the size of a washing machine: a box 56 x 56 x 90 cm, 62 kg. Outer aluminium side panels covered with dark blue dual-junction solar cells; on top, three small square-tube CubeSat deployers (T-PODs); a small camera, S-band patch and UHF whip antennas.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-lapan-tubsat": {
+  "ids": [
+   29709
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/lapan-tubsat.htm",
+   "https://www.eoportal.org/satellite-missions/tubsat"
+  ],
+  "description": "Indonesian/TU Berlin microsat (56 kg): a flat box 45 x 45 x 27 cm, sides covered with dark blue body-mounted solar cells, silver frame. On one face a long black video-camera lens (1 m focal length) and a smaller wide-angle camera; short whip antennas at the corners.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-sprite-sat": {
+  "ids": [
+   33494
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/spritesat.htm",
+   "https://www2.jpgu.org/meeting/2008/program/pdf/E207/E207-015_e.pdf"
+  ],
+  "description": "Tohoku University SPRITE-SAT (Raijin), about 45-50 kg. A compact cube about 48 x 48 x 48 cm with solar cells covering its outer faces (dark blue tiles with silver gaps). The Earth-facing side carries small camera lenses (lightning/sprite imagers and a wide-field CCD) and a gamma-ray detector box. A long thin VLF antenna wire/boom (supplied by Stanford) sticks out from the body. No deployable solar wings.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-proba-2": {
+  "ids": [
+   36037
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/PROBA-2",
+   "https://www.esa.int/ESA_Multimedia/Images/2009/06/Proba-2_fully_operational_in_its_final_orbit"
+  ],
+  "description": "ESA PROBA-2 (about 120-130 kg), a compact box 0.60 x 0.70 x 0.85 m. Two deployable solar panels, dark blue cells on flat rectangles, hinge out from one side, plus solar cells on the body. The sun-facing face carries the two solar instruments: the SWAP EUV telescope (a short cylindrical tube) and the LYRA radiometer (a small box with several small apertures). Silver/gold MLI on the rest of the body, small star tracker heads, and short Langmuir-probe booms (DSLP) on the side.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-picard": {
+  "ids": [
+   36598
+  ],
+  "refs": [
+   "https://www.eoportal.org/satellite-missions/picard",
+   "https://fr.wikipedia.org/wiki/Picard_(satellite)"
+  ],
+  "description": "CNES PICARD solar observatory on the Myriade microsatellite bus, about 143-150 kg. A box about 0.9 x 0.8 x 1.1 m: an aluminium base plate at the bottom, four honeycomb side panels with silver/gold MLI and white radiators, and a payload plate on top. One steerable solar panel (dark blue triple-junction cells, single rectangle) hangs off one side on a rotating hinge. On top, the main instrument SODISM, a squat telescope box about 30 x 30 x 37 cm with a round aperture, points at the Sun next to the smaller PREMOS and SOVAP radiometer boxes. Two small hemispherical S-band antennas on opposite faces.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-x-sat": {
+  "ids": [
+   37389
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/x-sat.htm",
+   "https://en.wikipedia.org/wiki/X-Sat"
+  ],
+  "description": "Singapore NTU/DSO X-Sat, 105 kg, on the SI-100 bus. A compact rectangular box roughly 0.6 m on a side. Two fixed deployable solar panels (dark blue) fold out from opposite sides like short wings. The Earth-facing (bottom) face carries the IRIS three-band multispectral camera, a cylindrical lens barrel. Gold/black MLI with aluminium edges; small GPS patch antenna on the top face.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-rasat": {
+  "ids": [
+   37791
+  ],
+  "refs": [
+   "https://www.eoportal.org/satellite-missions/rasat",
+   "https://space.skyrocket.de/doc_sdat/rasat.htm"
+  ],
+  "description": "TUBITAK UZAY RASAT, 95 kg. A squat box 70 x 70 x 55 cm. Three of its side faces (+/-X and +Y) are fully covered in body-mounted solar cells (dark blue); the fourth (-Y) is also a solar panel, with an elliptical cut-out for the star sensor. No deployable wings. The Earth-facing base holds the Satrec optical imager, a Maksutov telescope tube about 17 cm wide and 42 cm long. Small S-band, UHF/VHF whip and X-band antennas sit on the end faces.",
+  "confidence": "high",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-yubileiny-2": {
+  "ids": [
+   38735
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/yubileyniy-2.htm",
+   "https://russianspaceweb.com/yubileiny.html"
+  ],
+  "description": "Reshetnev Yubileiny-2 (MiR / RS-40), a 65 kg microsatellite. A hexagonal prism about 0.5 m across, with body-mounted solar cells (dark blue) on all six side faces. A long thin gravity-gradient boom with a small tip mass points straight up (away from Earth). Short whip antennas for the amateur radio/telemetry links sit on the bottom (Earth-facing) end.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-neossat": {
+  "ids": [
+   39089
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/NEOSSat"
+  ],
+  "description": "Canadian NEOSSat, 74 kg, about the size of a suitcase: a flat rectangular box 137 x 78 x 38 cm (including the baffle). Gallium arsenide solar cells cover all six faces (dark blue, silver edges). The single instrument, a 15 cm Maksutov telescope, runs along the long axis; its black cylindrical baffle sticks out from one end with an angled sunshade/door at the tip. No deployable arrays; a few small antenna stubs.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-proba-v": {
+  "ids": [
+   39159
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/PROBA-V",
+   "https://earth.esa.int/eogateway/missions/proba-v/objectives"
+  ],
+  "description": "ESA PROBA-V, 158 kg, a compact box under 1 m on a side. Solar cells are body-mounted on the side panels (dark blue); there are no long wings. The top (Earth-facing in the art, nadir) deck carries the Vegetation instrument: three aligned three-mirror camera blocks side by side, fanned slightly to widen the 2,250 km swath. Gold MLI and white radiator areas elsewhere, plus small antenna stubs. Generally similar in look to PROBA-1.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-wnisat-1": {
+  "ids": [
+   39423
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/wnisat-1.htm"
+  ],
+  "description": "Axelspace/Weathernews WNISAT-1, 10 kg: a 27 cm cube, three-axis stabilised. Body-mounted solar cells on its faces. One face carries two small camera lenses (visible and near-infrared, for sea-ice monitoring) and a small laser emitter aperture (1556/1570 nm CO2 lasers). Small whip antennas at the corners.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-triton-1": {
+  "ids": [
+   39427
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/triton-1.htm"
+  ],
+  "description": "ISIS-built 3U CubeSat Triton-1 (3 kg): a 10 x 10 x 34 cm aluminium rail-frame bar with dark-blue solar cells body-mounted on the four long faces. Thin tape-measure whip antennas (ISIS deployable antenna system) stick out at one end, used for the AIS ship-tracking receiver and telemetry.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-uniform-1": {
+  "ids": [
+   39767
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/uniform-1.htm"
+  ],
+  "description": "Wakayama University UNIFORM-1 wildfire-detection microsatellite, 50 kg, built on a 50 x 50 x 50 cm cube. Two deployable solar arrays (dark blue rectangles) hinge out from opposite sides. The Earth-facing face carries an uncooled microbolometer thermal-infrared camera (a small black lens) for spotting fires, plus a visible camera. Gold/black MLI on the remaining surfaces.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-rising-2": {
+  "ids": [
+   39769
+  ],
+  "refs": [
+   "https://www2.jpgu.org/meeting/2010_disc2/program/PDF/M-SD030/MSD030-09_e.pdf",
+   "https://space.skyrocket.de/doc_sdat/spritesat.htm"
+  ],
+  "description": "Tohoku/Hokkaido University RISING-2 (Raijin-2), about 43 kg: a 50 x 50 x 50 cm cube with body-mounted solar cells. The Earth-facing face holds a 10 cm-aperture Cassegrain telescope (short black cylinder) with a liquid-crystal tunable filter for 5 m imaging, plus small sprite/lightning imager lenses. Small whip antennas at the corners.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-bugsat-1": {
+  "ids": [
+   40014
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/bugsat-1.htm"
+  ],
+  "description": "Satellogic BugSat-1 'Tita', 22 kg: a flat box 50 x 50 x 27.5 cm. The large top face is covered in dark-blue body-mounted solar cells; the opposite face carries the mid-resolution camera lens. Three short antennas and a GPS patch on the edges.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-popsat-hip1": {
+  "ids": [
+   40028
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/popsat-hip1.htm"
+  ],
+  "description": "Microspace (Singapore) POPSAT-HIP1, a 3U CubeSat: 10 x 10 x 34 cm frame with body-mounted dark-blue solar cells on the long faces. It carries a cold-gas micropropulsion module (tiny nozzles at one end) and a small camera lens on one end face. Thin deployable whip antennas.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-aisat-1": {
+  "ids": [
+   40054
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/aisat.htm"
+  ],
+  "description": "DLR AISat-1, 14 kg: a small cube-shaped body (roughly 25-30 cm) covered in body-mounted solar cells. Its signature part is a 4 m long helical antenna, a wide coil spring of wire that unrolls from one face and also acts as a gravity-gradient boom. Draw the coil many times longer than the body.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-dauria-dx1": {
+  "ids": [
+   40071
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/dx-1.htm"
+  ],
+  "description": "Dauria Aerospace DX-1, 27 kg: a box 40 x 40 x 30 cm. Solar cells on the outer faces (dark blue), small AIS/telemetry whip antennas, and sensor ports. No large deployables.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-ukube-1": {
+  "ids": [
+   40074
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/ukube-1.htm"
+  ],
+  "description": "UK Space Agency/Clyde Space UKube-1 (FUNcube-2 payload), a 3U CubeSat: 10 x 10 x 34 cm, 3 kg, black aluminium rails with dark-blue solar cells on the long faces. Four thin tape-measure antennas splay out from one end (for the FUNcube amateur radio transponder). A small camera lens on one end face.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-lapan-a3": {
+  "ids": [
+   41603
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/lapan-a3.htm"
+  ],
+  "description": "Indonesian LAPAN-A3 (LAPAN-IPB), 115 kg, structurally a sister of LAPAN-A2: a squat box roughly 50 x 47 x 38 cm with body-mounted solar panels (dark blue) on its sides and no deployable wings. The Earth-facing face carries a cluster of camera lenses (a 4-band multispectral imager and an RGB video camera) and a star tracker. Small whip antennas for AIS and amateur radio.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-yijian": {
+  "ids": [
+   41899
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/yijian.htm"
+  ],
+  "description": "Chinese Academy of Sciences 'Yijian' (CX 6-02) high-resolution minisatellite, 66 kg, built on the WN5000 bus. A compact box about 0.5-0.6 m across with two fixed deployable solar panels (dark blue) on opposite sides. A hyperspectral/optical imager lens points down from the Earth-facing face. Gold/black MLI.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-egyptsat-1": {
+  "ids": [
+   31117
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/egyptsat-1.htm",
+   "https://space.skyrocket.de/doc_sdat/egyptsat-2.htm"
+  ],
+  "description": "EgyptSat 1 (MisrSat 1), 160 kg, Yuzhnoye MS-1TK bus: a compact box roughly 0.6-0.8 m across with four fixed deployable solar panels (dark blue) arranged around the body like a cross. The Earth-facing face carries the multispectral and infrared imager lenses.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-worldview": {
+  "ids": [
+   35946,
+   40115
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/WorldView-3",
+   "https://en.wikipedia.org/wiki/WorldView-2"
+  ],
+  "description": "DigitalGlobe WorldView-2/-3 (Ball BCP-5000 bus, 2,800 kg, about 5.7 m tall). A tall six-sided body: a gold/silver MLI bus at the base and a large white/black cylindrical telescope barrel (1.1 m aperture) rising from it, topped by an open sunshade ring. Three to four fixed rectangular solar panels (dark blue) splay out around the base like a skirt, angled away from the body. Small X-band downlink antennas on the Earth-facing bottom.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-alsat-2": {
+  "ids": [
+   36798,
+   41786
+  ],
+  "refs": [
+   "https://www.eoportal.org/satellite-missions/alsat-2"
+  ],
+  "description": "Algeria's AlSat-2A/2B on the Astrium AstroSat-100 (Myriade-derived) bus, about 116 kg. A small aluminium box 60 x 60 x 100 cm (2B about 130 cm tall) with gold/black MLI. One deployable GaAs solar array, built as several dark-blue rectangular panels hinged from one edge of the body. The NAOMI telescope (200 mm aperture, silicon carbide optics) is a short cylindrical barrel on the Earth-facing end.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-meridian": {
+  "ids": [
+   37212,
+   38995
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/meridian.htm",
+   "https://en.wikipedia.org/wiki/Meridian_(satellite)"
+  ],
+  "description": "Russian Meridian military comsat (Reshetnev, over 2,000 kg), reportedly on a pressurized Uragan-M-type bus: a sealed cylindrical body, silver/white, about 1.3 m wide and 3 m long. Two large deployable solar wings (dark blue, each a long rectangle on a boom) stick out on opposite sides. The Earth-facing end carries a cluster of communication antennas (horns and helices) for the three Raduga-compatible transponders.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-elisa": {
+  "ids": [
+   38007,
+   38009
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/elisa.htm",
+   "https://en.wikipedia.org/wiki/ELISA_(satellite)"
+  ],
+  "description": "ELISA SIGINT demonstrators (4 built, about 120 kg each) on the Astrium Myriade microsatellite bus: a small box about 60 x 60 x 80 cm with gold/black MLI and white radiators. One deployable solar array (dark blue panels) on one side. The Earth-facing face carries several small spiral/patch receiving antennas for the electronic-intelligence payload.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-avum": {
+  "ids": [
+   40698,
+   49467
+  ],
+  "refs": [
+   "https://www.esa.int/ESA_Multimedia/Images/2013/03/Vega_VV02_AVUM_integration",
+   "https://www.esa.int/ESA_Multimedia/Images/2013/11/Preparing_AVUM_shaker_test",
+   "https://en.wikipedia.org/wiki/Vega_(rocket)"
+  ],
+  "description": "Vega 4th stage AVUM (Attitude Vernier Upper Module) as left in orbit: a short, wide cylinder about 1.9 m across and 1.7 m tall, in two parts. The lower propulsion module has four spherical titanium propellant tanks, helium bottles and the small RD-843 engine nozzle at the bottom centre, with clusters of tiny attitude-control thrusters at the rim. The upper avionics module is a white/grey ring with boxes inside. On top sits the conical payload adapter (Sentinel-2A on 2015, Ceres satellites on 2021). Typically white/silver with black thruster blocks and gold foil on parts.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-dfh-2-test": {
+  "ids": [
+   14670
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/Dong_Fang_Hong_2"
+  ],
+  "description": "China's first DFH-2 geostationary test satellite (STW-T1), stranded in low orbit when the first Long March 3's third stage failed to restart. A spin-stabilized drum about 2.1 m across and 1.6 m tall, its sides covered in dark-blue body-mounted solar cells with a silver band. On top, a mechanically despun parabolic dish antenna (about 1 m) on a short mast, tilted toward Earth, with small omni whips; an apogee motor nozzle underneath. About 3 m tall overall.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-geosat": {
+  "ids": [
+   15595
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/Geosat"
+  ],
+  "description": "US Navy GEOSAT radar altimetry satellite (built by Johns Hopkins APL, about 635 kg). An octagonal body about 1.5 m across. A round radar altimeter dish (about 1 m) points straight down at the Earth from the bottom. Four rectangular solar panels (dark blue) fold out in a windmill/cross arrangement around the upper body. A long thin gravity-gradient boom (about 6 m) with a tip mass rises straight up from the top.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-adeos": {
+  "ids": [
+   24277
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/ADEOS_I",
+   "https://winds.jpl.nasa.gov/missions/nscat/"
+  ],
+  "description": "ADEOS (Midori), a large NASDA Earth-observation satellite (about 3.5 t). Long rectangular box body about 4 x 4 x 5 m in gold MLI with white radiators, its Earth-facing face crowded with instruments: NASA's NSCAT scatterometer with six long thin stick antennas (about 3 m each) fanned out in an X/fan pattern, the TOMS box, the OCTS and AVNIR sensor boxes, and the ILAS and RIS instruments (RIS is a small retroreflector). One very long single-wing solar paddle (about 3 x 24 m, dark blue with a gold back) extended from one end on a boom, giving the satellite a lopsided T shape.",
+  "confidence": "high",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-fast": {
+  "ids": [
+   24285
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/Fast_Auroral_Snapshot_Explorer"
+  ],
+  "description": "FAST (Fast Auroral SnapshoT Explorer), NASA SMEX. Short octagonal drum about 1.0 m wide and 0.9 m tall, all sides covered with dark-blue body-mounted solar cells. Spin-stabilised. Four long thin wire-boom electric-field antennas radiating outward in the spin plane (two 28 m, two 23 m), two short rigid axial booms (about 3 m) sticking out of top and bottom, and two short magnetometer booms (about 2 m) on the sides.",
+  "confidence": "high",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-interball-2": {
+  "ids": [
+   24293
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/Interball",
+   "https://www.iki.rssi.ru/interball/"
+  ],
+  "description": "Interball-2 (Auroral Probe), built on the Lavochkin Prognoz-M2 bus. A cylindrical body about 1.8 m in diameter and 1.5 m tall, covered with gold/black thermal blankets. Four large flat rectangular solar panels (dark blue) arranged like a cross / windmill around the body, plus several long wire and rigid instrument booms (magnetometer boom, electric-field antennas) sticking out radially. Spin-stabilised.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-comets": {
+  "ids": [
+   25175
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/COMETS_(satellite)",
+   "https://global.jaxa.jp/projects/sat/comets/index.html"
+  ],
+  "description": "COMETS (Kakehashi), NASDA two-tonne communications/broadcast test satellite. Large rectangular box body about 2 x 2 x 3 m wrapped in gold MLI. Two long solar-array wings on opposite sides (several dark-blue rectangular panels each, about 30 m span). Several deployed antennas: a large inter-orbit-link dish (about 3.6 m) on a boom, plus two or three smaller reflector dishes for Ka-band and S-band on the Earth-facing deck.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-ikonos": {
+  "ids": [
+   25919
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/Ikonos"
+  ],
+  "description": "IKONOS (Lockheed Martin LM-900 bus, 817 kg). A hexagonal body about 1.8 m tall and 1.6 m across, covered in gold and silver MLI, with a large telescope tube (Kodak camera, 70 cm aperture) making up the upper part, with a black sunshade opening at one end. Three rectangular solar panels (dark blue) fixed around the body like a skirt or flower petals, each angled outward. Small antennas and star trackers on the base.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-helios-1": {
+  "ids": [
+   25977
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/Helios_(satellite)",
+   "https://en.wikipedia.org/wiki/SPOT_(satellite)"
+  ],
+  "description": "Helios 1B, French military reconnaissance satellite derived from the SPOT-4 bus (about 2.5 t). A tall rectangular box body about 2 x 2 x 5.6 m, gold/black MLI. One long solar-array wing on one side only, a straight row of five dark-blue rectangular panels (about 8 m long) on a hinge arm. The Earth-facing end carries the large optical instrument housing, a box with a mirror port, plus small antennas.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-mds-1": {
+  "ids": [
+   27367
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/MDS-1",
+   "https://global.jaxa.jp/projects/sat/mds1/index.html"
+  ],
+  "description": "MDS-1 (Tsubasa), NASDA technology demonstrator (480 kg). A cube-shaped box bus about 1.2 m on each side, gold MLI. Two solar-array wings on opposite sides, each two or three dark-blue panels (about 6 m span total). Small antennas and radiation-monitor sensors on the top face.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-double-star-tc2": {
+  "ids": [
+   28382
+  ],
+  "refs": [
+   "https://www.esa.int/Science_Exploration/Space_Science/Double_Star",
+   "https://en.wikipedia.org/wiki/Double_Star_(spacecraft)"
+  ],
+  "description": "Double Star TC-2 (Tan Ce 2), Chinese/ESA magnetosphere probe. Short cylindrical drum about 2.1 m across and 1.4 m tall, sides covered in dark-blue body-mounted solar cells. Spin-stabilised. Two long magnetometer booms (about 2.5 m) sticking out on opposite sides, and a short antenna mast on the top axis.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-radarsat-2": {
+  "ids": [
+   32382
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/RADARSAT-2",
+   "https://www.asc-csa.gc.ca/eng/satellites/radarsat2/"
+  ],
+  "description": "RADARSAT-2 (Alenia PRIMA bus, 2.3 t). A rectangular box body about 1.5 x 1.5 x 3.7 m with gold MLI. A very long, flat, rectangular C-band SAR antenna (15 m x 1.5 m, made of dark panels) mounted on an extensible support structure and running along the side of the bus. Two solar-array wings (dark blue) sticking out perpendicular to the antenna.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-hj-1b": {
+  "ids": [
+   33321
+  ],
+  "refs": [
+   "https://www.eoportal.org/satellite-missions/hj-1",
+   "https://en.wikipedia.org/wiki/Huanjing_(satellite)"
+  ],
+  "description": "HJ-1B (CAST968 small-satellite bus, about 500 kg). A hexagonal-prism body about 1.2 m across, gold MLI. One rectangular solar wing on one side (dark blue, two to three panels). On the Earth-facing end, two wide-angle CCD camera boxes and an infrared multispectral camera box.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-geoeye-1": {
+  "ids": [
+   33331
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/GeoEye-1"
+  ],
+  "description": "GeoEye-1 (General Dynamics SA-200HP bus, 1.95 t). A tall hexagonal body about 4.4 m long and 2.7 m wide; the upper half is a white/silver cylindrical telescope housing (1.1 m aperture) with a sunshade opening, and the lower half is a gold-wrapped bus. Three or four rectangular solar panels (dark blue) fixed around the base, angled out like petals.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-ssot": {
+  "ids": [
+   38011
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/FASat-Charlie"
+  ],
+  "description": "SSOT / FASat-Charlie (Chilean Earth-observation satellite, Astrium Myriade bus, 117 kg). A box body about 0.6 x 0.6 x 1 m, black and silver panels. Three deployable dark-blue solar panels (one central and two side panels forming a fan) on one face. A cylindrical NAOMI camera tube on the Earth-facing end.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-zy-1-02c": {
+  "ids": [
+   38038
+  ],
+  "refs": [
+   "https://www.eoportal.org/satellite-missions/zy-1-02c"
+  ],
+  "description": "ZY-1 02C (CAST CS-L3000A bus, about 2.1 t). A rectangular box body about 2 x 1.8 x 2.2 m wrapped in gold MLI. One long solar-array wing (three dark-blue panels) on one side. The Earth-facing deck holds two camera boxes (a panchromatic/multispectral camera and two HR cameras).",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-ekspress-md2": {
+  "ids": [
+   38745
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/ekspress-md.htm"
+  ],
+  "description": "Ekspress-MD2, a small Russian comsat (Khrunichev Yakhta bus, 1.14 t). A compact rectangular box about 1.6 x 1.6 x 2 m wrapped in gold MLI. Two solar-array wings (two or three dark-blue panels each) on opposite sides, and one deployed dish antenna (about 1.5 m) on the Earth-facing side next to smaller horn antennas.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-saral": {
+  "ids": [
+   39086
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/SARAL",
+   "https://www.eoportal.org/satellite-missions/saral"
+  ],
+  "description": "SARAL (ISRO IMS-2 bus, 407 kg). A box body about 1 x 1 x 1.3 m, gold MLI. Two solar-array wings (each one or two dark-blue panels). On the Earth-facing side, the AltiKa altimeter dish (a round reflector about 1 m across).",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-cassiope": {
+  "ids": [
+   39265
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/CASSIOPE",
+   "https://www.asc-csa.gc.ca/eng/satellites/cassiope.asp"
+  ],
+  "description": "CASSIOPE (MDA MAC-200 bus, 481 kg). A short hexagonal prism about 1.8 m across and 1.25 m tall, its six sides covered with dark-blue body-mounted solar cells (five solar panels). Small instrument booms and antennas around the top deck (the e-POP science package, eight instruments, including a magnetometer boom and four radio-receiver antenna booms).",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-deimos-2": {
+  "ids": [
+   40013
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/Deimos-2",
+   "https://www.eoportal.org/satellite-missions/deimos-2"
+  ],
+  "description": "Deimos-2 (Satrec Initiative SI-300 bus, 310 kg). A hexagonal body about 1.2 m across and 1.6 m tall, with a cylindrical telescope housing (white/silver) on top. Three rectangular solar panels (dark blue) arranged around the body like petals.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-asnaro-1": {
+  "ids": [
+   40298
+  ],
+  "refs": [
+   "https://www.eoportal.org/satellite-missions/asnaro-1"
+  ],
+  "description": "ASNARO-1 (NEC NEXTAR bus, 495 kg). A box body about 1.5 x 1.5 x 2.7 m, black/gold MLI, with a tall cylindrical high-resolution camera tube. Two rectangular solar wings (dark blue) on opposite sides.",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-dampe": {
+  "ids": [
+   41173
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/Dark_Matter_Particle_Explorer"
+  ],
+  "description": "DAMPE (Wukong), a Chinese dark-matter particle detector (1.9 t). A cube-shaped box about 1.5 m on each side, gold MLI. Two solar-array wings (dark blue) on opposite sides. The top face carries the detector stack (a square block of plastic scintillators and a BGO calorimeter inside).",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-microscope": {
+  "ids": [
+   41457
+  ],
+  "refs": [
+   "https://fr.wikipedia.org/wiki/Microscope_(satellite)",
+   "https://en.wikipedia.org/wiki/MICROSCOPE_(satellite)"
+  ],
+  "description": "MICROSCOPE (CNES Myriade bus, 303 kg). A rectangular box about 1.4 x 1.0 x 1.5 m, black and silver panels. Two fixed deployed solar panels (1.6 m² total, dark blue, GaAs cells). Small cold-gas thruster pods on the corners. Optional: two inflatable drag-sail booms (IDEAS) deployed at end of life.",
+  "confidence": "high",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-scatsat": {
+  "ids": [
+   41790
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/SCATSAT-1"
+  ],
+  "description": "SCATSAT-1 (ISRO IMS-2 bus, 371 kg). A box body about 1.4 x 1.4 x 1.2 m, gold MLI. One or two dark-blue solar wings. On top, the Ku-band scatterometer: a spinning dish antenna (about 1 m across) on a short pedestal.",
+  "confidence": "high",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-tansat": {
+  "ids": [
+   41898
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/TanSat"
+  ],
+  "description": "TanSat (CAST2000 bus, 620 kg). A box body about 1.4 x 1.4 x 1.5 m, gold MLI. Two dark-blue solar wings on opposite sides. On the Earth-facing side, the CO2 grating spectrometer (a large box) and the cloud and aerosol imager (a small camera).",
+  "confidence": "medium",
+  "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
  }
 }

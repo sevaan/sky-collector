@@ -1365,5 +1365,83 @@
   "credit": "NASA/JPL-Caltech/Wendy Stenzel",
   "licence": "PD",
   "source": "https://commons.wikimedia.org/wiki/File:Kepler_spacecraft_artist_render_(crop).jpg"
+ },
+ "sat-eole-1": {
+  "credit": "Pline, CC BY-SA 3.0",
+  "licence": "CC BY-SA 3.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Eole_satellite_Meteo_experimental_1971_Musee_du_Bourget.JPG",
+  "shows": "EOLE satellite (1971) on display at the Musée de l'Air et de l'Espace, Le Bourget"
+ },
+ "stage-waxwing": {
+  "credit": "Geni, CC BY-SA 4.0",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Waxwing_rocket_motor_science_museum_2012.JPG",
+  "shows": "Waxwing solid motor (Black Arrow third stage, the stage that reached orbit with Prospero) on display at the Science Museum, London"
+ },
+ "sat-picosat": {
+  "credit": "NASA",
+  "licence": "PD",
+  "source": "https://commons.wikimedia.org/wiki/File:PICOSat.jpg",
+  "shows": "The PICOSat payload undergoing final preparations before its Athena 1 launch (Kodiak Star)"
+ },
+ "sat-chipsat": {
+  "credit": "NASA",
+  "licence": "PD",
+  "source": "https://commons.wikimedia.org/wiki/File:CHIPSAT_2.jpg",
+  "shows": "The CHIPSat satellite (NASA GSFC release)"
+ },
+ "sat-reimei": {
+  "credit": "Kestrel, CC BY-SA 4.0",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Reimei_Structural_Thermal_Model_P4037941.jpg",
+  "shows": "Structural thermal model of Reimei (INDEX) on public exhibition"
+ },
+ "sat-ugatusat": {
+  "credit": "QibWiFuna, CC BY 4.0",
+  "licence": "CC BY 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:UGATUSAT_microsatellite.jpg",
+  "shows": "The UGATUSAT microsatellite itself (file caption 'UGATUSAT microsatellite'; own work by the uploader, 2009)."
+ },
+ "sat-sentinel-2": {
+  "credit": "ESA–M. Pedoussaut",
+  "licence": "CC BY-SA 2.0",
+  "source": "https://commons.wikimedia.org/wiki/File:Sentinel-2A_ready_for_encapsulation.jpg",
+  "shows": "The real Sentinel-2A in the Kourou cleanroom (8 June 2015), red-tag covers removed, ready for encapsulation."
+ },
+ "sat-cbers-2": {
+  "credit": "CBERS/INPE – Divulgação",
+  "licence": "Free with attribution (INPE)",
+  "source": "https://commons.wikimedia.org/wiki/File:CBERS-2_003.jpg",
+  "shows": "Assembly of the CBERS-2 satellite at INPE ('Montagem do CBERS-2')."
+ },
+ "sat-gokturk-2": {
+  "credit": "CeeGee, CC BY-SA 4.0",
+  "licence": "CC BY-SA 4.0",
+  "source": "https://commons.wikimedia.org/wiki/File:TaiIDEF2015_(8).JPG",
+  "shows": "Model of Göktürk-2 on the Turkish Aerospace stand at IDEF 2015."
+ },
+ "sat-oao": {
+  "credit": "NASA",
+  "licence": "PD",
+  "source": "https://commons.wikimedia.org/wiki/File:Orbiting_Astronomical_Observatory_2.jpg",
+  "shows": "Technicians inspecting OAO-2 in a KSC cleanroom before its 1968 launch; star trackers visible at top."
+ },
+ "sat-eo-1": {
+  "credit": "NASA",
+  "licence": "PD",
+  "source": "https://commons.wikimedia.org/wiki/File:EO-1_spacecraft_model.png",
+  "shows": "Official NASA 3D model render of the Earth Observing-1 spacecraft (from NASA's spacecraft icons toolkit)."
+ },
+ "sat-timed": {
+  "credit": "NASA",
+  "licence": "PD",
+  "source": "https://commons.wikimedia.org/wiki/File:TIMED.jpg",
+  "shows": "TIMED satellite (NASA Goddard image, likely an artist's rendering in orbit)."
+ },
+ "sat-gp-b": {
+  "credit": "NASA",
+  "licence": "PD",
+  "source": "https://commons.wikimedia.org/wiki/File:Gravity_Probe_B_in_Vandenberg%27s_Payload_Processing_Facility_(KSC-04PD0782).jpg",
+  "shows": "The Gravity Probe B spacecraft in the Payload Processing Facility at Vandenberg, before launch."
  }
 }

@@ -1,17 +1,17 @@
-// Sky Collector Plus (2026-10-11, design/plans.html). One switch, isPlus(), that every paid perk checks. The sky,
+// Space Collector Plus (2026-10-11, design/plans.html). One switch, isPlus(), that every paid perk checks. The sky,
 // every card, patches and missions are never behind it. In the apps it comes from the store through RevenueCat
 // (2026-10-16): the purchase belongs to the player’s Apple ID / Google account, no sign-in of ours. The last answer is
 // kept (localStorage 'plusStore') so Plus holds offline. The testing toggle (Settings → Testing tools → "Plus
 // (testing)", 'plusTest') still turns it on anywhere; the website never sells Plus.
-import { plugin, isNative, onNative } from './native.js?v=0.1.1651';
+import { plugin, isNative, onNative } from './native.js?v=0.1.1672';
 
 // RevenueCat public SDK keys (safe in the app). The Test Store key works with no App Store / Play setup; swap in the
 // appl_ / goog_ keys from RevenueCat → Project settings → API keys once the store apps are connected.
 // RevenueCat public SDK keys (safe to ship). iOS is the real App Store key (2026-10-19); Android the real Play key
-// (2026-11-05, app.skycollector). TEST_KEY is used anywhere when Testing tools → "RevenueCat Test Store" is on.
-const TEST_KEY = ''; // Sky Collector has no RevenueCat project yet
-const RC_KEYS = { ios: '', android: '' }; // Sky Collector has no store apps yet
-const ENTITLEMENT = 'sky_collector_plus'; // RevenueCat → Entitlements (display name Sky Collector Plus)
+// (2026-11-05, app.spacecollector). TEST_KEY is used anywhere when Testing tools → "RevenueCat Test Store" is on.
+const TEST_KEY = 'test_JraFtXiozFSxozSuydeJskzEQGO';
+const RC_KEYS = { ios: 'appl_kcCLaPloJiZyAENoVFnxOxyhGVY', android: 'goog_kzvEVYbcfivjiBzgohQFzqnoKND' };
+const ENTITLEMENT = 'space_collector_plus'; // RevenueCat → Entitlements (display name Space Collector Plus)
 const listeners = new Set();
 const ls = { get: (k) => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
 const testing = () => ls.get('plusTest') === '1';
@@ -24,7 +24,7 @@ export function onPlus(f) { listeners.add(f); return () => listeners.delete(f); 
 // ---- the store (native apps only) ----
 const rc = () => (isNative() ? plugin('Purchases') : null);
 let ready = null;
-// Plus = the sky_collector_plus entitlement; any other active one counts too, in case it’s ever renamed.
+// Plus = the space_collector_plus entitlement; any other active one counts too, in case it’s ever renamed.
 const active = (info) => { const a = info?.entitlements?.active ?? {}; return !!(a[ENTITLEMENT] ?? Object.values(a).find((e) => e?.isActive)); };
 function apply(info, how = 'store') { if (!info) return; const was = isPlus(); ls.set('plusStore', active(info) ? '1' : '0'); emit(was, how); }
 export const rcTestStore = (on) => (on === undefined ? ls.get('rcTestStore') === '1' : ls.set('rcTestStore', on ? '1' : '0'));
@@ -111,11 +111,11 @@ export async function restorePlus() {
 // What Plus adds, in the order the Plus card lists them (2026-10-16, design/plus-sheet-card.html). `why` = the openPlus
 // reason that leads with it (its label turns orange on the card).
 export const PLUS_PERKS = [
-  { why: 'reminders', name: 'Reminders', text: 'A ping before a flight you’re waiting for comes over.' },
-  { why: 'rare', name: 'Rare alerts', text: 'A ping when a new Rare or better flight is heading your way.' },
-  { why: 'widgets', name: 'Widgets', text: 'What’s overhead, on your home and lock screen.' }, // every widget is Plus (2026-10-22, Sevaan)
-  { why: 'shiny', name: 'Shiny forecast', text: 'When a shiny catch is possible: last light, the Moon, straight overhead.' },
-  { why: 'backs', name: 'Card backs', text: '5 more designs, House Livery included, or a random one each flip.' },
+  { why: 'reminders', name: 'Pass reminders', text: 'Alerts for any pass you choose.' },
+  { why: 'rare', name: 'Rare alerts', text: 'A ping when a new Rare or better card passes.' },
+  { why: 'widgets', name: 'Widgets', text: 'Tonight on your home and lock screen.' }, // every widget is Plus (2026-10-22, Sevaan)
+  { why: 'shiny', name: 'Shiny forecast', text: 'When and where a shiny can happen.' },
+  { why: 'backs', name: 'Card backs', text: '6 designs, or a random one each flip.' },
   { why: 'patch', name: 'Member patch', text: 'Only Plus members wear this one.' },
 ];
 // Prices (2026-10-16, Sevaan). The yearly plan has the 7-day free trial; all three are shared with Family Sharing.

@@ -1,18 +1,18 @@
 // Canvas renderer for the sky view. Gnomonic (pinhole camera) projection around where the phone points.
-import { extinction } from './sky-limit.js?v=0.1.1651';
+import { extinction } from './sky-limit.js?v=0.1.1672';
 // Two themes: 'glass' (ink, cream and orange celestial chart) and 'night' (all red, keeps dark adaptation).
-import { pmTime } from './perf-meter.js?v=0.1.1651';
-import { createMilkyGL } from './milkyway-gl.js?v=0.1.1651';
+import { pmTime } from './perf-meter.js?v=0.1.1672';
+import { createMilkyGL } from './milkyway-gl.js?v=0.1.1672';
 
-import { enuFromAzEl, compassPoint } from './orbit.js?v=0.1.1651';
-import { createCloudGL } from './clouds-gl.js?v=0.1.1651';
+import { enuFromAzEl, compassPoint } from './orbit.js?v=0.1.1672';
+import { createCloudGL } from './clouds-gl.js?v=0.1.1672';
 // Cloud colours by light: sunlit tops, shadowed bellies, and the horizon haze they melt into (0–1 RGB).
 const CLOUD_LIGHT = {
   day: { lit: [1, 1, 1], shade: [0.62, 0.68, 0.77], haze: [0.82, 0.87, 0.93] },
   dusk: { lit: [1, 0.8, 0.68], shade: [0.36, 0.33, 0.42], haze: [0.62, 0.5, 0.52] },
   night: { lit: [0.22, 0.25, 0.31], shade: [0.1, 0.12, 0.16], haze: [0.14, 0.15, 0.2] },
 };
-import { TIER_INFO } from './rarity.js?v=0.1.1651';
+import { TIER_INFO } from './rarity.js?v=0.1.1672';
 
 const RAD = Math.PI / 180;
 const SECRET_PX = { santa: 24, roadster: 12.4, voyager: 14.5, voyager2: 14.5, pioneer10: 11.7, pioneer11: 11.7, newhorizons: 6.4, arecibo: 6.9, halley: 8.6, pillars: 9, hdf: 8, m87bh: 8, crab: 8, kepler: 10, sputnik: 11.2, laika: 13.3, wow: 9.8 };
@@ -1612,7 +1612,7 @@ export class SkyView {
     this.drawBackground();
     if (this.lightF < 0.2 && !this.camera) this.drawMilkyWay(milky); // no Milky Way in camera view
     if (sky && this.lightF < 0.6) this.drawStars(sky, { lines: lines && this.dayF < 0.2, time: this.reducedMotion ? 0 : time, starLimit });
-    this.shadowBox = null; /* Sky Collector: no Earth's shadow, it's for satellites (2026-11-15, Sevaan) */
+    this.shadowBox = null; if (this.showShadow !== false) this.drawEarthShadow();
     if (deep?.length && (this.dayF ?? 0) < 0.2) this.drawDeep(deep);
     if (weather && !this.camera) this.drawWeather(weather, this.reducedMotion || this.saver ? 0 : time); // the camera shows the real clouds
     if (bodies) this.drawBodies(bodies);
@@ -1759,7 +1759,7 @@ export class SkyView {
     let hitAt = null;
     for (const a of planes) {
       const p = this.project(a.enu);
-      if (!this.onScreen(p, 20)) continue;
+      if (!this.onScreen(p, 10)) continue;
       // Direction of travel on screen: project a point 1 km further along its track.
       const tr = a.plane.track * RAD, k = a.rangeKm;
       const w = [a.enu[0] * k + Math.sin(tr), a.enu[1] * k + Math.cos(tr), a.enu[2] * k], L = Math.hypot(...w);
@@ -1768,8 +1768,8 @@ export class SkyView {
       ctx.save();
       ctx.translate(p.x, p.y);
       if (q) ctx.rotate(Math.atan2(q.y - p.y, q.x - p.x));
-      ctx.globalAlpha = 1; /* Sky Collector: planes at full strength (2026-11-15, Sevaan: "make them brighter") */
-      this.drawIcon(a.plane.heli ? 'heli' : 'plane', 0, 0, hit ? 27 : (a.plane.heli ? 17 : 15), t.plane); // Sky Collector: planes are the game now, so bigger than satellites were (2026-11-15, Sevaan)
+      ctx.globalAlpha = hit ? 1 : 0.85; /* was .55: too dim (2026-10-30, Sevaan) */
+      this.drawIcon(a.plane.heli ? 'heli' : 'plane', 0, 0, hit ? 20 : 10, hit ? t.plane : t.planeDim); // same scale as satellites (9–12, ×1.3 when targeted)
       ctx.restore();
       if (hit) hitAt = { x: p.x, y: p.y };
     }

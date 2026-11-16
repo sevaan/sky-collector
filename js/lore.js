@@ -4,8 +4,8 @@
 // facts only state what the catalogue says today (orbit, launch date and site) or simple date
 // comparisons. No extrapolating today’s orbit back over decades (lifetime laps or distance).
 
-import { orbitStats, titleCase, siteName, ownerName } from './facts.js?v=0.1.1651';
-import { localText } from './localize.js?v=0.1.1651';
+import { orbitStats, titleCase, siteName, ownerName } from './facts.js?v=0.1.1672';
+import { localText } from './localize.js?v=0.1.1672';
 
 const FAMILY = [
   [/^IRIDIUM 33 DEB/, 'A piece of the **first accidental collision between two intact satellites**: Iridium 33 hit the dead Kosmos 2251 in 2009.'],
@@ -110,7 +110,7 @@ export function computedFacts(o) {
   if (o.incl >= 95 && o.incl <= 100 && ecc != null && ecc < 300 && Math.abs(Math.acos(-(((6378 + (o.apogee + o.perigee) / 2) / 12352) ** 3.5)) * 180 / Math.PI - o.incl) < 1) out.push('Its near-polar orbit has the height and tilt typical of **sun-synchronous satellites**, designed to pass places at roughly the same **local solar time**.');
   else if (o.incl > 105) out.push('It orbits **against Earth’s spin**, heading west, which takes extra rocket power to reach.');
   else if (o.incl >= 80) out.push('Its orbit runs **close to the poles**, so over time it passes above almost every part of Earth.');
-  if (st && ecc != null && ecc < 300) out.push(`It moves about **${st.speed.toFixed(1)} km every second**. That’s Toronto to Montreal in about ${Math.round(504 / st.speed)} seconds.`);
+  if (st && ecc != null && ecc < 300) out.push(`It moves about **${st.speed.toFixed(1)} km every second**. That would carry it across the whole width of Earth, **12,742 km**, in about ${Math.round(12742 / st.speed / 60)} minutes.`);
   if (o.period) out.push(`It goes all the way around Earth in **${Math.round(o.period)} minutes**, about ${Number((1440 / o.period).toFixed(o.period > 144 ? 1 : 0))} times a day.`);
   // The launch record.
   if (o.launch && o.site && siteName(o.site) !== o.site) out.push(`Launched on **${launchDay(o.launch)}** from ${siteName(o.site)}.`);

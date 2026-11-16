@@ -1,4 +1,4 @@
-// The usage page at /api/stats (rebuilt 2026-11-06, Sevaan: "Pretend you own skycollector.app… is it easy to
+// The usage page at /api/stats (rebuilt 2026-11-06, Sevaan: "Pretend you own spacecollector.app… is it easy to
 // understand? is it telling you everything you need to know?"). Pure: event rows in, HTML out, so it can be tried
 // locally with made-up rows (node functions/stats-try.mjs). Days and nights are in Toronto time.
 //
@@ -19,7 +19,7 @@ const ymd = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', mo
 const dayOf = (ts) => ymd.format(new Date(ts));
 // An observing night runs noon to noon, like the game's own nights.
 const nightOf = (ts) => dayOf(ts - 12 * 3600e3);
-const dayNum = (s) => Math.round(Date.parse(`${s}T12:00:00Z`) / DAY);
+const dayNum = (s) => Math.floor(Date.parse(`${s}T12:00:00Z`) / DAY); /* floor, not round: noon is exactly .5 and rounded up, so every date label (numOf) read a day late (2026-11-14) */
 const numOf = (s) => new Date(s * DAY).toISOString().slice(0, 10);
 const when = (ts) => new Date(ts).toLocaleString('en-CA', { timeZone: TZ, month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
 const verNum = (v) => Number(String(v ?? '').split('.').pop()) || 0;
@@ -33,9 +33,21 @@ export const isTest = (e) => e.p === 'web' || (e.x === 1 && verNum(e.v) >= 1518)
 
 // A fresh start (2026-11-06, Sevaan: "reset the stats… the app is now in the App Store, I want to start fresh"): the page
 // counts from midnight Nov 7, 2026 (Toronto). Nothing is deleted; ?before=1 shows the testing weeks before it too.
+// Claude's simulator/emulator playtests on store builds (first 8 characters of the install id), 2026-11-08 to 11-13.
+const MINE = new Set(['dfe644bb', '5055b6cb', 'b034b202', 'fe99c905', 'be2671fd', 'cf39dd97', 'e746bb6a', 'aa697112', '43afc5e9', '64bd12cd', 'c2f77f2b', '53a89706', 'a46e3346', '2e873ae4', '386ed6e9', '7c48acb7', '64ff2c7a', '732d4f9b']);
 export const FRESH = Date.parse('2026-11-07T05:00:00Z');
 export function statsHtml(rows, { all = false, before = false, now = Date.now(), keyQs = '', newCards = null, catalogAt = 0 } = {}) {
-  const ev = rows.filter((e) => (before || e.ts >= FRESH) && (all || !isTest(e))).map((e) => { let d = {}; try { d = JSON.parse(e.d || '{}'); } catch {} return { ...e, d }; }).sort((a, b) => a.ts - b.ts);
+  /* Whose numbers count (2026-11-14, Sevaan: "leave out my devices and my Claude tests"). An install that EVER sent a
+     row marked as a test (Testing tools unlocked by 7 taps on the version line, an Android emulator, a test build) is a
+     test install for all of its rows, before and after: that catches Sevaan's own phone and most of Claude's runs. Tap the
+     version line 7 times on any phone to leave it out from then on, history included. MINE lists Claude's simulator
+     playtests that never unlocked Testing tools (iOS simulators can't be told apart): bursts of 2–7 installs started in the
+     same minute or two, found by hand. A Plus purchase from a build marked as a test is a test purchase, whatever its
+     version. "include tests" brings all of them back. */
+  const testIid = new Set(rows.filter((e) => e.p !== 'web' && isTest(e)).map((e) => e.iid));
+  const testBuy = (e) => e.name === 'plus' && e.x === 1 && /"s"\s*:\s*"buy"/.test(e.d || '');
+  const mine = (e) => MINE.has(String(e.iid).slice(0, 8));
+  const ev = rows.filter((e) => (before || e.ts >= FRESH) && (all || (!isTest(e) && !testIid.has(e.iid) && !mine(e) && !testBuy(e)))).map((e) => { let d = {}; try { d = JSON.parse(e.d || '{}'); } catch {} return { ...e, d }; }).sort((a, b) => a.ts - b.ts);
   const today = dayNum(dayOf(now));
 
   // One record per install.
@@ -398,7 +410,7 @@ ${row('Went out after dark and caught nothing', pct(darkNo, dark.length), `${dar
   html += '</details>';
 
   const dayTitle = new Date(now).toLocaleDateString('en-US', { timeZone: TZ, weekday: 'long', month: 'long', day: 'numeric' });
-  const head = `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><meta name="color-scheme" content="dark"><meta name="theme-color" content="#080f1b"><link rel="icon" type="image/png" href="/icon.png"><link rel="apple-touch-icon" href="/icon.png"><title>Mission Control</title>
+  const head = `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><meta name="color-scheme" content="dark"><title>Mission Control</title>
 <style>${FONTS}:root{--bg:#080f1b;--ink:#e8eef6;--dim:#9fb0c6;--line:#22324a;--grid:#17243a;--gold:#fff2b3;--or:#fa8127;--tile:#0f1a2b;--tile2:#122039;--up:#7fd67f;--down:#ff8a7a;--disp:'SC Display',system-ui,sans-serif;--label:'SC Label','Arial Narrow',system-ui,sans-serif}
 *{box-sizing:border-box}html{background:var(--bg)}body{margin:0;padding:28px 16px 64px;background:radial-gradient(ellipse 120% 60% at 50% -10%,#13233a 0,var(--bg) 60%) no-repeat,var(--bg);color:var(--ink);font:15px/1.45 -apple-system,system-ui,sans-serif}main{max-width:860px;margin:0 auto}
 .eyebrow{font:500 13px var(--label);letter-spacing:.24em;text-transform:uppercase;color:var(--dim)}
@@ -451,7 +463,7 @@ details.long{margin-top:44px;padding-top:18px;border-top:1px solid var(--line)}d
 .hc-col .bar{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:min(70%,18px);background:var(--or);border-radius:4px 4px 0 0}.hc-col .yest{position:absolute;left:50%;transform:translate(-50%,1px);width:min(86%,22px);height:2px;background:#7d8da3;border-radius:2px}
 .hlabs{display:grid;grid-template-columns:repeat(24,1fr);margin-top:6px;font:500 12px var(--label);letter-spacing:.04em;color:var(--dim);white-space:nowrap}.hlabs span{overflow:visible;width:0}.hlabs b{color:var(--or);font-weight:500}
 [data-tip]{cursor:default}</style><main>
-<div class="eyebrow">Sky Collector</div><h1>Mission Control</h1>
+<div class="eyebrow">Space Collector</div><h1>Mission Control</h1>
 <p class="top"><b>${dayTitle}</b> · Toronto time · updated ${clock(now)} · <a href="">refresh</a> (new numbers every 10 minutes)</p>
 <p class="top">${all ? `<b>Everyone, including tests</b> (the website and builds in testing mode) · <a href="?${keyQs}">real players only</a>` : `<b>Real players</b> (the website and tests left out) · <a href="?all=1&amp;${keyQs}">include tests</a>`} · ${before ? `<b>including the testing weeks</b> · <a href="?${all ? 'all=1&amp;' : ''}${keyQs}">from launch only</a>` : `counting from launch (Nov 7, 2026) · <a href="?before=1&amp;${all ? 'all=1&amp;' : ''}${keyQs}">include the testing weeks</a>`} · anonymous: a random ID per install, no places or names</p>`;
   const tipJs = `<div id="tip" role="tooltip"></div><script>(()=>{const t=document.getElementById('tip');let cur=null;const show=(el,x,y)=>{cur=el;t.textContent=el.getAttribute('data-tip');t.classList.add('on');const r=t.getBoundingClientRect();t.style.left=Math.max(8,Math.min(innerWidth-r.width-8,x-r.width/2))+'px';t.style.top=Math.max(8,y-r.height-12)+'px';};const hide=()=>{cur=null;t.classList.remove('on');};

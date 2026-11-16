@@ -1,10 +1,9 @@
 // Shared catalogue → card mapping. Fleets (Starlink, OneWeb, Qianfan, Kuiper, Globalstar, Orbcomm, Iridium) are one fleet
 // card each; every launch in the fleet is a stamp on that card. Other objects are one card each.
-import { assignSets } from './sets.js?v=0.1.1651';
-import { tierFor } from './rarity.js?v=0.1.1651';
-import { fallAt, bumpTier } from './last-chance.js?v=0.1.1651';
-import { NATURAL } from './natural.js?v=0.1.1651';
-import { skyStampKey } from './sky-cards.js?v=0.1.1651';
+import { assignSets } from './sets.js?v=0.1.1672';
+import { tierFor } from './rarity.js?v=0.1.1672';
+import { fallAt, bumpTier } from './last-chance.js?v=0.1.1672';
+import { NATURAL } from './natural.js?v=0.1.1672';
 
 // Fleet members carry their launch key in the catalogue (`card` = 'STARLINK:2024-012'). That’s the
 // stamp; the card itself is the fleet ('STARLINK').
@@ -15,7 +14,7 @@ export const MOON_PHASES = ['New Moon', 'Waxing crescent', 'First quarter', 'Wax
 export function moonPhaseAt(t) { const f = ((((t - Date.UTC(2000, 0, 6, 18, 14)) / 86400e3 / 29.530588853) % 1) + 1) % 1; return Math.floor(f * 8 + 0.5) % 8; }
 export const moonPhaseOf = (stampKey) => { const m = /^MOON:(\d)$/.exec(stampKey ?? ''); return m ? Number(m[1]) : null; };
 // t: the sighting’s time (the Moon’s stamp depends on when you saw it; fleets' don’t).
-export const stampKeyFor = (o, t = null) => (o.sky ? skyStampKey(o.sky, t ?? Date.now(), o.hex) : o.family && o.card ? String(o.card) : o.type === 'moon' && o.natural && t != null ? `MOON:${moonPhaseAt(t)}` : null); // Sky Collector: a flight's stamp is the day, a plane type's the aircraft (js/sky-cards.js)
+export const stampKeyFor = (o, t = null) => (o.family && o.card ? String(o.card) : o.type === 'moon' && o.natural && t != null ? `MOON:${moonPhaseAt(t)}` : null);
 
 // Sightings saved before fleet cards (up to v0.1.55) have cardKey = the launch key. Read them as
 // fleet card + stamp without rewriting what’s stored.

@@ -1,37 +1,22 @@
-import { SETS, goldAlbums } from './sets.js?v=0.1.1651';
-import { isPlus } from './plus.js?v=0.1.1651';
+import { SETS, goldAlbums } from './sets.js?v=0.1.1672';
+import { isPlus } from './plus.js?v=0.1.1672';
 // Card backs you can choose (2026-10-16, design/card-backs.html, Sevaan liked all six). Mission Control is everyone’s;
 // Plus unlocks the rest; two can also be earned free: Golden Record (find the Pale Blue Dot story) and Star Chart
 // (complete 10 constellations); main.js writes what’s been earned to localStorage 'backEarned'. The choice is
 // localStorage 'cardBack': a back’s id, or 'random' for a different unlocked one each time a card turns over.
 export const CARD_BACKS = [
-  // Sky Collector's backs (2026-11-15, Sevaan): painted with Nano Banana Pro like Space Collector's (scripts/art/gen-back.py,
-  // prompts in scripts/art/back-prompts/). Airline Ticket is everyone's (Sevaan's pick from design room 3); Turbofan and Cheatline were defaults before it; the rest
-  // come with Plus, to be curated later.
-  { id: 'airline-ticket', bg: '#f3ead2', name: 'Airline Ticket', url: 'assets/art/backs/back-airline-ticket.webp', title: 'middle', free: true }, // classic playing-card back, design room 3 (Sevaan's default, 2026-11-15)
-  { id: 'turbofan', bg: '#0d2238', name: 'Turbofan', url: 'assets/art/backs/back-turbofan.webp', title: 'middle' }, // the default before Airline Ticket
-  { id: 'cheatline', bg: '#031622', name: 'Cheatline', url: 'assets/art/backs/back-cheatline.webp', title: 'middle' },
-  { id: 'fleet', bg: '#66b7d4', name: 'The Fleet', url: 'assets/art/backs/back-fleet.webp', title: 'middle' },
-  { id: 'first-class', bg: '#98a2a6', name: 'First Class', url: 'assets/art/backs/back-first-class.webp', title: 'middle' },
-  { id: 'endpaper', bg: '#8abfcf', name: 'Endpaper', url: 'assets/art/backs/back-endpaper.webp', title: 'middle' },
-  { id: 'contrail', bg: '#f9ebca', name: 'Contrail', url: 'assets/art/backs/back-contrail.webp', title: 'middle' },
-  { id: 'engine', bg: '#5ca5ce', name: 'Engine', url: 'assets/art/backs/back-engine.webp', title: 'middle' },
-  { id: 'aluminium', bg: '#5393c1', name: 'Aluminium', url: 'assets/art/backs/back-aluminium.webp', title: 'middle' },
-  { id: 'window-seat', bg: '#f7e9c6', name: 'Window Seat', url: 'assets/art/backs/back-window-seat.webp', title: 'middle' },
-  { id: 'airmail', bg: '#fcf2d7', name: 'Airmail', url: 'assets/art/backs/back-airmail.webp', title: 'middle' },
-  { id: 'propeller-note', bg: '#fcf5e2', name: 'Propeller Note', url: 'assets/art/backs/back-propeller-note.webp', title: 'middle' },
-  { id: 'wings-pin', bg: '#74a3be', name: 'Wings Pin', url: 'assets/art/backs/back-wings-pin.webp', title: 'middle' },
-  { id: 'sky', bg: '#8bb2c3', name: 'Daylight Seal', url: 'assets/art/backs/back-sky.webp', title: 'middle' },
-  { id: 'livery', bg: '#1c3550', name: 'House Livery', url: 'assets/art/backs/back-livery.webp', title: 'middle' }, // Sky Collector's own airline paint scheme (2026-11-15, Sevaan's idea)
-  { id: 'golden-age', bg: '#0c1c34', name: 'Golden Age', url: 'assets/art/backs/back-golden-age.webp', title: 'middle' },
-  { id: 'wings', bg: '#010e1a', name: 'Pilot Wings', url: 'assets/art/backs/back-wings.webp', title: 'middle' },
-  { id: 'altimeter', bg: '#051723', name: 'Altimeter', url: 'assets/art/backs/back-altimeter.webp', title: 'middle' },
-  { id: 'sky-blueprint', bg: '#164f86', name: 'Blueprint', url: 'assets/art/backs/back-sky-blueprint.webp', title: 'middle' },
+  { id: 'mission-control', bg: '#01121c', name: 'Mission Control', url: 'assets/art/backs/back-collector.webp', title: 'middle', free: true },
+  { id: 'golden-record', bg: '#031622', name: 'Golden Record', url: 'assets/art/backs/back-golden-record.webp', title: 'middle', earn: 'Find the Pale Blue Dot story' },
+  { id: 'star-chart', bg: '#02151e', name: 'Star Chart', url: 'assets/art/backs/back-star-chart.webp', title: 'middle', earn: 'Complete 10 constellations' },
+  { id: 'mission-patch', bg: '#071723', name: 'Mission Patch', url: 'assets/art/backs/back-mission-patch.webp', title: 'middle' },
+  { id: 'blueprint', bg: '#124e87', name: 'Blueprint', url: 'assets/art/backs/back-blueprint.webp', title: 'middle' },
+  { id: 'aurora', bg: '#021520', name: 'Northern Lights', url: 'assets/art/backs/back-aurora.webp', title: 'middle' },
+  { id: 'nebula-foil', bg: '#152338', name: 'Nebula Foil', url: 'assets/art/backs/back-nebula-foil.webp', title: 'middle' },
 ];
 const read = (k, d) => { try { return localStorage.getItem(k) ?? d; } catch { return d; } };
 export const backEarned = () => { try { return new Set(JSON.parse(read('backEarned', '[]'))); } catch { return new Set(); } };
 export const backUnlocked = (b) => !!b && (b.free || isPlus() || backEarned().has(b.id));
-export const chosenBack = () => read('cardBack', 'airline-ticket');
+export const chosenBack = () => read('cardBack', 'mission-control');
 export function chooseBack(id) { try { localStorage.setItem('cardBack', id); } catch {} last = null; next = pick(); preload(next); }
 const pool = () => { const c = chosenBack(); if (c === 'random') { const u = CARD_BACKS.filter(backUnlocked); return u.length ? u : [CARD_BACKS[0]]; } const b = CARD_BACKS.find((x) => x.id === c); return [backUnlocked(b) ? b : CARD_BACKS[0]]; };
 let last = null;

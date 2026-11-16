@@ -100,7 +100,7 @@ html[data-theme='night'] .send-view, body.night .send-view { filter: none; }
 #gift .gp-skin > div { position: absolute; inset: 0; pointer-events: none; }
 #gift .gp-base { background: radial-gradient(ellipse at 50% 40%, #13243a, #070d18 75%); }
 #gift .gp-art { background: linear-gradient(120deg, #7a5a14, #f7d77a 30%, #a87d22 45%, #fff2c2 55%, #b88a2a 70%, #f0c860) calc(var(--mx, 50) * 1%) 0 / 260% 100%;
-  -webkit-mask: url('../assets/art/backs/back-sky-mask.webp') 50% 52% / 118% auto no-repeat; mask: url('../assets/art/backs/back-sky-mask.webp') 50% 52% / 118% auto no-repeat; /* an alpha mask: WKWebView ignores mask-mode luminance (iPhone 14 simulator 2026-11-07) */ opacity: .95; }
+  -webkit-mask: url('../assets/art/backs/back-collector-mask.webp') 50% 52% / 118% auto no-repeat; mask: url('../assets/art/backs/back-collector-mask.webp') 50% 52% / 118% auto no-repeat; /* an alpha mask: WKWebView ignores mask-mode luminance (iPhone 14 simulator 2026-11-07) */ opacity: .95; }
 #gift .gp-lines { background: repeating-linear-gradient(0deg, #ffffff06 0 1px, transparent 1px 3px); }
 #gift .gp-glow { background: radial-gradient(circle at calc(var(--mx, 50) * 1%) calc(var(--my, 40) * 1%), #ffe9a855, transparent 45%); mix-blend-mode: soft-light; }
 #gift .gp-seam { top: calc(var(--ph) * .14 - 1px) !important; bottom: auto !important; height: 2px; background: repeating-linear-gradient(90deg, #f7d77a99 0 6px, transparent 6px 11px); opacity: .7; }
@@ -177,7 +177,7 @@ body.night #gift { filter: none; }
 .sv-bag > div { position: absolute; inset: 0; }
 .sv-pk-base { background: radial-gradient(ellipse at 50% 40%, #13243a, #070d18 75%); }
 .sv-pk-art { background: linear-gradient(120deg, #7a5a14, #f7d77a 30%, #a87d22 45%, #fff2c2 55%, #b88a2a 70%, #f0c860) 0 0 / 260% 100%; animation: sv-foil 6s ease-in-out infinite alternate;
-  -webkit-mask: url('../assets/art/backs/back-sky-mask.webp') 50% 52% / 118% auto no-repeat; mask: url('../assets/art/backs/back-sky-mask.webp') 50% 52% / 118% auto no-repeat; }
+  -webkit-mask: url('../assets/art/backs/back-collector-mask.webp') 50% 52% / 118% auto no-repeat; mask: url('../assets/art/backs/back-collector-mask.webp') 50% 52% / 118% auto no-repeat; }
 @keyframes sv-foil { to { background-position: 100% 0; } }
 .sv-pk-crimp { height: 18px; bottom: auto !important; background: repeating-linear-gradient(90deg, #ffffff22 0 1.5px, #00000033 1.5px 4px); mix-blend-mode: overlay; }
 .sv-pk-crimp.b { top: auto !important; bottom: 0 !important; }

@@ -1,28 +1,26 @@
 // Retro space-age cards. Text remains live; the foil follows pointer or optional phone tilt.
-import { fallWords } from './last-chance.js?v=0.1.1651';
-import { useMiles } from './units.js?v=0.1.1651';
-import { feel } from './native.js?v=0.1.1651';
-import { sfx } from './sfx.js?v=0.1.1651';
-import { cardArt } from './art.js?v=0.1.1651';
-import { TIER_INFO } from './rarity.js?v=0.1.1651';
-import { SET_BY_ID } from './sets.js?v=0.1.1651';
-import { TYPE_LABEL, orbitStats, sizeLabel, formatDate, titleCase } from './facts.js?v=0.1.1651';
-import { FLEET_ABOUT, fleetAbout, factSourceUrl, debrisOf, roleOf, ownerWord, titleFor, factFor, yearsUp, lapsPerDay, thirdStat, richText, seriesKeyOf } from './lore.js?v=0.1.1651';
-import { artFileFor } from './art-keys.js?v=0.1.1651';
-import { ART_FILES, ART_STARS } from './art-files.js?v=0.1.1651';
+import { fallWords } from './last-chance.js?v=0.1.1672';
+import { useMiles } from './units.js?v=0.1.1672';
+import { feel } from './native.js?v=0.1.1672';
+import { sfx } from './sfx.js?v=0.1.1672';
+import { cardArt } from './art.js?v=0.1.1672';
+import { TIER_INFO } from './rarity.js?v=0.1.1672';
+import { SET_BY_ID } from './sets.js?v=0.1.1672';
+import { TYPE_LABEL, orbitStats, sizeLabel, formatDate, titleCase } from './facts.js?v=0.1.1672';
+import { FLEET_ABOUT, fleetAbout, factSourceUrl, debrisOf, roleOf, ownerWord, titleFor, factFor, yearsUp, lapsPerDay, thirdStat, richText, seriesKeyOf } from './lore.js?v=0.1.1672';
+import { artFileFor } from './art-keys.js?v=0.1.1672';
+import { ART_FILES, ART_STARS } from './art-files.js?v=0.1.1672';
 /* the orbit view (and its 66 KB coastline) loads when a card first needs it (perf audit 2026-10-29) */
-let orbitP = null; const orbitMod = () => (orbitP ??= import('./orbit-view.js?v=0.1.1651'));
-import { ART_SHARED } from './art-shared.js?v=0.1.1651';
-import { ART_CREDITS } from './art-credits.js?v=0.1.1651';
-import { stampsIn, fleetLevel, fleetThresholds, sightingKeys, MOON_PHASES, moonPhaseOf } from './card-model.js?v=0.1.1651';
-import { nightsIn } from './observation.js?v=0.1.1651';
-import { CON_BY_ID, conProgress } from './constellations.js?v=0.1.1651';
-import { SHINY } from './shiny.js?v=0.1.1651';
-import { conArt, cometArt } from './con-art.js?v=0.1.1651';
-import { CON_FIGURES } from './con-figures.js?v=0.1.1651';
-import { localText } from './localize.js?v=0.1.1651';
-import { isSkyCard, skyStampInfo, skyTypeCode } from './sky-cards.js?v=0.1.1651';
-import { flightCardHtml, planeCardHtml } from './flight-card.js?v=0.1.1651';
+let orbitP = null; const orbitMod = () => (orbitP ??= import('./orbit-view.js?v=0.1.1672'));
+import { ART_SHARED } from './art-shared.js?v=0.1.1672';
+import { ART_CREDITS } from './art-credits.js?v=0.1.1672';
+import { stampsIn, fleetLevel, fleetThresholds, sightingKeys, MOON_PHASES, moonPhaseOf } from './card-model.js?v=0.1.1672';
+import { nightsIn } from './observation.js?v=0.1.1672';
+import { CON_BY_ID, conProgress } from './constellations.js?v=0.1.1672';
+import { SHINY } from './shiny.js?v=0.1.1672';
+import { conArt, cometArt } from './con-art.js?v=0.1.1672';
+import { CON_FIGURES } from './con-figures.js?v=0.1.1672';
+import { localText } from './localize.js?v=0.1.1672';
 // The animal/symbol figure belongs to the completed (gold) constellation card only (2026-10-05): a single
 // star’s card draws just the star pattern with its star marked, so the figure is a reward for finishing the set.
 // A star card’s constellation figure comes into focus as you collect the constellation’s stars (design/con-focus.html B).
@@ -167,27 +165,7 @@ function lcMark(o) {
   if (o.archived && Date.now() > o.fallAt - 5 * 86400e3) return `<span class="card__burned">BURNED UP ~${day}</span>`;
   return `<span class="card__lc">LAST CHANCE · ${fallWords(o.fallAt).toUpperCase()}</span>`;
 }
-// Sky Collector's flights and planes (Milestone 1.5, 2026-11-15): Space Collector's card element (.card, so its tilt, flip,
-// spin, share capture and level classes all apply) holding the plane card's own face (js/flight-card.js). Stamps and
-// level come from the card's sightings (js/sky-cards.js).
-function renderSkyCard(o0, opts) {
-  const o = { ...o0, type: skyTypeCode(o0, opts.sightings) };
-  const sightings = (opts.sightings ?? []).filter((s) => !s.sim), own = sightings.filter((s) => s.via !== 'gift');
-  const by = (f) => (own.length ? own.reduce((a, b) => (f(a.time, b.time) ? a : b)) : null), first = by((x, y) => x < y), last = by((x, y) => x > y);
-  const stampInfo = skyStampInfo(o, sightings), caughtAt = first ? new Date(first.time) : null;
-  const html = o.sky === 'flight'
-    ? flightCardHtml(o, { caughtAt, heightFt: last?.altFt, sightings: own.length, type: last?.typeCode, planeName: last?.plane?.name, eager: !opts.mini, stampInfo, newStamp: !!opts.newStamp })
-    : planeCardHtml(o, { caughtAt, heightFt: last?.altFt, speedKmh: Math.round((last?.gsKt ?? 0) * 1.852), awayKm: Math.round(last?.rangeKm ?? 0), sightings: own.length, stampInfo, newStamp: !!opts.newStamp, callsign: last?.callsign });
-  const el = document.createElement('article');
-  el.className = `card card--sky card--${o.sky} tier-${o.tier ?? 'common'} level-${opts.forceLevel ?? stampInfo.level}${own.length || opts.preview ? '' : ' card--unseen'}`;
-  el.dataset.id = o.id; el.setAttribute('aria-label', `${o.name}, ${TIER_INFO[o.tier]?.label ?? 'Common'}, ${own.length ? 'collected' : 'not collected'}`);
-  el.innerHTML = `${html}<div class="card__back"></div>`;
-  el._card = o;
-  return el;
-}
-
 export function renderCard(o, opts = {}) {
-  if (isSkyCard(o)) return renderSkyCard(o, opts);
   const sightings = (opts.sightings ?? []).filter((s) => !s.sim);
   const own = sightings.filter((s) => s.via !== 'gift'); /* a card you were sent is yours but has no date, nights or level of yours (2026-11-11) */
   // A constellation card is earned by its stars: opts.ownedKeys = card keys you own; opts.sightings = theirs.
@@ -263,7 +241,7 @@ export function renderCard(o, opts = {}) {
     ${tempStrip(o)}
     <div class="card__stats m4" style="--n:${four.length}">${four.map(inUnits).map(([label, value, unit], i) => `<div><span class="card__label">${esc(localText(label))}</span><b${nat ? statClass(value, unit, i) : ''}>${esc(value).replace(/(\d)\.(\d)/g, '$1<i class="dp">.</i>$2') /* the display font's point nearly vanishes: 2.3 read 23 (web playtest 2026-10-22) */}${unit ? `<small>${esc(unit)}</small>` : ''}</b></div>`).join('')}</div>
     ${factBlock}
-    <div class="card__footer"><span class="card__status${caught ? ' is-collected' : ''}"><span class="card__status-icon" aria-hidden="true">${caught ? '✓' : ''}</span><span>${caught ? (firstDate ? `COLLECTED · ${esc(firstDate)}` : 'COLLECTED') : 'NOT YET COLLECTED'}</span>${caught && !o.natural && (own.length || fleet) ? `<span class="card__seen-count">${seenLine(level, conCard || fleet ? 0 : nightsIn(own), fleet ? sightings.length : own.length)}</span>` : ''}</span><span class="card__brand">${o.setNumber && o.setSize > 1 ? `<small class="card__no">${String(o.setNumber).padStart(String(o.setSize).length, '0')}/${o.setSize}</small>` : ''}SKY COLLECTOR</span></div>
+    <div class="card__footer"><span class="card__status${caught ? ' is-collected' : ''}"><span class="card__status-icon" aria-hidden="true">${caught ? '✓' : ''}</span><span>${caught ? (firstDate ? `COLLECTED · ${esc(firstDate)}` : 'COLLECTED') : 'NOT YET COLLECTED'}</span>${caught && !o.natural && (own.length || fleet) ? `<span class="card__seen-count">${seenLine(level, conCard || fleet ? 0 : nightsIn(own), fleet ? sightings.length : own.length)}</span>` : ''}</span><span class="card__brand">${o.setNumber && o.setSize > 1 ? `<small class="card__no">${String(o.setNumber).padStart(String(o.setSize).length, '0')}/${o.setSize}</small>` : ''}SPACE COLLECTOR</span></div>
     <div class="card__shine"></div><div class="card__glare"></div>${opts.mini ? '' : '<div class="card__grain"></div><div class="card__coat"></div>'}
     <div class="card__back" aria-hidden="true"><div class="back-holo"></div><div class="back-glare"></div></div>
     ${extinct ? `<div class="card__stamp">REENTERED${o.decay ? `<small>${esc(formatDate(o.decay)).toUpperCase()}</small>` : ''}</div>` : ''}
@@ -385,7 +363,7 @@ export function renderCardTile(o, opts = {}) {
   tile.type = 'button';
   const conDone = (conCard && caught) || (!!o.launches && fleetLevel(o.family, stampsIn(sightings).size) === 'gold');
   const shinyTile = !o.launches && sightings.some((x) => x.shiny && SHINY[x.shiny]);
-  const lvl = caught && isSkyCard(o) ? skyStampInfo(o, sightings).level : caught && !conCard && !o.launches ? cardLevel(sightings.filter((x) => x.via !== 'gift'), o) : null, lvlUp = lvl === 'silver' || lvl === 'gold'; // a level badge on the tile (collectors 2026-10-11)
+  const lvl = caught && !conCard && !o.launches ? cardLevel(sightings.filter((x) => x.via !== 'gift'), o) : null, lvlUp = lvl === 'silver' || lvl === 'gold'; // a level badge on the tile (collectors 2026-10-11)
   tile.className = `card-tile card-tile--retro${o.icon ? ' is-icon' : ''}${caught ? ' is-owned' : ''}${conDone ? ' gold-foil' : ''}${shinyTile ? ' shiny' : ''}${lvlUp ? ` lvl-${lvl}` : ''}`;
   tile.style.setProperty('--set', set.color); tile.style.setProperty('--tier', tier.color);
   const hide = o.story && !caught; // an unfound story stays a secret, read aloud too (QA 2026-10-16)

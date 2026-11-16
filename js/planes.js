@@ -190,3 +190,22 @@ export function aircraftName(p) { return TYPES[p.type] ?? (p.desc ? p.desc.repla
 // broadcast a category). Covers the common civil, medical, police and military types.
 const HELI_TYPES = /^(A1(09|19|39|69|89)|AS(32|35|50|55|65)|AW(09|39|69|89)|B(06|05|07|12|17|22|212|412|407|429|505)|B4(07|12|29)|BK17|EC(20|25|30|35|45|55|75|130|135|145|155|175|225)|EH10|EN(28|48)|EXPL|H(12|13|25|46|47|53|60|64|72)|H1(25|30|35|45|55|60|75)|H(215|225)|HUCO|K(32|MAX)|LYNX|MI(2|8|17|24|26)|NH90|PUMA|R(22|44|66)|S(55|58|61|64|70|76|92)|SCHW|TIGR|UH1|UH60|V22|NOTA)$/;
 export function isHelicopter(p) { return p.category === 'A7' || HELI_TYPES.test(String(p.type ?? '').toUpperCase()); }
+
+/* The rest of the world (2026-11-15, Sevaan: "does it work anywhere?"): major airlines by ICAO code, so flights outside
+   North America and Europe get a name even when the route lookup has none. */
+Object.assign(AIRLINES, {
+  QFA: 'Qantas', JST: 'Jetstar', VOZ: 'Virgin Australia', ANZ: 'Air New Zealand', SIA: 'Singapore Airlines', TGW: 'Scoot',
+  MAS: 'Malaysia Airlines', AXM: 'AirAsia', THA: 'Thai Airways', GIA: 'Garuda Indonesia', PAL: 'Philippine Airlines', CEB: 'Cebu Pacific',
+  VNA: 'Vietnam Airlines', VJC: 'VietJet', CCA: 'Air China', CES: 'China Eastern', CSN: 'China Southern', CHH: 'Hainan Airlines',
+  CXA: 'Xiamen Airlines', CSC: 'Sichuan Airlines', EVA: 'EVA Air', CAL: 'China Airlines', AIC: 'Air India', IGO: 'IndiGo',
+  AAR: 'Asiana', JJA: 'Jeju Air', HKE: 'HK Express', APJ: 'Peach', JTA: 'Japan Transocean Air', SVA: 'Saudia', ELY: 'El Al',
+  MEA: 'Middle East Airlines', GFA: 'Gulf Air', OMA: 'Oman Air', KAC: 'Kuwait Airways', FDB: 'flydubai', ABY: 'Air Arabia',
+  RJA: 'Royal Jordanian', MSR: 'EgyptAir', ETH: 'Ethiopian', KQA: 'Kenya Airways', SAA: 'South African Airways', RAM: 'Royal Air Maroc',
+  RYR: 'Ryanair', EZY: 'easyJet', EJU: 'easyJet', EZS: 'easyJet', WZZ: 'Wizz Air', NAX: 'Norwegian', NSZ: 'Norwegian', FIN: 'Finnair',
+  LOT: 'LOT Polish Airlines', ITY: 'ITA Airways', VLG: 'Vueling', EWG: 'Eurowings', CFG: 'Condor', TOM: 'TUI', BEL: 'Brussels Airlines',
+  AEE: 'Aegean', TVF: 'Transavia', TRA: 'Transavia', CSA: 'Czech Airlines', SXS: 'SunExpress', PGT: 'Pegasus', AFL: 'Aeroflot',
+  LOG: 'Loganair', SHT: 'British Airways', CLH: 'Lufthansa CityLine', DLA: 'Air Dolomiti', CLX: 'Cargolux', GEC: 'Lufthansa Cargo',
+  BCS: 'DHL', DHK: 'DHL', LAN: 'LATAM', TAM: 'LATAM', LPE: 'LATAM', GLO: 'Gol', AZU: 'Azul', AVA: 'Avianca', CMP: 'Copa Airlines',
+  ARG: 'Aerolíneas Argentinas', VIV: 'Viva Aerobus', VOI: 'Volaris', HAL: 'Hawaiian', SCX: 'Sun Country', MXY: 'Breeze',
+  GTI: 'Atlas Air', ABX: 'ABX Air', CKS: 'Kalitta Air',
+});

@@ -3,7 +3,7 @@
 # card's framing) so the figure lands on its stars.
 import base64, json, subprocess, sys, urllib.request, os, time
 D = os.path.dirname(os.path.abspath(__file__))
-URL = 'https://aiplatform.googleapis.com/v1/projects/sky-collector-510722/locations/global/publishers/google/models/gemini-3-pro-image:generateContent'
+URL = 'https://aiplatform.googleapis.com/v1/projects/space-collector-510722/locations/global/publishers/google/models/gemini-3-pro-image:generateContent'
 tok = [None, 0]
 def token():
   if time.time() - tok[1] > 1800: tok[0] = subprocess.check_output([os.path.expanduser('~/google-cloud-sdk/bin/gcloud'), 'auth', 'print-access-token']).decode().strip(); tok[1] = time.time()

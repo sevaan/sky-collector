@@ -1,6 +1,6 @@
 // Sighting log in IndexedDB. Small, promise-based, no dependencies.
 
-const DB_NAME = 'sky-collector';
+const DB_NAME = 'space-collector';
 const STORE = 'sightings';
 
 let dbPromise;

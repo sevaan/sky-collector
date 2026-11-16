@@ -62,7 +62,7 @@ async function cached(name, url, delayMs = 0) {
   for (let attempt = 0; attempt < 5; attempt++) {
     if (attempt) await sleep(5000 * 2 ** (attempt - 1)); // 5, 10, 20, 40 s
     try {
-      res = await fetch(url, { headers: { 'User-Agent': 'sky-collector (github.com/sevaan/sky-collector)' } });
+      res = await fetch(url, { headers: { 'User-Agent': 'space-collector (github.com/sevaan/space-collector)' } });
       if (res.ok) break;
       lastErr = new Error(`${url}: HTTP ${res.status}`);
       if (res.status < 500 && res.status !== 429) throw lastErr; // a real 4xx won't fix itself

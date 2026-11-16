@@ -887,7 +887,7 @@ body.night .rc-plus { color: #ff6a55; }
 .set-range::-moz-range-track { height: 4px; border-radius: 99px; background: #2a3a4c; }
 .set-range::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; margin-top: -9px; border-radius: 50%; background: var(--gold); border: 0; }
 .set-range::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: var(--gold); border: 0; }
-/* Sky Collector Plus (2026-10-11) */
+/* Space Collector Plus (2026-10-11) */
 .plus-tag { display:inline-block; margin-left:.5em; padding:1px 6px 0; border-radius:99px; border:1px solid color-mix(in srgb,var(--gold) 60%,transparent); color:var(--gold); font:500 12px/1.4 var(--label); letter-spacing:.12em; vertical-align:2px; }
 .plus-perks { list-style:none; margin:4px 0 16px; padding:0; display:grid; gap:10px; max-height:46vh; overflow:auto; }
 .plus-perks li { display:flex; gap:12px; align-items:flex-start; }
@@ -3667,7 +3667,7 @@ body.night .tc .acts .yes { background-image: none; box-shadow: 0 3px 0 #3a0b07,
 .tc .art > .starfield { position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; border-radius: inherit; }
 .tc .art > svg { position: relative; z-index: 1; }
 
-/* Night 2 as Sky Collector talking to you (2026-11-13, Sevaan; design/night2-chat.html B, js/main.js nightTwoCard):
+/* Night 2 as Space Collector talking to you (2026-11-13, Sevaan; design/night2-chat.html B, js/main.js nightTwoCard):
    the app's icon, a short thread of bubbles, the headliner attached as a small card, replies worded like answers. */
 .n2-chat { margin: 14px 0 4px; }
 .n2-who { font: 500 12.5px 'SC Label', sans-serif; letter-spacing: .2em; text-transform: uppercase; color: var(--ui-muted, #a9b3c2); margin: 0 0 5px 46px; }

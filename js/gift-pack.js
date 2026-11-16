@@ -6,8 +6,8 @@
 //         renderCard, attachTilt, artImage, applyBack, sfx, feel, tierColor }
 const wait = (ms, reduced) => new Promise((r) => setTimeout(r, reduced ? Math.min(ms, 120) : ms));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-import { TIERS, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1651';
-import { attachGyro } from './card.js?v=0.1.1651';
+import { TIERS, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1672';
+import { attachGyro } from './card.js?v=0.1.1672';
 // Cards turn with the catch reveal's own flip and rarity table (js/card-moment.js, 2026-11-11): one turn for a catch, a
 // gift and the morning pack.
 // A tap that answers on the finger lifting, like main.js tapOn: the pack animates every frame, and WebKit drops a click
@@ -255,7 +255,7 @@ export function playPack(o) {
       el.innerHTML = `<div class="gp-sum" role="group" aria-label="${esc(from)}"><div class="gp-sbar"><span>${esc(from)}</span><span>${esc(o.dateLabel ?? '')}</span></div>
         <h2>${o.count} card${o.count === 1 ? '' : 's'}</h2><p>${o.subHtml ?? `${o.newCount ? `<b>${o.newCount} new</b> to you` : 'None new to you'}${upd ? ` · <b>${upd}</b> you have, with more` : ''}`}</p>
         <div class="gp-fan"></div><div class="gp-stats"${o.stats?.length ? '' : ' hidden'}>${statsHtml(o.stats)}</div><div class="gp-patches" hidden></div>
-        <div class="gp-sfoot"><span>${esc(o.footLeft ?? '')}</span><span>Sky Collector</span></div></div>
+        <div class="gp-sfoot"><span>${esc(o.footLeft ?? '')}</span><span>Space Collector</span></div></div>
         <div class="gp-btns">${o.rowHtml ? `<button class="gp-row" type="button">${o.rowHtml}</button>` : ''}<button class="go" type="button">${esc(o.goLabel ?? 'See them in your collection')}</button><button class="later" type="button">${esc(o.laterLabel ?? 'Done')}</button></div>`;
       root.appendChild(el); sfx('complete', 0.9);
       /* The night's best five as a fan in the middle (2026-11-11, Sevaan), best in front and centre, "+N more" under it when

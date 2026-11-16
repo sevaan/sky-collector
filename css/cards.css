@@ -607,7 +607,7 @@
 .card--mission .m-chip.m-reunion { top: auto; bottom: .65em; left: .65em; color: #7fe0c4; border: .07em solid #7fe0c466; letter-spacing: .14em; }
 :where(html[data-theme="night"], body.night) .card--mission .m-chip.m-reunion { color: #ff7f70; border-color: #ff7f7066; }
 /* Playtest 2026-10-18: the mini card's status line ("SE · 16° up") sat on the frame; a little smaller, more room under
-   it. The SKY COLLECTOR mark in a card's footer keeps a hair of space from the inner frame. */
+   it. The SPACE COLLECTOR mark in a card's footer keeps a hair of space from the inner frame. */
 .mini-face .mini-status { font-size: 2.1em; line-height: 1.1; }
 .mini-face .card__footer { padding-bottom: .9em; }
 .card--retro .card__brand { padding-right: .4em; }

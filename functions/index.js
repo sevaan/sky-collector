@@ -1,5 +1,5 @@
-// Sky Collector server on Firebase (2026-10-26, Sevaan: "Go with Firebase"). A Cloud Run function ("api", Node 22) in
-// the personal project sky-collector-91cc7, served through Firebase Hosting at https://skycollector.app/api/…, so
+// Space Collector server on Firebase (2026-10-26, Sevaan: "Go with Firebase"). A Cloud Run function ("api", Node 22) in
+// the personal project space-collector-91cc7, served through Firebase Hosting at https://spacecollector.app/api/…, so
 // the Hosting CDN caches what it can (Cache-Control s-maxage) and nearby players share upstream requests.
 // Deployed with gcloud (personal login), never the firebase CLI. Same routes as worker/src/index.js:
 //   GET  /api/wx?lat&lon        MET Norway (CC BY 4.0), reshaped for js/weather.js; cached 30 min per 0.1°
@@ -14,8 +14,8 @@ import functions from '@google-cloud/functions-framework';
 import { Firestore } from '@google-cloud/firestore';
 import { statsHtml } from './stats-page.js';
 const db = new Firestore();
-const ALLOWED = [/^https:\/\/sevaan\.github\.io$/, /^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/, /^capacitor:\/\/localhost$/, /^https:\/\/localhost$/, /^https:\/\/skycollector\.app$/];
-const UA = 'SkyCollector/1.0 (https://skycollector.app; hello@skycollector.app)';
+const ALLOWED = [/^https:\/\/sevaan\.github\.io$/, /^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/, /^capacitor:\/\/localhost$/, /^https:\/\/localhost$/, /^https:\/\/spacecollector\.app$/];
+const UA = 'SpaceCollector/1.0 (https://spacecollector.app; hello@spacecollector.app)';
 const REPO_RAW = 'https://raw.githubusercontent.com/sevaan/space-collector-data/main/'; // public copy of data/ (the game's repo went private 2026-11-06)
 const mem = new Map(); // per-instance cache on top of the CDN's
 async function cached(key, ms, make) { const h = mem.get(key); if (h && Date.now() - h.at < ms) return h.body; const body = await make(); if (body != null) { mem.set(key, { at: Date.now(), body }); if (mem.size > 2000) mem.clear(); } return body; }
@@ -46,7 +46,11 @@ async function weather(p) {
   });
 }
 async function planes(p, d) {
-  return cached(`planes/${p.lat},${p.lon},${d}`, 8e3, async () => { const r = await fetch(`https://api.adsb.lol/v2/point/${p.lat}/${p.lon}/${d}`, { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(4000) }); return r.ok ? await r.text() : null; });
+  return cached(`planes/${p.lat},${p.lon},${d}`, 8e3, async () => {
+    try { const r = await fetch(`https://api.adsb.lol/v2/point/${p.lat}/${p.lon}/${d}`, { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(4000) });
+      if (!r.ok) console.warn('planes upstream', r.status, (await r.text().catch(() => '')).slice(0, 200)); return r.ok ? await r.text() : null;
+    } catch (e) { console.warn('planes upstream threw', e?.name, e?.message); return null; } /* 2026-11-15: every lookup was failing; log why */
+  });
 }
 const repoFile = (path) => cached(`repo/${path}`, 3 * 3600e3, async () => { const r = await fetch(REPO_RAW + path, { headers: { 'User-Agent': UA } }); return r.ok ? await r.text() : null; });
 
@@ -82,19 +86,26 @@ async function notify(rows, { v, p }) {
 // The dashboard (functions/stats-page.js). /stats needs ?key=STATS_KEY (an env var set at deploy), reads only the last
 // 120 days and is cached 10 minutes per instance, so a public URL can't run up Firestore reads (bug hunt 2026-10-26).
 let statsMemo = null;
+/* Every instance shows the same snapshot (2026-11-14, Sevaan: 10 players out on the computer, 8 on the phone). Each of
+   the up to 3 instances used to cache its own render for 10 minutes, taken whenever it happened to be asked, so two
+   devices could see different counts. Now the page is the events up to the last 10-minute mark (9:40, 9:50…), rendered
+   as of that mark, so any instance gives the same numbers until the next mark. */
+const SLOT = 10 * 60e3;
 async function stats(all, before = false) {
-  if (statsMemo && statsMemo.all === all && statsMemo.before === before && Date.now() - statsMemo.at < 10 * 60e3) return statsMemo.html;
-  const snap = await db.collection('sc_events').where('ts', '>', Date.now() - 120 * 86400e3).get();
+  const at = Math.floor(Date.now() / SLOT) * SLOT;
+  if (statsMemo && statsMemo.all === all && statsMemo.before === before && statsMemo.at === at) return statsMemo.html;
+  const snap = await db.collection('sc_events').where('ts', '>', at - 120 * 86400e3).get();
   /* the daily catalogue: when it was made and the new cards it brought (data/new-cards.json, 2026-11-12) */
   let newCards = null, catalogAt = 0;
   try { const t = await repoFile('data/new-cards.json'); if (t) newCards = JSON.parse(t); } catch {} /* { cards, backlog } */
   try { const t = await repoFile('data/catalog.json'); catalogAt = Date.parse(/"generated"\s*:\s*"([^"]+)"/.exec(t?.slice(0, 200) ?? '')?.[1] ?? '') || 0; } catch {}
-  const html = statsHtml(snap.docs.map((doc) => doc.data()), { all, before, keyQs: `key=${encodeURIComponent(process.env.STATS_KEY ?? '')}`, newCards, catalogAt });
-  statsMemo = { at: Date.now(), all, before, html }; return html;
+  const rows = snap.docs.map((doc) => doc.data()).filter((e) => e.ts <= at);
+  const html = statsHtml(rows, { all, before, now: at, keyQs: `key=${encodeURIComponent(process.env.STATS_KEY ?? '')}`, newCards, catalogAt });
+  statsMemo = { at, all, before, html }; return html;
 }
 
 // Send cards (2026-11-07, Sevaan: "a link to a lot of cards [must] be sent by text normally"): the pack lives here under
-// a random 7-character id, so every link is short (skycollector.app/c/<id>). The code is what the app would have put in
+// a random 7-character id, so every link is short (spacecollector.app/c/<id>). The code is what the app would have put in
 // the link: card keys, times, places rounded to ~10 km; no names, no accounts.
 const PACK_ABC = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789', PACK_DAYS = 90, PACK_MAX = 300000;
 const packId = () => { let s = ''; const b = new Uint8Array(7); crypto.getRandomValues(b); for (const x of b) s += PACK_ABC[x % PACK_ABC.length]; return s; };
