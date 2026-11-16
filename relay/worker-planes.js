@@ -1,7 +1,7 @@
 // Sky Collector's plane relay (2026-11-15): a Cloudflare Worker on Sevaan's personal account, never Roundtrip's.
 // The plane feeds don't allow websites to read them directly (no CORS), so the test site asks this instead.
-//   GET /planes?lat&lon&dist   live aircraft near a point. adsb.lol first (ODbL, "© adsb.lol contributors"), adsb.fi if
-//                              adsb.lol turns us away. Cached 8 s per 0.1° square so nearby players share one request.
+//   GET /planes?lat&lon&dist   live aircraft near a point. adsb.lol (ODbL, "© adsb.lol contributors"), adsb.fi and airplanes.live
+//                              asked at once, merged by hex (newest position wins), with a `sources` field. Cached 8 s per 0.1° square so nearby players share one request.
 // Only rounded coordinates are ever sent upstream. Deploy: npx wrangler deploy -c relay/wrangler-planes.toml
 // Commercial-use terms for both feeds are still to be checked before launch (docs/RESEARCH-PLAN.md, phase 1).
 const ALLOWED = [/^https:\/\/sevaan\.github\.io$/, /^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/, /^capacitor:\/\/localhost$/, /^https:\/\/localhost$/];
@@ -32,16 +32,45 @@ export default {
   },
 };
 
+const FEEDS = [
+  ['adsblol', 'adsb.lol', (la, lo, d) => `https://api.adsb.lol/v2/point/${la}/${lo}/${d}`],
+  ['adsbfi', 'adsb.fi', (la, lo, d) => `https://opendata.adsb.fi/api/v2/lat/${la}/lon/${lo}/dist/${d}`],
+  ['airplaneslive', 'airplanes.live', (la, lo, d) => `https://api.airplanes.live/v2/point/${la}/${lo}/${d}`],
+];
+
 async function upstream(la, lo, d) {
-  const tries = [
-    ['adsb.lol', `https://api.adsb.lol/v2/point/${la}/${lo}/${d}`],
-    ['adsb.fi', `https://opendata.adsb.fi/api/v2/lat/${la}/lon/${lo}/dist/${d}`],
-  ];
-  for (const [src, u] of tries) {
+  const got = await Promise.all(FEEDS.map(async ([id, , mk]) => {
     try {
-      const r = await fetch(u, { headers: { 'User-Agent': UA, Accept: 'application/json' }, signal: AbortSignal.timeout(4000) });
-      if (r.ok) { const text = await r.text(); if (text.startsWith('{')) return { src, text }; }
-    } catch {}
+      const r = await fetch(mk(la, lo, d), { headers: { 'User-Agent': UA, Accept: 'application/json' }, signal: AbortSignal.timeout(4000) });
+      if (!r.ok) return { id, j: null };
+      const t = await r.text();
+      return { id, j: t.startsWith('{') ? JSON.parse(t) : null };
+    } catch { return { id, j: null }; }
+  }));
+  const merged = mergeFeeds(got);
+  if (!merged) return null;
+  return { src: FEEDS.filter(([id]) => got.find((g) => g.id === id)?.j).map(([, name]) => name).join('+'), text: JSON.stringify(merged) };
+}
+
+// Merge the feeds' answers by hex. Each aircraft's position time is the feed's `now` minus its seen_pos (or seen); the
+// newest wins, ties keep the earlier feed (adsb.lol). Returns null when no feed answered.
+// Keep identical to mergeFeeds in relay/planes.ts (tests/relay-merge.test.mjs covers this copy).
+export function mergeFeeds(got) {
+  const ok = got.filter((g) => g.j && Array.isArray(g.j.ac ?? g.j.aircraft));
+  if (!ok.length) return null;
+  const ms = (n) => (n < 1e12 ? n * 1000 : n);
+  const now = Math.max(...ok.map((g) => ms(Number(g.j.now) || Date.now())));
+  const best = new Map();
+  const sources = { adsblol: 0, adsbfi: 0, airplaneslive: 0 };
+  for (const g of ok) {
+    const fnow = ms(Number(g.j.now) || Date.now()), list = g.j.ac ?? g.j.aircraft;
+    sources[g.id] = list.length;
+    for (const a of list) {
+      if (!a?.hex) continue;
+      const t = a.lat == null || a.lon == null ? -Infinity : fnow - (a.seen_pos ?? a.seen ?? 0) * 1000, cur = best.get(a.hex);
+      if (!cur || t > cur.t) best.set(a.hex, { a, t });
+    }
   }
-  return null;
+  const ac = [...best.values()].map(({ a, t }) => (Number.isFinite(t) ? { ...a, seen_pos: Math.max(0, Math.round(now - t) / 1000) } : a));
+  return { now, ac, total: ac.length, sources: { ...sources, merged: ac.length } };
 }

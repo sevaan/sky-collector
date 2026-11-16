@@ -7,10 +7,11 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { TIERS } from './flights.js?v=0.1.1612';
-import { typePhoto } from './type-photos.js?v=0.1.1612';
-import { airlinePhoto } from './airline-photos.js?v=0.1.1612';
-import { hasAirlineCallsign, planeLine, levelWord } from './sky-stamps.js?v=0.1.1612';
+import { TIERS } from './flights.js?v=0.1.1617';
+import { typePhoto } from './type-photos.js?v=0.1.1617';
+import { airlinePhoto } from './airline-photos.js?v=0.1.1617';
+import { fitStyle } from './photo-fit.js?v=0.1.1617';
+import { hasAirlineCallsign, planeLine, levelWord } from './sky-stamps.js?v=0.1.1617';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
@@ -40,7 +41,27 @@ export function photoFor(type) { return type ? typePhoto(String(type).toUpperCas
 const airlineIcao = (f) => f?.airlineIcao || (/^F:([A-Z]{3}):/.exec(f?.key || '') || [])[1] || (f?.callsign || '').slice(0, 3);
 export function flightPhotoFor(f, type) { return (type && airlinePhoto(airlineIcao(f), type)) || photoFor(type); }
 const credit = (ph) => `<span class="fc-credit">Photo: ${esc(ph.credit)}, ${esc(ph.licence)}</span>`;
-const photoImg = (ph, cls, eager) => `<img class="${cls}" src="${esc(ph.url)}" alt="" ${eager ? '' : 'loading="lazy" '}decoding="async" draggable="false">`;
+// The whole aircraft always shows (2026-11-15, Sevaan: "planes can't be cropped"). Each photo carries the box the plane
+// sits in (scripts/photos/photo_common.py); once the frame has a size, fitPhoto picks a cover crop that keeps the box, or shows
+// the whole photo over a blurred copy of itself when the frame is too wide or tall for any crop to hold the plane.
+const photoImg = (ph, cls, eager) => `${ph.box ? `<img class="ph-blur" src="${esc(ph.url)}" alt="" aria-hidden="true" decoding="async" draggable="false">` : ''}<img class="${cls}" src="${esc(ph.url)}" alt="" ${eager ? '' : 'loading="lazy" '}decoding="async" draggable="false"${ph.box ? ` data-box="${ph.box.join(',')}" data-w="${ph.w}" data-h="${ph.h}"` : ''}>`;
+function fitPhoto(img) {
+  const f = img.parentElement, fw = f?.offsetWidth, fh = f?.offsetHeight; if (!fw || !fh) return false;
+  const st = fitStyle(img.dataset.box.split(',').map(Number), +img.dataset.w, +img.dataset.h, fw, fh);
+  const contain = st.mode === 'contain';
+  img.style.objectFit = contain ? 'contain' : 'cover'; img.style.objectPosition = contain ? '50% 50%' : st.objectPosition;
+  f.classList.toggle('ph-contain', contain); return true;
+}
+// Cards are built as HTML strings all over the app, so fit any photo that appears, and again when frames change size.
+if (typeof document !== 'undefined' && typeof MutationObserver !== 'undefined') {
+  const pending = new Set(); let raf = 0;
+  const flush = () => { raf = 0; for (const img of pending) if (!img.isConnected || fitPhoto(img)) pending.delete(img); if (pending.size) raf = requestAnimationFrame(flush); };
+  const queue = (img) => { pending.add(img); raf ||= requestAnimationFrame(flush); };
+  const scan = (n) => { if (n.nodeType !== 1) return; if (n.matches?.('img[data-box]')) queue(n); n.querySelectorAll?.('img[data-box]').forEach(queue); };
+  const start = () => { new MutationObserver((ms) => { for (const m of ms) m.addedNodes.forEach(scan); }).observe(document.body, { childList: true, subtree: true }); scan(document.body); };
+  if (document.body) start(); else addEventListener('DOMContentLoaded', start);
+  addEventListener('resize', () => document.querySelectorAll('img[data-box]').forEach(queue));
+}
 // No photo: a daylight sky panel with soft cloud banks and the silhouette crossing it.
 const skyPanel = (glyph, cls, mark = '') => `<span class="${cls}" aria-hidden="true"><span class="fc-cloud fc-cloud--a"></span><span class="fc-cloud fc-cloud--b"></span>${mark ? `<span class="fc-sky-ring"></span><span class="fc-sky-mark">${esc(mark)}</span>` : ''}${glyphSvg(glyph, 'fc-glyph')}</span>`;
 

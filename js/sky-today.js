@@ -5,9 +5,9 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1612';
-import { glyphSvg } from './flight-card.js?v=0.1.1612';
-import { catches } from './sky-catch.js?v=0.1.1612';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1617';
+import { glyphSvg } from './flight-card.js?v=0.1.1617';
+import { catches } from './sky-catch.js?v=0.1.1617';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -60,6 +60,15 @@ function forecast(planes, obs, nowMs, visibleHexes) {
   return out.sort((a, b) => a.inS - b.inS).slice(0, 8);
 }
 
+// ---------- the empty hero: three different reasons for no planes ----------
+// 'ok' with nothing up is a quiet sky; 'failing' is the feed being unreachable; 'loading' is still asking.
+function skyState(ctx) {
+  const st = ctx.planes?.status ?? (ctx.positions ? 'ok' : 'loading');
+  if (st === 'failing') return `<h3>Can’t reach the plane feed</h3><p class="td-lead">No word from the plane feed${ctx.planes?.lastOk ? ` since ${new Date(ctx.planes.lastOk).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}` : ''}. Check your connection, and we’ll keep trying.</p>`;
+  if (st === 'loading' || !ctx.positions) return '<h3>Checking what’s flying</h3><p class="td-lead">Finding the planes near you…</p>';
+  return '<h3>Quiet sky</h3><p class="td-lead">Nothing above the trees right now. Planes come and go every few minutes.</p>';
+}
+
 // ---------- render ----------
 // ctx: { planes: PlaneTracker, obs, positions: [{plane, az, el, rangeKm}], route(callsign), show(hex), place }
 export function renderToday(el, ctx) {
@@ -78,7 +87,7 @@ export function renderToday(el, ctx) {
       <h3>${esc(best.w.isNew ? 'Look up now' : 'Planes overhead')}</h3>
       <p class="td-lead">${esc(best.w.name)}${best.w.sub ? ` · ${esc(best.w.sub)}` : ''}. ${esc(dirWord(best.a.az))}, ${Math.round(best.a.el)}° up.</p>
       <button type="button" class="td-show" data-hex="${esc(best.a.plane.hex)}">SHOW ME</button>` : `
-      <p class="td-k">UP NOW</p><h3>Quiet sky</h3><p class="td-lead">${ctx.positions ? 'Nothing above the trees right now. Planes come and go every few minutes.' : 'Finding the planes near you…'}</p>`}
+      <p class="td-k">UP NOW</p>${skyState(ctx)}`}
     </section>
     ${up.length > 1 ? `<p class="td-h">EVERYTHING UP <span>${up.length}</span></p><div class="td-list">${up.slice(0, 12).map(row).join('')}</div>` : ''}
     <p class="td-h">COMING OVER NEXT <span>${next.length ? 'NEXT 15 MIN' : ''}</span></p>

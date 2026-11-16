@@ -420,3 +420,8 @@ html body .tc .art::after { box-shadow:inset 0 .3em .6em rgba(13,34,56,.22), ins
 #catchbar.stamped #cb-collect { background:#eef3f8; color:var(--sc-muted); opacity:.7; }
 #cb-collect:disabled { cursor:default; }
 .fcatch--stamp .fcatch-k { color:#2d4f86; }
+
+/* Photos never crop the plane (2026-11-15): js/flight-card.js fitPhoto. When no crop can hold the whole aircraft the photo is
+   shown whole (contain) over a blurred, enlarged copy of itself, so the frame still fills with that sky. */
+.ph-blur { display:none; position:absolute; inset:-8%; width:116%; height:116%; object-fit:cover; filter:blur(14px) saturate(1.1); transform:translateZ(0); pointer-events:none; }
+.ph-contain > .ph-blur { display:block; }

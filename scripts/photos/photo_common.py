@@ -49,12 +49,13 @@ def detect_box(path):
     gy, gx = np.gradient(a.mean(2)); g = _box_blur(np.hypot(gx, gy), 1)
     sal = d1 / (d1.max() + 1e-6) * 0.5 + d2 / (d2.max() + 1e-6) * 0.25 + g / (g.max() + 1e-6) * 0.25
     # Mask: pixels well away from the sky colour estimate
-    mask = d1 > 38
+    thr = max(20.0, min(34.0, 0.18 * float(np.percentile(d1, 99.5))))
+    mask = (d1 > thr) | (d2 > thr * 1.3)
     # Keep only edge-consistent mass: close small gaps
-    m = _box_blur(mask.astype(np.float32), 1) > 0.34
+    m = _box_blur(mask.astype(np.float32), 1) > 0.25
     lab, n = _label(m)
     if n == 0: return [0, 0, 1, 1]
-    areas = np.bincount(lab.ravel())[1:]; keep = [i + 1 for i, ar in enumerate(areas) if ar >= max(0.25 * areas.max(), 6)]
+    areas = np.bincount(lab.ravel())[1:]; keep = [i + 1 for i, ar in enumerate(areas) if ar >= max(0.06 * areas.max(), 4)]
     sel = np.isin(lab, keep); ys, xs = np.where(sel)
     x0, x1, y0, y1 = xs.min() / sw, (xs.max() + 1) / sw, ys.min() / sh, (ys.max() + 1) / sh
     return [round(max(0, x0 - PAD), 4), round(max(0, y0 - PAD), 4), round(min(1, x1 + PAD), 4), round(min(1, y1 + PAD), 4)]

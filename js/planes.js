@@ -3,16 +3,17 @@
 // on the website, because adsb.lol doesn’t allow browser requests directly. The airline comes from the callsign's prefix.
 // No DOM here. Positions are extrapolated between fetches using ground speed, track and climb rate.
 
-import { SERVER } from './server.js?v=0.1.1612';
-import { plugin } from './native.js?v=0.1.1612';
-import { lookupRoute } from './routes.js?v=0.1.1612';
+import { SERVER } from './server.js?v=0.1.1617';
+import { plugin } from './native.js?v=0.1.1617';
+import { lookupRoute } from './routes.js?v=0.1.1617';
 // Empty = feature off. localStorage 'planeRelay' overrides it (testing). Our server's /planes (adsb.lol only) once it's
 // deployed; until then the Val Town relay (relay/handler.ts).
 // Sky Collector (2026-11-15): Space Collector's Val Town relay is turned away by adsb.lol now, so the website needs Sky
 // Collector's own relay: relay/planes.ts on Val Town (val sevaan/sky-collector-planes, 2026-11-15). Only the website
 // needs it; the phone apps will ask the plane feed directly, like Space Collector's apps.
 const SKY_RELAY = 'https://sevaan--a2362084e15311f195931607ee4eb77e.web.val.run';
-const RELAY = SERVER ? `${SERVER}/planes` : SKY_RELAY;
+// A list, tried in order each poll: the first that answers wins. Add a second relay here (another host) as a fallback.
+const RELAYS = SERVER ? [`${SERVER}/planes`] : [SKY_RELAY];
 const POLL_MS = 10000;
 const RADIUS_NM = 40;    // ~75 km: an airliner at cruise height is ~8° up at that distance
 const MAX_AGE_S = 60;    // drop planes we haven’t heard about for a minute
@@ -20,10 +21,15 @@ const MAX_AGE_S = 60;    // drop planes we haven’t heard about for a minute
 const RAD = Math.PI / 180, A = 6378.137, E2 = 0.00669437999014; // WGS84, km
 const FT = 0.0003048, KT = 0.000514444; // feet -> km, knots -> km/s
 
-function relayUrl() {
-  try { return localStorage.getItem('planeRelay') || RELAY; } catch { return RELAY; }
+// localStorage 'planeRelay' (testing) may be one URL, several separated by commas or spaces, or a JSON array.
+function relayUrls() {
+  let o = null; try { o = localStorage.getItem('planeRelay'); } catch {}
+  if (!o) return RELAYS;
+  let list = null; try { const j = JSON.parse(o); if (Array.isArray(j)) list = j; } catch {}
+  return (list ?? o.split(/[\s,]+/)).map((u) => String(u).trim()).filter(Boolean);
 }
-export function planesAvailable() { return !!relayUrl(); }
+export function planesAvailable() { return relayUrls().length > 0; }
+const relayQuery = (url, obs) => `${url.replace(/\/$/, '')}${/\/planes$/.test(url) ? '' : '/'}?lat=${obs.lat.toFixed(2)}&lon=${obs.lon.toFixed(2)}&dist=${RADIUS_NM}`;
 
 function ecef(lat, lon, hKm) {
   const sl = Math.sin(lat * RAD), cl = Math.cos(lat * RAD);
@@ -81,17 +87,24 @@ function parse(json) {
 }
 
 export class PlaneTracker {
-  constructor() { this.planes = []; this.lastFetch = 0; this.busy = false; this.routes = new Map(); this.failures = 0; }
+  constructor() { this.planes = []; this.lastFetch = 0; this.busy = false; this.routes = new Map(); this.failures = 0; this.lastOk = 0; this.sources = null; }
+
+  // 'loading' (nothing has loaded yet), 'ok' (the last fetch worked), 'failing' (recent fetches failed). The sky is only
+  // known to be quiet when status is 'ok'. lastOk is the time of the last good fetch (0 = never); sources is the relay's
+  // per-feed counts {adsblol, adsbfi, airplaneslive, merged}, or null (phone apps ask adsb.lol directly).
+  get status() {
+    if (this.failures >= 2 || (this.failures >= 1 && !this.lastOk)) return 'failing';
+    return this.lastOk ? 'ok' : 'loading';
+  }
 
   // Call every frame; fetches at most every POLL_MS (backs off after errors).
   update(obs) {
-    const url = relayUrl();
+    const urls = relayUrls();
     loadAirlines();
-    if (!url || this.busy || (typeof document !== 'undefined' && document.hidden)) return; // no polling while the app is in the background
+    if (!urls.length || this.busy || (typeof document !== 'undefined' && document.hidden)) return; // no polling while the app is in the background
     const wait = POLL_MS * Math.min(6, 2 ** this.failures);
     if (Date.now() - this.lastFetch < wait) return;
     this.busy = true; this.lastFetch = Date.now();
-    const q = `${url.replace(/\/$/, '')}${/\/planes$/.test(url) ? '' : '/'}?lat=${obs.lat.toFixed(2)}&lon=${obs.lon.toFixed(2)}&dist=${RADIUS_NM}`;
     // In the apps each phone asks adsb.lol itself through Capacitor's native HTTP (no CORS there): adsb.lol turns away
     // cloud servers (Val Town got 429s, our Cloud Run server 502s on every request, 2026-10-26), but not phones.
     let over = null; try { over = localStorage.getItem('planeRelay'); } catch {}
@@ -99,9 +112,9 @@ export class PlaneTracker {
     const get = http
       ? http.request({ url: `https://api.adsb.lol/v2/point/${obs.lat.toFixed(2)}/${obs.lon.toFixed(2)}/${RADIUS_NM}`, method: 'GET', connectTimeout: 8000, readTimeout: 8000 })
         .then((r) => (r?.status === 200 ? (typeof r.data === 'string' ? JSON.parse(r.data) : r.data) : Promise.reject(new Error(r?.status))))
-      : fetch(q, { signal: AbortSignal.timeout?.(8000) }).then((r) => (r.ok ? r.json() : Promise.reject(new Error(r.status))));
+      : urls.reduce((chain, url) => chain.catch(() => fetch(relayQuery(url, obs), { signal: AbortSignal.timeout?.(8000) }).then((r) => (r.ok ? r.json() : Promise.reject(new Error(r.status))))), Promise.reject(new Error('start')));
     get
-      .then((j) => { this.planes = parse(j); this.failures = 0; })
+      .then((j) => { this.planes = parse(j); this.failures = 0; this.lastOk = Date.now(); this.sources = j.sources ?? null; })
       .catch(() => { this.failures++; })
       .finally(() => { this.busy = false; });
   }
@@ -150,7 +163,7 @@ const AIRLINES = { ACA: 'Air Canada', ROU: 'Air Canada Rouge', JZA: 'Air Canada 
 // Every ICAO airline code -> name (js/airlines.js, built by scripts/build-airlines.mjs), loaded once, lazily.
 let airlineTable = null, airlineLoad = null;
 export function loadAirlines() {
-  return (airlineLoad ??= import('./airlines.js?v=0.1.1612').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
+  return (airlineLoad ??= import('./airlines.js?v=0.1.1617').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
 }
 export function airlineName(callsign) { return /^[A-Z]{3}\d/.test(callsign ?? '') ? airlineFor(callsign, null) : ''; }
 function airlineFor(callsign, a) {
