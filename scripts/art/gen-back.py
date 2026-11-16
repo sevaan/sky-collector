@@ -16,7 +16,7 @@ for s in styles:
     mime = 'image/png' if s.endswith('.png') else 'image/webp' if s.endswith('.webp') else 'image/jpeg'
     parts.append({'inlineData': {'mimeType': mime, 'data': base64.b64encode(open(s, 'rb').read()).decode()}})
 body = json.dumps({'contents': [{'role': 'user', 'parts': parts}],
-                   'generationConfig': {'responseModalities': ['IMAGE'], 'imageConfig': {'aspectRatio': '2:3'}}}).encode()
+                   'generationConfig': {'responseModalities': ['IMAGE'], 'imageConfig': {'aspectRatio': __import__('os').environ.get('ASPECT', '2:3')}}}).encode()
 for attempt in range(6):
     token = subprocess.check_output([GCLOUD, 'auth', 'print-access-token']).decode().strip()
     req = urllib.request.Request(URL, data=body, headers={'Authorization': f'Bearer {token}', 'Content-Type': 'application/json'})

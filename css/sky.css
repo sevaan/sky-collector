@@ -373,3 +373,8 @@ body.sky-only #visible-sub { color:var(--sc-muted); }
 body.sky-only #row-tonight, body.sky-only #row-alerts, body.sky-only #row-live,
 body.sky-only .set-row:has(#chk-daysats), body.sky-only .set-row:has(#chk-meteor),
 body.sky-only #set-stats-open, body.sky-only #sky-plus-line { display:none !important; }
+
+/* Lighter inner shadows on the welcome card's step pictures and the tour cards' pictures (2026-11-15, Sevaan: "less dark");
+   Space Collector's were tuned for a night sky. */
+html body .wc-a-pic::after { box-shadow:inset 0 .3em .6em rgba(13,34,56,.22), inset 0 -1px 0 #ffffff55; }
+html body .tc .art::after { box-shadow:inset 0 .3em .6em rgba(13,34,56,.22), inset 0 -1px 0 #ffffff55; }

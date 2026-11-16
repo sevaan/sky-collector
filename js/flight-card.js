@@ -1,13 +1,15 @@
 // Sky Collector's flight and plane cards. Design 2026-11-15 ("D · Light Touch, daylight", fidelity pass): Space Collector's
 // card anatomy at full richness, printed light. A metal frame by rarity (steel, sage steel, gold, iridescent, animated
 // gold foil) around cream card stock with a fine grain and a double inner rule; a recessed photo window with the real
-// aircraft (js/type-photos.js, credited on the card); the route as a boarding-pass strip under the photo; Russo One
+// aircraft (flights: js/airline-photos.js in the airline's livery, else js/type-photos.js; credited on the card); the
+// route as a boarding-pass strip under the photo; Russo One
 // title, Barlow Condensed labels, a Georgia fact with an orange rule, and a collected footer. Foil and glare follow the
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { TIERS } from './flights.js?v=0.1.1606';
-import { typePhoto } from './type-photos.js?v=0.1.1606';
+import { TIERS } from './flights.js?v=0.1.1608';
+import { typePhoto } from './type-photos.js?v=0.1.1608';
+import { airlinePhoto } from './airline-photos.js?v=0.1.1608';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
@@ -32,6 +34,10 @@ const code = (a) => a?.iata || a?.icao || '—';
 
 // The photo for an ICAO type code, or null (the card then draws the top-down glyph on a sky panel).
 export function photoFor(type) { return type ? typePhoto(String(type).toUpperCase()) : null; }
+// A flight's photo: that type in the airline's own livery (js/airline-photos.js) when we have one, else the type photo.
+// The airline is the callsign's ICAO prefix (older saved catches only carry it in the key, F:ACA:CYYZ-KLAX).
+const airlineIcao = (f) => f?.airlineIcao || (/^F:([A-Z]{3}):/.exec(f?.key || '') || [])[1] || (f?.callsign || '').slice(0, 3);
+export function flightPhotoFor(f, type) { return (type && airlinePhoto(airlineIcao(f), type)) || photoFor(type); }
 const credit = (ph) => `<span class="fc-credit">Photo: ${esc(ph.credit)}, ${esc(ph.licence)}</span>`;
 const photoImg = (ph, cls, eager) => `<img class="${cls}" src="${esc(ph.url)}" alt="" ${eager ? '' : 'loading="lazy" '}decoding="async" draggable="false">`;
 // No photo: a daylight sky panel with soft cloud banks and the silhouette crossing it.
@@ -65,7 +71,7 @@ function footer(caughtAt, right) {
 
 // opts: { caughtAt: Date, heightFt, sightings, type (ICAO, for older catches), planeName, eager }
 export function flightCardHtml(f, opts = {}) {
-  const type = f.type || opts.type || '', ph = photoFor(type), typeName = f.typeName || opts.planeName || '';
+  const type = f.type || opts.type || '', ph = flightPhotoFor(f, type), typeName = f.typeName || opts.planeName || '';
   const air = !f.air ? '—' : f.air.h ? `${f.air.h} h ${String(f.air.m).padStart(2, '0')}` : `${f.air.m} min`;
   const long = Math.max(f.from.city.length, f.to.city.length) > 11;
   const art = ph ? `${photoImg(ph, 'fc-photo', opts.eager)}${credit(ph)}` : skyPanel('jet', 'fc-sky', type);
@@ -107,7 +113,7 @@ export function planeCardHtml(p, opts = {}) {
 // for ~110 px. e: { kind, card, type, last (ms), n (times seen), stamps (count) }. Returns the inner markup; the caller
 // wraps it in its button.
 export function miniCardHtml({ kind, card: c, type, last, n = 1, stamps = 0 }) {
-  const t = tierOf(c.tier), ty = c.type || type || '', ph = photoFor(ty);
+  const t = tierOf(c.tier), ty = c.type || type || '', ph = kind === 'flight' ? flightPhotoFor(c, ty) : photoFor(ty);
   const glyph = kind === 'plane' ? c.glyph : 'jet';
   const pic = ph ? photoImg(ph, 'sct-photo') : skyPanel(glyph, 'fc-sky sct-sky');
   const gem = `<span class="sct-tier"><i aria-hidden="true">${TIERS[t].mark}</i>${TIERS[t].label.toUpperCase()}</span>`;

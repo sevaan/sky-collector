@@ -1,0 +1,969 @@
+{
+ "_note": "Airline+type pairs for flight-card photos (find-airline-photos.py). name: Commons search words; match: regex that must appear in the file title or its categories; not: regex that rejects a file (a sister brand's livery). Types: what the airline mostly flies (fleet knowledge + data/research samples, 2026-11-15).",
+ "AAL": {
+  "name": "American Airlines",
+  "match": "American Airlines|^File:American |American (Airbus|Boeing)",
+  "not": "American Eagle|Eagle|TWA|US ?Airways|Piedmont|Envoy",
+  "types": [
+   "A319",
+   "A321",
+   "A21N",
+   "B738",
+   "B38M",
+   "B772",
+   "B77W",
+   "B788"
+  ]
+ },
+ "DAL": {
+  "name": "Delta Air Lines",
+  "match": "Delta Air ?Lines|^File:Delta |Delta (Airbus|Boeing)",
+  "not": "Connection|Northwest|Endeavor|SkyWest|Compass",
+  "types": [
+   "A320",
+   "A321",
+   "A21N",
+   "B739",
+   "B752",
+   "B763",
+   "A333",
+   "A339",
+   "A359",
+   "BCS3"
+  ]
+ },
+ "UAL": {
+  "name": "United Airlines",
+  "match": "United Airlines|^File:United |United (Airbus|Boeing)",
+  "not": "United Express|\\bExpress\\b|Continental|\\bTed\\b|SkyWest|ExpressJet|\\bMesa\\b",
+  "types": [
+   "A319",
+   "A320",
+   "B738",
+   "B739",
+   "B38M",
+   "B39M",
+   "B752",
+   "B763",
+   "B772",
+   "B77W",
+   "B789"
+  ]
+ },
+ "SWA": {
+  "name": "Southwest Airlines",
+  "match": "Southwest",
+  "not": "AirTran",
+  "types": [
+   "B737",
+   "B738",
+   "B38M"
+  ]
+ },
+ "ASA": {
+  "name": "Alaska Airlines",
+  "match": "Alaska Airlines|^File:Alaska |Alaska (Airbus|Boeing)",
+  "not": "Horizon|SkyWest|Virgin America",
+  "types": [
+   "B738",
+   "B739",
+   "B39M"
+  ]
+ },
+ "HAL": {
+  "name": "Hawaiian Airlines",
+  "match": "Hawaiian",
+  "not": null,
+  "types": [
+   "A332",
+   "A21N",
+   "B712"
+  ]
+ },
+ "JBU": {
+  "name": "JetBlue",
+  "match": "Jet ?Blue",
+  "not": null,
+  "types": [
+   "A320",
+   "A321",
+   "A21N",
+   "BCS3"
+  ]
+ },
+ "NKS": {
+  "name": "Spirit Airlines",
+  "match": "Spirit Airlines|^File:Spirit ",
+  "not": null,
+  "types": [
+   "A320",
+   "A20N",
+   "A321"
+  ]
+ },
+ "FFT": {
+  "name": "Frontier Airlines",
+  "match": "Frontier",
+  "not": null,
+  "types": [
+   "A20N",
+   "A21N"
+  ]
+ },
+ "AAY": {
+  "name": "Allegiant Air",
+  "match": "Allegiant",
+  "not": null,
+  "types": [
+   "A320"
+  ]
+ },
+ "SKW": {
+  "name": "SkyWest",
+  "match": "SkyWest",
+  "not": null,
+  "types": [
+   "CRJ2",
+   "CRJ7",
+   "CRJ9",
+   "E75L"
+  ]
+ },
+ "RPA": {
+  "name": "Republic Airways",
+  "match": "Republic Airline|Republic Airways",
+  "not": null,
+  "types": [
+   "E75L",
+   "E170"
+  ]
+ },
+ "ENY": {
+  "name": "Envoy American Eagle",
+  "match": "Envoy",
+  "not": null,
+  "types": [
+   "E170",
+   "E75L"
+  ]
+ },
+ "EDV": {
+  "name": "Endeavor Air",
+  "match": "Endeavor",
+  "not": null,
+  "types": [
+   "CRJ9"
+  ]
+ },
+ "JIA": {
+  "name": "PSA Airlines",
+  "match": "PSA Airlines",
+  "not": null,
+  "types": [
+   "CRJ7"
+  ]
+ },
+ "QXE": {
+  "name": "Horizon Air",
+  "match": "Horizon Air",
+  "not": null,
+  "types": [
+   "E75L",
+   "DH8D"
+  ]
+ },
+ "ACA": {
+  "name": "Air Canada",
+  "match": "Air Canada",
+  "not": "Rouge|Jazz|Express|Cargo|Jetz|Air Canada Regional|\\bTango\\b|\\bZip\\b",
+  "types": [
+   "A320",
+   "A321",
+   "BCS3",
+   "B38M",
+   "A333",
+   "B788",
+   "B789",
+   "B77W"
+  ]
+ },
+ "ROU": {
+  "name": "Air Canada Rouge",
+  "match": "Rouge",
+  "not": null,
+  "types": [
+   "A319",
+   "A320",
+   "A321"
+  ]
+ },
+ "JZA": {
+  "name": "Air Canada Express Jazz",
+  "match": "Jazz|Air Canada Express",
+  "not": null,
+  "types": [
+   "CRJ9",
+   "E75L",
+   "DH8D"
+  ]
+ },
+ "WJA": {
+  "name": "WestJet",
+  "match": "WestJet",
+  "not": "Encore|Swoop",
+  "types": [
+   "B737",
+   "B738",
+   "B38M",
+   "B789"
+  ]
+ },
+ "WEN": {
+  "name": "WestJet Encore",
+  "match": "Encore",
+  "not": null,
+  "types": [
+   "DH8D"
+  ]
+ },
+ "POE": {
+  "name": "Porter Airlines",
+  "match": "Porter",
+  "not": null,
+  "types": [
+   "DH8D",
+   "E295"
+  ]
+ },
+ "TSC": {
+  "name": "Air Transat",
+  "match": "Transat",
+  "not": null,
+  "types": [
+   "A321",
+   "A21N",
+   "A332"
+  ]
+ },
+ "FLE": {
+  "name": "Flair Airlines",
+  "match": "Flair",
+  "not": null,
+  "types": [
+   "B38M"
+  ]
+ },
+ "FDX": {
+  "name": "FedEx",
+  "match": "FedEx|Federal Express",
+  "not": "Feeder",
+  "types": [
+   "B763",
+   "B77L",
+   "MD11"
+  ]
+ },
+ "UPS": {
+  "name": "UPS Airlines",
+  "match": "\\bUPS\\b|United Parcel",
+  "not": null,
+  "types": [
+   "B763",
+   "B744",
+   "B748",
+   "MD11"
+  ],
+  "cs": true
+ },
+ "AMX": {
+  "name": "Aeromexico",
+  "match": "Aerom[eé]xico",
+  "not": "Connect",
+  "types": [
+   "B738",
+   "B38M",
+   "B788"
+  ]
+ },
+ "VOI": {
+  "name": "Volaris",
+  "match": "Volaris",
+  "not": null,
+  "types": [
+   "A320",
+   "A20N"
+  ]
+ },
+ "CMP": {
+  "name": "Copa Airlines",
+  "match": "Copa Airlines|^File:Copa ",
+  "not": null,
+  "types": [
+   "B738",
+   "B38M"
+  ]
+ },
+ "AVA": {
+  "name": "Avianca",
+  "match": "Avianca",
+  "not": null,
+  "types": [
+   "A320",
+   "A20N",
+   "B788"
+  ]
+ },
+ "LAN": {
+  "name": "LATAM",
+  "match": "LATAM|LAN Airlines|^File:LAN ",
+  "not": null,
+  "types": [
+   "A320",
+   "B789"
+  ]
+ },
+ "TAM": {
+  "name": "LATAM Brasil",
+  "match": "LATAM|TAM",
+  "not": null,
+  "types": [
+   "A320",
+   "A20N",
+   "A321"
+  ]
+ },
+ "GLO": {
+  "name": "Gol",
+  "match": "\\bGOL\\b|\\bGol\\b|Gol Linhas|Gol Transportes",
+  "not": null,
+  "types": [
+   "B737",
+   "B738",
+   "B38M"
+  ],
+  "cs": true
+ },
+ "AZU": {
+  "name": "Azul",
+  "match": "Azul",
+  "not": null,
+  "types": [
+   "E195",
+   "E295",
+   "A332"
+  ]
+ },
+ "ARG": {
+  "name": "Aerolineas Argentinas",
+  "match": "Aerol[ií]neas Argentinas",
+  "not": null,
+  "types": [
+   "B738"
+  ]
+ },
+ "BAW": {
+  "name": "British Airways",
+  "match": "British Airways",
+  "not": "Concorde",
+  "types": [
+   "A319",
+   "A320",
+   "A321",
+   "A20N",
+   "B772",
+   "B77W",
+   "B788",
+   "B789",
+   "A388",
+   "A35K"
+  ]
+ },
+ "VIR": {
+  "name": "Virgin Atlantic",
+  "match": "Virgin Atlantic",
+  "not": null,
+  "types": [
+   "B789",
+   "A339",
+   "A35K"
+  ]
+ },
+ "EZY": {
+  "name": "easyJet",
+  "match": "easy ?Jet",
+  "not": null,
+  "types": [
+   "A319",
+   "A320",
+   "A20N"
+  ]
+ },
+ "RYR": {
+  "name": "Ryanair",
+  "match": "Ryanair",
+  "not": "Lauda|Buzz|Malta Air",
+  "types": [
+   "B738",
+   "B38M"
+  ]
+ },
+ "DLH": {
+  "name": "Lufthansa",
+  "match": "Lufthansa",
+  "not": "Cargo|CityLine|City Airlines|Technik|Regional|Discover|Lufthansa Flight Training",
+  "types": [
+   "A320",
+   "A321",
+   "A20N",
+   "A333",
+   "A359",
+   "B748",
+   "A388"
+  ]
+ },
+ "AFR": {
+  "name": "Air France",
+  "match": "Air France",
+  "not": "\\bHop\\b|HOP!|Cargo|KLM|Concorde",
+  "types": [
+   "A320",
+   "A321",
+   "BCS3",
+   "B77W",
+   "A359"
+  ]
+ },
+ "KLM": {
+  "name": "KLM",
+  "match": "\\bKLM\\b",
+  "not": "Cityhopper|Air France|Martinair",
+  "types": [
+   "B738",
+   "B739",
+   "B77W",
+   "B789"
+  ],
+  "cs": true
+ },
+ "IBE": {
+  "name": "Iberia",
+  "match": "Iberia",
+  "not": "Express|Regional|Air Nostrum",
+  "types": [
+   "A320",
+   "A20N",
+   "A333",
+   "A359"
+  ]
+ },
+ "VLG": {
+  "name": "Vueling",
+  "match": "Vueling",
+  "not": null,
+  "types": [
+   "A320"
+  ]
+ },
+ "SWR": {
+  "name": "Swiss International Air Lines",
+  "match": "\\bSwiss\\b",
+  "not": "Swissair|Helvetic|Edelweiss",
+  "types": [
+   "BCS3",
+   "A333",
+   "B77W"
+  ]
+ },
+ "AUA": {
+  "name": "Austrian Airlines",
+  "match": "Austrian",
+  "not": null,
+  "types": [
+   "A320",
+   "B763",
+   "B772"
+  ]
+ },
+ "SAS": {
+  "name": "Scandinavian Airlines",
+  "match": "Scandinavian Airlines|\\bSAS\\b",
+  "not": null,
+  "types": [
+   "A20N",
+   "A339"
+  ],
+  "cs": true
+ },
+ "EIN": {
+  "name": "Aer Lingus",
+  "match": "Aer Lingus",
+  "not": "Regional",
+  "types": [
+   "A320",
+   "A333"
+  ]
+ },
+ "ICE": {
+  "name": "Icelandair",
+  "match": "Icelandair",
+  "not": null,
+  "types": [
+   "B752",
+   "B38M"
+  ]
+ },
+ "TAP": {
+  "name": "TAP Air Portugal",
+  "match": "\\bTAP\\b|TAP Portugal|TAP Air Portugal",
+  "not": "Express",
+  "types": [
+   "A20N",
+   "A21N",
+   "A339"
+  ],
+  "cs": true
+ },
+ "THY": {
+  "name": "Turkish Airlines",
+  "match": "Turkish Airlines|T[üu]rk Hava",
+  "not": null,
+  "types": [
+   "A321",
+   "B738",
+   "A333",
+   "B77W",
+   "B789",
+   "A359"
+  ]
+ },
+ "WZZ": {
+  "name": "Wizz Air",
+  "match": "Wizz",
+  "not": null,
+  "types": [
+   "A321",
+   "A21N"
+  ]
+ },
+ "LOT": {
+  "name": "LOT Polish Airlines",
+  "match": "\\bLOT\\b",
+  "not": null,
+  "types": [
+   "B738",
+   "B788",
+   "E195"
+  ],
+  "cs": true
+ },
+ "FIN": {
+  "name": "Finnair",
+  "match": "Finnair",
+  "not": null,
+  "types": [
+   "A321",
+   "A359"
+  ]
+ },
+ "EWG": {
+  "name": "Eurowings",
+  "match": "Eurowings",
+  "not": null,
+  "types": [
+   "A320"
+  ]
+ },
+ "NOZ": {
+  "name": "Norwegian Air",
+  "match": "Norwegian",
+  "not": null,
+  "types": [
+   "B738"
+  ]
+ },
+ "AEE": {
+  "name": "Aegean Airlines",
+  "match": "Aegean",
+  "not": null,
+  "types": [
+   "A320"
+  ]
+ },
+ "TOM": {
+  "name": "TUI Airways",
+  "match": "\\bTUI\\b|Thomson",
+  "not": null,
+  "types": [
+   "B738",
+   "B788"
+  ],
+  "cs": true
+ },
+ "EXS": {
+  "name": "Jet2",
+  "match": "Jet2",
+  "not": null,
+  "types": [
+   "B738"
+  ]
+ },
+ "UAE": {
+  "name": "Emirates",
+  "match": "Emirates",
+  "not": "SkyCargo|Cargo",
+  "types": [
+   "A388",
+   "B77W"
+  ]
+ },
+ "QTR": {
+  "name": "Qatar Airways",
+  "match": "Qatar",
+  "not": "Cargo|Amiri",
+  "types": [
+   "A320",
+   "A359",
+   "A35K",
+   "B77W",
+   "B788"
+  ]
+ },
+ "ETD": {
+  "name": "Etihad Airways",
+  "match": "Etihad",
+  "not": "Cargo",
+  "types": [
+   "B789",
+   "B77W",
+   "A388"
+  ]
+ },
+ "SVA": {
+  "name": "Saudia",
+  "match": "Saudia|Saudi Arabian Airlines",
+  "not": "Cargo",
+  "types": [
+   "A320",
+   "B77W",
+   "B789"
+  ]
+ },
+ "MSR": {
+  "name": "EgyptAir",
+  "match": "Egypt ?Air",
+  "not": "Cargo",
+  "types": [
+   "B738",
+   "B77W"
+  ]
+ },
+ "RAM": {
+  "name": "Royal Air Maroc",
+  "match": "Royal Air Maroc",
+  "not": null,
+  "types": [
+   "B738",
+   "B788"
+  ]
+ },
+ "ETH": {
+  "name": "Ethiopian Airlines",
+  "match": "Ethiopian",
+  "not": "Cargo",
+  "types": [
+   "B38M",
+   "B788",
+   "A359",
+   "B77W"
+  ]
+ },
+ "KQA": {
+  "name": "Kenya Airways",
+  "match": "Kenya Airways",
+  "not": null,
+  "types": [
+   "B788"
+  ]
+ },
+ "SAA": {
+  "name": "South African Airways",
+  "match": "South African Airways",
+  "not": null,
+  "types": [
+   "A320",
+   "A332"
+  ]
+ },
+ "SIA": {
+  "name": "Singapore Airlines",
+  "match": "Singapore Airlines",
+  "not": "Cargo|SilkAir|Scoot",
+  "types": [
+   "A359",
+   "A388",
+   "B77W",
+   "B78X"
+  ]
+ },
+ "CPA": {
+  "name": "Cathay Pacific",
+  "match": "Cathay",
+  "not": "Dragon|Cargo",
+  "types": [
+   "A321",
+   "A333",
+   "A359",
+   "B77W"
+  ]
+ },
+ "QFA": {
+  "name": "Qantas",
+  "match": "Qantas",
+  "not": "QantasLink|Freight|Jetstar",
+  "types": [
+   "B738",
+   "A332",
+   "A333",
+   "B789",
+   "A388"
+  ]
+ },
+ "ANZ": {
+  "name": "Air New Zealand",
+  "match": "Air New Zealand",
+  "not": "Air New Zealand Link|Eagle Air|Mount Cook",
+  "types": [
+   "A320",
+   "B789",
+   "B77W"
+  ]
+ },
+ "VOZ": {
+  "name": "Virgin Australia",
+  "match": "Virgin Australia|Virgin Blue",
+  "not": null,
+  "types": [
+   "B738"
+  ]
+ },
+ "JST": {
+  "name": "Jetstar",
+  "match": "Jetstar",
+  "not": null,
+  "types": [
+   "A320",
+   "A321",
+   "B788"
+  ]
+ },
+ "ANA": {
+  "name": "All Nippon Airways",
+  "match": "All Nippon|\\bANA\\b",
+  "not": "ANA Wings|Cargo|Pok[eé]mon",
+  "types": [
+   "A320",
+   "B738",
+   "B763",
+   "B772",
+   "B77W",
+   "B788",
+   "B789"
+  ],
+  "cs": true
+ },
+ "JAL": {
+  "name": "Japan Airlines",
+  "match": "Japan Airlines|\\bJAL\\b",
+  "not": "J-Air|JAL Express|Cargo|Transocean|JTA",
+  "types": [
+   "B738",
+   "B763",
+   "B788",
+   "A359",
+   "B77W"
+  ],
+  "cs": true
+ },
+ "KAL": {
+  "name": "Korean Air",
+  "match": "Korean Air",
+  "not": "Cargo",
+  "types": [
+   "B738",
+   "B739",
+   "A333",
+   "B77W",
+   "A388"
+  ]
+ },
+ "AAR": {
+  "name": "Asiana Airlines",
+  "match": "Asiana",
+  "not": "Cargo",
+  "types": [
+   "A321",
+   "A333",
+   "A359",
+   "A388"
+  ]
+ },
+ "CES": {
+  "name": "China Eastern Airlines",
+  "match": "China Eastern",
+  "not": "Cargo",
+  "types": [
+   "A320",
+   "A321",
+   "B738",
+   "A333"
+  ]
+ },
+ "CSN": {
+  "name": "China Southern Airlines",
+  "match": "China Southern",
+  "not": "Cargo",
+  "types": [
+   "A320",
+   "A321",
+   "B738",
+   "A333",
+   "B789",
+   "A388"
+  ]
+ },
+ "CCA": {
+  "name": "Air China",
+  "match": "Air China",
+  "not": "Cargo|Inner Mongolia|Dalian",
+  "types": [
+   "A320",
+   "A321",
+   "B738",
+   "A333",
+   "B77W"
+  ]
+ },
+ "CHH": {
+  "name": "Hainan Airlines",
+  "match": "Hainan",
+  "not": null,
+  "types": [
+   "B738",
+   "B789"
+  ]
+ },
+ "CAL": {
+  "name": "China Airlines",
+  "match": "China Airlines",
+  "not": "Cargo",
+  "types": [
+   "A333",
+   "A359",
+   "B77W"
+  ]
+ },
+ "EVA": {
+  "name": "EVA Air",
+  "match": "EVA Air|\\bEVA\\b",
+  "not": "Cargo",
+  "types": [
+   "A321",
+   "A333",
+   "B77W",
+   "B789"
+  ],
+  "cs": true
+ },
+ "IGO": {
+  "name": "IndiGo",
+  "match": "IndiGo",
+  "not": null,
+  "types": [
+   "A320",
+   "A20N",
+   "A21N"
+  ]
+ },
+ "AIC": {
+  "name": "Air India",
+  "match": "Air India",
+  "not": "Express|Regional|Alliance",
+  "types": [
+   "A320",
+   "B788",
+   "B77W"
+  ]
+ },
+ "AXM": {
+  "name": "AirAsia",
+  "match": "Air ?Asia",
+  "not": "AirAsia X|Cargo",
+  "types": [
+   "A320"
+  ]
+ },
+ "GIA": {
+  "name": "Garuda Indonesia",
+  "match": "Garuda",
+  "not": null,
+  "types": [
+   "B738",
+   "A333"
+  ]
+ },
+ "THA": {
+  "name": "Thai Airways",
+  "match": "Thai Airways|\\bThai\\b",
+  "not": "Smile|Lion|AirAsia|VietJet",
+  "types": [
+   "A333",
+   "B77W",
+   "B788"
+  ]
+ },
+ "MAS": {
+  "name": "Malaysia Airlines",
+  "match": "Malaysia Airlines|Malaysian Airline",
+  "not": null,
+  "types": [
+   "B738",
+   "A333",
+   "A359"
+  ]
+ },
+ "HVN": {
+  "name": "Vietnam Airlines",
+  "match": "Vietnam Airlines",
+  "not": null,
+  "types": [
+   "A321",
+   "A359"
+  ]
+ },
+ "VJC": {
+  "name": "VietJet",
+  "match": "Viet ?Jet",
+  "not": null,
+  "types": [
+   "A320",
+   "A321"
+  ]
+ },
+ "PAL": {
+  "name": "Philippine Airlines",
+  "match": "Philippine Airlines",
+  "not": "PAL Express",
+  "types": [
+   "A321",
+   "A333"
+  ]
+ },
+ "JJA": {
+  "name": "Jeju Air",
+  "match": "Jeju Air",
+  "not": null,
+  "types": [
+   "B738"
+  ]
+ }
+}

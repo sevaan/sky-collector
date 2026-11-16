@@ -2,8 +2,8 @@
 // e.g. Icelandair Toronto → Reykjavík), and every catch also counts toward PLANES (the aircraft type). Anything with no
 // route (helicopters, light planes, balloons, private jets) is a Planes card only. No DOM here.
 
-import { aircraftName, isHelicopter } from './planes.js?v=0.1.1606';
-import { routeKm } from './routes.js?v=0.1.1606';
+import { aircraftName, isHelicopter } from './planes.js?v=0.1.1608';
+import { routeKm } from './routes.js?v=0.1.1608';
 
 export const TIERS = {
   common: { label: 'Common', mark: '●', color: '#4a6178' },
@@ -56,7 +56,7 @@ export function cardsFor(p, route, airline) {
   const t = airTime(km);
   const flight = {
     kind: 'flight', key: `F:${a3}:${route.from.icao}-${route.to.icao}`,
-    from: route.from, to: route.to, airline: airline || a3, callsign: route.callsign,
+    from: route.from, to: route.to, airline: airline || a3, airlineIcao: a3, callsign: route.callsign,
     type: p.type || '', typeName, // the aircraft that flew it: the card shows its photo (js/type-photos.js)
     km, kmText: fmtKm(km), air: t, set, tier: tierFor(km, a3, set),
     fact: km == null ? `${route.to.city} is where this ${airline || ''} flight is headed.`.replace('  ', ' ')
