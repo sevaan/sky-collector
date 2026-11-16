@@ -2,9 +2,9 @@
 // (localStorage 'skyCatches', written by js/sky-catch.js). Runs inside cards.html and takes over its main area; Space
 // Collector's satellite grid stays in the page, hidden. Design: canvas row D (cream mini cards, gold frames for Rare+).
 
-import { flightCardHtml, planeCardHtml, miniCardHtml } from './flight-card.js?v=0.1.1619';
-import { attachTilt } from './card.js?v=0.1.1619';
-import { flightStampInfo, planeStampInfo, hasAirlineCallsign } from './sky-stamps.js?v=0.1.1619';
+import { flightCardHtml, planeCardHtml, miniCardHtml } from './flight-card.js?v=0.1.1621';
+import { attachTilt } from './card.js?v=0.1.1621';
+import { flightStampInfo, planeStampInfo, hasAirlineCallsign } from './sky-stamps.js?v=0.1.1621';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));

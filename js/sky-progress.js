@@ -5,8 +5,8 @@
 //   level-up bonus on top of the stamp: Silver 40, Gold 100 · same aircraft on the same local day: 0
 // A catch that opens a new flight AND a new plane type earns both (140); a catch can also earn a flight stamp and a plane stamp.
 // Ranks are Sky Collector's own list in js/progress.js (RANKS, same [xp, name] table Space Collector uses).
-import { RANKS } from './progress.js?v=0.1.1619';
-import { localDay, levelFor, levelRank } from './sky-stamps.js?v=0.1.1619';
+import { RANKS } from './progress.js?v=0.1.1621';
+import { localDay, levelFor, levelRank } from './sky-stamps.js?v=0.1.1621';
 
 export const XP = { newFlight: 80, newPlane: 60, stamp: 10, levelUp: { silver: 40, gold: 100 } };
 
