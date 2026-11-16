@@ -2,10 +2,10 @@
 // Collect does. Catches are kept in localStorage ('skyCatches') for now, apart from Space Collector's sightings, so the
 // old collection code never meets a flight. The Collection screen reads them in a later step.
 
-import { aircraftName, isHelicopter } from './planes.js?v=0.1.1586';
-import { lookupRoute } from './routes.js?v=0.1.1586';
-import { cardsFor, TIERS } from './flights.js?v=0.1.1586';
-import { glyphSvg, showCatch } from './flight-card.js?v=0.1.1586';
+import { aircraftName, isHelicopter } from './planes.js?v=0.1.1588';
+import { lookupRoute } from './routes.js?v=0.1.1588';
+import { cardsFor, TIERS } from './flights.js?v=0.1.1588';
+import { glyphSvg, showCatch } from './flight-card.js?v=0.1.1588';
 
 const KEY = 'skyCatches';
 export function catches() { try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { return []; } }
@@ -33,7 +33,7 @@ export function catchPanel(el, hit, route) {
 
 let busy = false;
 // Collect: look the route up properly (airports, distance), save the catch, show the card.
-export async function collect(el, { onDone } = {}) {
+export async function collect(el, { onDone, show = showCatch } = {}) {
   const hit = el._hit; if (!hit || busy) return;
   busy = true;
   try {
@@ -47,7 +47,7 @@ export async function collect(el, { onDone } = {}) {
       type: p.type, altFt: Math.round(p.hKm * 3280.84), gsKt: p.gs, rangeKm: Math.round(hit.rangeKm * 10) / 10, airline: route?.airline || '',
       flight, plane });
     save(list);
-    await showCatch({ flight, plane, isNewFlight, isNewPlane, heightFt: Math.round(p.hKm * 3280.84), speedKmh: Math.round(p.gs * 1.852),
+    await show({ flight, plane, isNewFlight, isNewPlane, heightFt: Math.round(p.hKm * 3280.84), speedKmh: Math.round(p.gs * 1.852),
       awayKm: Math.round(hit.rangeKm), flightSeen: flight ? seenCount(list, flight.key) : 0, planeSeen: seenCount(list, plane.key) });
   } finally { busy = false; onDone?.(); }
 }

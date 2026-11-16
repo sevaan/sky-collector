@@ -167,3 +167,4 @@ body:not(.sky-col-mode) #sky-col { display:none; }
 .scv-list li span:last-child { color:var(--sc-muted); text-align:right; }
 html:has(body.sky-col-mode) { background:#eef5fb; }
 body.sky-col-mode { --bg:#eef5fb; --text:#0d2238; }
+#rv-news .sky-rv-strip .fcatch-strip-n { color:var(--sc-ink); } #rv-news .sky-rv-strip { max-width:340px; }
