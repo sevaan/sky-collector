@@ -7,12 +7,12 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { TIERS } from './flights.js?v=0.1.1631';
-import { typePhoto } from './type-photos.js?v=0.1.1631';
-import { airlinePhoto } from './airline-photos.js?v=0.1.1631';
-import { airlineLogo } from './airline-logos.js?v=0.1.1631';
-import { fitStyle } from './photo-fit.js?v=0.1.1631';
-import { hasAirlineCallsign, planeLine, levelWord } from './sky-stamps.js?v=0.1.1631';
+import { TIERS } from './flights.js?v=0.1.1632';
+import { typePhoto } from './type-photos.js?v=0.1.1632';
+import { airlinePhoto } from './airline-photos.js?v=0.1.1632';
+import { airlineLogo } from './airline-logos.js?v=0.1.1632';
+import { fitStyle } from './photo-fit.js?v=0.1.1632';
+import { hasAirlineCallsign, planeLine, levelWord } from './sky-stamps.js?v=0.1.1632';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
@@ -49,7 +49,19 @@ function airlineMark(f, cls) {
   const lg = logosOn() ? airlineLogo(airlineIcao(f)) : null;
   return lg ? `<img class="${cls}" src="${esc(lg.url)}" alt="${esc(f.airline)}" title="${esc(f.airline)}" width="${lg.w}" height="${lg.h}" decoding="async" draggable="false">` : `<span>${esc(f.airline)}</span>`;
 }
-export function flightPhotoFor(f, type) { return (type && airlinePhoto(airlineIcao(f), type)) || photoFor(type); }
+/* An airline's family (2026-11-15, Sevaan: an Alaska 737 MAX on an Air Canada Rouge card): brands and regional carriers that
+   fly in, or alongside, their parent's paint. When we have no photo of that type in the flight's own livery, the parent's is
+   the next best thing; only carriers that fly for ONE brand are listed (SkyWest and Republic fly for several, so not them). */
+const FAMILY = {
+  ROU: 'ACA', JZA: 'ACA', CRQ: 'ACA', WEN: 'WJA', SWG: 'WJA', QXE: 'ASA',
+  ENY: 'AAL', PDT: 'AAL', JIA: 'AAL', AWI: 'AAL', EDV: 'DAL', GJS: 'UAL', ASH: 'UAL', UCA: 'UAL',
+  CFE: 'BAW', SHT: 'BAW', CLH: 'DLH', KLC: 'KLM', HOP: 'AFR', QLK: 'QFA', AKX: 'ANA', JTA: 'JAL', JAC: 'JAL', HDA: 'CPA', IBS: 'IBE',
+};
+// A flight's photo: that type in the airline's own livery, then in its parent's, then the type with no airline's paint at all.
+export function flightPhotoFor(f, type) {
+  if (!type) return null; const a = airlineIcao(f);
+  return airlinePhoto(a, type) || (FAMILY[a] && airlinePhoto(FAMILY[a], type)) || photoFor(type);
+}
 const credit = (ph) => `<span class="fc-credit">Photo: ${esc(ph.credit)}, ${esc(ph.licence)}</span>`;
 // The whole aircraft always shows (2026-11-15, Sevaan: "planes can't be cropped"). Each photo carries the box the plane
 // sits in (scripts/photos/photo_common.py); once the frame has a size, fitPhoto picks a cover crop that keeps the box, or shows
