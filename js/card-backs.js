@@ -1,5 +1,5 @@
-import { SETS, goldAlbums } from './sets.js?v=0.1.1674';
-import { isPlus } from './plus.js?v=0.1.1674';
+import { SETS, goldAlbums } from './sets.js?v=0.1.1675';
+import { isPlus } from './plus.js?v=0.1.1675';
 // Card backs you can choose (2026-10-16, design/card-backs.html, Sevaan liked all six). Mission Control is everyone’s;
 // Plus unlocks the rest; two can also be earned free: Golden Record (find the Pale Blue Dot story) and Star Chart
 // (complete 10 constellations); main.js writes what’s been earned to localStorage 'backEarned'. The choice is
@@ -10,7 +10,9 @@ export const CARD_BACKS = [
   // come with Plus, to be curated later.
   // Flight Plan (2026-11-16, Sevaan's design): Space Collector's Mission Control back redrawn for the sky, so it's the default
   // like Mission Control is there. scripts/art/source/back-flight-plan-original.webp is his file; the webp is cropped inside
-  // its gold frame to Space Collector's 900x1359 with the frame line 19px in, and the lower compass ticks redrawn from the top.
+  // its gold frame, the lower compass ticks redrawn from the top, then registered onto Mission Control by
+  // scripts/art/register-back.py (Sevaan: "line up and overlay perfectly"): frame, rules, corner circles, ring and title land
+  // on Mission Control's own positions.
   { id: 'flight-plan', bg: '#fdf6e9', name: 'Flight Plan', url: 'assets/art/backs/back-flight-plan.webp', title: 'middle', free: true },
   { id: 'engine', bg: '#5ca5ce', name: 'Engine', url: 'assets/art/backs/back-engine.webp', title: 'middle', free: true }, // the default 2026-11-15 to 11-16, stays free
   { id: 'airline-ticket', bg: '#f3ead2', name: 'Airline Ticket', url: 'assets/art/backs/back-airline-ticket.webp', title: 'middle' }, // classic playing-card back, design room 3 (Sevaan's default, 2026-11-15)
