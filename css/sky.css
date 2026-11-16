@@ -373,6 +373,9 @@ body.sky-only #visible-sub { color:var(--sc-muted); }
 body.sky-only #row-tonight, body.sky-only #row-alerts, body.sky-only #row-live,
 body.sky-only .set-row:has(#chk-daysats), body.sky-only .set-row:has(#chk-meteor),
 body.sky-only #set-stats-open, body.sky-only #sky-plus-line { display:none !important; }
+/* Settings sweep (2026-11-15): gifting has no planes yet; circle highlights only sort satellites, stars and UFOs; the test tools below are satellite-only */
+body.sky-only #set-send-open, body.sky-only #set-hl-open, body.sky-only #btn-next-pass, body.sky-only #btn-nightpack,
+body.sky-only #btn-ufo, body.sky-only #btn-santa, body.sky-only #btn-meteor, body.sky-only #btn-live-test { display:none !important; }
 
 /* Lighter inner shadows on the welcome card's step pictures and the tour cards' pictures (2026-11-15, Sevaan: "less dark");
    Space Collector's were tuned for a night sky. */
@@ -471,3 +474,8 @@ body.sky-only #reveal a#reveal-view, body.sky-only.night #reveal a#reveal-view {
 .card.card--sky { min-height:42em; position:relative; }
 .card.card--sky > .fc { --u:1em; font-size:1em; width:100%; }
 .card.card--sky > .card__back { border-radius:1.15em; }
+
+/* Sky's Collection on Space Collector's page (Milestone 1.5): Mine and Patches. Albums (sets with a known size) and Find
+   (satellite pass search) come back once plane sets exist (docs/PROJECT-PLAN.md task 13). */
+html.sky-cards #tab-albums, html.sky-cards #tab-discover { display:none !important; }
+html.sky-cards .collection-tabs { justify-content:flex-start; gap:28px; }

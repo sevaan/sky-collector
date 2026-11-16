@@ -5,9 +5,9 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1641';
-import { glyphSvg } from './flight-card.js?v=0.1.1641';
-import { catches } from './sky-catch.js?v=0.1.1641';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1644';
+import { glyphSvg } from './flight-card.js?v=0.1.1644';
+import { catches } from './sky-catch.js?v=0.1.1644';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -99,5 +99,6 @@ export function renderToday(el, ctx) {
     <div class="td-chart" aria-label="Planes seen by hour">${seen.hours.map((n, h) => `<i class="${h === nowH ? 'now' : ''}${seen.open[h] ? '' : ' gap'}" style="height:${seen.open[h] ? Math.max(4, Math.round(n / maxH * 64)) : 4}px" title="${h}:00 · ${seen.open[h] ? n : 'app closed'}"></i>`).join('')}</div>
     <div class="td-axis"><span>12 AM</span><span>6</span><span>NOON</span><span>6</span><span>11 PM</span></div>
     <p class="td-note">Counts only the hours Sky Collector was open. Grey bars are hours it wasn’t.</p>`;
-  el.querySelectorAll('[data-hex]').forEach((b) => b.addEventListener('click', () => ctx.show(b.dataset.hex)));
+  /* a row opens that plane's card, as a Tonight row does in Space Collector (2026-11-15); the hero's Show me steers you to it */
+  el.querySelectorAll('[data-hex]').forEach((b) => b.addEventListener('click', () => (b.classList.contains('td-row') && ctx.open ? ctx.open(b.dataset.hex, b.getBoundingClientRect()) : ctx.show(b.dataset.hex))));
 }
