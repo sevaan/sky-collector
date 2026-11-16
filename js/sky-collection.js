@@ -2,10 +2,11 @@
 // (localStorage 'skyCatches', written by js/sky-catch.js). Runs inside cards.html and takes over its main area; Space
 // Collector's satellite grid stays in the page, hidden. Design: canvas row D (cream mini cards, gold frames for Rare+).
 
-import { flightCardHtml, planeCardHtml, miniCardHtml } from './flight-card.js?v=0.1.1632';
-import { attachTilt } from './card.js?v=0.1.1632';
-import { flightStampInfo, planeStampInfo, hasAirlineCallsign } from './sky-stamps.js?v=0.1.1632';
-import { standing } from './sky-progress.js?v=0.1.1632';
+import { flightCardHtml, planeCardHtml, miniCardHtml } from './flight-card.js?v=0.1.1635';
+import { attachTilt, attachFlip } from './card.js?v=0.1.1635';
+import { applyBack } from './card-backs.js?v=0.1.1635';
+import { flightStampInfo, planeStampInfo, hasAirlineCallsign } from './sky-stamps.js?v=0.1.1635';
+import { standing } from './sky-progress.js?v=0.1.1635';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -94,11 +95,23 @@ function openCard(e) {
   viewerTilt?.destroy(); viewerTilt = null;
   dlg.querySelector('.scv-body').innerHTML = `<div class="scv-card">${html}</div>${liveries}<p class="scv-k">WHEN YOU SAW IT · ${e.seen.length} ${e.seen.length === 1 ? 'TIME' : 'TIMES'}</p><ul class="scv-list">${rows}</ul>`;
   // The card tilts under the finger, its foil and glare following (the page still scrolls).
-  const card = dlg.querySelector('.scv-card .fc'); if (card) viewerTilt = attachTilt(card, { scroll: true });
+  const card = dlg.querySelector('.scv-card .fc');
+  if (card) {
+    viewerTilt = attachTilt(card, { scroll: true });
+    /* Double-tap flips it to its card back, as in Space Collector (js/card.js attachFlip; 2026-11-15, Sevaan) */
+    const back = document.createElement('div'); back.className = 'card__back'; card.append(back);
+    viewerFlip?.destroy(); viewerFlip = attachFlip(card, { onBack: (b) => applyBack(b), onTap: null });
+  }
   if (!dlg.open) dlg.showModal();
 }
-let viewerTilt = null;
+let viewerTilt = null, viewerFlip = null;
 
+// Open the card with this key (a flight or plane key), switching to its tab: View card on Explore and View in collection.
+function showKey(key) {
+  const { flights, planes } = build(load()), e = flights.find((x) => x.key === key) ?? planes.find((x) => x.key === key); if (!e) return;
+  const tab = flights.includes(e) ? 'flights' : 'planes'; if (state.tab !== tab) { state.tab = tab; state.filter = 'all'; render(); }
+  openCard(e);
+}
 function init() {
   if (!$('sky-col')) return;
   document.body.classList.add('sky-col-mode');
@@ -108,7 +121,8 @@ function init() {
   render();
   // A catch on Explore writes localStorage; this page hears it and redraws.
   window.addEventListener('storage', (ev) => { if (ev.key === 'skyCatches') render(); });
-  window.addEventListener('message', (ev) => { if (ev.origin === location.origin && ev.data?.sc === 'refresh') render(); });
+  window.addEventListener('message', (ev) => { if (ev.origin !== location.origin) return; if (ev.data?.sc === 'refresh') render(); if (ev.data?.sc === 'show' && ev.data.key) showKey(ev.data.key); });
+  { let k = ''; try { k = decodeURIComponent(location.hash.slice(1)); } catch {} if (k) showKey(k); } /* opened straight onto a card (View card, View in collection) */
   document.addEventListener('visibilitychange', () => { if (!document.hidden) render(); });
 }
 init();

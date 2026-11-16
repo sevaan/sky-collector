@@ -2,14 +2,14 @@
 // Collect does. Catches are kept in localStorage ('skyCatches') for now, apart from Space Collector's sightings, so the
 // old collection code never meets a flight. The Collection screen reads them in a later step.
 
-import { aircraftName, isHelicopter } from './planes.js?v=0.1.1632';
-import { lookupRoute } from './routes.js?v=0.1.1632';
-import { cardsFor, TIERS } from './flights.js?v=0.1.1632';
-import { glyphSvg, showCatch, miniCardHtml } from './flight-card.js?v=0.1.1632';
-import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1632';
+import { aircraftName, isHelicopter } from './planes.js?v=0.1.1635';
+import { lookupRoute } from './routes.js?v=0.1.1635';
+import { cardsFor, TIERS } from './flights.js?v=0.1.1635';
+import { glyphSvg, showCatch, miniCardHtml } from './flight-card.js?v=0.1.1635';
+import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1635';
 
-import { TIER_INFO } from './rarity.js?v=0.1.1632';
-import { allCatches, addCatch } from './catch-store.js?v=0.1.1632';
+import { TIER_INFO } from './rarity.js?v=0.1.1635';
+import { allCatches, addCatch } from './catch-store.js?v=0.1.1635';
 // Catches live in js/catch-store.js (IndexedDB, with a localStorage mirror the Collection page reads).
 export function catches() { return allCatches(); }
 const seenCount = (list, key) => list.filter((c) => c.key === key || c.planeKey === key).length;
@@ -48,6 +48,8 @@ export function catchPanel(el, hit, route) {
 /* The plane in the circle uses Space Collector's own target ticket, #discover (2026-11-15, Sevaan: "so much looks off
    compared to our neat and tidy Space Collector"): the tier line and name above the circle, the real mini card, the
    distance, and Collect below it, laid out and animated exactly as a satellite's. */
+// When you last caught this card (its newest catch), for the mini card's date line; null if it isn't yours yet.
+const lastSeen = (key) => { const l = catches(); for (let i = l.length - 1; i >= 0; i--) { const c = l[i]; if (c.key === key || c.planeKey === key || c.flight?.key === key || c.plane?.key === key) return c.time; } return null; };
 function discoverPanel(el, hit, route) {
   const $ = (id) => document.getElementById(id), txt = (id, v) => { const e = $(id); if (e && e.textContent !== v) e.textContent = v; };
   const p = hit.plane, type = aircraftName(p) || (isHelicopter(p) ? 'Helicopter' : 'Aircraft'), full = route?.full;
@@ -56,16 +58,18 @@ function discoverPanel(el, hit, route) {
   const { flight, plane } = cardsFor(p, full ?? null, route?.airline || '');
   const card = flight ?? plane, tier = TIERS[card?.tier] ?? TIERS.common;
   const what = stamped ? 'Stamped today' : again ? 'New stamp' : fkey ? 'New flight' : route && !route.none && route.airline && !full ? 'Flight' : 'New plane';
-  txt('d-tier', `${tier.label} · ${what}`);
+  txt('d-tier', stamped ? tier.label : `${tier.label} · ${what}`); /* seen before: just the tier, as Space Collector */
   const ti = TIER_INFO[card?.tier] ?? TIER_INFO.common, dt = $('d-tier'); /* the tier's own mark and colour, as a satellite's (▲ green for Uncommon) */
   if (dt) { dt.style.setProperty('--find-tier', again ? 'var(--cyan)' : ti.color); dt.dataset.gem = again ? '✦' : ti.gem; }
   txt('d-name', full ? `To ${full.to.city}` : route?.airline ? `${route.airline} ${(p.callsign || '').replace(/^[A-Z]{3}/, '')}` : type);
   txt('d-dist', hit.rangeKm != null ? `${Math.round(hit.rangeKm)} km` : `${ft(p)} ft`);
-  const mk = `${card?.key}|${out.kind}`, mini = $('d-mini');
-  if (mini && mini.dataset.k !== mk) { mini.dataset.k = mk; try { mini.innerHTML = card ? miniCardHtml({ kind: flight ? 'flight' : 'plane', card, type: p.type }) : ''; } catch { mini.innerHTML = ''; } }
-  const cta = $('d-cta'); if (cta) { cta.hidden = false; txt('d-cta', stamped ? 'Stamped today' : 'Collect'); cta.disabled = stamped; cta.setAttribute('aria-disabled', String(stamped)); }
+  const mk = `${card?.key}|${out.kind}|${catches().length}`, mini = $('d-mini');
+  if (mini && mini.dataset.k !== mk) { mini.dataset.k = mk; try { mini.innerHTML = card ? miniCardHtml({ kind: flight ? 'flight' : 'plane', card, type: p.type, last: lastSeen(card.key), n: seenCount(catches(), card.key) || 1 }) : ''; } catch { mini.innerHTML = ''; } }
+  /* Already stamped today: Space Collector's seen-before state, a View card button that opens your card (2026-11-15, Sevaan) */
+  el.dataset.key = card?.key ?? '';
+  const cta = $('d-cta'); if (cta) { cta.hidden = false; txt('d-cta', stamped ? 'View card' : 'Collect'); cta.disabled = false; cta.removeAttribute('aria-disabled'); }
   for (const id of ['d-sub', 'd-check', 'd-switch']) { const e = $(id); if (e) e.hidden = true; }
-  $('d-hit')?.setAttribute('aria-label', stamped ? 'Already stamped today' : 'Collect this plane');
+  $('d-hit')?.setAttribute('aria-label', stamped ? 'View this card' : 'Collect this plane');
   el.classList.toggle('owned', stamped); el.classList.remove('quiet'); el.classList.add('sky-plane'); el.hidden = false;
 }
 let busy = false;

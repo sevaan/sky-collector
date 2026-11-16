@@ -463,3 +463,5 @@ body.sky-only #reveal a#reveal-view, body.sky-only.night #reveal a#reveal-view {
 .fc-logo { height:1.5em; width:auto; max-width:6.5em; object-fit:contain; flex:none; }
 .sct-sub { display:flex; align-items:center; gap:4px; min-width:0; } .sct-sub > span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .sct-logo { height:13px; width:auto; max-width:72px; object-fit:contain; flex:none; }
+/* The card back sits over the card it belongs to when the viewer's card turns (js/card.js attachFlip) */
+#sky-viewer .scv-card .fc { position:relative; }
