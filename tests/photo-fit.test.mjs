@@ -37,3 +37,16 @@ test('missing box or bad sizes degrade safely', () => {
   assert.equal(fitStyle(null, 800, 600, 460, 200).mode, 'contain');
   assert.equal(fitStyle([0, 0, 1, 1], 0, 600, 400, 300).mode, 'contain');
 });
+
+test('a crop may trim into the padding but not the plane', () => {
+  // 4:3 photo in a 2.3:1 strip shows 58% of the height; box is 0.62 tall with padding, 0.55 of plane
+  const r = fitStyle([0.1, 0.2, 0.9, 0.82], 1280, 960, 460, 200);
+  assert.equal(r.mode, 'cover');
+  const v = (1280 / 960) / (460 / 200), start = parseFloat(r.objectPosition.split(' ')[1]) / 100 * (1 - v);
+  assert.ok(start <= 0.235 + 1e-3 && start + v >= 0.785 - 1e-3);
+});
+
+test('a box side at the photo edge is not trimmed', () => {
+  assert.equal(fitStyle([0, 0.2, 1, 0.82], 1280, 960, 460, 200).mode, 'cover');
+  assert.equal(fitStyle([0.1, 0, 0.9, 0.62], 1280, 960, 460, 200).mode, 'contain');
+});

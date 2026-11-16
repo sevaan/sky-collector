@@ -5,13 +5,13 @@
 //  Everything scales with rarity (Legendary dims the sky, shockwave, held breath, slow flip, fanfare).
 // Waits use timers, not animation.finished, so a paused tab can never freeze the sequence.
 
-import { sfx, loadSfx } from './sfx.js?v=0.1.1673';
-import { audioCtx } from './audio-ctx.js?v=0.1.1673';
-import { TIER_INFO } from './rarity.js?v=0.1.1673';
-import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype } from './card.js?v=0.1.1673';
-import { applyBack } from './card-backs.js?v=0.1.1673';
-import { addStarfield } from './starfield.js?v=0.1.1673';
-import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1673';
+import { sfx, loadSfx } from './sfx.js?v=0.1.1674';
+import { audioCtx } from './audio-ctx.js?v=0.1.1674';
+import { TIER_INFO } from './rarity.js?v=0.1.1674';
+import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype } from './card.js?v=0.1.1674';
+import { applyBack } from './card-backs.js?v=0.1.1674';
+import { addStarfield } from './starfield.js?v=0.1.1674';
+import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1674';
 
 const FX = TIER_FX; /* one rarity table for every card moment (js/card-moment.js, 2026-11-11) */
 const NIGHT_MILESTONES = [3, 5, 10, 25, 50, 100, 200, 365], STAMP_MILESTONES = [5, 10, 25, 50, 100, 200, 300, 400];

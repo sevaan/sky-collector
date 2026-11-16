@@ -61,7 +61,9 @@ def detect_box(path):
     return [round(max(0, x0 - PAD), 4), round(max(0, y0 - PAD), 4), round(min(1, x1 + PAD), 4), round(min(1, y1 + PAD), 4)]
 
 def box_for(key, path, overrides):
-    if key in overrides: return overrides[key]
+    if key in overrides:  # hand-drawn tight round the plane; padded like a detected box (js/photo-fit.js trims it back)
+        x0, y0, x1, y1 = overrides[key]
+        return [round(max(0, x0 - PAD), 4), round(max(0, y0 - PAD), 4), round(min(1, x1 + PAD), 4), round(min(1, y1 + PAD), 4)]
     return detect_box(path)
 
 def load_overrides(): 
