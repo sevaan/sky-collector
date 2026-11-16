@@ -63,7 +63,9 @@ def detect_box(path):
 def box_for(key, path, overrides):
     if key in overrides:  # hand-drawn tight round the plane; padded like a detected box (js/photo-fit.js trims it back)
         x0, y0, x1, y1 = overrides[key]
-        return [round(max(0, x0 - PAD), 4), round(max(0, y0 - PAD), 4), round(min(1, x1 + PAD), 4), round(min(1, y1 + PAD), 4)]
+        # not clamped to 0-1: js/photo-fit.js reads a side at exactly 0 or 1 as "the plane may run to the edge"; a hand-drawn
+        # box knows where the plane ends, so its margin may hang past the edge and the card can still trim it (2026-11-16)
+        return [round(x0 - PAD, 4), round(y0 - PAD, 4), round(x1 + PAD, 4), round(y1 + PAD, 4)]
     return detect_box(path)
 
 def load_overrides(): 

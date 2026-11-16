@@ -50,3 +50,9 @@ test('a box side at the photo edge is not trimmed', () => {
   assert.equal(fitStyle([0, 0.2, 1, 0.82], 1280, 960, 460, 200).mode, 'cover');
   assert.equal(fitStyle([0.1, 0, 0.9, 0.62], 1280, 960, 460, 200).mode, 'contain');
 });
+
+test('a hand-drawn margin past the photo edge still trims', () => {
+  // plane 0.01-0.99 wide drawn tight, padded to -0.03..1.03: the crop may trim the margin, not treat it as the edge
+  assert.equal(fitStyle([-0.03, 0.2, 1.03, 0.6], 1280, 720, 1280 * 0.995, 720).mode, 'cover');
+  assert.equal(fitStyle([0, 0.2, 1, 0.6], 1280, 720, 1280 * 0.995, 720).mode, 'contain');
+});

@@ -12,11 +12,15 @@ const pct = (v) => `${Math.round(v * 1000) / 10}%`;
 export function fitStyle(box, imgW, imgH, frameW, frameH) {
   const ok = [imgW, imgH, frameW, frameH].every((n) => Number.isFinite(n) && n > 0);
   const b = Array.isArray(box) && box.length === 4 && box.every(Number.isFinite) ? box : [0, 0, 1, 1];
-  let x0 = Math.max(0, Math.min(b[0], b[2])), x1 = Math.min(1, Math.max(b[0], b[2]));
-  let y0 = Math.max(0, Math.min(b[1], b[3])), y1 = Math.min(1, Math.max(b[1], b[3]));
+  // A side at exactly 0 or 1 is a detected box clamped at the photo edge (the plane may run right to it): no trim there.
+  // Hand-drawn boxes keep their margin past the edge (e.g. -0.02), so they trim and then clamp. (2026-11-16)
+  let x0 = Math.min(b[0], b[2]), x1 = Math.max(b[0], b[2]);
+  let y0 = Math.min(b[1], b[3]), y1 = Math.max(b[1], b[3]);
   if (!ok) return { mode: 'contain' };
-  if (x1 - x0 > 2 * TRIM + 0.05) { if (x0 > EPS) x0 += TRIM; if (x1 < 1 - EPS) x1 -= TRIM; }
-  if (y1 - y0 > 2 * TRIM + 0.05) { if (y0 > EPS) y0 += TRIM; if (y1 < 1 - EPS) y1 -= TRIM; }
+  const edge = (v) => Math.abs(v) < EPS || Math.abs(v - 1) < EPS;
+  if (x1 - x0 > 2 * TRIM + 0.05) { if (!edge(x0)) x0 += TRIM; if (!edge(x1)) x1 -= TRIM; }
+  if (y1 - y0 > 2 * TRIM + 0.05) { if (!edge(y0)) y0 += TRIM; if (!edge(y1)) y1 -= TRIM; }
+  x0 = Math.max(0, x0); x1 = Math.min(1, x1); y0 = Math.max(0, y0); y1 = Math.min(1, y1);
   const ia = imgW / imgH, fa = frameW / frameH;
   const vx = fa > ia ? 1 : fa / ia, vy = fa > ia ? ia / fa : 1; // visible fraction of the photo under cover
   if (x1 - x0 > vx + EPS || y1 - y0 > vy + EPS) return { mode: 'contain' };
