@@ -378,3 +378,45 @@ body.sky-only #set-stats-open, body.sky-only #sky-plus-line { display:none !impo
    Space Collector's were tuned for a night sky. */
 html body .wc-a-pic::after { box-shadow:inset 0 .3em .6em rgba(13,34,56,.22), inset 0 -1px 0 #ffffff55; }
 html body .tc .art::after { box-shadow:inset 0 .3em .6em rgba(13,34,56,.22), inset 0 -1px 0 #ffffff55; }
+
+/* ===== Stamps and levels (2026-11-15, Sevaan: catching a card again stamps it) =====
+   Level metals follow Space Collector's fleet frames: bronze #b8793e, silver #b9c1cc, gold #e2b53c. The passport row
+   (.fc-pass) sits between the stats and the fact on the full card; the medal (.sct-lvl) sits on the mini card's picture. */
+.fc { --lvl:#b8793e; --lvl-ink:#6e4416; --ink-stamp:#2d4f86; }
+.fc--lvl-silver, .sct-face--silver { --lvl:#aab4c0; --lvl-ink:#4a5663; }
+.fc--lvl-gold, .sct-face--gold { --lvl:#e2b53c; --lvl-ink:#7a5200; }
+.sct-face--bronze { --lvl:#b8793e; --lvl-ink:#6e4416; }
+/* Level frame: the printed double rule just inside the card edge takes the level's metal. */
+.fc--lvl .fc-in::before { box-shadow:inset 0 0 0 .12em var(--lvl), inset 0 0 0 .2em var(--paper), inset 0 0 0 .26em color-mix(in srgb, var(--lvl) 60%, transparent); }
+.fc--lvl-gold .fc-in::before { box-shadow:inset 0 0 0 .16em var(--lvl), inset 0 0 0 .22em var(--paper), inset 0 0 0 .3em color-mix(in srgb, var(--lvl) 70%, transparent), inset 0 0 1.2em rgba(226,181,60,.25); }
+.sct-face--lvl .sct-in { box-shadow:0 0 0 1.5px var(--lvl); }
+.sct-face--gold .sct-in { box-shadow:0 0 0 2px var(--lvl), 0 0 6px rgba(226,181,60,.55); }
+
+.fc-pass { margin-top:.5em; padding:.32em 0 .1em; }
+.fc-pass-h { display:flex; align-items:center; justify-content:space-between; gap:.6em; }
+.fc-pass-k { font:600 .74em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.fc-lvl { flex:none; padding:.2em .6em .18em; border-radius:.3em; font:700 .76em/1.1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.14em; color:#1a1305;
+  background:linear-gradient(150deg, color-mix(in srgb, var(--lvl) 55%, #fff), var(--lvl) 55%, color-mix(in srgb, var(--lvl) 80%, #000)); box-shadow:0 .08em .2em rgba(13,34,56,.25); }
+.fc-lvl--bronze { color:#fff7ee; }
+.fc-pass-row { display:flex; gap:.4em; margin-top:.4em; align-items:center; }
+.fc-ink { position:relative; flex:none; width:3.3em; height:3.3em; display:grid; place-content:center; text-align:center; border-radius:50%;
+  border:.13em solid var(--ink-stamp); color:var(--ink-stamp); transform:rotate(var(--r,-5deg)); opacity:.92; }
+.fc-ink:nth-child(2n) { --r:4deg; } .fc-ink:nth-child(3n) { --r:-9deg; }
+.fc-ink::before { content:''; position:absolute; inset:.18em; border-radius:50%; border:.06em dashed currentColor; opacity:.6; }
+.fc-ink b { display:block; font:800 .78em/1 Inter,sans-serif; letter-spacing:.02em; }
+.fc-ink small { display:block; margin-top:.2em; font:600 .6em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.1em; }
+.fc-ink--more { border-style:dashed; color:var(--muted); border-color:var(--rule); } .fc-ink--more::before { display:none; }
+.fc-ink--new { animation:fc-stamp-in .7s cubic-bezier(.2,1.4,.4,1) .35s both; }
+@keyframes fc-stamp-in { 0% { transform:scale(2.6) rotate(-20deg); opacity:0; } 55% { transform:scale(.9) rotate(var(--r,-5deg)); opacity:1; } 100% { transform:scale(1) rotate(var(--r,-5deg)); opacity:.92; } }
+@media (prefers-reduced-motion: reduce) { .fc-ink--new { animation:none; } }
+.fc--lvl .fc-fact { margin-top:.5em; }
+
+.sct-lvl { position:absolute; z-index:2; right:3px; top:3px; display:grid; place-items:center; min-width:17px; height:17px; padding:0 3px; border-radius:9px; color:#1a1305;
+  background:linear-gradient(150deg, color-mix(in srgb, var(--lvl) 55%, #fff), var(--lvl) 60%, color-mix(in srgb, var(--lvl) 80%, #000)); border:1px solid rgba(13,34,56,.4); box-shadow:0 1px 2px rgba(13,34,56,.3); }
+.sct-lvl--bronze { color:#fff7ee; }
+.sct-lvl i { font:400 11px/1 'SC Display','Russo One',sans-serif; font-style:normal; }
+.sct-lvl em { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); } /* the word is for screen readers; the metal says it */
+/* Catch panel: a plane already stamped today (same aircraft, same local day) */
+#catchbar.stamped #cb-collect { background:#eef3f8; color:var(--sc-muted); opacity:.7; }
+#cb-collect:disabled { cursor:default; }
+.fcatch--stamp .fcatch-k { color:#2d4f86; }

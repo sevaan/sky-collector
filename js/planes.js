@@ -3,9 +3,9 @@
 // on the website, because adsb.lol doesn’t allow browser requests directly. The airline comes from the callsign's prefix.
 // No DOM here. Positions are extrapolated between fetches using ground speed, track and climb rate.
 
-import { SERVER } from './server.js?v=0.1.1609';
-import { plugin } from './native.js?v=0.1.1609';
-import { lookupRoute } from './routes.js?v=0.1.1609';
+import { SERVER } from './server.js?v=0.1.1612';
+import { plugin } from './native.js?v=0.1.1612';
+import { lookupRoute } from './routes.js?v=0.1.1612';
 // Empty = feature off. localStorage 'planeRelay' overrides it (testing). Our server's /planes (adsb.lol only) once it's
 // deployed; until then the Val Town relay (relay/handler.ts).
 // Sky Collector (2026-11-15): Space Collector's Val Town relay is turned away by adsb.lol now, so the website needs Sky
@@ -86,6 +86,7 @@ export class PlaneTracker {
   // Call every frame; fetches at most every POLL_MS (backs off after errors).
   update(obs) {
     const url = relayUrl();
+    loadAirlines();
     if (!url || this.busy || (typeof document !== 'undefined' && document.hidden)) return; // no polling while the app is in the background
     const wait = POLL_MS * Math.min(6, 2 ** this.failures);
     if (Date.now() - this.lastFetch < wait) return;
@@ -124,6 +125,8 @@ export class PlaneTracker {
     // The airline from the callsign's prefix, and the usual route from our server (2026-10-28, Sevaan): Virtual Radar
     // Server's standing data (CC0) by callsign. Only the callsign is sent. adsbdb was dropped 2026-10-25 for its licence.
     if (this.routes.has(callsign)) return this.routes.get(callsign);
+    // Airlines outside the hand list need js/airlines.js (lazy, ~140 KB): undefined until it has loaded, then it's looked up.
+    if (!AIRLINES[callsign.slice(0, 3)] && !airlineTable) { loadAirlines(); return undefined; }
     const airline = airlineFor(callsign, null), r = airline ? { airline, flight: callsign, from: '', to: '' } : null;
     this.routes.set(callsign, r); if (this.routes.size > 300) this.routes.delete(this.routes.keys().next().value);
     // Sky Collector: no server of ours, so the phone reads the same CC0 data straight from GitHub (js/routes.js).
@@ -144,9 +147,16 @@ const AIRLINES = { ACA: 'Air Canada', ROU: 'Air Canada Rouge', JZA: 'Air Canada 
   UPS: 'UPS', BAW: 'British Airways', VIR: 'Virgin Atlantic', AFR: 'Air France', DLH: 'Lufthansa', KLM: 'KLM', ICE: 'Icelandair',
   UAE: 'Emirates', QTR: 'Qatar Airways', ETD: 'Etihad', THY: 'Turkish Airlines', AMX: 'Aeroméxico', CPA: 'Cathay Pacific', JAL: 'Japan Airlines',
   ANA: 'All Nippon', KAL: 'Korean Air', EIN: 'Aer Lingus', SAS: 'SAS', IBE: 'Iberia', SWR: 'Swiss', AUA: 'Austrian', TAP: 'TAP Air Portugal' };
+// Every ICAO airline code -> name (js/airlines.js, built by scripts/build-airlines.mjs), loaded once, lazily.
+let airlineTable = null, airlineLoad = null;
+export function loadAirlines() {
+  return (airlineLoad ??= import('./airlines.js?v=0.1.1612').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
+}
+export function airlineName(callsign) { return /^[A-Z]{3}\d/.test(callsign ?? '') ? airlineFor(callsign, null) : ''; }
 function airlineFor(callsign, a) {
   const pre = callsign.slice(0, 3).toUpperCase();
   if (AIRLINES[pre]) return AIRLINES[pre];
+  if (airlineTable?.[pre]) return airlineTable[pre];
   return a?.name && (a.icao ?? '').toUpperCase() === pre ? a.name : '';
 }
 

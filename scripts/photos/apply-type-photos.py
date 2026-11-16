@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 """Download the picked Commons photos for Planes cards (2026-11-15): scripts/photos/candidates.json + picks.json
 ({ICAO: option index, or -1 for none}; anything not listed takes option 0) -> assets/photos/types/<ICAO>.webp
-(1024×768, centre-cropped 4:3) and js/type-photos.js (credit, licence, source page per photo, for the card credit line).
-Usage: python3 -I scripts/photos/apply-type-photos.py"""
-import io, json, os, re, time, urllib.request
+(UNCROPPED, longest side 1280, webp q80) and js/type-photos.js (credit, licence, source page, w/h and the detected
+aircraft box per photo; photo_common.py detects it, box-overrides.json ("types/<ICAO>") wins).
+Usage: python3 -I scripts/photos/apply-type-photos.py [--force]  (--force re-downloads every photo)"""
+import io, json, os, re, sys, time, urllib.request
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import photo_common as pc
 from PIL import Image, PngImagePlugin
 PngImagePlugin.MAX_TEXT_CHUNK = 64 * 1024 * 1024  # some Commons PNGs carry huge metadata
 
@@ -12,21 +15,22 @@ OUT = os.path.join(ROOT, 'assets', 'photos', 'types'); os.makedirs(OUT, exist_ok
 UA = 'SkyCollectorResearch/0.1 (https://github.com/sevaan/sky-collector)'
 C = json.load(open(os.path.join(HERE, 'candidates.json')))
 picks = json.load(open(os.path.join(HERE, 'picks.json')))
-credits = {}
+credits = {}; OV = pc.load_overrides()
 for code, c in C.items():
     i = picks.get(code, 0)
     if i is None or i < 0 or i >= len(c['options']): continue
     o = c['options'][i]
-    url = re.sub(r'/\d+px-', '/1280px-', o['thumb'])
-    try:
-        data = urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': UA}), timeout=60).read()
-    except Exception as e: print(code, 'download failed', e); continue
-    try: im = Image.open(io.BytesIO(data)).convert('RGB')
-    except Exception as e: print(code, 'unreadable', e); continue
-    W, H = im.size; tw, th = (W, round(W * 3 / 4)) if W * 3 / 4 <= H else (round(H * 4 / 3), H)
-    im = im.crop(((W - tw) // 2, (H - th) // 2, (W - tw) // 2 + tw, (H - th) // 2 + th)).resize((1024, 768), Image.LANCZOS)
-    im.save(os.path.join(OUT, f'{code}.webp'), 'WEBP', quality=82)
-    credits[code] = {'credit': o['artist'], 'licence': o['licence'], 'source': o['page'], 'title': o['title']}
+    dest = os.path.join(OUT, f'{code}.webp')
+    if '--force' in sys.argv or not os.path.exists(dest):
+        url = re.sub(r'/\d+px-', '/1280px-', o['thumb'])
+        try: data = urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': UA}), timeout=60).read()
+        except Exception as e: print(code, 'download failed', e); continue
+        try: pc.save_uncropped(data, dest)
+        except Exception as e: print(code, 'unreadable', e); continue
+        time.sleep(0.3)
+    w, h = Image.open(dest).size
+    credits[code] = {'credit': o['artist'], 'licence': o['licence'], 'source': o['page'], 'title': o['title'], 'w': w, 'h': h,
+                     'box': pc.box_for('types/' + code, dest, OV)}
     print(code, 'ok'); time.sleep(0.3)
 js = ('// Real photos for Planes cards (scripts/photos/apply-type-photos.py, Wikimedia Commons, free licences). Generated.\n'
       f'export const TYPE_PHOTOS = {json.dumps(credits, ensure_ascii=False, indent=0)};\n'

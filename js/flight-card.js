@@ -7,9 +7,10 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { TIERS } from './flights.js?v=0.1.1609';
-import { typePhoto } from './type-photos.js?v=0.1.1609';
-import { airlinePhoto } from './airline-photos.js?v=0.1.1609';
+import { TIERS } from './flights.js?v=0.1.1612';
+import { typePhoto } from './type-photos.js?v=0.1.1612';
+import { airlinePhoto } from './airline-photos.js?v=0.1.1612';
+import { hasAirlineCallsign, planeLine, levelWord } from './sky-stamps.js?v=0.1.1612';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
@@ -56,9 +57,9 @@ function routeStrip(f, typeName) {
 // Layers over the printed face: foil (rarity), gloss, glare under the finger.
 const layers = '<span class="fc-foil" aria-hidden="true"></span><span class="fc-coat" aria-hidden="true"></span><span class="fc-glare" aria-hidden="true"></span>';
 
-function shell(kind, tier, inner, label) {
+function shell(kind, tier, inner, label, level = 'none') {
   const t = tierOf(tier);
-  return `<article class="fc fc--${kind} fc--${t}${['rare', 'epic', 'legendary'].includes(t) ? ' fc--gilt' : ''}" style="--tier:${TIERS[t].color}" aria-label="${esc(label)}">
+  return `<article class="fc fc--${kind} fc--${t}${['rare', 'epic', 'legendary'].includes(t) ? ' fc--gilt' : ''}${level && level !== 'none' ? ` fc--lvl fc--lvl-${level}` : ''}" style="--tier:${TIERS[t].color}" aria-label="${esc(label)}">
   <div class="fc-rot"><div class="fc-face"><div class="fc-in">${inner}</div></div>${layers}</div>
 </article>`;
 }
@@ -69,7 +70,22 @@ function footer(caughtAt, right) {
       <span class="fc-brand"><small>${esc(right)}</small>SKY COLLECTOR</span></div>`;
 }
 
-// opts: { caughtAt: Date, heightFt, sightings, type (ICAO, for older catches), planeName, eager }
+// ---- Stamps (js/sky-stamps.js): the passport row under the stats, and the level chip ----
+const levelChip = (level, cls = 'fc-lvl') => (level && level !== 'none' ? `<span class="${cls} ${cls}--${level}">${levelWord(level)}</span>` : '');
+const MAX_INK = 6;
+const inkFlight = (s, fresh) => { const d = new Date(s.time); return `<span class="fc-ink${fresh ? ' fc-ink--new' : ''}" title="${esc(dateLong(d))}"><b>${esc(dateShort(d))}</b><small>${d.getFullYear()}</small></span>`; };
+const inkPlane = (s, fresh) => `<span class="fc-ink${fresh ? ' fc-ink--new' : ''}" title="${esc(String(s.hex).toUpperCase())}"><b>${esc(s.airline || '—')}</b><small>${esc(String(s.hex).slice(-4).toUpperCase())}</small></span>`;
+// info: flightStampInfo / planeStampInfo. newest = animate the latest stamp in (a re-catch).
+function passport(info, { newest = false } = {}) {
+  if (!info?.count) return '';
+  const plane = info.kind === 'plane', shown = info.stamps.slice(-MAX_INK), more = info.count - shown.length;
+  const head = plane ? `${info.count} AIRCRAFT${info.liveryCount ? ` · ${info.liveryCount} LIVER${info.liveryCount === 1 ? 'Y' : 'IES'}` : ''}` : `${info.count} DAY${info.count === 1 ? '' : 'S'}`;
+  return `<div class="fc-pass" aria-label="${esc(`${info.count} stamps, ${info.level}`)}"><div class="fc-pass-h"><span class="fc-pass-k">STAMPS · ${head}</span>${levelChip(info.level)}</div>
+      <div class="fc-pass-row">${more > 0 ? `<span class="fc-ink fc-ink--more"><b>+${more}</b></span>` : ''}${shown.map((x, i) => (plane ? inkPlane : inkFlight)(x, newest && i === shown.length - 1)).join('')}</div></div>`;
+}
+export const passportHtml = passport;
+
+// opts: { caughtAt: Date, heightFt, sightings, type (ICAO, for older catches), planeName, eager, stampInfo (flightStampInfo), newStamp }
 export function flightCardHtml(f, opts = {}) {
   const type = f.type || opts.type || '', ph = flightPhotoFor(f, type), typeName = f.typeName || opts.planeName || '';
   const air = !f.air ? '—' : f.air.h ? `${f.air.h} h ${String(f.air.m).padStart(2, '0')}` : `${f.air.m} min`;
@@ -83,74 +99,85 @@ export function flightCardHtml(f, opts = {}) {
     <h2 class="fc-name${long ? ' fc-name--long' : ''}"><span>${esc(f.from.city)} <i aria-label="to">→</i></span><span>${esc(f.to.city)}</span></h2>
     <div class="fc-id"><span class="fc-id-l">${esc(f.airline)}</span><span class="fc-id-r">FLIGHT ${esc(f.callsign || '—')}</span></div>
     <div class="fc-stats">${stat('DISTANCE', f.kmText, 'km')}${stat('IN THE AIR', air)}${stat('CAUGHT AT', feet(opts.heightFt), 'ft')}${stat('SEEN', opts.sightings ?? 1, '×')}</div>
+    ${passport(opts.stampInfo, { newest: opts.newStamp })}
     <p class="fc-fact">${rich(f.fact)}</p>
     ${footer(opts.caughtAt, type ? `TYPE ${type}` : 'FLIGHTS')}`;
-  return shell('flight', f.tier, inner, `${f.from.city} to ${f.to.city}, ${f.airline}, ${TIERS[tierOf(f.tier)].label}`);
+  return shell('flight', f.tier, inner, `${f.from.city} to ${f.to.city}, ${f.airline}, ${TIERS[tierOf(f.tier)].label}${opts.stampInfo?.level && opts.stampInfo.level !== 'none' ? `, ${opts.stampInfo.level} level` : ''}`, opts.stampInfo?.level);
 }
 
 const planeFact = (p) => p.fact || (p.glyph === 'heli' ? 'Helicopters fly low and slow, so they’re among the hardest things in the sky to catch twice.'
   : p.glyph === 'prop' ? 'Propeller planes cruise lower and slower than jets, which makes them easier to spot and to hear.'
-    : 'Every airline that flies this type past you adds a **stamp** to this card.');
+    : 'Every different aircraft of this type you catch adds a **stamp** to this card, and every airline it flies for is another livery.');
 
-// opts: { caughtAt, heightFt, speedKmh, awayKm, sightings, stamps (count), eager }
+// opts: { caughtAt, heightFt, speedKmh, awayKm, sightings, stampInfo (planeStampInfo), newStamp, callsign (the registration is hidden unless it's an airline's), eager }
 export function planeCardHtml(p, opts = {}) {
   const ph = photoFor(p.type), long = (p.name || '').length > 16;
   const art = ph ? `${photoImg(ph, 'fc-photo', opts.eager)}${credit(ph)}` : skyPanel(p.glyph, 'fc-sky fc-sky--big', p.type);
-  const stamps = opts.stamps ?? (p.stamp ? 1 : 0);
+  const si = opts.stampInfo, stamps = si?.count ?? opts.stamps ?? (p.stamp ? 1 : 0);
+  const showReg = p.reg && hasAirlineCallsign(opts.callsign ?? p.callsign);
   const inner = `
     <div class="fc-art fc-art--plane${ph ? '' : ' fc-art--sky'}">
       <div class="fc-pic">${art}<span class="fc-holo" aria-hidden="true"></span>${tierPill(p.tier)}<span class="fc-set">PLANES</span></div>
     </div>
     <h2 class="fc-name${long ? ' fc-name--long' : ''}"><span>${esc(p.name)}</span></h2>
-    <div class="fc-id"><span class="fc-id-l">${esc(p.stamp ? `${p.stamp}${stamps > 1 ? ` + ${stamps - 1} more` : ''}` : p.glyph === 'heli' ? 'Helicopter' : 'Aircraft')}</span><span class="fc-id-r">${esc(p.type || '—')}${p.reg ? ` · ${esc(p.reg)}` : ''}</span></div>
+    <div class="fc-id"><span class="fc-id-l">${esc(si?.count ? planeLine(si, p.type || '') : p.stamp ? `${p.stamp}${stamps > 1 ? ` + ${stamps - 1} more` : ''}` : p.glyph === 'heli' ? 'Helicopter' : 'Aircraft')}</span><span class="fc-id-r">${esc(p.type || '—')}${showReg ? ` · ${esc(p.reg)}` : ''}</span></div>
     <div class="fc-stats">${stat('CAUGHT AT', feet(opts.heightFt), 'ft')}${stat('SPEED', opts.speedKmh ?? '—', 'km/h')}${stat('AWAY', opts.awayKm ?? '—', 'km')}${stat('STAMPS', stamps)}</div>
+    ${passport(si, { newest: opts.newStamp })}
     <p class="fc-fact">${rich(planeFact(p))}</p>
     ${footer(opts.caughtAt, p.type ? `TYPE ${p.type}` : 'PLANES')}`;
-  return shell('plane', p.tier, inner, `${p.name}, ${TIERS[tierOf(p.tier)].label}`);
+  return shell('plane', p.tier, inner, `${p.name}, ${TIERS[tierOf(p.tier)].label}${si?.level && si.level !== 'none' ? `, ${si.level} level` : ''}`, si?.level);
 }
 
 // A small card for the Collection grid: the same frame, photo, rarity, title, identity, two stats and footer, laid out
-// for ~110 px. e: { kind, card, type, last (ms), n (times seen), stamps (count) }. Returns the inner markup; the caller
+// for ~110 px. e: { kind, card, type, last (ms), n (times seen), stamps (count), stampInfo }. Returns the inner markup; the caller
 // wraps it in its button.
-export function miniCardHtml({ kind, card: c, type, last, n = 1, stamps = 0 }) {
+export function miniCardHtml({ kind, card: c, type, last, n = 1, stamps = 0, stampInfo = null }) {
   const t = tierOf(c.tier), ty = c.type || type || '', ph = kind === 'flight' ? flightPhotoFor(c, ty) : photoFor(ty);
   const glyph = kind === 'plane' ? c.glyph : 'jet';
   const pic = ph ? photoImg(ph, 'sct-photo') : skyPanel(glyph, 'fc-sky sct-sky');
   const gem = `<span class="sct-tier"><i aria-hidden="true">${TIERS[t].mark}</i>${TIERS[t].label.toUpperCase()}</span>`;
+  const lvl = stampInfo?.level && stampInfo.level !== 'none' ? stampInfo.level : '';
+  const medal = lvl ? `<span class="sct-lvl sct-lvl--${lvl}" title="${lvl} · ${stampInfo.count} stamps"><i>${stampInfo.count}</i><em>${lvl.toUpperCase()}</em></span>` : '';
   const when = `<span class="sct-foot"><span>✓ ${dateShort(new Date(last))}</span><span>${n}×</span></span>`;
   if (kind === 'flight') {
     const air = !c.air ? '—' : c.air.h ? `${c.air.h}h${String(c.air.m).padStart(2, '0')}` : `${c.air.m} min`;
-    return `<span class="sct-face sct--${t}" style="--tier:${TIERS[t].color}"><span class="sct-in">
-      <span class="sct-art${ph ? '' : ' sct-art--sky'}">${pic}${gem}<span class="sct-route"><b>${esc(code(c.from))}</b><svg viewBox="0 0 40 10" preserveAspectRatio="none" aria-hidden="true"><path d="M2 9 Q20 -3 38 9"/></svg><b>${esc(code(c.to))}</b></span></span>
+    return `<span class="sct-face sct--${t}${lvl ? ` sct-face--lvl sct-face--${lvl}` : ''}" style="--tier:${TIERS[t].color}"><span class="sct-in">
+      <span class="sct-art${ph ? '' : ' sct-art--sky'}">${pic}${gem}${medal}<span class="sct-route"><b>${esc(code(c.from))}</b><svg viewBox="0 0 40 10" preserveAspectRatio="none" aria-hidden="true"><path d="M2 9 Q20 -3 38 9"/></svg><b>${esc(code(c.to))}</b></span></span>
       <span class="sct-name">${esc(c.to.city)}</span>
       <span class="sct-sub">${esc(c.airline)}</span>
       <span class="sct-stats"><span><small>KM</small>${esc(c.kmText)}</span><span><small>AIR</small>${air}</span></span>
       ${when}</span><span class="sct-shine" aria-hidden="true"></span></span>`;
   }
-  return `<span class="sct-face sct--${t}" style="--tier:${TIERS[t].color}"><span class="sct-in">
-    <span class="sct-art${ph ? '' : ' sct-art--sky'}">${pic}${gem}</span>
+  return `<span class="sct-face sct--${t}${lvl ? ` sct-face--lvl sct-face--${lvl}` : ''}" style="--tier:${TIERS[t].color}"><span class="sct-in">
+    <span class="sct-art${ph ? '' : ' sct-art--sky'}">${pic}${gem}${medal}</span>
     <span class="sct-name">${esc(c.name)}</span>
-    <span class="sct-sub">${stamps ? `${stamps} airline${stamps === 1 ? '' : 's'}` : esc(c.glyph === 'heli' ? 'Helicopter' : 'Aircraft')}</span>
-    <span class="sct-stats"><span><small>TYPE</small>${esc(c.type || '—')}</span><span><small>STAMPS</small>${stamps}</span></span>
+    <span class="sct-sub">${stampInfo?.count ? esc(`${stampInfo.count} aircraft${stampInfo.liveryCount ? ` · ${stampInfo.liveryCount} liver${stampInfo.liveryCount === 1 ? 'y' : 'ies'}` : ''}`) : esc(c.glyph === 'heli' ? 'Helicopter' : 'Aircraft')}</span>
+    <span class="sct-stats"><span><small>TYPE</small>${esc(c.type || '—')}</span><span><small>STAMPS</small>${stampInfo?.count ?? stamps}</span></span>
     ${when}</span><span class="sct-shine" aria-hidden="true"></span></span>`;
 }
 
-// The new-card screen: the flight card (or the plane card when there's no route), plus the Planes strip.
-// Returns a promise that resolves when it's closed.
-export function showCatch({ flight, plane, isNewFlight, isNewPlane, heightFt, speedKmh, awayKm, flightSeen, planeSeen }) {
-  const at = new Date();
+// The catch screen. kind 'new' (default): the new-card screen, the flight card (or the plane card when there's no route)
+// plus the Planes strip. kind 'stamp': the "new stamp" moment for a card you own: the card with its newest stamp
+// inking in and, on a level-up, the new level. Takes sky-catch.js collect()'s result. Resolves when it's closed.
+export function showCatch(r) {
+  const { flight, plane, isNewFlight, isNewPlane, heightFt, speedKmh, awayKm, flightSeen, planeSeen, kind = 'new', stampOn = 'flight',
+    level, levelUp, stampCount, flightStampInfo: fInfo = null, planeStampInfo: pInfo = null, callsign } = r;
+  const at = new Date(), stamp = kind === 'stamp', onPlane = stamp && (stampOn === 'plane' || !flight);
   const el = document.createElement('section');
-  el.className = 'fcatch'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'New card');
-  const main = flight ? flightCardHtml(flight, { caughtAt: at, heightFt, sightings: flightSeen, type: plane?.type, planeName: plane?.name, eager: true })
-    : planeCardHtml(plane, { caughtAt: at, heightFt, speedKmh, awayKm, sightings: planeSeen, eager: true });
-  const head = flight ? (isNewFlight ? 'NEW FLIGHT' : 'SEEN AGAIN') : (isNewPlane ? 'NEW PLANE' : 'SEEN AGAIN');
-  const xp = flight ? (isNewFlight ? 80 : 10) : (isNewPlane ? 60 : 10);
+  el.className = `fcatch${stamp ? ' fcatch--stamp' : ''}`; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', stamp ? 'New stamp' : 'New card');
+  const asFlight = flight && !onPlane;
+  const main = asFlight ? flightCardHtml(flight, { caughtAt: at, heightFt, sightings: flightSeen, type: plane?.type, planeName: plane?.name, eager: true, stampInfo: fInfo, newStamp: stamp })
+    : planeCardHtml(plane, { caughtAt: at, heightFt, speedKmh, awayKm, sightings: planeSeen, eager: true, stampInfo: pInfo, newStamp: stamp, callsign });
+  const noun = asFlight ? 'DAY' : 'AIRCRAFT';
+  const head = stamp ? `NEW STAMP <span>· ${noun} ${stampCount}${levelUp ? ` · ${String(level).toUpperCase()}!` : ''}</span>`
+    : `${flight ? (isNewFlight ? 'NEW FLIGHT' : 'SEEN AGAIN') : (isNewPlane ? 'NEW PLANE' : 'SEEN AGAIN')} <span>· +${flight ? (isNewFlight ? 80 : 10) : (isNewPlane ? 60 : 10)} XP</span>`;
   const ph = photoFor(plane?.type);
-  const strip = flight ? `<div class="fcatch-strip">
+  const planeNote = flight && !onPlane ? (isNewPlane ? 'NEW PLANE' : r.planeStamps?.gained ? `STAMP ${r.planeStamps.count}${r.planeStamps.levelUp ? ` · ${String(r.planeStamps.level).toUpperCase()}!` : ''}` : `SEEN ${planeSeen}×`) : '';
+  const strip = flight && !onPlane ? `<div class="fcatch-strip">
       <span class="fcatch-strip-art${ph ? ' has-photo' : ''}">${ph ? `<img src="${esc(ph.url)}" alt="">` : glyphSvg(plane.glyph)}</span>
-      <span class="fcatch-strip-t"><span class="fcatch-strip-k">+ PLANES · ${isNewPlane ? 'NEW PLANE' : plane.stamp ? `${esc(plane.stamp.toUpperCase())} STAMP` : `SEEN ${planeSeen}×`}</span>
+      <span class="fcatch-strip-t"><span class="fcatch-strip-k">+ PLANES · ${planeNote}</span>
       <span class="fcatch-strip-n">${esc(plane.name)}</span></span></div>` : '';
-  el.innerHTML = `<div class="fcatch-top"><span class="fcatch-k">${head} <span>· +${xp} XP</span></span>
+  el.innerHTML = `<div class="fcatch-top"><span class="fcatch-k">${head}</span>
       <button class="fcatch-x" type="button" aria-label="Close"><svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <div class="fcatch-card">${main}</div>${strip}
     <button class="fcatch-done" type="button">KEEP SPOTTING</button>`;
@@ -162,3 +189,5 @@ export function showCatch({ flight, plane, isNewFlight, isNewPlane, heightFt, sp
     el.querySelector('.fcatch-done').addEventListener('click', close);
   });
 }
+// The same screen by its other name, for callers that only ever show a stamp.
+export const showStamp = (r) => showCatch({ ...r, kind: 'stamp' });

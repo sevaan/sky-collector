@@ -144,7 +144,7 @@ can run in parallel.
 - Goal: a catch adds XP that is saved, the reveal shows the rank bar filling, the header shows the rank.
 - Files: new `js/sky-progress.js` (XP per catch, rank thresholds, stored with the catches and in the iCloud
   backup), `js/main.js` (`skyReveal` passes `rank`), `js/cloud-backup.js`.
-- Done when: XP survives a reload, a rank-up plays Space Collector's rank-up chip, and re-collecting gives nothing (task 2).
+- Done when: XP survives a reload, a rank-up plays Space Collector's rank-up chip, a new stamp gives a smaller amount than a new card, a level-up (Silver, Gold) gives a bonus, and the same aircraft on the same day gives nothing (task 2). XP is worked out from the catch records, never stored per tap.
 
 **6. Lead me to the plane.** Opus. PHONE.
 - Goal: Show me, with motion on, steers you to a plane the way Space Collector steers you to a satellite. Planes

@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """Download the picked airline-livery photos for Flight cards (2026-11-15): scripts/photos/airline-candidates.json +
 airline-picks.json ({"ACA-A321": option index, or -1 for none}; a pair with options but no pick is skipped, since
-every photo here was checked by eye) -> assets/photos/airlines/<AIRLINE>-<TYPE>.webp (1024x768, centre-cropped 4:3,
-quality 82) and js/airline-photos.js (credit, licence, source page per photo, for the card credit line).
-Usage: python3 -I scripts/photos/apply-airline-photos.py"""
-import io, json, os, re, time, urllib.request
+every photo here was checked by eye) -> assets/photos/airlines/<AIRLINE>-<TYPE>.webp (UNCROPPED, longest side 1280, webp q80) and js/airline-photos.js (credit, licence, source page, w/h and the detected
+aircraft box per photo; box-overrides.json ("airlines/<KEY>") wins).
+Usage: python3 -I scripts/photos/apply-airline-photos.py [--force]  (--force re-downloads every photo)"""
+import io, json, os, re, sys, time, urllib.request
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import photo_common as pc
 from PIL import Image, PngImagePlugin
 PngImagePlugin.MAX_TEXT_CHUNK = 64 * 1024 * 1024
 
@@ -16,21 +18,21 @@ picks = json.load(open(os.path.join(HERE, 'airline-picks.json')))
 # Photos already applied (js/airline-photos.js): only download a pair again when its picked file changed.
 try: OLD = json.loads(re.search(r'AIRLINE_PHOTOS = (\{.*?\n\});', open(os.path.join(ROOT, 'js', 'airline-photos.js')).read(), re.S).group(1))
 except Exception: OLD = {}
-credits = {}
+credits = {}; OV = pc.load_overrides(); FORCE = '--force' in sys.argv
 for key in sorted(C):
     c = C[key]; i = picks.get(key)
     if i is None or i < 0 or i >= len(c['options']): continue
     o = c['options'][i]; dest = os.path.join(OUT, f'{key}.webp')
-    if not os.path.exists(dest) or OLD.get(key, {}).get('title') != o['title']:
+    if FORCE or not os.path.exists(dest) or OLD.get(key, {}).get('title') != o['title']:
         url = re.sub(r'/\d+px-', '/1280px-', o['thumb'])
         try: data = urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': UA}), timeout=60).read()
         except Exception as e: print(key, 'download failed', e); continue
-        try: im = Image.open(io.BytesIO(data)).convert('RGB')
+        try: pc.save_uncropped(data, dest)
         except Exception as e: print(key, 'unreadable', e); continue
-        W, H = im.size; tw, th = (W, round(W * 3 / 4)) if W * 3 / 4 <= H else (round(H * 4 / 3), H)
-        im = im.crop(((W - tw) // 2, (H - th) // 2, (W - tw) // 2 + tw, (H - th) // 2 + th)).resize((1024, 768), Image.LANCZOS)
-        im.save(dest, 'WEBP', quality=82); time.sleep(0.3)
-    credits[key] = {'credit': o['artist'], 'licence': o['licence'], 'source': o['page'], 'title': o['title']}
+        time.sleep(0.3)
+    w, h = Image.open(dest).size
+    credits[key] = {'credit': o['artist'], 'licence': o['licence'], 'source': o['page'], 'title': o['title'], 'w': w, 'h': h,
+                   'box': pc.box_for('airlines/' + key, dest, OV)}
     print(key, 'ok')
 for f in os.listdir(OUT):  # drop photos that are no longer picked
     if f.endswith('.webp') and f[:-5] not in credits: os.remove(os.path.join(OUT, f)); print('removed', f)

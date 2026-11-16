@@ -2,8 +2,9 @@
 // (localStorage 'skyCatches', written by js/sky-catch.js). Runs inside cards.html and takes over its main area; Space
 // Collector's satellite grid stays in the page, hidden. Design: canvas row D (cream mini cards, gold frames for Rare+).
 
-import { flightCardHtml, planeCardHtml, miniCardHtml } from './flight-card.js?v=0.1.1609';
-import { attachTilt } from './card.js?v=0.1.1609';
+import { flightCardHtml, planeCardHtml, miniCardHtml } from './flight-card.js?v=0.1.1612';
+import { attachTilt } from './card.js?v=0.1.1612';
+import { flightStampInfo, planeStampInfo, hasAirlineCallsign } from './sky-stamps.js?v=0.1.1612';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -23,9 +24,12 @@ function build(list) {
     }
     if (c.plane) {
       const p = planes.get(c.plane.key) ?? { kind: 'plane', key: c.plane.key, card: c.plane, seen: [], stamps: new Set() };
-      p.seen.push(c); if (c.airline) p.stamps.add(c.airline); planes.set(p.key, p);
+      p.seen.push(c); planes.set(p.key, p);
     }
   }
+  // Stamps and levels are worked out from the catches every time (js/sky-stamps.js), never stored.
+  for (const f of flights.values()) f.stampInfo = flightStampInfo(list, f.key);
+  for (const p of planes.values()) { p.stampInfo = planeStampInfo(list, p.key); p.stamps = new Set(p.stampInfo.liveries); }
   const order = (a, b) => b.seen.at(-1).time - a.seen.at(-1).time;
   return { flights: [...flights.values()].sort(order), planes: [...planes.values()].sort(order) };
 }
@@ -39,8 +43,8 @@ const planeGroup = (e) => (e.card.glyph === 'heli' ? 'Helicopters' : e.card.glyp
 function tile(e) {
   const c = e.card, n = e.seen.length;
   const label = e.kind === 'flight' ? `${c.from.city} to ${c.to.city}, ${c.airline}` : c.name;
-  return `<button type="button" class="sct" data-key="${esc(e.key)}" aria-label="${esc(`${label}, ${c.tier}, seen ${n} ${n === 1 ? 'time' : 'times'}`)}">${miniCardHtml({
-    kind: e.kind, card: c, type: c.type || e.seen.find((s) => s.type)?.type || '', last: e.seen.at(-1).time, n, stamps: e.stamps?.size ?? 0 })}</button>`;
+  return `<button type="button" class="sct" data-key="${esc(e.key)}" aria-label="${esc(`${label}, ${c.tier}, seen ${n} ${n === 1 ? 'time' : 'times'}${e.stampInfo?.level && e.stampInfo.level !== 'none' ? `, ${e.stampInfo.level} level, ${e.stampInfo.count} stamps` : ''}`)}">${miniCardHtml({
+    kind: e.kind, card: c, type: c.type || e.seen.find((s) => s.type)?.type || '', last: e.seen.at(-1).time, n, stamps: e.stampInfo?.count ?? 0, stampInfo: e.stampInfo })}</button>`;
 }
 
 function render() {
@@ -72,12 +76,12 @@ function openCard(e) {
   if (!e) return;
   const last = e.seen.at(-1), dlg = $('sky-viewer');
   const html = e.kind === 'flight'
-    ? flightCardHtml(e.card, { caughtAt: new Date(e.seen[0].time), heightFt: last.altFt, sightings: e.seen.length, type: e.seen.find((s) => s.type)?.type, planeName: last.plane?.name, eager: true })
-    : planeCardHtml(e.card, { caughtAt: new Date(e.seen[0].time), heightFt: last.altFt, speedKmh: Math.round((last.gsKt ?? 0) * 1.852), awayKm: Math.round(last.rangeKm ?? 0), sightings: e.seen.length, stamps: e.stamps.size, eager: true });
-  const rows = [...e.seen].reverse().slice(0, 30).map((s) => `<li><span>${esc(when(s.time))}</span><span>${esc([s.callsign, s.reg, s.altFt ? `${Math.round(s.altFt / 100) * 100} ft` : ''].filter(Boolean).join(' · '))}</span></li>`).join('');
-  const stamps = e.kind === 'plane' && e.stamps.size ? `<p class="scv-k">AIRLINE STAMPS · ${e.stamps.size}</p><p class="scv-stamps">${[...e.stamps].map((a) => `<span>${esc(a)}</span>`).join('')}</p>` : '';
+    ? flightCardHtml(e.card, { caughtAt: new Date(e.seen[0].time), heightFt: last.altFt, sightings: e.seen.length, type: e.seen.find((s) => s.type)?.type, planeName: last.plane?.name, eager: true, stampInfo: e.stampInfo })
+    : planeCardHtml(e.card, { caughtAt: new Date(e.seen[0].time), heightFt: last.altFt, speedKmh: Math.round((last.gsKt ?? 0) * 1.852), awayKm: Math.round(last.rangeKm ?? 0), sightings: e.seen.length, stampInfo: e.stampInfo, callsign: last.callsign, eager: true });
+  const rows = [...e.seen].reverse().slice(0, 30).map((s) => `<li><span>${esc(when(s.time))}</span><span>${esc([s.callsign, hasAirlineCallsign(s.callsign) ? s.reg : '', s.altFt ? `${Math.round(s.altFt / 100) * 100} ft` : ''].filter(Boolean).join(' · '))}</span></li>`).join('');
+  const liveries = e.kind === 'plane' && e.stampInfo.liveries.length ? `<p class="scv-k">LIVERIES · ${e.stampInfo.liveries.length}</p><p class="scv-stamps">${e.stampInfo.liveries.map((a) => `<span>${esc(a)}</span>`).join('')}</p>` : '';
   viewerTilt?.destroy(); viewerTilt = null;
-  dlg.querySelector('.scv-body').innerHTML = `<div class="scv-card">${html}</div>${stamps}<p class="scv-k">WHEN YOU SAW IT · ${e.seen.length} ${e.seen.length === 1 ? 'TIME' : 'TIMES'}</p><ul class="scv-list">${rows}</ul>`;
+  dlg.querySelector('.scv-body').innerHTML = `<div class="scv-card">${html}</div>${liveries}<p class="scv-k">WHEN YOU SAW IT · ${e.seen.length} ${e.seen.length === 1 ? 'TIME' : 'TIMES'}</p><ul class="scv-list">${rows}</ul>`;
   // The card tilts under the finger, its foil and glare following (the page still scrolls).
   const card = dlg.querySelector('.scv-card .fc'); if (card) viewerTilt = attachTilt(card, { scroll: true });
   if (!dlg.open) dlg.showModal();

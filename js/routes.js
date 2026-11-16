@@ -8,14 +8,29 @@
 const SD = 'https://raw.githubusercontent.com/vradarserver/standing-data/main/';
 const files = new Map(); // path -> Promise<Map<code,row>>
 
+// A small RFC 4180 reader: "quoted, fields" may hold commas, doubled quotes ("") and line breaks. Blank lines are skipped.
+export function parseCsv(txt) {
+  const rows = []; let row = [], f = '', q = false, any = false;
+  const end = () => { row.push(f); f = ''; if (any || row.length > 1) rows.push(row); row = []; any = false; };
+  for (let i = 0; i < txt.length; i++) {
+    const ch = txt[i];
+    if (q) { if (ch === '"') { if (txt[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += ch; continue; }
+    if (ch === '"') { q = true; any = true; } else if (ch === ',') { row.push(f); f = ''; any = true; }
+    else if (ch === '\n' || ch === '\r') { if (ch === '\r' && txt[i + 1] === '\n') i++; end(); }
+    else { f += ch; any = true; }
+  }
+  if (any || f || row.length) end();
+  return rows;
+}
+
 function csv(path) {
   if (files.has(path)) return files.get(path);
   const p = fetch(SD + path, { signal: AbortSignal.timeout?.(8000) })
     .then((r) => (r.ok ? r.text() : ''))
     .then((txt) => {
-      const rows = new Map(), lines = txt.replace(/^﻿/, '').split(/\r?\n/).filter(Boolean);
-      const head = (lines.shift() ?? '').split(',');
-      for (const l of lines) { const v = l.split(','), o = {}; head.forEach((k, i) => (o[k] = v[i])); rows.set(v[0], o); }
+      const rows = new Map(), table = parseCsv(txt.replace(/^\uFEFF/, ''));
+      const head = table.shift() ?? [];
+      for (const v of table) { const o = {}; head.forEach((k, i) => (o[k] = v[i])); rows.set(v[0], o); }
       return rows;
     })
     .catch(() => { files.delete(path); return new Map(); }); // a failed fetch is tried again next time
