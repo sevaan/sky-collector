@@ -1,0 +1,5 @@
+# Sky Collector's plane relay (relay/worker-planes.js). Personal Cloudflare account only, never Roundtrip's.
+name = "sky-collector-planes"
+main = "worker-planes.js"
+compatibility_date = "2026-10-01"
+workers_dev = true
