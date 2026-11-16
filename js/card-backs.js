@@ -1,21 +1,21 @@
-import { SETS, goldAlbums } from './sets.js?v=0.1.1651';
-import { isPlus } from './plus.js?v=0.1.1651';
+import { SETS, goldAlbums } from './sets.js?v=0.1.1652';
+import { isPlus } from './plus.js?v=0.1.1652';
 // Card backs you can choose (2026-10-16, design/card-backs.html, Sevaan liked all six). Mission Control is everyone’s;
 // Plus unlocks the rest; two can also be earned free: Golden Record (find the Pale Blue Dot story) and Star Chart
 // (complete 10 constellations); main.js writes what’s been earned to localStorage 'backEarned'. The choice is
 // localStorage 'cardBack': a back’s id, or 'random' for a different unlocked one each time a card turns over.
 export const CARD_BACKS = [
   // Sky Collector's backs (2026-11-15, Sevaan): painted with Nano Banana Pro like Space Collector's (scripts/art/gen-back.py,
-  // prompts in scripts/art/back-prompts/). Airline Ticket is everyone's (Sevaan's pick from design room 3); Turbofan and Cheatline were defaults before it; the rest
+  // prompts in scripts/art/back-prompts/). Engine is everyone's (Sevaan's pick, 2026-11-15); Airline Ticket, Turbofan and Cheatline were defaults before it; the rest
   // come with Plus, to be curated later.
-  { id: 'airline-ticket', bg: '#f3ead2', name: 'Airline Ticket', url: 'assets/art/backs/back-airline-ticket.webp', title: 'middle', free: true }, // classic playing-card back, design room 3 (Sevaan's default, 2026-11-15)
+  { id: 'engine', bg: '#5ca5ce', name: 'Engine', url: 'assets/art/backs/back-engine.webp', title: 'middle', free: true }, // Sevaan's default, 2026-11-15
+  { id: 'airline-ticket', bg: '#f3ead2', name: 'Airline Ticket', url: 'assets/art/backs/back-airline-ticket.webp', title: 'middle' }, // classic playing-card back, design room 3 (Sevaan's default, 2026-11-15)
   { id: 'turbofan', bg: '#0d2238', name: 'Turbofan', url: 'assets/art/backs/back-turbofan.webp', title: 'middle' }, // the default before Airline Ticket
   { id: 'cheatline', bg: '#031622', name: 'Cheatline', url: 'assets/art/backs/back-cheatline.webp', title: 'middle' },
   { id: 'fleet', bg: '#66b7d4', name: 'The Fleet', url: 'assets/art/backs/back-fleet.webp', title: 'middle' },
   { id: 'first-class', bg: '#98a2a6', name: 'First Class', url: 'assets/art/backs/back-first-class.webp', title: 'middle' },
   { id: 'endpaper', bg: '#8abfcf', name: 'Endpaper', url: 'assets/art/backs/back-endpaper.webp', title: 'middle' },
   { id: 'contrail', bg: '#f9ebca', name: 'Contrail', url: 'assets/art/backs/back-contrail.webp', title: 'middle' },
-  { id: 'engine', bg: '#5ca5ce', name: 'Engine', url: 'assets/art/backs/back-engine.webp', title: 'middle' },
   { id: 'aluminium', bg: '#5393c1', name: 'Aluminium', url: 'assets/art/backs/back-aluminium.webp', title: 'middle' },
   { id: 'window-seat', bg: '#f7e9c6', name: 'Window Seat', url: 'assets/art/backs/back-window-seat.webp', title: 'middle' },
   { id: 'airmail', bg: '#fcf2d7', name: 'Airmail', url: 'assets/art/backs/back-airmail.webp', title: 'middle' },
@@ -31,7 +31,7 @@ export const CARD_BACKS = [
 const read = (k, d) => { try { return localStorage.getItem(k) ?? d; } catch { return d; } };
 export const backEarned = () => { try { return new Set(JSON.parse(read('backEarned', '[]'))); } catch { return new Set(); } };
 export const backUnlocked = (b) => !!b && (b.free || isPlus() || backEarned().has(b.id));
-export const chosenBack = () => read('cardBack', 'airline-ticket');
+export const chosenBack = () => read('cardBack', 'engine');
 export function chooseBack(id) { try { localStorage.setItem('cardBack', id); } catch {} last = null; next = pick(); preload(next); }
 const pool = () => { const c = chosenBack(); if (c === 'random') { const u = CARD_BACKS.filter(backUnlocked); return u.length ? u : [CARD_BACKS[0]]; } const b = CARD_BACKS.find((x) => x.id === c); return [backUnlocked(b) ? b : CARD_BACKS[0]]; };
 let last = null;
