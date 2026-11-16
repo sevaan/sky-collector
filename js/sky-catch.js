@@ -2,13 +2,13 @@
 // Collect does. Catches are kept in localStorage ('skyCatches') for now, apart from Space Collector's sightings, so the
 // old collection code never meets a flight. The Collection screen reads them in a later step.
 
-import { aircraftName, isHelicopter } from './planes.js?v=0.1.1617';
-import { lookupRoute } from './routes.js?v=0.1.1617';
-import { cardsFor, TIERS } from './flights.js?v=0.1.1617';
-import { glyphSvg, showCatch } from './flight-card.js?v=0.1.1617';
-import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1617';
+import { aircraftName, isHelicopter } from './planes.js?v=0.1.1618';
+import { lookupRoute } from './routes.js?v=0.1.1618';
+import { cardsFor, TIERS } from './flights.js?v=0.1.1618';
+import { glyphSvg, showCatch } from './flight-card.js?v=0.1.1618';
+import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1618';
 
-import { allCatches, addCatch } from './catch-store.js?v=0.1.1617';
+import { allCatches, addCatch } from './catch-store.js?v=0.1.1618';
 // Catches live in js/catch-store.js (IndexedDB, with a localStorage mirror the Collection page reads).
 export function catches() { return allCatches(); }
 const seenCount = (list, key) => list.filter((c) => c.key === key || c.planeKey === key).length;

@@ -1,5 +1,5 @@
-import { SETS, goldAlbums } from './sets.js?v=0.1.1617';
-import { isPlus } from './plus.js?v=0.1.1617';
+import { SETS, goldAlbums } from './sets.js?v=0.1.1618';
+import { isPlus } from './plus.js?v=0.1.1618';
 // Card backs you can choose (2026-10-16, design/card-backs.html, Sevaan liked all six). Mission Control is everyone’s;
 // Plus unlocks the rest; two can also be earned free: Golden Record (find the Pale Blue Dot story) and Star Chart
 // (complete 10 constellations); main.js writes what’s been earned to localStorage 'backEarned'. The choice is
@@ -9,6 +9,7 @@ export const CARD_BACKS = [
   // prompts in scripts/art/back-prompts/). Turbofan is everyone's (Sevaan's pick from design room 3); Cheatline was the default before it; the rest
   // come with Plus, to be curated later.
   { id: 'turbofan', bg: '#0d2238', name: 'Turbofan', url: 'assets/art/backs/back-turbofan.webp', title: 'middle', free: true }, // Sevaan's pick from design room 3 (2026-11-15)
+  { id: 'airline-ticket', bg: '#f3ead2', name: 'Airline Ticket', url: 'assets/art/backs/back-airline-ticket.webp', title: 'middle' }, // classic playing-card back, design room 3 (Sevaan liked it)
   { id: 'cheatline', bg: '#031622', name: 'Cheatline', url: 'assets/art/backs/back-cheatline.webp', title: 'middle' },
   { id: 'fleet', bg: '#66b7d4', name: 'The Fleet', url: 'assets/art/backs/back-fleet.webp', title: 'middle' },
   { id: 'first-class', bg: '#98a2a6', name: 'First Class', url: 'assets/art/backs/back-first-class.webp', title: 'middle' },
