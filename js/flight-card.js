@@ -7,13 +7,13 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { TIERS } from './flights.js?v=0.1.1678';
-import { typePhoto } from './type-photos.js?v=0.1.1678';
-import { housePhoto } from './house-photos.js?v=0.1.1678';
-import { airlinePhoto } from './airline-photos.js?v=0.1.1678';
-import { airlineLogo } from './airline-logos.js?v=0.1.1678';
-import { fitStyle } from './photo-fit.js?v=0.1.1678';
-import { hasAirlineCallsign, planeLine, levelWord } from './sky-stamps.js?v=0.1.1678';
+import { TIERS } from './flights.js?v=0.1.1679';
+import { typePhoto } from './type-photos.js?v=0.1.1679';
+import { housePhoto } from './house-photos.js?v=0.1.1679';
+import { airlinePhoto } from './airline-photos.js?v=0.1.1679';
+import { airlineLogo } from './airline-logos.js?v=0.1.1679';
+import { fitStyle } from './photo-fit.js?v=0.1.1679';
+import { hasAirlineCallsign, planeLine, levelWord } from './sky-stamps.js?v=0.1.1679';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
@@ -70,6 +70,12 @@ const FAMILY = {
 export function flightPhotoFor(f, type) {
   if (!type) return null; const a = airlineIcao(f);
   return airlinePhoto(a, type) || (FAMILY[a] && airlinePhoto(FAMILY[a], type)) || photoFor(type);
+}
+// A plane card's photo as a URL (2026-11-16: the weekly recap's "rarest find" showed Space Collector's art, a satellite):
+// the flight's airline photo or the type's, sm/ (480 px) unless size is 'full'. null when the card has none.
+export function skyCardPhotoUrl(o, type, size = 'sm') {
+  const ph = o?.sky === 'flight' ? flightPhotoFor(o, type || o.type) : photoFor(type || o?.type); if (!ph) return null;
+  return size === 'full' ? ph.url : String(ph.url).replace(/\/([^/]+)$/, `/${size}/$1`);
 }
 const credit = (ph) => `<span class="fc-credit">Photo: ${esc(ph.credit)}, ${esc(ph.licence)}</span>`;
 // The whole aircraft always shows (2026-11-15, Sevaan: "planes can't be cropped"). Each photo carries the box the plane

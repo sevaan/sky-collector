@@ -102,3 +102,18 @@ start, and any hard-coded colour turned into a variable.
 - Sky event tickets (meteor showers, the Moon meets Jupiter): astronomy, not planes. Hide in Sky or make plane events.
 - Still to check: secrets/stories, Tonight's notifications and reminders, Send cards (gifting), patches page, Plus sheet,
   share pictures, morning notification, 9 PM notes.
+6. Done (2026-11-16): checks run. Performance budget on both (scripts/perf/budget.mjs with PERF_URL / PERF_SKY): Sky's
+   sky loop is a quarter of Space Collector's cost; start-up was 4.4 s (waiting on a satellite plan Sky never has), now
+   1.3 s like Space Collector; Collection scroll p95 37 → 27-30 ms (small photos, no live filters) vs 25-27. Screens
+   compared side by side (scripts/perf/screens.mjs, sheets.mjs); fixed: Settings, every sheet, the recap and tickets in
+   light mode; Plus kit and patch; recap art and words; Today's hero is Space Collector's Tonight hero with the weather.
+   Not measured yet: catch → reveal for a plane (the budget's catch step aims at a satellite).
+
+## Still to give a plane version (2026-11-16)
+
+- Send cards (gifting): a pack must fit in the link because Sky has no server; plane cards carry their route, airline
+  and type, so they need Sky's own pack storage first. Hidden until then.
+- Observer stats: the page is built from space achievements (constellations, meteor showers, stories, albums). Hidden.
+- Circle highlights: sorts satellites, stars and UFOs only. Hidden.
+- Albums and Find in the Collection: need plane sets (Milestone 2).
+- Plus perks beyond backs and the patch: plane reminders, rare-plane alerts, a Today widget, shinies for planes.

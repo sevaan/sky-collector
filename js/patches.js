@@ -3,7 +3,7 @@
 // group (or the date earned) along the bottom, one icon in the middle. Milestones get gold foil, the rarest holo
 // (css/ui.css .patch--gold / .patch--holo). Shared by Explore (the earning moment, its toast) and Collection (the wall).
 
-import { CON_BY_ID } from './constellations.js?v=0.1.1678';
+import { CON_BY_ID } from './constellations.js?v=0.1.1679';
 
 export const GROUPS = {
   collect: { c: '#14284a', t: 'Collection' }, rarity: { c: '#3a2259', t: 'Rarity' }, rocket: { c: '#5a2a1a', t: 'Rockets' },
@@ -132,13 +132,21 @@ const UFO_ART = (id) => `<defs><linearGradient id="${id}beam" x1="0" y1="0" x2="
   <g transform="translate(0 -8) scale(1.7)"><path d="M-6 -1 Q-5 -7 0 -7 Q5 -7 6 -1Z" fill="#cfe8ff" fill-opacity=".85"/><ellipse rx="14" ry="4.2" fill="${INK}"/><ellipse rx="14" ry="4.2" fill="none" stroke="#c9b67a" stroke-width=".8"/><circle cx="-8" cy=".5" r="1.3" fill="#7dff8a"/><circle cx="0" cy="1.6" r="1.3" fill="#7dff8a"/><circle cx="8" cy=".5" r="1.3" fill="#7dff8a"/></g>`;
 const SECRET_TWILL = { ghost2026: '#123a2a', plus: '#14284a', santa: '#6a1d1d', roadster: '#14284a', meteor: '#22265a', voyager: '#0f1b2a', dizzy: '#3a2259', voyager2: '#0f1b2a', pioneer10: '#2a1d0c', pioneer11: '#1f1a2e', newhorizons: '#101c2c', wow: '#2a0f12' };
 const SLEIGH = '<g fill="#fff2b3">' + [0, 1, 2].map((k) => `<g transform="translate(${k * 13 - 30} ${4 - k * 2})"><path d="M0 5 Q3 1 8 2 L10 0 L9.5 4 Q11 6 8 7 L3 7 Z"/><path d="M8.5 1 l1.5 -3.5 M10 1 l2 -3" stroke="#fff2b3" stroke-width=".8"/></g>`).join('') + '</g><path d="M10 6 Q11 0 20 0 L30 0 Q34 0 33 5 L32 8 L12 8 Z" fill="#d94f38"/><path d="M8 11 L34 11 Q37 11 36 8" fill="none" stroke="#fff2b3" stroke-width="1.6"/><circle cx="24" cy="-3" r="3" fill="#fff2b3"/><circle cx="-28" cy="5" r="1.4" fill="#ff4a3a"/>';
+const SKY_PATCH = () => typeof document !== 'undefined' && (document.body?.classList.contains('sky-only') || document.documentElement.classList.contains('sky-cards'));
 const SECRET_ART = {
   // Plus Member (2026-10-16, design/plus-sheet-card.html): the brass telescope from the Plus card and one star, all inside
   // the inner ring so nothing crosses the lettering (Sevaan: the comet overlapped the text).
-  plus: () => '<path d="M19 -24 l1.4 3.6 3.6 1.4 -3.6 1.4 -1.4 3.6 -1.4 -3.6 -3.6 -1.4 3.6 -1.4z" fill="#fff2b3"/><circle cx="-20" cy="-18" r="1.1" fill="#fff2b3" opacity=".7"/><circle cx="26" cy="2" r=".9" fill="#fff2b3" opacity=".6"/>'
+  // Sky Collector's member patch (2026-11-16): the same brass and gold, an airliner climbing out with its contrail in place of the telescope.
+  plus: () => (SKY_PATCH() ? '<path d="M19 -24 l1.4 3.6 3.6 1.4 -3.6 1.4 -1.4 3.6 -1.4 -3.6 -3.6 -1.4 3.6 -1.4z" fill="#fff2b3"/><circle cx="-22" cy="-16" r="1.1" fill="#fff2b3" opacity=".7"/><circle cx="24" cy="14" r=".9" fill="#fff2b3" opacity=".6"/>'
+    + '<g transform="translate(2 4) rotate(-18) scale(.9)"><path d="M-46 3 H-26 M-44 -1 H-27" stroke="#fff2b3" stroke-width="1.6" stroke-linecap="round" opacity=".55"/>'
+    + '<path d="M-24 -3 L-31 -17 L-23 -17 L-13 -4 Z" fill="#c9952f" stroke="#f4d27a" stroke-width="1"/>'
+    + '<path d="M-26 0 Q-27 -4 -21 -4.5 L20 -4.5 Q29 -4.5 32 0 Q29 4 20 4 L-21 4 Q-27 4 -26 0 Z" fill="#d9a441" stroke="#f4d27a" stroke-width="1.2"/>'
+    + '<path d="M-2 1.5 L-14 15 L-6 15 L9 1.5 Z" fill="#b88a2e" stroke="#f4d27a" stroke-width="1"/><rect x="-6" y="5.5" width="9" height="4.5" rx="2" fill="#8a6420"/>'
+    + '<path d="M-14 -2 H18" stroke="#8a6420" stroke-width="1.2" stroke-dasharray="2 2.2"/><path d="M24 -2.6 Q27 -2.6 28.5 -0.6 H23 Z" fill="#8a6420"/></g>'
+    : '<path d="M19 -24 l1.4 3.6 3.6 1.4 -3.6 1.4 -1.4 3.6 -1.4 -3.6 -3.6 -1.4 3.6 -1.4z" fill="#fff2b3"/><circle cx="-20" cy="-18" r="1.1" fill="#fff2b3" opacity=".7"/><circle cx="26" cy="2" r=".9" fill="#fff2b3" opacity=".6"/>'
     + '<g transform="translate(-1 2) scale(.82)"><g stroke="#8a5a36" stroke-width="3" stroke-linecap="round"><path d="M0 4 L-14 30 M0 4 L0 32 M0 4 L14 30"/></g>'
     + '<g transform="rotate(-30)"><rect x="-28" y="-6" width="46" height="12" rx="2" fill="#d9a441" stroke="#f4d27a" stroke-width="1.2"/><rect x="18" y="-8" width="7" height="16" rx="1.6" fill="#e8c068"/><rect x="-34" y="-3.5" width="6" height="7" rx="1" fill="#b88a2e"/><path d="M-11 -6 V6 M5 -6 V6" stroke="#8a6420" stroke-width="1.4"/><rect x="-9" y="-13" width="16" height="5" rx="1.5" fill="#c9952f"/></g>'
-    + '<circle cy="4" r="3.4" fill="#8a6420"/></g>',
+    + '<circle cy="4" r="3.4" fill="#8a6420"/></g>'),
   santa: () => `<g transform="translate(-2 -6) scale(1.25)">${SLEIGH}</g>`,
   roadster: () => '<g transform="translate(-27 -12)"><path d="M2 16 Q4 8 16 7 L24 2 L36 2 L44 8 Q52 9 52 16 Z" fill="#d22b2b"/><circle cx="13" cy="17" r="4" fill="#111"/><circle cx="41" cy="17" r="4" fill="#111"/><circle cx="29" cy="6" r="3.4" fill="#f4f4f4"/></g>',
   // Halloween 2026: a little ghost with solar panels for arms (Envisat), a green glow and the year.

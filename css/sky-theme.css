@@ -329,12 +329,11 @@ body.sky-only, html.sky-cards { --sky-red:#d7362b; --sky-red-hi:#e8493c; --sky-r
 
 /* Space Collector's primary button (the tour's Yes: a solid fill with a gloss, a darker edge underneath and a drop
    shadow, pressed down on tap), in red. */
-body.sky-only .tc .acts .yes, body.sky-only .td-show {
+body.sky-only .tc .acts .yes {
   background:var(--sky-red) linear-gradient(#ffffff2e, #ffffff00 55%, #00000022) !important; color:#fff !important; border:0 !important;
   box-shadow:inset 0 1px 0 #ffffff59, 0 3px 0 var(--sky-red-edge), 0 8px 16px rgba(13,34,56,.28) !important; text-shadow:0 1px 0 #0000002e;
   transition:transform .08s ease-out, box-shadow .08s ease-out; }
-body.sky-only .tc .acts .yes:active, body.sky-only .td-show:active { transform:translateY(3px); box-shadow:inset 0 1px 0 #ffffff40, inset 0 2px 6px #0000004d, 0 0 0 var(--sky-red-edge), 0 3px 6px rgba(13,34,56,.3) !important; }
-body.sky-only .td-show { height:50px; border-radius:12px; font:500 15px/1 var(--label,'SC Label'); letter-spacing:.18em; }
+body.sky-only .tc .acts .yes:active { transform:translateY(3px); box-shadow:inset 0 1px 0 #ffffff40, inset 0 2px 6px #0000004d, 0 0 0 var(--sky-red-edge), 0 3px 6px rgba(13,34,56,.3) !important; }
 body.sky-only .tc .acts .no, body.sky-only .tc .acts .later { color:var(--sky-red-ink) !important; }
 /* Collect under the circle: Space Collector's pill, in red */
 body.sky-only #discover:not(.owned) #d-cta { color:#ff6a5c; background:rgba(215,54,43,.16); box-shadow:inset 0 0 0 1px rgba(215,54,43,.55); }
@@ -422,3 +421,14 @@ body.sky-only:not(.night) .crew-kit .kt-i { color:var(--gold); }
 body.sky-only:not(.night) .crew-kit small { color:#4a6178; }
 body.sky-only:not(.night) :is(.crew-patch, .kt-patch) { filter:drop-shadow(0 6px 14px rgba(13,34,56,.3)); }
 body.sky-only:not(.night) .kt-fan img { border-color:#ffffff; box-shadow:0 3px 8px rgba(13,34,56,.3); }
+body.sky-only:not(.night) #set-plus-sheet :is(.starfield, .crew-meteor) { display:none; } /* stars and a shooting star belong to the night page */
+body.sky-only:not(.night) #recap .starfield { display:none; } /* night stars on the daylight recap page */
+/* Notification tickets follow the header (2026-11-16): light wherever the header is light, Space Collector's dark ticket
+   only over Explore at night. Its background is set with heavy specificity in css/ui.css, hence the repeated id. */
+body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts {
+  --text:#0d2238; --muted:#4a6178; --ink:#0d2238; --ui-ink:#0d2238; --ui-muted:#4a6178; --edge:#9fb3c6; --k:#9fb3c6; }
+body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts#toasts#toasts#toasts .ticket:not(.tone-shiny) {
+  background-color:#fffffff5 !important; background-image:repeating-linear-gradient(0deg, #0d223805 0 1px, transparent 1px 3px) !important; color:#0d2238;
+  box-shadow:0 10px 28px rgba(13,34,56,.22), 0 0 0 1px #c9d9e6 !important; }
+body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts .ticket :is(.ticket__line, b) { color:#0d2238 !important; }
+body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts .ticket :is(.ticket__sub, .ticket__x, .ticket__xp small) { color:#4a6178 !important; }

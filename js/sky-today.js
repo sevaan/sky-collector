@@ -5,9 +5,10 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1678';
-import { glyphSvg } from './flight-card.js?v=0.1.1678';
-import { catches } from './sky-catch.js?v=0.1.1678';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1679';
+import { glyphSvg } from './flight-card.js?v=0.1.1679';
+import { catches } from './sky-catch.js?v=0.1.1679';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1679';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -71,6 +72,16 @@ function skyState(ctx) {
 
 // ---------- render ----------
 // ctx: { planes: PlaneTracker, obs, positions: [{plane, az, el, rangeKm}], route(callsign), show(hex), place }
+// The weather in the hero: { cls, html, word } from the forecast's now (cloud %, kind).
+const WX_WORDS = { rain: 'Rain', snow: 'Snow', storm: 'Storms', fog: 'Fog' };
+function heroSky(wx) {
+  const n = wx?.now; if (!n) return { cls: '', html: '', word: '' };
+  const cloud = Math.max(0, Math.min(1, (n.cloud ?? 0) / 100)), wet = ['rain', 'storm'].includes(n.kind), grey = wet || ['snow', 'fog'].includes(n.kind) || cloud >= 0.8;
+  const word = WX_WORDS[n.kind] ?? (cloud >= 0.8 ? 'Overcast' : cloud >= 0.35 ? 'Partly cloudy' : 'Clear');
+  if (cloud < 0.2 && !wet) return { cls: ' clear', html: '', word };
+  const tint = grey ? [214, 223, 232] : [255, 255, 255];
+  return { cls: ` cloudy${grey ? ' grey' : ''}`, html: `<div class="tn-sky" aria-hidden="true">${cloudsHtml(wet ? 1 : Math.max(0.45, cloud), { tint })}${wet ? rainHtml(50) : ''}</div>`, word };
+}
 export function renderToday(el, ctx) {
   const owned = new Set(); for (const c of catches()) { owned.add(c.key); if (c.planeKey) owned.add(c.planeKey); }
   const up = (ctx.positions ?? []).filter((a) => a.el > 5).map((a) => ({ a, w: worth(a, ctx.route(a.plane.callsign), owned) })).sort((x, y) => y.w.score - x.w.score);
@@ -81,13 +92,17 @@ export function renderToday(el, ctx) {
       <span class="td-art">${glyphSvg(u.w.glyph)}</span>
       <span class="td-t"><b>${esc(u.w.name)}</b><span>${esc(u.w.sub || '')}</span><span class="td-where">${esc(dirWord(u.a.az))}, ${Math.round(u.a.el)}° up · ${ft(u.a.plane.hKm)}</span></span>
       <span class="td-tag${u.w.isNew ? ' new' : ''}">${u.w.tag}</span></button>`;
+  /* The top card is Space Collector's Tonight hero (2026-11-16, Sevaan: "this has cool weather effects on Space Collector"):
+     its .tn-wx box with the forecast drawn in: Tonight's drifting clouds when it's cloudy, rain when it rains, in daylight
+     white over the sky. ctx.wx is the forecast (js/weather.js). */
+  const sky = heroSky(ctx.wx);
   el.innerHTML = `
-    <section class="td-hero">${best ? `
-      <p class="td-k">UP NOW · ${up.length} OVERHEAD</p>
+    <section class="tn-wx td-wx${sky.cls}">${sky.html}${best ? `
+      <span class="k">Up now · ${up.length} overhead${sky.word ? `<em>${esc(sky.word)}</em>` : ''}</span>
       <h3>${esc(best.w.isNew ? 'Look up now' : 'Planes overhead')}</h3>
-      <p class="td-lead">${esc(best.w.name)}${best.w.sub ? ` · ${esc(best.w.sub)}` : ''}. ${esc(dirWord(best.a.az))}, ${Math.round(best.a.el)}° up.</p>
-      <button type="button" class="td-show" data-hex="${esc(best.a.plane.hex)}">SHOW ME</button>` : `
-      <p class="td-k">UP NOW</p>${skyState(ctx)}`}
+      <p>${esc(best.w.name)}${best.w.sub ? ` · ${esc(best.w.sub)}` : ''}. ${esc(dirWord(best.a.az))}, ${Math.round(best.a.el)}° up.</p>
+      <div class="acts"><button type="button" class="tn-btn solid td-show" data-hex="${esc(best.a.plane.hex)}"><span>Show me</span></button></div>` : `
+      <span class="k">Up now${sky.word ? `<em>${esc(sky.word)}</em>` : ''}</span>${skyState(ctx)}`}
     </section>
     ${up.length > 1 ? `<p class="td-h">EVERYTHING UP <span>${up.length}</span></p><div class="td-list">${up.slice(0, 12).map(row).join('')}</div>` : ''}
     <p class="td-h">COMING OVER NEXT <span>${next.length ? 'NEXT 15 MIN' : ''}</span></p>

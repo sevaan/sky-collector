@@ -218,11 +218,7 @@ body.sky-only #visible { background:#eef5fb; color:var(--sc-ink); }
 body.sky-only #visible .panel-head h2, body.sky-only #visible .panel-head .x-close { color:var(--sc-ink); }
 body.sky-only #visible-sub { color:var(--sc-muted); }
 #sky-today { padding:0 16px calc(var(--nav-h, 112px) + 30px); max-width:620px; margin:0 auto; }
-.td-hero { margin-top:8px; border-radius:16px; border:1px solid var(--sc-line); padding:14px 16px 16px; background:linear-gradient(180deg,#9ccaee 0%,#e0eefa 100%); }
-.td-k { margin:0; font:600 12px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.2em; color:var(--sc-orange-ink); }
-.td-hero h3 { margin:6px 0 4px; font:400 30px/1 'SC Display','Russo One',sans-serif; color:var(--sc-ink); }
 .td-lead { margin:0 0 12px; font-size:15px; line-height:1.35; color:#1b3047; }
-.td-show { height:46px; padding:0 22px; border:0; border-radius:12px; background:var(--sc-orange); color:var(--sc-ink); font:600 15px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.2em; }
 .td-h { display:flex; justify-content:space-between; margin:18px 4px 6px; font:600 13px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.2em; color:var(--sc-orange-ink); }
 .td-h span { color:var(--sc-muted); letter-spacing:.12em; }
 .td-list { background:#fff; border:1px solid var(--sc-line); border-radius:12px; padding:0 10px; }
@@ -246,7 +242,6 @@ body.sky-only #visible-sub { color:var(--sc-muted); }
 .td-chart i.now { background:var(--sc-ink); }
 .td-axis { display:flex; justify-content:space-between; margin-top:4px; padding:0 4px; font:500 12px/1 'SC Label','Barlow Condensed',sans-serif; color:var(--sc-muted); }
 .td-note { margin:8px 4px 0; font-size:12.5px; color:var(--sc-muted); }
-.td-hero h3 { letter-spacing:0 !important; text-transform:none; }
 
 /* Satellite sweep (2026-11-15): Settings rows that only made sense for satellites */
 body.sky-only #row-tonight, body.sky-only #row-alerts, body.sky-only #row-live,
@@ -334,3 +329,21 @@ html.sky-cards .collection-tabs { justify-content:flex-start; gap:28px; }
    clouds are already soft at this size; the plane's drop shadow is drawn flat. */
 .mini-face .fc-cloud { filter:none; }
 .mini-face .fc-glyph { filter:none; }
+
+/* Today's top card is Space Collector's Tonight hero (.tn-wx, css/app.css) with the weather drawn in (js/sky-today.js
+   heroSky, 2026-11-16): Space Collector's layout and button, a daylight sky behind it. */
+body.sky-only .tn-wx.td-wx { position:relative; overflow:hidden; isolation:isolate; margin-top:8px; border-color:var(--sc-line); background:linear-gradient(180deg,#5d97cf 0%,#9cc8ee 55%,#e0eefa 100%); }
+body.sky-only .tn-wx.td-wx.clear { background:radial-gradient(circle at 88% -10%, #fff8dccc, #fff8dc00 38%), linear-gradient(180deg,#4d8fd0 0%,#93c4ee 60%,#e0eefa 100%); }
+body.sky-only .tn-wx.td-wx.grey { background:linear-gradient(180deg,#8399ad 0%,#b8c7d4 55%,#e1e8ee 100%); }
+body.sky-only .tn-wx.td-wx > .tn-sky { position:absolute; inset:0; z-index:-1; pointer-events:none; }
+body.sky-only .tn-wx.td-wx > .tn-sky .wx-clouds { top:-30px; height:300px; }
+body.sky-only .tn-wx.td-wx .k { color:var(--sc-orange-ink); }
+body.sky-only .tn-wx.td-wx .k em { margin-left:auto; font-style:normal; letter-spacing:.12em; color:#0d2238; }
+body.sky-only .tn-wx.td-wx :is(h3, p) { color:#0d2238; text-shadow:0 1px 0 #ffffff66; }
+body.sky-only .tn-wx.td-wx h3 { letter-spacing:0 !important; text-transform:none; }
+/* After dark the hero's sky is night, like Space Collector's Tonight hero; the words go light on it */
+body.sky-only:not(.day) .tn-wx.td-wx, body.sky-only:not(.day) .tn-wx.td-wx.clear { background:radial-gradient(ellipse at 80% -20%, #3a5f9455, transparent 60%), linear-gradient(180deg,#0e1f38 0%,#1d3a5f 70%,#2c4d73 100%); border-color:#2c4d73; }
+body.sky-only:not(.day) .tn-wx.td-wx.grey { background:linear-gradient(180deg,#1c2836 0%,#2b3a4b 100%); }
+body.sky-only:not(.day) .tn-wx.td-wx > .tn-sky { opacity:.45; }
+body.sky-only:not(.day) .tn-wx.td-wx :is(h3, p, .k em) { color:#f4f8fc; text-shadow:none; }
+body.sky-only:not(.day) #visible .tn-wx.td-wx .k, body.sky-only:not(.day) #sky-today .tn-wx.td-wx .k { color:#ff9d8f !important; }
