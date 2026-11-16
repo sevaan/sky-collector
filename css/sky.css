@@ -465,3 +465,9 @@ body.sky-only #reveal a#reveal-view, body.sky-only.night #reveal a#reveal-view {
 .sct-logo { height:13px; width:auto; max-width:72px; object-fit:contain; flex:none; }
 /* The card back sits over the card it belongs to when the viewer's card turns (js/card.js attachFlip) */
 #sky-viewer .scv-card .fc { position:relative; }
+
+/* Plane cards inside Space Collector's .card (Milestone 1.5): the card element keeps Space Collector's sizing (font-size =
+   the card unit, 28em wide) and the plane face fills it at 28 × 42em, the shape of the card backs. */
+.card.card--sky { min-height:42em; position:relative; }
+.card.card--sky > .fc { --u:1em; font-size:1em; width:100%; }
+.card.card--sky > .card__back { border-radius:1.15em; }

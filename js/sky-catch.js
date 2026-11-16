@@ -2,16 +2,19 @@
 // Collect does. Catches are kept in localStorage ('skyCatches') for now, apart from Space Collector's sightings, so the
 // old collection code never meets a flight. The Collection screen reads them in a later step.
 
-import { aircraftName, isHelicopter } from './planes.js?v=0.1.1635';
-import { lookupRoute } from './routes.js?v=0.1.1635';
-import { cardsFor, TIERS } from './flights.js?v=0.1.1635';
-import { glyphSvg, showCatch, miniCardHtml } from './flight-card.js?v=0.1.1635';
-import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1635';
+import { aircraftName, isHelicopter } from './planes.js?v=0.1.1638';
+import { lookupRoute } from './routes.js?v=0.1.1638';
+import { cardsFor, TIERS } from './flights.js?v=0.1.1638';
+import { glyphSvg, showCatch, miniCardHtml } from './flight-card.js?v=0.1.1638';
+import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1638';
 
-import { TIER_INFO } from './rarity.js?v=0.1.1635';
-import { allCatches, addCatch } from './catch-store.js?v=0.1.1635';
+import { TIER_INFO } from './rarity.js?v=0.1.1638';
+import { allCatches, addCatch } from './catch-store.js?v=0.1.1638';
 // Catches live in js/catch-store.js (IndexedDB, with a localStorage mirror the Collection page reads).
-export function catches() { return allCatches(); }
+// Where catches are read from: Space Collector's sightings once main.js says so (Milestone 1.5), the old store until then.
+let source = allCatches;
+export const setCatchSource = (fn) => { source = fn; };
+export function catches() { return source(); }
 const seenCount = (list, key) => list.filter((c) => c.key === key || c.planeKey === key).length;
 
 const ft = (p) => (Math.round(p.hKm * 3280.84 / 100) * 100).toLocaleString('en-US');
@@ -78,6 +81,19 @@ let busy = false;
 //   stampCount, flightStamps, planeStamps, flight, plane, isNewFlight, isNewPlane, heightFt, speedKmh, awayKm,
 //   flightSeen, planeSeen }. 'none' (same aircraft, same local day) saves nothing and shows nothing.
 // `show` gets that same object for 'new' and for 'stamp'; main.js's skyReveal branches on `kind`.
+// Milestone 1.5: what Collect would save for the plane in the circle, worked out but not saved (main.js capturePlane saves it
+// as Space Collector sightings and plays Space Collector's reveal). Returns { out, c } or null; out.kind 'none' = already
+// stamped today.
+export async function preparePlaneCatch(el, now = Date.now()) {
+  const hit = el._hit; if (!hit) return null;
+  const p = hit.plane, route = el._route;
+  const full = route?.full ?? (await lookupRoute(p.callsign).catch(() => null));
+  const { flight, plane } = cardsFor(p, full, route?.airline || '');
+  const out = assess([...catches()], { time: now, hex: p.hex, callsign: p.callsign, flight, plane });
+  const c = { time: now, hex: p.hex, callsign: p.callsign, ...(hasAirlineCallsign(p.callsign) && p.reg ? { reg: p.reg } : {}), type: p.type,
+    altFt: Math.round(p.hKm * 3280.84), gsKt: p.gs, rangeKm: Math.round(hit.rangeKm * 10) / 10, airline: route?.airline || '', flight, plane };
+  return { out, c };
+}
 export async function collect(el, { onDone, show = showCatch, now = Date.now() } = {}) {
   const hit = el._hit; if (!hit || busy) return null;
   busy = true;
