@@ -1,5 +1,5 @@
-import { SETS, goldAlbums } from './sets.js?v=0.1.1598';
-import { isPlus } from './plus.js?v=0.1.1598';
+import { SETS, goldAlbums } from './sets.js?v=0.1.1599';
+import { isPlus } from './plus.js?v=0.1.1599';
 // Card backs you can choose (2026-10-16, design/card-backs.html, Sevaan liked all six). Mission Control is everyone’s;
 // Plus unlocks the rest; two can also be earned free: Golden Record (find the Pale Blue Dot story) and Star Chart
 // (complete 10 constellations); main.js writes what’s been earned to localStorage 'backEarned'. The choice is
@@ -8,6 +8,7 @@ export const CARD_BACKS = [
   // Sky Collector's backs (2026-11-15, Sevaan): painted with Nano Banana Pro like Space Collector's (scripts/art/gen-back.py,
   // prompts in scripts/art/back-prompts/). The Daylight Seal is everyone's; the rest come with Plus.
   { id: 'sky', bg: '#8bb2c3', name: 'Daylight Seal', url: 'assets/art/backs/back-sky.webp', title: 'middle', free: true },
+  { id: 'livery', bg: '#1c3550', name: 'House Livery', url: 'assets/art/backs/back-livery.webp', title: 'middle' }, // Sky Collector's own airline paint scheme (2026-11-15, Sevaan's idea)
   { id: 'golden-age', bg: '#0c1c34', name: 'Golden Age', url: 'assets/art/backs/back-golden-age.webp', title: 'middle' },
   { id: 'wings', bg: '#010e1a', name: 'Pilot Wings', url: 'assets/art/backs/back-wings.webp', title: 'middle' },
   { id: 'altimeter', bg: '#051723', name: 'Altimeter', url: 'assets/art/backs/back-altimeter.webp', title: 'middle' },
