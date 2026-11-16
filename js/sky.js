@@ -1,18 +1,18 @@
 // Canvas renderer for the sky view. Gnomonic (pinhole camera) projection around where the phone points.
-import { extinction } from './sky-limit.js?v=0.1.1585';
+import { extinction } from './sky-limit.js?v=0.1.1586';
 // Two themes: 'glass' (ink, cream and orange celestial chart) and 'night' (all red, keeps dark adaptation).
-import { pmTime } from './perf-meter.js?v=0.1.1585';
-import { createMilkyGL } from './milkyway-gl.js?v=0.1.1585';
+import { pmTime } from './perf-meter.js?v=0.1.1586';
+import { createMilkyGL } from './milkyway-gl.js?v=0.1.1586';
 
-import { enuFromAzEl, compassPoint } from './orbit.js?v=0.1.1585';
-import { createCloudGL } from './clouds-gl.js?v=0.1.1585';
+import { enuFromAzEl, compassPoint } from './orbit.js?v=0.1.1586';
+import { createCloudGL } from './clouds-gl.js?v=0.1.1586';
 // Cloud colours by light: sunlit tops, shadowed bellies, and the horizon haze they melt into (0–1 RGB).
 const CLOUD_LIGHT = {
   day: { lit: [1, 1, 1], shade: [0.62, 0.68, 0.77], haze: [0.82, 0.87, 0.93] },
   dusk: { lit: [1, 0.8, 0.68], shade: [0.36, 0.33, 0.42], haze: [0.62, 0.5, 0.52] },
   night: { lit: [0.22, 0.25, 0.31], shade: [0.1, 0.12, 0.16], haze: [0.14, 0.15, 0.2] },
 };
-import { TIER_INFO } from './rarity.js?v=0.1.1585';
+import { TIER_INFO } from './rarity.js?v=0.1.1586';
 
 const RAD = Math.PI / 180;
 const SECRET_PX = { santa: 24, roadster: 12.4, voyager: 14.5, voyager2: 14.5, pioneer10: 11.7, pioneer11: 11.7, newhorizons: 6.4, arecibo: 6.9, halley: 8.6, pillars: 9, hdf: 8, m87bh: 8, crab: 8, kepler: 10, sputnik: 11.2, laika: 13.3, wow: 9.8 };
@@ -1612,7 +1612,7 @@ export class SkyView {
     this.drawBackground();
     if (this.lightF < 0.2 && !this.camera) this.drawMilkyWay(milky); // no Milky Way in camera view
     if (sky && this.lightF < 0.6) this.drawStars(sky, { lines: lines && this.dayF < 0.2, time: this.reducedMotion ? 0 : time, starLimit });
-    this.shadowBox = null; if (this.showShadow !== false) this.drawEarthShadow();
+    this.shadowBox = null; /* Sky Collector: no Earth's shadow, it's for satellites (2026-11-15, Sevaan) */
     if (deep?.length && (this.dayF ?? 0) < 0.2) this.drawDeep(deep);
     if (weather && !this.camera) this.drawWeather(weather, this.reducedMotion || this.saver ? 0 : time); // the camera shows the real clouds
     if (bodies) this.drawBodies(bodies);
