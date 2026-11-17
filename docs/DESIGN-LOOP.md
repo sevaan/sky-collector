@@ -1,6 +1,6 @@
 # The loop for planes: rarity, sets, missions, XP, patches
 
-Design for Sevaan to approve (sprint task C, 2026-11-17). Nothing here is built. Numbers come from the 24-hour sample
+**Approved by Sevaan as written, 2026-11-17** (all four recommendations at the end). Nothing here is built yet: that is sprint task D. Numbers come from the 24-hour sample
 study (docs/research/sample-study.md: 30 places, 27 with coverage, 446 aircraft types, 857 airlines).
 
 The rule from the rebuild still holds: this is Space Collector's loop with plane content. Its machinery (tiers, stamps and
@@ -153,7 +153,7 @@ Space Collector's secrets (UFO, Santa, stories) have no plane version here; they
 - **Quiet now:** Today's "Coming over next" is the session; Explore's radar line already says why it's empty.
 - **Feed down:** already says so (2026-11-17).
 
-## Questions for Sevaan
+## Questions for Sevaan (answered 2026-11-17: yes to all four, as recommended)
 
 1. **One tier everywhere plus a "Rare here" ribbon** (recommended), or tiers that change by region?
 2. **Flight tiers stay distance-based**, with cargo dropping from Epic to Rare?
