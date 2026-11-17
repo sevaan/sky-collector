@@ -34,7 +34,7 @@ changes so the next sync from Space Collector is a re-apply, not a re-port.
 
 ## Base
 
-Space Collector at its latest commit (`fc2de46b`, 2026-11-15), committed files only (`git archive`), excluding store/,
+Space Collector at `e5e2afb7` (synced 2026-11-17 by a three-way merge per changed file; first copy was `fc2de46b`, 2026-11-15), committed files only (`git archive`), excluding store/,
 design/, site/, notes/, docs/, native/ as before. Built on a `rebuild` branch; the test site keeps serving the current
 version from `main` until the rebuild passes side-by-side checks, then `rebuild` replaces `main`.
 

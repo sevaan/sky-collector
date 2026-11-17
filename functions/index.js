@@ -13,6 +13,7 @@
 import functions from '@google-cloud/functions-framework';
 import { Firestore } from '@google-cloud/firestore';
 import { statsHtml } from './stats-page.js';
+import { gzipSync, gunzipSync } from 'node:zlib';
 const db = new Firestore();
 const ALLOWED = [/^https:\/\/sevaan\.github\.io$/, /^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/, /^capacitor:\/\/localhost$/, /^https:\/\/localhost$/, /^https:\/\/spacecollector\.app$/];
 const UA = 'SpaceCollector/1.0 (https://spacecollector.app; hello@spacecollector.app)';
@@ -60,7 +61,7 @@ async function report(body) {
   const iid = String(b?.i ?? ''); if (!/^[a-f0-9]{16,40}$/.test(iid)) return 400;
   const v = String(b?.v ?? '').slice(0, 20), p = ['ios', 'android', 'web'].includes(b?.p) ? b.p : 'web', x = b?.x ? 1 : 0, now = Date.now();
   const rows = (Array.isArray(b?.e) ? b.e : []).slice(0, 60).filter((e) => Array.isArray(e) && NAMES.has(e[0]));
-  if (rows.length) { const batch = db.batch(); for (const e of rows) batch.set(db.collection('sc_events').doc(), { ts: Math.min(now, Math.max(now - 30 * 86400000, Number(e[1]) || now)), iid, v, p, x, name: String(e[0]), d: JSON.stringify(e[2] ?? {}).slice(0, 600) }); await batch.commit(); }
+  if (rows.length) { const batch = db.batch(); for (const e of rows) batch.set(db.collection('sc_events').doc(), { ts: Math.min(now, Math.max(now - 30 * 86400000, Number(e[1]) || now)), rt: now /* when the server got it: the stats snapshot reads only rows newer than its last one (2026-11-17) */, iid, v, p, x, name: String(e[0]), d: JSON.stringify(e[2] ?? {}).slice(0, 600) }); await batch.commit(); }
   if (process.env.NTFY_TOPIC && !x && p !== 'web') { try { await notify(rows, { v, p }); } catch (err) { console.error('ntfy', err?.message ?? err); } }
   return 204;
 }
@@ -85,23 +86,63 @@ async function notify(rows, { v, p }) {
 }
 // The dashboard (functions/stats-page.js). /stats needs ?key=STATS_KEY (an env var set at deploy), reads only the last
 // 120 days and is cached 10 minutes per instance, so a public URL can't run up Firestore reads (bug hunt 2026-10-26).
-let statsMemo = null;
 /* Every instance shows the same snapshot (2026-11-14, Sevaan: 10 players out on the computer, 8 on the phone). Each of
    the up to 3 instances used to cache its own render for 10 minutes, taken whenever it happened to be asked, so two
    devices could see different counts. Now the page is the events up to the last 10-minute mark (9:40, 9:50…), rendered
    as of that mark, so any instance gives the same numbers until the next mark. */
 const SLOT = 10 * 60e3;
-async function stats(all, before = false) {
-  const at = Math.floor(Date.now() / SLOT) * SLOT;
-  if (statsMemo && statsMemo.all === all && statsMemo.before === before && statsMemo.at === at) return statsMemo.html;
-  const snap = await db.collection('sc_events').where('ts', '>', at - 120 * 86400e3).get();
+/* Cheap reads (2026-11-17, Sevaan: $4.95 of database reads in November). Every refresh used to re-read every event of
+   the last 120 days (~30,000 rows, 6.46M reads in two weeks). Now the rows live in a snapshot (sc_statcache: gzipped
+   JSON in a few chunk documents) and a refresh reads the snapshot's small meta document plus only the rows the server
+   received since (rt > the snapshot's mark, with a minute's overlap, de-duplicated by document id). The snapshot is
+   rewritten once 300 new rows or 6 hours have built up. The first refresh after this deploy reads everything once to
+   make it; /stats?rebuild=1 does that again by hand. */
+const CACHE = 'sc_statcache', CHUNK = 900000;
+let snapMem = null; /* { ver, rows: Map(id → row), rtUpTo } on this instance */
+async function loadSnapshot() {
+  const meta = (await db.collection(CACHE).doc('meta').get()).data();
+  if (!meta) return null;
+  if (snapMem && snapMem.ver === meta.ver) return snapMem;
+  const docs = await db.getAll(...Array.from({ length: meta.chunks }, (_, k) => db.collection(CACHE).doc(`c${k}`)));
+  const buf = Buffer.concat(docs.map((d) => d.data().b));
+  const list = JSON.parse(gunzipSync(buf).toString('utf8'));
+  snapMem = { ver: meta.ver, rtUpTo: meta.rtUpTo, rows: new Map(list.map((r) => [r._id, r])) }; return snapMem;
+}
+async function saveSnapshot(rows, rtUpTo) {
+  const keep = Date.now() - 120 * 86400e3, list = [...rows.values()].filter((r) => r.ts > keep);
+  const gz = gzipSync(Buffer.from(JSON.stringify(list), 'utf8')), n = Math.max(1, Math.ceil(gz.length / CHUNK)), ver = `${Date.now()}`;
+  const batch = db.batch();
+  for (let k = 0; k < n; k++) batch.set(db.collection(CACHE).doc(`c${k}`), { b: gz.subarray(k * CHUNK, (k + 1) * CHUNK) });
+  batch.set(db.collection(CACHE).doc('meta'), { ver, chunks: n, rtUpTo, rows: list.length, at: Date.now() });
+  await batch.commit();
+  snapMem = { ver, rtUpTo, rows: new Map(list.map((r) => [r._id, r])) };
+}
+async function statRows(at, rebuild) {
+  let snap = rebuild ? null : await loadSnapshot().catch((e) => { console.warn('stats snapshot', e?.message); return null; });
+  if (!snap) { /* the one full read */
+    const all = await db.collection('sc_events').where('ts', '>', at - 120 * 86400e3).get();
+    const rows = new Map(all.docs.map((d) => [d.id, { ...d.data(), _id: d.id }])), mark = Date.now() - 60e3;
+    await saveSnapshot(rows, mark).catch((e) => console.warn('stats snapshot save', e?.message));
+    return [...rows.values()];
+  }
+  const fresh = await db.collection('sc_events').where('rt', '>', snap.rtUpTo - 60e3).get();
+  const rows = new Map(snap.rows); let added = 0, top = snap.rtUpTo;
+  for (const d of fresh.docs) { const r = { ...d.data(), _id: d.id }; if (!rows.has(d.id)) added++; rows.set(d.id, r); if (r.rt > top) top = r.rt; }
+  console.log('stats reads: snapshot', snap.rows.size, 'rows kept, read', fresh.size, 'new');
+  if (added >= 300 || (added && Date.now() - Number(snap.ver) > 6 * 3600e3)) await saveSnapshot(rows, top).catch((e) => console.warn('stats snapshot save', e?.message));
+  return [...rows.values()];
+}
+const statsMemo = new Map(); /* one render per view (all / before) per 10-minute mark */
+async function stats(all, before = false, rebuild = false) {
+  const at = Math.floor(Date.now() / SLOT) * SLOT, mk = `${all}|${before}`, hit = statsMemo.get(mk);
+  if (!rebuild && hit && hit.at === at) return hit.html;
   /* the daily catalogue: when it was made and the new cards it brought (data/new-cards.json, 2026-11-12) */
   let newCards = null, catalogAt = 0;
   try { const t = await repoFile('data/new-cards.json'); if (t) newCards = JSON.parse(t); } catch {} /* { cards, backlog } */
   try { const t = await repoFile('data/catalog.json'); catalogAt = Date.parse(/"generated"\s*:\s*"([^"]+)"/.exec(t?.slice(0, 200) ?? '')?.[1] ?? '') || 0; } catch {}
-  const rows = snap.docs.map((doc) => doc.data()).filter((e) => e.ts <= at);
+  const rows = (await statRows(at, rebuild)).filter((e) => e.ts <= at);
   const html = statsHtml(rows, { all, before, now: at, keyQs: `key=${encodeURIComponent(process.env.STATS_KEY ?? '')}`, newCards, catalogAt });
-  statsMemo = { at, all, before, html }; return html;
+  statsMemo.set(mk, { at, html }); return html;
 }
 
 // Send cards (2026-11-07, Sevaan: "a link to a lot of cards [must] be sent by text normally"): the pack lives here under
@@ -121,7 +162,7 @@ functions.http('api', async (req, res) => {
   const path = req.path.replace(/^\/api/, '').replace(/\/$/, '') || '/';
   const json = (body, sMax) => { if (body == null) return res.status(502).send('unavailable'); res.set('Content-Type', 'application/json'); res.set('Cache-Control', `public, max-age=${Math.min(sMax, 300)}, s-maxage=${sMax}`); return res.send(body); };
   try {
-    if (path === '/stats' && req.method === 'GET') { if (!process.env.STATS_KEY || req.query.key !== process.env.STATS_KEY) return res.status(404).send('not found'); res.set('Content-Type', 'text/html; charset=utf-8'); res.set('Cache-Control', 'private, no-store'); return res.send(await stats(req.query.all === '1', req.query.before === '1')); }
+    if (path === '/stats' && req.method === 'GET') { if (!process.env.STATS_KEY || req.query.key !== process.env.STATS_KEY) return res.status(404).send('not found'); res.set('Content-Type', 'text/html; charset=utf-8'); res.set('Cache-Control', 'private, no-store'); return res.send(await stats(req.query.all === '1', req.query.before === '1', req.query.rebuild === '1')); }
     if (path === '/t' && req.method === 'POST') { if (!ok) return res.status(403).send('Forbidden'); if (limited(req, 't', 20)) return res.status(429).send('slow down'); return res.status(await report(typeof req.body === 'string' ? req.body : req.rawBody?.toString() ?? JSON.stringify(req.body))).send(''); }
     if (path === '/pack' && req.method === 'POST') { if (!ok) return res.status(403).send('Forbidden'); if (limited(req, 'pk', 20)) return res.status(429).send('slow down');
       const code = String(typeof req.body === 'string' ? req.body : req.rawBody?.toString() ?? '').trim();
