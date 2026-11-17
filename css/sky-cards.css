@@ -347,3 +347,6 @@ body.sky-only:not(.day) .tn-wx.td-wx.grey { background:linear-gradient(180deg,#1
 body.sky-only:not(.day) .tn-wx.td-wx > .tn-sky { opacity:.45; }
 body.sky-only:not(.day) .tn-wx.td-wx :is(h3, p, .k em) { color:#f4f8fc; text-shadow:none; }
 body.sky-only:not(.day) #visible .tn-wx.td-wx .k, body.sky-only:not(.day) #sky-today .tn-wx.td-wx .k { color:#ff9d8f !important; }
+/* Why the sky is empty, where "N overhead" sits under the radar (2026-11-17) */
+#radar-why { font:500 12px/1.25 var(--label); letter-spacing:.14em; text-transform:uppercase; color:color-mix(in srgb,var(--text) 70%,transparent); max-width:190px; }
+body.day #radar-why { color:#143046; }
