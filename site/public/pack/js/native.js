@@ -93,7 +93,9 @@ let notifId = 1000;
 // Notifications plan 2026-10-29 (design/notifications-plan.html): taps go somewhere, and a night is grouped together.
 // channel: the Android category it's filed under ('asked' | 'tonight' | 'events' | 'alerts'), so a player can mute one
 // kind in the phone's own settings without losing the rest; the names match the Settings rows.
+const oneStop = (s) => String(s ?? '').replace(/(\b[ap]\.\s?m)\.\./gi, '$1.'); /* "at 7:33 p.m.." on phones that write p.m. (2026-11-18) */
 export async function notifyAt(at, title, body, { id, link, actions, night, channel } = {}) {
+  title = oneStop(title); body = oneStop(body);
   if (!isNative()) return 'unsupported';
   const ln = plugin('LocalNotifications');
   try {

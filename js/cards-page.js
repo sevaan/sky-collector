@@ -1,40 +1,40 @@
-import { pullToClose } from './pull-close.js?v=0.1.1718';
-import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1718';
-import { computeStats, statsHtml } from './stats.js?v=0.1.1718';
-import { nightKey } from './observation.js?v=0.1.1718';
-import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1718';
-import { sfx } from './sfx.js?v=0.1.1718';
-import { expandFacts } from './catalog-facts.js?v=0.1.1718';
-import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned } from './patches.js?v=0.1.1718';
-import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1718';
-import { ticket } from './toast.js?v=0.1.1718';
-import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1718';
-import { satGlobe } from './sat-globe.js?v=0.1.1718';
-import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1718';
-import { cardArt } from './art.js?v=0.1.1718';
-import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1718';
-import { applyBack } from './card-backs.js?v=0.1.1718';
-import { localStats } from './sky-local.js?v=0.1.1718';
-import { retier } from './flights.js?v=0.1.1718';
-import { SETS, assignSets, albumGoals, albumList, useSets, goalsOf } from './sets.js?v=0.1.1718';
-import { SKY_ALBUM_SETS, FLIGHT_SETS } from './sky-sets.js?v=0.1.1718';
+import { pullToClose } from './pull-close.js?v=0.1.1719';
+import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1719';
+import { computeStats, statsHtml } from './stats.js?v=0.1.1719';
+import { nightKey } from './observation.js?v=0.1.1719';
+import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1719';
+import { sfx } from './sfx.js?v=0.1.1719';
+import { expandFacts } from './catalog-facts.js?v=0.1.1719';
+import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned } from './patches.js?v=0.1.1719';
+import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1719';
+import { ticket } from './toast.js?v=0.1.1719';
+import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1719';
+import { satGlobe } from './sat-globe.js?v=0.1.1719';
+import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1719';
+import { cardArt } from './art.js?v=0.1.1719';
+import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1719';
+import { applyBack } from './card-backs.js?v=0.1.1719';
+import { localStats } from './sky-local.js?v=0.1.1719';
+import { retier } from './flights.js?v=0.1.1719';
+import { SETS, assignSets, albumGoals, albumList, useSets, goalsOf } from './sets.js?v=0.1.1719';
+import { SKY_ALBUM_SETS, FLIGHT_SETS } from './sky-sets.js?v=0.1.1719';
 const FLIGHT_SET_IDS = new Set(FLIGHT_SETS.map((s) => s.id));
-import { skyCatalogue } from './sky-catalogue.js?v=0.1.1718';
-import { skyCardPhotoUrl, glyphSvg } from './flight-card.js?v=0.1.1718';
-import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1718';
-import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1718';
-import { STORIES } from './stories.js?v=0.1.1718';
-import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1718';
-import { conArt } from './con-art.js?v=0.1.1718';
-import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1718';
-import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1718';
-import { shareCardEl } from './share-card.js?v=0.1.1718';
-import { forgetSighting } from './cloud-backup.js?v=0.1.1718';
-import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1718';
-import { allSightings, deleteSighting } from './store.js?v=0.1.1718';
-import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1718';
-import { SECRET_PATCHES, hasPatch } from './secrets.js?v=0.1.1718';
-import { localText } from './localize.js?v=0.1.1718';
+import { skyCatalogue } from './sky-catalogue.js?v=0.1.1719';
+import { skyCardPhotoUrl, glyphSvg } from './flight-card.js?v=0.1.1719';
+import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1719';
+import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1719';
+import { STORIES } from './stories.js?v=0.1.1719';
+import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1719';
+import { conArt } from './con-art.js?v=0.1.1719';
+import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1719';
+import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1719';
+import { shareCardEl } from './share-card.js?v=0.1.1719';
+import { forgetSighting } from './cloud-backup.js?v=0.1.1719';
+import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1719';
+import { allSightings, deleteSighting } from './store.js?v=0.1.1719';
+import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1719';
+import { SECRET_PATCHES, NOT_SECRET, hasPatch } from './secrets.js?v=0.1.1719';
+import { localText } from './localize.js?v=0.1.1719';
 // Sky Collector (Milestone 1.5): the same Collection, with plane cards from your catches and no satellite catalogue.
 const SKY = (() => { try { return !!window.parent?.__skyOnly; } catch { return false; } })() || /[?&]sky\b/.test(location.search);
 if (SKY) { document.documentElement.classList.add('sky-cards'); setSkyProgress(true); setEventsOff(true); useSets(SKY_ALBUM_SETS); /* Sky's albums: plane families and where flights go (js/sky-sets.js) */ try { setSkySize(localStats().sky); } catch {} }
@@ -406,11 +406,12 @@ function fillStats() {
   let sec = {}; try { sec = JSON.parse(localStorage.getItem('secrets')) || {}; } catch {}
   let extra = Object.keys(sec).filter((k) => SECRET_PATCHES[k] && hasPatch(k, sec[k])).length;
   try { if (JSON.parse(localStorage.getItem('fossilFound'))) extra++; if (JSON.parse(localStorage.getItem('ufoFound'))) extra++; } catch {}
+  const ambLocked = sec.ambassador && hasPatch('ambassador', sec.ambassador) ? 0 : 1; /* the wall shows it locked until earned, so the totals agree (2026-11-18) */
   const lv = SETS.map((set) => albumStats(set.id)).filter((a) => a.cards.length);
   const cd = conDone();
   const ctx = { sky: SKY, cards: state.cards, title: titleFor, art: (c) => (c?.sky ? skyCardPhotoUrl(c, c.type) : artImage(c, 'small')),
     rank: { name: p.rank.name, xp: p.xp, next: p.rank.next, nextName: p.rank.nextName, at: p.rank.at },
-    patches: [p.achievements.filter((a) => a.done).length + extra, p.achievements.length + extra],
+    patches: [p.achievements.filter((a) => a.done).length + extra, p.achievements.length + extra + ambLocked],
     ...(SKY ? {} : { events: eventBadges(state.raw).length, cons: [cd.done, cd.total], stories: [STORIES.filter((st) => state.sightingsByKey.has(st.key)).length, STORIES.length] }), /* Sky: no meteor showers, constellations or hidden stories (2026-11-17) */
     albums: { bronze: lv.filter((a) => a.level >= 1).length, silver: lv.filter((a) => a.level >= 2).length, gold: lv.filter((a) => a.level >= 3).length, total: lv.length } };
   $('stats-body').innerHTML = statsHtml(computeStats(state.raw, state.byKey, nightKey, null, ctx));
@@ -678,6 +679,10 @@ window.addEventListener('message', (e) => {
     { const u = $('v-up'); if (($('viewer').open || opening) && u._card && !u._up && !u.hidden) renderNextPanel(u._card); } // also while it waits for its art (opening), or the reply was dropped (bug hunt 2026-10-17)
     for (const el of document.querySelectorAll('.fd-pass[data-id]')) { const id = isNaN(el.dataset.id) ? el.dataset.id : Number(el.dataset.id), c = state.cards.find((k) => k.id === id); if (c) { el.innerHTML = findPassLine(c); findActs(el.closest('.find-row, .v-next'), c); } } findTrim(); }
   if (e.data?.sc === 'say' && e.data.text) ticket({ kind: 'info', line: e.data.text, ms: 3500 }); // a message from Explore (reminder results)
+  if (e.data?.sc === 'patch' && SECRET_PATCHES[e.data.id]) { /* earned from the wall (Tell a friend on the locked Ambassador, 2026-11-18): shown earned at once, with its notice here, not on the sky under the Collection */
+    const a = SECRET_PATCHES[e.data.id]; if (state.view === 'patches') renderPatches();
+    ticket({ kind: 'patch', eyebrow: 'PATCH EARNED', line: a.name, sub: e.data.text || '', art: patchHtml(a, { stitch: true }), ms: 4500 });
+  }
   if (e.data?.sc === 'find-reminded') { findReminded = new Set(e.data.set); { const u = $('v-up'); if (u && !u.hidden && u._up) renderUpPanel(u._card, u._up, u._find); } for (const el of document.querySelectorAll('.fd-pass[data-id]')) { const id = isNaN(el.dataset.id) ? el.dataset.id : Number(el.dataset.id), c = state.cards.find((k) => k.id === id); if (c) findActs(el.closest('.find-row, .v-next'), c); } }
 });
 let upHold = false; // true while the viewer shows Up tonight’s list; 'again' if a redraw waited (openUpNext)
@@ -1331,7 +1336,7 @@ function renderPatches() {
   let ufo = null; try { ufo = JSON.parse(localStorage.getItem('ufoFound')); } catch {}
   let sec = {}; try { sec = JSON.parse(localStorage.getItem('secrets')) || {}; } catch {}
   const SEC = Object.fromEntries(Object.values(SECRET_PATCHES).map((x) => [x.id, [x.name, x.text.replace(/\.$/, '')]])); // every secret, from js/secrets.js
-  const secs = Object.keys(SEC).filter((k) => sec[k] && hasPatch(k, sec[k])).map((k) => ({ id: k, name: SEC[k][0], text: SEC[k][1], icon: '', secret: true, done: true }));
+  const secs = Object.keys(SEC).filter((k) => sec[k] && hasPatch(k, sec[k])).map((k) => ({ id: k, name: SEC[k][0], text: SEC[k][1], icon: '', secret: !NOT_SECRET.has(k), done: true }));
   if (!secs.some((x) => x.id === 'ambassador')) secs.push({ id: 'ambassador', name: SECRET_PATCHES.ambassador.name, text: SKY ? 'Tell a friend about Sky Collector' : 'Tell a friend about Space Collector', icon: '', done: false }); /* shown locked until earned; tapping it tells a friend (2026-11-18) */
   const all = [...secs, ...(fossil ? [{ id: 'fossil', name: 'Fossil Hunter', text: 'Found dinosaur bones buried under your feet', icon: '', secret: true, done: true }] : []), ...(ufo ? [{ id: 'ufo', name: 'Close Encounter', text: "Something crossed your sky that isn’t in any catalogue", icon: '', secret: true, done: true }] : []), ...(state.achievements ?? [])];
   if (ufo) dates.ufo ??= ufo.at;
@@ -1360,7 +1365,7 @@ function openPatch(id, from = null) {
   let ufo = null; try { ufo = JSON.parse(localStorage.getItem('ufoFound')); } catch {}
   let sec = {}; try { sec = JSON.parse(localStorage.getItem('secrets')) || {}; } catch {}
   const SEC = Object.fromEntries(Object.values(SECRET_PATCHES).map((x) => [x.id, [x.name, x.text.replace(/\.$/, '')]])); // every secret, from js/secrets.js
-  const secs = Object.keys(SEC).filter((k) => sec[k] && hasPatch(k, sec[k])).map((k) => ({ id: k, name: SEC[k][0], text: SEC[k][1], icon: '', secret: true, done: true }));
+  const secs = Object.keys(SEC).filter((k) => sec[k] && hasPatch(k, sec[k])).map((k) => ({ id: k, name: SEC[k][0], text: SEC[k][1], icon: '', secret: !NOT_SECRET.has(k), done: true }));
   if (!secs.some((x) => x.id === 'ambassador')) secs.push({ id: 'ambassador', name: SECRET_PATCHES.ambassador.name, text: SKY ? 'Tell a friend about Sky Collector' : 'Tell a friend about Space Collector', icon: '', done: false }); /* shown locked until earned; tapping it tells a friend (2026-11-18) */
   const all = [...secs, ...(fossil ? [{ id: 'fossil', name: 'Fossil Hunter', text: 'Found dinosaur bones buried under your feet', icon: '', secret: true, done: true }] : []), ...(ufo ? [{ id: 'ufo', name: 'Close Encounter', text: "Something crossed your sky that isn’t in any catalogue", icon: '', secret: true, done: true }] : []), ...(state.achievements ?? [])], a = all.find((x) => x.id === id); if (!a) return;
   const date = earnedDates()[id] ?? (id === 'fossil' ? fossil?.at : id === 'ufo' ? ufo?.at : sec[id] ?? null), f = finishOf(a);

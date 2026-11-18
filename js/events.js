@@ -2,7 +2,7 @@
 // peak nights to earn that year’s badge (Logbook). Peak dates are the usual annual ones (International
 // Meteor Organization calendar); the window runs from the evening before the peak to the morning after.
 // No DOM.
-import { SKY_EVENTS } from './sky-events-data.js?v=0.1.1718';
+import { SKY_EVENTS } from './sky-events-data.js?v=0.1.1719';
 /* best: the hours worth being out (the radiant has to be up). from: where they seem to come from, in words that hold
    in both hemispheres. src: what the dust is from. All standard facts (International Meteor Organization, NASA). Added
    2026-11-18 (Sevaan: the Leonids note "didn't say when or anything"). */
@@ -43,7 +43,7 @@ export const nextEvent = (time = Date.now()) => eventsAround(time).find((e) => e
 export const activeShower = (time = Date.now()) => eventsAround(time).find((e) => e.kind === 'shower' && time >= e.start && time <= e.end) ?? null;
 export const nextShower = (time = Date.now()) => eventsAround(time).find((e) => e.kind === 'shower' && e.start > time) ?? null;
 // One line for any event: a shower's rate, or the sky event's own words.
-export const eventLine = (e) => (e?.kind === 'shower' ? `Best ${e.best}: ${e.rate.split(',')[0]}. Collect any card to earn its badge.` : e?.text ?? '');
+export const eventLine = (e) => (e?.kind === 'shower' ? `Best ${e.best}: ${e.rate.split(',')[0].replace(/^up to (\d+) an hour/, 'up to $1 shooting stars an hour')}. Collect any card to earn its badge.` : e?.text ?? ''); /* "shooting stars", like the daily note (2026-11-18: "up to 15 an hour" alone) */
 // A meteor-shower badge is for a night sighting (2026-10-08, Sevaan earned the Draconids badge with the Sun at noon):
 // not the Sun, and between 6 pm and 7 am local time.
 export const countsForEvent = (s) => !s.sim && s.cardKey !== 'sun' && s.objectId !== 'sun' && ((h) => h >= 18 || h < 7)(new Date(s.time).getHours());

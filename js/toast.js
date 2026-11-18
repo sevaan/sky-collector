@@ -137,9 +137,11 @@ function pump() {
   // straight away and the older one is shelved until it goes (2026-10-18 playtest: NEW RANK waited forever behind TONIGHT).
   const [cur] = queue.splice(qi, 1); if (cur.unasked) lastUnasked = Date.now(); return show(cur);
 }
+const oneStop = (s) => String(s ?? '').replace(/(\b[ap]\.\s?m)\.\./gi, '$1.'); /* "at 7:33 p.m.." on phones that write p.m. (2026-11-18) */
 function show(t) {
   busy = true;
   try { t.onShow?.(); } catch {} // a once-a-week/year notice counts as seen when it really shows, not when it's queued (bug hunt 2026-10-25)
+  t.line = oneStop(t.line); if (t.sub) t.sub = oneStop(t.sub);
   const el = document.createElement('div');
   el.className = `ticket ticket--${t.kind} tone-${t.tone || KIND_TONE[t.kind] || 'info'}${t.href || t.action ? ' linked' : ''}${t.art ? ' ticket--art' : ''}${t.sticky ? ' ticket--sticky' : ''}`;
   el.dataset.eyebrow = (t.eyebrow ?? '').toUpperCase(); if (t.id) el.dataset.id = t.id;

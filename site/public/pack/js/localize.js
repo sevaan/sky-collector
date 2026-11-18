@@ -62,6 +62,8 @@ let flags = null, flagsKey = ''; const memo = new Map();
 const raw = (k) => { try { return localStorage.getItem(k) ?? ''; } catch { return ''; } };
 const flagsNow = () => { const key = `${raw('units')}|${raw('clock')}|${navigator.language}`; /* the expensive parts only when a setting or the language changes */
   if (key !== flagsKey) { const f = `${useMiles() ? 1 : 0}${is24Raw() ? 1 : 0}${usEnglish() ? 1 : 0}`; if (f !== flags) memo.clear(); flags = f; flagsKey = key; } return flags; };
+/* one full stop after a time that ends in its own (2026-11-18: "at 7:33 p.m.." on phones that write p.m.) */
+export const oneStop = (s) => String(s ?? '').replace(/(\b[ap]\.\s?m)\.\./gi, '$1.');
 export function localText(t) {
   if (!t) return t;
   const f = flagsNow(), key = String(t), hit = memo.get(key); if (hit !== undefined) return hit;

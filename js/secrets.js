@@ -36,7 +36,9 @@ export const SECRET_PATCHES = {
   // patch each year (next year can be a different ghost).
   ghost2026: { id: 'ghost2026', name: 'Ghost Satellite', text: 'You caught a dead satellite on Halloween 2026: silent for years, and still going round.' },
 };
-for (const p of Object.values(SECRET_PATCHES)) { p.secret = true; p.icon = ''; }
+/* every one is a secret except these two, which are earned in plain sight (2026-11-18: the Ambassador coin said "Secret patch" and its card had a Secret chip) */
+export const NOT_SECRET = new Set(['plus', 'ambassador']);
+for (const p of Object.values(SECRET_PATCHES)) { p.secret = !NOT_SECRET.has(p.id); p.icon = ''; }
 // Secrets that give a story card (js/stories.js) give no patch (2026-10-14, Sevaan). Patches already earned before this
 // change are kept: a found time before STORY_PATCH_CUTOFF still shows on the wall.
 export const STORY_SECRETS = new Set(['hdf', 'm87bh', 'crab', 'kepler', 'pillars', 'wow', 'voyager', 'voyager2', 'pioneer10', 'pioneer11', 'newhorizons', 'roadster', 'arecibo', 'halley', 'sputnik', 'laika', 'apollo11', 'twohomes']);
