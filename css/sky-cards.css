@@ -495,3 +495,5 @@ body.sky-only:not(.night) #around .hint { color:var(--sc-muted); }
 .td2-mc { aspect-ratio:2 / 3.3; }
 .td2-w b { font-size:10.5px; line-height:1.12; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
 .td2-w small { padding-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+/* (playtest 2026-11-18) on a tablet or a wide window the mission cards grew to a third of the screen each: Today keeps a phone's width, centred */
+body.sky-only #sky-today { max-width:520px; margin-inline:auto; }

@@ -7,16 +7,16 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { TIERS, unlisted } from './flights.js?v=0.1.1705';
-import { typePhoto } from './type-photos.js?v=0.1.1705';
-import { housePhoto } from './house-photos.js?v=0.1.1705';
-import { airlinePhoto } from './airline-photos.js?v=0.1.1705';
-import { airlineLogo } from './airline-logos.js?v=0.1.1705';
-import { fitStyle } from './photo-fit.js?v=0.1.1705';
-import { dist, speed } from './units.js?v=0.1.1705';
-import { typeFact } from './sky-facts.js?v=0.1.1705';
-import { localText } from './localize.js?v=0.1.1705';
-import { hasAirlineCallsign, planeLine, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1705';
+import { TIERS, unlisted } from './flights.js?v=0.1.1706';
+import { typePhoto } from './type-photos.js?v=0.1.1706';
+import { housePhoto } from './house-photos.js?v=0.1.1706';
+import { airlinePhoto } from './airline-photos.js?v=0.1.1706';
+import { airlineLogo } from './airline-logos.js?v=0.1.1706';
+import { fitStyle } from './photo-fit.js?v=0.1.1706';
+import { dist, speed } from './units.js?v=0.1.1706';
+import { typeFact } from './sky-facts.js?v=0.1.1706';
+import { localText } from './localize.js?v=0.1.1706';
+import { hasAirlineCallsign, planeLine, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1706';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
@@ -33,7 +33,7 @@ export function glyphSvg(kind = 'jet', cls = '') {
 const TIER_KEYS = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
 const tierOf = (t) => (TIER_KEYS.includes(t) ? t : 'common');
 const tierPill = (tier, cls = 'fc-tier') => { const t = tierOf(tier), T = TIERS[t]; return `<span class="${cls}"><i aria-hidden="true">${T.mark}</i>${T.label.toUpperCase()}</span>`; };
-const stat = (label, value, unit = '') => `<div class="fc-stat"><span class="fc-stat-l">${label}</span><span class="fc-stat-v">${esc(value)}${unit ? `<small>${unit}</small>` : ''}</span></div>`;
+const stat = (label, value, unit = '') => `<div class="fc-stat"><span class="fc-stat-l">${label}</span><span class="fc-stat-v">${esc(value)}${unit && value !== '—' ? `<small>${unit}</small>` : ''}</span></div>`; /* no unit after a dash ("—mph") */
 const dateLong = (d) => (d ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase() : '');
 const dateShort = (d) => (d ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase() : '');
 const feet = (ft) => { if (!ft) return '—'; const r = Math.round(ft / 100) * 100; return r >= 1000 ? r.toLocaleString('en-US') : String(Math.round(ft)); };

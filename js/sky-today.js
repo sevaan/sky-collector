@@ -5,14 +5,14 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { planeKey } from './flights.js?v=0.1.1705';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1705';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1705';
-import { airlineIcon } from './airline-icons.js?v=0.1.1705';
-import { catches } from './sky-catch.js?v=0.1.1705';
-import { noteLocal } from './sky-local.js?v=0.1.1705';
-import { planeSet } from './sky-sets.js?v=0.1.1705';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1705';
+import { planeKey } from './flights.js?v=0.1.1706';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1706';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1706';
+import { airlineIcon } from './airline-icons.js?v=0.1.1706';
+import { catches } from './sky-catch.js?v=0.1.1706';
+import { noteLocal } from './sky-local.js?v=0.1.1706';
+import { planeSet } from './sky-sets.js?v=0.1.1706';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1706';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -164,7 +164,7 @@ function finisherFor(m, cands, route) {
 const DEAL = 'skyMcDeal';
 
 // ---------- the page ----------
-let tick = 0, expanded = false;
+let tick = 0, expanded = false, dealIo = null;
 export function renderToday(el, ctx) {
   const owned = ownedKeys(), t = Date.now(), obs = ctx.obs;
   const up = (ctx.positions ?? []).filter((a) => a.el > 5).map((a) => ({ a, w: worth(a, ctx.route(a.plane.callsign), owned) })).sort((x, y) => y.w.score - x.w.score);
@@ -249,7 +249,8 @@ export function renderToday(el, ctx) {
 
   // the deal: face down until the cards are well on screen, then turned over one by one (once a day)
   const deal = el.querySelector('[data-deal]');
-  if (deal && !deal.classList.contains('on')) { const io = new IntersectionObserver((es) => { for (const e of es) if (e.intersectionRatio > .6) { deal.classList.add('on'); try { localStorage.setItem(DEAL, dayKey()); } catch {} io.disconnect(); } }, { threshold: [0, .6, 1] }); io.observe(deal); }
+  dealIo?.disconnect(); dealIo = null; /* one watcher, not one more every 10 s refresh */
+  if (deal && !deal.classList.contains('on')) { const io = dealIo = new IntersectionObserver((es) => { for (const e of es) if (e.intersectionRatio > .6) { deal.classList.add('on'); try { localStorage.setItem(DEAL, dayKey()); } catch {} io.disconnect(); } }, { threshold: [0, .6, 1] }); io.observe(deal); }
   // taps: Show me, a row's card, the board's All
   el.onclick = (e) => {
     const more = e.target.closest('[data-more]'); if (more) { expanded = !expanded; renderToday(el, ctx); return; }

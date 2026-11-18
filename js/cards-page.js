@@ -1,40 +1,40 @@
-import { pullToClose } from './pull-close.js?v=0.1.1705';
-import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1705';
-import { computeStats, statsHtml } from './stats.js?v=0.1.1705';
-import { nightKey } from './observation.js?v=0.1.1705';
-import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1705';
-import { sfx } from './sfx.js?v=0.1.1705';
-import { expandFacts } from './catalog-facts.js?v=0.1.1705';
-import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned } from './patches.js?v=0.1.1705';
-import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1705';
-import { ticket } from './toast.js?v=0.1.1705';
-import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1705';
-import { satGlobe } from './sat-globe.js?v=0.1.1705';
-import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1705';
-import { cardArt } from './art.js?v=0.1.1705';
-import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1705';
-import { applyBack } from './card-backs.js?v=0.1.1705';
-import { localStats } from './sky-local.js?v=0.1.1705';
-import { retier } from './flights.js?v=0.1.1705';
-import { SETS, assignSets, albumGoals, albumList, useSets, goalsOf } from './sets.js?v=0.1.1705';
-import { SKY_ALBUM_SETS, FLIGHT_SETS } from './sky-sets.js?v=0.1.1705';
+import { pullToClose } from './pull-close.js?v=0.1.1706';
+import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1706';
+import { computeStats, statsHtml } from './stats.js?v=0.1.1706';
+import { nightKey } from './observation.js?v=0.1.1706';
+import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1706';
+import { sfx } from './sfx.js?v=0.1.1706';
+import { expandFacts } from './catalog-facts.js?v=0.1.1706';
+import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned } from './patches.js?v=0.1.1706';
+import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1706';
+import { ticket } from './toast.js?v=0.1.1706';
+import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1706';
+import { satGlobe } from './sat-globe.js?v=0.1.1706';
+import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1706';
+import { cardArt } from './art.js?v=0.1.1706';
+import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1706';
+import { applyBack } from './card-backs.js?v=0.1.1706';
+import { localStats } from './sky-local.js?v=0.1.1706';
+import { retier } from './flights.js?v=0.1.1706';
+import { SETS, assignSets, albumGoals, albumList, useSets, goalsOf } from './sets.js?v=0.1.1706';
+import { SKY_ALBUM_SETS, FLIGHT_SETS } from './sky-sets.js?v=0.1.1706';
 const FLIGHT_SET_IDS = new Set(FLIGHT_SETS.map((s) => s.id));
-import { skyCatalogue } from './sky-catalogue.js?v=0.1.1705';
-import { skyCardPhotoUrl, glyphSvg } from './flight-card.js?v=0.1.1705';
-import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1705';
-import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1705';
-import { STORIES } from './stories.js?v=0.1.1705';
-import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1705';
-import { conArt } from './con-art.js?v=0.1.1705';
-import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1705';
-import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1705';
-import { shareCardEl } from './share-card.js?v=0.1.1705';
-import { forgetSighting } from './cloud-backup.js?v=0.1.1705';
-import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1705';
-import { allSightings, deleteSighting } from './store.js?v=0.1.1705';
-import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1705';
-import { SECRET_PATCHES, hasPatch } from './secrets.js?v=0.1.1705';
-import { localText } from './localize.js?v=0.1.1705';
+import { skyCatalogue } from './sky-catalogue.js?v=0.1.1706';
+import { skyCardPhotoUrl, glyphSvg } from './flight-card.js?v=0.1.1706';
+import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1706';
+import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1706';
+import { STORIES } from './stories.js?v=0.1.1706';
+import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1706';
+import { conArt } from './con-art.js?v=0.1.1706';
+import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1706';
+import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1706';
+import { shareCardEl } from './share-card.js?v=0.1.1706';
+import { forgetSighting } from './cloud-backup.js?v=0.1.1706';
+import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1706';
+import { allSightings, deleteSighting } from './store.js?v=0.1.1706';
+import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1706';
+import { SECRET_PATCHES, hasPatch } from './secrets.js?v=0.1.1706';
+import { localText } from './localize.js?v=0.1.1706';
 // Sky Collector (Milestone 1.5): the same Collection, with plane cards from your catches and no satellite catalogue.
 const SKY = (() => { try { return !!window.parent?.__skyOnly; } catch { return false; } })() || /[?&]sky\b/.test(location.search);
 if (SKY) { document.documentElement.classList.add('sky-cards'); setSkyProgress(true); setEventsOff(true); useSets(SKY_ALBUM_SETS); /* Sky's albums: plane families and where flights go (js/sky-sets.js) */ try { setSkySize(localStats().sky); } catch {} }
@@ -57,7 +57,7 @@ function setNight(on) {
   document.querySelector('meta[name=theme-color]').content = on ? '#090303' : '#080f18';
 }
 setNight(document.documentElement.dataset.theme === 'night');
-if (!(window.parent !== window && new URLSearchParams(location.search).has('embed'))) $('night-toggle').hidden = false; // opened on its own, the Collection has no Settings: keep its switch (code review 2026-10-23)
+/* red night mode removed (2026-11-18): its switch stays hidden */ if (false) $('night-toggle').hidden = false; // opened on its own, the Collection has no Settings: keep its switch (code review 2026-10-23)
 $('night-toggle').addEventListener('click', () => {
   const on = document.documentElement.dataset.theme !== 'night';
   setNight(on);

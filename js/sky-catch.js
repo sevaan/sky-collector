@@ -2,15 +2,15 @@
 // Collect does. Catches are kept in localStorage ('skyCatches') for now, apart from Space Collector's sightings, so the
 // old collection code never meets a flight. The Collection screen reads them in a later step.
 
-import { aircraftName, isHelicopter } from './planes.js?v=0.1.1705';
-import { lookupRoute } from './routes.js?v=0.1.1705';
-import { distText } from './units.js?v=0.1.1705';
-import { cardsFor, planeKey, unlisted, TIERS } from './flights.js?v=0.1.1705';
-import { glyphSvg, showCatch, miniCardHtml } from './flight-card.js?v=0.1.1705';
-import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1705';
+import { aircraftName, isHelicopter } from './planes.js?v=0.1.1706';
+import { lookupRoute } from './routes.js?v=0.1.1706';
+import { distText } from './units.js?v=0.1.1706';
+import { cardsFor, planeKey, unlisted, TIERS } from './flights.js?v=0.1.1706';
+import { glyphSvg, showCatch, miniCardHtml } from './flight-card.js?v=0.1.1706';
+import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1706';
 
-import { TIER_INFO } from './rarity.js?v=0.1.1705';
-import { allCatches, addCatch } from './catch-store.js?v=0.1.1705';
+import { TIER_INFO } from './rarity.js?v=0.1.1706';
+import { allCatches, addCatch } from './catch-store.js?v=0.1.1706';
 // Catches live in js/catch-store.js (IndexedDB, with a localStorage mirror the Collection page reads).
 // Where catches are read from: Space Collector's sightings once main.js says so (Milestone 1.5), the old store until then.
 let source = allCatches;
@@ -111,7 +111,7 @@ export async function collect(el, { onDone, show = showCatch, now = Date.now() }
       flight, plane };
     list.push(entry); await addCatch(entry);
     const result = { ...out, flight, plane, isNewFlight: !!flight && out.flightStamps?.isNew, isNewPlane: !!out.planeStamps?.isNew,
-      heightFt: Math.round(p.hKm * 3280.84), speedKmh: Math.round(p.gs * 1.852), awayKm: Math.round(hit.rangeKm),
+      heightFt: Math.round(p.hKm * 3280.84), speedKmh: p.gs > 30 ? Math.round(p.gs * 1.852) : null, /* no speed from the feed, or an impossible one for a plane in the air (playtest 2026-11-18: a 737 at 27,600 ft said 1 mph): a dash, not a number */ awayKm: Math.round(hit.rangeKm),
       flightSeen: flight ? seenCount(list, flight.key) : 0, planeSeen: seenCount(list, plane.key),
       flightStampInfo: flight ? flightStampInfo(list, flight.key) : null, planeStampInfo: planeStampInfo(list, plane.key), callsign: p.callsign };
     await show(result);
