@@ -7,16 +7,16 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { TIERS, unlisted } from './flights.js?v=0.1.1706';
-import { typePhoto } from './type-photos.js?v=0.1.1706';
-import { housePhoto } from './house-photos.js?v=0.1.1706';
-import { airlinePhoto } from './airline-photos.js?v=0.1.1706';
-import { airlineLogo } from './airline-logos.js?v=0.1.1706';
-import { fitStyle } from './photo-fit.js?v=0.1.1706';
-import { dist, speed } from './units.js?v=0.1.1706';
-import { typeFact } from './sky-facts.js?v=0.1.1706';
-import { localText } from './localize.js?v=0.1.1706';
-import { hasAirlineCallsign, planeLine, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1706';
+import { TIERS, unlisted } from './flights.js?v=0.1.1707';
+import { typePhoto } from './type-photos.js?v=0.1.1707';
+import { housePhoto } from './house-photos.js?v=0.1.1707';
+import { airlinePhoto } from './airline-photos.js?v=0.1.1707';
+import { airlineLogo } from './airline-logos.js?v=0.1.1707';
+import { fitStyle } from './photo-fit.js?v=0.1.1707';
+import { dist, speed } from './units.js?v=0.1.1707';
+import { typeFact } from './sky-facts.js?v=0.1.1707';
+import { localText } from './localize.js?v=0.1.1707';
+import { hasAirlineCallsign, planeLine, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1707';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');

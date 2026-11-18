@@ -5,14 +5,14 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { planeKey } from './flights.js?v=0.1.1706';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1706';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1706';
-import { airlineIcon } from './airline-icons.js?v=0.1.1706';
-import { catches } from './sky-catch.js?v=0.1.1706';
-import { noteLocal } from './sky-local.js?v=0.1.1706';
-import { planeSet } from './sky-sets.js?v=0.1.1706';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1706';
+import { planeKey } from './flights.js?v=0.1.1707';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1707';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1707';
+import { airlineIcon } from './airline-icons.js?v=0.1.1707';
+import { catches } from './sky-catch.js?v=0.1.1707';
+import { noteLocal } from './sky-local.js?v=0.1.1707';
+import { planeSet } from './sky-sets.js?v=0.1.1707';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1707';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -162,6 +162,51 @@ function finisherFor(m, cands, route) {
   return test ? cands.find((c) => { try { return test(c); } catch { return false; } }) ?? null : null;
 }
 const DEAL = 'skyMcDeal';
+// Coming over next: a plane whose label would overlap the one before it sits a row higher
+const tlX = (c) => 4 + Math.min(1, c.n.inS / 900) * 88; /* % across the timeline */
+const tlUp = (arr, i) => { let up = false; for (let k = 1; k <= i; k++) up = tlX(arr[k]) - tlX(arr[k - 1]) < 26 ? !up : false; return up; }; /* closer than a label's width on screen */
+
+// ---------- the departures board's split-flap ----------
+// (2026-11-18, Sevaan: "do these names animate in like a real board when it scrolls into view for the first time?
+// high fidelity, but still good on performance") A fixed field of 10 tiles. The first time the board comes into view each
+// time Today opens, every tile spins through characters and lands, left to right and row by row; afterwards only a
+// plane new to the board flaps in. One requestAnimationFrame loop drives every tile; each change is one text write and a
+// short compositor-only flip (transform), and the loop stops when the last tile lands (~2 s). Reduced motion: no spin.
+const FIELD = 10, FLAP_CH = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+// The flight's name as a board shows it, in up to two lines of FIELD tiles (2026-11-18, Sevaan: "names should fit
+// though... maybe multiline"): the destination, else the callsign, else the type; words wrap to the second line, and a
+// single word longer than a line runs on into it. Longer than two lines: cut at the last whole word that fits.
+function boardLines(c) {
+  const u = String(c.full?.to?.city || c.p.callsign || c.p.type || 'Aircraft').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^A-Z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim() || 'AIRCRAFT';
+  const lines = ['']; for (const w of u.split(' ')) { let x = w;
+    while (x) { const cur = lines.at(-1), room = FIELD - (cur ? cur.length + 1 : 0);
+      if (x.length <= room) { lines[lines.length - 1] = cur ? `${cur} ${x}` : x; x = ''; }
+      else if (!cur && x.length > FIELD) { lines[lines.length - 1] = x.slice(0, FIELD); x = x.slice(FIELD); lines.push(''); }
+      else lines.push(''); } }
+  const out = lines.filter(Boolean); return out.slice(0, 2);
+}
+let flapJobs = [], flapRaf = 0;
+const reducedMotion = () => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return false; } };
+function flapIn(rows, t0 = performance.now()) {
+  if (reducedMotion()) return;
+  rows.forEach((row, r) => [...row.querySelectorAll('i')].forEach((el, i) => {
+    const fin = el.textContent, n = 5 + ((i * 7 + r * 3) % 6) + (fin === ' ' ? -2 : 0); el.textContent = FLAP_CH[(i * 11 + r * 5) % FLAP_CH.length]; el.classList.remove('sp');
+    flapJobs.push({ el, fin, n, at: t0 + r * 110 + i * 38, k: -1 });
+  }));
+  if (!flapRaf) flapRaf = requestAnimationFrame(flapTick);
+}
+function flapTick(t) {
+  let live = 0;
+  for (const j of flapJobs) {
+    if (j.done) continue; if (!j.el.isConnected) { j.done = true; continue; } live++;
+    const k = Math.floor((t - j.at) / 58); if (k < 0 || k === j.k) continue; j.k = k;
+    const last = k >= j.n; j.el.textContent = last ? j.fin : FLAP_CH[(Math.random() * FLAP_CH.length) | 0];
+    if (last) { j.done = true; if (j.fin === ' ') j.el.classList.add('sp'); }
+    j.el.animate([{ transform: 'perspective(60px) rotateX(-78deg)', filter: 'brightness(.6)' }, { transform: 'none', filter: 'none' }], { duration: 70, easing: 'ease-out' });
+  }
+  if (live) flapRaf = requestAnimationFrame(flapTick); else { flapRaf = 0; flapJobs = []; }
+}
+let boardShown = new Set(), boardIo = null, lastRender = 0, boardSpun = false;
 
 // ---------- the page ----------
 let tick = 0, expanded = false, dealIo = null;
@@ -218,13 +263,13 @@ export function renderToday(el, ctx) {
   const missions = ms.length ? `<p class="td-h">TODAY'S MISSIONS <span>${nDone} OF ${ms.length}</span></p><div class="td2-mcs${dealt ? ' on' : ''}" data-deal>${ms.map(mcard).join('')}</div>` : '';
 
   // 4 · coming over next
-  const tl = nexts.length ? `<p class="td-h">COMING OVER NEXT <span>NEXT 15 MIN</span></p><div class="td2-tl"><div class="td2-axis"><span>NOW</span><span>15 MIN</span></div>${nexts.slice(0, 5).map((c) => `<button type="button" class="td2-tp" data-show="${esc(c.p.hex)}" data-az="${c.n.az.toFixed(1)}" data-el="15" data-at="${t + c.n.inS * 1000}" data-name="${esc(c.name)}" style="left:${(4 + Math.min(1, c.n.inS / 900) * 88).toFixed(1)}%">${tailImg(tailOf(c.p)) || `<span class="td2-tdot" style="${bg(picOf(c.p))}"></span>`}<small>${esc(c.name.replace(/^To /, ''))} · ${mins(c.n.inS)}</small></button>`).join('')}</div>` : `<p class="td-h">COMING OVER NEXT <span></span></p><p class="td-empty td2-card">Nothing heading your way in the next 15 minutes that we can see yet.</p>`;
+  const tl = nexts.length ? `<p class="td-h">COMING OVER NEXT <span>NEXT 15 MIN</span></p><div class="td2-tl"><div class="td2-axis"><span>NOW</span><span>15 MIN</span></div>${nexts.slice(0, 5).map((c, i, arr) => `<button type="button" class="td2-tp${tlUp(arr, i) ? ' up' : ''}" data-show="${esc(c.p.hex)}" data-az="${c.n.az.toFixed(1)}" data-el="15" data-at="${t + c.n.inS * 1000}" data-name="${esc(c.name)}" style="left:${(4 + Math.min(1, c.n.inS / 900) * 88).toFixed(1)}%">${tailImg(tailOf(c.p)) || `<span class="td2-tdot" style="${bg(picOf(c.p))}"></span>`}<small>${esc(c.name.replace(/^To /, ''))} · ${mins(c.n.inS)}</small></button>`).join('')}</div>` : `<p class="td-h">COMING OVER NEXT <span></span></p><p class="td-empty td2-card">Nothing heading your way in the next 15 minutes that we can see yet.</p>`;
 
   // 5 · over you now: the departures board
   const status = (c) => (c.left != null && c.left < 240 ? ['LEAVING SOON', 'soon'] : obs && justUp(c.p, obs, t) ? ['JUST ARRIVED', 'go'] : ['OVERHEAD', '']);
-  const rows = (expanded ? ups : ups.slice(0, 6)).map((c) => { const [st, cls] = status(c), word = (c.full?.to?.city || c.r?.airline || aircraftName(c.p) || 'Aircraft').toUpperCase(), who = [c.r?.airline ? `${c.r.airline} ${(c.p.callsign || '').replace(/^[A-Z]{3}/, '')}`.toUpperCase() : (c.p.callsign || '').toUpperCase(), (c.p.type || '').toUpperCase(), `${compass(c.a.az)} ${Math.round(c.a.el)}°`].filter(Boolean).join(' · ');
+  const rows = (expanded ? ups : ups.slice(0, 6)).map((c) => { const [st, cls] = status(c), word = boardLines(c), who = [c.r?.airline ? `${c.r.airline} ${(c.p.callsign || '').replace(/^[A-Z]{3}/, '')}`.toUpperCase() : (c.p.callsign || '').toUpperCase(), (c.p.type || '').toUpperCase(), `${compass(c.a.az)} ${Math.round(c.a.el)}°`].filter(Boolean).join(' · ');
     const tl2 = tailOf(c.p);
-    return `<div class="td2-fr" role="button" tabindex="0" data-open="${esc(c.p.hex)}">${tl2 ? tailImg(tl2) : `<span class="td2-fpic" style="${bg(picOf(c.p))}"></span>`}<div class="td2-fw"><span class="td2-flap${cls === 'go' ? ' roll' : ''}">${[...word.slice(0, 9)].map((ch) => `<i>${esc(ch)}</i>`).join('')}</span><span class="td2-who">${c.isNew ? '<em>NEW</em>' : ''}${esc(who)}</span></div><div class="td2-st ${cls}"><b>${c.left == null ? '30+ min' : `${mins(c.left)} min`}</b>${st}</div><button type="button" class="td2-go" data-show="${esc(c.p.hex)}" aria-label="Show me">${TARGET}</button></div>`; }).join('');
+    return `<div class="td2-fr" role="button" tabindex="0" data-open="${esc(c.p.hex)}">${tl2 ? tailImg(tl2) : `<span class="td2-fpic" style="${bg(picOf(c.p))}"></span>`}<div class="td2-fw"><span class="td2-flap" data-hex="${esc(c.p.hex)}">${word.map((ln) => `<span class="td2-fl">${[...ln.padEnd(FIELD)].map((ch) => `<i${ch === ' ' ? ' class="sp"' : ''}>${esc(ch)}</i>`).join('')}</span>`).join('')}</span><span class="td2-who">${c.isNew ? '<em>NEW</em>' : ''}${esc(who)}</span></div><div class="td2-st ${cls}"><b>${c.left == null ? '30+ min' : `${mins(c.left)} min`}</b>${st}</div><button type="button" class="td2-go" data-show="${esc(c.p.hex)}" aria-label="Show me">${TARGET}</button></div>`; }).join('');
   const board = ups.length ? `<p class="td-h">OVER YOU NOW <span>${up.length}${sky.word ? ` · ${esc(sky.word.toUpperCase())}` : ''}</span></p><div class="td2-fids"><div class="td2-fcols"><span>Flight</span><span>In sky · status</span></div>${rows}${ups.length > 6 ? `<button type="button" class="td2-more" data-more>${expanded ? 'Show fewer' : `All ${ups.length} ›`}</button>` : ''}</div>` : '';
 
   // 6 · where they're going
@@ -247,10 +292,20 @@ export function renderToday(el, ctx) {
 
   el.innerHTML = live + alert + missions + tl + board + map + story;
 
+  // the board: on the first view after Today opens every row spins in; on later refreshes only rows new to the board.
+  // Today redraws every 10 s, so until the first spin has played the watcher moves to each new board.
+  if (t - lastRender > 15000) { boardShown = new Set(); boardSpun = false; } /* Today was closed: a fresh first view */
+  lastRender = t; boardIo?.disconnect(); boardIo = null;
+  const fids = el.querySelector('.td2-fids');
+  if (fids) { const rows = [...fids.querySelectorAll('.td2-flap')];
+    if (!boardSpun) { boardIo = new IntersectionObserver((es) => { for (const e of es) if (e.isIntersecting && e.intersectionRect.height >= Math.min(140, e.boundingClientRect.height * .35)) { /* enough of it on screen; by height, so a board taller than the screen still starts */
+      boardIo?.disconnect(); boardIo = null; boardSpun = true; flapIn([...fids.querySelectorAll('.td2-flap')]); } }, { threshold: [0, .05, .1, .2, .3, .4, .5] }); boardIo.observe(fids); }
+    else { const fresh = rows.filter((x) => !boardShown.has(x.dataset.hex)); if (fresh.length) flapIn(fresh); }
+    rows.forEach((x) => boardShown.add(x.dataset.hex)); }
   // the deal: face down until the cards are well on screen, then turned over one by one (once a day)
   const deal = el.querySelector('[data-deal]');
   dealIo?.disconnect(); dealIo = null; /* one watcher, not one more every 10 s refresh */
-  if (deal && !deal.classList.contains('on')) { const io = dealIo = new IntersectionObserver((es) => { for (const e of es) if (e.intersectionRatio > .6) { deal.classList.add('on'); try { localStorage.setItem(DEAL, dayKey()); } catch {} io.disconnect(); } }, { threshold: [0, .6, 1] }); io.observe(deal); }
+  if (deal && !deal.classList.contains('on')) { const io = dealIo = new IntersectionObserver((es) => { for (const e of es) if (e.isIntersecting && e.intersectionRect.height >= e.boundingClientRect.height * .6) { deal.classList.add('on'); try { localStorage.setItem(DEAL, dayKey()); } catch {} io.disconnect(); } }, { threshold: [0, .6, 1] }); io.observe(deal); }
   // taps: Show me, a row's card, the board's All
   el.onclick = (e) => {
     const more = e.target.closest('[data-more]'); if (more) { expanded = !expanded; renderToday(el, ctx); return; }
