@@ -1,7 +1,8 @@
 // The sample pack's driver for Sky Collector (2026-11-18; hand-written in site/pack-src, copied by scripts/build-site-pack.mjs).
-// A friend who was told about the game opens a pack of three plane cards (an Airbus A380, an Airbus H135 helicopter and a
-// Douglas DC-3) with the game's own pack, cards and sounds (./js, copied from the game), then the last card: what the game
-// is and that it is coming soon. Nothing is sent anywhere and nothing is kept: the same pack for everyone.
+// A friend who was told about the game opens a pack of three cards with the game's own pack, cards and sounds (./js,
+// copied from the game): a real flight near them (js/pack-flight.js), an Airbus A380 and a Douglas DC-3, then the last
+// card: what the game is and that it is coming soon. The only request it makes is for the planes near the city of the
+// visitor's time zone (the city's coordinates, never the visitor's); nothing is kept.
 // Space Collector's version is its site/public/pack/pack.js; this differs only in the cards and the last card.
 import { playPack } from './js/gift-pack.js';
 import { renderCard, attachTilt, miniCard } from './js/card.js';
@@ -12,10 +13,17 @@ import { applyBack } from './js/card-backs.js';
 import { TIER_INFO } from './js/rarity.js';
 import { sfx as appSfx, loadSfx, sfxOnly } from './js/sfx.js';
 import { audioCtx } from './js/audio-ctx.js';
+import { TIERS } from './js/card-moment.js';
+import { lookupRoute } from './js/routes.js';
+import { airlineName, loadAirlines } from './js/planes.js';
+import { airlinePhoto } from './js/airline-photos.js';
+import { airlineLogo } from './js/airline-logos.js';
+import { cityForZone, visitorZone, findLiveFlight, nearestCanned, liveTag, seenTag, seenWhen, km } from './js/pack-flight.js';
+import { PACK_FLIGHTS } from './js/pack-flights.js';
 
 const $ = (id) => document.getElementById(id);
 const SITE = 'https://skycollector.app/';
-const PLANES = ['A388', 'EC35', 'DC3']; // keep in step with scripts/build-site-pack.mjs (it copies their photos)
+const PLANES = ['A388', 'DC3']; // keep in step with scripts/build-site-pack.mjs (it copies their photos)
 const tierColor = (t) => (TIER_INFO[t] ?? TIER_INFO.common).color;
 
 // ---- sound (2026-11-18): only the sounds this page can play, fetched and decoded while the sealed pack sways, so the
@@ -49,8 +57,45 @@ const LAST = 'your-turn';
 const model = (type) => ({ ...retier(skyModel(cardsFor({ type, callsign: '', reg: '' }, null, '').plane, 'plane')), type });
 let models = null;
 /* One made-up catch per card, so its numbers read like a card you own (how high, how fast, how far) and not a row of dashes */
-const SEEN = { A388: { altFt: 36000, gsKt: 490, rangeKm: 14 }, EC35: { altFt: 1400, gsKt: 115, rangeKm: 3 }, DC3: { altFt: 4500, gsKt: 150, rangeKm: 6 } };
-const seen = (c) => catchSightings({ time: Date.now() - 36e5, hex: `sample-${c.type}`, callsign: '', reg: '', type: c.type, ...SEEN[c.type], lat: 0, lon: 0, plane: c }).filter((x) => x.cardKey === c.key);
+const SEEN = { A388: { altFt: 36000, gsKt: 490, rangeKm: 14 }, DC3: { altFt: 4500, gsKt: 150, rangeKm: 6 } };
+const SIGHT = new Map(); /* a flight card's own sighting: its real height, speed and distance */
+const seen = (c) => SIGHT.get(c.key) ?? catchSightings({ time: Date.now() - 36e5, hex: `sample-${c.type}`, callsign: '', reg: '', type: c.type, ...SEEN[c.type], lat: 0, lon: 0, plane: c }).filter((x) => x.cardKey === c.key);
+
+// ---- the flight card (2026-11-18, Sevaan: "users should see one that goes over their area") ----
+// The pack opens straight away with a flight Sky's relay saw over the nearest big city (js/pack-flights.js, labelled with
+// when). Meanwhile the page asks for what is over the visitor's city now; if a good airliner with a known route answers
+// within 2.5 s and the pack is still sealed, the first card becomes that flight, "Over <city> right now".
+const city = cityForZone(visitorZone()), T0 = performance.now(), LIVE_MS = 2500;
+const hasArt = (a3, type) => !!(airlinePhoto(a3, type) && airlineLogo(a3));
+function flightModel(p, route, airline, time) {
+  const { flight } = cardsFor(p, route, airline); if (!flight) return null;
+  const m = { ...retier(skyModel(flight, 'flight')), type: p.type };
+  SIGHT.set(m.key, catchSightings({ time, hex: `sample-${p.callsign}`, callsign: p.callsign, reg: '', type: p.type, altFt: p.altFt, gsKt: p.gs, rangeKm: Math.round(km(city.lat, city.lon, p.lat, p.lon)), lat: p.lat, lon: p.lon, flight, plane: { key: 'P:' + p.type } }).filter((x) => x.cardKey === m.key));
+  return m;
+}
+function cannedFlight() {
+  const near = [...PACK_FLIGHTS].sort((a, b) => km(city.lat, city.lon, a.lat, a.lon) - km(city.lat, city.lon, b.lat, b.lon));
+  for (const c of near) { const m = flightModel(c.plane, c.route, c.airline, c.seen); if (m) return { card: m, tag: seenTag(c.hub, seenWhen(c.seen)) }; }
+  return null;
+}
+const live = (async () => {
+  try { await loadAirlines(); } catch {}
+  const f = await findLiveFlight(city, { lookupRoute, airlineName, hasArt, timeoutMs: LIVE_MS });
+  if (!f || performance.now() - T0 > LIVE_MS + 1500) return null;
+  const m = flightModel(f.plane, f.route, f.airline, Date.now()); return m ? { card: m, tag: liveTag(city.name) } : null;
+})().catch(() => null);
+/* Put the live flight into the sealed pack in place of the stand-in: only while the pack is still sealed, pictures decoded first */
+let sealedDone = false;
+async function swapIn(first, f) {
+  if (sealedDone) return;
+  const dc = [...document.querySelectorAll('#gift .gp-dc')].find((d) => d._h === first); if (!dc) return;
+  const el = render(f.card, {});
+  await Promise.race([Promise.all([...el.querySelectorAll('img')].map((im) => im.decode?.().catch(() => {}))), new Promise((ok) => setTimeout(ok, 1200))]);
+  if (sealedDone || !dc.isConnected) return;
+  dc._card.replaceWith(el); dc._card = el;
+  first.card = f.card; first.tags = [['new', f.tag]];
+  dc.style.setProperty('--t', tierColor(f.card.tier) ?? '#fff'); dc._rare = TIERS.indexOf(f.card.tier) >= 2;
+}
 /* "Sample pack" where the card would say it isn't collected yet (as Space Collector's sample pack does) */
 function sample(el) {
   const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT); let n;
@@ -65,21 +110,25 @@ function render(c, opts) {
 
 async function play() {
   $('start').hidden = true; $('end').hidden = true; document.body.classList.add('playing');
-  const [a380, heli, dc3] = models;
+  const [a380, dc3] = models; sealedDone = false;
+  const stand = cannedFlight();
+  const first = stand ? { card: stand.card, sightings: [], tags: [['new', stand.tag]] } : null;
+  const swapped = live.then((f) => (f && first ? swapIn(first, f) : null)).catch(() => null);
   const last = { key: LAST, id: LAST, tier: 'common', name: 'Collect the sky above you' }; /* not a 'rare' card: it turns over by itself, no 'something legendary' tease (as Space Collector's) */
   await playPack({
     count: 3, newCount: 0, kicker: 'A sample pack', title: 'Cards from the sky', dates: 'Real planes that fly over your backyard',
     label: 'A sample pack', dateLabel: 'Sky Collector', footLeft: 'Free · no ads',
-    subHtml: 'An Airbus A380, a helicopter and a Douglas DC-3',
+    subHtml: 'A real flight, an Airbus A380 and a Douglas DC-3',
     goLabel: 'See Sky Collector', laterLabel: 'Done',
     highlights: [
+      ...(first ? [first] : []),
       { card: a380, sightings: [], tags: [['new', 'The biggest airliner']] },
-      { card: heli, sightings: [], tags: [['new', 'Helicopters count too']] },
       { card: dc3, sightings: [], tags: [['new', 'Flying since 1935']] },
     ],
-    tiles: [{ card: heli, isNew: false }, { card: a380, isNew: false }, { card: dc3, isNew: false }],
+    tiles: [{ card: a380, isNew: false }, { card: dc3, isNew: false }],
     tail: { card: last, label: 'Your turn', tags: [], button: { label: 'Visit SkyCollector.app', fn: () => { location.href = SITE; return null; } } }, /* something to do under the last card (2026-11-18, Sevaan): the game's page */
-    onOpen: () => true,
+    onOpen: async () => { /* a live flight that's nearly here gets what's left of its 2.5 s, at most 0.7 s after the tear; then the cards are what they are */
+      await Promise.race([swapped, new Promise((ok) => setTimeout(ok, Math.min(700, Math.max(0, LIVE_MS - (performance.now() - T0)))))]); sealedDone = true; return true; },
     renderCard: render, attachTilt, artImage: (c) => skyCardPhotoUrl(c, c.type) ?? '', mini: (c) => sample(miniCard(c, { status: 'Sample pack', preview: true, sightings: seen(c) })), applyBack, sfx, feel: () => {}, tierColor,
   });
   showEnd();

@@ -35,7 +35,7 @@ import { attachTilt } from './js/card.js';
 const ap = (icao, iata, city, cc) => ({ icao, iata, city, cc });
 const YYZ = ap('CYYZ', 'YYZ', 'Toronto', 'CA'), YTZ = ap('CYTZ', 'YTZ', 'Toronto', 'CA'), YOW = ap('CYOW', 'YOW', 'Ottawa', 'CA');
 const CUN = ap('MMUN', 'CUN', 'Cancún', 'MX'), LGW = ap('EGKK', 'LGW', 'London', 'GB'), MEM = ap('KMEM', 'MEM', 'Memphis', 'US'), DXB = ap('OMDB', 'DXB', 'Dubai', 'AE');
-const fact = (a, b, km, h, m, plane) => `${a.city} to ${b.city} is **${km} km** as the crow flies: about ${h ? `${h}\u00a0h ${String(m).padStart(2, '0')}\u00a0m` : `${m} minutes`} in the air, on a ${plane}.`;
+const fact = (a, b, km, h, m, plane) => `${a.city} to ${b.city} is **${km} km**, about ${h ? `${h}\u00a0h ${String(m).padStart(2, '0')}\u00a0m` : `${m} minutes`} in the air, on a ${plane}.`;
 const flight = (o) => ({ kind: 'flight', key: `F:${o.callsign.slice(0, 3)}:${o.from.icao}-${o.to.icao}`, ...o, kmText: o.km.toLocaleString('en-US'), air: { h: o.h, m: o.m },
   fact: o.fact ?? fact(o.from, o.to, o.km.toLocaleString('en-US'), o.h, o.m, o.typeName) });
 

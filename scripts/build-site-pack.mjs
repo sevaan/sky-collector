@@ -10,8 +10,8 @@ import { readFileSync, writeFileSync, mkdirSync, copyFileSync, rmSync, readdirSy
 import { join, dirname, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..'), OUT = join(ROOT, 'site/public/pack'), SRC = join(ROOT, 'site/pack-src');
-const ENTRIES = ['gift-pack.js', 'card.js', 'card-backs.js', 'rarity.js', 'sfx.js', 'audio-ctx.js', 'flights.js', 'sky-cards.js', 'flight-card.js'];
-export const PLANES = ['A388', 'EC35', 'DC3']; // the Airbus A380, a helicopter (Airbus H135) and the Douglas DC-3; keep in step with site/pack-src/pack.js
+const ENTRIES = ['gift-pack.js', 'card.js', 'card-backs.js', 'rarity.js', 'sfx.js', 'audio-ctx.js', 'flights.js', 'sky-cards.js', 'flight-card.js', 'pack-flight.js', 'pack-flights.js', 'airline-photos.js', 'airline-logos.js', 'routes.js', 'planes.js', 'card-moment.js'];
+export const PLANES = ['A388', 'DC3']; // the Airbus A380 and the Douglas DC-3, after a live flight card (js/pack-flight.js); keep in step with site/pack-src/pack.js
 
 rmSync(OUT, { recursive: true, force: true });
 const seen = new Set(), queue = ENTRIES.map((f) => join(ROOT, 'js', f));
@@ -31,7 +31,7 @@ for (const f of ['fonts.css', 'cards.css', 'gift.css', 'ui.css', 'sky-theme.css'
   for (const m of css.matchAll(/url\(\s*['"]?\.\.\/((?:fonts|assets)\/[^'")?#]+)/g)) if (copy(m[1])) cssFiles++;
 }
 // the three planes' photos: whatever the game's own card markup asks for, full size and small
-globalThis.localStorage = { getItem: () => null, setItem() {} };
+globalThis.localStorage = { getItem: () => null, setItem() {} }; globalThis.Image ??= class { decode() { return Promise.resolve(); } }; /* js/card-backs.js preloads a back as it loads */
 const J = (f) => import(join(ROOT, 'js', f));
 const { planeCardHtml, skyCardPhotoUrl } = await J('flight-card.js'); const { cardsFor, retier } = await J('flights.js'); const { skyModel } = await J('sky-cards.js');
 let photos = 0;
@@ -44,7 +44,22 @@ for (const type of PLANES) {
   if (!got) throw new Error(`no photo found for ${type}`);
   photos += got;
 }
-const backs = copyDir('assets/art/backs', (f) => f.endsWith('.webp'));
-const sfx = copyDir('assets/audio/sfx', (f) => f.endsWith('.mp3'));
+// Only what this page can show or play (2026-11-18: it shipped all 36 backs and 31 sounds, 7.4 MB): the backs a new
+// visitor can be dealt (js/card-backs.js: the unlocked ones) and the sounds pack.js lists in PAGE_SFX.
+const { CARD_BACKS, backUnlocked } = await J('card-backs.js');
+const backFiles = new Set(CARD_BACKS.filter((b) => { try { return backUnlocked(b); } catch { return false; } }).map((b) => b.url.split('/').pop()));
+const backs = copyDir('assets/art/backs', (f) => backFiles.has(f));
+const pageSfx = new Set(JSON.parse((/const PAGE_SFX = (\[[^\]]*\])/.exec(readFileSync(join(SRC, 'pack.js'), 'utf8'))?.[1] ?? '[]').replace(/'/g, '"')));
+if (!pageSfx.size) throw new Error('PAGE_SFX not found in site/pack-src/pack.js');
+const sfx = copyDir('assets/audio/sfx', (f) => pageSfx.has(f.replace(/\.mp3$/, '')));
+// The flight card (js/pack-flight.js): a live airliner over the visitor's city can be any airline with a logo and a photo
+// of its own aircraft, so their route data, photos (full, small, blur) and logos ship. They are fetched one at a time, a
+// card's worth, but they are big: kept out of git (.gitignore), rebuilt by this script before every deploy.
+const { AIRLINE_PHOTOS } = await J('airline-photos.js'); const { AIRLINE_LOGOS } = await J('airline-logos.js');
+const lines = new Set(Object.keys(AIRLINE_LOGOS).filter((a) => existsSync(join(ROOT, 'data/routes/r', a + '.json'))));
+let flightFiles = 0;
+for (const a of lines) { if (copy(`data/routes/r/${a}.json`)) flightFiles++; if (copy(`assets/logos/${a}.webp`)) flightFiles++; }
+for (const k of Object.keys(AIRLINE_PHOTOS)) if (lines.has(k.slice(0, 3))) for (const d of ['', 'sm/', 'tiny/']) if (copy(`assets/photos/airlines/${d}${k}.webp`)) flightFiles++;
+copy('data/routes/airports.json');
 for (const f of ['index.html', 'pack.js', 'og.jpg']) copyFileSync(join(SRC, f), join(OUT, f));
-console.log('pack page: modules', seen.size, '· css pictures and fonts', cssFiles, '· plane photos', photos, '· backs', backs, '· sounds', sfx);
+console.log('pack page: modules', seen.size, '· css pictures and fonts', cssFiles, '· plane photos', photos, '· backs', backs, '· sounds', sfx, '· flight card files', flightFiles, 'for', lines.size, 'airlines');

@@ -12,3 +12,7 @@ scripts/perf/out/
 node_modules
 __pycache__/
 scripts/qa/out/
+# The sample pack's flight card files (scripts/build-site-pack.mjs copies them before every deploy; ~27 MB)
+site/public/pack/data/
+site/public/pack/assets/logos/
+site/public/pack/assets/photos/airlines/
