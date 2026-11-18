@@ -432,3 +432,15 @@ body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts#toasts#t
   box-shadow:0 10px 28px rgba(13,34,56,.22), 0 0 0 1px #c9d9e6 !important; }
 body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts .ticket :is(.ticket__line, b) { color:#0d2238 !important; }
 body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts .ticket :is(.ticket__sub, .ticket__x, .ticket__xp small) { color:#4a6178 !important; }
+/* Rank card leftovers from the screen check (2026-11-17): the "Last week" link and the XP line were pale yellow or grey
+   on the light panel; on a 320 px phone "5,530 XP to Air Traffic Controller" ran off the card. */
+html.sky-cards .logbook .lb-pic .lb-week { color:#0d2238; }
+html.sky-cards .lb-to { color:#4a6178; flex-wrap:wrap; row-gap:2px; }
+html.sky-cards .lb-to > :first-child { min-width:0; flex:1 1 auto; overflow-wrap:anywhere; }
+html.sky-cards .lb-to b { color:#0d2238; }
+html.sky-cards .lb-bar { background:#dfe8f0; }
+html.sky-cards .lb-bar i { background:linear-gradient(90deg, var(--gold), #e8493c); }
+html.sky-cards .lb-dial > :last-child, html.sky-cards .lbd-m { min-width:0; flex:1 1 0; }
+html.sky-cards .lbd-to { white-space:normal; overflow:visible; text-wrap:balance; } /* Sky's rank names are longer ("Air Traffic Controller"): wrap, don't clip, on a 320 px phone */
+html.sky-cards .lbd-m { grid-template-columns:minmax(0, 1fr); } /* the one column was as wide as its longest line, so XP and Missions ran off a 320 px card */
+html.sky-cards .lbd-l { min-width:0; flex-wrap:wrap; row-gap:2px; }

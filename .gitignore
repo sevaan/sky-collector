@@ -10,3 +10,4 @@ store/zen-sounds-reel.mp3
 .wrangler/
 scripts/perf/out/
 node_modules
+__pycache__/

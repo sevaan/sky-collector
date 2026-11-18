@@ -2,7 +2,7 @@
 // peak nights to earn that year’s badge (Logbook). Peak dates are the usual annual ones (International
 // Meteor Organization calendar); the window runs from the evening before the peak to the morning after.
 // No DOM.
-import { SKY_EVENTS } from './sky-events-data.js?v=0.1.1686';
+import { SKY_EVENTS } from './sky-events-data.js?v=0.1.1687';
 const SHOWERS = [
   { id: 'quadrantids', name: 'Quadrantids', month: 1, day: 3, rate: 'up to 80 an hour, in a short peak' },
   { id: 'lyrids', name: 'Lyrids', month: 4, day: 22, rate: 'up to 18 an hour' },
@@ -18,7 +18,10 @@ const SHOWERS = [
 // scripts/build-sky-events.mjs): a planet at its brightest, the Moon meeting a planet, supermoons, solstices and
 // equinoxes, lunar eclipses. A sky event runs noon to noon over the night of its date, in the player's own time zone.
 let cache = { y: null, list: null };
+// Sky Collector (2026-11-17): meteor showers and planet meetings aren't planes, so its events are off until it has its own.
+let OFF = false; export function setEventsOff(v) { OFF = !!v; cache = { y: null, list: null }; }
 export function eventsAround(time = Date.now()) {
+  if (OFF) return [];
   const y = new Date(time).getFullYear(); if (cache.y === y) return cache.list;
   const out = [];
   for (const yr of [y - 1, y, y + 1]) for (const s of SHOWERS) {

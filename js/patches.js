@@ -3,7 +3,7 @@
 // group (or the date earned) along the bottom, one icon in the middle. Milestones get gold foil, the rarest holo
 // (css/ui.css .patch--gold / .patch--holo). Shared by Explore (the earning moment, its toast) and Collection (the wall).
 
-import { CON_BY_ID } from './constellations.js?v=0.1.1686';
+import { CON_BY_ID } from './constellations.js?v=0.1.1687';
 
 export const GROUPS = {
   collect: { c: '#14284a', t: 'Collection' }, rarity: { c: '#3a2259', t: 'Rarity' }, rocket: { c: '#5a2a1a', t: 'Rockets' },
@@ -46,7 +46,7 @@ const GOLD = new Set('deep10 con-solar hundred archivist curator gold gold3 star
 const HOLO = new Set('plus legends25 shiny5 cons25 cons44 catalogue diplomat zodiac'.split(' '));
 export const finishOf = (a) => (HOLO.has(a.id) ? 'holo' : GOLD.has(a.id) || a.album ? 'gold' : '');
 
-const INK = '#fff2b3', OR = '#fa8127';
+const INK = '#fff2b3', OR = 'var(--gold)'; /* the accent: orange in Space Collector, red in Sky (2026-11-17) */
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const star = (r, R, n = 5, rot = -90) => Array.from({ length: n * 2 }, (_, i) => { const t = (rot + i * 180 / n) * Math.PI / 180, rr = i % 2 ? r : R; return `${(Math.cos(t) * rr).toFixed(1)},${(Math.sin(t) * rr).toFixed(1)}`; }).join(' ');
 function glyph(k, text) {

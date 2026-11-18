@@ -2,8 +2,8 @@
 // badges"). Your history under the sky, from the sighting log plus what the Collection page already knows (rank,
 // patches, constellations, stories, albums). computeStats(sightings, byKey, nightKey, year, ctx) -> numbers;
 // statsHtml(st) -> the panel. No network; the map uses js/geo.js’s coarse outlines.
-import { LAND } from './geo.js?v=0.1.1686';
-import { TIER_INFO, TIERS } from './rarity.js?v=0.1.1686';
+import { LAND } from './geo.js?v=0.1.1687';
+import { TIER_INFO, TIERS } from './rarity.js?v=0.1.1687';
 
 const RANK = { common: 0, uncommon: 1, rare: 2, epic: 3, legendary: 4 };
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -52,7 +52,7 @@ export function computeStats(sightings, byKey, nightKey, year = null, ctx = {}) 
 function mapSvg(places, w = 340, h = 170) {
   const X = (lon) => ((lon + 180) / 360) * w, Y = (lat) => ((90 - lat) / 180) * h;
   const land = LAND.map(([, poly]) => `<path d="M${poly.map(([lo, la]) => `${X(lo).toFixed(1)} ${Y(la).toFixed(1)}`).join('L')}Z"/>`).join('');
-  const dots = places.map((p) => `<circle cx="${X(p.lon).toFixed(1)}" cy="${Y(p.lat).toFixed(1)}" r="${Math.min(7, 2.5 + Math.log2(p.n + 1))}" fill="#fa8127" stroke="#080f1b" stroke-width="1"/><circle cx="${X(p.lon).toFixed(1)}" cy="${Y(p.lat).toFixed(1)}" r="${Math.min(7, 2.5 + Math.log2(p.n + 1)) + 5}" fill="none" stroke="#fa8127" stroke-opacity=".35"/>`).join('');
+  const dots = places.map((p) => `<circle cx="${X(p.lon).toFixed(1)}" cy="${Y(p.lat).toFixed(1)}" r="${Math.min(7, 2.5 + Math.log2(p.n + 1))}" fill="var(--gold)" stroke="#080f1b" stroke-width="1"/><circle cx="${X(p.lon).toFixed(1)}" cy="${Y(p.lat).toFixed(1)}" r="${Math.min(7, 2.5 + Math.log2(p.n + 1)) + 5}" fill="none" stroke="var(--gold)" stroke-opacity=".35"/>`).join('');
   return `<svg viewBox="0 0 ${w} ${h}" class="st-map" aria-label="Where you’ve observed"><rect width="${w}" height="${h}" rx="10" fill="#0c1a2e"/><g fill="#1f3550">${land}</g>${dots}</svg>`;
 }
 
@@ -63,7 +63,7 @@ export function statsHtml(st) {
   // Rank header, like the rank card: name, XP, how far to the next.
   // The rank as the Collection's slim dial card (2026-10-28, Sevaan; design/rank-compact.html A).
   const rk = x.rank, into = rk && rk.next ? Math.max(0, Math.min(1, (rk.xp - (rk.at ?? 0)) / (rk.next - (rk.at ?? 0)))) : 1;
-  const rank = rk ? `<div class="st-rank lb-dial"><span class="lbd-ring"><svg viewBox="0 0 74 74"><circle cx="37" cy="37" r="32" fill="none" stroke="#24344a" stroke-width="5"/><circle cx="37" cy="37" r="32" fill="none" stroke="#fa8127" stroke-width="5" stroke-linecap="round" stroke-dasharray="${(into * 201.06).toFixed(1)} 202" transform="rotate(-90 37 37)"/><g stroke="#fff2b355" stroke-width="1.5"><line x1="37" y1="0" x2="37" y2="5"/><line x1="74" y1="37" x2="69" y2="37"/><line x1="37" y1="74" x2="37" y2="69"/><line x1="0" y1="37" x2="5" y2="37"/></g></svg><b>${rk.next ? `${Math.round(into * 100)}%<small>to next</small>` : 'Top<small>rank</small>'}</b></span><span class="lbd-m"><span class="lbd-l"><span class="lbd-name">${esc(rk.name)}</span><span class="lb-xp"><b>${n(rk.xp)}</b> XP</span></span><span class="lbd-l"><span class="lbd-to">${rk.next ? `${n(rk.next - rk.xp)} XP to <b>${esc(rk.nextName || 'the next rank')}</b>` : 'The top rank'}</span></span></span></div>` : '';
+  const rank = rk ? `<div class="st-rank lb-dial"><span class="lbd-ring"><svg viewBox="0 0 74 74"><circle cx="37" cy="37" r="32" fill="none" stroke="#24344a" stroke-width="5"/><circle cx="37" cy="37" r="32" fill="none" stroke="var(--gold)" stroke-width="5" stroke-linecap="round" stroke-dasharray="${(into * 201.06).toFixed(1)} 202" transform="rotate(-90 37 37)"/><g stroke="#fff2b355" stroke-width="1.5"><line x1="37" y1="0" x2="37" y2="5"/><line x1="74" y1="37" x2="69" y2="37"/><line x1="37" y1="74" x2="37" y2="69"/><line x1="0" y1="37" x2="5" y2="37"/></g></svg><b>${rk.next ? `${Math.round(into * 100)}%<small>to next</small>` : 'Top<small>rank</small>'}</b></span><span class="lbd-m"><span class="lbd-l"><span class="lbd-name">${esc(rk.name)}</span><span class="lb-xp"><b>${n(rk.xp)}</b> XP</span></span><span class="lbd-l"><span class="lbd-to">${rk.next ? `${n(rk.next - rk.xp)} XP to <b>${esc(rk.nextName || 'the next rank')}</b>` : 'The top rank'}</span></span></span></div>` : '';
   // The collection, by rarity.
   const coll = `<section class="st-sec"><div class="st-head"><span>The collection</span><span class="st-big"><b>${n(st.cards)}</b> / ${n(st.total)} cards</span></div>
     <div class="st-tiers">${st.tiers.map((r) => { const t = r.t === 'story' ? STORY : TIER_INFO[r.t]; const pct = r.all ? r.have / r.all : 0; return `<div class="st-tier" style="--c:${t.color}"><span class="st-tl">${t.gem} ${esc(t.label)}</span><span class="st-tb"><i style="width:${Math.max(pct ? 2 : 0, pct * 100).toFixed(1)}%"></i></span><span class="st-tn">${n(r.have)} <small>/ ${n(r.all)}</small></span></div>`; }).join('')}</div></section>`;

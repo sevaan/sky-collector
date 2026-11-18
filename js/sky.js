@@ -1,18 +1,20 @@
 // Canvas renderer for the sky view. Gnomonic (pinhole camera) projection around where the phone points.
-import { extinction } from './sky-limit.js?v=0.1.1686';
+import { extinction } from './sky-limit.js?v=0.1.1687';
 // Two themes: 'glass' (ink, cream and orange celestial chart) and 'night' (all red, keeps dark adaptation).
-import { pmTime } from './perf-meter.js?v=0.1.1686';
-import { createMilkyGL } from './milkyway-gl.js?v=0.1.1686';
+import { pmTime } from './perf-meter.js?v=0.1.1687';
+import { createMilkyGL } from './milkyway-gl.js?v=0.1.1687';
 
-import { enuFromAzEl, compassPoint } from './orbit.js?v=0.1.1686';
-import { createCloudGL } from './clouds-gl.js?v=0.1.1686';
+import { enuFromAzEl, compassPoint } from './orbit.js?v=0.1.1687';
+import { createCloudGL } from './clouds-gl.js?v=0.1.1687';
 // Cloud colours by light: sunlit tops, shadowed bellies, and the horizon haze they melt into (0–1 RGB).
 const CLOUD_LIGHT = {
   day: { lit: [1, 1, 1], shade: [0.62, 0.68, 0.77], haze: [0.82, 0.87, 0.93] },
   dusk: { lit: [1, 0.8, 0.68], shade: [0.36, 0.33, 0.42], haze: [0.62, 0.5, 0.52] },
   night: { lit: [0.22, 0.25, 0.31], shade: [0.1, 0.12, 0.16], haze: [0.14, 0.15, 0.2] },
 };
-import { TIER_INFO } from './rarity.js?v=0.1.1686';
+import { TIER_INFO } from './rarity.js?v=0.1.1687';
+// The accent for canvas drawing: the page's --gold (orange in Space Collector, red in Sky Collector), read once (2026-11-17).
+const ACCENT = (() => { try { return getComputedStyle(document.documentElement).getPropertyValue('--gold').trim() || '#fa8127'; } catch { return '#fa8127'; } })();
 
 const RAD = Math.PI / 180;
 const SECRET_PX = { santa: 24, roadster: 12.4, voyager: 14.5, voyager2: 14.5, pioneer10: 11.7, pioneer11: 11.7, newhorizons: 6.4, arecibo: 6.9, halley: 8.6, pillars: 9, hdf: 8, m87bh: 8, crab: 8, kepler: 10, sputnik: 11.2, laika: 13.3, wow: 9.8 };
@@ -28,13 +30,13 @@ const THEMES = {
     horizon: 'rgba(255, 242, 179, 0.38)',
     ground: '#070e16', groundEdge: 'rgba(173, 188, 200, 0.10)',
     hills: '#101e29', haze: 'rgb(143, 179, 207)',
-    groundInk: 'rgba(143, 179, 207, 0.20)', groundText: 'rgba(255, 242, 179, 0.53)', groundNorth: '#fa8127', ghost: '#fa8127', ghostText: 'rgba(255, 242, 179, 0.85)', ghostPill: 'rgba(8, 15, 27, 0.94)',
+    groundInk: 'rgba(143, 179, 207, 0.20)', groundText: 'rgba(255, 242, 179, 0.53)', groundNorth: ACCENT, ghost: ACCENT, ghostText: 'rgba(255, 242, 179, 0.85)', ghostPill: 'rgba(8, 15, 27, 0.94)',
     label: '#fff2b3', labelDim: 'rgba(173, 188, 200, 0.83)',
     compass: 'rgba(255, 242, 179, 0.78)',
     sat: '#fff2b3', satGlow: [250, 129, 39], satHot: '#fff2b3',
     dim: 'rgba(173, 188, 200, 0.35)',
     bead: [250, 129, 39], trailPast: 'rgba(255, 242, 179, 0.26)',
-    reticle: 'rgba(255, 242, 179, 0.66)', reticleSoft: 'rgba(173, 188, 200, 0.35)', tick: '#fa8127', plane: '#f16b4c', planeDim: '#be776a',
+    reticle: 'rgba(255, 242, 179, 0.66)', reticleSoft: 'rgba(173, 188, 200, 0.35)', tick: ACCENT, plane: '#f16b4c', planeDim: '#be776a',
     constLine: 'rgba(143, 179, 207, 0.28)', constLabel: 'rgba(173, 188, 200, 0.73)', constCase: (s) => s.toUpperCase(),
     starRGB: [255, 242, 179], star: (a) => `rgba(255, 242, 179, ${a})`, starLabel: 'rgba(173, 188, 200, 0.78)',
     body: '#fff2b3', planet: '#fff2b3',
@@ -1192,7 +1194,7 @@ export class SkyView {
     const at = (az, el = EL) => this.project(enuFromAzEl(az, el));
     const sky = (az, h) => at(az, EL - R * Math.max(0, Math.min(90, h)) / 90); // a height above the horizon → a point on the map
     const dir = (az) => { const q = at(az); if (!q) return null; const dx = q.x - n.x, dy = q.y - n.y, l = Math.hypot(dx, dy) || 1; return [dx / l, dy / l]; };
-    const ink = night ? 'rgba(255,90,70,' : 'rgba(255,242,179,', orange = night ? 'rgb(255,110,90)' : '#fa8127';
+    const ink = night ? 'rgba(255,90,70,' : 'rgba(255,242,179,', orange = night ? 'rgb(255,110,90)' : ACCENT;
     ctx.save(); ctx.globalAlpha = a;
     const ringPts = []; for (let az = 0; az <= 360; az += 4) ringPts.push(enuFromAzEl(az, EL));
     const ring = ringPts.map((v) => this.project(v)).filter(Boolean);
