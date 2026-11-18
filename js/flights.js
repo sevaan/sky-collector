@@ -2,12 +2,13 @@
 // e.g. Icelandair Toronto → Reykjavík), and every catch also counts toward PLANES (the aircraft type). Anything with no
 // route (helicopters, light planes, balloons, private jets) is a Planes card only. No DOM here.
 
-import { aircraftName, isHelicopter } from './planes.js?v=0.1.1688';
-import { routeKm } from './routes.js?v=0.1.1688';
-import { hasAirlineCallsign } from './sky-stamps.js?v=0.1.1688';
-import { typeTier } from './sky-tiers.js?v=0.1.1688';
-import { planeSet, flightSet } from './sky-sets.js?v=0.1.1688';
-import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1688';
+import { aircraftName, isHelicopter } from './planes.js?v=0.1.1690';
+import { routeKm } from './routes.js?v=0.1.1690';
+import { hasAirlineCallsign } from './sky-stamps.js?v=0.1.1690';
+import { typeTier } from './sky-tiers.js?v=0.1.1690';
+import { planeSet, flightSet } from './sky-sets.js?v=0.1.1690';
+import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1690';
+import { typeName } from './sky-type-names.js?v=0.1.1690';
 
 export const TIERS = {
   common: { label: 'Common', mark: '●', color: '#4a6178' },
@@ -34,7 +35,7 @@ export function flightTier(km, airline3) {
 export function retier(card) {
   if (!card) return card;
   if (card.sky === 'flight' || card.kind === 'flight') { const a3 = card.airlineIcao || String(card.key ?? '').split(':')[1] || ''; const st = flightSet(card.km ?? null, card.from, card.to, a3); card.tier = flightTier(card.km ?? null, a3); card.set = st.name; card.setId = st.id; }
-  else if (card.sky === 'plane' || card.kind === 'plane') { const code = (/^P:(.+)$/.exec(card.key ?? '') || [])[1] || '', heli = card.glyph === 'heli' || code === 'HELI', st = planeSet(code, heli); card.tier = typeTier(code === 'HELI' || code === 'UNKNOWN' ? '' : code, heli); card.set = st.name; card.setId = st.id; }
+  else if (card.sky === 'plane' || card.kind === 'plane') { const code = (/^P:(.+)$/.exec(card.key ?? '') || [])[1] || '', heli = card.glyph === 'heli' || code === 'HELI', st = planeSet(code, heli); card.tier = typeTier(code === 'HELI' || code === 'UNKNOWN' ? '' : code, heli); card.set = st.name; card.setId = st.id; const nm = typeName(code); if (nm) { card.name = nm; card.typeName = nm; } /* the exact type name, for a card saved as "Boeing 737" */ }
   return card;
 }
 

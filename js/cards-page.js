@@ -1,39 +1,43 @@
-import { pullToClose } from './pull-close.js?v=0.1.1688';
-import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1688';
-import { computeStats, statsHtml } from './stats.js?v=0.1.1688';
-import { nightKey } from './observation.js?v=0.1.1688';
-import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1688';
-import { sfx } from './sfx.js?v=0.1.1688';
-import { expandFacts } from './catalog-facts.js?v=0.1.1688';
-import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned } from './patches.js?v=0.1.1688';
-import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1688';
-import { ticket } from './toast.js?v=0.1.1688';
-import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1688';
-import { satGlobe } from './sat-globe.js?v=0.1.1688';
-import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1688';
-import { cardArt } from './art.js?v=0.1.1688';
-import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1688';
-import { applyBack } from './card-backs.js?v=0.1.1688';
-import { localStats } from './sky-local.js?v=0.1.1688';
-import { retier } from './flights.js?v=0.1.1688';
-import { SETS, assignSets, albumGoals, albumList } from './sets.js?v=0.1.1688';
-import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1688';
-import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1688';
-import { STORIES } from './stories.js?v=0.1.1688';
-import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1688';
-import { conArt } from './con-art.js?v=0.1.1688';
-import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1688';
-import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1688';
-import { shareCardEl } from './share-card.js?v=0.1.1688';
-import { forgetSighting } from './cloud-backup.js?v=0.1.1688';
-import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1688';
-import { allSightings, deleteSighting } from './store.js?v=0.1.1688';
-import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1688';
-import { SECRET_PATCHES, hasPatch } from './secrets.js?v=0.1.1688';
-import { localText } from './localize.js?v=0.1.1688';
+import { pullToClose } from './pull-close.js?v=0.1.1690';
+import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1690';
+import { computeStats, statsHtml } from './stats.js?v=0.1.1690';
+import { nightKey } from './observation.js?v=0.1.1690';
+import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1690';
+import { sfx } from './sfx.js?v=0.1.1690';
+import { expandFacts } from './catalog-facts.js?v=0.1.1690';
+import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned } from './patches.js?v=0.1.1690';
+import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1690';
+import { ticket } from './toast.js?v=0.1.1690';
+import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1690';
+import { satGlobe } from './sat-globe.js?v=0.1.1690';
+import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1690';
+import { cardArt } from './art.js?v=0.1.1690';
+import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1690';
+import { applyBack } from './card-backs.js?v=0.1.1690';
+import { localStats } from './sky-local.js?v=0.1.1690';
+import { retier } from './flights.js?v=0.1.1690';
+import { SETS, assignSets, albumGoals, albumList, useSets, goalsOf } from './sets.js?v=0.1.1690';
+import { SKY_ALBUM_SETS, FLIGHT_SETS } from './sky-sets.js?v=0.1.1690';
+const FLIGHT_SET_IDS = new Set(FLIGHT_SETS.map((s) => s.id));
+import { skyCatalogue } from './sky-catalogue.js?v=0.1.1690';
+import { skyCardPhotoUrl, glyphSvg } from './flight-card.js?v=0.1.1690';
+import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1690';
+import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1690';
+import { STORIES } from './stories.js?v=0.1.1690';
+import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1690';
+import { conArt } from './con-art.js?v=0.1.1690';
+import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1690';
+import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1690';
+import { shareCardEl } from './share-card.js?v=0.1.1690';
+import { forgetSighting } from './cloud-backup.js?v=0.1.1690';
+import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1690';
+import { allSightings, deleteSighting } from './store.js?v=0.1.1690';
+import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1690';
+import { SECRET_PATCHES, hasPatch } from './secrets.js?v=0.1.1690';
+import { localText } from './localize.js?v=0.1.1690';
 // Sky Collector (Milestone 1.5): the same Collection, with plane cards from your catches and no satellite catalogue.
 const SKY = (() => { try { return !!window.parent?.__skyOnly; } catch { return false; } })() || /[?&]sky\b/.test(location.search);
-if (SKY) { document.documentElement.classList.add('sky-cards'); setSkyProgress(true); setEventsOff(true); try { setSkySize(localStats().sky); } catch {} }
+if (SKY) { document.documentElement.classList.add('sky-cards'); setSkyProgress(true); setEventsOff(true); useSets(SKY_ALBUM_SETS); /* Sky's albums: plane families and where flights go (js/sky-sets.js) */ try { setSkySize(localStats().sky); } catch {} }
 
 const $ = (id) => document.getElementById(id);
 const state = { raw: [], cards: [], byKey: new Map(), sightingsByKey: new Map(), seenMembers: new Map(), view: 'owned', query: '', set: 'all', rarity: 'all', list: [], index: 0, preview: false, ready: false };
@@ -96,7 +100,7 @@ function ingest(sightings) {
     // A saved card stays in the collection after it leaves the current orbital catalogue.
     if (!state.byKey.has(key)) {
       const saved = s.cardSnapshot ?? { id: s.objectId, name: s.name ?? `Object ${s.objectId}`, type: s.type ?? 'satellite', year: s.year, tier: 'common' };
-      const card = { ...saved, key, archived: !saved.sky }; if (saved.sky) retier(card); /* a plane card isn't an old satellite: it lives in your catches */
+      const card = { ...saved, key, archived: !saved.sky }; if (saved.sky) { retier(card); card.setName = card.set; card.set = card.setId; } /* the album code keys on the set's id; the face prints its name */ /* a plane card isn't an old satellite: it lives in your catches */
       if (!card.set && !saved.sky) assignSets([card]);
       state.cards.push(card); state.byKey.set(key, card);
     }
@@ -125,7 +129,7 @@ async function boot() {
   const cat = SKY ? { objects: [] } : catalogueResult.status === 'fulfilled' ? catalogueResult.value : { objects: [] };
   // One card per key: a star in two constellations (Dubhe: Big Dipper and Ursa Major) showed twice and was counted twice
   // in Mine (collectors 2026-10-11).
-  { const seen = new Set(); state.cards = SKY ? [] : buildCards(cat).filter((c) => !seen.has(c.key) && seen.add(c.key)); } /* Sky: plane cards come from your catches (ingest) */
+  { const seen = new Set(); state.cards = SKY ? skyCatalogue() : buildCards(cat).filter((c) => !seen.has(c.key) && seen.add(c.key)); } /* Sky: plane cards come from your catches (ingest) */
   state.byKey = new Map(state.cards.map((c) => [c.key, c]));
   const keyOfId = new Map(cat.objects.map((o) => [String(o.id), cardKeyFor(o)])); state.keyOfId = keyOfId;
   const sightings = sightingResult.status === 'fulfilled' ? sightingResult.value : [];
@@ -332,7 +336,7 @@ function albumStats(setId) {
   const key = `${state.cards.length}|${state.raw?.length ?? 0}|${state.sightingsByKey.size}`;
   if (albumMemo.key !== key) { const bySet = new Map(); for (const c of state.cards) if (!c.archived) { let l = bySet.get(c.set); if (!l) bySet.set(c.set, (l = [])); l.push(c); } albumMemo = { key, bySet }; }
   const cards = albumMemo.bySet.get(setId) ?? [], have = cards.filter(hasSightings);
-  const goals = albumGoals(cards.length), level = goals.filter((g) => have.length >= g).length; // 0..3
+  const goals = goalsOf(SETS.find((s) => s.id === setId), cards.length), level = goals.filter((g) => have.length >= g).length; // 0..3
   return { cards, have, goals, level, next: goals[level] ?? null };
 }
 function albumBar({ have, goals, cards }) {
@@ -342,7 +346,7 @@ function albumBar({ have, goals, cards }) {
 // The Constellations album counts constellations completed, with its stars as a second line (2026-10-16, Sevaan: "0 / 709"
 // read as 709 constellations). Its levels still count stars, so the next goal says "stars".
 const conDone = () => { const cs = conList().filter((c) => !c.system && c.stars?.length && c.id !== 'BigDipper'); /* 88: the Big Dipper is part of Ursa Major, not a constellation (iOS playtest 2026-10-19) */ return { done: cs.filter((c) => c.stars.every((k) => state.sightingsByKey.has(k))).length, total: cs.length }; };
-const albumCount = (set, st) => set.id === 'constellations' ? (() => { const d = conDone(); return `<b>${d.done}</b> / ${d.total} constellations`; })() : `<b>${st.have.length.toLocaleString()}</b> / ${st.cards.length.toLocaleString()}`;
+const albumCount = (set, st) => SKY && FLIGHT_SET_IDS.has(set.id) ? (st.have.length >= st.goals[2] ? `<b>${st.have.length.toLocaleString()}</b> collected` : `<b>${st.have.length.toLocaleString()}</b> / ${st.goals[2]}`) /* a flight album has no fixed list: count toward gold */ : set.id === 'constellations' ? (() => { const d = conDone(); return `<b>${d.done}</b> / ${d.total} constellations`; })() : `<b>${st.have.length.toLocaleString()}</b> / ${st.cards.length.toLocaleString()}`;
 const unit = (set) => (set.id === 'constellations' ? ' stars' : '');
 function renderAlbums() {
   $('grid').replaceChildren();
@@ -352,12 +356,12 @@ function renderAlbums() {
     const st = albumStats(set.id); if (!st.cards.length) continue;
     const latest = st.have.slice().sort((a, b) => (state.sightingsByKey.get(b.key)?.[0]?.time ?? 0) - (state.sightingsByKey.get(a.key)?.[0]?.time ?? 0))[0];
     const show = latest ?? st.cards.find((c) => c.tier === 'legendary') ?? st.cards[0];
-    const img = artImage(show, 'small'); // the set’s best card, dimmed (CSS .album.empty) until you own one
+    const img = show?.sky ? skyCardPhotoUrl(show, show.type) : artImage(show, 'small'); // the set’s best card, dimmed (CSS .album.empty) until you own one
     const b = document.createElement('button'); b.type = 'button';
     const crossed = (lv[set.id] ?? st.level) < st.level; lv[set.id] = st.level;
     b.className = `album${st.level === 3 ? ' gold' : ''}${latest ? '' : ' empty'}${crossed ? ' crossed' : ''}`; b.style.setProperty('--set', set.color);
     const ori = set.id === 'constellations' ? CON_BY_ID.get('Ori') : null; /* a real chart for the Constellations album, not the crosshair placeholder (playtest 2026-10-28) */
-    b.innerHTML = `<span class="album__art">${ori ? conArt(ori.data, null, { w: 360, h: 240 }) : img ? `<img src="${img}" alt="" loading="lazy">` : cardArt(show, { accent: set.color, silhouette: !latest })}</span>
+    b.innerHTML = `<span class="album__art">${ori ? conArt(ori.data, null, { w: 360, h: 240 }) : img ? `<img src="${img}" alt="" loading="lazy">` : show?.sky ? `<span class="album__plane">${glyphSvg(show.glyph ?? 'jet')}</span>` /* a plane on sky, not Space Collector's satellite drawing */ : cardArt(show, { accent: set.color, silhouette: !latest })}</span>
       <span class="album__body"><span class="album__top"><span class="album__name">${esc(set.name)}${set.sub ? `<small class="album__sub">${esc(set.sub)}</small>` : ''}</span><span class="album__count">${set.id === 'constellations' ? albumCount(set, st).replace(' constellations', '') : albumCount(set, st)}</span></span>
       ${albumBar(st)}<span class="album__foot">${st.level ? `<span class="album__level l${st.level}">${LEVELS[st.level - 1]}</span>` : ''}<span class="album__next">${st.level === 3 ? 'Complete' : `${(st.next - st.have.length).toLocaleString()} more${unit(set)} for ${LEVELS[st.level]}`}</span></span></span>`;
     b.addEventListener('click', () => { state.set = set.id; $('set-filter').value = set.id; setView('discover'); requestAnimationFrame(() => { const tools = document.querySelector('.collection-tools'), pin = tools ? parseFloat(getComputedStyle(tools).top) + tools.offsetHeight : 160, head = $('album-head'); /* where the tools sit once pinned, not where they are now (web QA 2026-10-24: it barely scrolled) */ window.scrollTo({ top: Math.max(0, (head.hidden ? $('grid') : head).getBoundingClientRect().top + scrollY - pin - 8), behavior: 'smooth' }); }); }); // the album's name lands just under the pinned tabs and search (web playtest 2026-10-22: it scrolled under them)

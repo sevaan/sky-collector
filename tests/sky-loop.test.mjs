@@ -20,7 +20,7 @@ test('flight tiers: distance bands, cargo is Rare not Epic, ultra-long is Legend
   assert.equal(flightTier(900, 'FDX'), 'rare'); assert.equal(flightTier(11000, 'FDX'), 'epic'); assert.equal(flightTier(null, 'ACA'), 'common');
 });
 test('plane sets: families, and the Cessna 172 is not a C-17', () => {
-  assert.equal(planeSet('C172').id, 'light'); assert.equal(planeSet('C17').id, 'giants'); assert.equal(planeSet('B744').id, 'giants');
+  assert.equal(planeSet('C172').id, 'light'); assert.equal(planeSet('C17').id, 'military'); assert.equal(planeSet('A124').id, 'rarebirds'); assert.equal(planeSet('B744').id, 'giants');
   assert.equal(planeSet('B38M').id, 'b737'); assert.equal(planeSet('A21N').id, 'a320'); assert.equal(planeSet('B77W').id, 'twinaisle');
   assert.equal(planeSet('E75L').id, 'regional'); assert.equal(planeSet('DH8D').id, 'props'); assert.equal(planeSet('C56X').id, 'bizjets');
   assert.equal(planeSet('EC35', true).id, 'helicopters'); assert.equal(planeSet('ZZZZ').id, 'others');

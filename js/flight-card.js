@@ -7,15 +7,15 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { TIERS } from './flights.js?v=0.1.1688';
-import { typePhoto } from './type-photos.js?v=0.1.1688';
-import { housePhoto } from './house-photos.js?v=0.1.1688';
-import { airlinePhoto } from './airline-photos.js?v=0.1.1688';
-import { airlineLogo } from './airline-logos.js?v=0.1.1688';
-import { fitStyle } from './photo-fit.js?v=0.1.1688';
-import { dist, speed } from './units.js?v=0.1.1688';
-import { localText } from './localize.js?v=0.1.1688';
-import { hasAirlineCallsign, planeLine, levelWord } from './sky-stamps.js?v=0.1.1688';
+import { TIERS } from './flights.js?v=0.1.1690';
+import { typePhoto } from './type-photos.js?v=0.1.1690';
+import { housePhoto } from './house-photos.js?v=0.1.1690';
+import { airlinePhoto } from './airline-photos.js?v=0.1.1690';
+import { airlineLogo } from './airline-logos.js?v=0.1.1690';
+import { fitStyle } from './photo-fit.js?v=0.1.1690';
+import { dist, speed } from './units.js?v=0.1.1690';
+import { localText } from './localize.js?v=0.1.1690';
+import { hasAirlineCallsign, planeLine, levelWord } from './sky-stamps.js?v=0.1.1690';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
@@ -156,7 +156,7 @@ export function flightCardHtml(f, opts = {}) {
   const art = ph ? `${photoImg(ph, 'fc-photo', opts.eager, opts.small)}${credit(ph)}` : skyPanel('jet', 'fc-sky', type);
   const inner = `
     <div class="fc-art${ph ? '' : ' fc-art--sky'}">
-      <div class="fc-pic">${art}<span class="fc-holo" aria-hidden="true"></span>${tierPill(f.tier)}<span class="fc-set">${esc(f.set.toUpperCase())}</span></div>
+      <div class="fc-pic">${art}<span class="fc-holo" aria-hidden="true"></span>${tierPill(f.tier)}<span class="fc-set">${esc(String(f.setName ?? f.set ?? '').toUpperCase())}</span></div>
       ${routeStrip(f, typeName)}
     </div>
     <h2 class="fc-name${long ? ' fc-name--long' : ''}"><span>${esc(f.from.city)} <i aria-label="to">→</i></span><span>${esc(f.to.city)}</span></h2>
@@ -180,7 +180,7 @@ export function planeCardHtml(p, opts = {}) {
   const showReg = p.reg && hasAirlineCallsign(opts.callsign ?? p.callsign);
   const inner = `
     <div class="fc-art fc-art--plane${ph ? '' : ' fc-art--sky'}">
-      <div class="fc-pic">${art}<span class="fc-holo" aria-hidden="true"></span>${tierPill(p.tier)}<span class="fc-set">${esc(String(p.set ?? 'Planes').toUpperCase())}</span>${opts.rareHere ? '<span class="fc-here" title="Unusual where you caught it">RARE HERE</span>' : ''}</div>
+      <div class="fc-pic">${art}<span class="fc-holo" aria-hidden="true"></span>${tierPill(p.tier)}<span class="fc-set">${esc(String(p.setName ?? p.set ?? 'Planes').toUpperCase())}</span>${opts.rareHere ? '<span class="fc-here" title="Unusual where you caught it">RARE HERE</span>' : ''}</div>
     </div>
     <h2 class="fc-name${long ? ' fc-name--long' : ''}"><span>${esc(p.name)}</span></h2>
     <div class="fc-id"><span class="fc-id-l">${esc(si?.count ? planeLine(si, p.type || '') : p.stamp ? `${p.stamp}${stamps > 1 ? ` + ${stamps - 1} more` : ''}` : p.glyph === 'heli' ? 'Helicopter' : 'Aircraft')}</span><span class="fc-id-r">${esc(p.type || '—')}${showReg ? ` · ${esc(p.reg)}` : ''}</span></div>

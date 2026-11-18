@@ -23,6 +23,10 @@ export const SETS = [
 ];
 
 export const SET_BY_ID = Object.fromEntries(SETS.map((s) => [s.id, s]));
+// Sky Collector swaps in its own sets (js/sky-sets.js, 2026-11-17): the same albums, different contents. A set may carry its
+// own bronze / silver / gold `goals`; without them the goals scale with the set's size as before.
+export function useSets(list) { SETS.splice(0, SETS.length, ...list); for (const k of Object.keys(SET_BY_ID)) delete SET_BY_ID[k]; for (const s of SETS) SET_BY_ID[s.id] = s; }
+export const goalsOf = (set, n) => set?.goals ?? albumGoals(n);
 
 // Attach primary set and card number (within the set, oldest first) to every object.
 export function assignSets(objects) {
@@ -43,7 +47,7 @@ export function assignSets(objects) {
 export function albumGoals(n) { return n <= 30 ? [1, Math.ceil(n / 2), n] : n <= 300 ? [10, 50, 100] : [10, 50, 200]; }
 // For progress(): each album’s cards and its gold goal (a filled album earns its own patch, 2026-10-10 #17).
 export function albumList(cards) {
-  return SETS.map((s) => { const keys = cards.filter((c) => c.set === s.id).map((c) => String(c.key ?? c.id)); return { id: s.id, name: s.name, keys, goal: albumGoals(keys.length)[2] }; }).filter((a) => a.keys.length);
+  return SETS.map((s) => { const keys = cards.filter((c) => (c.setId ?? c.set) === s.id).map((c) => String(c.key ?? c.id)); return { id: s.id, name: s.name, keys, goal: goalsOf(s, keys.length)[2] }; }).filter((a) => a.keys.length);
 }
 // Albums you’ve filled to gold (cards-page writes localStorage goldAlbums): their cards wear an album card back.
 export function goldAlbums() { try { return new Set(JSON.parse(localStorage.getItem('goldAlbums')) || []); } catch { return new Set(); } }

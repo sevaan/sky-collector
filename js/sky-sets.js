@@ -5,11 +5,15 @@
 // Not built: "Freighters" as a plane set (a type code doesn't say cargo: a B77L is both the 777 freighter and the
 // 777-200LR), so cargo is a flight set only; and "Next door" has no border data, so it is any international flight
 // under 1,500 km.
-import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1688';
+import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1690';
 
 // Order matters: the first match is the card's set.
 export const PLANE_SETS = [
-  { id: 'giants', name: 'Giants', color: '#7a3fc4', goals: [1, 2, 4], test: (t) => /^(B74.|A38.|A34.|MD11|DC10|A124|A225|C5M|C17|C130|C30J|A400|IL76|AN12|K35[ER]|KC10|BLCF|A3ST|A337|B52|E3[TC]F)$/.test(t) }, /* whole codes: 'C17' must not take the Cessna C172 */
+  /* Two sets beyond the approved ten (2026-11-17), so fighters and museum pieces don't sit in "Everything Else"; whole codes
+     throughout: 'C17' must not take the Cessna C172. */
+  { id: 'rarebirds', name: 'Rare Birds', color: '#9a6a00', goals: [1, 2, 4], test: (t) => /^(DC3|CONI|B17|B29|LANC|SPIT|P51|JU52|CONC|SHIP|BALL|A124|A225|A3ST|A337|BLCF)$/.test(t) },
+  { id: 'military', name: 'Military', color: '#55633a', goals: [1, 3, 6], test: (t) => /^(C17|C130|C30J|C5M|A400|K35[ER]|KC10|E3[TC]F|E6|B52|B1|B2|P8|C2|C295|V22|U2|F16|F18|F15|F35|EUFI|A10|H47|H53|H60|AN12|IL76)$/.test(t) },
+  { id: 'giants', name: 'Giants', color: '#7a3fc4', goals: [1, 2, 4], test: (t) => /^(B74.|A38.|A34.|MD11|DC10)$/.test(t) },
   { id: 'helicopters', name: 'Helicopters', color: '#c0562e', goals: [1, 3, 6], test: (t, heli) => heli },
   { id: 'b737', name: 'The 737 Family', color: '#1f5fbf', goals: [2, 3, 5], test: (t) => /^(B73[0-9]|B3[789X]M|B37M)/.test(t) },
   { id: 'a320', name: 'The A320 Family', color: '#2a8a9a', goals: [2, 3, 5], test: (t) => /^(A318|A319|A320|A321|A19N|A20N|A21N)$/.test(t) },
@@ -36,3 +40,5 @@ export const SKY_SETS = [...FLIGHT_SETS, ...PLANE_SETS];
 export const SKY_SET_BY_ID = Object.fromEntries(SKY_SETS.map((s) => [s.id, s]));
 // A set's level from how many of its cards you own: 0 none, 1 bronze, 2 silver, 3 gold.
 export const setLevel = (set, owned) => { const g = set?.goals ?? [1, 2, 3]; return owned >= g[2] ? 3 : owned >= g[1] ? 2 : owned >= g[0] ? 1 : 0; };
+// For Space Collector's album code (js/sets.js useSets): a set there has a test over cards.
+export const SKY_ALBUM_SETS = SKY_SETS.map((s) => ({ id: s.id, name: s.name, color: s.color, goals: s.goals, test: (o) => (o.setId ?? o.set) === s.id }));

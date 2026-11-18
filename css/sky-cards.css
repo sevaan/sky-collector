@@ -322,7 +322,7 @@ body.night #discover.sky-plane .d-mini { filter:drop-shadow(0 6px 12px #000c); }
 
 /* Sky's Collection on Space Collector's page (Milestone 1.5): Mine and Patches. Albums (sets with a known size) and Find
    (satellite pass search) come back once plane sets exist (docs/PROJECT-PLAN.md task 13). */
-html.sky-cards #tab-albums, html.sky-cards #tab-discover { display:none !important; }
+html.sky-cards #tab-discover { display:none !important; } /* Albums are back (2026-11-17, plane sets); Find stays hidden: it is about what passes tonight */
 html.sky-cards .collection-tabs { justify-content:flex-start; gap:28px; }
 
 /* Small faces in grids (2026-11-16 scroll pass): no live filters, as Space Collector's tiles have none. The sky panel's
@@ -354,3 +354,8 @@ body.day #radar-why { color:#143046; }
 .fc-here { position:absolute; z-index:3; right:.6em; bottom:.6em; padding:.36em .6em .32em; border-radius:.4em; background:var(--sc-orange-ink, #b42a20); color:#fff;
   font:600 .82em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.16em; box-shadow:0 .15em .4em rgba(13,34,56,.3); }
 .mini-face .fc-here { font-size:.7em; }
+/* An album whose lead card has no photo: the drawn plane on a sky panel (2026-11-17) */
+.album__plane { display:grid; place-items:center; width:100%; height:100%; background:linear-gradient(180deg,#5f9fd6,#bcdaf2); }
+.album__plane svg { width:62%; height:auto; filter:drop-shadow(3px 4px 2px rgba(13,34,56,.25)); }
+.album.empty .album__plane { filter:grayscale(1) opacity(.55); }
+.album__plane { color:#fffdf6; } .album__plane svg :is(path, polygon) { fill:currentColor; }
