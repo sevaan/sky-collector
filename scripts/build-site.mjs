@@ -28,7 +28,7 @@ const html = `<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Sky Collector: collect what flies over you</title>
 <meta name="description" content="Point your phone at the sky, line up a plane in the circle, and collect it. Sky Collector is coming soon to iPhone and Android.">
-<meta property="og:title" content="Sky Collector"><meta property="og:description" content="Collect what flies over you. Coming soon to iPhone and Android."><meta property="og:url" content="https://skycollector.app/"><meta property="og:image" content="https://skycollector.app/icon-512.png"><meta name="twitter:card" content="summary">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Sky Collector"><meta property="og:title" content="Sky Collector"><meta property="og:description" content="Collect what flies over you. Coming soon to iPhone and Android."><meta property="og:url" content="https://skycollector.app/"><meta property="og:image" content="https://skycollector.app/icon-512.png"><meta name="twitter:card" content="summary">
 <meta name="theme-color" content="#5d97cf">
 <link rel="canonical" href="https://skycollector.app/">
 <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -111,6 +111,10 @@ const html = `<!doctype html>
 </html>
 `;
 writeFileSync(OUT + 'index.html', html);
+// robots.txt and sitemap.xml (2026-11-18): every page may be indexed; the sitemap lists the three pages people land on.
+const SITE = 'https://skycollector.app', PAGES = ['/', '/pack', '/privacy'];
+writeFileSync(OUT + 'robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${SITE}/sitemap.xml\n`);
+writeFileSync(OUT + 'sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${PAGES.map((u) => `  <url><loc>${SITE}${u}</loc></url>`).join('\n')}\n</urlset>\n`);
 console.log('built site/public', card.name, card.tier, fit.mode);
 
 // The sample pack page (skycollector.app/pack) lives under site/public too, which this script wipes: rebuild it last.

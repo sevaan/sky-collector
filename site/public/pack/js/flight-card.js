@@ -172,7 +172,10 @@ export function flightCardHtml(f, opts = {}) {
 }
 
 /* A checked fact for the type first (js/sky-facts.js, 2026-11-17: 131 types, sources in docs/FACTS-SOURCES.md) */
-const planeFact = (p) => p.fact || unlisted(p.key)?.fact || typeFact(p.type || (/^P:(.+)$/.exec(p.key ?? '') || [])[1]) || (p.glyph === 'heli' ? 'Helicopters fly low and slow, so they’re among the hardest things in the sky to catch twice.'
+/* Several facts per type (2026-11-18, Sevaan: "there may be multiple facts too"): the card shows the one for how many
+   different aircraft of the type you've caught (1st aircraft: fact 1, 2nd: fact 2 …, round again), so catching a type
+   again teaches something new. n = that count (stampInfo.count), 1 for a card you don't have yet. */
+const planeFact = (p, n = 1) => p.fact || unlisted(p.key)?.fact || typeFact(p.type || (/^P:(.+)$/.exec(p.key ?? '') || [])[1], n) || (p.glyph === 'heli' ? 'Helicopters fly low and slow, so they’re among the hardest things in the sky to catch twice.'
   : p.glyph === 'prop' ? 'Propeller planes cruise lower and slower than jets, which makes them easier to spot and to hear.'
     : 'Every different aircraft of this type you catch counts toward this card’s **level**, and every airline it flies for is another livery.');
 
@@ -192,7 +195,7 @@ export function planeCardHtml(p, opts = {}) {
     <div class="fc-id"><span class="fc-id-l">${esc(un && (si?.count ?? 1) <= 1 ? (p.stamp || 'Type not listed') : si?.count ? planeLine(si, type) : p.stamp ? `${p.stamp}${stamps > 1 ? ` + ${stamps - 1} more` : ''}` : p.glyph === 'heli' ? 'Helicopter' : 'Aircraft')}</span><span class="fc-id-r">${esc(type || (un ? 'TYPE NOT LISTED' : '—'))}${showReg ? ` · ${esc(p.reg)}` : ''}</span></div>
     <div class="fc-stats">${stat('CAUGHT AT', feet(opts.heightFt), 'ft')}${stat('SPEED', speed(opts.speedKmh ?? null).v, speed(0).u)}${stat('AWAY', dist(opts.awayKm ?? null).v, dist(0).u)}${stat('SEEN', opts.sightings ?? stamps ?? 1, '×')}</div>
     ${passport(si, { newest: opts.newStamp })}
-    <p class="fc-fact">${rich(localText(planeFact(p)))}</p>
+    <p class="fc-fact">${rich(localText(planeFact(p, si?.count ?? 1)))}</p>
     ${footer(opts.caughtAt, type ? `TYPE ${type}` : 'PLANES')}`;
   return shell('plane', p.tier, inner, `${name}, ${TIERS[tierOf(p.tier)].label}${si?.level && si.level !== 'none' ? `, ${si.level} level` : ''}`, si?.level);
 }

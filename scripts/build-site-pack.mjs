@@ -46,5 +46,5 @@ for (const type of PLANES) {
 }
 const backs = copyDir('assets/art/backs', (f) => f.endsWith('.webp'));
 const sfx = copyDir('assets/audio/sfx', (f) => f.endsWith('.mp3'));
-for (const f of ['index.html', 'pack.js']) copyFileSync(join(SRC, f), join(OUT, f));
+for (const f of ['index.html', 'pack.js', 'og.jpg']) copyFileSync(join(SRC, f), join(OUT, f));
 console.log('pack page: modules', seen.size, '· css pictures and fonts', cssFiles, '· plane photos', photos, '· backs', backs, '· sounds', sfx);
