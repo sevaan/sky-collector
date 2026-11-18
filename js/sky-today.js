@@ -5,10 +5,12 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1685';
-import { glyphSvg } from './flight-card.js?v=0.1.1685';
-import { catches } from './sky-catch.js?v=0.1.1685';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1685';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1686';
+import { glyphSvg } from './flight-card.js?v=0.1.1686';
+import { catches } from './sky-catch.js?v=0.1.1686';
+import { noteLocal } from './sky-local.js?v=0.1.1686';
+import { planeSet } from './sky-sets.js?v=0.1.1686';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1686';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -24,12 +26,15 @@ function readSeen() {
   return s;
 }
 let seenCache = null, seenSaved = 0;
+// What a seen plane could count for in a mission (js/progress.js SKY_MISSIONS reads the same words).
+const localFlags = (p) => { const f = [], st = planeSet(p.type, isHelicopter(p)).id; if (st === 'helicopters') f.push('heli'); if (st === 'twinaisle' || st === 'giants') f.push('wide'); if (st === 'props' || st === 'light') f.push('prop'); if ((p.altFt ?? 0) >= 35000) f.push('high'); if (p.altFt != null && p.altFt < 5000) f.push('low'); if (/^[A-Z]{3}\d/.test(p.callsign ?? '')) f.push('airline'); return f; };
 // Called with the planes above the horizon each poll (about every 10 s while Explore or Today is open).
 export function logSeen(list) {
   const s = seenCache && seenCache.day === dayKey() ? seenCache : (seenCache = readSeen());
-  const h = new Date().getHours(), have = new Set(s.hexes);
+  const h = new Date().getHours(), have = new Set(s.hexes), newHour = !s.open[h], fresh = [];
   s.open[h] = 1;
-  for (const a of list ?? []) { const x = a.plane?.hex; if (x && !have.has(x)) { have.add(x); s.hexes.push(x); s.hours[h]++; } }
+  for (const a of list ?? []) { const x = a.plane?.hex; if (x && !have.has(x)) { have.add(x); s.hexes.push(x); s.hours[h]++; fresh.push({ type: a.plane.type, flags: localFlags(a.plane) }); } }
+  noteLocal(fresh, newHour); /* the 30-day tally behind "Rare here" and mission sizing (js/sky-local.js) */
   if (Date.now() - seenSaved > 15000) { seenSaved = Date.now(); try { localStorage.setItem(SEEN, JSON.stringify(s)); } catch {} }
 }
 

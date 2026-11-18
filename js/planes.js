@@ -3,9 +3,9 @@
 // on the website, because adsb.lol doesn’t allow browser requests directly. The airline comes from the callsign's prefix.
 // No DOM here. Positions are extrapolated between fetches using ground speed, track and climb rate.
 
-import { SERVER } from './server.js?v=0.1.1685';
-import { plugin } from './native.js?v=0.1.1685';
-import { lookupRoute } from './routes.js?v=0.1.1685';
+import { SERVER } from './server.js?v=0.1.1686';
+import { plugin } from './native.js?v=0.1.1686';
+import { lookupRoute } from './routes.js?v=0.1.1686';
 // Empty = feature off. localStorage 'planeRelay' overrides it (testing). Our server's /planes (adsb.lol only) once it's
 // deployed; until then the Val Town relay (relay/handler.ts).
 // Sky Collector (2026-11-15): Space Collector's Val Town relay is turned away by adsb.lol now, so the website needs Sky
@@ -141,7 +141,7 @@ export class PlaneTracker {
   }
 
   // Airline + origin/destination for a callsign, or null. Cached; undefined while loading.
-  route(callsign) {
+  route(callsign, plane = null) {
     if (!callsign || !/^[A-Z]{3}\d/.test(callsign)) return null; // registrations (private planes) have no route
     // The airline from the callsign's prefix, and the usual route from our server (2026-10-28, Sevaan): Virtual Radar
     // Server's standing data (CC0) by callsign. Only the callsign is sent. adsbdb was dropped 2026-10-25 for its licence.
@@ -151,7 +151,10 @@ export class PlaneTracker {
     const airline = airlineFor(callsign, null), r = airline ? { airline, flight: callsign, from: '', to: '' } : null;
     this.routes.set(callsign, r); if (this.routes.size > 300) this.routes.delete(this.routes.keys().next().value);
     // Sky Collector: no server of ours, so the phone reads the same CC0 data straight from GitHub (js/routes.js).
-    if (r && !SERVER) lookupRoute(callsign).then((x) => { if (x) { r.from = x.from.city; r.to = x.to.city; r.full = x; } else r.none = true; }).catch(() => {});
+    /* The plane itself goes with the lookup (2026-11-17): a route the plane isn't plausibly flying (Detroit to Detroit, or
+       a path it's nowhere near) comes back null and the catch is a plane card with no flight card. */
+    const pl = plane ?? this.planes.find((p) => p.callsign === callsign) ?? null;
+    if (r && !SERVER) lookupRoute(callsign, pl).then((x) => { if (x) { r.from = x.from.city; r.to = x.to.city; r.full = x; } else r.none = true; }).catch(() => {});
     if (r && SERVER) fetch(`${SERVER}/route?cs=${encodeURIComponent(callsign)}`, { signal: AbortSignal.timeout?.(8000) })
       .then((x) => (x.ok ? x.json() : null)).then((j) => { const st = j?.route; if (st?.length >= 2) { const nm = (a) => a.city || a.iata || a.icao; r.from = nm(st[0]); r.to = nm(st[st.length - 1]); } }).catch(() => {});
     return r;
@@ -171,7 +174,7 @@ const AIRLINES = { ACA: 'Air Canada', ROU: 'Air Canada Rouge', JZA: 'Air Canada 
 // Every ICAO airline code -> name (js/airlines.js, built by scripts/build-airlines.mjs), loaded once, lazily.
 let airlineTable = null, airlineLoad = null;
 export function loadAirlines() {
-  return (airlineLoad ??= import('./airlines.js?v=0.1.1685').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
+  return (airlineLoad ??= import('./airlines.js?v=0.1.1686').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
 }
 export function airlineName(callsign) { return /^[A-Z]{3}\d/.test(callsign ?? '') ? airlineFor(callsign, null) : ''; }
 function airlineFor(callsign, a) {

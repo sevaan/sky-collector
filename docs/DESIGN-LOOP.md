@@ -159,3 +159,24 @@ Space Collector's secrets (UFO, Santa, stories) have no plane version here; they
 2. **Flight tiers stay distance-based**, with cargo dropping from Epic to Rare?
 3. **Both cards of a catch pay XP**, with the first two ranks stretched, or should only the flight card pay?
 4. **The Epic and Legendary hand lists:** happy for me to draft them from the study for you to edit?
+
+## Built 2026-11-17, and what the checks said
+
+Built as approved: js/sky-tiers.js (from the study, scripts/research/build-tiers.py), js/sky-sets.js, js/sky-local.js
+("Rare here" and how busy your sky is), flight tiers and re-tiering of saved cards in js/flights.js, sized and possible
+missions and Sky's XP and ranks in js/progress.js, the deal in main.js (skyDealMissions). Tests: tests/sky-loop.test.mjs.
+
+Not built: Freighters as a plane set (a type code doesn't say cargo); "Next door" uses "international under 1,500 km"
+(no border data); the Albums tab showing these sets (sprint task T); patch art and the new patch list (§5).
+
+**The pyramid check in §1 did not pass as written.** Target: every place 45–70% Common and an Epic per 300 aircraft.
+Result over the study, by aircraft seen: 10 of 27 places inside it. Outside: Asia and the Gulf run 73–86% Common
+(Delhi 86%, Istanbul 83%, Jakarta 82%); 747 freighter corridors run far more Epic than planned (Anchorage 27%, rural
+Saskatchewan 17%, Dubai 10% from A380s); Kansas and Reykjavik saw no Epic at all; remote places are mostly Rare
+(northern Canada 49%). The tiers were left as approved. This is the gap "Rare here" is for, but it is real, and it
+is Sevaan's call whether to accept it, or to soften it (for example Epic 747/A380 cards paying less XP after the
+first few, or regional Common lists).
+
+**The XP check in §4 was estimated, not simulated:** about 3 catches in a 15-minute session at Peterborough or Toronto
+(2 planes up at a time) gives roughly 5 new cards (65 XP) plus up to 150 XP of missions, so the first rank-up (700) lands
+on day 3; at Kansas (4 up at a time) about the same. Inside the "day 2 or 3" target, at its slow end.

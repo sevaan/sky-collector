@@ -350,3 +350,7 @@ body.sky-only:not(.day) #visible .tn-wx.td-wx .k, body.sky-only:not(.day) #sky-t
 /* Why the sky is empty, where "N overhead" sits under the radar (2026-11-17) */
 #radar-why { font:500 12px/1.25 var(--label); letter-spacing:.14em; text-transform:uppercase; color:color-mix(in srgb,var(--text) 70%,transparent); max-width:190px; }
 body.day #radar-why { color:#143046; }
+/* "Rare here" ribbon on a plane card's picture (docs/DESIGN-LOOP.md §1) */
+.fc-here { position:absolute; z-index:3; right:.6em; bottom:.6em; padding:.36em .6em .32em; border-radius:.4em; background:var(--sc-orange-ink, #b42a20); color:#fff;
+  font:600 .82em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.16em; box-shadow:0 .15em .4em rgba(13,34,56,.3); }
+.mini-face .fc-here { font-size:.7em; }

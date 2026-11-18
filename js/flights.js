@@ -2,9 +2,12 @@
 // e.g. Icelandair Toronto → Reykjavík), and every catch also counts toward PLANES (the aircraft type). Anything with no
 // route (helicopters, light planes, balloons, private jets) is a Planes card only. No DOM here.
 
-import { aircraftName, isHelicopter } from './planes.js?v=0.1.1685';
-import { routeKm } from './routes.js?v=0.1.1685';
-import { hasAirlineCallsign } from './sky-stamps.js?v=0.1.1685';
+import { aircraftName, isHelicopter } from './planes.js?v=0.1.1686';
+import { routeKm } from './routes.js?v=0.1.1686';
+import { hasAirlineCallsign } from './sky-stamps.js?v=0.1.1686';
+import { typeTier } from './sky-tiers.js?v=0.1.1686';
+import { planeSet, flightSet } from './sky-sets.js?v=0.1.1686';
+import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1686';
 
 export const TIERS = {
   common: { label: 'Common', mark: '●', color: '#4a6178' },
@@ -13,29 +16,26 @@ export const TIERS = {
   epic: { label: 'Epic', mark: '★', color: '#7a3fc4' },
   legendary: { label: 'Legendary', mark: '✦', color: '#9a6a00' },
 };
-export const CARGO = new Set(['FDX', 'UPS', 'CJT', 'GTI', 'CLX', 'ABX', 'ATN', 'BOX', 'CKS', 'DHK', 'GEC', 'NCA', 'PAC']);
-const SUN = new Set(['MX', 'CU', 'DO', 'JM', 'BS', 'BB', 'AW', 'CW', 'LC', 'TC', 'KY', 'PR', 'CR', 'PA', 'BZ', 'HT', 'AG', 'VC', 'GD', 'TT', 'SX', 'MF', 'BQ', 'VG', 'VI', 'KN']);
-const EUROPE = new Set(['GB', 'IE', 'IS', 'FR', 'DE', 'NL', 'BE', 'LU', 'CH', 'AT', 'IT', 'ES', 'PT', 'DK', 'NO', 'SE', 'FI', 'PL', 'CZ', 'HU', 'GR', 'TR', 'HR', 'RO', 'BG', 'RS', 'SK', 'SI', 'LT', 'LV', 'EE', 'MT', 'CY', 'AL', 'ME', 'MK', 'BA', 'UA', 'MD', 'BY', 'FO', 'GL']);
-const NORTH_AMERICA = new Set(['CA', 'US']);
-
-// The far end of the flight, for sets: from North America, the destination; otherwise the origin if it's yours.
-function setFor(route, airline3) {
-  if (CARGO.has(airline3)) return 'Cargo';
-  const a = route.from.cc, b = route.to.cc;
-  if (a === 'CA' && b === 'CA') return 'Across Canada';
-  if ((NORTH_AMERICA.has(a) && EUROPE.has(b)) || (EUROPE.has(a) && NORTH_AMERICA.has(b))) return 'Across the Atlantic';
-  if (SUN.has(a) || SUN.has(b)) return 'Sun Destinations';
-  if (NORTH_AMERICA.has(a) && NORTH_AMERICA.has(b)) return 'North America';
-  return 'Around the World';
-}
-
-function tierFor(km, airline3) {
-  if (CARGO.has(airline3)) return 'epic';
+export const CARGO = CARGO_AIRLINES;
+/* Tiers and sets (docs/DESIGN-LOOP.md, approved 2026-11-17). A flight's tier is how far it goes; cargo is Rare, not
+   Epic (cargo hubs made every card Epic); 14,000 km and beyond is Legendary. A plane's tier is how much of the world's
+   traffic its type is (js/sky-tiers.js). Sets: js/sky-sets.js. */
+export function flightTier(km, airline3) {
+  if (km != null && km >= 14000) return 'legendary';
+  if (km != null && km >= 10000) return 'epic';
+  if (CARGO.has(airline3)) return 'rare';
   if (km == null) return 'common';
-  if (km >= 9000) return 'epic';
-  if (km >= 4000) return 'rare';
+  if (km >= 5000) return 'rare';
   if (km >= 1500) return 'uncommon';
   return 'common';
+}
+// A saved card brought up to today's rules (cards are kept as snapshots on their sightings, so one caught under older
+// rules would keep its old tier and set for ever). Returns the same object, changed in place.
+export function retier(card) {
+  if (!card) return card;
+  if (card.sky === 'flight' || card.kind === 'flight') { const a3 = card.airlineIcao || String(card.key ?? '').split(':')[1] || ''; const st = flightSet(card.km ?? null, card.from, card.to, a3); card.tier = flightTier(card.km ?? null, a3); card.set = st.name; card.setId = st.id; }
+  else if (card.sky === 'plane' || card.kind === 'plane') { const code = (/^P:(.+)$/.exec(card.key ?? '') || [])[1] || '', heli = card.glyph === 'heli' || code === 'HELI', st = planeSet(code, heli); card.tier = typeTier(code === 'HELI' || code === 'UNKNOWN' ? '' : code, heli); card.set = st.name; card.setId = st.id; }
+  return card;
 }
 
 const fmtKm = (km) => (km == null ? '—' : km.toLocaleString('en-US'));
@@ -49,17 +49,17 @@ export function cardsFor(p, route, airline) {
   const plane = {
     kind: 'plane', key: `P:${p.type || (heli ? 'HELI' : 'UNKNOWN')}`, name: typeName, type: p.type || '',
     glyph: heli ? 'heli' : /^(C1|C2|PA|P2|SR|DA|BE|PC|C208|DH8|AT)/.test(p.type || '') ? 'prop' : 'jet',
-    tier: heli ? 'rare' : /^(A38|B74|A34|AN|C17|C5|KC|E3|C30|C13)/.test(p.type || '') ? 'epic' : 'common',
+    tier: typeTier(p.type, heli), set: planeSet(p.type, heli).name, setId: planeSet(p.type, heli).id,
     stamp: airline || '', reg: hasAirlineCallsign(p.callsign) ? (p.reg || '') : '', // no airline callsign: the callsign is the registration, so it isn't kept
   };
   if (!route?.from || !route?.to) return { flight: null, plane };
-  const a3 = (route.callsign ?? p.callsign ?? '').slice(0, 3), km = routeKm(route), set = setFor(route, a3);
+  const a3 = (route.callsign ?? p.callsign ?? '').slice(0, 3), km = routeKm(route), st = flightSet(km, route.from, route.to, a3), set = st.name;
   const t = airTime(km);
   const flight = {
     kind: 'flight', key: `F:${a3}:${route.from.icao}-${route.to.icao}`,
     from: route.from, to: route.to, airline: airline || a3, airlineIcao: a3, callsign: route.callsign,
     type: p.type || '', typeName, // the aircraft that flew it: the card shows its photo (js/type-photos.js)
-    km, kmText: fmtKm(km), air: t, set, tier: tierFor(km, a3),
+    km, kmText: fmtKm(km), air: t, set, setId: st.id, tier: flightTier(km, a3),
     fact: km == null ? `${route.to.city} is where this ${airline || ''} flight is headed.`.replace('  ', ' ')
       : `${route.from.city} to ${route.to.city} is **${fmtKm(km)} km** as the crow flies: about ${t.h ? `${t.h}\u00a0h ${String(t.m).padStart(2, '0')}\u00a0m` : `${t.m} minutes`} in the air, on a ${typeName}.`,
   };

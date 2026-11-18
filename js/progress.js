@@ -1,8 +1,8 @@
 // Player progress from the sighting log: XP and observer rank, tonight’s three missions, a weekly streak and
 // achievements. Everything is derived from the saved sightings (nothing extra is stored), so it can’t drift.
 // info(cardKey) -> { tier, type, owner, launch, natural, con } | null. No DOM.
-import { nightKey } from './observation.js?v=0.1.1685';
-import { fleetThresholds } from './card-model.js?v=0.1.1685';
+import { nightKey } from './observation.js?v=0.1.1686';
+import { fleetThresholds } from './card-model.js?v=0.1.1686';
 
 // A longer climb (2026-10-12, playtest room: three ranks on night 1, Mission Control in about two weeks), with two
 // prestige ranks past Mission Control. Nobody drops a rank they had on the old curve (rankFloor below).
@@ -140,18 +140,29 @@ const snap = (s) => s.cardSnapshot ?? {};
 const WIDE = /^(A3[3-9]|A35|A38|B74|B76|B77|B78|IL96|A30)/;
 const PROP = /^(DH8|AT[4-7]|C208|PC12|SF34|B190|DHC|JS4|D228|SW4|C130|E120|BE[0-9]|C1[5-9]|C2[0-9]|PA[0-9])/;
 const firstFlight = (s) => s.first && snap(s).sky === 'flight';
+// Sized to your sky (docs/DESIGN-LOOP.md §3, approved 2026-11-17): counts follow how busy the place is (js/sky-local.js
+// localStats().sky → setSkySize). A quiet sky asks for one airline; a busy one for five.
+const SIZES = { new: { airlines: 2, cards: 1 }, quiet: { airlines: 1, cards: 1 }, steady: { airlines: 3, cards: 2 }, busy: { airlines: 5, cards: 4 } };
+let SIZE = SIZES.steady;
+export function setSkySize(sky) { SIZE = SIZES[sky] ?? SIZES.steady; }
+const NUM = ['', 'one', 'two', 'three', 'four', 'five'];
+const airlinesOf = (n) => new Set(n.filter((s) => /^[A-Z]{3}\d/.test(s.callsign ?? '')).map((s) => s.callsign.slice(0, 3))).size;
 export const SKY_MISSIONS = [
   { id: 'wide', text: 'Catch a wide-body jet', done: (n) => n.some((s) => WIDE.test(s.typeCode ?? '')) },
   { id: 'heli', text: 'Catch a helicopter', done: (n) => n.some((s) => snap(s).heli || snap(s).glyph === 'heli') },
   { id: 'prop', text: 'Catch a propeller plane', done: (n) => n.some((s) => PROP.test(s.typeCode ?? '')) },
   { id: 'far', text: 'Catch a flight going more than 3,000 km', done: (n) => n.some((s) => (snap(s).km ?? 0) > 3000) },
+  { id: 'ocean', text: 'Catch a flight going more than 5,000 km', done: (n) => n.some((s) => (snap(s).km ?? 0) > 5000) },
   { id: 'short', text: 'Catch a hop under 500 km', done: (n) => n.some((s) => snap(s).sky === 'flight' && snap(s).km != null && snap(s).km < 500) },
   { id: 'abroad', text: 'Catch a flight to another country', done: (n) => n.some((s) => snap(s).sky === 'flight' && snap(s).from?.country && snap(s).to?.country && snap(s).from.country !== snap(s).to.country) },
-  { id: 'airlines3', text: 'Catch three different airlines', done: (n) => new Set(n.filter((s) => /^[A-Z]{3}\d/.test(s.callsign ?? '')).map((s) => s.callsign.slice(0, 3))).size >= 3 },
+  { id: 'airlines3', get text() { return SIZE.airlines === 1 ? 'Catch an airline flight' : `Catch ${NUM[SIZE.airlines]} different airlines`; }, done: (n) => airlinesOf(n) >= SIZE.airlines },
   { id: 'high', text: 'Catch a plane above 35,000 ft', done: (n) => n.some((s) => (s.altFt ?? 0) >= 35000) },
   { id: 'low', text: 'Catch a plane below 5,000 ft', done: (n) => n.some((s) => s.altFt != null && s.altFt < 5000) },
+  { id: 'bands', text: 'Catch one plane below 5,000 ft and one above 35,000 ft', done: (n) => n.some((s) => s.altFt != null && s.altFt < 5000) && n.some((s) => (s.altFt ?? 0) >= 35000) },
   { id: 'rarenew', text: 'Collect a new Rare card or better', done: (n) => n.some((s) => s.first && ['rare', 'epic', 'legendary'].includes(s.info?.tier ?? snap(s).tier)) },
-  { id: 'newflights2', text: 'Collect two new flights', done: (n) => n.filter(firstFlight).length >= 2 },
+  { id: 'rarehere', text: 'Catch a plane that is rare where you are', done: (n) => n.some((s) => s.rareHere) },
+  { id: 'families2', text: 'Catch planes from two different families', done: (n) => new Set(n.filter((s) => snap(s).sky === 'plane').map((s) => snap(s).setId ?? snap(s).set).filter(Boolean)).size >= 2 },
+  { id: 'newflights2', get text() { return SIZE.cards === 1 ? 'Collect a new card' : `Collect ${NUM[SIZE.cards]} new cards`; }, done: (n) => n.filter((s) => s.first).length >= SIZE.cards },
   { id: 'again', text: 'Stamp a card you own on a new day', done: (n) => n.some((s) => !s.first) },
 ];
 export const SKY_STARTER = [
@@ -169,7 +180,9 @@ const SKY_PATCHES = new Set(['first', 'ten', 'twentyfive', 'fifty', 'hundred', '
   'twilight', 'owl', 'dawn', 'marathon', 'double', 'hattrick', 'months3', 'months12', 'streak4', 'streak12', 'anniversary', 'roadtrip', 'missions10', 'fullhouse', 'missions50']);
 let SKY = false;
 const RANK_NAMES = RANKS.map((r) => r[1]), SKY_RANK_NAMES = ['Spotter', 'Plane Spotter', 'Tracker', 'Navigator', 'Air Traffic Controller', 'Chief Pilot', 'Ace', 'Sky Legend'];
-export function setSkyProgress(on) { SKY = !!on; RANKS.forEach((r, i) => { r[1] = (SKY ? SKY_RANK_NAMES : RANK_NAMES)[i] ?? r[1]; }); } /* Sky Collector's rank names, same thresholds */
+const RANK_AT = RANKS.map((r) => r[0]), SKY_RANK_AT = { 1: 700, 2: 2000 }; /* a plane catch makes two cards, so the first two ranks sit further out and the first rank-up still lands on day 2 (docs/DESIGN-LOOP.md §4) */
+export function setSkyProgress(on) { SKY = !!on; RANKS.forEach((r, i) => { r[1] = (SKY ? SKY_RANK_NAMES : RANK_NAMES)[i] ?? r[1]; r[0] = SKY ? SKY_RANK_AT[i] ?? RANK_AT[i] : RANK_AT[i]; }); }
+const SKY_REPEAT_XP = 3, RARE_HERE_XP = 10; /* a stamp on a card you own; a plane that is unusual where you stand */
 export const isSkyProgress = () => SKY;
 const activeMissions = () => (SKY ? SKY_MISSIONS : MISSIONS);
 export const activeAchievements = () => (SKY ? ACHIEVEMENTS.filter((x) => SKY_PATCHES.has(x.id)) : ACHIEVEMENTS);
@@ -392,7 +405,8 @@ export function progress(sightings, info, { constellations = [], albums = [], no
       if (s.lastChance) a.witness = (a.witness ?? 0) + 1; // collected while it was falling (js/last-chance.js)
       if (i?.reunion) { const r = reunionRoles.get(i.reunion) ?? reunionRoles.set(i.reunion, new Set()).get(i.reunion); r.add(i.role); }
     }
-    else if (!seenNight.has(nk)) xp += REPEAT_XP;
+    else if (!seenNight.has(nk)) xp += SKY ? SKY_REPEAT_XP : REPEAT_XP;
+    if (SKY && s.rareHere) { xp += RARE_HERE_XP; a.rareHere = (a.rareHere ?? 0) + 1; }
     let lv = false;
     if (!seenNight.has(nk) && !i?.natural && !fam) { const c = (nightsOnCard.get(s.cardKey) ?? 0) + 1; /* no levels for the Moon, planets, stars… (2026-10-21, Sevaan) */ nightsOnCard.set(s.cardKey, c); lv = c === 3 || c === 10; }
     seenNight.add(nk);

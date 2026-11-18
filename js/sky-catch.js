@@ -2,14 +2,14 @@
 // Collect does. Catches are kept in localStorage ('skyCatches') for now, apart from Space Collector's sightings, so the
 // old collection code never meets a flight. The Collection screen reads them in a later step.
 
-import { aircraftName, isHelicopter } from './planes.js?v=0.1.1685';
-import { lookupRoute } from './routes.js?v=0.1.1685';
-import { cardsFor, TIERS } from './flights.js?v=0.1.1685';
-import { glyphSvg, showCatch, miniCardHtml } from './flight-card.js?v=0.1.1685';
-import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1685';
+import { aircraftName, isHelicopter } from './planes.js?v=0.1.1686';
+import { lookupRoute } from './routes.js?v=0.1.1686';
+import { cardsFor, TIERS } from './flights.js?v=0.1.1686';
+import { glyphSvg, showCatch, miniCardHtml } from './flight-card.js?v=0.1.1686';
+import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1686';
 
-import { TIER_INFO } from './rarity.js?v=0.1.1685';
-import { allCatches, addCatch } from './catch-store.js?v=0.1.1685';
+import { TIER_INFO } from './rarity.js?v=0.1.1686';
+import { allCatches, addCatch } from './catch-store.js?v=0.1.1686';
 // Catches live in js/catch-store.js (IndexedDB, with a localStorage mirror the Collection page reads).
 // Where catches are read from: Space Collector's sightings once main.js says so (Milestone 1.5), the old store until then.
 let source = allCatches;
@@ -87,7 +87,7 @@ let busy = false;
 export async function preparePlaneCatch(el, now = Date.now()) {
   const hit = el._hit; if (!hit) return null;
   const p = hit.plane, route = el._route;
-  const full = route?.full ?? (await lookupRoute(p.callsign).catch(() => null));
+  const full = route?.full ?? (route?.none ? null : await lookupRoute(p.callsign, p).catch(() => null)) /* the plane goes along: an implausible route is no route (2026-11-17) */;
   const { flight, plane } = cardsFor(p, full, route?.airline || '');
   const out = assess([...catches()], { time: now, hex: p.hex, callsign: p.callsign, flight, plane });
   const c = { time: now, hex: p.hex, callsign: p.callsign, ...(hasAirlineCallsign(p.callsign) && p.reg ? { reg: p.reg } : {}), type: p.type,
@@ -99,7 +99,7 @@ export async function collect(el, { onDone, show = showCatch, now = Date.now() }
   busy = true;
   try {
     const p = hit.plane, route = el._route;
-    const full = route?.full ?? (await lookupRoute(p.callsign).catch(() => null));
+    const full = route?.full ?? (route?.none ? null : await lookupRoute(p.callsign, p).catch(() => null)) /* the plane goes along: an implausible route is no route (2026-11-17) */;
     const { flight, plane } = cardsFor(p, full, route?.airline || '');
     const list = [...catches()];
     const out = assess(list, { time: now, hex: p.hex, callsign: p.callsign, flight, plane });
