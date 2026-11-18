@@ -15,8 +15,9 @@ Mirrors spacecollector.app, in a project of its own so nothing Sky does touches 
   back that flips to a Legendary card made from the game's own card code, /privacy). Deploy: `python3 -I
   scripts/deploy-site.py` (Hosting REST API with the personal gcloud login; never the firebase CLI, which is a work
   account on this Mac). `scripts/fb.py` is a small helper for other Firebase REST calls.
-- **The icon on the page is a placeholder** (a plane in a reticle): Sky has no logo yet, and the repo's icons are still
-  Space Collector's.
+- **Icons:** the app icon (icons/icon.svg, exported by `node scripts/export-icons.mjs`) is copied in by build-site.mjs:
+  /favicon.ico (16, 32, 48), /favicon-32.png, /apple-touch-icon.png (180), /icon-512.png (the share preview, og:image)
+  and /icon.svg. The hero shows the same icon.
 
 ## Not set up yet: Sky's server
 

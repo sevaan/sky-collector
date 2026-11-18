@@ -1,1 +1,41 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 76 76" width="76" height="76"><rect width="76" height="76" rx="18" fill="#0d2238"/><circle cx="38" cy="38" r="19" fill="none" stroke="#fffdf6" stroke-width="2.6"/><path d="M38 9v9M38 58v9M9 38h9M58 38h9" stroke="#d7362b" stroke-width="2.6" stroke-linecap="round"/><path transform="translate(38 38) rotate(45) scale(1.15)" d="M0-12 L2-3 L12 3 L12 6 L2 3 L1 9 L4 11 L4 13 L0 12 L-4 13 L-4 11 L-1 9 L-2 3 L-12 6 L-12 3 L-2-3 Z" fill="#fffdf6"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- Sky Collector app icon (2026-11-18): Space Collector's "Lock-on" icon (its design/icon-options.html, option A) in the
+       sky: the target circle locked onto an airliner, red crosshair ticks, contrails where the orbit's dashed line was,
+       on the Sky Blue of the pack. Source for icons/icon-*.png; export with scripts/export-icons.mjs. -->
+  <defs>
+    <radialGradient id="sky" cx="35%" cy="22%" r="95%">
+      <stop offset="0" stop-color="#5aa0e0"/>
+      <stop offset=".55" stop-color="#2f6fb3"/>
+      <stop offset="1" stop-color="#1b4f87"/>
+    </radialGradient>
+    <linearGradient id="trail" gradientUnits="userSpaceOnUse" x1="-40" y1="787" x2="512" y2="512">
+      <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#fff" stop-opacity=".9"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="14"/></filter>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#sky)"/>
+  <!-- soft clouds, where the stars were -->
+  <g fill="#fff" filter="url(#soft)" opacity=".28">
+    <ellipse cx="170" cy="860" rx="190" ry="54"/><ellipse cx="290" cy="830" rx="120" ry="50"/>
+    <ellipse cx="860" cy="170" rx="170" ry="44"/><ellipse cx="760" cy="150" rx="100" ry="40"/>
+    <ellipse cx="900" cy="900" rx="150" ry="40"/>
+  </g>
+  <!-- the plane's path: Space Collector's orbit line, the same curve from bottom-left to top-right. Behind the plane,
+       its two contrails trace it; ahead, a faint dashed line where it's going -->
+  <g fill="none" stroke="url(#trail)" stroke-width="16" stroke-linecap="round"><path d="M-8 865 Q252 715 511 604" /><path d="M-72 709 Q187 559 446 448" /></g>
+  <path d="M622 468 Q843 383 1064 327" fill="none" stroke="#fff" stroke-width="10" stroke-dasharray="26 30" stroke-linecap="round" opacity=".55"/>
+  <!-- the target circle and its crosshair ticks, as in the app -->
+  <circle cx="512" cy="512" r="300" fill="none" stroke="#d7362b" stroke-width="10" opacity=".45"/>
+  <circle cx="512" cy="512" r="250" fill="none" stroke="#fff" stroke-width="26"/>
+  <g stroke="#e8493c" stroke-width="34" stroke-linecap="round">
+    <line x1="512" y1="222" x2="512" y2="142"/><line x1="512" y1="802" x2="512" y2="882"/>
+    <line x1="222" y1="512" x2="142" y2="512"/><line x1="802" y1="512" x2="882" y2="512"/>
+  </g>
+  <!-- an airliner from below, flying along the path -->
+  <g transform="translate(512 512) rotate(67.4) scale(.82)" fill="#fff">
+    <path d="M0 -215 C16 -215 26 -196 26 -170 L26 150 L96 192 L96 214 L22 196 L12 222 L-12 222 L-22 196 L-96 214 L-96 192 L-26 150 L-26 -170 C-26 -196 -16 -215 0 -215 Z"/>
+    <path d="M24 -46 L232 50 L232 84 L24 30 Z"/><path d="M-24 -46 L-232 50 L-232 84 L-24 30 Z"/>
+    <rect x="86" y="0" width="34" height="74" rx="15"/><rect x="-120" y="0" width="34" height="74" rx="15"/>
+  </g>
+</svg>

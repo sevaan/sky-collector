@@ -16,9 +16,11 @@ rmSync(OUT, { recursive: true, force: true });
 for (const d of ['', 'assets/photos/house/tiny', 'assets/art/backs', 'fonts', 'css', 'js']) mkdirSync(OUT + d, { recursive: true });
 const cp = (f, to = f) => copyFileSync(ROOT + f, OUT + to);
 cp(`assets/photos/house/${TYPE}.webp`); cp(`assets/photos/house/tiny/${TYPE}.webp`); cp('assets/art/backs/back-flight-plan.webp'); /* no Sky logo is chosen yet (the repo's icons are still Space Collector's): a placeholder mark, also in the page */
-writeFileSync(OUT + 'icon.svg', `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 76 76" width="76" height="76"><rect width="76" height="76" rx="18" fill="#0d2238"/><circle cx="38" cy="38" r="19" fill="none" stroke="#fffdf6" stroke-width="2.6"/><path d="M38 9v9M38 58v9M9 38h9M58 38h9" stroke="#d7362b" stroke-width="2.6" stroke-linecap="round"/><path transform="translate(38 38) rotate(45) scale(1.15)" d="M0-12 L2-3 L12 3 L12 6 L2 3 L1 9 L4 11 L4 13 L0 12 L-4 13 L-4 11 L-1 9 L-2 3 L-12 6 L-12 3 L-2-3 Z" fill="#fffdf6"/></svg>`);
+/* the app icon (icons/, exported from icons/icon.svg by scripts/export-icons.mjs): favicons, the home-screen icon, the
+   share preview and the hero's icon (2026-11-18, it replaced the placeholder plane-in-a-reticle) */
+for (const [f, to] of [['favicon.ico'], ['favicon-32.png'], ['icon-180.png', 'apple-touch-icon.png'], ['icon-512.png'], ['icon.svg']]) cp(`icons/${f}`, to ?? f);
 cp('css/fonts.css'); cp('css/sky-cards.css'); cp('js/weather-art.js'); cpSync(ROOT + 'fonts', OUT + 'fonts', { recursive: true });
-writeFileSync(OUT + 'privacy.html', readFileSync(ROOT + 'privacy.html', 'utf8').replaceAll("url('fonts/", "url('/fonts/"));
+writeFileSync(OUT + 'privacy.html', readFileSync(ROOT + 'privacy.html', 'utf8').replaceAll("url('fonts/", "url('/fonts/").replaceAll('href="icons/favicon', 'href="/favicon').replace('href="icons/icon-180.png"', 'href="/apple-touch-icon.png"'));
 const html = `<!doctype html>
 <html lang="en">
 <head>
@@ -26,10 +28,10 @@ const html = `<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Sky Collector: collect what flies over you</title>
 <meta name="description" content="Point your phone at the sky, line up a plane in the circle, and collect it. Sky Collector is coming soon to iPhone and Android.">
-<meta property="og:title" content="Sky Collector"><meta property="og:description" content="Collect what flies over you. Coming soon to iPhone and Android."><meta property="og:url" content="https://skycollector.app/">
+<meta property="og:title" content="Sky Collector"><meta property="og:description" content="Collect what flies over you. Coming soon to iPhone and Android."><meta property="og:url" content="https://skycollector.app/"><meta property="og:image" content="https://skycollector.app/icon-512.png"><meta name="twitter:card" content="summary">
 <meta name="theme-color" content="#5d97cf">
 <link rel="canonical" href="https://skycollector.app/">
-<link rel="icon" type="image/svg+xml" href="/icon.svg">
+<link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/css/fonts.css"><link rel="stylesheet" href="/css/sky-cards.css">
 <style>
   :root { --gold:#d7362b; --ink:#0d2238; --muted:#23405c; --red-ink:#b42a20; }
@@ -73,7 +75,7 @@ const html = `<!doctype html>
 <div class="sky" aria-hidden="true"><div class="deck hi" id="deck-hi"></div><div class="deck mid" id="deck-mid"></div><div class="deck lo" id="deck-lo"></div></div>
 <main>
   <section class="hero">
-    <svg class="icon" viewBox="0 0 76 76" width="76" height="76" aria-hidden="true"><rect width="76" height="76" rx="18" fill="#0d2238"/><circle cx="38" cy="38" r="19" fill="none" stroke="#fffdf6" stroke-width="2.6"/><path d="M38 9v9M38 58v9M9 38h9M58 38h9" stroke="#d7362b" stroke-width="2.6" stroke-linecap="round"/><path transform="translate(38 38) rotate(45) scale(1.15)" d="M0-12 L2-3 L12 3 L12 6 L2 3 L1 9 L4 11 L4 13 L0 12 L-4 13 L-4 11 L-1 9 L-2 3 L-12 6 L-12 3 L-2-3 Z" fill="#fffdf6"/></svg>
+    <img class="icon" src="/apple-touch-icon.png" width="76" height="76" alt="">
     <h1>Sky Collector</h1>
     <p class="tag">Collect what flies over you</p>
     <p class="pitch">Find out what’s really up there. Point your phone at the sky, line up a plane in the circle, and collect it: where it’s going, who’s flying it, and what it is.</p>
