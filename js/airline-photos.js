@@ -113,6 +113,20 @@ export const AIRLINE_PHOTOS = {
 0.78
 ]
 },
+"AAR-A21N": {
+"credit": "N509FZ",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:HL8364@PEK_(20190825094709).jpg",
+"title": "File:HL8364@PEK (20190825094709).jpg",
+"w": 1280,
+"h": 844,
+"box": [
+-0.02,
+0.25,
+0.98,
+0.79
+]
+},
 "AAR-A321": {
 "credit": "lasta29",
 "licence": "CC BY 2.0",
@@ -181,6 +195,20 @@ export const AIRLINE_PHOTOS = {
 -0.01,
 0.99,
 1.0
+]
+},
+"ABY-A21N": {
+"credit": "Colin Cooke Photo",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:A6-ATD_Airbus_A321-251NX_Air_Arabia_LGW_8.8.26.jpg",
+"title": "File:A6-ATD Airbus A321-251NX Air Arabia LGW 8.8.26.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+-0.02,
+0.28,
+1.01,
+0.77
 ]
 },
 "ACA-A320": {
@@ -268,17 +296,17 @@ export const AIRLINE_PHOTOS = {
 ]
 },
 "ACA-B789": {
-"credit": "AVA Navigate",
+"credit": "Adam Moreira (AEMoreira042281)",
 "licence": "CC BY-SA 4.0",
-"source": "https://commons.wikimedia.org/wiki/File:Air_Canada_787-9_C-FVLZ_@YYZ.jpg",
-"title": "File:Air Canada 787-9 C-FVLZ @YYZ.jpg",
+"source": "https://commons.wikimedia.org/wiki/File:Air_Canada_Boeing_787-9_Dreamliner_C-FVND_approaching_EWR_Airport.jpg",
+"title": "File:Air Canada Boeing 787-9 Dreamliner C-FVND approaching EWR Airport.jpg",
 "w": 1280,
-"h": 720,
+"h": 960,
 "box": [
--0.04,
-0.2,
-1.03,
-0.81
+0.02,
+0.25,
+1.02,
+0.72
 ]
 },
 "ACA-BCS3": {
@@ -293,6 +321,48 @@ export const AIRLINE_PHOTOS = {
 0.05,
 0.99,
 0.9
+]
+},
+"AEA-B738": {
+"credit": "Bene Riobó",
+"licence": "CC BY-SA 3.0",
+"source": "https://commons.wikimedia.org/wiki/File:EC-IDA_737_Air_Europa_VGO.jpg",
+"title": "File:EC-IDA 737 Air Europa VGO.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.01,
+0.27,
+0.99,
+0.84
+]
+},
+"AEA-B788": {
+"credit": "Alan Wilson from Stilton, Peterborough, Cambs, UK",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:Boeing_787-8_%E2%80%98EC-MIG%E2%80%99_Air_Europa_(27188864746).jpg",
+"title": "File:Boeing 787-8 ‘EC-MIG’ Air Europa (27188864746).jpg",
+"w": 1280,
+"h": 853,
+"box": [
+-0.02,
+0.2,
+1.0,
+0.69
+]
+},
+"AEA-B789": {
+"credit": "MarcelX42",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Hannover_Airport_Air_Europa_Boeing_787-9_Dreamliner_EC-OMB_(DSC04167).jpg",
+"title": "File:Hannover Airport Air Europa Boeing 787-9 Dreamliner EC-OMB (DSC04167).jpg",
+"w": 1280,
+"h": 720,
+"box": [
+-0.02,
+0.18,
+1.0,
+0.73
 ]
 },
 "AEE-A320": {
@@ -407,6 +477,20 @@ export const AIRLINE_PHOTOS = {
 0.68
 ]
 },
+"AIC-B789": {
+"credit": "Mike Burdett",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:VT-AWA_Boeing_787-9_at_Heathrow_18th_July_2026.jpg",
+"title": "File:VT-AWA Boeing 787-9 at Heathrow 18th July 2026.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+-0.04,
+0.19,
+0.93,
+0.7
+]
+},
 "AMX-B38M": {
 "credit": "4300streetcar",
 "licence": "CC BY 4.0",
@@ -419,6 +503,20 @@ export const AIRLINE_PHOTOS = {
 0.13,
 1.02,
 0.74
+]
+},
+"AMX-B39M": {
+"credit": "NS777",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:AeroMexico_B737-9_MAX_XA-HSB_at_GDL.jpg",
+"title": "File:AeroMexico B737-9 MAX XA-HSB at GDL.jpg",
+"w": 1280,
+"h": 960,
+"box": [
+0.05,
+0.41,
+0.8,
+0.82
 ]
 },
 "AMX-B738": {
@@ -533,6 +631,20 @@ export const AIRLINE_PHOTOS = {
 0.7409
 ]
 },
+"ANZ-A21N": {
+"credit": "DS28",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Air_New_Zealand_Airbus_A321neo_(ZK-NNF)_takeoff_at_Gold_Coast_airport_(OOL_-_YBCG)_2019.11.10.jpg",
+"title": "File:Air New Zealand Airbus A321neo (ZK-NNF) takeoff at Gold Coast airport (OOL - YBCG) 2019.11.10.jpg",
+"w": 1280,
+"h": 857,
+"box": [
+0.03,
+0.21,
+0.89,
+0.74
+]
+},
 "ANZ-A320": {
 "credit": "G B_NZ",
 "licence": "CC BY-SA 2.0",
@@ -576,17 +688,17 @@ export const AIRLINE_PHOTOS = {
 ]
 },
 "ASA-B39M": {
-"credit": "4300streetcar",
-"licence": "CC BY 4.0",
-"source": "https://commons.wikimedia.org/wiki/File:Alaska_737-9_MAX_N966AK_on_final_approach_to_Boston_Oct_2024_1.jpg",
-"title": "File:Alaska 737-9 MAX N966AK on final approach to Boston Oct 2024 1.jpg",
+"credit": "Oleg Yunakov",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Boeing_737_MAX_9_-_Alaska_Airlines_-_N823AK.jpg",
+"title": "File:Boeing 737 MAX 9 - Alaska Airlines - N823AK.jpg",
 "w": 1280,
-"h": 720,
+"h": 960,
 "box": [
--0.03,
-0.13,
-1.02,
-0.82
+0.03,
+0.41,
+0.93,
+0.84
 ]
 },
 "ASA-B738": {
@@ -604,17 +716,17 @@ export const AIRLINE_PHOTOS = {
 ]
 },
 "ASA-B739": {
-"credit": "4300streetcar",
-"licence": "CC BY 4.0",
-"source": "https://commons.wikimedia.org/wiki/File:Alaska_Airlines_Boeing_737-900ER_N403AS_departing_Boston_July_2026.jpg",
-"title": "File:Alaska Airlines Boeing 737-900ER N403AS departing Boston July 2026.jpg",
+"credit": "Adam Moreira (AEMoreira042281)",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Alaska_Airlines_Boeing_737-990(ER)_N248AK_approaching_EWR_Airport.jpg",
+"title": "File:Alaska Airlines Boeing 737-990(ER) N248AK approaching EWR Airport.jpg",
 "w": 1280,
-"h": 720,
+"h": 960,
 "box": [
-0.05,
-0.25,
-0.99,
-0.71
+-0.01,
+0.26,
+1.02,
+0.74
 ]
 },
 "AUA-A320": {
@@ -701,6 +813,48 @@ export const AIRLINE_PHOTOS = {
 0.7503
 ]
 },
+"AXB-B738": {
+"credit": "S5A-0043",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:(SGP-Singapore)_Air_India_Express_Boeing_737-8HG_VT-AXJ_@_WSSS_2026-03-11.jpg",
+"title": "File:(SGP-Singapore) Air India Express Boeing 737-8HG VT-AXJ @ WSSS 2026-03-11.jpg",
+"w": 1280,
+"h": 720,
+"box": [
+0.0,
+0.0,
+1.04,
+0.83
+]
+},
+"AXM-A20N": {
+"credit": "LN9267",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:AirAsia_9M-RAB_run_AK236(Hong_Kong_International_Airport_to_Malaysia_Kota_Kinabalu_International_Airport)_25-02-2025.jpg",
+"title": "File:AirAsia 9M-RAB run AK236(Hong Kong International Airport to Malaysia Kota Kinabalu International Airport) 25-02-2025.jpg",
+"w": 1280,
+"h": 960,
+"box": [
+0.15,
+0.4,
+0.81,
+0.78
+]
+},
+"AXM-A21N": {
+"credit": "UB-TY144",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:9M-VAH_A321neo_2026-02-16_KUL_AirAsia_9N1A2892ps1.jpg",
+"title": "File:9M-VAH A321neo 2026-02-16 KUL AirAsia 9N1A2892ps1.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+-0.02,
+0.27,
+1.0,
+0.73
+]
+},
 "AXM-A320": {
 "credit": "This Photo was taken by Timothy A. Gonsalves.  Feel free to use my photos, but p",
 "licence": "CC BY-SA 4.0",
@@ -713,6 +867,20 @@ export const AIRLINE_PHOTOS = {
 0.2684,
 0.8588,
 0.8718
+]
+},
+"AZU-A20N": {
+"credit": "Rafael Luiz Canossa",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:A320neo_Azul_SBPA_(31500553833).jpg",
+"title": "File:A320neo Azul SBPA (31500553833).jpg",
+"w": 1280,
+"h": 853,
+"box": [
+-0.04,
+0.15,
+1.02,
+0.72
 ]
 },
 "AZU-A332": {
@@ -741,6 +909,20 @@ export const AIRLINE_PHOTOS = {
 0.18,
 1.04,
 0.77
+]
+},
+"AZU-E295": {
+"credit": "Guilherme Borges dos Santos",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Azul_Embraer_E195-E2_Brazilian_Flag_Livery_%E2%80%93_2026_FIFA_World_Cup_Promotion.jpg",
+"title": "File:Azul Embraer E195-E2 Brazilian Flag Livery – 2026 FIFA World Cup Promotion.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+-0.04,
+0.04,
+1.03,
+0.87
 ]
 },
 "BAW-A20N": {
@@ -772,17 +954,17 @@ export const AIRLINE_PHOTOS = {
 ]
 },
 "BAW-A320": {
-"credit": "Oscaracton",
-"licence": "CC BY 4.0",
-"source": "https://commons.wikimedia.org/wiki/File:G-EUUD_British_Airways_A320_EGPH.jpg",
-"title": "File:G-EUUD British Airways A320 EGPH.jpg",
+"credit": "Bene Riobó",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:G-EUYI_A320_British_Airways_BCN.jpg",
+"title": "File:G-EUYI A320 British Airways BCN.jpg",
 "w": 1280,
 "h": 853,
 "box": [
--0.04,
-0.23,
-1.03,
-0.82
+0.01,
+0.2,
+1.01,
+0.74
 ]
 },
 "BAW-A321": {
@@ -828,17 +1010,17 @@ export const AIRLINE_PHOTOS = {
 ]
 },
 "BAW-B772": {
-"credit": "Acroterion",
-"licence": "CC BY-SA 4.0",
-"source": "https://commons.wikimedia.org/wiki/File:British_Airways_Boeing_777-200_G-VIIV_IAD_VA1.jpg",
-"title": "File:British Airways Boeing 777-200 G-VIIV IAD VA1.jpg",
+"credit": "km30192002",
+"licence": "CC BY 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:G-YMMG_British_Airways_Boeing_777-200_(27383351267).jpg",
+"title": "File:G-YMMG British Airways Boeing 777-200 (27383351267).jpg",
 "w": 1280,
-"h": 676,
+"h": 853,
 "box": [
-0.01,
-0.24,
-1.04,
-0.82
+0.0,
+0.17,
+1.02,
+0.72
 ]
 },
 "BAW-B77W": {
@@ -883,6 +1065,34 @@ export const AIRLINE_PHOTOS = {
 0.72
 ]
 },
+"BTK-A320": {
+"credit": "Bahnfrend",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Batik_Air_Airbus_A320_PK-BKK_Jakarta_2023_(01).jpg",
+"title": "File:Batik Air Airbus A320 PK-BKK Jakarta 2023 (01).jpg",
+"w": 1280,
+"h": 720,
+"box": [
+0.0,
+0.2,
+1.02,
+0.78
+]
+},
+"BTK-B738": {
+"credit": "Bahnfrend",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Batik_Air_Boeing_737_PK-BGF_Jakarta_2025_(03).jpg",
+"title": "File:Batik Air Boeing 737 PK-BGF Jakarta 2025 (03).jpg",
+"w": 1280,
+"h": 720,
+"box": [
+-0.01,
+0.12,
+1.03,
+0.69
+]
+},
 "CAL-A333": {
 "credit": "4300streetcar",
 "licence": "CC BY 4.0",
@@ -909,6 +1119,20 @@ export const AIRLINE_PHOTOS = {
 0.2,
 0.97,
 0.76
+]
+},
+"CAL-B744": {
+"credit": "Aero Icarus from Zürich, Switzerland",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:431al_-_China_Airlines_Boeing_747-400,_B-18203@YVR,_10.2006_-_Flickr_-_Aero_Icarus.jpg",
+"title": "File:431al - China Airlines Boeing 747-400, B-18203@YVR, 10.2006 - Flickr - Aero Icarus.jpg",
+"w": 1280,
+"h": 857,
+"box": [
+0.04,
+0.2,
+0.92,
+0.69
 ]
 },
 "CAL-B77W": {
@@ -967,6 +1191,20 @@ export const AIRLINE_PHOTOS = {
 0.74
 ]
 },
+"CCA-A359": {
+"credit": "S5A-0043",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:(SGP-Singapore)_Air_China_Airbus_A350-941_B-322Z_@_WSSS_2026-01-29.jpg",
+"title": "File:(SGP-Singapore) Air China Airbus A350-941 B-322Z @ WSSS 2026-01-29.jpg",
+"w": 1280,
+"h": 720,
+"box": [
+-0.03,
+0.22,
+1.02,
+0.79
+]
+},
 "CCA-B738": {
 "credit": "Alan Wilson from Peterborough, Cambs, UK",
 "licence": "CC BY-SA 2.0",
@@ -979,6 +1217,20 @@ export const AIRLINE_PHOTOS = {
 0.26,
 1.03,
 0.74
+]
+},
+"CES-A20N": {
+"credit": "Benlisquare",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:China_Eastern_Airlines_Airbus_A320neo_(B-324Z)_on_final_approach_towards_SHA.jpg",
+"title": "File:China Eastern Airlines Airbus A320neo (B-324Z) on final approach towards SHA.jpg",
+"w": 1280,
+"h": 852,
+"box": [
+0.03,
+0.21,
+0.95,
+0.85
 ]
 },
 "CES-A320": {
@@ -1009,6 +1261,20 @@ export const AIRLINE_PHOTOS = {
 0.71
 ]
 },
+"CES-A333": {
+"credit": "4300streetcar",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:China_Eastern_Airbus_A330-300_B-1066_landing_at_Taipei_Songshan_Airport_February_2026.jpg",
+"title": "File:China Eastern Airbus A330-300 B-1066 landing at Taipei Songshan Airport February 2026.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.13,
+0.11,
+0.96,
+0.78
+]
+},
 "CES-B738": {
 "credit": "4300streetcar",
 "licence": "CC BY 4.0",
@@ -1021,6 +1287,48 @@ export const AIRLINE_PHOTOS = {
 0.14,
 0.95,
 0.68
+]
+},
+"CFG-A20N": {
+"credit": "André Gerwing",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Airbus_A320-271N_(c-n_12954,_D-ANCW)_2026-02-17_Andre_Gerwing_Collection_ID_027919.jpg",
+"title": "File:Airbus A320-271N (c-n 12954, D-ANCW) 2026-02-17 Andre Gerwing Collection ID 027919.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.03,
+0.22,
+0.99,
+0.76
+]
+},
+"CFG-A320": {
+"credit": "Alan Wilson from Peterborough, Cambs, UK",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:Condor_Airlines_A320_(D-AICE)_@_TFS,_Jan_2019.jpg",
+"title": "File:Condor Airlines A320 (D-AICE) @ TFS, Jan 2019.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+-0.01,
+0.16,
+1.0,
+0.71
+]
+},
+"CFG-A339": {
+"credit": "4300streetcar",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Condor_Airbus_A330-900_D-ANRE_departing_Boston_June_2025_2.jpg",
+"title": "File:Condor Airbus A330-900 D-ANRE departing Boston June 2025 2.jpg",
+"w": 1280,
+"h": 720,
+"box": [
+-0.01,
+0.08,
+1.0,
+0.88
 ]
 },
 "CHH-B738": {
@@ -1121,6 +1429,34 @@ export const AIRLINE_PHOTOS = {
 0.769
 ]
 },
+"CSN-A20N": {
+"credit": "S5A-0043",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:(SGP-Singapore)_China_Southern_Airlines_Airbus_A320-251N_B-30EZ_@_WSSS_2026-03-11.jpg",
+"title": "File:(SGP-Singapore) China Southern Airlines Airbus A320-251N B-30EZ @ WSSS 2026-03-11.jpg",
+"w": 1280,
+"h": 720,
+"box": [
+-0.03,
+0.02,
+1.03,
+0.69
+]
+},
+"CSN-A21N": {
+"credit": "4300streetcar",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:China_Southern_Airlines_Airbus_A321neo_B-324P_on_final_approach_to_Shanghai_Hongqiao_May_2026.jpg",
+"title": "File:China Southern Airlines Airbus A321neo B-324P on final approach to Shanghai Hongqiao May 2026.jpg",
+"w": 1280,
+"h": 720,
+"box": [
+0.02,
+0.15,
+0.99,
+0.61
+]
+},
 "CSN-A320": {
 "credit": "Alan Wilson from Peterborough, Cambs, UK",
 "licence": "CC BY-SA 2.0",
@@ -1208,15 +1544,15 @@ export const AIRLINE_PHOTOS = {
 "DAL-A21N": {
 "credit": "4300streetcar",
 "licence": "CC BY 4.0",
-"source": "https://commons.wikimedia.org/wiki/File:Delta_Air_Lines_Airbus_A321neo_N503DZ_on_final_approach_to_Boston_June_2026_1.jpg",
-"title": "File:Delta Air Lines Airbus A321neo N503DZ on final approach to Boston June 2026 1.jpg",
+"source": "https://commons.wikimedia.org/wiki/File:Delta_Air_Lines_Airbus_A321neo_N512DE_on_final_approach_to_Boston_June_2026_1.jpg",
+"title": "File:Delta Air Lines Airbus A321neo N512DE on final approach to Boston June 2026 1.jpg",
 "w": 1280,
 "h": 720,
 "box": [
-0.01,
-0.24,
-0.95,
-0.81
+0.02,
+0.18,
+0.98,
+0.57
 ]
 },
 "DAL-A320": {
@@ -1346,17 +1682,17 @@ export const AIRLINE_PHOTOS = {
 ]
 },
 "DLH-A320": {
-"credit": "Oscaracton",
-"licence": "CC BY 4.0",
-"source": "https://commons.wikimedia.org/wiki/File:D-AIQW_Lufthansa_A320_EGPH.jpg",
-"title": "File:D-AIQW Lufthansa A320 EGPH.jpg",
+"credit": "Bene Riobó",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:D-AIZM_A320_Lufthansa_ARN.jpg",
+"title": "File:D-AIZM A320 Lufthansa ARN.jpg",
 "w": 1280,
 "h": 853,
 "box": [
--0.04,
-0.24,
-1.03,
-0.8
+0.0,
+0.2,
+1.01,
+0.79
 ]
 },
 "DLH-A321": {
@@ -1443,6 +1779,34 @@ export const AIRLINE_PHOTOS = {
 0.82
 ]
 },
+"EIN-A20N": {
+"credit": "simon butler from halesowen, uk",
+"licence": "CC BY 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:AER_LINGUS_AIRBUS_A320NEO_EI-NSC_(53113997948).jpg",
+"title": "File:AER LINGUS AIRBUS A320NEO EI-NSC (53113997948).jpg",
+"w": 1280,
+"h": 942,
+"box": [
+0.0,
+0.27,
+1.01,
+0.78
+]
+},
+"EIN-A21N": {
+"credit": "4300streetcar",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Aer_Lingus_Airbus_A321neo_EI-LRA_departing_Boston_April_2025_1.jpg",
+"title": "File:Aer Lingus Airbus A321neo EI-LRA departing Boston April 2025 1.jpg",
+"w": 1280,
+"h": 720,
+"box": [
+0.0,
+0.1,
+1.0,
+0.85
+]
+},
 "EIN-A320": {
 "credit": "Alan Wilson from Stilton, Peterborough, Cambs, UK",
 "licence": "CC BY-SA 2.0",
@@ -1471,6 +1835,90 @@ export const AIRLINE_PHOTOS = {
 0.86
 ]
 },
+"EJA-C68A": {
+"credit": "André Gerwing",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Cessna_680A_-_Citation_Latitude_(c-n_443,_CS-LUD)_2026-03-23_Andre_Gerwing_Collection_ID_028077.jpg",
+"title": "File:Cessna 680A - Citation Latitude (c-n 443, CS-LUD) 2026-03-23 Andre Gerwing Collection ID 028077.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.0,
+0.13,
+0.97,
+0.79
+]
+},
+"EJA-C700": {
+"credit": "DUNCAN KIRK",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:N891QS_Citation_Longitude,_NetJets,_Harry_Reid_05-06-26.jpg",
+"title": "File:N891QS Citation Longitude, NetJets, Harry Reid 05-06-26.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+-0.03,
+0.25,
+1.02,
+0.75
+]
+},
+"EJA-E55P": {
+"credit": "ZLEA",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Embraer_EMB-505_Phenom_300_(N466QS,_cn_50500757)_(2-18-2026).jpg",
+"title": "File:Embraer EMB-505 Phenom 300 (N466QS, cn 50500757) (2-18-2026).jpg",
+"w": 1280,
+"h": 853,
+"box": [
+-0.01,
+0.2,
+0.95,
+0.74
+]
+},
+"EJU-A20N": {
+"credit": "André Gerwing",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Airbus_A320-251N_(c-n_11234,_OE-LSO)_2026-03-23_Andre_Gerwing_Collection_ID_028072.jpg",
+"title": "File:Airbus A320-251N (c-n 11234, OE-LSO) 2026-03-23 Andre Gerwing Collection ID 028072.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.0,
+0.18,
+1.0,
+0.71
+]
+},
+"EJU-A319": {
+"credit": "MarcelX42",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Berlin_Brandenburg_Airport_easyJet_Europe_Airbus_A319-111_OE-LKP_(DSC01880).jpg",
+"title": "File:Berlin Brandenburg Airport easyJet Europe Airbus A319-111 OE-LKP (DSC01880).jpg",
+"w": 1280,
+"h": 720,
+"box": [
+-0.03,
+0.23,
+1.02,
+0.82
+]
+},
+"EJU-A320": {
+"credit": "Alan Wilson from Peterborough, Cambs, UK",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:Airbus_A320-214_%E2%80%98OE-IJD%E2%80%99_easyJet_Europe_(53701233914).jpg",
+"title": "File:Airbus A320-214 ‘OE-IJD’ easyJet Europe (53701233914).jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.01,
+0.21,
+0.98,
+0.71
+]
+},
 "ENY-E170": {
 "credit": "Acroterion",
 "licence": "CC BY-SA 4.0",
@@ -1497,6 +1945,34 @@ export const AIRLINE_PHOTOS = {
 0.16,
 1.0,
 0.89
+]
+},
+"ETD-A35K": {
+"credit": "Mark Bess",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:A6-XWB_JFK_Landing_22L_EY_A350_1041_Year_Of_The_Fiftieth_Small.png",
+"title": "File:A6-XWB JFK Landing 22L EY A350 1041 Year Of The Fiftieth Small.png",
+"w": 1280,
+"h": 720,
+"box": [
+-0.01,
+0.22,
+1.01,
+0.75
+]
+},
+"ETD-A388": {
+"credit": "S5A-0043",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:(GBR-London)_Etihad_Airways_Airbus_A380-861_A6-APJ_@_EGLL_2025-06-18.jpg",
+"title": "File:(GBR-London) Etihad Airways Airbus A380-861 A6-APJ @ EGLL 2025-06-18.jpg",
+"w": 1280,
+"h": 720,
+"box": [
+0.0,
+0.08,
+1.01,
+0.76
 ]
 },
 "ETD-B77W": {
@@ -1611,6 +2087,48 @@ export const AIRLINE_PHOTOS = {
 0.74
 ]
 },
+"EVA-B78X": {
+"credit": "4300streetcar",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:EVA_Air_Boeing_787-10_B-17806_on_final_approach_to_Taoyuan_February_2026.jpg",
+"title": "File:EVA Air Boeing 787-10 B-17806 on final approach to Taoyuan February 2026.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.01,
+0.07,
+0.97,
+0.8
+]
+},
+"EWG-A20N": {
+"credit": "André Gerwing",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Airbus_A320-251N_(c-n_10970,_D-AENG)_2026-02-25_Andre_Gerwing_Collection_ID_027936.jpg",
+"title": "File:Airbus A320-251N (c-n 10970, D-AENG) 2026-02-25 Andre Gerwing Collection ID 027936.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.0,
+0.16,
+0.97,
+0.77
+]
+},
+"EWG-A319": {
+"credit": "MarcelX42",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Berlin_Brandenburg_Airport_Eurowings_Airbus_A319-112_D-ABGQ_(DSC06405).jpg",
+"title": "File:Berlin Brandenburg Airport Eurowings Airbus A319-112 D-ABGQ (DSC06405).jpg",
+"w": 1280,
+"h": 720,
+"box": [
+-0.02,
+0.13,
+1.04,
+0.79
+]
+},
 "EWG-A320": {
 "credit": "MarcelX42",
 "licence": "CC BY-SA 4.0",
@@ -1625,18 +2143,46 @@ export const AIRLINE_PHOTOS = {
 0.76
 ]
 },
-"EXS-B738": {
-"credit": "Acabashi",
+"EXS-A21N": {
+"credit": "André Gerwing",
 "licence": "CC BY-SA 4.0",
-"source": "https://commons.wikimedia.org/wiki/File:Jet2_Holidays_Boeing_737-800_over_Bishop%27s_Stortford.jpg",
-"title": "File:Jet2 Holidays Boeing 737-800 over Bishop's Stortford.jpg",
+"source": "https://commons.wikimedia.org/wiki/File:Airbus_A321-251NX_(c-n_12730,_G-SUNV)_2025-12-08_Andre_Gerwing_Collection_ID_027529.jpg",
+"title": "File:Airbus A321-251NX (c-n 12730, G-SUNV) 2025-12-08 Andre Gerwing Collection ID 027529.jpg",
 "w": 1280,
-"h": 720,
+"h": 853,
 "box": [
--0.02,
-0.18,
-0.94,
-0.86
+-0.01,
+0.22,
+1.01,
+0.71
+]
+},
+"EXS-B738": {
+"credit": "ahisgett",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:G-JZDG_Jet2_Boeing_737-800_1.jpg",
+"title": "File:G-JZDG Jet2 Boeing 737-800 1.jpg",
+"w": 1280,
+"h": 805,
+"box": [
+0.02,
+0.16,
+1.01,
+0.91
+]
+},
+"EZY-A20N": {
+"credit": "Alan Wilson",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:HB-AYN_@_TFS,_2022-12-13.jpg",
+"title": "File:HB-AYN @ TFS, 2022-12-13.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.01,
+0.22,
+1.0,
+0.71
 ]
 },
 "EZY-A319": {
@@ -1665,6 +2211,34 @@ export const AIRLINE_PHOTOS = {
 0.22,
 1.02,
 0.81
+]
+},
+"FDB-B38M": {
+"credit": "DUNCAN KIRK",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:A6-FPM_B737_MAX_8,_flydubai,_Boeing_Field_09-15-26.jpg",
+"title": "File:A6-FPM B737 MAX 8, flydubai, Boeing Field 09-15-26.jpg",
+"w": 1280,
+"h": 854,
+"box": [
+-0.03,
+0.16,
+1.03,
+0.65
+]
+},
+"FDB-B738": {
+"credit": "Faisal Akram from Dhaka, Bangladesh",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:A6-FDD_Boeing_737-800_Flydubai_Lined_Up_for_Take_Off_(8305312353).jpg",
+"title": "File:A6-FDD Boeing 737-800 Flydubai Lined Up for Take Off (8305312353).jpg",
+"w": 1280,
+"h": 927,
+"box": [
+-0.01,
+0.11,
+1.04,
+0.71
 ]
 },
 "FDX-B763": {
@@ -1737,6 +2311,20 @@ export const AIRLINE_PHOTOS = {
 0.99
 ]
 },
+"FFT-A321": {
+"credit": "Acroterion",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Frontier_Airbus_A321_N702FR_BWI_MD1.jpg",
+"title": "File:Frontier Airbus A321 N702FR BWI MD1.jpg",
+"w": 1280,
+"h": 639,
+"box": [
+0.03,
+0.17,
+1.01,
+0.78
+]
+},
 "FIN-A321": {
 "credit": "Bene Riobó",
 "licence": "CC BY-SA 4.0",
@@ -1807,18 +2395,32 @@ export const AIRLINE_PHOTOS = {
 0.74
 ]
 },
-"GLO-B38M": {
-"credit": "Colin Cooke Photo",
-"licence": "CC BY-SA 2.0",
-"source": "https://commons.wikimedia.org/wiki/File:PR-XMD_@_MIA,_2023-01-17.jpg",
-"title": "File:PR-XMD @ MIA, 2023-01-17.jpg",
+"GIA-B77W": {
+"credit": "Arthur Chi Yen",
+"licence": "CC0",
+"source": "https://commons.wikimedia.org/wiki/File:Boeing_777-300ER_Garuda_Indonesia_PK-GIK.png",
+"title": "File:Boeing 777-300ER Garuda Indonesia PK-GIK.png",
 "w": 1280,
-"h": 853,
+"h": 720,
+"box": [
+-0.04,
+0.18,
+1.02,
+0.63
+]
+},
+"GLO-B38M": {
+"credit": "Dontenphotography",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:PR-XMR_-_Boeing_737_Max_8_-_GOL_090322_(3).jpg",
+"title": "File:PR-XMR - Boeing 737 Max 8 - GOL 090322 (3).jpg",
+"w": 1280,
+"h": 854,
 "box": [
 -0.01,
-0.17,
-1.03,
-0.72
+0.13,
+0.95,
+0.9
 ]
 },
 "GLO-B737": {
@@ -1847,6 +2449,48 @@ export const AIRLINE_PHOTOS = {
 0.1376,
 0.9775,
 0.797
+]
+},
+"GTI-B744": {
+"credit": "Alf van Beem",
+"licence": "CC0",
+"source": "https://commons.wikimedia.org/wiki/File:N475MC_Atlas_Air_Boeing_747-400_takeoff_from_Schiphol_(AMS_-_EHAM),_The_Netherlands,_18may2014,_pic-2.JPG",
+"title": "File:N475MC Atlas Air Boeing 747-400 takeoff from Schiphol (AMS - EHAM), The Netherlands, 18may2014, pic-2.JPG",
+"w": 1280,
+"h": 960,
+"box": [
+-0.03,
+0.26,
+1.02,
+0.74
+]
+},
+"GTI-B748": {
+"credit": "4300streetcar",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Atlas_Air_Boeing_747-8F_departing_Taoyuan_February_2026.jpg",
+"title": "File:Atlas Air Boeing 747-8F departing Taoyuan February 2026.jpg",
+"w": 1280,
+"h": 720,
+"box": [
+0.01,
+0.26,
+0.96,
+0.74
+]
+},
+"GTI-B77L": {
+"credit": "Dltl2010",
+"licence": "CC0",
+"source": "https://commons.wikimedia.org/wiki/File:N722GT_(9_Sept_2026).jpg",
+"title": "File:N722GT (9 Sept 2026).jpg",
+"w": 1280,
+"h": 853,
+"box": [
+-0.03,
+0.29,
+1.04,
+0.75
 ]
 },
 "HAL-A21N": {
@@ -1975,6 +2619,20 @@ export const AIRLINE_PHOTOS = {
 0.7
 ]
 },
+"ICE-A21N": {
+"credit": "André Gerwing",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Airbus_A321-271NX_(c-n_12359,_TF-IAB)_2025-06-20_Andre_Gerwing_Collection_ID_024045.jpg",
+"title": "File:Airbus A321-271NX (c-n 12359, TF-IAB) 2025-06-20 Andre Gerwing Collection ID 024045.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.01,
+0.26,
+0.98,
+0.69
+]
+},
 "ICE-B38M": {
 "credit": "kitmasterbloke",
 "licence": "CC BY 2.0",
@@ -2004,31 +2662,45 @@ export const AIRLINE_PHOTOS = {
 ]
 },
 "IGO-A20N": {
-"credit": "S5A-0043",
-"licence": "CC BY 4.0",
-"source": "https://commons.wikimedia.org/wiki/File:(SGP-Singapore)_IndiGo_Airbus_A320-251N_VT-IXO_@_WSSS_2025-01-01.jpg",
-"title": "File:(SGP-Singapore) IndiGo Airbus A320-251N VT-IXO @ WSSS 2025-01-01.jpg",
+"credit": "Dylan Agbagni (CC0) from Bordeaux, France",
+"licence": "CC0",
+"source": "https://commons.wikimedia.org/wiki/File:F-WWBX_-_Airbus_A320_-_IndiGo_(test_in_flight)_(48928991416).jpg",
+"title": "File:F-WWBX - Airbus A320 - IndiGo (test in flight) (48928991416).jpg",
 "w": 1280,
-"h": 720,
+"h": 853,
 "box": [
-0.03,
-0.19,
-1.03,
-0.8
+0.05,
+0.09,
+0.99,
+0.98
 ]
 },
 "IGO-A21N": {
-"credit": "S5A-0043",
-"licence": "CC BY 4.0",
-"source": "https://commons.wikimedia.org/wiki/File:(SGP-Singapore)_IndiGo_Airbus_A321-252NX_VT-NCR_@_WSSS_2026-03-11.jpg",
-"title": "File:(SGP-Singapore) IndiGo Airbus A321-252NX VT-NCR @ WSSS 2026-03-11.jpg",
+"credit": "Dltl2010",
+"licence": "CC0",
+"source": "https://commons.wikimedia.org/wiki/File:VT-IUF_(21_Oct_2024).jpg",
+"title": "File:VT-IUF (21 Oct 2024).jpg",
 "w": 1280,
-"h": 720,
+"h": 853,
 "box": [
--0.03,
-0.06,
-1.03,
-0.84
+0.02,
+0.23,
+0.99,
+0.66
+]
+},
+"IGO-A320": {
+"credit": "Kingshuk Mondal",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:IndiGo_Airbus_A320-251N_-_VT-IXA_at_Maharaja_Bir_Bikram_Airport_(IXA)_01.jpg",
+"title": "File:IndiGo Airbus A320-251N - VT-IXA at Maharaja Bir Bikram Airport (IXA) 01.jpg",
+"w": 1280,
+"h": 960,
+"box": [
+0.04,
+0.35,
+0.75,
+0.73
 ]
 },
 "JAL-A359": {
@@ -2104,15 +2776,15 @@ export const AIRLINE_PHOTOS = {
 "JBU-A21N": {
 "credit": "4300streetcar",
 "licence": "CC BY 4.0",
-"source": "https://commons.wikimedia.org/wiki/File:JetBlue_Airbus_A321neo_N2151J_departing_Boston_February_2025.jpg",
-"title": "File:JetBlue Airbus A321neo N2151J departing Boston February 2025.jpg",
+"source": "https://commons.wikimedia.org/wiki/File:JetBlue_Airways_Airbus_A321neo_N2142J_departing_Boston_June_2025_2.jpg",
+"title": "File:JetBlue Airways Airbus A321neo N2142J departing Boston June 2025 2.jpg",
 "w": 1280,
-"h": 720,
+"h": 800,
 "box": [
--0.04,
-0.07,
-1.03,
-0.88
+0.02,
+0.06,
+1.02,
+0.95
 ]
 },
 "JBU-A320": {
@@ -2132,15 +2804,15 @@ export const AIRLINE_PHOTOS = {
 "JBU-A321": {
 "credit": "4300streetcar",
 "licence": "CC BY 4.0",
-"source": "https://commons.wikimedia.org/wiki/File:JetBlue_A321_N986JB_on_approach_to_Boston_Oct_6_2024.jpg",
-"title": "File:JetBlue A321 N986JB on approach to Boston Oct 6 2024.jpg",
+"source": "https://commons.wikimedia.org/wiki/File:JetBlue_Airways_Airbus_A321_N946JL_departing_Boston_June_2025_1.jpg",
+"title": "File:JetBlue Airways Airbus A321 N946JL departing Boston June 2025 1.jpg",
 "w": 1280,
-"h": 853,
+"h": 800,
 "box": [
--0.03,
-0.13,
-1.02,
-0.74
+0.01,
+0.02,
+1.0,
+0.95
 ]
 },
 "JBU-BCS3": {
@@ -2157,6 +2829,20 @@ export const AIRLINE_PHOTOS = {
 0.84
 ]
 },
+"JJA-B38M": {
+"credit": "S5A-0043",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:(KOR-Incheon)_Jeju_Air_Boeing_737_MAX_8_HL8523_@_RKSI_2026-06-04.jpg",
+"title": "File:(KOR-Incheon) Jeju Air Boeing 737 MAX 8 HL8523 @ RKSI 2026-06-04.jpg",
+"w": 1280,
+"h": 720,
+"box": [
+-0.03,
+0.23,
+1.02,
+0.7
+]
+},
 "JJA-B738": {
 "credit": "Alan Wilson from Peterborough, Cambs, UK",
 "licence": "CC BY-SA 2.0",
@@ -2169,6 +2855,20 @@ export const AIRLINE_PHOTOS = {
 0.16,
 0.98,
 0.69
+]
+},
+"JST-A21N": {
+"credit": "Kypros1992",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Jetstar_-_VH-OFW_-_Sydney_Airport_-_24122024.jpg",
+"title": "File:Jetstar - VH-OFW - Sydney Airport - 24122024.jpg",
+"w": 1280,
+"h": 854,
+"box": [
+0.09,
+0.28,
+0.92,
+0.67
 ]
 },
 "JST-A321": {
@@ -2241,6 +2941,20 @@ export const AIRLINE_PHOTOS = {
 0.64
 ]
 },
+"KAL-A21N": {
+"credit": "HawkeyeUK",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Airbus_A321-272NX_%E2%80%98HL8530%E2%80%99_Korean_Air.jpg",
+"title": "File:Airbus A321-272NX ‘HL8530’ Korean Air.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.01,
+0.25,
+1.0,
+0.72
+]
+},
 "KAL-A333": {
 "credit": "Fedor Leukhin",
 "licence": "CC BY-SA 2.0",
@@ -2311,6 +3025,20 @@ export const AIRLINE_PHOTOS = {
 0.66
 ]
 },
+"KAL-B78X": {
+"credit": "Bidgee",
+"licence": "CC BY-SA 3.0 au",
+"source": "https://commons.wikimedia.org/wiki/File:Korean_Air_(HL8515)_Boeing_787-10_Dreamliner_departing_Sydney_Airport.jpg",
+"title": "File:Korean Air (HL8515) Boeing 787-10 Dreamliner departing Sydney Airport.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+-0.01,
+0.25,
+1.02,
+0.7
+]
+},
 "KLM-B738": {
 "credit": "MarcelX42",
 "licence": "CC BY-SA 4.0",
@@ -2337,6 +3065,20 @@ export const AIRLINE_PHOTOS = {
 0.32,
 0.91,
 0.72
+]
+},
+"KLM-B772": {
+"credit": "Marvin Mutz",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:PH-BQP_Boeing_777-200(ER)_KLM_AMS_2019-06-02_(8a).jpg",
+"title": "File:PH-BQP Boeing 777-200(ER) KLM AMS 2019-06-02 (8a).jpg",
+"w": 1280,
+"h": 829,
+"box": [
+-0.03,
+0.18,
+1.02,
+0.8
 ]
 },
 "KLM-B77W": {
@@ -2451,6 +3193,34 @@ export const AIRLINE_PHOTOS = {
 0.76
 ]
 },
+"LXJ-E545": {
+"credit": "Acroterion",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Flexjet_Embraer_Legacy_450_N409FX_IAD_VA1.jpg",
+"title": "File:Flexjet Embraer Legacy 450 N409FX IAD VA1.jpg",
+"w": 1280,
+"h": 735,
+"box": [
+0.01,
+0.17,
+1.02,
+0.82
+]
+},
+"LXJ-E55P": {
+"credit": "Tomás Del Coro",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:N354FX_2013_Embraer_EMB_505_Phenom_300_FlexJet_sn_50500135_(3).jpg",
+"title": "File:N354FX 2013 Embraer EMB 505 Phenom 300 FlexJet sn 50500135 (3).jpg",
+"w": 1280,
+"h": 599,
+"box": [
+-0.01,
+0.23,
+0.99,
+0.88
+]
+},
 "MAS-A333": {
 "credit": "Masakatsu Ukon",
 "licence": "CC BY-SA 2.0",
@@ -2463,6 +3233,34 @@ export const AIRLINE_PHOTOS = {
 0.19,
 0.97,
 0.78
+]
+},
+"MAS-A339": {
+"credit": "Afrojack1997",
+"licence": "CC0",
+"source": "https://commons.wikimedia.org/wiki/File:A330-900_malaysia_airlines.jpg",
+"title": "File:A330-900 malaysia airlines.jpg",
+"w": 1280,
+"h": 646,
+"box": [
+-0.02,
+0.22,
+0.98,
+0.81
+]
+},
+"MAS-B38M": {
+"credit": "Pangalau",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Kota_Kinabalu_27_December_2023_80.jpg",
+"title": "File:Kota Kinabalu 27 December 2023 80.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.04,
+0.27,
+0.97,
+0.75
 ]
 },
 "MAS-B738": {
@@ -2505,6 +3303,20 @@ export const AIRLINE_PHOTOS = {
 0.28,
 0.97,
 0.67
+]
+},
+"MXY-BCS3": {
+"credit": "Charles",
+"licence": "CC BY 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:N204BZ_@_LAX,_2024-12-09.jpg",
+"title": "File:N204BZ @ LAX, 2024-12-09.jpg",
+"w": 1280,
+"h": 816,
+"box": [
+0.11,
+0.22,
+0.97,
+0.68
 ]
 },
 "NKS-A20N": {
@@ -2591,6 +3403,48 @@ export const AIRLINE_PHOTOS = {
 0.67
 ]
 },
+"PGT-A20N": {
+"credit": "MarcelX42",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Hannover_Airport_Pegasus_Airlines_Airbus_A320-251N_TC-NBA_(DSC07980).jpg",
+"title": "File:Hannover Airport Pegasus Airlines Airbus A320-251N TC-NBA (DSC07980).jpg",
+"w": 1280,
+"h": 720,
+"box": [
+-0.02,
+0.08,
+1.02,
+0.69
+]
+},
+"PGT-A21N": {
+"credit": "MarcelX42",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Hannover_Airport_Pegasus_Airlines_Airbus_A321-251NX_TC-RBE_(DSC06319).jpg",
+"title": "File:Hannover Airport Pegasus Airlines Airbus A321-251NX TC-RBE (DSC06319).jpg",
+"w": 1280,
+"h": 720,
+"box": [
+-0.01,
+0.1,
+0.97,
+0.67
+]
+},
+"PGT-B738": {
+"credit": "Julian Herzog (Website)",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Pegasus_Airlines_Boeing_737-82R_TC-CPC_MUC_2015_01.jpg",
+"title": "File:Pegasus Airlines Boeing 737-82R TC-CPC MUC 2015 01.jpg",
+"w": 1280,
+"h": 720,
+"box": [
+0.05,
+0.24,
+0.99,
+0.78
+]
+},
 "POE-DH8D": {
 "credit": "4300streetcar",
 "licence": "CC BY 4.0",
@@ -2659,6 +3513,20 @@ export const AIRLINE_PHOTOS = {
 0.16,
 0.97,
 0.88
+]
+},
+"QFA-B738": {
+"credit": "ZidaneHartono",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Qantas_Boeing_737-800_VH-VXQ_over_Cannington,Western_Australia.jpg",
+"title": "File:Qantas Boeing 737-800 VH-VXQ over Cannington,Western Australia.jpg",
+"w": 1280,
+"h": 719,
+"box": [
+0.22,
+0.32,
+0.84,
+0.8
 ]
 },
 "QFA-B789": {
@@ -2886,17 +3754,17 @@ export const AIRLINE_PHOTOS = {
 ]
 },
 "RYR-B738": {
-"credit": "Hugo LUC",
-"licence": "CC BY-SA 4.0",
-"source": "https://commons.wikimedia.org/wiki/File:Boeing_737_8AS_-_EI-DLV_from_Ryanair_after_landing_at_LFBT_airport.jpg",
-"title": "File:Boeing 737 8AS - EI-DLV from Ryanair after landing at LFBT airport.jpg",
+"credit": "BriYYZ",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:Ryanair_Boeing_737-800_EI-DHD_(53926462296).jpg",
+"title": "File:Ryanair Boeing 737-800 EI-DHD (53926462296).jpg",
 "w": 1280,
-"h": 853,
+"h": 852,
 "box": [
--0.03,
-0.09,
-1.01,
-0.7
+0.0,
+0.18,
+0.97,
+0.71
 ]
 },
 "SAA-A320": {
@@ -2941,18 +3809,60 @@ export const AIRLINE_PHOTOS = {
 0.79
 ]
 },
+"SAS-A333": {
+"credit": "4300streetcar",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:SAS_Airbus_A330-300_LN-RKN_departing_Boston_July_2026.jpg",
+"title": "File:SAS Airbus A330-300 LN-RKN departing Boston July 2026.jpg",
+"w": 1280,
+"h": 720,
+"box": [
+0.02,
+0.16,
+1.0,
+0.78
+]
+},
+"SAS-A359": {
+"credit": "4300streetcar",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:SAS_A350-900_SE-RSC_on_final_approach_at_Boston_Oct_2024_1.jpg",
+"title": "File:SAS A350-900 SE-RSC on final approach at Boston Oct 2024 1.jpg",
+"w": 1280,
+"h": 720,
+"box": [
+0.0,
+0.12,
+1.01,
+0.84
+]
+},
+"SFR-B738": {
+"credit": "AirplaneNiner",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:20230615_-_Boeing_737-81M_ZS-FGC.jpg",
+"title": "File:20230615 - Boeing 737-81M ZS-FGC.jpg",
+"w": 1280,
+"h": 960,
+"box": [
+0.0,
+0.25,
+1.0,
+0.72
+]
+},
 "SIA-A359": {
 "credit": "BriYYZ from Toronto, Canada",
 "licence": "CC BY-SA 2.0",
-"source": "https://commons.wikimedia.org/wiki/File:Singapore_Airlines_A350-900_(9V-SMK)_landing_at_Melbourne_Airport.jpg",
-"title": "File:Singapore Airlines A350-900 (9V-SMK) landing at Melbourne Airport.jpg",
+"source": "https://commons.wikimedia.org/wiki/File:Singapore_Airlines_A350-941_(9V-SMG)_landing_at_Melbourne_Airport.jpg",
+"title": "File:Singapore Airlines A350-941 (9V-SMG) landing at Melbourne Airport.jpg",
 "w": 1280,
 "h": 853,
 "box": [
--0.04,
-0.22,
-1.04,
-0.84
+-0.02,
+0.13,
+0.95,
+0.66
 ]
 },
 "SIA-A388": {
@@ -2967,6 +3877,20 @@ export const AIRLINE_PHOTOS = {
 0.13,
 0.88,
 0.77
+]
+},
+"SIA-B38M": {
+"credit": "S5A-0043",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:(SGP-Singapore)_Singapore_Airlines_Boeing_737_MAX_8_9V-MBA_@_WSSS_2026-03-11.jpg",
+"title": "File:(SGP-Singapore) Singapore Airlines Boeing 737 MAX 8 9V-MBA @ WSSS 2026-03-11.jpg",
+"w": 1280,
+"h": 720,
+"box": [
+-0.01,
+0.05,
+1.02,
+0.79
 ]
 },
 "SIA-B77W": {
@@ -3065,6 +3989,20 @@ export const AIRLINE_PHOTOS = {
 0.22,
 0.99,
 0.72
+]
+},
+"SVA-A333": {
+"credit": "BriYYZ from Toronto, Canada",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:Saudia_A330-300_F-WWKY_(to_HZ-AQ14)_(28915127023).jpg",
+"title": "File:Saudia A330-300 F-WWKY (to HZ-AQ14) (28915127023).jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.0,
+0.33,
+1.02,
+0.85
 ]
 },
 "SVA-B77W": {
@@ -3235,6 +4173,34 @@ export const AIRLINE_PHOTOS = {
 0.74
 ]
 },
+"TAP-A320": {
+"credit": "Alan Wilson from Peterborough, Cambs, UK",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:Airbus_A320-214_%E2%80%98CS-TNK%E2%80%99_TAP_Air_Portugal_(53741966666).jpg",
+"title": "File:Airbus A320-214 ‘CS-TNK’ TAP Air Portugal (53741966666).jpg",
+"w": 1280,
+"h": 853,
+"box": [
+-0.02,
+0.16,
+1.01,
+0.72
+]
+},
+"TGW-B788": {
+"credit": "S5A-0043",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:(SGP-Singapore)_Scoot_Boeing_787-8_9V-OFB_@_WSSS_2026-01-29.jpg",
+"title": "File:(SGP-Singapore) Scoot Boeing 787-8 9V-OFB @ WSSS 2026-01-29.jpg",
+"w": 1280,
+"h": 720,
+"box": [
+-0.03,
+0.11,
+1.03,
+0.76
+]
+},
 "THA-A333": {
 "credit": "Md Shaifuzzaman Ayon",
 "licence": "CC BY-SA 4.0",
@@ -3275,6 +4241,20 @@ export const AIRLINE_PHOTOS = {
 0.02,
 1.03,
 0.78
+]
+},
+"THY-A21N": {
+"credit": "Alan Wilson from Peterborough, Cambs, UK",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:Airbus_A321-271NX_%E2%80%98TC-LTI%E2%80%99_Turkish_Airlines_(53757299377).jpg",
+"title": "File:Airbus A321-271NX ‘TC-LTI’ Turkish Airlines (53757299377).jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.01,
+0.23,
+0.98,
+0.69
 ]
 },
 "THY-A321": {
@@ -3320,17 +4300,17 @@ export const AIRLINE_PHOTOS = {
 ]
 },
 "THY-B738": {
-"credit": "Tony Hisgett",
-"licence": "CC BY 2.0",
-"source": "https://commons.wikimedia.org/wiki/File:TC-JVI_Turkish_Airlines_Boeing_737-8F2(WL)_2.jpg",
-"title": "File:TC-JVI Turkish Airlines Boeing 737-8F2(WL) 2.jpg",
+"credit": "BriYYZ from Toronto, Canada",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:Turkish_Airlines_Boeing_737-800_TC-JGT_(28937930345).jpg",
+"title": "File:Turkish Airlines Boeing 737-800 TC-JGT (28937930345).jpg",
 "w": 1280,
-"h": 626,
+"h": 853,
 "box": [
--0.04,
-0.09,
-1.01,
-0.88
+-0.01,
+0.2,
+0.99,
+0.72
 ]
 },
 "THY-B77W": {
@@ -3359,6 +4339,34 @@ export const AIRLINE_PHOTOS = {
 0.28,
 1.04,
 0.72
+]
+},
+"TKJ-A21N": {
+"credit": "kitmasterbloke",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:G-HLYL_-_Airbus_A321-251NX_-_Jet2_BHX_240426.jpg",
+"title": "File:G-HLYL - Airbus A321-251NX - Jet2 BHX 240426.jpg",
+"w": 1280,
+"h": 612,
+"box": [
+0.03,
+0.23,
+0.99,
+0.76
+]
+},
+"TKJ-B738": {
+"credit": "Acabashi",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Jet2_Holidays_Boeing_737-800_over_Bishop%27s_Stortford.jpg",
+"title": "File:Jet2 Holidays Boeing 737-800 over Bishop's Stortford.jpg",
+"w": 1280,
+"h": 720,
+"box": [
+-0.01,
+0.16,
+0.93,
+0.86
 ]
 },
 "TOM-B738": {
@@ -3417,18 +4425,46 @@ export const AIRLINE_PHOTOS = {
 0.58
 ]
 },
-"UAE-A388": {
-"credit": "AVA Navigate",
-"licence": "CC BY-SA 4.0",
-"source": "https://commons.wikimedia.org/wiki/File:Emirates_A380-800_A6-EEQ_@YYZ.jpg",
-"title": "File:Emirates A380-800 A6-EEQ @YYZ.jpg",
+"TWB-A333": {
+"credit": "S5A-0043",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:(KOR-Incheon)_T%27way_Air_Airbus_A330-343_HL8560_@_RKSI_2026-06-04.jpg",
+"title": "File:(KOR-Incheon) T'way Air Airbus A330-343 HL8560 @ RKSI 2026-06-04.jpg",
 "w": 1280,
 "h": 720,
 "box": [
-0.0,
-0.15,
-1.03,
-0.75
+-0.02,
+0.12,
+1.02,
+0.67
+]
+},
+"TWB-B738": {
+"credit": "4300streetcar",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:T%27way_Air_Boeing_737-800_HL8235_on_final_approach_to_Taoyuan_February_2026.jpg",
+"title": "File:T'way Air Boeing 737-800 HL8235 on final approach to Taoyuan February 2026.jpg",
+"w": 1280,
+"h": 720,
+"box": [
+0.03,
+0.1,
+0.95,
+0.72
+]
+},
+"UAE-A388": {
+"credit": "Epilot787",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Emirates_A380_In_Flight.jpg",
+"title": "File:Emirates A380 In Flight.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.05,
+0.16,
+1.0,
+0.69
 ]
 },
 "UAE-B77W": {
@@ -3476,29 +4512,29 @@ export const AIRLINE_PHOTOS = {
 "UAL-B38M": {
 "credit": "4300streetcar",
 "licence": "CC BY 4.0",
-"source": "https://commons.wikimedia.org/wiki/File:United_Airlines_Boeing_737-8_MAX_N17341_on_final_approach_to_Boston_June_2026_1.jpg",
-"title": "File:United Airlines Boeing 737-8 MAX N17341 on final approach to Boston June 2026 1.jpg",
+"source": "https://commons.wikimedia.org/wiki/File:United_Airlines_Boeing_737-8_MAX_N47293_on_final_approach_to_Boston_Oct_2024_1.jpg",
+"title": "File:United Airlines Boeing 737-8 MAX N47293 on final approach to Boston Oct 2024 1.jpg",
 "w": 1280,
-"h": 720,
+"h": 853,
 "box": [
 0.0,
-0.18,
-1.0,
-0.84
+0.21,
+0.95,
+0.89
 ]
 },
 "UAL-B39M": {
 "credit": "4300streetcar",
 "licence": "CC BY 4.0",
-"source": "https://commons.wikimedia.org/wiki/File:United_Airlines_Boeing_737-9_MAX_N17408_on_final_approach_to_Boston_July_2026_2.jpg",
-"title": "File:United Airlines Boeing 737-9 MAX N17408 on final approach to Boston July 2026 2.jpg",
+"source": "https://commons.wikimedia.org/wiki/File:United_Airlines_Boeing_737-9_MAX_N27539_on_final_approach_to_Boston_Oct_2024_1.jpg",
+"title": "File:United Airlines Boeing 737-9 MAX N27539 on final approach to Boston Oct 2024 1.jpg",
 "w": 1280,
-"h": 720,
+"h": 853,
 "box": [
--0.02,
-0.16,
-1.03,
-0.75
+0.01,
+0.29,
+0.97,
+0.76
 ]
 },
 "UAL-B738": {
@@ -3683,6 +4719,48 @@ export const AIRLINE_PHOTOS = {
 0.66
 ]
 },
+"VIV-A20N": {
+"credit": "Oliver Holzbauer",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:XA-VIM_Viva_Aerobus_Airbus_A320-271N_-_ferry_flight_XFW-KEF-BGR-MTY@_Airbus_factory_Hamburg_Finkenwerder_(XFW_EDHI).jpg",
+"title": "File:XA-VIM Viva Aerobus Airbus A320-271N - ferry flight XFW-KEF-BGR-MTY@ Airbus factory Hamburg Finkenwerder (XFW EDHI).jpg",
+"w": 1280,
+"h": 854,
+"box": [
+-0.04,
+0.2,
+1.03,
+0.76
+]
+},
+"VIV-A21N": {
+"credit": "Mark Bess",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:XA-VBB_JFK_Landing_31R_VB_A321_271_NX_Beacon_Small_(52541377618).png",
+"title": "File:XA-VBB JFK Landing 31R VB A321 271 NX Beacon Small (52541377618).png",
+"w": 1280,
+"h": 720,
+"box": [
+-0.02,
+0.13,
+1.04,
+0.75
+]
+},
+"VIV-A320": {
+"credit": "Charles from Port Chester, New York",
+"licence": "CC BY 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:VivaAerobus_A320-232,_XA-VAJ,_MSN_6750_(08_2015),_as_VB_511_Los_Angeles_(LAX)_-_Guadalajara_(GDL),_Flight_time_2_37_(54207090569).jpg",
+"title": "File:VivaAerobus A320-232, XA-VAJ, MSN 6750 (08 2015), as VB 511 Los Angeles (LAX) - Guadalajara (GDL), Flight time 2 37 (54207090569).jpg",
+"w": 1280,
+"h": 777,
+"box": [
+0.13,
+0.3,
+0.93,
+0.77
+]
+},
 "VJC-A320": {
 "credit": "S5A-0043",
 "licence": "CC BY 4.0",
@@ -3711,6 +4789,34 @@ export const AIRLINE_PHOTOS = {
 0.8
 ]
 },
+"VLG-A20N": {
+"credit": "Dylan Agbagni (CC0) from Bordeaux, France",
+"licence": "CC0",
+"source": "https://commons.wikimedia.org/wiki/File:F-WWBZ_-_Airbus_A320_-_Vueling_(test_in_flight)_(48928454073).jpg",
+"title": "File:F-WWBZ - Airbus A320 - Vueling (test in flight) (48928454073).jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.0,
+0.2,
+0.99,
+0.74
+]
+},
+"VLG-A21N": {
+"credit": "Zima Savolainen",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Vueling_EC-NYF_A321neo.jpg",
+"title": "File:Vueling EC-NYF A321neo.jpg",
+"w": 1280,
+"h": 852,
+"box": [
+-0.03,
+0.2,
+1.01,
+0.74
+]
+},
 "VLG-A320": {
 "credit": "Bene Riobó",
 "licence": "CC BY-SA 3.0",
@@ -3725,6 +4831,34 @@ export const AIRLINE_PHOTOS = {
 0.7
 ]
 },
+"VOI-A20N": {
+"credit": "DUNCAN KIRK from Coeur d'Alene, United States",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:N541VL_A320neo,_Volaris_(Deportivo_Toluca_FC_titles),_Cancun_03-08-26_(55174464586).jpg",
+"title": "File:N541VL A320neo, Volaris (Deportivo Toluca FC titles), Cancun 03-08-26 (55174464586).jpg",
+"w": 1280,
+"h": 853,
+"box": [
+-0.02,
+0.14,
+1.02,
+0.78
+]
+},
+"VOI-A21N": {
+"credit": "Tomás Del Coro from Fabulous Las Vegas, Nevada, USA",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:XA-VSK_Volaris_Airbus_A321-271NX_s_n_10855_(54816790416).jpg",
+"title": "File:XA-VSK Volaris Airbus A321-271NX s n 10855 (54816790416).jpg",
+"w": 1280,
+"h": 575,
+"box": [
+0.0,
+0.11,
+1.02,
+0.82
+]
+},
 "VOI-A320": {
 "credit": "Alan Wilson from Stilton, Peterborough, Cambs, UK",
 "licence": "CC BY-SA 2.0",
@@ -3737,6 +4871,34 @@ export const AIRLINE_PHOTOS = {
 0.17,
 1.01,
 0.72
+]
+},
+"VOZ-B737": {
+"credit": "Bahnfrend",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Virgin_Australia_Boeing_737_VH-NJV_Perth_2024_(01).jpg",
+"title": "File:Virgin Australia Boeing 737 VH-NJV Perth 2024 (01).jpg",
+"w": 1280,
+"h": 720,
+"box": [
+0.0,
+0.22,
+0.99,
+0.74
+]
+},
+"VOZ-B738": {
+"credit": "Bidgee",
+"licence": "CC BY-SA 3.0 au",
+"source": "https://commons.wikimedia.org/wiki/File:Virgin_Australia_(VH-VOK)_Boeing_737-8FE(WL)_departing_Sydney_Airport_(4).jpg",
+"title": "File:Virgin Australia (VH-VOK) Boeing 737-8FE(WL) departing Sydney Airport (4).jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.01,
+0.24,
+0.99,
+0.76
 ]
 },
 "WEN-DH8D": {
@@ -3784,15 +4946,15 @@ export const AIRLINE_PHOTOS = {
 "WJA-B738": {
 "credit": "4300streetcar",
 "licence": "CC BY 4.0",
-"source": "https://commons.wikimedia.org/wiki/File:WestJet_Boeing_737-800_C-GJWS_departing_Boston_June_2025.jpg",
-"title": "File:WestJet Boeing 737-800 C-GJWS departing Boston June 2025.jpg",
+"source": "https://commons.wikimedia.org/wiki/File:WestJet_Boeing_737-800_C-GRTB_departing_Boston_August_2025.jpg",
+"title": "File:WestJet Boeing 737-800 C-GRTB departing Boston August 2025.jpg",
 "w": 1280,
-"h": 720,
+"h": 853,
 "box": [
-0.0,
-0.1,
-1.01,
-0.77
+0.02,
+0.06,
+0.96,
+0.9
 ]
 },
 "WJA-B789": {
@@ -3807,6 +4969,62 @@ export const AIRLINE_PHOTOS = {
 0.2123,
 0.99,
 0.6942
+]
+},
+"WMT-A21N": {
+"credit": "André Gerwing",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Airbus_A321-271NX_(c-n_12567,_9H-WMD)_2026-02-25_Andre_Gerwing_Collection_ID_027930.jpg",
+"title": "File:Airbus A321-271NX (c-n 12567, 9H-WMD) 2026-02-25 Andre Gerwing Collection ID 027930.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.0,
+0.22,
+1.0,
+0.77
+]
+},
+"WMT-A320": {
+"credit": "DUNCAN KIRK",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:9H-WZR_A320,_Wizz_Air_Malta,_Luton_05-27-26.jpg",
+"title": "File:9H-WZR A320, Wizz Air Malta, Luton 05-27-26.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+-0.02,
+0.17,
+1.02,
+0.79
+]
+},
+"WMT-A321": {
+"credit": "André Gerwing",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Airbus_A321-231_(c-n_8174,_9H-WZA)_2026-04-15_Andre_Gerwing_Collection_ID_028437.jpg",
+"title": "File:Airbus A321-231 (c-n 8174, 9H-WZA) 2026-04-15 Andre Gerwing Collection ID 028437.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+-0.01,
+0.25,
+1.01,
+0.79
+]
+},
+"WZZ-A21N": {
+"credit": "DavidivardiIL",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:DAV_2804-Airbus_A321-271NX_Wizz_Air_HA-LZN.jpg",
+"title": "File:DAV 2804-Airbus A321-271NX Wizz Air HA-LZN.jpg",
+"w": 1280,
+"h": 720,
+"box": [
+-0.01,
+0.05,
+1.02,
+0.75
 ]
 },
 "WZZ-A321": {

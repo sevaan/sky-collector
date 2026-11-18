@@ -1,0 +1,3318 @@
+{
+ "B738": {
+  "kind": "house",
+  "name": "Boeing 737-800",
+  "rx": "737-8(?![\\s-]?MAX)|737-800|737NG|Boeing 737",
+  "queries": [
+   "Boeing 737-800 house colors",
+   "Boeing 737-800 prototype",
+   "Boeing 737-800 in flight",
+   "Boeing 737-800 N1786B",
+   "Boeing 737-800 BBJ Boeing Business Jet",
+   "Boeing 737-800 Renton Boeing colours",
+   "Boeing 737-800"
+  ]
+ },
+ "A321": {
+  "kind": "house",
+  "name": "Airbus A321",
+  "rx": "A321(?![\\s-]?neo)",
+  "queries": [
+   "Airbus A321 F-WWDB",
+   "Airbus A321-231 F-WWIA",
+   "Airbus A321 D-AVZ Hamburg Finkenwerder",
+   "Airbus A321-211 Airbus Industries"
+  ]
+ },
+ "A333": {
+  "kind": "house",
+  "name": "Airbus A330-300",
+  "rx": "A330-3|A330-300",
+  "queries": [
+   "Airbus A330-300 F-WWKA",
+   "Airbus A330-343 F-WWY",
+   "Airbus A330 F-WWC house colors",
+   "Airbus A330-300 Airbus Industries"
+  ]
+ },
+ "B739": {
+  "kind": "house",
+  "name": "Boeing 737-900",
+  "rx": "737-9(?![\\s-]?MAX)|737-900",
+  "queries": [
+   "Boeing 737-900ER N Boeing Field",
+   "Boeing 737-924ER test",
+   "Boeing 737-900ER first flight",
+   "Boeing 737-900 Boeing livery"
+  ]
+ },
+ "CRJ9": {
+  "kind": "house",
+  "name": "Bombardier CRJ900",
+  "rx": "CRJ-?900|CL-600-2D24",
+  "queries": [
+   "CRJ900 Bombardier test aircraft C-FM",
+   "CRJ900 first flight Mirabel",
+   "Bombardier CRJ-900 demonstrator"
+  ]
+ },
+ "DH8D": {
+  "kind": "house",
+  "name": "Bombardier Dash 8 Q400",
+  "rx": "Q400|Dash 8|DHC-8-4",
+  "queries": [
+   "Q400 C-FFQ Bombardier",
+   "Dash 8 Q400 Downsview test flight",
+   "Bombardier Q400 demonstrator Toronto"
+  ]
+ },
+ "E190": {
+  "kind": "house",
+  "name": "Embraer 190",
+  "rx": "E-?190(?![\\s-]?E2)|ERJ-?190|Embraer 190",
+  "queries": [
+   "Embraer 190 PR-ZJF",
+   "Embraer 190 PP-XMA",
+   "Embraer 190 first flight Sao Jose dos Campos",
+   "Embraer E190 demonstrator"
+  ]
+ },
+ "E170": {
+  "kind": "house",
+  "name": "Embraer 170",
+  "rx": "E-?170|ERJ-?170|Embraer 170",
+  "queries": [
+   "Embraer 170 PP-XMA",
+   "Embraer ERJ-170 Sao Jose dos Campos",
+   "Embraer 170 test aircraft",
+   "Embraer 175 PR-ZJA"
+  ]
+ },
+ "E145": {
+  "kind": "house",
+  "name": "Embraer ERJ-145",
+  "rx": "ERJ[\\s-]?145|EMB[\\s-]?145|E145|Embraer 145",
+  "queries": [
+   "ERJ-145 PT-ZJE",
+   "Embraer 145 Embraer colors",
+   "EMB-145 first flight",
+   "ERJ 145 Embraer house"
+  ]
+ },
+ "CL35": {
+  "kind": "house",
+  "name": "Bombardier Challenger 350",
+  "rx": "Challenger 3[05]0|CL-?350|CL-?300|Challenger 300",
+  "queries": [
+   "Bombardier Challenger 350 house colors",
+   "Bombardier Challenger 350 prototype",
+   "Bombardier Challenger 350 in flight",
+   "Challenger 350 Bombardier demonstrator",
+   "Challenger 300 Bombardier demonstrator",
+   "Challenger 350 C-G Bombardier house colors",
+   "Bombardier Challenger 350"
+  ]
+ },
+ "CL30": {
+  "kind": "house",
+  "name": "Bombardier Challenger 300",
+  "rx": "Challenger 3[05]0|CL-?350|CL-?300|Challenger 300",
+  "queries": [
+   "Bombardier Challenger 300 house colors",
+   "Bombardier Challenger 300 prototype",
+   "Bombardier Challenger 300 in flight",
+   "Challenger 300 Bombardier demonstrator",
+   "Challenger 300 first flight",
+   "Challenger 300 C-FBLT",
+   "Bombardier Challenger 300"
+  ]
+ },
+ "CRJ7": {
+  "kind": "house",
+  "name": "Bombardier CRJ700",
+  "rx": "CRJ-?700|CL-600-2C10|CRJ-?[79]00",
+  "queries": [
+   "CRJ700 C-FJLO",
+   "CRJ-700 Mirabel Bombardier",
+   "Bombardier CRJ700 demonstrator"
+  ]
+ },
+ "C56X": {
+  "kind": "house",
+  "name": "Cessna Citation Excel",
+  "rx": "Citation (Excel|XLS)|560XL|Citation 560|XLS\\+",
+  "queries": [
+   "Cessna Citation Excel house colors",
+   "Cessna Citation Excel prototype",
+   "Cessna Citation Excel in flight",
+   "Cessna Citation XLS demonstrator",
+   "Citation Excel Textron Aviation Wichita",
+   "Citation XLS+ Cessna",
+   "Cessna Citation Excel"
+  ]
+ },
+ "C152": {
+  "kind": "house",
+  "name": "Cessna 152",
+  "rx": "\\b152\\b",
+  "queries": [
+   "Cessna 152 house colors",
+   "Cessna 152 prototype",
+   "Cessna 152 in flight",
+   "Cessna 152 N White",
+   "Cessna 152 flying",
+   "Cessna 152 in flight",
+   "Cessna 152"
+  ]
+ },
+ "GLF4": {
+  "kind": "house",
+  "name": "Gulfstream IV",
+  "rx": "Gulfstream (G-?IV|G-?400|G-?450|IV)|G-?IV|G450|G400|GIV",
+  "queries": [
+   "Gulfstream IV house colors",
+   "Gulfstream IV prototype",
+   "Gulfstream IV in flight",
+   "Gulfstream G450 Savannah",
+   "Gulfstream IV N Savannah Gulfstream colors",
+   "Gulfstream G-IV flight",
+   "Gulfstream IV"
+  ]
+ },
+ "GLF5": {
+  "kind": "house",
+  "name": "Gulfstream V",
+  "rx": "Gulfstream (G-?V|G-?500|G-?550|V)\\b|G550|G-V|GV\\b",
+  "queries": [
+   "Gulfstream V house colors",
+   "Gulfstream V prototype",
+   "Gulfstream V in flight",
+   "Gulfstream G550 Savannah",
+   "Gulfstream G550 N Gulfstream colors",
+   "Gulfstream V flight",
+   "Gulfstream V"
+  ]
+ },
+ "F2TH": {
+  "kind": "house",
+  "name": "Dassault Falcon 2000",
+  "rx": "Falcon 2000",
+  "queries": [
+   "Dassault Falcon 2000 house colors",
+   "Dassault Falcon 2000 prototype",
+   "Dassault Falcon 2000 in flight",
+   "Dassault Falcon 2000 demonstrator F-W",
+   "Falcon 2000 Dassault M\u00e9rignac",
+   "Falcon 2000LX Dassault",
+   "Dassault Falcon 2000"
+  ]
+ },
+ "GL7T": {
+  "kind": "house",
+  "name": "Bombardier Global 7500",
+  "rx": "Global (7500|7000|8000)",
+  "queries": [
+   "Bombardier Global 7500 house colors",
+   "Bombardier Global 7500 prototype",
+   "Bombardier Global 7500 in flight",
+   "Global 7500 C-FZ Bombardier",
+   "Bombardier Global 7000 flight test",
+   "Global 7500 Bombardier demonstrator",
+   "Bombardier Global 7500"
+  ]
+ },
+ "C25B": {
+  "kind": "house",
+  "name": "Cessna Citation CJ3",
+  "rx": "CJ3",
+  "queries": [
+   "Cessna Citation CJ3 house colors",
+   "Cessna Citation CJ3 prototype",
+   "Cessna Citation CJ3 in flight",
+   "Cessna Citation CJ3 demonstrator",
+   "Citation CJ3 Textron Aviation",
+   "Citation CJ3+ flight",
+   "Cessna Citation CJ3"
+  ]
+ },
+ "C25A": {
+  "kind": "house",
+  "name": "Cessna Citation CJ2",
+  "rx": "CJ2",
+  "queries": [
+   "Cessna Citation CJ2 house colors",
+   "Cessna Citation CJ2 prototype",
+   "Cessna Citation CJ2 in flight",
+   "Cessna Citation CJ2 demonstrator",
+   "Citation CJ2+ Cessna",
+   "Citation CJ2 flight",
+   "Cessna Citation CJ2"
+  ]
+ },
+ "H25B": {
+  "kind": "house",
+  "name": "Hawker 800",
+  "rx": "Hawker (800|850|750|900|700|4000)|BAe[\\s-]?125|HS[\\s-]?125|Hawker Beechcraft",
+  "queries": [
+   "Hawker 800 house colors",
+   "Hawker 800 prototype",
+   "Hawker 800 in flight",
+   "Hawker 800XP Hawker Beechcraft",
+   "BAe 125-800 flight",
+   "Hawker 900XP flying",
+   "Hawker 800"
+  ]
+ },
+ "B350": {
+  "kind": "house",
+  "name": "Beechcraft King Air 350",
+  "rx": "King Air 350|Super King Air 350|B300|350i|King Air",
+  "queries": [
+   "Beechcraft King Air 350 house colors",
+   "Beechcraft King Air 350 prototype",
+   "Beechcraft King Air 350 in flight",
+   "Beechcraft King Air 350i Hawker Beechcraft",
+   "King Air 350 Textron Aviation",
+   "Beechcraft Super King Air 350 flight",
+   "Beechcraft King Air 350"
+  ]
+ },
+ "B190": {
+  "kind": "house",
+  "name": "Beechcraft 1900",
+  "rx": "1900|B1900",
+  "queries": [
+   "Beechcraft 1900 house colors",
+   "Beechcraft 1900 prototype",
+   "Beechcraft 1900 in flight",
+   "Beechcraft 1900D flight",
+   "Beech 1900 Raytheon colors",
+   "Beechcraft 1900D N",
+   "Beechcraft 1900"
+  ]
+ },
+ "C750": {
+  "kind": "house",
+  "name": "Cessna Citation X",
+  "rx": "Citation X\\b|Citation 750|C750",
+  "queries": [
+   "Cessna Citation X house colors",
+   "Cessna Citation X prototype",
+   "Cessna Citation X in flight",
+   "Cessna Citation X demonstrator",
+   "Citation X Cessna Wichita",
+   "Citation X flight",
+   "Cessna Citation X"
+  ]
+ },
+ "B741": {
+  "kind": "house",
+  "name": "Boeing 747-100",
+  "rx": "747-1|747-100|747SR|City of Everett|747-123|SCA",
+  "queries": [
+   "Boeing 747-100 Everett",
+   "Boeing 747-100 N7470 flight",
+   "NASA Boeing 747-123 N905NA Shuttle Carrier Aircraft",
+   "Boeing 747-121 prototype in flight"
+  ],
+  "mil": true
+ },
+ "B742": {
+  "kind": "house",
+  "name": "Boeing 747-200",
+  "rx": "747-2|747-200|E-4|VC-25|Air Force One|747-206",
+  "queries": [
+   "Boeing 747-200 house colors",
+   "Boeing 747-200 prototype",
+   "Boeing 747-200 in flight",
+   "Boeing 747-200 Boeing colors",
+   "Boeing E-4B flight",
+   "Boeing 747-200F test",
+   "Boeing 747-200 unpainted",
+   "Boeing 747-200"
+  ],
+  "mil": true
+ },
+ "B743": {
+  "kind": "house",
+  "name": "Boeing 747-300",
+  "rx": "747-3|747-300",
+  "queries": [
+   "Boeing 747-300 N",
+   "Boeing 747-300 SCA",
+   "Boeing 747-300 test"
+  ]
+ },
+ "B744": {
+  "kind": "house",
+  "name": "Boeing 747-400",
+  "rx": "747-4|747-400|N401PW|VC-25",
+  "queries": [
+   "Boeing 747-400 N401PW",
+   "Boeing 747-400 City of Everett",
+   "Boeing 747-400 unpainted",
+   "Boeing 747-400 N6005C"
+  ]
+ },
+ "B74S": {
+  "kind": "house",
+  "name": "Boeing 747SP",
+  "rx": "747SP|SOFIA|747-SP",
+  "queries": [
+   "Boeing 747SP house colors",
+   "Boeing 747SP prototype",
+   "Boeing 747SP in flight",
+   "NASA SOFIA 747SP",
+   "Boeing 747SP N747SP",
+   "Boeing 747SP flight",
+   "Boeing 747SP"
+  ],
+  "mil": true
+ },
+ "B74R": {
+  "kind": "house",
+  "name": "Boeing 747SR",
+  "rx": "747SR|747-SR|747-100SR|747-300SR",
+  "queries": [
+   "Boeing 747SR house colors",
+   "Boeing 747SR prototype",
+   "Boeing 747SR in flight",
+   "Boeing 747SR",
+   "Boeing 747-100SR",
+   "Boeing 747-400D",
+   "Boeing 747SR"
+  ]
+ },
+ "B74D": {
+  "kind": "house",
+  "name": "Boeing 747-400D",
+  "rx": "747-400D|747-400BCF|747-4",
+  "queries": [
+   "Boeing 747-400D house colors",
+   "Boeing 747-400D prototype",
+   "Boeing 747-400D in flight",
+   "Boeing 747-400D",
+   "Boeing 747-400BCF Boeing",
+   "Boeing 747-400 domestic",
+   "Boeing 747-400D"
+  ]
+ },
+ "A342": {
+  "kind": "house",
+  "name": "Airbus A340-200",
+  "rx": "A340-2|A340-200",
+  "queries": [
+   "Airbus A340-200 house colors",
+   "Airbus A340-200 prototype",
+   "Airbus A340-200 in flight",
+   "Airbus A340-200 F-WW house colors",
+   "Airbus A340-200 Toulouse",
+   "Airbus A340 Airbus Industries",
+   "Airbus A340-200",
+   "Airbus A340-200 F-WW",
+   "Airbus A340-200 D-AV"
+  ]
+ },
+ "A343": {
+  "kind": "house",
+  "name": "Airbus A340-300",
+  "rx": "A340-3|A340-300",
+  "queries": [
+   "Airbus A340-300 house colors",
+   "Airbus A340-300 prototype",
+   "Airbus A340-300 in flight",
+   "Airbus A340-300 F-WWAI house colors",
+   "Airbus A340-300 Toulouse",
+   "Airbus A340-300 Airbus Industries",
+   "Airbus A340-300",
+   "Airbus A340-300 F-WW",
+   "Airbus A340-300 D-AV"
+  ]
+ },
+ "A345": {
+  "kind": "house",
+  "name": "Airbus A340-500",
+  "rx": "A340-5|A340-500",
+  "queries": [
+   "Airbus A340-500 house colors",
+   "Airbus A340-500 prototype",
+   "Airbus A340-500 in flight",
+   "Airbus A340-500 F-WWTE house colors",
+   "Airbus A340-500 Toulouse",
+   "Airbus A340-500 Airbus Industries",
+   "Airbus A340-500",
+   "Airbus A340-500 F-WW",
+   "Airbus A340-500 D-AV"
+  ]
+ },
+ "A346": {
+  "kind": "house",
+  "name": "Airbus A340-600",
+  "rx": "A340-6|A340-600",
+  "queries": [
+   "Airbus A340-600 house colors",
+   "Airbus A340-600 prototype",
+   "Airbus A340-600 in flight",
+   "Airbus A340-600 F-WWCA house colors",
+   "Airbus A340-600 Toulouse",
+   "Airbus A340-600 Airbus Industries",
+   "Airbus A340-600",
+   "Airbus A340-600 F-WW",
+   "Airbus A340-600 D-AV"
+  ]
+ },
+ "MD11": {
+  "kind": "house",
+  "name": "McDonnell Douglas MD-11",
+  "rx": "MD-?11",
+  "queries": [
+   "MD-11 N211MD",
+   "McDonnell Douglas MD-11 Long Beach test",
+   "MD-11 McDonnell Douglas house colors"
+  ]
+ },
+ "DC10": {
+  "kind": "house",
+  "name": "McDonnell Douglas DC-10",
+  "rx": "DC-?10|KC-10",
+  "queries": [
+   "McDonnell Douglas DC-10 house colors",
+   "McDonnell Douglas DC-10 prototype",
+   "McDonnell Douglas DC-10 in flight",
+   "McDonnell Douglas DC-10 N10MD house colors",
+   "DC-10 McDonnell Douglas prototype",
+   "DC-10 Long Beach",
+   "McDonnell Douglas DC-10"
+  ]
+ },
+ "C5M": {
+  "kind": "house",
+  "name": "Lockheed C-5M Super Galaxy",
+  "rx": "C-5[A-Z]?\\b|Galaxy",
+  "queries": [
+   "Lockheed C-5M Super Galaxy house colors",
+   "Lockheed C-5M Super Galaxy prototype",
+   "Lockheed C-5M Super Galaxy in flight",
+   "C-5M Super Galaxy flight",
+   "C-5 Galaxy Air Force in flight",
+   "C-5M Super Galaxy takeoff",
+   "Lockheed C-5M Super Galaxy"
+  ],
+  "mil": true
+ },
+ "K35R": {
+  "kind": "house",
+  "name": "Boeing KC-135R Stratotanker",
+  "rx": "KC-135",
+  "queries": [
+   "Boeing KC-135R Stratotanker house colors",
+   "Boeing KC-135R Stratotanker prototype",
+   "Boeing KC-135R Stratotanker in flight",
+   "KC-135R Stratotanker in flight",
+   "KC-135 Stratotanker refueling",
+   "KC-135R takeoff",
+   "Boeing KC-135R Stratotanker"
+  ],
+  "mil": true
+ },
+ "K35E": {
+  "kind": "house",
+  "name": "Boeing KC-135E Stratotanker",
+  "rx": "KC-135",
+  "queries": [
+   "Boeing KC-135E Stratotanker house colors",
+   "Boeing KC-135E Stratotanker prototype",
+   "Boeing KC-135E Stratotanker in flight",
+   "KC-135E Stratotanker",
+   "KC-135 Stratotanker Air National Guard",
+   "KC-135 landing",
+   "Boeing KC-135E Stratotanker"
+  ],
+  "mil": true
+ },
+ "KC10": {
+  "kind": "house",
+  "name": "McDonnell Douglas KC-10 Extender",
+  "rx": "KC-10",
+  "queries": [
+   "McDonnell Douglas KC-10 Extender house colors",
+   "McDonnell Douglas KC-10 Extender prototype",
+   "McDonnell Douglas KC-10 Extender in flight",
+   "KC-10 Extender in flight",
+   "KC-10 Extender refueling",
+   "KC-10 takeoff",
+   "McDonnell Douglas KC-10 Extender"
+  ],
+  "mil": true
+ },
+ "E3TF": {
+  "kind": "house",
+  "name": "Boeing E-3 Sentry AWACS",
+  "rx": "E-3\\b|AWACS|Sentry",
+  "queries": [
+   "Boeing E-3 Sentry AWACS house colors",
+   "Boeing E-3 Sentry AWACS prototype",
+   "Boeing E-3 Sentry AWACS in flight",
+   "E-3 Sentry AWACS in flight",
+   "E-3 Sentry takeoff",
+   "E-3A AWACS NATO",
+   "Boeing E-3 Sentry AWACS"
+  ],
+  "mil": true
+ },
+ "E3CF": {
+  "kind": "house",
+  "name": "Boeing E-3 Sentry AWACS",
+  "rx": "E-3\\b|AWACS|Sentry",
+  "queries": [
+   "E-3 Sentry AWACS in flight",
+   "E-3F Sentry French Air Force",
+   "E-3 Sentry landing",
+   "Boeing E-3 Sentry AWACS"
+  ],
+  "mil": true
+ },
+ "E6": {
+  "kind": "house",
+  "name": "Boeing E-6 Mercury",
+  "rx": "E-6\\b|Mercury|E-6B",
+  "queries": [
+   "Boeing E-6 Mercury house colors",
+   "Boeing E-6 Mercury prototype",
+   "Boeing E-6 Mercury in flight",
+   "E-6B Mercury TACAMO",
+   "E-6B Mercury in flight",
+   "E-6B Mercury takeoff",
+   "Boeing E-6 Mercury"
+  ],
+  "mil": true
+ },
+ "B52": {
+  "kind": "house",
+  "name": "Boeing B-52 Stratofortress",
+  "rx": "B-52",
+  "queries": [
+   "Boeing B-52 Stratofortress house colors",
+   "Boeing B-52 Stratofortress prototype",
+   "Boeing B-52 Stratofortress in flight",
+   "B-52 Stratofortress in flight",
+   "B-52H Stratofortress takeoff",
+   "B-52 flying",
+   "Boeing B-52 Stratofortress"
+  ],
+  "mil": true
+ },
+ "B1": {
+  "kind": "house",
+  "name": "Rockwell B-1B Lancer",
+  "rx": "B-1B?\\b|Lancer",
+  "queries": [
+   "Rockwell B-1B Lancer house colors",
+   "Rockwell B-1B Lancer prototype",
+   "Rockwell B-1B Lancer in flight",
+   "B-1B Lancer in flight",
+   "B-1B Lancer takeoff",
+   "B-1B Lancer flying",
+   "Rockwell B-1B Lancer"
+  ],
+  "mil": true
+ },
+ "B2": {
+  "kind": "house",
+  "name": "Northrop B-2 Spirit",
+  "rx": "B-2\\b|Spirit",
+  "queries": [
+   "Northrop B-2 Spirit house colors",
+   "Northrop B-2 Spirit prototype",
+   "Northrop B-2 Spirit in flight",
+   "B-2 Spirit in flight",
+   "B-2 Spirit stealth bomber flying",
+   "B-2 Spirit takeoff",
+   "Northrop B-2 Spirit"
+  ],
+  "mil": true
+ },
+ "P8": {
+  "kind": "house",
+  "name": "Boeing P-8 Poseidon",
+  "rx": "P-8|Poseidon",
+  "queries": [
+   "Boeing P-8 Poseidon house colors",
+   "Boeing P-8 Poseidon prototype",
+   "Boeing P-8 Poseidon in flight",
+   "P-8A Poseidon in flight",
+   "P-8 Poseidon takeoff",
+   "P-8A Poseidon flying",
+   "Boeing P-8 Poseidon"
+  ],
+  "mil": true
+ },
+ "C2": {
+  "kind": "house",
+  "name": "Grumman C-2 Greyhound",
+  "rx": "C-2\\b|Greyhound",
+  "queries": [
+   "Grumman C-2 Greyhound house colors",
+   "Grumman C-2 Greyhound prototype",
+   "Grumman C-2 Greyhound in flight",
+   "C-2A Greyhound in flight",
+   "C-2A Greyhound carrier",
+   "C-2 Greyhound takeoff",
+   "Grumman C-2 Greyhound"
+  ],
+  "mil": true
+ },
+ "AN12": {
+  "kind": "house",
+  "name": "Antonov An-12",
+  "rx": "An-?12|Antonov 12",
+  "queries": [
+   "Antonov An-12 house colors",
+   "Antonov An-12 prototype",
+   "Antonov An-12 in flight",
+   "Antonov An-12 in flight",
+   "Antonov An-12 takeoff",
+   "An-12 flying",
+   "Antonov An-12"
+  ],
+  "mil": true
+ },
+ "IL76": {
+  "kind": "house",
+  "name": "Ilyushin Il-76",
+  "rx": "Il-?76|Ilyushin 76",
+  "queries": [
+   "Ilyushin Il-76 house colors",
+   "Ilyushin Il-76 prototype",
+   "Ilyushin Il-76 in flight",
+   "Ilyushin Il-76 in flight",
+   "Il-76 takeoff",
+   "Il-76 flying",
+   "Ilyushin Il-76"
+  ],
+  "mil": true
+ },
+ "IL96": {
+  "kind": "house",
+  "name": "Ilyushin Il-96",
+  "rx": "Il-?96",
+  "queries": [
+   "Ilyushin Il-96 house colors",
+   "Ilyushin Il-96 prototype",
+   "Ilyushin Il-96 in flight",
+   "Ilyushin Il-96 in flight",
+   "Il-96 takeoff",
+   "Il-96 flying",
+   "Ilyushin Il-96"
+  ],
+  "mil": true
+ },
+ "C295": {
+  "kind": "house",
+  "name": "Airbus C295",
+  "rx": "C-?295|CN-?235|C295",
+  "queries": [
+   "Airbus C295 house colors",
+   "Airbus C295 prototype",
+   "Airbus C295 in flight",
+   "Airbus C295 in flight",
+   "C-295 Airbus Defence flight",
+   "CASA C-295 takeoff",
+   "Airbus C295"
+  ],
+  "mil": true
+ },
+ "V22": {
+  "kind": "house",
+  "name": "Bell Boeing V-22 Osprey",
+  "rx": "V-22|Osprey",
+  "queries": [
+   "V-22 Osprey airborne",
+   "Bell Boeing V-22 Osprey flying",
+   "MV-22B Osprey in flight over",
+   "CV-22 Osprey takeoff"
+  ],
+  "mil": true
+ },
+ "U2": {
+  "kind": "house",
+  "name": "Lockheed U-2",
+  "rx": "U-2|Dragon Lady",
+  "queries": [
+   "Lockheed U-2 house colors",
+   "Lockheed U-2 prototype",
+   "Lockheed U-2 in flight",
+   "U-2 Dragon Lady in flight",
+   "U-2S flying",
+   "U-2 takeoff",
+   "Lockheed U-2"
+  ],
+  "mil": true
+ },
+ "F35": {
+  "kind": "house",
+  "name": "Lockheed Martin F-35 Lightning II",
+  "rx": "F-35",
+  "queries": [
+   "Lockheed Martin F-35 Lightning II house colors",
+   "Lockheed Martin F-35 Lightning II prototype",
+   "Lockheed Martin F-35 Lightning II in flight",
+   "F-35A Lightning II in flight",
+   "F-35 flying",
+   "F-35B in flight",
+   "Lockheed Martin F-35 Lightning II"
+  ],
+  "mil": true
+ },
+ "F15": {
+  "kind": "house",
+  "name": "McDonnell Douglas F-15 Eagle",
+  "rx": "F-15",
+  "queries": [
+   "McDonnell Douglas F-15 Eagle house colors",
+   "McDonnell Douglas F-15 Eagle prototype",
+   "McDonnell Douglas F-15 Eagle in flight",
+   "F-15 Eagle in flight",
+   "F-15C Eagle flying",
+   "F-15E Strike Eagle in flight",
+   "McDonnell Douglas F-15 Eagle"
+  ],
+  "mil": true
+ },
+ "EUFI": {
+  "kind": "house",
+  "name": "Eurofighter Typhoon",
+  "rx": "Typhoon|Eurofighter",
+  "queries": [
+   "Eurofighter Typhoon house colors",
+   "Eurofighter Typhoon prototype",
+   "Eurofighter Typhoon in flight",
+   "Eurofighter Typhoon in flight",
+   "Eurofighter Typhoon flying",
+   "Eurofighter Typhoon takeoff",
+   "Eurofighter Typhoon"
+  ],
+  "mil": true
+ },
+ "A10": {
+  "kind": "house",
+  "name": "Fairchild A-10 Thunderbolt II",
+  "rx": "A-10",
+  "queries": [
+   "Fairchild A-10 Thunderbolt II house colors",
+   "Fairchild A-10 Thunderbolt II prototype",
+   "Fairchild A-10 Thunderbolt II in flight",
+   "A-10 Thunderbolt II in flight",
+   "A-10C Warthog flying",
+   "A-10 takeoff",
+   "Fairchild A-10 Thunderbolt II"
+  ],
+  "mil": true
+ },
+ "H47": {
+  "kind": "house",
+  "name": "Boeing CH-47 Chinook",
+  "rx": "CH-47|Chinook|HC-?[1-6]",
+  "queries": [
+   "Boeing CH-47 Chinook house colors",
+   "Boeing CH-47 Chinook prototype",
+   "Boeing CH-47 Chinook in flight",
+   "CH-47 Chinook in flight",
+   "CH-47F Chinook flying",
+   "Chinook helicopter flight",
+   "Boeing CH-47 Chinook"
+  ],
+  "mil": true
+ },
+ "H53": {
+  "kind": "house",
+  "name": "Sikorsky CH-53 Sea Stallion",
+  "rx": "CH-53|Sea Stallion|Super Stallion|Sea Dragon|MH-53",
+  "queries": [
+   "Sikorsky CH-53 Sea Stallion house colors",
+   "Sikorsky CH-53 Sea Stallion prototype",
+   "Sikorsky CH-53 Sea Stallion in flight",
+   "CH-53E Super Stallion in flight",
+   "CH-53 flying",
+   "CH-53K King Stallion",
+   "Sikorsky CH-53 Sea Stallion"
+  ],
+  "mil": true
+ },
+ "A225": {
+  "kind": "house",
+  "name": "Antonov An-225 Mriya",
+  "rx": "An-?225|Mriya",
+  "queries": [
+   "Antonov An-225 Mriya house colors",
+   "Antonov An-225 Mriya prototype",
+   "Antonov An-225 Mriya in flight",
+   "Antonov An-225 Mriya in flight",
+   "An-225 Mriya takeoff",
+   "An-225 Mriya landing",
+   "Antonov An-225 Mriya"
+  ],
+  "mil": true
+ },
+ "A337": {
+  "kind": "house",
+  "name": "Airbus Beluga XL",
+  "rx": "Beluga ?XL|A330-743|A337",
+  "queries": [
+   "Airbus Beluga XL house colors",
+   "Airbus Beluga XL prototype",
+   "Airbus Beluga XL in flight",
+   "Airbus Beluga XL in flight",
+   "Beluga XL Toulouse",
+   "Airbus BelugaXL first flight",
+   "Airbus Beluga XL"
+  ]
+ },
+ "SHIP": {
+  "kind": "house",
+  "name": "Zeppelin NT airship",
+  "rx": "Zeppelin|airship|blimp|Goodyear|dirigible",
+  "queries": [
+   "Zeppelin NT airship house colors",
+   "Zeppelin NT airship prototype",
+   "Zeppelin NT airship in flight",
+   "Zeppelin NT in flight",
+   "airship in flight",
+   "blimp in flight",
+   "Zeppelin NT airship"
+  ],
+  "mil": true
+ },
+ "BALL": {
+  "kind": "house",
+  "name": "hot air balloon",
+  "rx": "balloon",
+  "queries": [
+   "hot air balloon house colors",
+   "hot air balloon prototype",
+   "hot air balloon in flight",
+   "hot air balloon in flight",
+   "hot air balloon sky",
+   "hot air balloon over",
+   "hot air balloon"
+  ],
+  "mil": true
+ },
+ "DC3": {
+  "kind": "house",
+  "name": "Douglas DC-3",
+  "rx": "DC-?3|C-47|Dakota|Dak\\b",
+  "queries": [
+   "Douglas DC-3 house colors",
+   "Douglas DC-3 prototype",
+   "Douglas DC-3 in flight",
+   "Douglas DC-3 in flight",
+   "C-47 Skytrain flying",
+   "Douglas DC-3 N flying",
+   "DC-3 Dakota flight",
+   "Douglas DC-3"
+  ],
+  "mil": true
+ },
+ "CONI": {
+  "kind": "house",
+  "name": "Lockheed Constellation",
+  "rx": "Constellation|Super Constellation|Connie|L-1049|L-049",
+  "queries": [
+   "Lockheed Constellation house colors",
+   "Lockheed Constellation prototype",
+   "Lockheed Constellation in flight",
+   "Lockheed Constellation flying",
+   "Super Constellation in flight",
+   "Lockheed Constellation N",
+   "Lockheed Constellation"
+  ],
+  "mil": true
+ },
+ "B17": {
+  "kind": "house",
+  "name": "Boeing B-17 Flying Fortress",
+  "rx": "B-17|Flying Fortress",
+  "queries": [
+   "Boeing B-17 Flying Fortress house colors",
+   "Boeing B-17 Flying Fortress prototype",
+   "Boeing B-17 Flying Fortress in flight",
+   "B-17 Flying Fortress in flight",
+   "B-17G flying",
+   "B-17 Flying Fortress airshow",
+   "Boeing B-17 Flying Fortress"
+  ],
+  "mil": true
+ },
+ "B29": {
+  "kind": "house",
+  "name": "Boeing B-29 Superfortress",
+  "rx": "B-29|Superfortress|Fifi|Doc\\b",
+  "queries": [
+   "Boeing B-29 Superfortress house colors",
+   "Boeing B-29 Superfortress prototype",
+   "Boeing B-29 Superfortress in flight",
+   "B-29 Superfortress in flight",
+   "B-29 Doc flying",
+   "B-29 FIFI flying",
+   "Boeing B-29 Superfortress"
+  ],
+  "mil": true
+ },
+ "LANC": {
+  "kind": "house",
+  "name": "Avro Lancaster",
+  "rx": "Lancaster",
+  "queries": [
+   "Avro Lancaster house colors",
+   "Avro Lancaster prototype",
+   "Avro Lancaster in flight",
+   "Avro Lancaster in flight",
+   "Lancaster bomber flying",
+   "Avro Lancaster airshow",
+   "Avro Lancaster"
+  ],
+  "mil": true
+ },
+ "SPIT": {
+  "kind": "house",
+  "name": "Supermarine Spitfire",
+  "rx": "Spitfire",
+  "queries": [
+   "Supermarine Spitfire house colors",
+   "Supermarine Spitfire prototype",
+   "Supermarine Spitfire in flight",
+   "Supermarine Spitfire in flight",
+   "Spitfire flying",
+   "Spitfire airshow",
+   "Supermarine Spitfire"
+  ],
+  "mil": true
+ },
+ "CONC": {
+  "kind": "house",
+  "name": "Concorde",
+  "rx": "Concorde",
+  "queries": [
+   "Concorde house colors",
+   "Concorde prototype",
+   "Concorde in flight",
+   "Concorde in flight",
+   "Concorde prototype",
+   "Concorde G-AXDN",
+   "Concorde F-WTSS",
+   "Concorde 002",
+   "Concorde"
+  ],
+  "mil": true
+ },
+ "JU52": {
+  "kind": "house",
+  "name": "Junkers Ju 52",
+  "rx": "Ju[\\s-]?52",
+  "queries": [
+   "Junkers Ju 52 house colors",
+   "Junkers Ju 52 prototype",
+   "Junkers Ju 52 in flight",
+   "Junkers Ju 52 in flight",
+   "Ju 52 flying",
+   "Ju 52 airshow",
+   "Junkers Ju 52"
+  ],
+  "mil": true
+ },
+ "P51": {
+  "kind": "house",
+  "name": "North American P-51 Mustang",
+  "rx": "P-51|Mustang",
+  "queries": [
+   "North American P-51 Mustang house colors",
+   "North American P-51 Mustang prototype",
+   "North American P-51 Mustang in flight",
+   "P-51 Mustang in flight",
+   "P-51D Mustang flying",
+   "P-51 Mustang airshow",
+   "North American P-51 Mustang"
+  ],
+  "mil": true
+ },
+ "THY-A21N": {
+  "kind": "airline",
+  "name": "Turkish Airlines A321neo",
+  "rx": "A321[\\s-]?neo|A321-2\\d\\dN|A321 ?X?LR",
+  "match": "Turkish Airlines|T[\u00fcu]rk Hava",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Turkish Airlines A321neo",
+   "Turkish Airlines A321neo in flight",
+   "Turkish Airlines A321neo Turkish departing"
+  ]
+ },
+ "RYR-A320": {
+  "kind": "airline",
+  "name": "Ryanair A320",
+  "rx": "A320(?![\\s-]?neo)(?!-2\\d\\dN)(?![\\s-]?family)",
+  "match": "Ryanair",
+  "not": "Lauda|Buzz|Malta Air",
+  "cs": null,
+  "queries": [
+   "Ryanair A320",
+   "Ryanair A320 in flight",
+   "Ryanair A320 Ryanair departing"
+  ]
+ },
+ "UAE-B77L": {
+  "kind": "airline",
+  "name": "Emirates Boeing 777F",
+  "rx": "777F|777-F|777-2[0-9A-Z]{2}LR|777-200LR|777 Freighter",
+  "match": "Emirates",
+  "not": "SkyCargo|Cargo",
+  "cs": null,
+  "queries": [
+   "Emirates Boeing 777F",
+   "Emirates Boeing 777F in flight",
+   "Emirates Boeing 777F Emirates departing"
+  ]
+ },
+ "EJA-C68A": {
+  "kind": "airline",
+  "name": "NetJets Citation Latitude",
+  "rx": "Latitude|680A",
+  "match": "NetJets",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "NetJets Citation Latitude",
+   "NetJets Citation Latitude in flight",
+   "NetJets Citation Latitude NetJets departing"
+  ]
+ },
+ "EJA-E55P": {
+  "kind": "airline",
+  "name": "NetJets Phenom 300",
+  "rx": "Phenom 300",
+  "match": "NetJets",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "NetJets Phenom 300",
+   "NetJets Phenom 300 in flight",
+   "NetJets Phenom 300 NetJets departing"
+  ]
+ },
+ "EJA-C700": {
+  "kind": "airline",
+  "name": "NetJets Citation Longitude",
+  "rx": "Longitude|\\b700\\b",
+  "match": "NetJets",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "NetJets Citation Longitude",
+   "NetJets Citation Longitude in flight",
+   "NetJets Citation Longitude NetJets departing"
+  ]
+ },
+ "ANA-B789": {
+  "kind": "airline",
+  "name": "All Nippon Airways Boeing 787-9",
+  "rx": "787-9\\b|787-9[0-9A-Z]{0,2}\\b",
+  "match": "All Nippon|\\bANA\\b",
+  "not": "ANA Wings|Cargo|Pok[e\u00e9]mon",
+  "cs": true,
+  "queries": [
+   "All Nippon Airways Boeing 787-9",
+   "All Nippon Airways Boeing 787-9 in flight",
+   "All Nippon Airways Boeing 787-9 All departing"
+  ]
+ },
+ "TAM-A320": {
+  "kind": "airline",
+  "name": "LATAM Brasil A320",
+  "rx": "A320(?![\\s-]?neo)(?!-2\\d\\dN)(?![\\s-]?family)",
+  "match": "LATAM|TAM",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "LATAM Brasil A320",
+   "LATAM Brasil A320 in flight",
+   "LATAM Brasil A320 LATAM departing"
+  ]
+ },
+ "EZY-A20N": {
+  "kind": "airline",
+  "name": "easyJet A320neo",
+  "rx": "A320[\\s-]?neo|A320-2\\d\\dN",
+  "match": "easy ?Jet",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "easyJet A320neo",
+   "easyJet A320neo in flight",
+   "easyJet A320neo easyJet departing"
+  ]
+ },
+ "ASA-A332": {
+  "kind": "airline",
+  "name": "Alaska Airlines A330-200",
+  "rx": "A330-2\\d\\d",
+  "match": "Alaska Airlines|^File:Alaska |Alaska (Airbus|Boeing)",
+  "not": "Horizon|SkyWest|Virgin America",
+  "cs": null,
+  "queries": [
+   "Alaska Airlines A330-200",
+   "Alaska Airlines A330-200 in flight",
+   "Alaska Airlines A330-200 Alaska departing"
+  ]
+ },
+ "KAL-A21N": {
+  "kind": "airline",
+  "name": "Korean Air A321neo",
+  "rx": "A321[\\s-]?neo|A321-2\\d\\dN|A321 ?X?LR",
+  "match": "Korean Air",
+  "not": "Cargo",
+  "cs": null,
+  "queries": [
+   "Korean Air A321neo",
+   "Korean Air A321neo in flight",
+   "Korean Air A321neo Korean departing"
+  ]
+ },
+ "KAL-B78X": {
+  "kind": "airline",
+  "name": "Korean Air Boeing 787-10",
+  "rx": "787-10",
+  "match": "Korean Air",
+  "not": "Cargo",
+  "cs": null,
+  "queries": [
+   "Korean Air Boeing 787-10",
+   "Korean Air Boeing 787-10 in flight",
+   "Korean Air Boeing 787-10 Korean departing"
+  ]
+ },
+ "QTR-B77L": {
+  "kind": "airline",
+  "name": "Qatar Airways Boeing 777F",
+  "rx": "777F|777-F|777-2[0-9A-Z]{2}LR|777-200LR|777 Freighter",
+  "match": "Qatar",
+  "not": "Cargo|Amiri",
+  "cs": null,
+  "queries": [
+   "Qatar Airways Boeing 777F",
+   "Qatar Airways Boeing 777F in flight",
+   "Qatar Airways Boeing 777F Qatar departing"
+  ]
+ },
+ "SIA-B38M": {
+  "kind": "airline",
+  "name": "Singapore Airlines Boeing 737 MAX 8",
+  "rx": "737 ?MAX ?8|MAX 8|737-8(?![0-9A-Z])|737-8200|737-8-200",
+  "match": "Singapore Airlines",
+  "not": "Cargo|SilkAir|Scoot",
+  "cs": null,
+  "queries": [
+   "Singapore Airlines Boeing 737 MAX 8",
+   "Singapore Airlines Boeing 737 MAX 8 in flight",
+   "Singapore Airlines Boeing 737 MAX 8 Singapore departing"
+  ]
+ },
+ "PGT-A21N": {
+  "kind": "airline",
+  "name": "Pegasus Airlines A321neo",
+  "rx": "A321[\\s-]?neo|A321-2\\d\\dN|A321 ?X?LR",
+  "match": "Pegasus",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Pegasus Airlines A321neo",
+   "Pegasus Airlines A321neo in flight",
+   "Pegasus Airlines A321neo Pegasus departing"
+  ]
+ },
+ "PGT-A20N": {
+  "kind": "airline",
+  "name": "Pegasus Airlines A320neo",
+  "rx": "A320[\\s-]?neo|A320-2\\d\\dN",
+  "match": "Pegasus",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Pegasus Airlines A320neo",
+   "Pegasus Airlines A320neo in flight",
+   "Pegasus Airlines A320neo Pegasus departing"
+  ]
+ },
+ "PGT-B738": {
+  "kind": "airline",
+  "name": "Pegasus Airlines Boeing 737-800",
+  "rx": "737-8[0-9A-Z]{2}\\b(?!.*MAX)",
+  "match": "Pegasus",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Pegasus Airlines Boeing 737-800",
+   "Pegasus Airlines Boeing 737-800 in flight",
+   "Pegasus Airlines Boeing 737-800 Pegasus departing"
+  ]
+ },
+ "IGO-A320": {
+  "kind": "airline",
+  "name": "IndiGo A320",
+  "rx": "A320(?![\\s-]?neo)(?!-2\\d\\dN)(?![\\s-]?family)",
+  "match": "IndiGo",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "IndiGo A320",
+   "IndiGo A320 in flight",
+   "IndiGo A320 IndiGo departing"
+  ]
+ },
+ "AMX-B39M": {
+  "kind": "airline",
+  "name": "Aeromexico Boeing 737 MAX 9",
+  "rx": "737 ?MAX ?9|MAX 9|737-9(?![0-9A-Z])",
+  "match": "Aerom[e\u00e9]xico",
+  "not": "Connect",
+  "cs": null,
+  "queries": [
+   "Aeromexico Boeing 737 MAX 9",
+   "Aeromexico Boeing 737 MAX 9 in flight",
+   "Aeromexico Boeing 737 MAX 9 Aeromexico departing"
+  ]
+ },
+ "QFA-B738": {
+  "kind": "airline",
+  "name": "Qantas Boeing 737-800",
+  "rx": "737-8[0-9A-Z]{2}\\b(?!.*MAX)",
+  "match": "Qantas",
+  "not": "QantasLink|Freight|Jetstar",
+  "cs": null,
+  "queries": [
+   "Qantas Boeing 737-800",
+   "Qantas Boeing 737-800 in flight",
+   "Qantas Boeing 737-800 Qantas departing"
+  ]
+ },
+ "LXJ-CL35": {
+  "kind": "airline",
+  "name": "Flexjet Challenger 350",
+  "rx": "Challenger 3[05]0|CL-?350",
+  "match": "Flexjet",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Flexjet Challenger 350",
+   "Flexjet Challenger 350 in flight",
+   "Flexjet Challenger 350 Flexjet departing"
+  ]
+ },
+ "LXJ-E545": {
+  "kind": "airline",
+  "name": "Flexjet Embraer Legacy 450",
+  "rx": "Legacy 450|Praetor 500|E545",
+  "match": "Flexjet",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Flexjet Embraer Legacy 450",
+   "Flexjet Embraer Legacy 450 in flight",
+   "Flexjet Embraer Legacy 450 Flexjet departing"
+  ]
+ },
+ "LXJ-E55P": {
+  "kind": "airline",
+  "name": "Flexjet Phenom 300",
+  "rx": "Phenom 300",
+  "match": "Flexjet",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Flexjet Phenom 300",
+   "Flexjet Phenom 300 in flight",
+   "Flexjet Phenom 300 Flexjet departing"
+  ]
+ },
+ "EDV-CRJ7": {
+  "kind": "airline",
+  "name": "Endeavor Air CRJ700",
+  "rx": "CRJ-?700|CL-600-2C10",
+  "match": "Endeavor",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Endeavor Air CRJ700",
+   "Endeavor Air CRJ700 in flight",
+   "Endeavor Air CRJ700 Endeavor departing"
+  ]
+ },
+ "AIC-A20N": {
+  "kind": "airline",
+  "name": "Air India A320neo",
+  "rx": "A320[\\s-]?neo|A320-2\\d\\dN",
+  "match": "Air India",
+  "not": "Express|Regional|Alliance",
+  "cs": null,
+  "queries": [
+   "Air India A320neo",
+   "Air India A320neo in flight",
+   "Air India A320neo Air departing"
+  ]
+ },
+ "AIC-B789": {
+  "kind": "airline",
+  "name": "Air India Boeing 787-9",
+  "rx": "787-9\\b|787-9[0-9A-Z]{0,2}\\b",
+  "match": "Air India",
+  "not": "Express|Regional|Alliance",
+  "cs": null,
+  "queries": [
+   "Air India Boeing 787-9",
+   "Air India Boeing 787-9 in flight",
+   "Air India Boeing 787-9 Air departing"
+  ]
+ },
+ "FDB-B38M": {
+  "kind": "airline",
+  "name": "flydubai Boeing 737 MAX 8",
+  "rx": "737 ?MAX ?8|MAX 8|737-8(?![0-9A-Z])|737-8200|737-8-200",
+  "match": "flydubai|fly ?dubai",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "flydubai Boeing 737 MAX 8",
+   "flydubai Boeing 737 MAX 8 in flight",
+   "flydubai Boeing 737 MAX 8 flydubai departing"
+  ]
+ },
+ "FDB-B738": {
+  "kind": "airline",
+  "name": "flydubai Boeing 737-800",
+  "rx": "737-8[0-9A-Z]{2}\\b(?!.*MAX)",
+  "match": "flydubai|fly ?dubai",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "flydubai Boeing 737-800",
+   "flydubai Boeing 737-800 in flight",
+   "flydubai Boeing 737-800 flydubai departing"
+  ]
+ },
+ "FDB-B39M": {
+  "kind": "airline",
+  "name": "flydubai Boeing 737 MAX 9",
+  "rx": "737 ?MAX ?9|MAX 9|737-9(?![0-9A-Z])",
+  "match": "flydubai|fly ?dubai",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "flydubai Boeing 737 MAX 9",
+   "flydubai Boeing 737 MAX 9 in flight",
+   "flydubai Boeing 737 MAX 9 flydubai departing"
+  ]
+ },
+ "ANZ-AT76": {
+  "kind": "airline",
+  "name": "Air New Zealand ATR 72-600",
+  "rx": "ATR[\\s-]?72-6\\d\\d|ATR[\\s-]?72-212A",
+  "match": "Air New Zealand",
+  "not": "Air New Zealand Link|Eagle Air|Mount Cook",
+  "cs": null,
+  "queries": [
+   "Air New Zealand ATR 72-600",
+   "Air New Zealand ATR 72-600 in flight",
+   "Air New Zealand ATR 72-600 Air departing"
+  ]
+ },
+ "ANZ-A21N": {
+  "kind": "airline",
+  "name": "Air New Zealand A321neo",
+  "rx": "A321[\\s-]?neo|A321-2\\d\\dN|A321 ?X?LR",
+  "match": "Air New Zealand",
+  "not": "Air New Zealand Link|Eagle Air|Mount Cook",
+  "cs": null,
+  "queries": [
+   "Air New Zealand A321neo",
+   "Air New Zealand A321neo in flight",
+   "Air New Zealand A321neo Air departing"
+  ]
+ },
+ "KLM-B772": {
+  "kind": "airline",
+  "name": "KLM Boeing 777-200",
+  "rx": "777-2[0-9A-Z]{2}(?!LR|F)(?![\\s-]?LR)",
+  "match": "\\bKLM\\b",
+  "not": "Cityhopper|Air France|Martinair",
+  "cs": true,
+  "queries": [
+   "KLM Boeing 777-200",
+   "KLM Boeing 777-200 in flight",
+   "KLM Boeing 777-200 KLM departing"
+  ]
+ },
+ "AZU-E295": {
+  "kind": "airline",
+  "name": "Azul Embraer E195-E2",
+  "rx": "E195[\\s-]?E2|ERJ-190-400|E2-195|195-E2",
+  "match": "Azul",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Azul Embraer E195-E2",
+   "Azul Embraer E195-E2 in flight",
+   "Azul Embraer E195-E2 Azul departing"
+  ]
+ },
+ "AZU-A20N": {
+  "kind": "airline",
+  "name": "Azul A320neo",
+  "rx": "A320[\\s-]?neo|A320-2\\d\\dN",
+  "match": "Azul",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Azul A320neo",
+   "Azul A320neo in flight",
+   "Azul A320neo Azul departing"
+  ]
+ },
+ "AZU-A21N": {
+  "kind": "airline",
+  "name": "Azul A321neo",
+  "rx": "A321[\\s-]?neo|A321-2\\d\\dN|A321 ?X?LR",
+  "match": "Azul",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Azul A321neo",
+   "Azul A321neo in flight",
+   "Azul A321neo Azul departing"
+  ]
+ },
+ "JZA-E75S": {
+  "kind": "airline",
+  "name": "Air Canada Express Jazz Embraer 175",
+  "rx": "E-?175|ERJ-?175|ERJ-?170-200",
+  "match": "Jazz|Air Canada Express",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Air Canada Express Jazz Embraer 175",
+   "Air Canada Express Jazz Embraer 175 in flight",
+   "Air Canada Express Jazz Embraer 175 Air departing"
+  ]
+ },
+ "VOZ-B738": {
+  "kind": "airline",
+  "name": "Virgin Australia Boeing 737-800",
+  "rx": "737-8[0-9A-Z]{2}\\b(?!.*MAX)",
+  "match": "Virgin Australia|Virgin Blue",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Virgin Australia Boeing 737-800",
+   "Virgin Australia Boeing 737-800 in flight",
+   "Virgin Australia Boeing 737-800 Virgin departing"
+  ]
+ },
+ "VOZ-B38M": {
+  "kind": "airline",
+  "name": "Virgin Australia Boeing 737 MAX 8",
+  "rx": "737 ?MAX ?8|MAX 8|737-8(?![0-9A-Z])|737-8200|737-8-200",
+  "match": "Virgin Australia|Virgin Blue",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Virgin Australia Boeing 737 MAX 8",
+   "Virgin Australia Boeing 737 MAX 8 in flight",
+   "Virgin Australia Boeing 737 MAX 8 Virgin departing"
+  ]
+ },
+ "VOZ-B737": {
+  "kind": "airline",
+  "name": "Virgin Australia Boeing 737-700",
+  "rx": "737-7[0-9A-Z]{2}\\b(?!.*MAX)",
+  "match": "Virgin Australia|Virgin Blue",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Virgin Australia Boeing 737-700",
+   "Virgin Australia Boeing 737-700 in flight",
+   "Virgin Australia Boeing 737-700 Virgin departing"
+  ]
+ },
+ "EXS-A21N": {
+  "kind": "airline",
+  "name": "Jet2 A321neo",
+  "rx": "A321[\\s-]?neo|A321-2\\d\\dN|A321 ?X?LR",
+  "match": "Jet2",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Jet2 A321neo",
+   "Jet2 A321neo in flight",
+   "Jet2 A321neo Jet2 departing"
+  ]
+ },
+ "CPA-B748": {
+  "kind": "airline",
+  "name": "Cathay Pacific Boeing 747-8",
+  "rx": "747-8",
+  "match": "Cathay",
+  "not": "Dragon|Cargo",
+  "cs": null,
+  "queries": [
+   "Cathay Pacific Boeing 747-8",
+   "Cathay Pacific Boeing 747-8 in flight",
+   "Cathay Pacific Boeing 747-8 Cathay departing"
+  ]
+ },
+ "JIA-CRJ9": {
+  "kind": "airline",
+  "name": "PSA Airlines CRJ900",
+  "rx": "CRJ-?900|CL-600-2D24",
+  "match": "PSA Airlines",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "PSA Airlines CRJ900",
+   "PSA Airlines CRJ900 in flight",
+   "PSA Airlines CRJ900 PSA departing"
+  ]
+ },
+ "JIA-CRJ7": {
+  "kind": "airline",
+  "name": "PSA Airlines CRJ700",
+  "rx": "CRJ-?700|CL-600-2C10",
+  "match": "PSA Airlines",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "PSA Airlines CRJ700",
+   "PSA Airlines CRJ700 in flight",
+   "PSA Airlines CRJ700 PSA departing"
+  ]
+ },
+ "ROU-B38M": {
+  "kind": "airline",
+  "name": "Air Canada Rouge Boeing 737 MAX 8",
+  "rx": "737 ?MAX ?8|MAX 8|737-8(?![0-9A-Z])|737-8200|737-8-200",
+  "match": "Rouge",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Air Canada Rouge Boeing 737 MAX 8",
+   "Air Canada Rouge Boeing 737 MAX 8 in flight",
+   "Air Canada Rouge Boeing 737 MAX 8 Air departing"
+  ]
+ },
+ "AAR-A21N": {
+  "kind": "airline",
+  "name": "Asiana Airlines A321neo",
+  "rx": "A321[\\s-]?neo|A321-2\\d\\dN|A321 ?X?LR",
+  "match": "Asiana",
+  "not": "Cargo",
+  "cs": null,
+  "queries": [
+   "Asiana Airlines A321neo",
+   "Asiana Airlines A321neo in flight",
+   "Asiana Airlines A321neo Asiana departing"
+  ]
+ },
+ "CES-A333": {
+  "kind": "airline",
+  "name": "China Eastern Airlines A330-300",
+  "rx": "A330-3\\d\\d",
+  "match": "China Eastern",
+  "not": "Cargo",
+  "cs": null,
+  "queries": [
+   "China Eastern Airlines A330-300",
+   "China Eastern Airlines A330-300 in flight",
+   "China Eastern Airlines A330-300 China departing"
+  ]
+ },
+ "CES-A20N": {
+  "kind": "airline",
+  "name": "China Eastern Airlines A320neo",
+  "rx": "A320[\\s-]?neo|A320-2\\d\\dN",
+  "match": "China Eastern",
+  "not": "Cargo",
+  "cs": null,
+  "queries": [
+   "China Eastern Airlines A320neo",
+   "China Eastern Airlines A320neo in flight",
+   "China Eastern Airlines A320neo China departing"
+  ]
+ },
+ "JST-A320": {
+  "kind": "airline",
+  "name": "Jetstar A320",
+  "rx": "A320(?![\\s-]?neo)(?!-2\\d\\dN)(?![\\s-]?family)",
+  "match": "Jetstar",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Jetstar A320",
+   "Jetstar A320 in flight",
+   "Jetstar A320 Jetstar departing"
+  ]
+ },
+ "JST-A21N": {
+  "kind": "airline",
+  "name": "Jetstar A321neo",
+  "rx": "A321[\\s-]?neo|A321-2\\d\\dN|A321 ?X?LR",
+  "match": "Jetstar",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Jetstar A321neo",
+   "Jetstar A321neo in flight",
+   "Jetstar A321neo Jetstar departing"
+  ]
+ },
+ "TKJ-B38M": {
+  "kind": "airline",
+  "name": "Jet2 Boeing 737 MAX 8",
+  "rx": "737 ?MAX ?8|MAX 8|737-8(?![0-9A-Z])|737-8200|737-8-200",
+  "match": "Jet2",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Jet2 Boeing 737 MAX 8",
+   "Jet2 Boeing 737 MAX 8 in flight",
+   "Jet2 Boeing 737 MAX 8 Jet2 departing"
+  ]
+ },
+ "TKJ-A21N": {
+  "kind": "airline",
+  "name": "Jet2 A321neo",
+  "rx": "A321[\\s-]?neo|A321-2\\d\\dN|A321 ?X?LR",
+  "match": "Jet2",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Jet2 A321neo",
+   "Jet2 A321neo in flight",
+   "Jet2 A321neo Jet2 departing"
+  ]
+ },
+ "TKJ-B738": {
+  "kind": "airline",
+  "name": "Jet2 Boeing 737-800",
+  "rx": "737-8[0-9A-Z]{2}\\b(?!.*MAX)",
+  "match": "Jet2",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Jet2 Boeing 737-800",
+   "Jet2 Boeing 737-800 in flight",
+   "Jet2 Boeing 737-800 Jet2 departing"
+  ]
+ },
+ "EJU-A320": {
+  "kind": "airline",
+  "name": "easyJet Europe A320",
+  "rx": "A320(?![\\s-]?neo)(?!-2\\d\\dN)(?![\\s-]?family)",
+  "match": "easyJet",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "easyJet Europe A320",
+   "easyJet Europe A320 in flight",
+   "easyJet Europe A320 easyJet departing"
+  ]
+ },
+ "EJU-A319": {
+  "kind": "airline",
+  "name": "easyJet Europe A319",
+  "rx": "A319(?![\\s-]?neo)(?!-1\\d\\dN)",
+  "match": "easyJet",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "easyJet Europe A319",
+   "easyJet Europe A319 in flight",
+   "easyJet Europe A319 easyJet departing"
+  ]
+ },
+ "EJU-A20N": {
+  "kind": "airline",
+  "name": "easyJet Europe A320neo",
+  "rx": "A320[\\s-]?neo|A320-2\\d\\dN",
+  "match": "easyJet",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "easyJet Europe A320neo",
+   "easyJet Europe A320neo in flight",
+   "easyJet Europe A320neo easyJet departing"
+  ]
+ },
+ "FFT-A321": {
+  "kind": "airline",
+  "name": "Frontier Airlines A321",
+  "rx": "A321(?![\\s-]?neo)(?!-2\\d\\dN)(?![\\s-]?LR|XLR)",
+  "match": "Frontier",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Frontier Airlines A321",
+   "Frontier Airlines A321 in flight",
+   "Frontier Airlines A321 Frontier departing"
+  ]
+ },
+ "VOI-A20N": {
+  "kind": "airline",
+  "name": "Volaris A320neo",
+  "rx": "A320[\\s-]?neo|A320-2\\d\\dN",
+  "match": "Volaris",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Volaris A320neo",
+   "Volaris A320neo in flight",
+   "Volaris A320neo Volaris departing"
+  ]
+ },
+ "VOI-A21N": {
+  "kind": "airline",
+  "name": "Volaris A321neo",
+  "rx": "A321[\\s-]?neo|A321-2\\d\\dN|A321 ?X?LR",
+  "match": "Volaris",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Volaris A321neo",
+   "Volaris A321neo in flight",
+   "Volaris A321neo Volaris departing"
+  ]
+ },
+ "GIA-B77W": {
+  "kind": "airline",
+  "name": "Garuda Indonesia Boeing 777-300ER",
+  "rx": "777-3[0-9A-Z]{2}",
+  "match": "Garuda",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Garuda Indonesia Boeing 777-300ER",
+   "Garuda Indonesia Boeing 777-300ER in flight",
+   "Garuda Indonesia Boeing 777-300ER Garuda departing"
+  ]
+ },
+ "ABY-A320": {
+  "kind": "airline",
+  "name": "Air Arabia A320",
+  "rx": "A320(?![\\s-]?neo)(?!-2\\d\\dN)(?![\\s-]?family)",
+  "match": "Air Arabia",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Air Arabia A320",
+   "Air Arabia A320 in flight",
+   "Air Arabia A320 Air departing"
+  ]
+ },
+ "ABY-A20N": {
+  "kind": "airline",
+  "name": "Air Arabia A320neo",
+  "rx": "A320[\\s-]?neo|A320-2\\d\\dN",
+  "match": "Air Arabia",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Air Arabia A320neo",
+   "Air Arabia A320neo in flight",
+   "Air Arabia A320neo Air departing"
+  ]
+ },
+ "ABY-A21N": {
+  "kind": "airline",
+  "name": "Air Arabia A321neo",
+  "rx": "A321[\\s-]?neo|A321-2\\d\\dN|A321 ?X?LR",
+  "match": "Air Arabia",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Air Arabia A321neo",
+   "Air Arabia A321neo in flight",
+   "Air Arabia A321neo Air departing"
+  ]
+ },
+ "CCA-B77W": {
+  "kind": "airline",
+  "name": "Air China Boeing 777-300ER",
+  "rx": "777-3[0-9A-Z]{2}",
+  "match": "Air China",
+  "not": "Cargo|Inner Mongolia|Dalian",
+  "cs": null,
+  "queries": [
+   "Air China Boeing 777-300ER",
+   "Air China Boeing 777-300ER in flight",
+   "Air China Boeing 777-300ER Air departing"
+  ]
+ },
+ "CCA-A359": {
+  "kind": "airline",
+  "name": "Air China A350-900",
+  "rx": "A350-9\\d\\d|A350(?!-10)(?![\\s-]?1000)(?!-1041)",
+  "match": "Air China",
+  "not": "Cargo|Inner Mongolia|Dalian",
+  "cs": null,
+  "queries": [
+   "Air China A350-900",
+   "Air China A350-900 in flight",
+   "Air China A350-900 Air departing"
+  ]
+ },
+ "TGW-B788": {
+  "kind": "airline",
+  "name": "Scoot Boeing 787-8",
+  "rx": "787-8\\b|787-8[0-9A-Z]{0,2}\\b|Dreamliner 787-8",
+  "match": "\\bScoot\\b",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Scoot Boeing 787-8",
+   "Scoot Boeing 787-8 in flight",
+   "Scoot Boeing 787-8 Scoot departing"
+  ]
+ },
+ "TGW-A20N": {
+  "kind": "airline",
+  "name": "Scoot A320neo",
+  "rx": "A320[\\s-]?neo|A320-2\\d\\dN",
+  "match": "\\bScoot\\b",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Scoot A320neo",
+   "Scoot A320neo in flight",
+   "Scoot A320neo Scoot departing"
+  ]
+ },
+ "TGW-B789": {
+  "kind": "airline",
+  "name": "Scoot Boeing 787-9",
+  "rx": "787-9\\b|787-9[0-9A-Z]{0,2}\\b",
+  "match": "\\bScoot\\b",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Scoot Boeing 787-9",
+   "Scoot Boeing 787-9 in flight",
+   "Scoot Boeing 787-9 Scoot departing"
+  ]
+ },
+ "IBE-A21N": {
+  "kind": "airline",
+  "name": "Iberia A321neo",
+  "rx": "A321[\\s-]?neo|A321-2\\d\\dN|A321 ?X?LR",
+  "match": "Iberia",
+  "not": "Express|Regional|Air Nostrum",
+  "cs": null,
+  "queries": [
+   "Iberia A321neo",
+   "Iberia A321neo in flight",
+   "Iberia A321neo Iberia departing"
+  ]
+ },
+ "CSN-A21N": {
+  "kind": "airline",
+  "name": "China Southern Airlines A321neo",
+  "rx": "A321[\\s-]?neo|A321-2\\d\\dN|A321 ?X?LR",
+  "match": "China Southern",
+  "not": "Cargo",
+  "cs": null,
+  "queries": [
+   "China Southern Airlines A321neo",
+   "China Southern Airlines A321neo in flight",
+   "China Southern Airlines A321neo China departing"
+  ]
+ },
+ "CSN-A20N": {
+  "kind": "airline",
+  "name": "China Southern Airlines A320neo",
+  "rx": "A320[\\s-]?neo|A320-2\\d\\dN",
+  "match": "China Southern",
+  "not": "Cargo",
+  "cs": null,
+  "queries": [
+   "China Southern Airlines A320neo",
+   "China Southern Airlines A320neo in flight",
+   "China Southern Airlines A320neo China departing"
+  ]
+ },
+ "VIV-A320": {
+  "kind": "airline",
+  "name": "Viva Aerobus A320",
+  "rx": "A320(?![\\s-]?neo)(?!-2\\d\\dN)(?![\\s-]?family)",
+  "match": "Viva ?Aerobus",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Viva Aerobus A320",
+   "Viva Aerobus A320 in flight",
+   "Viva Aerobus A320 Viva departing"
+  ]
+ },
+ "VIV-A20N": {
+  "kind": "airline",
+  "name": "Viva Aerobus A320neo",
+  "rx": "A320[\\s-]?neo|A320-2\\d\\dN",
+  "match": "Viva ?Aerobus",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Viva Aerobus A320neo",
+   "Viva Aerobus A320neo in flight",
+   "Viva Aerobus A320neo Viva departing"
+  ]
+ },
+ "VIV-A21N": {
+  "kind": "airline",
+  "name": "Viva Aerobus A321neo",
+  "rx": "A321[\\s-]?neo|A321-2\\d\\dN|A321 ?X?LR",
+  "match": "Viva ?Aerobus",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Viva Aerobus A321neo",
+   "Viva Aerobus A321neo in flight",
+   "Viva Aerobus A321neo Viva departing"
+  ]
+ },
+ "EWG-A319": {
+  "kind": "airline",
+  "name": "Eurowings A319",
+  "rx": "A319(?![\\s-]?neo)(?!-1\\d\\dN)",
+  "match": "Eurowings",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Eurowings A319",
+   "Eurowings A319 in flight",
+   "Eurowings A319 Eurowings departing"
+  ]
+ },
+ "EWG-A20N": {
+  "kind": "airline",
+  "name": "Eurowings A320neo",
+  "rx": "A320[\\s-]?neo|A320-2\\d\\dN",
+  "match": "Eurowings",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Eurowings A320neo",
+   "Eurowings A320neo in flight",
+   "Eurowings A320neo Eurowings departing"
+  ]
+ },
+ "UPS-B744": {
+  "kind": "airline",
+  "name": "UPS Airlines Boeing 747-400",
+  "rx": "747-4",
+  "match": "\\bUPS\\b|United Parcel",
+  "not": null,
+  "cs": true,
+  "queries": [
+   "UPS Airlines Boeing 747-400",
+   "UPS Airlines Boeing 747-400 in flight",
+   "UPS Airlines Boeing 747-400 UPS departing"
+  ]
+ },
+ "GTI-B744": {
+  "kind": "airline",
+  "name": "Atlas Air Boeing 747-400",
+  "rx": "747-4",
+  "match": "Atlas Air",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Atlas Air Boeing 747-400",
+   "Atlas Air Boeing 747-400 in flight",
+   "Atlas Air Boeing 747-400 Atlas departing"
+  ]
+ },
+ "GTI-B748": {
+  "kind": "airline",
+  "name": "Atlas Air Boeing 747-8",
+  "rx": "747-8",
+  "match": "Atlas Air",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Atlas Air Boeing 747-8",
+   "Atlas Air Boeing 747-8 in flight",
+   "Atlas Air Boeing 747-8 Atlas departing"
+  ]
+ },
+ "GTI-B77L": {
+  "kind": "airline",
+  "name": "Atlas Air Boeing 777F",
+  "rx": "777F|777-F|777-2[0-9A-Z]{2}LR|777-200LR|777 Freighter",
+  "match": "Atlas Air",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Atlas Air Boeing 777F",
+   "Atlas Air Boeing 777F in flight",
+   "Atlas Air Boeing 777F Atlas departing"
+  ]
+ },
+ "TAP-A320": {
+  "kind": "airline",
+  "name": "TAP Air Portugal A320",
+  "rx": "A320(?![\\s-]?neo)(?!-2\\d\\dN)(?![\\s-]?family)",
+  "match": "\\bTAP\\b|TAP Portugal|TAP Air Portugal",
+  "not": "Express",
+  "cs": true,
+  "queries": [
+   "TAP Air Portugal A320",
+   "TAP Air Portugal A320 in flight",
+   "TAP Air Portugal A320 TAP departing"
+  ]
+ },
+ "TAP-E190": {
+  "kind": "airline",
+  "name": "TAP Air Portugal Embraer 190",
+  "rx": "E-?190\\b(?![\\s-]?E2)|ERJ-?190-100|Embraer 190(?![\\s-]?E2)",
+  "match": "\\bTAP\\b|TAP Portugal|TAP Air Portugal",
+  "not": "Express",
+  "cs": true,
+  "queries": [
+   "TAP Air Portugal Embraer 190",
+   "TAP Air Portugal Embraer 190 in flight",
+   "TAP Air Portugal Embraer 190 TAP departing"
+  ]
+ },
+ "AXB-B38M": {
+  "kind": "airline",
+  "name": "Air India Express Boeing 737 MAX 8",
+  "rx": "737 ?MAX ?8|MAX 8|737-8(?![0-9A-Z])|737-8200|737-8-200",
+  "match": "Air India Express",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Air India Express Boeing 737 MAX 8",
+   "Air India Express Boeing 737 MAX 8 in flight",
+   "Air India Express Boeing 737 MAX 8 Air departing"
+  ]
+ },
+ "AXB-B738": {
+  "kind": "airline",
+  "name": "Air India Express Boeing 737-800",
+  "rx": "737-8[0-9A-Z]{2}\\b(?!.*MAX)",
+  "match": "Air India Express",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Air India Express Boeing 737-800",
+   "Air India Express Boeing 737-800 in flight",
+   "Air India Express Boeing 737-800 Air departing"
+  ]
+ },
+ "AXB-A20N": {
+  "kind": "airline",
+  "name": "Air India Express A320neo",
+  "rx": "A320[\\s-]?neo|A320-2\\d\\dN",
+  "match": "Air India Express",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Air India Express A320neo",
+   "Air India Express A320neo in flight",
+   "Air India Express A320neo Air departing"
+  ]
+ },
+ "BTK-A320": {
+  "kind": "airline",
+  "name": "Batik Air A320",
+  "rx": "A320(?![\\s-]?neo)(?!-2\\d\\dN)(?![\\s-]?family)",
+  "match": "Batik",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Batik Air A320",
+   "Batik Air A320 in flight",
+   "Batik Air A320 Batik departing"
+  ]
+ },
+ "BTK-B738": {
+  "kind": "airline",
+  "name": "Batik Air Boeing 737-800",
+  "rx": "737-8[0-9A-Z]{2}\\b(?!.*MAX)",
+  "match": "Batik",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Batik Air Boeing 737-800",
+   "Batik Air Boeing 737-800 in flight",
+   "Batik Air Boeing 737-800 Batik departing"
+  ]
+ },
+ "WZZ-A21N": {
+  "kind": "airline",
+  "name": "Wizz Air A321neo",
+  "rx": "A321[\\s-]?neo|A321-2\\d\\dN|A321 ?X?LR",
+  "match": "Wizz",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Wizz Air A321neo",
+   "Wizz Air A321neo in flight",
+   "Wizz Air A321neo Wizz departing"
+  ]
+ },
+ "CFG-A339": {
+  "kind": "airline",
+  "name": "Condor A330-900",
+  "rx": "A330-9\\d\\d|A330[\\s-]?neo",
+  "match": "Condor",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Condor A330-900",
+   "Condor A330-900 in flight",
+   "Condor A330-900 Condor departing"
+  ]
+ },
+ "CFG-A20N": {
+  "kind": "airline",
+  "name": "Condor A320neo",
+  "rx": "A320[\\s-]?neo|A320-2\\d\\dN",
+  "match": "Condor",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Condor A320neo",
+   "Condor A320neo in flight",
+   "Condor A320neo Condor departing"
+  ]
+ },
+ "CFG-A320": {
+  "kind": "airline",
+  "name": "Condor A320",
+  "rx": "A320(?![\\s-]?neo)(?!-2\\d\\dN)(?![\\s-]?family)",
+  "match": "Condor",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Condor A320",
+   "Condor A320 in flight",
+   "Condor A320 Condor departing"
+  ]
+ },
+ "WMT-A21N": {
+  "kind": "airline",
+  "name": "Wizz Air Malta A321neo",
+  "rx": "A321[\\s-]?neo|A321-2\\d\\dN|A321 ?X?LR",
+  "match": "Wizz",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Wizz Air Malta A321neo",
+   "Wizz Air Malta A321neo in flight",
+   "Wizz Air Malta A321neo Wizz departing"
+  ]
+ },
+ "WMT-A321": {
+  "kind": "airline",
+  "name": "Wizz Air Malta A321",
+  "rx": "A321(?![\\s-]?neo)(?!-2\\d\\dN)(?![\\s-]?LR|XLR)",
+  "match": "Wizz",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Wizz Air Malta A321",
+   "Wizz Air Malta A321 in flight",
+   "Wizz Air Malta A321 Wizz departing"
+  ]
+ },
+ "WMT-A320": {
+  "kind": "airline",
+  "name": "Wizz Air Malta A320",
+  "rx": "A320(?![\\s-]?neo)(?!-2\\d\\dN)(?![\\s-]?family)",
+  "match": "Wizz",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Wizz Air Malta A320",
+   "Wizz Air Malta A320 in flight",
+   "Wizz Air Malta A320 Wizz departing"
+  ]
+ },
+ "SAS-A359": {
+  "kind": "airline",
+  "name": "Scandinavian Airlines A350-900",
+  "rx": "A350-9\\d\\d|A350(?!-10)(?![\\s-]?1000)(?!-1041)",
+  "match": "Scandinavian Airlines|\\bSAS\\b",
+  "not": null,
+  "cs": true,
+  "queries": [
+   "Scandinavian Airlines A350-900",
+   "Scandinavian Airlines A350-900 in flight",
+   "Scandinavian Airlines A350-900 Scandinavian departing"
+  ]
+ },
+ "SAS-A333": {
+  "kind": "airline",
+  "name": "Scandinavian Airlines A330-300",
+  "rx": "A330-3\\d\\d",
+  "match": "Scandinavian Airlines|\\bSAS\\b",
+  "not": null,
+  "cs": true,
+  "queries": [
+   "Scandinavian Airlines A330-300",
+   "Scandinavian Airlines A330-300 in flight",
+   "Scandinavian Airlines A330-300 Scandinavian departing"
+  ]
+ },
+ "ETD-A35K": {
+  "kind": "airline",
+  "name": "Etihad Airways A350-1000",
+  "rx": "A350-10\\d\\d|A350-1000",
+  "match": "Etihad",
+  "not": "Cargo",
+  "cs": null,
+  "queries": [
+   "Etihad Airways A350-1000",
+   "Etihad Airways A350-1000 in flight",
+   "Etihad Airways A350-1000 Etihad departing"
+  ]
+ },
+ "ETD-A388": {
+  "kind": "airline",
+  "name": "Etihad Airways A380",
+  "rx": "A380",
+  "match": "Etihad",
+  "not": "Cargo",
+  "cs": null,
+  "queries": [
+   "Etihad Airways A380",
+   "Etihad Airways A380 in flight",
+   "Etihad Airways A380 Etihad departing"
+  ]
+ },
+ "MAS-A339": {
+  "kind": "airline",
+  "name": "Malaysia Airlines A330-900",
+  "rx": "A330-9\\d\\d|A330[\\s-]?neo",
+  "match": "Malaysia Airlines|Malaysian Airline",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Malaysia Airlines A330-900",
+   "Malaysia Airlines A330-900 in flight",
+   "Malaysia Airlines A330-900 Malaysia departing"
+  ]
+ },
+ "MAS-B38M": {
+  "kind": "airline",
+  "name": "Malaysia Airlines Boeing 737 MAX 8",
+  "rx": "737 ?MAX ?8|MAX 8|737-8(?![0-9A-Z])|737-8200|737-8-200",
+  "match": "Malaysia Airlines|Malaysian Airline",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Malaysia Airlines Boeing 737 MAX 8",
+   "Malaysia Airlines Boeing 737 MAX 8 in flight",
+   "Malaysia Airlines Boeing 737 MAX 8 Malaysia departing"
+  ]
+ },
+ "AXM-A20N": {
+  "kind": "airline",
+  "name": "AirAsia A320neo",
+  "rx": "A320[\\s-]?neo|A320-2\\d\\dN",
+  "match": "Air ?Asia",
+  "not": "AirAsia X|Cargo",
+  "cs": null,
+  "queries": [
+   "AirAsia A320neo",
+   "AirAsia A320neo in flight",
+   "AirAsia A320neo AirAsia departing"
+  ]
+ },
+ "AXM-A21N": {
+  "kind": "airline",
+  "name": "AirAsia A321neo",
+  "rx": "A321[\\s-]?neo|A321-2\\d\\dN|A321 ?X?LR",
+  "match": "Air ?Asia",
+  "not": "AirAsia X|Cargo",
+  "cs": null,
+  "queries": [
+   "AirAsia A321neo",
+   "AirAsia A321neo in flight",
+   "AirAsia A321neo AirAsia departing"
+  ]
+ },
+ "SVA-A333": {
+  "kind": "airline",
+  "name": "Saudia A330-300",
+  "rx": "A330-3\\d\\d",
+  "match": "Saudia|Saudi Arabian Airlines",
+  "not": "Cargo",
+  "cs": null,
+  "queries": [
+   "Saudia A330-300",
+   "Saudia A330-300 in flight",
+   "Saudia A330-300 Saudia departing"
+  ]
+ },
+ "JJA-B38M": {
+  "kind": "airline",
+  "name": "Jeju Air Boeing 737 MAX 8",
+  "rx": "737 ?MAX ?8|MAX 8|737-8(?![0-9A-Z])|737-8200|737-8-200",
+  "match": "Jeju Air",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Jeju Air Boeing 737 MAX 8",
+   "Jeju Air Boeing 737 MAX 8 in flight",
+   "Jeju Air Boeing 737 MAX 8 Jeju departing"
+  ]
+ },
+ "AEA-B738": {
+  "kind": "airline",
+  "name": "Air Europa Boeing 737-800",
+  "rx": "737-8[0-9A-Z]{2}\\b(?!.*MAX)",
+  "match": "Air Europa",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Air Europa Boeing 737-800",
+   "Air Europa Boeing 737-800 in flight",
+   "Air Europa Boeing 737-800 Air departing"
+  ]
+ },
+ "AEA-B789": {
+  "kind": "airline",
+  "name": "Air Europa Boeing 787-9",
+  "rx": "787-9\\b|787-9[0-9A-Z]{0,2}\\b",
+  "match": "Air Europa",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Air Europa Boeing 787-9",
+   "Air Europa Boeing 787-9 in flight",
+   "Air Europa Boeing 787-9 Air departing"
+  ]
+ },
+ "AEA-B788": {
+  "kind": "airline",
+  "name": "Air Europa Boeing 787-8",
+  "rx": "787-8\\b|787-8[0-9A-Z]{0,2}\\b|Dreamliner 787-8",
+  "match": "Air Europa",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Air Europa Boeing 787-8",
+   "Air Europa Boeing 787-8 in flight",
+   "Air Europa Boeing 787-8 Air departing"
+  ]
+ },
+ "SFR-B738": {
+  "kind": "airline",
+  "name": "Safair Boeing 737-800",
+  "rx": "737-8[0-9A-Z]{2}\\b(?!.*MAX)",
+  "match": "Safair",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Safair Boeing 737-800",
+   "Safair Boeing 737-800 in flight",
+   "Safair Boeing 737-800 Safair departing"
+  ]
+ },
+ "SFR-B737": {
+  "kind": "airline",
+  "name": "Safair Boeing 737-700",
+  "rx": "737-7[0-9A-Z]{2}\\b(?!.*MAX)",
+  "match": "Safair",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Safair Boeing 737-700",
+   "Safair Boeing 737-700 in flight",
+   "Safair Boeing 737-700 Safair departing"
+  ]
+ },
+ "VLG-A20N": {
+  "kind": "airline",
+  "name": "Vueling A320neo",
+  "rx": "A320[\\s-]?neo|A320-2\\d\\dN",
+  "match": "Vueling",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Vueling A320neo",
+   "Vueling A320neo in flight",
+   "Vueling A320neo Vueling departing"
+  ]
+ },
+ "VLG-A21N": {
+  "kind": "airline",
+  "name": "Vueling A321neo",
+  "rx": "A321[\\s-]?neo|A321-2\\d\\dN|A321 ?X?LR",
+  "match": "Vueling",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Vueling A321neo",
+   "Vueling A321neo in flight",
+   "Vueling A321neo Vueling departing"
+  ]
+ },
+ "EVA-B77L": {
+  "kind": "airline",
+  "name": "EVA Air Boeing 777F",
+  "rx": "777F|777-F|777-2[0-9A-Z]{2}LR|777-200LR|777 Freighter",
+  "match": "EVA Air|\\bEVA\\b",
+  "not": "Cargo",
+  "cs": true,
+  "queries": [
+   "EVA Air Boeing 777F",
+   "EVA Air Boeing 777F in flight",
+   "EVA Air Boeing 777F EVA departing"
+  ]
+ },
+ "EVA-B78X": {
+  "kind": "airline",
+  "name": "EVA Air Boeing 787-10",
+  "rx": "787-10",
+  "match": "EVA Air|\\bEVA\\b",
+  "not": "Cargo",
+  "cs": true,
+  "queries": [
+   "EVA Air Boeing 787-10",
+   "EVA Air Boeing 787-10 in flight",
+   "EVA Air Boeing 787-10 EVA departing"
+  ]
+ },
+ "ICE-A21N": {
+  "kind": "airline",
+  "name": "Icelandair A321neo",
+  "rx": "A321[\\s-]?neo|A321-2\\d\\dN|A321 ?X?LR",
+  "match": "Icelandair",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Icelandair A321neo",
+   "Icelandair A321neo in flight",
+   "Icelandair A321neo Icelandair departing"
+  ]
+ },
+ "ICE-B763": {
+  "kind": "airline",
+  "name": "Icelandair Boeing 767-300",
+  "rx": "767-3[0-9A-Z]{2}",
+  "match": "Icelandair",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Icelandair Boeing 767-300",
+   "Icelandair Boeing 767-300 in flight",
+   "Icelandair Boeing 767-300 Icelandair departing"
+  ]
+ },
+ "ETH-B38M": {
+  "kind": "airline",
+  "name": "Ethiopian Airlines Boeing 737 MAX 8",
+  "rx": "737 ?MAX ?8|MAX 8|737-8(?![0-9A-Z])|737-8200|737-8-200",
+  "match": "Ethiopian",
+  "not": "Cargo",
+  "cs": null,
+  "queries": [
+   "Ethiopian Airlines Boeing 737 MAX 8",
+   "Ethiopian Airlines Boeing 737 MAX 8 in flight",
+   "Ethiopian Airlines Boeing 737 MAX 8 Ethiopian departing"
+  ]
+ },
+ "ETH-B77L": {
+  "kind": "airline",
+  "name": "Ethiopian Airlines Boeing 777F",
+  "rx": "777F|777-F|777-2[0-9A-Z]{2}LR|777-200LR|777 Freighter",
+  "match": "Ethiopian",
+  "not": "Cargo",
+  "cs": null,
+  "queries": [
+   "Ethiopian Airlines Boeing 777F",
+   "Ethiopian Airlines Boeing 777F in flight",
+   "Ethiopian Airlines Boeing 777F Ethiopian departing"
+  ]
+ },
+ "MXY-BCS3": {
+  "kind": "airline",
+  "name": "Breeze Airways A220-300",
+  "rx": "A220-300|A220-3\\d\\d|CS300|BD-500-1A11",
+  "match": "Breeze",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "Breeze Airways A220-300",
+   "Breeze Airways A220-300 in flight",
+   "Breeze Airways A220-300 Breeze departing"
+  ]
+ },
+ "TWB-B738": {
+  "kind": "airline",
+  "name": "T'way Air Boeing 737-800",
+  "rx": "737-8[0-9A-Z]{2}\\b(?!.*MAX)",
+  "match": "T.?way",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "T'way Air Boeing 737-800",
+   "T'way Air Boeing 737-800 in flight",
+   "T'way Air Boeing 737-800 T'way departing"
+  ]
+ },
+ "TWB-B38M": {
+  "kind": "airline",
+  "name": "T'way Air Boeing 737 MAX 8",
+  "rx": "737 ?MAX ?8|MAX 8|737-8(?![0-9A-Z])|737-8200|737-8-200",
+  "match": "T.?way",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "T'way Air Boeing 737 MAX 8",
+   "T'way Air Boeing 737 MAX 8 in flight",
+   "T'way Air Boeing 737 MAX 8 T'way departing"
+  ]
+ },
+ "TWB-A333": {
+  "kind": "airline",
+  "name": "T'way Air A330-300",
+  "rx": "A330-3\\d\\d",
+  "match": "T.?way",
+  "not": "",
+  "cs": null,
+  "queries": [
+   "T'way Air A330-300",
+   "T'way Air A330-300 in flight",
+   "T'way Air A330-300 T'way departing"
+  ]
+ },
+ "CAL-B744": {
+  "kind": "airline",
+  "name": "China Airlines Boeing 747-400",
+  "rx": "747-4",
+  "match": "China Airlines",
+  "not": "Cargo",
+  "cs": null,
+  "queries": [
+   "China Airlines Boeing 747-400",
+   "China Airlines Boeing 747-400 in flight",
+   "China Airlines Boeing 747-400 China departing"
+  ]
+ },
+ "EIN-A21N": {
+  "kind": "airline",
+  "name": "Aer Lingus A321neo",
+  "rx": "A321[\\s-]?neo|A321-2\\d\\dN|A321 ?X?LR",
+  "match": "Aer Lingus",
+  "not": "Regional",
+  "cs": null,
+  "queries": [
+   "Aer Lingus A321neo",
+   "Aer Lingus A321neo in flight",
+   "Aer Lingus A321neo Aer departing"
+  ]
+ },
+ "EIN-A20N": {
+  "kind": "airline",
+  "name": "Aer Lingus A320neo",
+  "rx": "A320[\\s-]?neo|A320-2\\d\\dN",
+  "match": "Aer Lingus",
+  "not": "Regional",
+  "cs": null,
+  "queries": [
+   "Aer Lingus A320neo",
+   "Aer Lingus A320neo in flight",
+   "Aer Lingus A320neo Aer departing"
+  ]
+ },
+ "AAL-B738": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:American Airlines Boeing 737-800 N895NN departing Boston July 2026.jpg"
+  ],
+  "name": "American Airlines Boeing 737-800",
+  "rx": "737-8[0-9A-Z]{2}\\b(?!.*MAX)",
+  "match": "American Airlines|^File:American |American (Airbus|Boeing)",
+  "not": "American Eagle|Eagle|TWA|US ?Airways|Piedmont|Envoy",
+  "cs": null,
+  "queries": [
+   "American Airlines Boeing 737-800",
+   "American Airlines Boeing 737-800 in flight",
+   "American Airlines Boeing 737-800 American departing"
+  ]
+ },
+ "RYR-B738": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:Boeing 737 8AS - EI-DLV from Ryanair after landing at LFBT airport.jpg"
+  ],
+  "name": "Ryanair Boeing 737-800",
+  "rx": "737-8[0-9A-Z]{2}\\b(?!.*MAX)",
+  "match": "Ryanair",
+  "not": "Lauda|Buzz|Malta Air",
+  "cs": null,
+  "queries": [
+   "Ryanair Boeing 737-800",
+   "Ryanair Boeing 737-800 in flight",
+   "Ryanair Boeing 737-800 Ryanair departing"
+  ]
+ },
+ "RPA-E75L": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:Delta Connection E175LR opby Republic Airways N202JQ @IND.jpg"
+  ],
+  "name": "Republic Airways Embraer 175",
+  "rx": "E-?175\\b|ERJ-?170-200|Embraer 175|ERJ-?175",
+  "match": "Republic Airline|Republic Airways",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Republic Airways Embraer 175",
+   "Republic Airways Embraer 175 in flight",
+   "Republic Airways Embraer 175 Republic departing"
+  ]
+ },
+ "SWA-B38M": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:Southwest Airlines Boeing 737-8 MAX N8800L departing Boston December 2025.jpg"
+  ],
+  "name": "Southwest Airlines Boeing 737 MAX 8",
+  "rx": "737 ?MAX ?8|MAX 8|737-8(?![0-9A-Z])|737-8200|737-8-200",
+  "match": "Southwest",
+  "not": "AirTran",
+  "cs": null,
+  "queries": [
+   "Southwest Airlines Boeing 737 MAX 8",
+   "Southwest Airlines Boeing 737 MAX 8 in flight",
+   "Southwest Airlines Boeing 737 MAX 8 Southwest departing"
+  ]
+ },
+ "AAL-A321": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:American Airlines Airbus A321 N141NN departing Boston November 2025.jpg"
+  ],
+  "name": "American Airlines A321",
+  "rx": "A321(?![\\s-]?neo)(?!-2\\d\\dN)(?![\\s-]?LR|XLR)",
+  "match": "American Airlines|^File:American |American (Airbus|Boeing)",
+  "not": "American Eagle|Eagle|TWA|US ?Airways|Piedmont|Envoy",
+  "cs": null,
+  "queries": [
+   "American Airlines A321",
+   "American Airlines A321 in flight",
+   "American Airlines A321 American departing"
+  ]
+ },
+ "UAE-B77W": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:A6-END - Emirates - Boeing 777-31HER - 41084 - VGHS.jpg"
+  ],
+  "name": "Emirates Boeing 777-300ER",
+  "rx": "777-3[0-9A-Z]{2}",
+  "match": "Emirates",
+  "not": "SkyCargo|Cargo",
+  "cs": null,
+  "queries": [
+   "Emirates Boeing 777-300ER",
+   "Emirates Boeing 777-300ER in flight",
+   "Emirates Boeing 777-300ER Emirates departing"
+  ]
+ },
+ "EDV-CRJ9": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:Delta Connection-Endeavor Air Bomardier CRJ900 N302PQ BWI MD1.jpg"
+  ],
+  "name": "Endeavor Air CRJ900",
+  "rx": "CRJ-?900|CL-600-2D24",
+  "match": "Endeavor",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Endeavor Air CRJ900",
+   "Endeavor Air CRJ900 in flight",
+   "Endeavor Air CRJ900 Endeavor departing"
+  ]
+ },
+ "SWA-B738": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:Southwest Airlines Boeing 737-800 N8305E departing Boston June 2025.jpg"
+  ],
+  "name": "Southwest Airlines Boeing 737-800",
+  "rx": "737-8[0-9A-Z]{2}\\b(?!.*MAX)",
+  "match": "Southwest",
+  "not": "AirTran",
+  "cs": null,
+  "queries": [
+   "Southwest Airlines Boeing 737-800",
+   "Southwest Airlines Boeing 737-800 in flight",
+   "Southwest Airlines Boeing 737-800 Southwest departing"
+  ]
+ },
+ "UAE-A388": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:Emirates A380-800 A6-EEQ @YYZ.jpg"
+  ],
+  "name": "Emirates A380",
+  "rx": "A380",
+  "match": "Emirates",
+  "not": "SkyCargo|Cargo",
+  "cs": null,
+  "queries": [
+   "Emirates A380",
+   "Emirates A380 in flight",
+   "Emirates A380 Emirates departing"
+  ]
+ },
+ "UAL-B39M": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:United Airlines Boeing 737-9 MAX N17408 on final approach to Boston July 2026 2.jpg"
+  ],
+  "name": "United Airlines Boeing 737 MAX 9",
+  "rx": "737 ?MAX ?9|MAX 9|737-9(?![0-9A-Z])",
+  "match": "United Airlines|^File:United |United (Airbus|Boeing)",
+  "not": "United Express|\\bExpress\\b|Continental|\\bTed\\b|SkyWest|ExpressJet|\\bMesa\\b",
+  "cs": null,
+  "queries": [
+   "United Airlines Boeing 737 MAX 9",
+   "United Airlines Boeing 737 MAX 9 in flight",
+   "United Airlines Boeing 737 MAX 9 United departing"
+  ]
+ },
+ "UAL-B38M": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:United Airlines Boeing 737-8 MAX N17341 on final approach to Boston June 2026 1.jpg"
+  ],
+  "name": "United Airlines Boeing 737 MAX 8",
+  "rx": "737 ?MAX ?8|MAX 8|737-8(?![0-9A-Z])|737-8200|737-8-200",
+  "match": "United Airlines|^File:United |United (Airbus|Boeing)",
+  "not": "United Express|\\bExpress\\b|Continental|\\bTed\\b|SkyWest|ExpressJet|\\bMesa\\b",
+  "cs": null,
+  "queries": [
+   "United Airlines Boeing 737 MAX 8",
+   "United Airlines Boeing 737 MAX 8 in flight",
+   "United Airlines Boeing 737 MAX 8 United departing"
+  ]
+ },
+ "ENY-E75L": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:Envoy Air American Eagle Embraer 175 N794JH BWI MD1.jpg"
+  ],
+  "name": "Envoy American Eagle Embraer 175",
+  "rx": "E-?175\\b|ERJ-?170-200|Embraer 175|ERJ-?175",
+  "match": "Envoy",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Envoy American Eagle Embraer 175",
+   "Envoy American Eagle Embraer 175 in flight",
+   "Envoy American Eagle Embraer 175 Envoy departing"
+  ]
+ },
+ "DAL-A321": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:Delta Air Lines Airbus A321 N101DQ on final approach to Boston August 2020.jpg"
+  ],
+  "name": "Delta Air Lines A321",
+  "rx": "A321(?![\\s-]?neo)(?!-2\\d\\dN)(?![\\s-]?LR|XLR)",
+  "match": "Delta Air ?Lines|^File:Delta |Delta (Airbus|Boeing)",
+  "not": "Connection|Northwest|Endeavor|SkyWest|Compass",
+  "cs": null,
+  "queries": [
+   "Delta Air Lines A321",
+   "Delta Air Lines A321 in flight",
+   "Delta Air Lines A321 Delta departing"
+  ]
+ },
+ "EZY-A320": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:Berlin Brandenburg Airport easyJet Europe Airbus A320-214(WL) OE-IVL (DSC07765).jpg"
+  ],
+  "name": "easyJet A320",
+  "rx": "A320(?![\\s-]?neo)(?!-2\\d\\dN)(?![\\s-]?family)",
+  "match": "easy ?Jet",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "easyJet A320",
+   "easyJet A320 in flight",
+   "easyJet A320 easyJet departing"
+  ]
+ },
+ "AAL-B38M": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:American 737-8 MAX N321TG departing Boston June 2025 1.jpg"
+  ],
+  "name": "American Airlines Boeing 737 MAX 8",
+  "rx": "737 ?MAX ?8|MAX 8|737-8(?![0-9A-Z])|737-8200|737-8-200",
+  "match": "American Airlines|^File:American |American (Airbus|Boeing)",
+  "not": "American Eagle|Eagle|TWA|US ?Airways|Piedmont|Envoy",
+  "cs": null,
+  "queries": [
+   "American Airlines Boeing 737 MAX 8",
+   "American Airlines Boeing 737 MAX 8 in flight",
+   "American Airlines Boeing 737 MAX 8 American departing"
+  ]
+ },
+ "DAL-A21N": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:Delta Air Lines Airbus A321neo N503DZ on final approach to Boston June 2026 1.jpg"
+  ],
+  "name": "Delta Air Lines A321neo",
+  "rx": "A321[\\s-]?neo|A321-2\\d\\dN|A321 ?X?LR",
+  "match": "Delta Air ?Lines|^File:Delta |Delta (Airbus|Boeing)",
+  "not": "Connection|Northwest|Endeavor|SkyWest|Compass",
+  "cs": null,
+  "queries": [
+   "Delta Air Lines A321neo",
+   "Delta Air Lines A321neo in flight",
+   "Delta Air Lines A321neo Delta departing"
+  ]
+ },
+ "IGO-A21N": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:(SGP-Singapore) IndiGo Airbus A321-252NX VT-NCR @ WSSS 2026-03-11.jpg"
+  ],
+  "name": "IndiGo A321neo",
+  "rx": "A321[\\s-]?neo|A321-2\\d\\dN|A321 ?X?LR",
+  "match": "IndiGo",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "IndiGo A321neo",
+   "IndiGo A321neo in flight",
+   "IndiGo A321neo IndiGo departing"
+  ]
+ },
+ "SIA-A359": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:Singapore Airlines A350-900 (9V-SMK) landing at Melbourne Airport.jpg"
+  ],
+  "name": "Singapore Airlines A350-900",
+  "rx": "A350-9\\d\\d|A350(?!-10)(?![\\s-]?1000)(?!-1041)",
+  "match": "Singapore Airlines",
+  "not": "Cargo|SilkAir|Scoot",
+  "cs": null,
+  "queries": [
+   "Singapore Airlines A350-900",
+   "Singapore Airlines A350-900 in flight",
+   "Singapore Airlines A350-900 Singapore departing"
+  ]
+ },
+ "IGO-A20N": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:(SGP-Singapore) IndiGo Airbus A320-251N VT-IXO @ WSSS 2025-01-01.jpg"
+  ],
+  "name": "IndiGo A320neo",
+  "rx": "A320[\\s-]?neo|A320-2\\d\\dN",
+  "match": "IndiGo",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "IndiGo A320neo",
+   "IndiGo A320neo in flight",
+   "IndiGo A320neo IndiGo departing"
+  ]
+ },
+ "EXS-B738": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:Jet2 Holidays Boeing 737-800 over Bishop's Stortford.jpg"
+  ],
+  "name": "Jet2 Boeing 737-800",
+  "rx": "737-8[0-9A-Z]{2}\\b(?!.*MAX)",
+  "match": "Jet2",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Jet2 Boeing 737-800",
+   "Jet2 Boeing 737-800 in flight",
+   "Jet2 Boeing 737-800 Jet2 departing"
+  ]
+ },
+ "DAL-B739": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:Delta 737-900 N902DN BWI MD1.jpg"
+  ],
+  "name": "Delta Air Lines Boeing 737-900",
+  "rx": "737-9[0-9A-Z]{2}\\b(?!.*MAX)",
+  "match": "Delta Air ?Lines|^File:Delta |Delta (Airbus|Boeing)",
+  "not": "Connection|Northwest|Endeavor|SkyWest|Compass",
+  "cs": null,
+  "queries": [
+   "Delta Air Lines Boeing 737-900",
+   "Delta Air Lines Boeing 737-900 in flight",
+   "Delta Air Lines Boeing 737-900 Delta departing"
+  ]
+ },
+ "GLO-B38M": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:PR-XMD @ MIA, 2023-01-17.jpg"
+  ],
+  "name": "Gol Boeing 737 MAX 8",
+  "rx": "737 ?MAX ?8|MAX 8|737-8(?![0-9A-Z])|737-8200|737-8-200",
+  "match": "\\bGOL\\b|\\bGol\\b|Gol Linhas|Gol Transportes",
+  "not": null,
+  "cs": true,
+  "queries": [
+   "Gol Boeing 737 MAX 8",
+   "Gol Boeing 737 MAX 8 in flight",
+   "Gol Boeing 737 MAX 8 Gol departing"
+  ]
+ },
+ "AMX-B38M": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:Aerom\u00e9xico Boeing 737-8 MAX XA-DAE on final approach to Boston July 2025.jpg"
+  ],
+  "name": "Aeromexico Boeing 737 MAX 8",
+  "rx": "737 ?MAX ?8|MAX 8|737-8(?![0-9A-Z])|737-8200|737-8-200",
+  "match": "Aerom[e\u00e9]xico",
+  "not": "Connect",
+  "cs": null,
+  "queries": [
+   "Aeromexico Boeing 737 MAX 8",
+   "Aeromexico Boeing 737 MAX 8 in flight",
+   "Aeromexico Boeing 737 MAX 8 Aeromexico departing"
+  ]
+ },
+ "JBU-A321": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:JetBlue A321 N986JB on approach to Boston Oct 6 2024.jpg"
+  ],
+  "name": "JetBlue A321",
+  "rx": "A321(?![\\s-]?neo)(?!-2\\d\\dN)(?![\\s-]?LR|XLR)",
+  "match": "Jet ?Blue",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "JetBlue A321",
+   "JetBlue A321 in flight",
+   "JetBlue A321 JetBlue departing"
+  ]
+ },
+ "FDX-B77L": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:Boeing 777F \u2018N888FD\u2019 FedEx (44079329221).jpg"
+  ],
+  "name": "FedEx Boeing 777F",
+  "rx": "777F|777-F|777-2[0-9A-Z]{2}LR|777-200LR|777 Freighter",
+  "match": "FedEx|Federal Express",
+  "not": "Feeder",
+  "cs": null,
+  "queries": [
+   "FedEx Boeing 777F",
+   "FedEx Boeing 777F in flight",
+   "FedEx Boeing 777F FedEx departing"
+  ]
+ },
+ "UAL-B738": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:United Airlines Boeing 737-800 N24211 departing Boston November 2025 1.jpg"
+  ],
+  "name": "United Airlines Boeing 737-800",
+  "rx": "737-8[0-9A-Z]{2}\\b(?!.*MAX)",
+  "match": "United Airlines|^File:United |United (Airbus|Boeing)",
+  "not": "United Express|\\bExpress\\b|Continental|\\bTed\\b|SkyWest|ExpressJet|\\bMesa\\b",
+  "cs": null,
+  "queries": [
+   "United Airlines Boeing 737-800",
+   "United Airlines Boeing 737-800 in flight",
+   "United Airlines Boeing 737-800 United departing"
+  ]
+ },
+ "WJA-B738": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:WestJet Boeing 737-800 C-GJWS departing Boston June 2025.jpg"
+  ],
+  "name": "WestJet Boeing 737-800",
+  "rx": "737-8[0-9A-Z]{2}\\b(?!.*MAX)",
+  "match": "WestJet",
+  "not": "Encore|Swoop",
+  "cs": null,
+  "queries": [
+   "WestJet Boeing 737-800",
+   "WestJet Boeing 737-800 in flight",
+   "WestJet Boeing 737-800 WestJet departing"
+  ]
+ },
+ "ACA-BCS3": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:Air Canada airbus A220-300 C-GVDQ departing Boston March 2025 1.jpg"
+  ],
+  "name": "Air Canada A220-300",
+  "rx": "A220-300|A220-3\\d\\d|CS300|BD-500-1A11",
+  "match": "Air Canada",
+  "not": "Rouge|Jazz|Express|Cargo|Jetz|Air Canada Regional|\\bTango\\b|\\bZip\\b",
+  "cs": null,
+  "queries": [
+   "Air Canada A220-300",
+   "Air Canada A220-300 in flight",
+   "Air Canada A220-300 Air departing"
+  ]
+ },
+ "THY-B738": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:TC-JVI Turkish Airlines Boeing 737-8F2(WL) 2.jpg"
+  ],
+  "name": "Turkish Airlines Boeing 737-800",
+  "rx": "737-8[0-9A-Z]{2}\\b(?!.*MAX)",
+  "match": "Turkish Airlines|T[\u00fcu]rk Hava",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Turkish Airlines Boeing 737-800",
+   "Turkish Airlines Boeing 737-800 in flight",
+   "Turkish Airlines Boeing 737-800 Turkish departing"
+  ]
+ },
+ "JBU-A21N": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:JetBlue Airbus A321neo N2151J departing Boston February 2025.jpg"
+  ],
+  "name": "JetBlue A321neo",
+  "rx": "A321[\\s-]?neo|A321-2\\d\\dN|A321 ?X?LR",
+  "match": "Jet ?Blue",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "JetBlue A321neo",
+   "JetBlue A321neo in flight",
+   "JetBlue A321neo JetBlue departing"
+  ]
+ },
+ "BAW-B772": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:British Airways Boeing 777-200 G-VIIV IAD VA1.jpg"
+  ],
+  "name": "British Airways Boeing 777-200",
+  "rx": "777-2[0-9A-Z]{2}(?!LR|F)(?![\\s-]?LR)",
+  "match": "British Airways",
+  "not": "Concorde",
+  "cs": null,
+  "queries": [
+   "British Airways Boeing 777-200",
+   "British Airways Boeing 777-200 in flight",
+   "British Airways Boeing 777-200 British departing"
+  ]
+ },
+ "THY-A359": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:Turkish Airlines Airbus A350-900 TC-LGR on final approach to Boston June 2026 1.jpg"
+  ],
+  "name": "Turkish Airlines A350-900",
+  "rx": "A350-9\\d\\d|A350(?!-10)(?![\\s-]?1000)(?!-1041)",
+  "match": "Turkish Airlines|T[\u00fcu]rk Hava",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Turkish Airlines A350-900",
+   "Turkish Airlines A350-900 in flight",
+   "Turkish Airlines A350-900 Turkish departing"
+  ]
+ },
+ "ASA-B39M": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:Alaska 737-9 MAX N966AK on final approach to Boston Oct 2024 1.jpg"
+  ],
+  "name": "Alaska Airlines Boeing 737 MAX 9",
+  "rx": "737 ?MAX ?9|MAX 9|737-9(?![0-9A-Z])",
+  "match": "Alaska Airlines|^File:Alaska |Alaska (Airbus|Boeing)",
+  "not": "Horizon|SkyWest|Virgin America",
+  "cs": null,
+  "queries": [
+   "Alaska Airlines Boeing 737 MAX 9",
+   "Alaska Airlines Boeing 737 MAX 9 in flight",
+   "Alaska Airlines Boeing 737 MAX 9 Alaska departing"
+  ]
+ },
+ "ACA-B789": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:Air Canada 787-9 C-FVLZ @YYZ.jpg"
+  ],
+  "name": "Air Canada Boeing 787-9",
+  "rx": "787-9\\b|787-9[0-9A-Z]{0,2}\\b",
+  "match": "Air Canada",
+  "not": "Rouge|Jazz|Express|Cargo|Jetz|Air Canada Regional|\\bTango\\b|\\bZip\\b",
+  "cs": null,
+  "queries": [
+   "Air Canada Boeing 787-9",
+   "Air Canada Boeing 787-9 in flight",
+   "Air Canada Boeing 787-9 Air departing"
+  ]
+ },
+ "DLH-A320": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:D-AIQW Lufthansa A320 EGPH.jpg"
+  ],
+  "name": "Lufthansa A320",
+  "rx": "A320(?![\\s-]?neo)(?!-2\\d\\dN)(?![\\s-]?family)",
+  "match": "Lufthansa",
+  "not": "Cargo|CityLine|City Airlines|Technik|Regional|Discover|Lufthansa Flight Training",
+  "cs": null,
+  "queries": [
+   "Lufthansa A320",
+   "Lufthansa A320 in flight",
+   "Lufthansa A320 Lufthansa departing"
+  ]
+ },
+ "EZY-A319": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:EasyJet Europe Airbus A319 OE-LKD at Schiphol 24-11-2022.jpg"
+  ],
+  "name": "easyJet A319",
+  "rx": "A319(?![\\s-]?neo)(?!-1\\d\\dN)",
+  "match": "easy ?Jet",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "easyJet A319",
+   "easyJet A319 in flight",
+   "easyJet A319 easyJet departing"
+  ]
+ },
+ "TAM-A20N": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:A320 NEO LATAM SBPA (36886103586).jpg"
+  ],
+  "name": "LATAM Brasil A320neo",
+  "rx": "A320[\\s-]?neo|A320-2\\d\\dN",
+  "match": "LATAM|TAM",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "LATAM Brasil A320neo",
+   "LATAM Brasil A320neo in flight",
+   "LATAM Brasil A320neo LATAM departing"
+  ]
+ },
+ "ASA-B739": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:Alaska Airlines Boeing 737-900ER N403AS departing Boston July 2026.jpg"
+  ],
+  "name": "Alaska Airlines Boeing 737-900",
+  "rx": "737-9[0-9A-Z]{2}\\b(?!.*MAX)",
+  "match": "Alaska Airlines|^File:Alaska |Alaska (Airbus|Boeing)",
+  "not": "Horizon|SkyWest|Virgin America",
+  "cs": null,
+  "queries": [
+   "Alaska Airlines Boeing 737-900",
+   "Alaska Airlines Boeing 737-900 in flight",
+   "Alaska Airlines Boeing 737-900 Alaska departing"
+  ]
+ },
+ "BAW-A320": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:G-EUUD British Airways A320 EGPH.jpg"
+  ],
+  "name": "British Airways A320",
+  "rx": "A320(?![\\s-]?neo)(?!-2\\d\\dN)(?![\\s-]?family)",
+  "match": "British Airways",
+  "not": "Concorde",
+  "cs": null,
+  "queries": [
+   "British Airways A320",
+   "British Airways A320 in flight",
+   "British Airways A320 British departing"
+  ]
+ },
+ "RPA-E170": {
+  "kind": "airline",
+  "only_fit": true,
+  "skip": [
+   "File:Delta Connection (Republic Airways) Embraer 170 N810MD on final approach to Boston Feb 2025.jpg"
+  ],
+  "name": "Republic Airways Embraer 170",
+  "rx": "E-?170\\b|ERJ-?170-100|Embraer 170|ERJ-?170\\b",
+  "match": "Republic Airline|Republic Airways",
+  "not": null,
+  "cs": null,
+  "queries": [
+   "Republic Airways Embraer 170",
+   "Republic Airways Embraer 170 in flight",
+   "Republic Airways Embraer 170 Republic departing"
+  ]
+ }
+}

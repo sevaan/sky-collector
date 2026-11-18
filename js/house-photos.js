@@ -169,6 +169,20 @@ export const HOUSE_PHOTOS = {
 0.92
 ]
 },
+"B738": {
+"credit": "Kentaro Iemoto from Tokyo, Japan",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:Untitled_B737-800(N1786B)_(4629111103).jpg",
+"title": "File:Untitled B737-800(N1786B) (4629111103).jpg",
+"w": 1280,
+"h": 853,
+"box": [
+-0.02,
+0.18,
+1.04,
+0.71
+]
+},
 "B38M": {
 "credit": "pjs2005 from Hampshire, UK, rotated by the uploader",
 "licence": "CC BY-SA 2.0",
@@ -895,6 +909,762 @@ export const HOUSE_PHOTOS = {
 0.03,
 1.03,
 0.84
+]
+},
+"CL35": {
+"credit": "Alan Wilson from Peterborough, Cambs, UK",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:Bombardier_Challenger_350_%E2%80%989H-VCE%E2%80%99_(52508710064).jpg",
+"title": "File:Bombardier Challenger 350 ‘9H-VCE’ (52508710064).jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.04,
+0.24,
+1.0,
+0.73
+]
+},
+"CL30": {
+"credit": "Aero Icarus from Zürich, Switzerland",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:Untitled_Bombardier_BD-100_1A10_Challenger_300;_N301MB@LAX;10.10.2011_(6482281217).jpg",
+"title": "File:Untitled Bombardier BD-100 1A10 Challenger 300; N301MB@LAX;10.10.2011 (6482281217).jpg",
+"w": 1280,
+"h": 858,
+"box": [
+0.02,
+0.06,
+1.0,
+0.9
+]
+},
+"C56X": {
+"credit": "Transport Pixels from England",
+"licence": "CC BY 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:G-IPAX_Cessna_Citation_Excel_@MAN,_June_2017.jpg",
+"title": "File:G-IPAX Cessna Citation Excel @MAN, June 2017.jpg",
+"w": 1280,
+"h": 813,
+"box": [
+0.0,
+0.18,
+0.97,
+0.74
+]
+},
+"C152": {
+"credit": "James from Cheltenham, Gloucestershire",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:G-BHZH_Cessna_152_(Plymouth_Flying_School_Ltd)_(46679604901).jpg",
+"title": "File:G-BHZH Cessna 152 (Plymouth Flying School Ltd) (46679604901).jpg",
+"w": 1280,
+"h": 960,
+"box": [
+-0.02,
+0.3,
+1.03,
+0.88
+]
+},
+"GLF4": {
+"credit": "NASA Armstrong Flight Research Center / NASA/Carla Thomas",
+"licence": "Public domain",
+"source": "https://commons.wikimedia.org/wiki/File:The_G-IV_joins_NASA%E2%80%99s_Armstrong_Flight_Research_Center%E2%80%99s_fleet_of_airborne_science_aircraft_(AFRC2024-0101-12).jpg",
+"title": "File:The G-IV joins NASA’s Armstrong Flight Research Center’s fleet of airborne science aircraft (AFRC2024-0101-12).jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.05,
+0.23,
+1.0,
+0.82
+]
+},
+"GLF5": {
+"credit": "Tomás Del Coro from Las Vegas, Nevada, USA",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:N218EC_2001_Gulfstream_Aerospace_G-V_C-N_656_(6081416279).jpg",
+"title": "File:N218EC 2001 Gulfstream Aerospace G-V C-N 656 (6081416279).jpg",
+"w": 1280,
+"h": 816,
+"box": [
+0.05,
+0.12,
+0.97,
+0.9
+]
+},
+"F2TH": {
+"credit": "Dylan Agbagni (No copyrights) from Bayonne, France",
+"licence": "CC0",
+"source": "https://commons.wikimedia.org/wiki/File:F-wwjn_(28562473096).jpg",
+"title": "File:F-wwjn (28562473096).jpg",
+"w": 1280,
+"h": 853,
+"box": [
+-0.01,
+0.18,
+1.0,
+0.84
+]
+},
+"GL7T": {
+"credit": "S5A-0043",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:(SGP-Singapore)_Demonstrator_Bombardier_Global_7500_N100BD_@_Singapore_Airshow_2026-02-07.jpg",
+"title": "File:(SGP-Singapore) Demonstrator Bombardier Global 7500 N100BD @ Singapore Airshow 2026-02-07.jpg",
+"w": 1280,
+"h": 720,
+"box": [
+0.26,
+0.23,
+1.01,
+0.84
+]
+},
+"C25B": {
+"credit": "Markus Eigenheer from Genève, Schweiz",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:G-PAOL_Cessna_525B_CitationJet_CJ3_C25B_c_n_525B-232_(47217348131).jpg",
+"title": "File:G-PAOL Cessna 525B CitationJet CJ3 C25B c n 525B-232 (47217348131).jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.12,
+0.3,
+0.94,
+0.77
+]
+},
+"C25A": {
+"credit": "James from Cheltenham, Gloucestershire",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:D-INOB_Cessna_Citation_CJ2_Atlas_Air_Service_(26827170842).jpg",
+"title": "File:D-INOB Cessna Citation CJ2 Atlas Air Service (26827170842).jpg",
+"w": 1280,
+"h": 960,
+"box": [
+-0.01,
+0.32,
+1.03,
+0.81
+]
+},
+"H25B": {
+"credit": "Björn Strey",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:HAWKER_VP-BNK_(2382876668).jpg",
+"title": "File:HAWKER VP-BNK (2382876668).jpg",
+"w": 1280,
+"h": 914,
+"box": [
+0.0,
+0.26,
+0.95,
+0.76
+]
+},
+"B350": {
+"credit": "Elen Schurova",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:Hawker_Beechcraft_King_Air_350i,_MAKS_2011.jpg",
+"title": "File:Hawker Beechcraft King Air 350i, MAKS 2011.jpg",
+"w": 1280,
+"h": 960,
+"box": [
+-0.04,
+0.23,
+1.0,
+0.76
+]
+},
+"B190": {
+"credit": "Laurent ERRERA from L'Union, France",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:Beechcraft_1900D_Algerian_Air_Force_7T-WRC_-_MSN_UE-413_(5377621630).jpg",
+"title": "File:Beechcraft 1900D Algerian Air Force 7T-WRC - MSN UE-413 (5377621630).jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.0,
+0.29,
+1.02,
+0.74
+]
+},
+"C750": {
+"credit": "Acroterion",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Cessna_Citation_X_N232CF_BWI_MD1.jpg",
+"title": "File:Cessna Citation X N232CF BWI MD1.jpg",
+"w": 1280,
+"h": 857,
+"box": [
+-0.01,
+0.01,
+0.99,
+1.02
+]
+},
+"B742": {
+"credit": "Christian Turner",
+"licence": "Public domain",
+"source": "https://commons.wikimedia.org/wiki/File:Aerial_refueling_testing_with_a_KC-46_Pegasus_and_an_E-4B_Nightwatch_in_the_skies_over_Southern_California,_April_4,_2022.jpg",
+"title": "File:Aerial refueling testing with a KC-46 Pegasus and an E-4B Nightwatch in the skies over Southern California, April 4, 2022.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.43,
+0.0,
+0.96,
+0.64
+]
+},
+"B74S": {
+"credit": "NASA Armstrong Flight Research Center / NASA/Carla Thomas",
+"licence": "Public domain",
+"source": "https://commons.wikimedia.org/wiki/File:This_inflight_photo_was_taken_during_the_first_flight_of_the_NASA_and_German_Aerospace_Center_SOFIA_airborne_infrared_observatory_747SP_on_April_26,_2007_(ED07-0079-03).jpg",
+"title": "File:This inflight photo was taken during the first flight of the NASA and German Aerospace Center SOFIA airborne infrared observatory 747SP on April 26, 2007 (ED07-0079-03).jpg",
+"w": 1280,
+"h": 1024,
+"box": [
+0.05,
+0.22,
+0.98,
+0.72
+]
+},
+"A342": {
+"credit": "N509FZ",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:HZ-124@PEK_(20261101125916).jpg",
+"title": "File:HZ-124@PEK (20261101125916).jpg",
+"w": 1280,
+"h": 853,
+"box": [
+-0.04,
+0.07,
+1.03,
+0.9
+]
+},
+"A343": {
+"credit": "Laurent ERRERA from L'Union, France",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:Airbus_A340-300_Airbus_Industries_(AIB)_%22House_colors%22_F-WWAI_-_MSN_001_(10223075916).jpg",
+"title": "File:Airbus A340-300 Airbus Industries (AIB) \"House colors\" F-WWAI - MSN 001 (10223075916).jpg",
+"w": 1280,
+"h": 720,
+"box": [
+-0.02,
+0.14,
+1.03,
+0.74
+]
+},
+"A345": {
+"credit": "Laurent ERRERA from L'Union, France",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:Airbus_A340-500_Gouvernement_Alg%C3%A9rien_-_Algerian_Government_7T-VPP_-_MSN_917_(2978988197).jpg",
+"title": "File:Airbus A340-500 Gouvernement Algérien - Algerian Government 7T-VPP - MSN 917 (2978988197).jpg",
+"w": 1280,
+"h": 833,
+"box": [
+-0.04,
+0.13,
+1.03,
+0.69
+]
+},
+"A346": {
+"credit": "Ken Fielding",
+"licence": "CC BY-SA 3.0",
+"source": "https://commons.wikimedia.org/wiki/File:F-WWCA_A340-642_(proto)_Airbus_TLS_09SEP10_(4979496505).jpg",
+"title": "File:F-WWCA A340-642 (proto) Airbus TLS 09SEP10 (4979496505).jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.11,
+0.02,
+0.92,
+0.98
+]
+},
+"DC10": {
+"credit": "aceebee from Camberley, UK",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:McDonnell_Douglas_DC-10_Omega_Tanker_(27760284300).jpg",
+"title": "File:McDonnell Douglas DC-10 Omega Tanker (27760284300).jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.03,
+0.1,
+1.0,
+0.82
+]
+},
+"C5M": {
+"credit": "Greg Davis",
+"licence": "Public domain",
+"source": "https://commons.wikimedia.org/wiki/File:C-5M_Delivery,_85-0004_131121-F-VV898-013.jpg",
+"title": "File:C-5M Delivery, 85-0004 131121-F-VV898-013.jpg",
+"w": 1280,
+"h": 745,
+"box": [
+0.0,
+0.1,
+1.04,
+0.85
+]
+},
+"K35R": {
+"credit": "Noah Wulf",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:54th_ARS_KC-135R_After_Take_Off_-_Aviation_Nation_2019.jpg",
+"title": "File:54th ARS KC-135R After Take Off - Aviation Nation 2019.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.31,
+0.39,
+0.97,
+0.72
+]
+},
+"KC10": {
+"credit": "U.S. Air Force 412TW by Todd Schannuth",
+"licence": "Public domain",
+"source": "https://commons.wikimedia.org/wiki/File:A_KC-10_Extender_from_Travis_AFB_flies_over_the_desert_of_Southern_California_(8491115).jpg",
+"title": "File:A KC-10 Extender from Travis AFB flies over the desert of Southern California (8491115).jpg",
+"w": 1280,
+"h": 836,
+"box": [
+0.08,
+0.03,
+0.95,
+0.92
+]
+},
+"E3TF": {
+"credit": "This Photo was taken by Timothy A. Gonsalves.  Feel free to use my photos, but p",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:NATO_E3A_AWACS_Takeoff_Paine_Field_WA_Jul15_DSC8404.jpg",
+"title": "File:NATO E3A AWACS Takeoff Paine Field WA Jul15 DSC8404.jpg",
+"w": 1280,
+"h": 851,
+"box": [
+0.1,
+0.29,
+1.0,
+0.78
+]
+},
+"E3CF": {
+"credit": "U.S. Air Force 185ARW by Senior Master Sgt. Vincent De Groot",
+"licence": "Public domain",
+"source": "https://commons.wikimedia.org/wiki/File:NATO_E-3_Sentry_(6671378).jpg",
+"title": "File:NATO E-3 Sentry (6671378).jpg",
+"w": 1280,
+"h": 854,
+"box": [
+0.05,
+0.31,
+0.95,
+0.84
+]
+},
+"E6": {
+"credit": "USAF Greg L. Davis",
+"licence": "Public domain",
+"source": "https://commons.wikimedia.org/wiki/File:United_States_Navy_Boeing_E-6B_Mercury_of_Strategic_Communications_Wing_ONE,_Task_Group_114.jpg",
+"title": "File:United States Navy Boeing E-6B Mercury of Strategic Communications Wing ONE, Task Group 114.jpg",
+"w": 1280,
+"h": 895,
+"box": [
+0.0,
+-0.01,
+0.96,
+0.94
+]
+},
+"B52": {
+"credit": "Geoff McKay from Palmerston North, New Zealand",
+"licence": "CC BY 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:Boeing_B-52_Stratofortress_flypass..._(50987155596).jpg",
+"title": "File:Boeing B-52 Stratofortress flypass... (50987155596).jpg",
+"w": 1280,
+"h": 856,
+"box": [
+0.11,
+0.11,
+0.97,
+0.85
+]
+},
+"B1": {
+"credit": "U.S. Air Force photo by Master Sgt. Lance Cheung",
+"licence": "Public domain",
+"source": "https://commons.wikimedia.org/wiki/File:B-1B_Lancer_in_flight_(2).jpg",
+"title": "File:B-1B Lancer in flight (2).jpg",
+"w": 1280,
+"h": 765,
+"box": [
+0.15,
+-0.02,
+0.97,
+0.89
+]
+},
+"B2": {
+"credit": "U.S. Air Force 412TW by Giancarlo Casem",
+"licence": "Public domain",
+"source": "https://commons.wikimedia.org/wiki/File:B-2_Spirit_conducts_flight_tests_over_Edwards_AFB_(8533260).jpg",
+"title": "File:B-2 Spirit conducts flight tests over Edwards AFB (8533260).jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.17,
+0.11,
+0.81,
+0.92
+]
+},
+"P8": {
+"credit": "FotoSleuth",
+"licence": "CC BY 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:Boeing_P-8_Poseidon_RAAF_-_49671346853.jpg",
+"title": "File:Boeing P-8 Poseidon RAAF - 49671346853.jpg",
+"w": 1280,
+"h": 960,
+"box": [
+0.12,
+0.04,
+1.04,
+0.96
+]
+},
+"C2": {
+"credit": "U.S. Navy photo by Erik Hildebrandt",
+"licence": "Public domain",
+"source": "https://commons.wikimedia.org/wiki/File:Grumman_C-2A_Greyhound_of_VX-20_in_flight,_circa_in_March_2020_(200319-N-UZ648-002).JPG",
+"title": "File:Grumman C-2A Greyhound of VX-20 in flight, circa in March 2020 (200319-N-UZ648-002).JPG",
+"w": 1280,
+"h": 853,
+"box": [
+-0.02,
+0.06,
+1.01,
+0.83
+]
+},
+"IL76": {
+"credit": "Steve Lynes from Sandshurst, United Kingdom",
+"licence": "CC BY 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:Ilyushin_IL-76MD_-_Ukrainian_Air_Force_-_76683_(48367735331_cropped).jpg",
+"title": "File:Ilyushin IL-76MD - Ukrainian Air Force - 76683 (48367735331 cropped).jpg",
+"w": 1280,
+"h": 829,
+"box": [
+-0.01,
+0.26,
+1.03,
+0.76
+]
+},
+"C295": {
+"credit": "Jakub Hałun",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:CASA_C-295,_Polish_Air_Force_(012),_Radom_Air_Show,_20230826_1435_9314.jpg",
+"title": "File:CASA C-295, Polish Air Force (012), Radom Air Show, 20230826 1435 9314.jpg",
+"w": 1280,
+"h": 854,
+"box": [
+0.11,
+0.01,
+0.87,
+1.0
+]
+},
+"V22": {
+"credit": "U.S. Marine Corps photo by Lance Cpl. Jacqueline Parsons",
+"licence": "Public domain",
+"source": "https://commons.wikimedia.org/wiki/File:With_Flying_Colors_(6722109).jpg",
+"title": "File:With Flying Colors (6722109).jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.03,
+0.13,
+0.74,
+0.88
+]
+},
+"U2": {
+"credit": "Staff Sgt. Robert M. Trujillo",
+"licence": "CC0",
+"source": "https://commons.wikimedia.org/wiki/File:A_U-2_Dragon_Lady_flies_over_the_Golden_Gate_Bridge_near_San_Francisco,_California,_Mar._23,_2016._The_U-2_is_capable_of_flying_at_altitudes_exceeding_70,000_ft.jpg",
+"title": "File:A U-2 Dragon Lady flies over the Golden Gate Bridge near San Francisco, California, Mar. 23, 2016. The U-2 is capable of flying at altitudes exceeding 70,000 ft.jpg",
+"w": 1280,
+"h": 854,
+"box": [
+0.23,
+0.33,
+0.91,
+0.76
+]
+},
+"F35": {
+"credit": "Official U.S. Navy Page from United States of America",
+"licence": "Public domain",
+"source": "https://commons.wikimedia.org/wiki/File:An_F-35B_JSF_flies_tests_flying_with_missiles._(8043212532).jpg",
+"title": "File:An F-35B JSF flies tests flying with missiles. (8043212532).jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.16,
+0.2,
+0.82,
+0.82
+]
+},
+"F15": {
+"credit": "Ethan Wagner",
+"licence": "Public domain",
+"source": "https://commons.wikimedia.org/wiki/File:F-15EX_Eagle_II.jpg",
+"title": "File:F-15EX Eagle II.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.02,
+0.0,
+0.98,
+0.95
+]
+},
+"EUFI": {
+"credit": "Julian Herzog (Website)",
+"licence": "CC BY 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:30%2B68_German_Air_Force_Eurofighter_Typhoon_EF2000_ILA_Berlin_2016_06.jpg",
+"title": "File:30+68 German Air Force Eurofighter Typhoon EF2000 ILA Berlin 2016 06.jpg",
+"w": 1280,
+"h": 720,
+"box": [
+0.1,
+0.15,
+1.03,
+0.76
+]
+},
+"A10": {
+"credit": "Noah Wulf",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:422d_TES_A-10C_After_Takeoff_(2)_-_Aviation_Nation_2019.jpg",
+"title": "File:422d TES A-10C After Takeoff (2) - Aviation Nation 2019.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.25,
+0.39,
+0.63,
+0.62
+]
+},
+"H47": {
+"credit": "Balon Greyjoy",
+"licence": "CC0",
+"source": "https://commons.wikimedia.org/wiki/File:20181208_JASDF_CH-47_Chinook_Naha_Air_Show_2018-10.jpg",
+"title": "File:20181208 JASDF CH-47 Chinook Naha Air Show 2018-10.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+-0.01,
+0.27,
+0.95,
+0.75
+]
+},
+"H53": {
+"credit": "Matti Blume",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Sikorsky_CH-53K_King_Stallion,_ILA_2018,_Sch%C3%B6nefeld_(1X7A6778).jpg",
+"title": "File:Sikorsky CH-53K King Stallion, ILA 2018, Schönefeld (1X7A6778).jpg",
+"w": 1280,
+"h": 853,
+"box": [
+-0.03,
+0.0,
+0.94,
+0.76
+]
+},
+"A225": {
+"credit": "Laurent ERRERA from L'Union, France",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:Antonov_An-225_Mriya_Antonov_Design_Bureau_(ADB)_UR-82060_-_MSN_13102_(2949446818).jpg",
+"title": "File:Antonov An-225 Mriya Antonov Design Bureau (ADB) UR-82060 - MSN 13102 (2949446818).jpg",
+"w": 1280,
+"h": 857,
+"box": [
+0.01,
+0.24,
+1.01,
+0.76
+]
+},
+"A337": {
+"credit": "Rémi Guillot",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Airbus_Beluga_XL_F-WBXL.jpg",
+"title": "File:Airbus Beluga XL F-WBXL.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.07,
+0.24,
+1.03,
+0.72
+]
+},
+"SHIP": {
+"credit": "Kecko from Switzerland (Rheintal SG, the border valley between Switzerland and A",
+"licence": "CC BY 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:German_Zeppelin_NT_over_the_St.Gallen-Altenrhein_Airport.jpg",
+"title": "File:German Zeppelin NT over the St.Gallen-Altenrhein Airport.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.17,
+0.03,
+0.8,
+0.97
+]
+},
+"BALL": {
+"credit": "Juliancolton",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Hot_air_balloon_in_flight.jpg",
+"title": "File:Hot air balloon in flight.jpg",
+"w": 1280,
+"h": 850,
+"box": [
+0.42,
+0.2,
+0.85,
+0.92
+]
+},
+"DC3": {
+"credit": "Ibex73",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Douglas_DC-3_FAZOX_at_Paris_Arir_Show_2017_(3).jpg",
+"title": "File:Douglas DC-3 FAZOX at Paris Arir Show 2017 (3).jpg",
+"w": 1280,
+"h": 719,
+"box": [
+0.17,
+0.08,
+0.9,
+0.9
+]
+},
+"CONI": {
+"credit": "U.S. Navy",
+"licence": "Public domain",
+"source": "https://commons.wikimedia.org/wiki/File:Lockheed_RV7-2_Constellation_in_September_1954.jpg",
+"title": "File:Lockheed RV7-2 Constellation in September 1954.jpg",
+"w": 1280,
+"h": 954,
+"box": [
+-0.04,
+0.33,
+1.04,
+0.74
+]
+},
+"B17": {
+"credit": "Paul Hermans",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Boeing_B-17_Flying_Fortress_Sanicole_Airshow_2024_22-09-2024_12-00-56.jpg",
+"title": "File:Boeing B-17 Flying Fortress Sanicole Airshow 2024 22-09-2024 12-00-56.jpg",
+"w": 1280,
+"h": 720,
+"box": [
+0.33,
+0.05,
+0.87,
+0.97
+]
+},
+"B29": {
+"credit": "cool3dpictures",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:Final_Air_Offensive_-_CAF_Boeing_B-29_Superfortress_%27Fifi%27_overhead_(17311207898).jpg",
+"title": "File:Final Air Offensive - CAF Boeing B-29 Superfortress 'Fifi' overhead (17311207898).jpg",
+"w": 1280,
+"h": 854,
+"box": [
+0.07,
+0.0,
+0.96,
+0.98
+]
+},
+"LANC": {
+"credit": "Jan Arkesteijn",
+"licence": "Public domain",
+"source": "https://commons.wikimedia.org/wiki/File:Avro_Lancaster_flying.jpg",
+"title": "File:Avro Lancaster flying.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.0,
+-0.01,
+0.89,
+0.99
+]
+},
+"SPIT": {
+"credit": "Airwolfhound from  Hertfordshire, UK",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:Spitfire_-_Flying_Legends_Duxford_2015_(18986789413).jpg",
+"title": "File:Spitfire - Flying Legends Duxford 2015 (18986789413).jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.02,
+0.0,
+0.93,
+0.99
+]
+},
+"JU52": {
+"credit": "Airwolfhound from  Hertfordshire, UK",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:JU-52_Tantu_-_Flying_Legends_Duxford_2015_(19631073255).jpg",
+"title": "File:JU-52 Tantu - Flying Legends Duxford 2015 (19631073255).jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0.0,
+0.21,
+1.0,
+0.78
+]
+},
+"P51": {
+"credit": "Alfred T. Palmer",
+"licence": "Public domain",
+"source": "https://commons.wikimedia.org/wiki/File:North_American_Mustang_Mk.IA_in_flight_over_California_(USA),_in_October_1942_(fsac.1a35324).jpg",
+"title": "File:North American Mustang Mk.IA in flight over California (USA), in October 1942 (fsac.1a35324).jpg",
+"w": 1280,
+"h": 991,
+"box": [
+0.14,
+0.18,
+0.85,
+0.69
 ]
 }
 };
