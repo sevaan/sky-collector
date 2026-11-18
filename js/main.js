@@ -1,68 +1,68 @@
-import { pullToClose } from './pull-close.js?v=0.1.1694';
-import { TESTER } from './build-flavor.js?v=0.1.1694';
-import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1694';
-import * as Secrets from './secrets.js?v=0.1.1694';
-import { STORY_BY_SECRET } from './stories.js?v=0.1.1694';
-import { cloudsHtml, rainHtml, warmClouds } from './weather-art.js?v=0.1.1694';
-import * as Ufo from './ufo.js?v=0.1.1694';
-import * as Fossil from './fossil.js?v=0.1.1694';
-import { patchHtml, patchSvg } from './patches.js?v=0.1.1694';
-import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1694';
-import { pmOn, pmTime, pmStart, pmStop, pmLast, pmMark, pmSpan } from './perf-meter.js?v=0.1.1694';
-import { toast, ticket, dropToast, toastPending, onTicketShown, iconSvg, dropPageNotices } from './toast.js?v=0.1.1694';
-import { VERSION } from './version.js?v=0.1.1694';
-import { loadCatalog, frame, look, track, motion, compassPoint, enuFromAzEl, DARK_SUN_ELEVATION, SkyModel, BelowModel, overEarth, RisingSoon, setBinocularMode, setSkyLimit, toWorker } from './orbit.js?v=0.1.1694';
-import { placeName } from './geo.js?v=0.1.1694';
-import { skyLimit, SKIES, DEFAULT_SKY, SB_MIN, SB_MAX, SLIDER_MAX, sbOfSky, skyNameFor } from './sky-limit.js?v=0.1.1694';
-import { fitCards } from './fit-text.js?v=0.1.1694';
-import { conArt } from './con-art.js?v=0.1.1694';
-import { fetchWeather, keptWeather, tonightSky, skyClearAt, goodSkyAt } from './weather.js?v=0.1.1694';
-import { CON_FIGURES } from './con-figures.js?v=0.1.1694';
-import { loadConstellations, CON_STARS, CON_BY_ID, conProgress, starDistance } from './constellations.js?v=0.1.1694';
-import { shinyFor, SHINY } from './shiny.js?v=0.1.1694';
-import { setSkyProgress, setSkySize, progress as progressOf, missionsFor, readDeals, readWeekThemes, WEEK_THEMES, countryOf, weekStartOf, weekThemeFor, xpCarry } from './progress.js?v=0.1.1694';
-import { eventOf, activeEvent, nextEvent, activeShower, nextShower, eventLine, setEventsOff } from './events.js?v=0.1.1694';
-import { localText } from './localize.js?v=0.1.1694';
-import { searchCities } from './cities.js?v=0.1.1694';
-import { catalogUrl, refreshCatalog, dropCatalog } from './fresh-data.js?v=0.1.1694';
-import { conList } from './constellations.js?v=0.1.1694';
-import { compassSettling, startSensors, trySensorsQuietly, hasLiveSensors, trueBasis, basisFromAzEl, rotateAz, pointing, nudgeHeading, getNudge, lockHeading, setCompassPlace, getDeclination, hasSensorView, resumeSensors, needsPermission } from './sensors.js?v=0.1.1694';
-import { SkyView, shortName, stripLandscape } from './sky.js?v=0.1.1694';
-import { loadSky, eqToEnu, solarSystem, milkyWayModel, galAxes, roadster, starVector } from './celestial.js?v=0.1.1694';
-import { isPlus, setPlusForTesting, onPlus, PLUS_PRICES, initStore, storePlans, buyPlus, restorePlus, redeemCode, rcTestStore, storeOpen } from './plus.js?v=0.1.1694';
-import { isNative, getPosition, saveFile, notifyAt, cancelNotify, haptic, onNative, nativeChrome, plugin } from './native.js?v=0.1.1694';
-import { initBackup, onBackupChange, backupSoon, clearBackup, backupStatus, rememberSightings, backupBid } from './cloud-backup.js?v=0.1.1694';
-import { SERVER } from './server.js?v=0.1.1694';
-import { codeFrom, packIdFrom, readGiftCode, planImport, summarizeImport, giftTags, pickHighlights, looksReceived, asGift } from './gift.js?v=0.1.1694';
-import { playPack, packMessage } from './gift-pack.js?v=0.1.1694';
-import { addSighting, addSightings, allSightings, deleteSighting, putSighting, warmStore } from './store.js?v=0.1.1694';
-import { cardArt } from './art.js?v=0.1.1694';
-import { renderCard, miniCard, cardLevel, artImage, lockedArt, attachTilt, attachGyro, throwOff, attachFlip, turnCard, phasePath } from './card.js?v=0.1.1694';
-import { applyBack, CARD_BACKS, backUnlocked, chosenBack, chooseBack, backEarned, showBackNext } from './card-backs.js?v=0.1.1694';
-import { sfx, loadSfx, sfxVolume, heartbeat } from './sfx.js?v=0.1.1694';
-import { audioCtx, audioMade, audioIfAny } from './audio-ctx.js?v=0.1.1694';
-import { musicOn, startMusic, setMusic, duckMusic, musicVolume, setMusicVolume, musicAway } from './music.js?v=0.1.1694';
-import { onRevealNews, playReveal, playView, primeReveal, stopReveal, onRevealDismiss, onRevealSwipeIntoBinder, rushReveal, cancelRush } from './reveal.js?v=0.1.1694';
-import { buildCards, cardKeyFor, stampKeyFor, normalizeSighting, stampsIn, fleetLevel, moonPhaseOf, moonPhaseAt, MOON_PHASES } from './card-model.js?v=0.1.1694';
-import { collectedDuringPass, collectedTonight, canCapture, nightsIn, nightKey } from './observation.js?v=0.1.1694';
-import { naturalTargets, SOLAR_SYSTEM, DEEP_SKY, NATURAL, NATURAL_BY_KEY } from './natural.js?v=0.1.1694';
-import { placeFromTimeZone } from './tz-places.js?v=0.1.1694';
-import { TIER_INFO } from './rarity.js?v=0.1.1694';
-import { SETS, albumList } from './sets.js?v=0.1.1694';
-import { TYPE_LABEL, ownerName, orbitStats } from './facts.js?v=0.1.1694';
-import { note, send as sendNotes, noteError, daysSinceInstall } from './field-notes.js?v=0.1.1694';
-const shareCardEl = (...a) => import('./share-card.js?v=0.1.1694').then((m) => m.shareCardEl(...a)); /* loaded when first shared (perf audit 2026-10-29) */
-import { loadLore, titleFor, factFor, richText } from './lore.js?v=0.1.1694';
-import { PlaneTracker, planesAvailable, aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1694';
-import { initCatches, clearCatches } from './catch-store.js?v=0.1.1694';
-import { cardsFor, retier } from './flights.js?v=0.1.1694';
-import { rareHere, localStats } from './sky-local.js?v=0.1.1694';
-import { skyCardPhotoUrl } from './flight-card.js?v=0.1.1694';
-import { catchSightings, isSkyCard, skyStampInfo, skyModel, skyTypeCode } from './sky-cards.js?v=0.1.1694';
-import { THRESHOLDS as SKY_THRESHOLDS, levelFor as skyLevelFor } from './sky-stamps.js?v=0.1.1694';
-import { renderToday, logSeen, dirWord as todayDir } from './sky-today.js?v=0.1.1694';
-import { catchPanel, catches as skyCatches, previewFor as skyPreview, preparePlaneCatch, setCatchSource } from './sky-catch.js?v=0.1.1694';
-import { addStarfield } from './starfield.js?v=0.1.1694';
+import { pullToClose } from './pull-close.js?v=0.1.1696';
+import { TESTER } from './build-flavor.js?v=0.1.1696';
+import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1696';
+import * as Secrets from './secrets.js?v=0.1.1696';
+import { STORY_BY_SECRET } from './stories.js?v=0.1.1696';
+import { cloudsHtml, rainHtml, warmClouds } from './weather-art.js?v=0.1.1696';
+import * as Ufo from './ufo.js?v=0.1.1696';
+import * as Fossil from './fossil.js?v=0.1.1696';
+import { patchHtml, patchSvg } from './patches.js?v=0.1.1696';
+import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1696';
+import { pmOn, pmTime, pmStart, pmStop, pmLast, pmMark, pmSpan } from './perf-meter.js?v=0.1.1696';
+import { toast, ticket, dropToast, toastPending, onTicketShown, iconSvg, dropPageNotices } from './toast.js?v=0.1.1696';
+import { VERSION } from './version.js?v=0.1.1696';
+import { loadCatalog, frame, look, track, motion, compassPoint, enuFromAzEl, DARK_SUN_ELEVATION, SkyModel, BelowModel, overEarth, RisingSoon, setBinocularMode, setSkyLimit, toWorker } from './orbit.js?v=0.1.1696';
+import { placeName } from './geo.js?v=0.1.1696';
+import { skyLimit, SKIES, DEFAULT_SKY, SB_MIN, SB_MAX, SLIDER_MAX, sbOfSky, skyNameFor } from './sky-limit.js?v=0.1.1696';
+import { fitCards } from './fit-text.js?v=0.1.1696';
+import { conArt } from './con-art.js?v=0.1.1696';
+import { fetchWeather, keptWeather, tonightSky, skyClearAt, goodSkyAt } from './weather.js?v=0.1.1696';
+import { CON_FIGURES } from './con-figures.js?v=0.1.1696';
+import { loadConstellations, CON_STARS, CON_BY_ID, conProgress, starDistance } from './constellations.js?v=0.1.1696';
+import { shinyFor, SHINY } from './shiny.js?v=0.1.1696';
+import { setSkyProgress, setSkySize, progress as progressOf, missionsFor, readDeals, readWeekThemes, WEEK_THEMES, countryOf, weekStartOf, weekThemeFor, xpCarry } from './progress.js?v=0.1.1696';
+import { eventOf, activeEvent, nextEvent, activeShower, nextShower, eventLine, setEventsOff } from './events.js?v=0.1.1696';
+import { localText } from './localize.js?v=0.1.1696';
+import { searchCities } from './cities.js?v=0.1.1696';
+import { catalogUrl, refreshCatalog, dropCatalog } from './fresh-data.js?v=0.1.1696';
+import { conList } from './constellations.js?v=0.1.1696';
+import { compassSettling, startSensors, trySensorsQuietly, hasLiveSensors, trueBasis, basisFromAzEl, rotateAz, pointing, nudgeHeading, getNudge, lockHeading, setCompassPlace, getDeclination, hasSensorView, resumeSensors, needsPermission } from './sensors.js?v=0.1.1696';
+import { SkyView, shortName, stripLandscape } from './sky.js?v=0.1.1696';
+import { loadSky, eqToEnu, solarSystem, milkyWayModel, galAxes, roadster, starVector } from './celestial.js?v=0.1.1696';
+import { isPlus, setPlusForTesting, onPlus, PLUS_PRICES, initStore, storePlans, buyPlus, restorePlus, redeemCode, rcTestStore, storeOpen } from './plus.js?v=0.1.1696';
+import { isNative, getPosition, saveFile, notifyAt, cancelNotify, haptic, onNative, nativeChrome, plugin } from './native.js?v=0.1.1696';
+import { initBackup, onBackupChange, backupSoon, clearBackup, backupStatus, rememberSightings, backupBid } from './cloud-backup.js?v=0.1.1696';
+import { SERVER } from './server.js?v=0.1.1696';
+import { codeFrom, packIdFrom, readGiftCode, planImport, summarizeImport, giftTags, pickHighlights, looksReceived, asGift } from './gift.js?v=0.1.1696';
+import { playPack, packMessage } from './gift-pack.js?v=0.1.1696';
+import { addSighting, addSightings, allSightings, deleteSighting, putSighting, warmStore } from './store.js?v=0.1.1696';
+import { cardArt } from './art.js?v=0.1.1696';
+import { renderCard, miniCard, cardLevel, artImage, lockedArt, attachTilt, attachGyro, throwOff, attachFlip, turnCard, phasePath } from './card.js?v=0.1.1696';
+import { applyBack, CARD_BACKS, backUnlocked, chosenBack, chooseBack, backEarned, showBackNext } from './card-backs.js?v=0.1.1696';
+import { sfx, loadSfx, sfxVolume, heartbeat } from './sfx.js?v=0.1.1696';
+import { audioCtx, audioMade, audioIfAny } from './audio-ctx.js?v=0.1.1696';
+import { musicOn, startMusic, setMusic, duckMusic, musicVolume, setMusicVolume, musicAway } from './music.js?v=0.1.1696';
+import { onRevealNews, playReveal, playView, primeReveal, stopReveal, onRevealDismiss, onRevealSwipeIntoBinder, rushReveal, cancelRush } from './reveal.js?v=0.1.1696';
+import { buildCards, cardKeyFor, stampKeyFor, normalizeSighting, stampsIn, fleetLevel, moonPhaseOf, moonPhaseAt, MOON_PHASES } from './card-model.js?v=0.1.1696';
+import { collectedDuringPass, collectedTonight, canCapture, nightsIn, nightKey } from './observation.js?v=0.1.1696';
+import { naturalTargets, SOLAR_SYSTEM, DEEP_SKY, NATURAL, NATURAL_BY_KEY } from './natural.js?v=0.1.1696';
+import { placeFromTimeZone } from './tz-places.js?v=0.1.1696';
+import { TIER_INFO } from './rarity.js?v=0.1.1696';
+import { SETS, albumList } from './sets.js?v=0.1.1696';
+import { TYPE_LABEL, ownerName, orbitStats } from './facts.js?v=0.1.1696';
+import { note, send as sendNotes, noteError, daysSinceInstall } from './field-notes.js?v=0.1.1696';
+const shareCardEl = (...a) => import('./share-card.js?v=0.1.1696').then((m) => m.shareCardEl(...a)); /* loaded when first shared (perf audit 2026-10-29) */
+import { loadLore, titleFor, factFor, richText } from './lore.js?v=0.1.1696';
+import { PlaneTracker, planesAvailable, aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1696';
+import { initCatches, clearCatches } from './catch-store.js?v=0.1.1696';
+import { cardsFor, retier } from './flights.js?v=0.1.1696';
+import { rareHere, localStats } from './sky-local.js?v=0.1.1696';
+import { skyCardPhotoUrl } from './flight-card.js?v=0.1.1696';
+import { catchSightings, isSkyCard, skyStampInfo, skyModel, skyTypeCode } from './sky-cards.js?v=0.1.1696';
+import { THRESHOLDS as SKY_THRESHOLDS, levelFor as skyLevelFor } from './sky-stamps.js?v=0.1.1696';
+import { renderToday, logSeen, dirWord as todayDir } from './sky-today.js?v=0.1.1696';
+import { catchPanel, catches as skyCatches, previewFor as skyPreview, preparePlaneCatch, setCatchSource } from './sky-catch.js?v=0.1.1696';
+import { addStarfield } from './starfield.js?v=0.1.1696';
 
 /* Startup timings (2026-11-11, Sevaan: "measure"): marks from the page's start to the sky being ready, kept in localStorage
    'bootTimes' and shown in Testing tools → Startup timings. */
@@ -5814,7 +5814,7 @@ const HT_SLIDES = [
   { t: 'Know when to look up', d: 'Tonight shows what’s worth catching and when. The bell under the circle tells you when it’s dark; pass reminders come with Plus.', pic: () => `<span class="ht-tonight"><span class="ico" data-ico="bell"></span><b>9:41 PM</b><small>Hubble · high in the south</small></span>`, last: true },
 ];
 // Sky Collector's How to play (2026-11-15): the same deck, about planes. Pictures are the welcome card's three steps plus small inline drawings.
-const htSkyArt = (inner) => `<svg viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="10" fill="#cfe5f6"/>${inner}</svg>`;
+const htSkyArt = (inner) => `<svg viewBox="0 0 100 100" aria-hidden="true">${inner}</svg>`; /* no panel of its own: the frame is already sky (it showed as a pale square, QA 2026-11-17) */
 const htPlane = (x, y, sc = 1) => `<path transform="translate(${x} ${y}) scale(${sc})" d="M0-12 L2-3 L12 3 L12 6 L2 3 L1 9 L4 11 L4 13 L0 12 L-4 13 L-4 11 L-1 9 L-2 3 L-12 6 L-12 3 L-2-3 Z" fill="#fff" stroke="#0d2238" stroke-width="1.2" stroke-linejoin="round"/>`;
 const htMedal = (cx, col, ink, n, sub) => `<circle cx="${cx}" cy="46" r="13" fill="${col}" stroke="${ink}" stroke-width="2"/><text x="${cx}" y="51" text-anchor="middle" font-family="SC Display, sans-serif" font-size="14" fill="${ink}">${n}</text><text x="${cx}" y="76" text-anchor="middle" font-family="SC Label, sans-serif" font-size="8" fill="#0d2238">${sub}</text>`;
 const HT_SLIDES_SKY = [
@@ -5822,8 +5822,8 @@ const HT_SLIDES_SKY = [
   { t: 'Line it up, tap Collect', d: 'Put the plane in the circle and tap Collect. You get two cards: the flight (the airline and where it’s going) and the plane (the aircraft type).', pic: () => SKY_WC_PICS[1].replace('xMidYMid slice', 'xMidYMid meet') },
   { t: 'Catch it again for a stamp', d: 'Catch the same flight on another day, or another aircraft of the same type, and the card gets a stamp.', pic: () => htSkyArt(`<rect x="22" y="18" width="56" height="64" rx="5" fill="#fff" stroke="#0d2238" stroke-width="2"/>${htPlane(50, 38, .9)}<rect x="30" y="58" width="40" height="3" rx="1.5" fill="#9db4c8"/><circle cx="64" cy="70" r="9" fill="none" stroke="#2d4f86" stroke-width="2" stroke-dasharray="3 2"/><path d="M60 70l3 3 6-7" fill="none" stroke="#2d4f86" stroke-width="2"/>`) },
   { t: 'Level up', d: 'Flights level up at 5 and 15 days. Plane types level up at 10 and 50 aircraft. Bronze, Silver, then Gold.', pic: () => htSkyArt(`${htMedal(24, '#b8793e', '#6e4416', 'I', 'Bronze')}${htMedal(50, '#c9d1da', '#4a5663', 'II', 'Silver')}${htMedal(76, '#e2b53c', '#7a5200', 'III', 'Gold')}`) },
-  { t: 'Missions and patches', d: 'There are new missions every day. Finish them and your first of anything to earn patches.', pic: () => htSkyArt(`<rect x="20" y="20" width="60" height="14" rx="4" fill="#fff" stroke="#0d2238" stroke-width="1.5"/><path d="M26 27l3 3 5-6" fill="none" stroke="#c2560a" stroke-width="2"/><rect x="40" y="25" width="30" height="4" rx="2" fill="#9db4c8"/><rect x="20" y="40" width="60" height="14" rx="4" fill="#fff" stroke="#0d2238" stroke-width="1.5"/><circle cx="31" cy="47" r="4" fill="none" stroke="#9db4c8" stroke-width="1.5"/><rect x="40" y="45" width="24" height="4" rx="2" fill="#9db4c8"/><circle cx="50" cy="75" r="11" fill="#f2b632" stroke="#7a5200" stroke-width="2"/>${htPlane(50, 75, .55)}`) },
-  { t: 'Nothing overhead?', d: 'Open Today and tap Show me. It points you to a plane you can catch.', pic: () => htSkyArt(`<rect x="18" y="26" width="64" height="26" rx="6" fill="#fff" stroke="#0d2238" stroke-width="1.5"/>${htPlane(32, 39, .5)}<rect x="44" y="33" width="28" height="4" rx="2" fill="#0d2238"/><rect x="44" y="41" width="20" height="3" rx="1.5" fill="#9db4c8"/><rect x="28" y="62" width="44" height="18" rx="9" fill="#c2560a"/><text x="50" y="75" text-anchor="middle" font-family="SC Display, sans-serif" font-size="10" fill="#fff">Show me</text>`), last: true },
+  { t: 'Missions and patches', d: 'There are new missions every day. Finish them and your first of anything to earn patches.', pic: () => htSkyArt(`<rect x="20" y="20" width="60" height="14" rx="4" fill="#fff" stroke="#0d2238" stroke-width="1.5"/><path d="M26 27l3 3 5-6" fill="none" stroke="#b42a20" stroke-width="2"/><rect x="40" y="25" width="30" height="4" rx="2" fill="#9db4c8"/><rect x="20" y="40" width="60" height="14" rx="4" fill="#fff" stroke="#0d2238" stroke-width="1.5"/><circle cx="31" cy="47" r="4" fill="none" stroke="#9db4c8" stroke-width="1.5"/><rect x="40" y="45" width="24" height="4" rx="2" fill="#9db4c8"/><circle cx="50" cy="75" r="11" fill="#f2b632" stroke="#7a5200" stroke-width="2"/>${htPlane(50, 75, .55)}`) },
+  { t: 'Nothing overhead?', d: 'Open Today and tap Show me. It points you to a plane you can catch.', pic: () => htSkyArt(`<rect x="18" y="26" width="64" height="26" rx="6" fill="#fff" stroke="#0d2238" stroke-width="1.5"/>${htPlane(32, 39, .5)}<rect x="44" y="33" width="28" height="4" rx="2" fill="#0d2238"/><rect x="44" y="41" width="20" height="3" rx="1.5" fill="#9db4c8"/><rect x="28" y="62" width="44" height="18" rx="9" fill="#b42a20"/><text x="50" y="75" text-anchor="middle" font-family="SC Display, sans-serif" font-size="10" fill="#fff">Show me</text>`), last: true },
 ];
 let htAt = 0;
 const htSlides = () => (SKY_ONLY ? HT_SLIDES_SKY : HT_SLIDES);
@@ -5851,7 +5851,7 @@ const CREDITS = [
   ['Music', [['“Permafrost”', 'Scott Buckley · CC BY 4.0', 'https://www.scottbuckley.com.au']]],
 ];
 async function openCredits() {
-  const { ART_SOURCES } = await import('./art-sources.js?v=0.1.1694');
+  const { ART_SOURCES } = await import('./art-sources.js?v=0.1.1696');
   const a = (t, href) => (href ? `<a href="${escapeHtml(href)}" target="_blank" rel="noopener">${t}</a>` : t);
   const card = (title, n, rows) => `<div class="set-group set-card"><div class="set-bar"><h3>${title}</h3><b aria-hidden="true">${String(n).padStart(2, '0')}</b></div>${rows}</div>`;
   const row = (b, sub, href) => `<div class="cr-row"><b>${escapeHtml(b)}</b><span>${a(escapeHtml(sub), href)}</span></div>`;
@@ -6463,7 +6463,7 @@ async function runOnboarding(force = false) {
  };
   steps[A].text = 'Sweep the sky. When something lines up in the circle, tap it to collect your first card.';
   // Sky Collector (2026-11-15): the first card is whatever plane you catch.
-  if (SKY_ONLY) Object.assign(steps[A], { art: '<svg viewBox="0 0 300 120" aria-hidden="true"><path d="M40 104 L262 14" stroke="#0d2238" stroke-opacity=".3" stroke-dasharray="3 5"/><circle cx="150" cy="60" r="34" fill="none" stroke="#c2560a" stroke-width="2.5"/><path d="M150 20v-8M150 100v8M110 60h-8M190 60h8" stroke="#c2560a" stroke-width="2.5" stroke-linecap="round"/><g transform="translate(132 42) rotate(68 18 18)"><path transform="scale(.5625)" d="M32 3c2.2 0 3.4 3 3.4 6.5V24l22.6 12.2v4.3L35.4 34v15.2l7.2 5.6v3.6L32 55.6l-10.6 2.8v-3.6l7.2-5.6V34L6 40.5v-4.3L28.6 24V9.5C28.6 6 29.8 3 32 3z" fill="#fffdf6" stroke="#0d2238" stroke-width="2.6" stroke-linejoin="round"/></g></svg>', title: 'Catch a plane', sub: ['Up right now', ''], text: 'Find a plane in the sky and line it up in the circle, then tap Collect. Its flight becomes your first card.', yes: 'Let’s go' });
+  if (SKY_ONLY) Object.assign(steps[A], { art: '<svg viewBox="0 0 300 120" aria-hidden="true"><path d="M40 104 L262 14" stroke="#0d2238" stroke-opacity=".3" stroke-dasharray="3 5"/><circle cx="150" cy="60" r="34" fill="none" stroke="#b42a20" stroke-width="2.5"/><path d="M150 20v-8M150 100v8M110 60h-8M190 60h8" stroke="#b42a20" stroke-width="2.5" stroke-linecap="round"/><g transform="translate(132 42) rotate(68 18 18)"><path transform="scale(.5625)" d="M32 3c2.2 0 3.4 3 3.4 6.5V24l22.6 12.2v4.3L35.4 34v15.2l7.2 5.6v3.6L32 55.6l-10.6 2.8v-3.6l7.2-5.6V34L6 40.5v-4.3L28.6 24V9.5C28.6 6 29.8 3 32 3z" fill="#fffdf6" stroke="#0d2238" stroke-width="2.6" stroke-linejoin="round"/></g></svg>', title: 'Catch a plane', sub: ['Up right now', ''], text: 'Find a plane in the sky and line it up in the circle, then tap Collect. Its flight becomes your first card.', yes: 'Let’s go' });
   // The sky starts asleep behind the cards: blurred, dim and turned away. Each permission wakes part of it.
   $('sky').classList.add('asleep');
   // 1. location: the sky wakes and swings round into your real sky
@@ -6930,7 +6930,7 @@ async function openNightPack(K, { force = false } = {}) {
 }
 // Share my night: the night's cards as a pack link (js/pack-share.js, the same link Send cards makes), no picking.
 async function shareNight(d) {
-  const { packLinkFor, shareLink } = await import('./pack-share.js?v=0.1.1694');
+  const { packLinkFor, shareLink } = await import('./pack-share.js?v=0.1.1696');
   const link = await packLinkFor(d.night, { kind: d.what });
   if (!link) return { ok: false, text: 'No connection. Try again online.' };
   const r = await shareLink(link, `My ${d.what} · ${d.items.length} card${d.items.length === 1 ? '' : 's'} · Sky Collector`);
@@ -6942,7 +6942,7 @@ async function shareNight(d) {
 // picture as a shared card, drawn from the card on screen.
 async function shareNightPicture(el, d) {
   if (!el) return null;
-  const { shareElementPicture } = await import('./share-card.js?v=0.1.1694');
+  const { shareElementPicture } = await import('./share-card.js?v=0.1.1696');
   const day = new Date(d.start - (new Date(d.start).getHours() < 12 ? 86400e3 : 0)).toLocaleDateString([], { day: 'numeric', month: 'short' });
   const how = await shareElementPicture(el, `My ${d.what} · ${day}`, { rootExtra: 'position:relative;left:0;top:0;bottom:auto;translate:none;transform:none;margin:0;opacity:1;', extra: (n) => (n.parentElement?.classList.contains('gp-fan') ? 'box-shadow:none;' : '') }); /* the tilted cards' glow and shadow drew as bands and wedges in the picture */
   if (how === 'cancelled') return null;
@@ -7657,9 +7657,9 @@ const WC_PICS = [ // gently animated (2026-10-19, Sevaan): the phone sways, the 
 ];
 // Sky Collector's how-to pictures (2026-11-15): light sky, a plane, the circle, a flight card.
 const SKY_WC_PICS = [
-  '<svg viewBox="0 0 100 118" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="wcs1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8cc2ec"/><stop offset="1" stop-color="#e4f1fa"/></linearGradient></defs><rect width="100" height="118" fill="url(#wcs1)"/><path d="M14 40 Q 50 18 92 26" fill="none" stroke="#c2560a" stroke-width="1.4" stroke-dasharray="3 3"/><g transform="translate(68 18) rotate(75 8 8)"><path transform="scale(.25)" d="M32 3c2.2 0 3.4 3 3.4 6.5V24l22.6 12.2v4.3L35.4 34v15.2l7.2 5.6v3.6L32 55.6l-10.6 2.8v-3.6l7.2-5.6V34L6 40.5v-4.3L28.6 24V9.5C28.6 6 29.8 3 32 3z" fill="#fffdf6" stroke="#0d2238" stroke-width="4"/></g><g class="wa-sway"><rect x="34" y="52" width="28" height="48" rx="5" transform="rotate(-18 48 76)" fill="#fffdf6" stroke="#0d2238" stroke-width="2"/><circle cx="48" cy="74" r="6" transform="rotate(-18 48 76)" fill="none" stroke="#c2560a" stroke-width="2"/></g></svg>',
-  '<svg viewBox="0 0 100 118" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="wcs2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8cc2ec"/><stop offset="1" stop-color="#e4f1fa"/></linearGradient></defs><rect width="100" height="118" fill="url(#wcs2)"/><circle cx="50" cy="59" r="24" fill="none" stroke="#c2560a" stroke-width="2.5"/><path d="M50 29v-7M50 89v7M20 59h-7M80 59h7" stroke="#c2560a" stroke-width="2.5" stroke-linecap="round"/><path d="M6 96 L94 22" stroke="#0d2238" stroke-opacity=".35" stroke-dasharray="3 4"/><g transform="translate(39 48) rotate(50 11 11)"><path transform="scale(.34)" d="M32 3c2.2 0 3.4 3 3.4 6.5V24l22.6 12.2v4.3L35.4 34v15.2l7.2 5.6v3.6L32 55.6l-10.6 2.8v-3.6l7.2-5.6V34L6 40.5v-4.3L28.6 24V9.5C28.6 6 29.8 3 32 3z" fill="#fffdf6" stroke="#0d2238" stroke-width="3.5"/></g></svg>',
-  '<svg viewBox="0 0 100 118" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="wcs3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8cc2ec"/><stop offset="1" stop-color="#e4f1fa"/></linearGradient><linearGradient id="wcs3g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe28a"/><stop offset=".5" stop-color="#f2b632"/><stop offset="1" stop-color="#c98f1c"/></linearGradient></defs><rect width="100" height="118" fill="url(#wcs3)"/><g class="wa-float"><rect x="22" y="14" width="56" height="90" rx="6" fill="url(#wcs3g)"/><rect x="25" y="17" width="50" height="84" rx="4" fill="#fffdf6"/><rect x="28" y="20" width="44" height="32" rx="2" fill="#d7eaf8"/><path d="M32 46 Q 50 24 68 46" fill="none" stroke="#c2560a" stroke-width="1.4" stroke-dasharray="2.5 2.5"/><circle cx="32" cy="46" r="2.2" fill="#0d2238"/><circle cx="68" cy="46" r="2.2" fill="#c2560a"/><rect x="28" y="57" width="34" height="5" rx="1" fill="#0d2238"/><rect x="28" y="65" width="26" height="5" rx="1" fill="#0d2238"/><rect x="28" y="75" width="44" height="1" fill="#c9b98a"/><rect x="28" y="80" width="40" height="2.5" rx="1" fill="#4a6178"/><rect x="28" y="85" width="34" height="2.5" rx="1" fill="#4a6178"/><rect x="28" y="93" width="44" height="1" fill="#c9b98a"/></g></svg>',
+  '<svg viewBox="0 0 100 118" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="wcs1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8cc2ec"/><stop offset="1" stop-color="#e4f1fa"/></linearGradient></defs><rect width="100" height="118" fill="url(#wcs1)"/><path d="M14 40 Q 50 18 92 26" fill="none" stroke="#b42a20" stroke-width="1.4" stroke-dasharray="3 3"/><g transform="translate(68 18) rotate(75 8 8)"><path transform="scale(.25)" d="M32 3c2.2 0 3.4 3 3.4 6.5V24l22.6 12.2v4.3L35.4 34v15.2l7.2 5.6v3.6L32 55.6l-10.6 2.8v-3.6l7.2-5.6V34L6 40.5v-4.3L28.6 24V9.5C28.6 6 29.8 3 32 3z" fill="#fffdf6" stroke="#0d2238" stroke-width="4"/></g><g class="wa-sway"><rect x="34" y="52" width="28" height="48" rx="5" transform="rotate(-18 48 76)" fill="#fffdf6" stroke="#0d2238" stroke-width="2"/><circle cx="48" cy="74" r="6" transform="rotate(-18 48 76)" fill="none" stroke="#b42a20" stroke-width="2"/></g></svg>',
+  '<svg viewBox="0 0 100 118" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="wcs2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8cc2ec"/><stop offset="1" stop-color="#e4f1fa"/></linearGradient></defs><rect width="100" height="118" fill="url(#wcs2)"/><circle cx="50" cy="59" r="24" fill="none" stroke="#b42a20" stroke-width="2.5"/><path d="M50 29v-7M50 89v7M20 59h-7M80 59h7" stroke="#b42a20" stroke-width="2.5" stroke-linecap="round"/><path d="M6 96 L94 22" stroke="#0d2238" stroke-opacity=".35" stroke-dasharray="3 4"/><g transform="translate(39 48) rotate(50 11 11)"><path transform="scale(.34)" d="M32 3c2.2 0 3.4 3 3.4 6.5V24l22.6 12.2v4.3L35.4 34v15.2l7.2 5.6v3.6L32 55.6l-10.6 2.8v-3.6l7.2-5.6V34L6 40.5v-4.3L28.6 24V9.5C28.6 6 29.8 3 32 3z" fill="#fffdf6" stroke="#0d2238" stroke-width="3.5"/></g></svg>',
+  '<svg viewBox="0 0 100 118" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="wcs3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8cc2ec"/><stop offset="1" stop-color="#e4f1fa"/></linearGradient><linearGradient id="wcs3g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe28a"/><stop offset=".5" stop-color="#f2b632"/><stop offset="1" stop-color="#c98f1c"/></linearGradient></defs><rect width="100" height="118" fill="url(#wcs3)"/><g class="wa-float"><rect x="22" y="14" width="56" height="90" rx="6" fill="url(#wcs3g)"/><rect x="25" y="17" width="50" height="84" rx="4" fill="#fffdf6"/><rect x="28" y="20" width="44" height="32" rx="2" fill="#d7eaf8"/><path d="M32 46 Q 50 24 68 46" fill="none" stroke="#b42a20" stroke-width="1.4" stroke-dasharray="2.5 2.5"/><circle cx="32" cy="46" r="2.2" fill="#0d2238"/><circle cx="68" cy="46" r="2.2" fill="#b42a20"/><rect x="28" y="57" width="34" height="5" rx="1" fill="#0d2238"/><rect x="28" y="65" width="26" height="5" rx="1" fill="#0d2238"/><rect x="28" y="75" width="44" height="1" fill="#c9b98a"/><rect x="28" y="80" width="40" height="2.5" rx="1" fill="#4a6178"/><rect x="28" y="85" width="34" height="2.5" rx="1" fill="#4a6178"/><rect x="28" y="93" width="44" height="1" fill="#c9b98a"/></g></svg>',
 ];
 function welcomeModel() {
   return {
@@ -7708,7 +7708,7 @@ function renderStartHand() {
       <div class="wc-step"><div class="wc-a-pic"><i>2</i>${WC_PICS[1]}</div><b>Line up an object in the circle.</b></div>
       <div class="wc-step"><div class="wc-a-pic card-pic"><i>3</i><span class="wa-card"><img src="assets/art/cards/sm/iss.webp" alt="" decoding="async"></span></div><b>Tap Collect to claim its card.</b></div>`}
     </div>
-    <p class="wc-a-text">${SKY_ONLY ? 'Every plane up there is a card: the flight and where it’s headed, and the plane flying it. Catch long-haul flights to faraway places, helicopters and the odd airship, and earn <b>patches</b> as you go.' : 'Discover satellites, rocket stages, the Space Station, planets and stars, all really up there. Return on clear nights to level up your cards and uncover <b>secrets</b>.'}</p>
+    <p class="wc-a-text">${SKY_ONLY ? 'Every plane up there is a card: the flight, where it’s headed and the plane flying it. Catch long-haul jets, helicopters and the odd airship, and earn <b>patches</b>.' : 'Discover satellites, rocket stages, the Space Station, planets and stars, all really up there. Return on clear nights to level up your cards and uncover <b>secrets</b>.'}</p>
     <div class="wc-a-foot"><span>↑ Swipe up to begin</span><span class="brand">SKY COLLECTOR</span></div>
   </div>`);
   // Start face-down: the card is turned half way, so its (pre-mirrored) back faces you.

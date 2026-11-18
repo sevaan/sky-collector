@@ -444,3 +444,16 @@ html.sky-cards .lb-dial > :last-child, html.sky-cards .lbd-m { min-width:0; flex
 html.sky-cards .lbd-to { white-space:normal; overflow:visible; text-wrap:balance; } /* Sky's rank names are longer ("Air Traffic Controller"): wrap, don't clip, on a 320 px phone */
 html.sky-cards .lbd-m { grid-template-columns:minmax(0, 1fr); } /* the one column was as wide as its longest line, so XP and Missions ran off a 320 px card */
 html.sky-cards .lbd-l { min-width:0; flex-wrap:wrap; row-gap:2px; }
+/* QA 2026-11-17 */
+body.sky-only:not(.night) .set-grab { background:none; background-color:#c9d9e6; background-clip:content-box; } /* the shorthand had reset the clip: the handle drew as a block */
+/* the card back picker holds 20 backs: it scrolls inside the screen (it was taller than the phone with its top out of reach) */
+body.sky-only #set-back-sheet .set-sheet-card { max-height:calc(100dvh - var(--safe-top, 0px) - 24px); overflow-y:auto; overscroll-behavior:contain; touch-action:pan-y; -webkit-overflow-scrolling:touch; }
+/* By day the target ticket and the guide ticket are light like the rest of the daytime chrome (QA 2026-11-17: near-black
+   panels on a daylight sky); at night on Explore they keep Space Collector's dark ticket. Space Collector's own variable
+   (--tk-bg) and the few colours it hard-codes on the ticket. */
+body.sky-only.day:not(.night) :is(#discover, #guidance) { --tk-bg:#fffdf6f2; }
+body.sky-only.day:not(.night) :is(.tk-card, #guidance:not(.first)) { background-image:repeating-linear-gradient(0deg, #0d223805 0 1px, transparent 1px 3px) !important; box-shadow:0 10px 26px rgba(13,34,56,.22), 0 0 0 1px #c9d9e6 !important; }
+body.sky-only.day:not(.night) #discover .d-ticket #d-name, body.sky-only.day:not(.night) #guidance:not(.first), body.sky-only.day:not(.night) #guidance:not(.first) :is(b, strong) { color:#0d2238 !important; text-shadow:none !important; }
+body.sky-only.day:not(.night) #discover .d-ticket :is(#d-sub, #d-switch, #d-dist), body.sky-only.day:not(.night) #guidance:not(.first) small { color:#4a6178 !important; }
+body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts .ticket { --tkc:#b42a20; } /* the ticket's small label was pale yellow on white */
+body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts .ticket .ticket__eyebrow { color:#b42a20 !important; }

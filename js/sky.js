@@ -1,18 +1,18 @@
 // Canvas renderer for the sky view. Gnomonic (pinhole camera) projection around where the phone points.
-import { extinction } from './sky-limit.js?v=0.1.1694';
+import { extinction } from './sky-limit.js?v=0.1.1696';
 // Two themes: 'glass' (ink, cream and orange celestial chart) and 'night' (all red, keeps dark adaptation).
-import { pmTime } from './perf-meter.js?v=0.1.1694';
-import { createMilkyGL } from './milkyway-gl.js?v=0.1.1694';
+import { pmTime } from './perf-meter.js?v=0.1.1696';
+import { createMilkyGL } from './milkyway-gl.js?v=0.1.1696';
 
-import { enuFromAzEl, compassPoint } from './orbit.js?v=0.1.1694';
-import { createCloudGL } from './clouds-gl.js?v=0.1.1694';
+import { enuFromAzEl, compassPoint } from './orbit.js?v=0.1.1696';
+import { createCloudGL } from './clouds-gl.js?v=0.1.1696';
 // Cloud colours by light: sunlit tops, shadowed bellies, and the horizon haze they melt into (0–1 RGB).
 const CLOUD_LIGHT = {
   day: { lit: [1, 1, 1], shade: [0.62, 0.68, 0.77], haze: [0.82, 0.87, 0.93] },
   dusk: { lit: [1, 0.8, 0.68], shade: [0.36, 0.33, 0.42], haze: [0.62, 0.5, 0.52] },
   night: { lit: [0.22, 0.25, 0.31], shade: [0.1, 0.12, 0.16], haze: [0.14, 0.15, 0.2] },
 };
-import { TIER_INFO } from './rarity.js?v=0.1.1694';
+import { TIER_INFO } from './rarity.js?v=0.1.1696';
 // The accent for canvas drawing: the page's --gold (orange in Space Collector, red in Sky Collector), read once (2026-11-17).
 const ACCENT = (() => { try { return getComputedStyle(document.documentElement).getPropertyValue('--gold').trim() || '#fa8127'; } catch { return '#fa8127'; } })();
 
@@ -153,7 +153,7 @@ function inkIsDark(c) {
 }
 // A rarity colour as [r, g, b] for glow(), cached.
 const TIER_RGB = new Map();
-function tierRgb(tier) { if (!TIER_RGB.has(tier)) { const h = (TIER_INFO[tier]?.color ?? '#fa8127').replace('#', ''); TIER_RGB.set(tier, [0, 2, 4].map((k) => parseInt(h.slice(k, k + 2), 16))); } return TIER_RGB.get(tier); }
+function tierRgb(tier) { if (!TIER_RGB.has(tier)) { const h = (TIER_INFO[tier]?.color ?? ACCENT) /* no tier (the Show me arrow for a plane): the app's accent, red in Sky */.replace('#', ''); TIER_RGB.set(tier, [0, 2, 4].map((k) => parseInt(h.slice(k, k + 2), 16))); } return TIER_RGB.get(tier); }
 // Setting a canvas font makes the browser resolve styles first, so a font set while the page has pending style changes
 // costs a style pass (perf pass 2026-11-10: 5-10 ms a frame at 4x after a page closed). Set it only when it differs.
 const FONT_NORM = new Map();
