@@ -15,7 +15,7 @@ export const TYPE_FACTS = {
   A321: 'The A321 was the first stretched A320, flying in 1993; its seating has since grown from 220 to as many as **244** people.',
   A332: 'The A330-200 is shorter than the A330-300 but flies farther, up to **13,450 km** compared with 11,750 km.',
   A333: 'Airbus designed the two-engine A330 and the four-engine A340 together, so they share the **same wing** parts.',
-  A337: 'The BelugaXL is built to move big pieces of A350 jets, taking one-ninth of the time the old Beluga needed for **A350 parts**.',
+  A337: 'The BelugaXL wears a whale’s smile on its nose, and its hold is big enough to carry **two A350 wings** at once.',
   A339: 'The A330neo was launched in 2014 promising **14 percent** better fuel economy per seat than the older A330.',
   A342: 'The A340-200 is the shortest A340, at **59.4 m**, but this long-range version can still fly 15,000 km.',
   A343: 'Airbus gave the A340 **four engines** instead of two to get around the strict twin-engine rules for flying over oceans.',

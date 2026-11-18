@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sky Collector Privacy</title>
+<meta name="description" content="What Sky Collector does with your location and your collection.">
+<style>
+  @font-face { font-family: 'SC Display'; src: url('/fonts/RussoOne-Regular.woff2') format('woff2'), url('/fonts/RussoOne-Regular.ttf') format('truetype'); }
+  @font-face { font-family: 'SC Label'; src: url('/fonts/BarlowCondensed-Medium.woff2') format('woff2'), url('/fonts/BarlowCondensed-Medium.ttf') format('truetype'); font-weight: 500; }
+  :root { --bg: #080f1b; --text: #e6ecf5; --ink: #fff2b3; --muted: #9fb3c8; --org: #fa8127; --edge: #22344a; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 -apple-system, system-ui, sans-serif; }
+  main { max-width: 680px; margin: 0 auto; padding: 40px 16px 80px; }
+  .eyebrow { font: 500 14px 'SC Label', sans-serif; letter-spacing: .2em; text-transform: uppercase; color: var(--org); }
+  h1 { font: 400 32px/1.1 'SC Display', sans-serif; color: var(--ink); margin: 6px 0 8px; }
+  h2 { font: 400 20px/1.2 'SC Display', sans-serif; color: var(--ink); margin: 36px 0 8px; }
+  p, li { color: var(--text); }
+  .muted { color: var(--muted); }
+  ul { padding-left: 20px; }
+  li { margin: 0 0 6px; }
+  .box { border: 1px solid var(--edge); border-radius: 14px; padding: 14px 16px; background: #0e1a29; }
+  a { color: var(--ink); }
+</style>
+</head>
+<body><main>
+  <span class="eyebrow">Sky Collector</span>
+  <h1>Privacy</h1>
+  <p class="muted">Last updated 17 November 2026 · This covers the test version at sevaan.github.io/sky-collector. It will be rewritten before the game is in the app stores.</p>
+
+  <div class="box"><p style="margin:0">The short version: your location is used to find the planes over you. There are no accounts. Your collection stays on your device. There are no ads, no tracking, no usage reports and no selling of data.</p></div>
+
+  <h2>Your location</h2>
+  <p>Sky Collector needs to know roughly where you are to show the planes in your sky. Your position is rounded before it leaves your device and is used for two things only:</p>
+  <ul>
+    <li><b>Planes near you.</b> The page asks Sky Collector's plane relay (a small program on <a href="https://www.val.town/">Val Town</a>) for aircraft within about 75 km of a position rounded to about 1 km. The relay rounds it again, to about 10 km, and asks the community flight-tracking networks <a href="https://adsb.lol/">adsb.lol</a> and <a href="https://adsb.fi/">adsb.fi</a>. The relay keeps nothing but a few seconds of the answer.</li>
+    <li><b>The weather.</b> The forecast for your area comes from <a href="https://open-meteo.com/">Open-Meteo</a>, asked with a position rounded to about 1 km.</li>
+  </ul>
+  <p>Like any website, each of those services sees your internet address when it is asked. You can choose a place by hand in Settings, and the game works without your location (it shows an example sky).</p>
+
+  <h2>Your collection</h2>
+  <p>Your cards, catches, patches and progress are stored in your browser on your device. Each catch records the time, the aircraft and where you were standing, because that is part of the card. There is no sign-up and no account, and nothing of your collection is sent anywhere. Clearing this site's data in your browser deletes it.</p>
+  <p>Sky Collector also keeps a tally on your device of the aircraft types that have flown over you in the last 30 days. It is how the game knows what is rare where you are. It never leaves your device.</p>
+
+  <h2>The aircraft you see</h2>
+  <p>Aircraft broadcast their position publicly, and volunteers with receivers share those broadcasts. Sky Collector shows the airline, the route and the type of an aircraft. For a private aircraft with no airline flight number it keeps the type only: its registration is not saved on your card.</p>
+  <p>Routes come from <a href="https://github.com/vradarserver/standing-data">Virtual Radar Server's standing data</a> (CC0), bundled with the game. Aircraft photos and airline logos come from <a href="https://commons.wikimedia.org/">Wikimedia Commons</a>; each photo's author and licence is shown on its card. Airline names and logos belong to their owners and are used only to say which airline a flight is.</p>
+
+  <h2>What this version does not do</h2>
+  <ul>
+    <li>No ads and no advertising trackers.</li>
+    <li>No analytics and no usage or error reports.</li>
+    <li>No purchases: Sky Collector Plus is not on sale in the test version.</li>
+    <li>No notifications sent from a server, and no shared-card links.</li>
+    <li>It never sells or shares your data.</li>
+  </ul>
+
+  <h2>Children</h2>
+  <p>Sky Collector is made for everyone, including families. There are no accounts, and it collects no personal information from anyone, children included.</p>
+
+  <h2>Contact</h2>
+  <p>Questions, or an aircraft you would like left out? Open an issue at <a href="https://github.com/sevaan/sky-collector/issues">github.com/sevaan/sky-collector</a>.</p>
+</main></body>
+</html>
