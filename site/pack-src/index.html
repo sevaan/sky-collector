@@ -27,10 +27,12 @@
   .again { margin-top: 14px; background: none; border: 0; color: #23405c; font: 600 15px 'SC Label', sans-serif; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; padding: 8px; }
   #end .lc-host { font-size: min(11px, calc((100vw - 48px) / 28), calc((100dvh - 262px) / 42)); margin: 8px auto 0; }
 
-  /* The sealed pack (2026-11-18, Sevaan: "a little crowded" top and bottom): a smaller pack, so the title above and the
-     button below have air, and no "Swipe across the top to open · 3 cards" lines under it (the pack says 3 cards itself;
-     swiping still works). Only this page: the game's own packs keep their hint. */
-  html body #gift { --cf: min(11px, calc((100vw - 90px) / 31), calc((100dvh - 340px) / 50)); }
+  /* The sealed pack screen (2026-11-18, Sevaan, second pass): the pack at the game's own full size (a smaller pack "is not a
+     good look"); the room comes from the words instead. The headline is one line, the line under it is gone, and so are
+     the "Swipe across the top to open · 3 cards" lines under the pack (the pack says 3 cards itself; swiping still
+     works). Only this page: the game's own packs keep all of it. */
+  #gift .gp-head h1 { white-space: nowrap; font-size: min(28px, 7.4vw); }
+  #gift .gp-head p { display: none; }
   #gift .gp-hint { font-size: 0; letter-spacing: 0; }
   #gift .gp-hint > b, #gift .gp-hint .sub { display: none; }
   #gift .gp-hint button { margin-top: 0; }
