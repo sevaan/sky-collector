@@ -59,3 +59,10 @@ test('Sky ranks: the first two stretched, Space Collector\'s restored when off',
   setSkyProgress(true); assert.deepEqual(RANKS.slice(0, 4).map((r) => r[0]), [0, 700, 2000, 4000]); assert.equal(RANKS[1][1], 'Plane Spotter');
   setSkyProgress(false); assert.deepEqual(RANKS.slice(0, 3).map((r) => r[0]), [0, 500, 1500]); assert.equal(RANKS[1][1], 'Spotter');
 });
+test('distances follow the Units setting; missions say them in the player\'s units', async () => {
+  globalThis.navigator ??= { language: 'en-CA' };
+  const { dist, distText, speed } = await import('../js/units.js');
+  localStorage.setItem('units', 'metric'); assert.deepEqual(dist(1234), { v: '1,234', u: 'km' }); assert.match(SKY_MISSIONS.find((x) => x.id === 'far').text, /3,000 km/);
+  localStorage.setItem('units', 'imperial'); assert.deepEqual(dist(1000), { v: '621', u: 'mi' }); assert.equal(speed(800).u, 'mph'); assert.match(SKY_MISSIONS.find((x) => x.id === 'far').text, /1,900 mi/);
+  assert.equal(distText(null), '— mi'); localStorage.setItem('units', 'metric');
+});

@@ -2,14 +2,15 @@
 // Collect does. Catches are kept in localStorage ('skyCatches') for now, apart from Space Collector's sightings, so the
 // old collection code never meets a flight. The Collection screen reads them in a later step.
 
-import { aircraftName, isHelicopter } from './planes.js?v=0.1.1687';
-import { lookupRoute } from './routes.js?v=0.1.1687';
-import { cardsFor, TIERS } from './flights.js?v=0.1.1687';
-import { glyphSvg, showCatch, miniCardHtml } from './flight-card.js?v=0.1.1687';
-import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1687';
+import { aircraftName, isHelicopter } from './planes.js?v=0.1.1688';
+import { lookupRoute } from './routes.js?v=0.1.1688';
+import { distText } from './units.js?v=0.1.1688';
+import { cardsFor, TIERS } from './flights.js?v=0.1.1688';
+import { glyphSvg, showCatch, miniCardHtml } from './flight-card.js?v=0.1.1688';
+import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1688';
 
-import { TIER_INFO } from './rarity.js?v=0.1.1687';
-import { allCatches, addCatch } from './catch-store.js?v=0.1.1687';
+import { TIER_INFO } from './rarity.js?v=0.1.1688';
+import { allCatches, addCatch } from './catch-store.js?v=0.1.1688';
 // Catches live in js/catch-store.js (IndexedDB, with a localStorage mirror the Collection page reads).
 // Where catches are read from: Space Collector's sightings once main.js says so (Milestone 1.5), the old store until then.
 let source = allCatches;
@@ -65,7 +66,7 @@ function discoverPanel(el, hit, route) {
   const ti = TIER_INFO[card?.tier] ?? TIER_INFO.common, dt = $('d-tier'); /* the tier's own mark and colour, as a satellite's (▲ green for Uncommon) */
   if (dt) { dt.style.setProperty('--find-tier', again ? 'var(--cyan)' : ti.color); dt.dataset.gem = again ? '✦' : ti.gem; }
   txt('d-name', full ? `To ${full.to.city}` : route?.airline ? `${route.airline} ${(p.callsign || '').replace(/^[A-Z]{3}/, '')}` : type);
-  txt('d-dist', hit.rangeKm != null ? `${Math.round(hit.rangeKm)} km` : `${ft(p)} ft`);
+  txt('d-dist', hit.rangeKm != null ? distText(hit.rangeKm) : `${ft(p)} ft`);
   const mk = `${card?.key}|${out.kind}|${catches().length}`, mini = $('d-mini');
   if (mini && mini.dataset.k !== mk) { mini.dataset.k = mk; try { mini.innerHTML = card ? miniCardHtml({ kind: flight ? 'flight' : 'plane', card, type: p.type, last: lastSeen(card.key), n: seenCount(catches(), card.key) || 1 }) : ''; } catch { mini.innerHTML = ''; } }
   /* Already stamped today: Space Collector's seen-before state, a View card button that opens your card (2026-11-15, Sevaan) */

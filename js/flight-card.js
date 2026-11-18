@@ -7,13 +7,15 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { TIERS } from './flights.js?v=0.1.1687';
-import { typePhoto } from './type-photos.js?v=0.1.1687';
-import { housePhoto } from './house-photos.js?v=0.1.1687';
-import { airlinePhoto } from './airline-photos.js?v=0.1.1687';
-import { airlineLogo } from './airline-logos.js?v=0.1.1687';
-import { fitStyle } from './photo-fit.js?v=0.1.1687';
-import { hasAirlineCallsign, planeLine, levelWord } from './sky-stamps.js?v=0.1.1687';
+import { TIERS } from './flights.js?v=0.1.1688';
+import { typePhoto } from './type-photos.js?v=0.1.1688';
+import { housePhoto } from './house-photos.js?v=0.1.1688';
+import { airlinePhoto } from './airline-photos.js?v=0.1.1688';
+import { airlineLogo } from './airline-logos.js?v=0.1.1688';
+import { fitStyle } from './photo-fit.js?v=0.1.1688';
+import { dist, speed } from './units.js?v=0.1.1688';
+import { localText } from './localize.js?v=0.1.1688';
+import { hasAirlineCallsign, planeLine, levelWord } from './sky-stamps.js?v=0.1.1688';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
@@ -159,9 +161,9 @@ export function flightCardHtml(f, opts = {}) {
     </div>
     <h2 class="fc-name${long ? ' fc-name--long' : ''}"><span>${esc(f.from.city)} <i aria-label="to">→</i></span><span>${esc(f.to.city)}</span></h2>
     <div class="fc-id"><span class="fc-id-l">${airlineMark(f, 'fc-logo')}</span><span class="fc-id-r">FLIGHT ${esc(f.callsign || '—')}</span></div>
-    <div class="fc-stats">${stat('DISTANCE', f.kmText, 'km')}${stat('IN THE AIR', air)}${stat('CAUGHT AT', feet(opts.heightFt), 'ft')}${stat('SEEN', opts.sightings ?? 1, '×')}</div>
+    <div class="fc-stats">${stat('DISTANCE', dist(f.km ?? null).v, dist(f.km ?? null).u)}${stat('IN THE AIR', air)}${stat('CAUGHT AT', feet(opts.heightFt), 'ft')}${stat('SEEN', opts.sightings ?? 1, '×')}</div>
     ${passport(opts.stampInfo, { newest: opts.newStamp })}
-    <p class="fc-fact">${rich(f.fact)}</p>
+    <p class="fc-fact">${rich(localText(f.fact))}</p>
     ${footer(opts.caughtAt, type ? `TYPE ${type}` : 'FLIGHTS')}`;
   return shell('flight', f.tier, inner, `${f.from.city} to ${f.to.city}, ${f.airline}, ${TIERS[tierOf(f.tier)].label}${opts.stampInfo?.level && opts.stampInfo.level !== 'none' ? `, ${opts.stampInfo.level} level` : ''}`, opts.stampInfo?.level);
 }
@@ -182,9 +184,9 @@ export function planeCardHtml(p, opts = {}) {
     </div>
     <h2 class="fc-name${long ? ' fc-name--long' : ''}"><span>${esc(p.name)}</span></h2>
     <div class="fc-id"><span class="fc-id-l">${esc(si?.count ? planeLine(si, p.type || '') : p.stamp ? `${p.stamp}${stamps > 1 ? ` + ${stamps - 1} more` : ''}` : p.glyph === 'heli' ? 'Helicopter' : 'Aircraft')}</span><span class="fc-id-r">${esc(p.type || '—')}${showReg ? ` · ${esc(p.reg)}` : ''}</span></div>
-    <div class="fc-stats">${stat('CAUGHT AT', feet(opts.heightFt), 'ft')}${stat('SPEED', opts.speedKmh ?? '—', 'km/h')}${stat('AWAY', opts.awayKm ?? '—', 'km')}${stat('STAMPS', stamps)}</div>
+    <div class="fc-stats">${stat('CAUGHT AT', feet(opts.heightFt), 'ft')}${stat('SPEED', speed(opts.speedKmh ?? null).v, speed(0).u)}${stat('AWAY', dist(opts.awayKm ?? null).v, dist(0).u)}${stat('STAMPS', stamps)}</div>
     ${passport(si, { newest: opts.newStamp })}
-    <p class="fc-fact">${rich(planeFact(p))}</p>
+    <p class="fc-fact">${rich(localText(planeFact(p)))}</p>
     ${footer(opts.caughtAt, p.type ? `TYPE ${p.type}` : 'PLANES')}`;
   return shell('plane', p.tier, inner, `${p.name}, ${TIERS[tierOf(p.tier)].label}${si?.level && si.level !== 'none' ? `, ${si.level} level` : ''}`, si?.level);
 }
@@ -206,7 +208,7 @@ export function miniCardHtml({ kind, card: c, type, last, n = 1, stamps = 0, sta
       <span class="sct-art${ph ? '' : ' sct-art--sky'}">${pic}${gem}${medal}<span class="sct-route"><b>${esc(code(c.from))}</b><svg viewBox="0 0 40 10" preserveAspectRatio="none" aria-hidden="true"><path d="M2 9 Q20 -3 38 9"/></svg><b>${esc(code(c.to))}</b></span></span>
       <span class="sct-name">${esc(c.to.city)}</span>
       <span class="sct-sub">${kind === 'flight' ? airlineMark(c, 'sct-logo') : `<span>${esc(c.airline)}</span>`}</span>
-      <span class="sct-stats"><span><small>KM</small>${esc(c.kmText)}</span><span><small>AIR</small>${air}</span></span>
+      <span class="sct-stats"><span><small>${dist(0).u.toUpperCase()}</small>${esc(dist(c.km ?? null).v)}</span><span><small>AIR</small>${air}</span></span>
       ${when}</span><span class="sct-shine" aria-hidden="true"></span></span>`;
   }
   return `<span class="sct-face sct--${t}${lvl ? ` sct-face--lvl sct-face--${lvl}` : ''}" style="--tier:${TIERS[t].color}"><span class="sct-in">

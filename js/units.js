@@ -8,3 +8,13 @@ export function useMiles() {
   const l = navigator.language; if (!region.has(l)) { let r = false; try { r = ['US', 'LR', 'MM'].includes(new Intl.Locale(l).maximize().region); } catch {} region.set(l, r); }
   return region.get(l);
 }
+
+// Distances and speeds in the player's units (Sky Collector, 2026-11-17). Height stays in feet for everyone: it is how
+// aircraft height is given everywhere, and Space Collector's own plane ticket already says "24,800 ft up · 10 km away".
+// dist(1234) → { v: '1,234', u: 'km' } or { v: '767', u: 'mi' }; speed(km/h) → { v, u: 'km/h' | 'mph' }.
+const fmt = (n) => (n == null || !Number.isFinite(n) ? '—' : Math.round(n).toLocaleString('en-US'));
+export const dist = (km) => (useMiles() ? { v: fmt(km == null ? null : km * 0.621371), u: 'mi' } : { v: fmt(km), u: 'km' });
+export const distText = (km) => { const d = dist(km); return `${d.v} ${d.u}`; };
+export const speed = (kmh) => (useMiles() ? { v: fmt(kmh == null ? null : kmh * 0.621371), u: 'mph' } : { v: fmt(kmh), u: 'km/h' });
+// A round figure for a goal ("more than 3,000 km" → "more than 1,900 mi", not 1,864): two significant figures.
+export const distRound = (km) => { if (!useMiles()) return `${fmt(km)} km`; const mi = km * 0.621371, step = 10 ** (Math.floor(Math.log10(mi)) - 1); return `${fmt(Math.round(mi / step) * step)} mi`; };

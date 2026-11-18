@@ -1,8 +1,9 @@
 // Player progress from the sighting log: XP and observer rank, tonight’s three missions, a weekly streak and
 // achievements. Everything is derived from the saved sightings (nothing extra is stored), so it can’t drift.
 // info(cardKey) -> { tier, type, owner, launch, natural, con } | null. No DOM.
-import { nightKey } from './observation.js?v=0.1.1687';
-import { fleetThresholds } from './card-model.js?v=0.1.1687';
+import { nightKey } from './observation.js?v=0.1.1688';
+import { fleetThresholds } from './card-model.js?v=0.1.1688';
+import { distRound as distText } from './units.js?v=0.1.1688';
 
 // A longer climb (2026-10-12, playtest room: three ranks on night 1, Mission Control in about two weeks), with two
 // prestige ranks past Mission Control. Nobody drops a rank they had on the old curve (rankFloor below).
@@ -151,9 +152,9 @@ export const SKY_MISSIONS = [
   { id: 'wide', text: 'Catch a wide-body jet', done: (n) => n.some((s) => WIDE.test(s.typeCode ?? '')) },
   { id: 'heli', text: 'Catch a helicopter', done: (n) => n.some((s) => snap(s).heli || snap(s).glyph === 'heli') },
   { id: 'prop', text: 'Catch a propeller plane', done: (n) => n.some((s) => PROP.test(s.typeCode ?? '')) },
-  { id: 'far', text: 'Catch a flight going more than 3,000 km', done: (n) => n.some((s) => (snap(s).km ?? 0) > 3000) },
-  { id: 'ocean', text: 'Catch a flight going more than 5,000 km', done: (n) => n.some((s) => (snap(s).km ?? 0) > 5000) },
-  { id: 'short', text: 'Catch a hop under 500 km', done: (n) => n.some((s) => snap(s).sky === 'flight' && snap(s).km != null && snap(s).km < 500) },
+  { id: 'far', get text() { return `Catch a flight going more than ${distText(3000)}`; }, done: (n) => n.some((s) => (snap(s).km ?? 0) > 3000) },
+  { id: 'ocean', get text() { return `Catch a flight going more than ${distText(5000)}`; }, done: (n) => n.some((s) => (snap(s).km ?? 0) > 5000) },
+  { id: 'short', get text() { return `Catch a hop under ${distText(500)}`; }, done: (n) => n.some((s) => snap(s).sky === 'flight' && snap(s).km != null && snap(s).km < 500) },
   { id: 'abroad', text: 'Catch a flight to another country', done: (n) => n.some((s) => snap(s).sky === 'flight' && snap(s).from?.country && snap(s).to?.country && snap(s).from.country !== snap(s).to.country) },
   { id: 'airlines3', get text() { return SIZE.airlines === 1 ? 'Catch an airline flight' : `Catch ${NUM[SIZE.airlines]} different airlines`; }, done: (n) => airlinesOf(n) >= SIZE.airlines },
   { id: 'high', text: 'Catch a plane above 35,000 ft', done: (n) => n.some((s) => (s.altFt ?? 0) >= 35000) },
@@ -186,11 +187,11 @@ const SKY_WEEK_THEMES = [
   { id: 'sky-airlines', name: 'Airline week', short: 'Airline Week', text: 'Catch five different airlines.', icon: 'AIR', need: 5, have: (w) => airlinesOf(w) },
   { id: 'sky-heavy', name: 'Heavy week', short: 'Heavy Week', text: 'Catch three different wide-body jets.', icon: 'HVY', need: 3, have: (w) => new Set(w.filter((s) => WIDE.test(s.typeCode ?? '')).map((s) => s.typeCode)).size },
   { id: 'sky-props', name: 'Propeller week', short: 'Propeller Week', text: 'Catch three propeller planes.', icon: 'PRP', need: 3, have: (w) => new Set(w.filter((s) => PROP.test(s.typeCode ?? '')).map((s) => s.hex ?? s.time)).size },
-  { id: 'sky-longhaul', name: 'Long-haul week', short: 'Long-Haul Week', text: 'Catch three flights going more than 5,000 km.', icon: '5K', need: 3, have: (w) => new Set(w.filter((s) => snap(s).sky === 'flight' && (snap(s).km ?? 0) > 5000).map((s) => s.cardKey)).size },
+  { id: 'sky-longhaul', name: 'Long-haul week', short: 'Long-Haul Week', get text() { return `Catch three flights going more than ${distText(5000)}.`; }, icon: '5K', need: 3, have: (w) => new Set(w.filter((s) => snap(s).sky === 'flight' && (snap(s).km ?? 0) > 5000).map((s) => s.cardKey)).size },
   { id: 'sky-families', name: 'Family week', short: 'Family Week', text: 'Catch planes from four different families.', icon: 'FAM', need: 4, have: (w) => new Set(w.filter((s) => snap(s).sky === 'plane').map((s) => snap(s).setId ?? snap(s).set).filter(Boolean)).size },
   { id: 'sky-regulars', name: 'Regulars week', short: 'Regulars Week', text: 'Stamp five cards you already own.', icon: 'x5', need: 5, have: (w) => new Set(w.filter((s) => !s.first).map((s) => s.cardKey)).size },
   { id: 'sky-newcards', name: 'New cards week', short: 'New Cards Week', text: 'Collect eight new cards.', icon: '+8', need: 8, have: (w) => w.filter((s) => s.first).length },
-  { id: 'sky-hops', name: 'Short hop week', short: 'Short Hop Week', text: 'Catch three flights under 500 km.', icon: 'HOP', need: 3, have: (w) => new Set(w.filter((s) => snap(s).sky === 'flight' && snap(s).km != null && snap(s).km < 500).map((s) => s.cardKey)).size },
+  { id: 'sky-hops', name: 'Short hop week', short: 'Short Hop Week', get text() { return `Catch three flights under ${distText(500)}.`; }, icon: 'HOP', need: 3, have: (w) => new Set(w.filter((s) => snap(s).sky === 'flight' && snap(s).km != null && snap(s).km < 500).map((s) => s.cardKey)).size },
 ];
 const SPACE_WEEK_THEMES = WEEK_THEMES.slice();
 const RANK_AT = RANKS.map((r) => r[0]), SKY_RANK_AT = { 1: 700, 2: 2000 }; /* a plane catch makes two cards, so the first two ranks sit further out and the first rank-up still lands on day 2 (docs/DESIGN-LOOP.md §4) */
