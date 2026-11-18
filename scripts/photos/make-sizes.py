@@ -6,7 +6,7 @@ import os
 from PIL import Image
 ROOT = os.path.join(os.path.dirname(__file__), '..', '..', 'assets', 'photos')
 n = 0
-for kind in ('house', 'types', 'airlines'):
+for kind in ('house', 'types', 'airlines', 'gap'):
     d = os.path.join(ROOT, kind)
     for size, w, q in (('sm', 480, 76), ('tiny', 32, 60)):
         os.makedirs(os.path.join(d, size), exist_ok=True)

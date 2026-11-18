@@ -550,3 +550,36 @@ html body .sv-pk-count b { background:linear-gradient(120deg,#ffffff,#dfeaf5 40%
    pollution for stars), snapping onto targets (satellites; planes lock on their own), the Milky Way and constellation lines.
    Hidden in Sky Collector; their switches keep working underneath. The compass stays: it aims at planes too. */
 body.sky-only #debug :is(.set-row:has(#chk-snap), .set-row:has(#chk-milky), .set-row:has(#chk-lines), .set-slider:has(#set-sky-range)) { display:none !important; }
+
+/* ---- The plane pictures on the welcome card and the "Catch a plane" tour card, animated like Space Collector's
+   (2026-11-18, Sevaan). One 6 s cycle: the plane flies its route, slides into the circle, the circle pulses as it locks
+   on, the card floats with a sheen. Transforms and opacity only; still under Reduce Motion. ---- */
+@media (prefers-reduced-motion: no-preference) {
+  .wsk-fly { animation:wskFly 6s ease-in-out infinite; }
+  @keyframes wskFly { 0% { transform:translate(-58px, 16px); opacity:0; } 10% { opacity:1; } 62% { transform:translate(0, 0); opacity:1; } 82%, 100% { transform:translate(16px, -2px); opacity:0; } }
+  .wsk-in { animation:wskIn 6s cubic-bezier(.3, .1, .3, 1) infinite; }
+  @keyframes wskIn { 0%, 12% { transform:translate(-40px, 34px); opacity:0; } 20% { opacity:1; } 46%, 86% { transform:none; opacity:1; } 96%, 100% { transform:none; opacity:0; } }
+  .wsk-ring { transform-box:fill-box; transform-origin:center; animation:wskRing 6s ease-out infinite; }
+  @keyframes wskRing { 0%, 44% { transform:scale(1); } 50% { transform:scale(.88); } 58%, 100% { transform:scale(1); } }
+  .wsk-float { transform-box:view-box; transform-origin:50px 60px; animation:wskFloat 6s ease-in-out infinite; }
+  @keyframes wskFloat { 0%, 46% { transform:rotate(4deg); } 64% { transform:rotate(1deg) translateY(-4px) scale(1.04); } 84%, 100% { transform:rotate(4deg); } }
+  .wsk-sheen { animation:wskSheen 6s ease-in-out infinite; }
+  @keyframes wskSheen { 0%, 54% { transform:skewX(-18deg) translateX(-60px); } 76%, 100% { transform:skewX(-18deg) translateX(90px); } }
+  .wsk-blink { animation:waLens 6s ease-in-out infinite; }
+  .wsk-dot { transform-box:fill-box; transform-origin:center; animation:wskDot 6s ease-out infinite; }
+  @keyframes wskDot { 0%, 60% { transform:scale(1); } 66% { transform:scale(1.8); } 74%, 100% { transform:scale(1); } }
+  /* the tour's Catch a plane card */
+  .ob-fly { animation:obFly 5s cubic-bezier(.3, .1, .3, 1) infinite; }
+  @keyframes obFly { 0%, 8% { transform:translate(-96px, 39px); opacity:0; } 16% { opacity:1; } 46%, 84% { transform:none; opacity:1; } 94%, 100% { transform:translate(30px, -12px); opacity:0; } }
+  .ob-ring { transform-box:fill-box; transform-origin:center; animation:obRing 5s ease-out infinite; }
+  @keyframes obRing { 0%, 44% { transform:scale(1); } 50% { transform:scale(.88); } 58%, 100% { transform:scale(1); } }
+  .ob-route { animation:waDash 1.6s linear infinite; }
+}
+/* the welcome card's pictures taller: the card had room to spare under its words */
+#wc-holder .wc-mission .wc-a-pic { height:14.5em; }
+
+/* Tell a friend sheet (Space Collector's, 2026-11-18): its cream and gold text was written for a dark sheet; on Sky's
+   light one the paragraph and the reward line were unreadable. Navy ink and a deeper gold. */
+body.sky-only .tell-text { color:#23405c; }
+body.sky-only .tell-reward { background:#f2b6321f; box-shadow:inset 0 0 0 1px #c98f1c66; color:#5a4310; }
+body.sky-only .tell-reward i { color:#c98f1c; }

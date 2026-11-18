@@ -112,3 +112,6 @@ const html = `<!doctype html>
 `;
 writeFileSync(OUT + 'index.html', html);
 console.log('built site/public', card.name, card.tier, fit.mode);
+
+// The sample pack page (skycollector.app/pack) lives under site/public too, which this script wipes: rebuild it last.
+await import('./build-site-pack.mjs');

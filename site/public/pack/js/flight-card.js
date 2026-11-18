@@ -10,6 +10,7 @@
 import { TIERS, unlisted } from './flights.js';
 import { typePhoto } from './type-photos.js';
 import { housePhoto } from './house-photos.js';
+import { gapPhoto } from './gap-photos.js'; /* the types that had no photo (2026-11-18) */
 import { airlinePhoto } from './airline-photos.js';
 import { airlineLogo } from './airline-logos.js';
 import { fitStyle } from './photo-fit.js';
@@ -47,7 +48,7 @@ const HOUSE_NEAR = { E190: 'E290', E195: 'E295', E170: 'E75L', A321: 'A21N', A19
 const AIRLINE_TYPE_PHOTO = new Set(['A19N', 'A20N', 'A21N', 'A306', 'A319', 'A320', 'A321', 'A332', 'A333', 'A339', 'A359', 'A35K', 'A388', 'A124', 'B38M', 'B39M', 'B737', 'B738', 'B739', 'B744', 'B748', 'B752', 'B762', 'B763', 'B772', 'B77L', 'B77W', 'B789', 'B78X', 'BCS1', 'BCS3', 'C208', 'CRJ2', 'CRJ9', 'DH8A', 'DH8C', 'DH8D', 'E170', 'E190', 'E195', 'E290', 'E75L', 'MD11']);
 export function photoFor(type) {
   if (!type) return null; const t = String(type).toUpperCase();
-  return housePhoto(t) || (HOUSE_NEAR[t] && housePhoto(HOUSE_NEAR[t])) || (AIRLINE_TYPE_PHOTO.has(t) ? null : typePhoto(t));
+  return housePhoto(t) || (HOUSE_NEAR[t] && housePhoto(HOUSE_NEAR[t])) || (AIRLINE_TYPE_PHOTO.has(t) ? null : typePhoto(t)) || gapPhoto(t);
 }
 // A flight's photo: that type in the airline's own livery (js/airline-photos.js) when we have one, else the type photo.
 // The airline is the callsign's ICAO prefix (older saved catches only carry it in the key, F:ACA:CYYZ-KLAX).
