@@ -74,26 +74,101 @@ html body #gift .gp-hint { color:var(--sc-ink); }
 html body #gift .gp-hint b { color:var(--sc-orange-ink); }
 html body #gift .gp-hint button { border-color:var(--sc-line); background:#ffffffcc; color:var(--sc-ink); }
 html body #gift .gp-x { color:var(--sc-ink); }
-html body #gift .gp-piece { filter:drop-shadow(0 18px 30px rgba(13,34,56,.35)); }
-/* The pack: Space Collector's foil, navy on cream; the shimmer follows the tilt (--mx) as there. */
-html body #gift .gp-base, html body .sv-pk-base { background:radial-gradient(ellipse at 50% 40%,#fbf5e6,#efe4c8 80%); }
-html body #gift .gp-art { background:linear-gradient(120deg,#0d2238,#3d6a98 30%,#10283f 45%,#7aa4cc 55%,#173554 70%,#2d5882) calc(var(--mx, 50) * 1%) 0 / 260% 100%;
-  -webkit-mask:url('../assets/art/backs/back-flight-plan-mask.webp') 50% 52% / 118% auto no-repeat; mask:url('../assets/art/backs/back-flight-plan-mask.webp') 50% 52% / 118% auto no-repeat; opacity:1; }
-html body .sv-pk-art { background:linear-gradient(120deg,#0d2238,#3d6a98 30%,#10283f 45%,#7aa4cc 55%,#173554 70%,#2d5882) 0 0 / 260% 100%;
-  -webkit-mask:url('../assets/art/backs/back-flight-plan-mask.webp') 50% 52% / 118% auto no-repeat; mask:url('../assets/art/backs/back-flight-plan-mask.webp') 50% 52% / 118% auto no-repeat; }
+/* The pack: Sky Blue (2026-11-18, Sevaan picked it from seven options): Flight Plan's linework (back-flight-plan-mask.webp)
+   in white foil on a deep sky-blue pack. The shimmer follows the tilt (--mx) as in Space Collector. Its colours are these
+   variables, shared by the big pack (#gift), the share sheet's small pack (.sv-pk) and the sides. */
+:root { --pk-base:radial-gradient(ellipse at 50% 35%,#4f93d4,#1f5a99 85%);
+  --pk-foil:linear-gradient(120deg,#ffffff,#d8e7f5 30%,#ffffff 45%,#a9c7e3 55%,#ffffff 70%,#e3eef8);
+  --pk-mask:url('../assets/art/backs/back-flight-plan-mask.webp'); --pk-foil-op:1;
+  --pk-side:#3f7fc0; --pk-side2:#164577; --pk-mid:#1b4f87; --pk-count-bg:#0d22384d; --pk-count-ink:#fff; }
+html body #gift .gp-base, html body .sv-pk-base { background:var(--pk-base); }
+html body #gift .gp-art { background:var(--pk-foil) calc(var(--mx, 50) * 1%) 0 / 260% 100%;
+  -webkit-mask:var(--pk-mask) 50% 52% / 118% auto no-repeat; mask:var(--pk-mask) 50% 52% / 118% auto no-repeat; opacity:var(--pk-foil-op); }
+html body .sv-pk-art { background:var(--pk-foil) 0 0 / 260% 100%;
+  -webkit-mask:var(--pk-mask) 50% 52% / 118% auto no-repeat; mask:var(--pk-mask) 50% 52% / 118% auto no-repeat; opacity:var(--pk-foil-op); }
 html body .sv-pk-crimp { background:repeating-linear-gradient(90deg,#0d223822 0 1.5px,#ffffff55 1.5px 4px); }
-/* the small pack on the night-pack ticket and toasts: Flight Plan, not Mission Control */
-html body .tn-pack { background:#f3ead2 url('../assets/art/backs/back-flight-plan.webp') 50% 45% / 150% auto no-repeat; box-shadow:inset 0 0 0 1px #0d223866; }
-html body .tn-pack::before { border-top-color:#0d2238aa; }
-html body #toasts .tn-ic.art:has(.tn-pack) { background:#f3ead2; }
-html body #toasts .ticket .tn-pack { box-shadow:inset 0 0 0 1px #0d223866, 0 4px 10px #0d223855; }
+/* the small pack on the night-pack ticket and toasts: the same Sky Blue pack, white linework on blue */
+html body .tn-pack { background:var(--pk-base); box-shadow:inset 0 0 0 1px #ffffff55; }
+html body .tn-pack::after { content:''; position:absolute; inset:0; background:#fff;
+  -webkit-mask:var(--pk-mask) 50% 45% / 150% auto no-repeat; mask:var(--pk-mask) 50% 45% / 150% auto no-repeat; }
+html body #toasts .ticket .tn-pack::after { -webkit-mask-size:170% auto; mask-size:170% auto; }
+html body .tn-pack::before { border-top-color:#ffffffbb; z-index:1; }
+html body #toasts .tn-ic.art:has(.tn-pack) { background:#1f5a99; }
+html body #toasts .ticket .tn-ic.art:has(.tn-pack) { background:none; }
+html body #toasts .ticket .tn-pack { box-shadow:inset 0 0 0 1px #ffffff55, 0 4px 10px #0d223855; }
 html body #gift .gp-lines { background:repeating-linear-gradient(0deg,#0d223806 0 1px,transparent 1px 3px); }
 html body #gift .gp-glow { background:radial-gradient(circle at calc(var(--mx, 50) * 1%) calc(var(--my, 40) * 1%),#ffffffaa,transparent 45%); mix-blend-mode:soft-light; }
 html body #gift .gp-seam { background:repeating-linear-gradient(90deg,#0d223866 0 6px,transparent 6px 11px); }
 html body #gift .gp-shade { background:linear-gradient(90deg,#0d223830,transparent 14%,transparent 86%,#0d223830),linear-gradient(#0000 80%,#0d223822); }
-html body #gift .gp-count { background:radial-gradient(ellipse 45% 60% at 50% 60%,#f4f9fde6,transparent 75%); }
-html body #gift .gp-count b { background:linear-gradient(120deg,#0d2238,#2c4f73 40%,#b42a20 60%,#0d2238) calc(var(--mx, 50) * 1%) 0 / 240% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; }
-html body #gift .gp-count span { color:var(--sc-ink); }
+html body #gift .gp-count { background:radial-gradient(ellipse 45% 60% at 50% 60%,var(--pk-count-bg),transparent 75%); }
+html body #gift .gp-count b { background:linear-gradient(120deg,#ffffff,#dfeaf5 40%,#ffb3a8 60%,#ffffff) calc(var(--mx, 50) * 1%) 0 / 240% 100%; -webkit-background-clip:text; background-clip:text; color:transparent; }
+html body #gift .gp-count span { color:var(--pk-count-ink); }
+/* The pack's depth and shadow in daylight (2026-11-18, Sevaan: "anytime a pack tilts to the side you can see a blob behind
+   it"): Space Collector's pack has a flat back panel half a pack-depth behind the front, and a blurred shadow that tilts
+   with it. On the night sky both were lost in the dark; on a light sky the panel's corners poke out past the bag's edges
+   and the shadow shows as a blob beside it. Here neither is drawn: the curved side walls give the depth, and the only
+   shadow is the soft one on the ground under the pack (.gp-contact), which doesn't tilt. The extra drop-shadow filter on
+   the pieces goes too (a filter on the masked pieces re-renders every frame: gift.css jank pass). */
+html body #gift .gp-piece { filter:none; }
+html body #gift .gp-back, html body #gift .gp-shadow { display:none; }
+html body #gift .gp-wall.l { background:linear-gradient(90deg,#ffffff99 0 1.5px,var(--pk-side) 2px,var(--pk-mid) 45%,var(--pk-side2)); }
+html body #gift .gp-wall.r { background:linear-gradient(270deg,#ffffff99 0 1.5px,var(--pk-side) 2px,var(--pk-mid) 45%,var(--pk-side2)); }
+/* the light leaking from the top of the sealed pack: white daylight, not the best card's colour as a coloured smudge */
+html body #gift .gp-leak { background:radial-gradient(ellipse 50% 40% at 50% 34%,#ffffffb3,transparent 70%); }
+html body #gift .gp-contact { background:radial-gradient(ellipse at 50% 50%,rgba(13,34,56,.45),transparent 70%); opacity:.7; }
+html body #gift .gp-edges { background:linear-gradient(90deg,#ffffff80 0 1px,#ffffff20 1px 3px,transparent 3px calc(100% - 3px),#0d22381f calc(100% - 3px) calc(100% - 1px),#ffffff40 calc(100% - 1px)); }
+/* The bag's shading (pillow, seals, the stack pressing through) was tuned for black foil: near-black at the edges and seals,
+   which on cream reads as a dirty band down each side and across the bottom. The same shapes in navy, much lighter. */
+html body #gift .gp-pillow { background:
+    radial-gradient(ellipse 52% 44% at 50% 54%,#ffffff30,transparent 70%),
+    linear-gradient(90deg,#0d223838,#0d22381a 5%,#0d223808 9%,transparent 13%,transparent 87%,#0d223808 91%,#0d22381a 95%,#0d223838),
+    linear-gradient(#0d22382e,#0d223810 10%,transparent 16%,transparent 84%,#0d223810 90%,#0d223833); }
+html body #gift .gp-seal { background:linear-gradient(#ffffff59,#ffffff14 55%,#0d22381a 92%,#0d223833), repeating-linear-gradient(90deg,#ffffff66 0 .8px,#ffffff14 .8px 2.2px,#0d223826 2.2px 3.6px,#0000 3.6px 4px); }
+html body #gift .gp-seal.b { background:linear-gradient(#0d223833,#0d22381a 8%,#ffffff14 45%,#ffffff59), repeating-linear-gradient(90deg,#ffffff66 0 .8px,#ffffff14 .8px 2.2px,#0d223826 2.2px 3.6px,#0000 3.6px 4px); }
+html body #gift .gp-pinch { background:repeating-linear-gradient(90deg,#ffffff26 0 2px,#0d223814 2px 7px,#ffffff14 7px 9px,#0d22380d 9px 15px); }
+html body #gift .gp-cards { box-shadow:inset 0 3px 0 #ffffff99, inset 0 4px 6px #ffffff33, inset 2px 0 0 #ffffff4d, inset 0 -4px 0 #0d223833, inset -2px 0 0 #0d223826, 0 2px 0 #0d223829, 0 -2px 0 #ffffff33, 0 0 30px #0d22381f; }
+html body #gift .gp-cards::after { background:repeating-linear-gradient(#ffffff40 0 1px,#0d22381f 1px 2.5px); }
+html body #gift .gp-ribbon { box-shadow:0 4px 10px rgba(13,34,56,.25); }
+/* Dealt cards: a soft navy shadow under each back, not black */
+html body #gift .gp-dc .gp-bk { box-shadow:0 0 0 1px #0d22381f, 0 12px 26px rgba(13,34,56,.3); }
+html body #gift .gp-dc.aura .gp-bk { box-shadow:0 0 0 2px var(--t), 0 0 22px var(--t), 0 0 60px color-mix(in srgb, var(--t) 60%, transparent), 0 12px 26px rgba(13,34,56,.3); }
+html body #gift .gp-tags .up { background:#ffffffd9; color:var(--sc-ink); border-color:var(--sc-line); }
+html body #gift .gp-tags .tease { background:#fffdf6e6; }
+html body #gift .gp-count2 { color:#23405c; } html body #gift .gp-count2 b { color:var(--sc-ink); }
+html body #gift .gp-share { color:var(--sc-ink); }
+html body #gift .gp-sharemsg { background:#fffdf6; border-color:var(--sc-rule); color:var(--sc-ink); box-shadow:0 6px 16px rgba(13,34,56,.18); }
+/* The summary card at the end of a pack (2026-11-18): was Space Collector's navy card under a black shadow; now cream
+   paper with navy ink, like the cards and the Collection. */
+html body #gift .gp-haul .gp-sum { background:#fffdf6; border-color:var(--sc-rule); box-shadow:0 0 0 5px #fffdf6, 0 0 0 6.5px #c9b98a88, 0 18px 40px rgba(13,34,56,.25); color:var(--sc-ink); }
+html body #gift .gp-haul .gp-sbar { color:var(--sc-muted); border-bottom-color:#0d22381a; }
+html body #gift .gp-haul .gp-sbar span:first-child { color:var(--sc-orange-ink); }
+html body #gift .gp-haul .gp-sum > h2 { color:var(--sc-ink); }
+html body #gift .gp-haul .gp-sum > p, html body #gift .gp-haul p:not(:where(.mini-face *, .card *, .sct-face *)) { color:var(--sc-muted); }
+html body #gift .gp-haul p:not(:where(.mini-face *, .card *, .sct-face *)) b { color:var(--sc-ink); }
+html body #gift .gp-haul .gp-stats { border-color:#0d22381a; }
+html body #gift .gp-haul .gp-stats b { color:var(--sc-ink); }
+html body #gift .gp-haul .gp-stats small, html body #gift .gp-haul .gp-patch small { color:var(--sc-muted); }
+html body #gift .gp-haul .gp-sfoot { color:#7d8fa1; }
+html body #gift .gp-haul .xp { background:#fffdf6; border-color:var(--sc-line); border-left-color:var(--gold); color:var(--sc-ink); }
+html body #gift .gp-haul .gp-row { color:var(--sc-ink); background:#ffffffb3; }
+html body #gift .gp-haul .gp-row span { color:var(--sc-muted); }
+html body #gift .gp-haul .later { color:var(--sc-ink); }
+html body #gift .gp-haul .go, html body #gift .gp-msg button, html body #gift .gp-haul .gp-fan .t.n::after, html body #gift .gp-grid .t.n::after, html body #gift .gp-tags .new { color:#fff; }
+html body #gift .gp-haul .gp-fan .t { background-color:#eef3f8; box-shadow:0 0 14px color-mix(in srgb, var(--c) 30%, transparent), 0 12px 24px rgba(13,34,56,.25); }
+html body #gift .gp-haul .gp-fan .t.mini { box-shadow:0 0 16px color-mix(in srgb, var(--c) 25%, transparent), 0 12px 24px rgba(13,34,56,.25); }
+html body #gift .gp-grid .t { background-color:#eef3f8; }
+html body #gift .gp-grid .t.more { background:#eef3f8; color:var(--sc-orange-ink); }
+html body #gift .gp-haul .gp-more { background:#fffdf6; border-color:var(--sc-line); color:var(--sc-ink); }
+/* the share chooser */
+html body #gift .gp-sheet { background:#0d223840; }
+html body #gift .gp-sheet-card { background:#fffdf6; border-top-color:var(--sc-rule); box-shadow:0 -10px 30px rgba(13,34,56,.18); }
+html body #gift .gp-sheet .k { color:var(--sc-muted); }
+html body #gift .gp-opt { background:#ffffff; border-color:var(--sc-line); color:var(--sc-ink); }
+html body #gift .gp-opt-vis { background:radial-gradient(ellipse at 50% 30%,#cfe5f6,#9cc4e6 80%); }
+html body #gift .gp-cancel { border-color:var(--sc-line); color:var(--sc-ink); }
+html body #gift .gp-count b { filter:drop-shadow(0 1px 2px rgba(13,34,56,.18)); }
+/* the small card on the Collect panel: a soft navy shadow on the cream panel, not Space Collector's black one */
+body.sky-only:not(.night) #discover .d-ticket.has-mini .d-mini { filter:drop-shadow(0 4px 8px rgba(13,34,56,.28)); }
 html body #gift.bare { background:none; } html body #gift.bare::before { background:linear-gradient(180deg,#8cc2ec 0%,#cfe5f6 55%,#eef5fb 100%); }
 
 
@@ -457,3 +532,11 @@ body.sky-only.day:not(.night) #discover .d-ticket #d-name, body.sky-only.day:not
 body.sky-only.day:not(.night) #discover .d-ticket :is(#d-sub, #d-switch, #d-dist), body.sky-only.day:not(.night) #guidance:not(.first) small { color:#4a6178 !important; }
 body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts .ticket { --tkc:#b42a20; } /* the ticket's small label was pale yellow on white */
 body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts .ticket .ticket__eyebrow { color:#b42a20 !important; }
+
+/* The small pack on the share sheet in daylight (2026-11-18): soft navy shadows, a cream count, the gold glow as a pale one */
+html body .sv-bag { filter:drop-shadow(0 10px 18px rgba(13,34,56,.28)); }
+html body .sv-peek { filter:drop-shadow(0 5px 10px rgba(13,34,56,.25)); }
+html body .sv-ribbon { box-shadow:0 4px 10px rgba(13,34,56,.25); color:#fff; }
+html body .sv-glow { background:radial-gradient(ellipse at 50% 100%,rgba(255,255,255,.6),transparent 70%); }
+html body .sv-pk-count { background:radial-gradient(ellipse 45% 60% at 50% 60%,var(--pk-count-bg),transparent 75%); color:var(--pk-count-ink); }
+html body .sv-pk-count b { background:linear-gradient(120deg,#ffffff,#dfeaf5 40%,#ffb3a8 60%,#ffffff); -webkit-background-clip:text; background-clip:text; }
