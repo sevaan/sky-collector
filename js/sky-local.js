@@ -42,4 +42,9 @@ export function rareHere(type, stats = localStats()) {
   const t = String(type || '').toUpperCase(); if (!t || t === '?' || stats.total < MIN_SEEN) return false;
   return (stats.byType.get(t) ?? 0) / stats.total < RARE_SHARE;
 }
+// Does plane tracking reach this place at all? (docs/DESIGN-LOOP.md §6) Each good answer from the feed is counted, and
+// whether it held any aircraft within range. 60 good answers (ten minutes of an open app) with never a single aircraft
+// means volunteers' receivers don't cover here: the game says so instead of looking broken.
+export function noteFeed(n) { const c = load(), day = (c.d[dayKey()] ??= { h: 0, t: {}, f: {} }); day.q = (day.q ?? 0) + 1; if (n > 0) day.r = (day.r ?? 0) + 1; save(); }
+export function noCoverage() { let q = 0, r = 0; for (const d of Object.values(load().d)) { q += d.q ?? 0; r += d.r ?? 0; } return q >= 60 && r === 0; }
 export const _resetLocal = (v = null) => { cache = v; saved = 0; }; // tests

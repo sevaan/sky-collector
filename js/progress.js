@@ -1,9 +1,9 @@
 // Player progress from the sighting log: XP and observer rank, tonight’s three missions, a weekly streak and
 // achievements. Everything is derived from the saved sightings (nothing extra is stored), so it can’t drift.
 // info(cardKey) -> { tier, type, owner, launch, natural, con } | null. No DOM.
-import { nightKey } from './observation.js?v=0.1.1696';
-import { fleetThresholds } from './card-model.js?v=0.1.1696';
-import { distRound as distText } from './units.js?v=0.1.1696';
+import { nightKey } from './observation.js?v=0.1.1698';
+import { fleetThresholds } from './card-model.js?v=0.1.1698';
+import { distRound as distText } from './units.js?v=0.1.1698';
 
 // A longer climb (2026-10-12, playtest room: three ranks on night 1, Mission Control in about two weeks), with two
 // prestige ranks past Mission Control. Nobody drops a rank they had on the old curve (rankFloor below).
@@ -199,7 +199,7 @@ export function setSkyProgress(on) { SKY = !!on; RANKS.forEach((r, i) => { r[1] 
 const SKY_REPEAT_XP = 3, RARE_HERE_XP = 10; /* a stamp on a card you own; a plane that is unusual where you stand */
 export const isSkyProgress = () => SKY;
 const activeMissions = () => (SKY ? SKY_MISSIONS : MISSIONS);
-export const activeAchievements = () => (SKY ? ACHIEVEMENTS.filter((x) => SKY_PATCHES.has(x.id)) : ACHIEVEMENTS);
+export const activeAchievements = () => (SKY ? [...ACHIEVEMENTS.filter((x) => SKY_PATCHES.has(x.id)), ...SKY_ACHIEVEMENTS] : ACHIEVEMENTS);
 const MISSION_BY_ID = new Map([...MISSIONS, ...RETIRED, ...STARTER, ...SKY_MISSIONS, ...SKY_STARTER].map((m) => [m.id, m]));
 // Seeded by the night (a day index from nightKey): integer mixing with Math.imul, so the picks spread evenly
 // from one night to the next. (The old float LCG overflowed 2^53 and kept dealing the same few missions.)
@@ -243,6 +243,24 @@ export function xpCarry(sightings, info, opts = {}) {
 // Grouped so a collector always has a next one in reach. `icon` is the short text in the badge circle
 // (≤ 4 characters). Everything is read off the accumulator `a` built in progress(); nothing is stored.
 const T_HAS = (t) => (a) => a.tiers.has(t);
+// Sky Collector's own patches (docs/DESIGN-LOOP.md §5, approved 2026-11-17). Text icons until they have art.
+const skyK = (a) => a.sky ?? { wide: 0, b747: 0, a380: 0, heli: 0, freightNight: 0, hop: 0, far: 0, airlines: new Set(), propDays: new Map(), flightDays: new Map() };
+const maxSize = (m) => { let n = 0; for (const v of m.values()) n = Math.max(n, v.size); return n; };
+const SKY_ACHIEVEMENTS = [
+  { id: 'sky-heavy', name: 'Heavy Metal', text: 'Catch a twin-aisle jet', icon: '2✈', done: (a) => skyK(a).wide >= 1 },
+  { id: 'sky-jumbo', name: 'Jumbo', text: 'Catch a Boeing 747', icon: '747', done: (a) => skyK(a).b747 >= 1 },
+  { id: 'sky-superjumbo', name: 'Superjumbo', text: 'Catch an Airbus A380', icon: '380', done: (a) => skyK(a).a380 >= 1 },
+  { id: 'sky-rotor', name: 'Rotor Head', text: 'Catch a helicopter', icon: '✢', done: (a) => skyK(a).heli >= 1 },
+  { id: 'sky-propday', name: 'Prop Day', text: 'Catch three propeller planes in one day', icon: '✣3', done: (a) => maxSize(skyK(a).propDays) >= 3 },
+  { id: 'sky-freightnight', name: 'Freight Night', text: 'Catch a cargo flight after dark', icon: '▣', done: (a) => skyK(a).freightNight >= 1 },
+  { id: 'sky-hopper', name: 'Hopper', text: 'Catch a flight shorter than 300 km', icon: '⤻', done: (a) => skyK(a).hop >= 1 },
+  { id: 'sky-globetrotter', name: 'Globetrotter', text: 'Catch a flight longer than 10,000 km', icon: '10K', done: (a) => skyK(a).far >= 1 },
+  { id: 'sky-airlines5', name: 'Five Airlines', text: 'Catch five different airlines', icon: '5', done: (a) => skyK(a).airlines.size >= 5 },
+  { id: 'sky-airlines25', name: 'Twenty-five Airlines', text: 'Catch 25 different airlines', icon: '25', done: (a) => skyK(a).airlines.size >= 25 },
+  { id: 'sky-regular', name: 'Regular', text: 'Catch the same flight on 15 days: a gold flight card', icon: '15', done: (a) => maxSize(skyK(a).flightDays) >= 15 },
+  { id: 'sky-rarehere', name: 'Rare Here', text: 'Catch five planes that are rare where you are', icon: '◆5', done: (a) => (a.rareHere ?? 0) >= 5 },
+  { id: 'sky-fullhangar', name: 'Full Hangar', text: 'Bring five albums to silver', icon: '▦5', done: (a) => (a.albumsSilver ?? 0) >= 5 },
+];
 export const ACHIEVEMENTS = [
   // Collecting
   { id: 'first', name: 'First Light', text: 'Collect your first card', icon: '✦', done: (a) => a.cards >= 1 },
@@ -345,6 +363,7 @@ export const ACHIEVEMENTS = [
 // How far along a locked patch is, [have, goal], for the ones that count something (playtest 2026-10-09: a locked
 // patch shows its progress stitched part-way round the border, and the detail view says "3 of 10").
 const PROG = {
+  'sky-airlines5': (a) => [skyK(a).airlines.size, 5], 'sky-airlines25': (a) => [skyK(a).airlines.size, 25], 'sky-regular': (a) => [maxSize(skyK(a).flightDays), 15], 'sky-propday': (a) => [maxSize(skyK(a).propDays), 3], 'sky-rarehere': (a) => [a.rareHere ?? 0, 5], 'sky-fullhangar': (a) => [a.albumsSilver ?? 0, 5],
   witness: (a) => [a.witness ?? 0, 3], reunion: (a) => [a.reunions ?? 0, 1], reunion10: (a) => [a.reunions ?? 0, 10], reunion25: (a) => [a.reunions ?? 0, 25], headliners: (a) => [a.headliners ?? 0, 10], first: (a) => [a.cards, 1], ten: (a) => [a.cards, 10], twentyfive: (a) => [a.cards, 25], fifty: (a) => [a.cards, 50], hundred: (a) => [a.cards, 100],
   archivist: (a) => [a.cards, 250], curator: (a) => [a.cards, 500], catalogue: (a) => [a.cards, 1000], sightings100: (a) => [a.sightings, 100],
   spectrum: (a) => [a.tiers.size, 5], legends5: (a) => [a.tierCount.legendary ?? 0, 5], legends25: (a) => [a.tierCount.legendary ?? 0, 15], shiny5: (a) => [a.shinies, 5],
@@ -421,6 +440,15 @@ export function progress(sightings, info, { constellations = [], albums = [], no
     }
     else if (!seenNight.has(nk)) xp += SKY ? SKY_REPEAT_XP : REPEAT_XP;
     if (SKY && s.rareHere) { xp += RARE_HERE_XP; a.rareHere = (a.rareHere ?? 0) + 1; }
+    if (SKY) { /* what the plane patches count (docs/DESIGN-LOOP.md §5) */
+      const k = a.sky ??= { wide: 0, b747: 0, a380: 0, heli: 0, freightNight: 0, hop: 0, far: 0, airlines: new Set(), propDays: new Map(), flightDays: new Map() };
+      const c = snap(s), tc = String(s.typeCode ?? ''), d = new Date(s.time), day = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`, hr = d.getHours();
+      if (WIDE.test(tc)) k.wide++; if (/^B74/.test(tc)) k.b747++; if (tc === 'A388') k.a380++; if (c.glyph === 'heli' || c.setId === 'helicopters') k.heli++;
+      if (PROP.test(tc)) { const st = k.propDays.get(day) ?? k.propDays.set(day, new Set()).get(day); st.add(s.hex ?? s.time); }
+      if (/^[A-Z]{3}\d/.test(s.callsign ?? '')) k.airlines.add(s.callsign.slice(0, 3));
+      if (c.sky === 'flight') { if (c.km != null && c.km < 300) k.hop++; if ((c.km ?? 0) >= 10000) k.far++; if (c.setId === 'cargo' && (hr >= 21 || hr < 5)) k.freightNight++;
+        const fd = k.flightDays.get(s.cardKey) ?? k.flightDays.set(s.cardKey, new Set()).get(s.cardKey); fd.add(day); }
+    }
     let lv = false;
     if (!seenNight.has(nk) && !i?.natural && !fam) { const c = (nightsOnCard.get(s.cardKey) ?? 0) + 1; /* no levels for the Moon, planets, stars… (2026-10-21, Sevaan) */ nightsOnCard.set(s.cardKey, c); lv = c === 3 || c === 10; }
     seenNight.add(nk);
@@ -484,6 +512,7 @@ export function progress(sightings, info, { constellations = [], albums = [], no
   let ri = 0; for (let k = 0; k < RANKS.length; k++) if (xp >= RANKS[k][0]) ri = k;
   ri = Math.max(ri, rankFloor(xp));
   const rank = { name: RANKS[ri][1], index: ri, at: RANKS[ri][0], next: RANKS[ri + 1]?.[0] ?? null, nextName: RANKS[ri + 1]?.[1] ?? null };
+  a.albumsSilver = albums.filter((al) => al.silver && al.keys.filter((k) => seenCard.has(k)).length >= al.silver).length; /* Sky's Full Hangar patch */
   const achievements = activeAchievements().map((x) => ({ id: x.id, name: x.name, text: x.text, icon: x.icon, done: x.done(a), prog: PROG[x.id]?.(a) }));
   // Every constellation is its own mission patch (2026-10-09, Sevaan: they replace the gold constellation cards),
   // and so is the Solar System. The patch art is the stick figure (js/patches.js).

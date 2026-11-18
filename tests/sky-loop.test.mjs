@@ -66,3 +66,21 @@ test('distances follow the Units setting; missions say them in the player\'s uni
   localStorage.setItem('units', 'imperial'); assert.deepEqual(dist(1000), { v: '621', u: 'mi' }); assert.equal(speed(800).u, 'mph'); assert.match(SKY_MISSIONS.find((x) => x.id === 'far').text, /1,900 mi/);
   assert.equal(distText(null), '— mi'); localStorage.setItem('units', 'metric');
 });
+test('no coverage: sixty good answers from the feed and never a plane', async () => {
+  const { noteFeed, noCoverage } = await import('../js/sky-local.js');
+  _resetLocal({ d: {} }); for (let i = 0; i < 59; i++) noteFeed(0); assert.equal(noCoverage(), false);
+  noteFeed(0); assert.equal(noCoverage(), true); noteFeed(3); assert.equal(noCoverage(), false);
+});
+test('plane patches count what they say', async () => {
+  const { progress, activeAchievements } = await import('../js/progress.js');
+  setSkyProgress(true);
+  const ids = activeAchievements().map((x) => x.id); for (const id of ['sky-jumbo', 'sky-rotor', 'sky-airlines5', 'sky-fullhangar', 'first']) assert.ok(ids.includes(id), id);
+  const t0 = new Date(2026, 10, 10, 14).getTime(), S = (i, o) => ({ time: t0 + i * 60000, cardKey: o.cardKey ?? `K${i}`, objectId: `K${i}`, lat: 44, lon: -78, ...o });
+  const list = [S(0, { typeCode: 'B744', callsign: 'BAW93', cardSnapshot: { sky: 'plane', setId: 'giants' } }), S(1, { typeCode: 'A388', callsign: 'UAE241', cardSnapshot: { sky: 'plane' } }),
+    S(2, { typeCode: 'DH8D', hex: 'a1', callsign: 'JZA1', cardSnapshot: { sky: 'plane' } }), S(3, { typeCode: 'DH8D', hex: 'a2', callsign: 'POE2', cardSnapshot: { sky: 'plane' } }), S(4, { typeCode: 'AT76', hex: 'a3', callsign: 'WJA3', cardSnapshot: { sky: 'plane' } }),
+    S(5, { typeCode: 'B77W', callsign: 'ACA7', cardSnapshot: { sky: 'flight', km: 11000 } }), S(6, { typeCode: 'DH8D', callsign: 'JZA8', cardSnapshot: { sky: 'flight', km: 250 } }), S(7, { typeCode: 'EC35', cardSnapshot: { sky: 'plane', glyph: 'heli' }, rareHere: true })];
+  const p = progress(list, () => null, { now: t0 + 3600e3 }), done = new Set(p.achievements.filter((x) => x.done).map((x) => x.id));
+  for (const id of ['sky-heavy', 'sky-jumbo', 'sky-superjumbo', 'sky-rotor', 'sky-propday', 'sky-hopper', 'sky-globetrotter', 'sky-airlines5']) assert.ok(done.has(id), `${id} should be earned`);
+  for (const id of ['sky-airlines25', 'sky-regular', 'sky-rarehere', 'sky-freightnight', 'sky-fullhangar']) assert.ok(!done.has(id), `${id} should not be earned`);
+  setSkyProgress(false);
+});
