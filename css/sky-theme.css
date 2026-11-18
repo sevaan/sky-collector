@@ -545,3 +545,8 @@ html body .sv-ribbon { box-shadow:0 4px 10px rgba(13,34,56,.25); color:#fff; }
 html body .sv-glow { background:radial-gradient(ellipse at 50% 100%,rgba(255,255,255,.6),transparent 70%); }
 html body .sv-pk-count { background:radial-gradient(ellipse 45% 60% at 50% 60%,var(--pk-count-bg),transparent 75%); color:var(--pk-count-ink); }
 html body .sv-pk-count b { background:linear-gradient(120deg,#ffffff,#dfeaf5 40%,#ffb3a8 60%,#ffffff); -webkit-background-clip:text; background-clip:text; }
+
+/* Settings that only mean anything for stars and satellites (2026-11-18, the age playtest): how dark your sky is (light
+   pollution for stars), snapping onto targets (satellites; planes lock on their own), the Milky Way and constellation lines.
+   Hidden in Sky Collector; their switches keep working underneath. The compass stays: it aims at planes too. */
+body.sky-only #debug :is(.set-row:has(#chk-snap), .set-row:has(#chk-milky), .set-row:has(#chk-lines), .set-slider:has(#set-sky-range)) { display:none !important; }

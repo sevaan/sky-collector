@@ -1,9 +1,9 @@
 // Player progress from the sighting log: XP and observer rank, tonight’s three missions, a weekly streak and
 // achievements. Everything is derived from the saved sightings (nothing extra is stored), so it can’t drift.
 // info(cardKey) -> { tier, type, owner, launch, natural, con } | null. No DOM.
-import { nightKey } from './observation.js?v=0.1.1707';
-import { fleetThresholds } from './card-model.js?v=0.1.1707';
-import { distRound as distText } from './units.js?v=0.1.1707';
+import { nightKey } from './observation.js?v=0.1.1708';
+import { fleetThresholds } from './card-model.js?v=0.1.1708';
+import { distRound as distText } from './units.js?v=0.1.1708';
 
 // A longer climb (2026-10-12, playtest room: three ranks on night 1, Mission Control in about two weeks), with two
 // prestige ranks past Mission Control. Nobody drops a rank they had on the old curve (rankFloor below).
@@ -91,7 +91,7 @@ export const MISSIONS = [
   { id: 'again', text: 'See a card you own on a new night', done: (n) => n.some((s) => !s.first) },
   { id: 'conset', text: 'Find 3 stars in one constellation', done: (n) => { const c = {}; for (const s of n) if (s.info?.con && s.first) c[s.info.con] = (c[s.info.con] ?? 0) + 1; return Object.values(c).some((v) => v >= 3); } },
   { id: 'deep', text: 'Find a star cluster or galaxy', done: (n) => n.some((s) => s.info?.type === 'deepsky') },
-  { id: 'rarenew', text: 'Collect a new Rare card or better', done: (n) => n.some((s) => s.first && s.info?.natural !== 'story' && ['rare', 'epic', 'legendary'].includes(s.info?.tier)) },
+  { id: 'rarenew', text: 'Collect a new Rare card, or rarer', done: (n) => n.some((s) => s.first && s.info?.natural !== 'story' && ['rare', 'epic', 'legendary'].includes(s.info?.tier)) },
   { id: 'levelup2', text: 'Turn a card silver or gold', done: (n) => n.some((s) => s.lv) },
   // Fifteen more (2026-10-25, Sevaan: so a night's three don't repeat within a week or two). main.js dealMissions only
   // deals the ones tonight's sky can give.
@@ -148,28 +148,31 @@ let SIZE = SIZES.steady;
 export function setSkySize(sky) { SIZE = SIZES[sky] ?? SIZES.steady; }
 const NUM = ['', 'one', 'two', 'three', 'four', 'five'];
 const airlinesOf = (n) => new Set(n.filter((s) => /^[A-Z]{3}\d/.test(s.callsign ?? '')).map((s) => s.callsign.slice(0, 3))).size;
+/* Mission wording (2026-11-18, the age playtest: a 7-year-old couldn't read "Catch one plane below 5,000 ft and one above
+   35,000 ft"): short, plain words; the exact numbers live in the rules ("really high" is 35,000 ft and up, "low" under
+   5,000 ft, a long flight over 3,000 km). */
 export const SKY_MISSIONS = [
-  { id: 'wide', text: 'Catch a wide-body jet', done: (n) => n.some((s) => WIDE.test(s.typeCode ?? '')) },
+  { id: 'wide', text: 'Catch a big wide jet', done: (n) => n.some((s) => WIDE.test(s.typeCode ?? '')) },
   { id: 'heli', text: 'Catch a helicopter', done: (n) => n.some((s) => snap(s).heli || snap(s).glyph === 'heli') },
   { id: 'prop', text: 'Catch a propeller plane', done: (n) => n.some((s) => PROP.test(s.typeCode ?? '')) },
-  { id: 'far', get text() { return `Catch a flight going more than ${distText(3000)}`; }, done: (n) => n.some((s) => (snap(s).km ?? 0) > 3000) },
-  { id: 'ocean', get text() { return `Catch a flight going more than ${distText(5000)}`; }, done: (n) => n.some((s) => (snap(s).km ?? 0) > 5000) },
-  { id: 'short', get text() { return `Catch a hop under ${distText(500)}`; }, done: (n) => n.some((s) => snap(s).sky === 'flight' && snap(s).km != null && snap(s).km < 500) },
+  { id: 'far', get text() { return `Catch a long flight (over ${distText(3000)})`; }, done: (n) => n.some((s) => (snap(s).km ?? 0) > 3000) },
+  { id: 'ocean', get text() { return `Catch a very long flight (over ${distText(5000)})`; }, done: (n) => n.some((s) => (snap(s).km ?? 0) > 5000) },
+  { id: 'short', get text() { return `Catch a short hop (under ${distText(500)})`; }, done: (n) => n.some((s) => snap(s).sky === 'flight' && snap(s).km != null && snap(s).km < 500) },
   { id: 'abroad', text: 'Catch a flight to another country', done: (n) => n.some((s) => snap(s).sky === 'flight' && snap(s).from?.country && snap(s).to?.country && snap(s).from.country !== snap(s).to.country) },
   { id: 'airlines3', get text() { return SIZE.airlines === 1 ? 'Catch an airline flight' : `Catch ${NUM[SIZE.airlines]} different airlines`; }, done: (n) => airlinesOf(n) >= SIZE.airlines },
-  { id: 'high', text: 'Catch a plane above 35,000 ft', done: (n) => n.some((s) => (s.altFt ?? 0) >= 35000) },
-  { id: 'low', text: 'Catch a plane below 5,000 ft', done: (n) => n.some((s) => s.altFt != null && s.altFt < 5000) },
-  { id: 'bands', text: 'Catch one plane below 5,000 ft and one above 35,000 ft', done: (n) => n.some((s) => s.altFt != null && s.altFt < 5000) && n.some((s) => (s.altFt ?? 0) >= 35000) },
-  { id: 'rarenew', text: 'Collect a new Rare card or better', done: (n) => n.some((s) => s.first && ['rare', 'epic', 'legendary'].includes(s.info?.tier ?? snap(s).tier)) },
-  { id: 'rarehere', text: 'Catch a plane that is rare where you are', done: (n) => n.some((s) => s.rareHere) },
-  { id: 'families2', text: 'Catch planes from two different families', done: (n) => new Set(n.filter((s) => snap(s).sky === 'plane').map((s) => snap(s).setId ?? snap(s).set).filter(Boolean)).size >= 2 },
+  { id: 'high', text: 'Catch a plane flying really high', done: (n) => n.some((s) => (s.altFt ?? 0) >= 35000) },
+  { id: 'low', text: 'Catch a plane flying low', done: (n) => n.some((s) => s.altFt != null && s.altFt < 5000) },
+  { id: 'bands', text: 'Catch one low plane and one really high one', done: (n) => n.some((s) => s.altFt != null && s.altFt < 5000) && n.some((s) => (s.altFt ?? 0) >= 35000) },
+  { id: 'rarenew', text: 'Collect a new Rare card, or rarer', done: (n) => n.some((s) => s.first && ['rare', 'epic', 'legendary'].includes(s.info?.tier ?? snap(s).tier)) },
+  { id: 'rarehere', text: 'Catch a plane that’s rare around here', done: (n) => n.some((s) => s.rareHere) },
+  { id: 'families2', text: 'Catch planes from two plane families', done: (n) => new Set(n.filter((s) => snap(s).sky === 'plane').map((s) => snap(s).setId ?? snap(s).set).filter(Boolean)).size >= 2 },
   { id: 'newflights2', get text() { return SIZE.cards === 1 ? 'Collect a new card' : `Collect ${NUM[SIZE.cards]} new cards`; }, done: (n) => n.filter((s) => s.first).length >= SIZE.cards },
-  { id: 'again', text: 'Catch a card you own on a new day', done: (n) => n.some((s) => !s.first) },
+  { id: 'again', text: 'Catch a plane you’ve caught before', done: (n) => n.some((s) => !s.first) },
 ];
 export const SKY_STARTER = [
   { id: 'firstcard', text: 'Collect your first card', done: (n) => n.some((s) => s.first) },
-  { id: 'firstflight', text: 'Collect a flight: a plane with a route', done: (n) => n.some(firstFlight) },
-  { id: 'types2', text: 'Catch two different kinds of aircraft', done: (n) => new Set(n.map((s) => s.typeCode).filter(Boolean)).size >= 2 },
+  { id: 'firstflight', text: 'Catch a plane on its way somewhere', done: (n) => n.some(firstFlight) },
+  { id: 'types2', text: 'Catch two different kinds of plane', done: (n) => new Set(n.map((s) => s.typeCode).filter(Boolean)).size >= 2 },
 ];
 export const SKY_CHALLENGES = [
   { id: 'revisit3', text: 'Catch 3 cards you own again', done: (n) => n.filter((s) => !s.first).length >= 3 },
