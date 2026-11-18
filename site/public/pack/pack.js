@@ -100,6 +100,10 @@ async function swapIn(first, f) {
 function sample(el) {
   const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT); let n;
   while ((n = w.nextNode())) if (/not (yet )?(collected|caught)( yet)?/i.test(n.nodeValue)) n.nodeValue = n.nodeValue.replace(/not (yet )?(collected|caught)( yet)?/i, (s) => (s === s.toUpperCase() ? 'SAMPLE PACK' : 'Sample pack'));
+  /* no sample card claims a catch, a level or progress (2026-11-18): the passport row ("Caught on 1 day · Bronze · 4 more
+     to silver") goes, and the frame keeps no level colour */
+  el.querySelectorAll('.fc-pass').forEach((x) => x.remove());
+  for (const c of [...el.classList]) if (/^level-(bronze|silver|gold)$/.test(c)) { el.classList.remove(c); el.classList.add('level-none'); }
   const t = el.querySelector('.fc-foot-t'), tm = el.querySelector('.fc-foot-n'); if (t) t.textContent = 'SAMPLE PACK'; if (tm) tm.textContent = ''; /* the footer's "CAUGHT · date · time" */
   return el;
 }
