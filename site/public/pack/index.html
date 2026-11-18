@@ -12,6 +12,7 @@
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:image:alt" content="A sealed Sky Collector card pack on a blue sky, next to the words: A sample pack. Cards from the sky.">
 <meta name="theme-color" content="#5d97cf">
 <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preload" href="fonts/RussoOne-Regular.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="fonts/BarlowCondensed-Medium.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/fonts.css"><link rel="stylesheet" href="css/cards.css"><link rel="stylesheet" href="css/gift.css"><link rel="stylesheet" href="css/ui.css"><link rel="stylesheet" href="css/sky-theme.css"><link rel="stylesheet" href="css/sky-cards.css">
 <style>
   /* Sky Collector's sample pack (2026-11-18; Space Collector's is its site/public/pack). The pack, its cards and sounds are
@@ -23,6 +24,10 @@
   body { margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: calc(28px + var(--safe-top)) max(20px, env(safe-area-inset-right)) calc(28px + var(--safe-bottom)) max(20px, env(safe-area-inset-left)); background: linear-gradient(180deg, #5d97cf 0%, #86b6e0 40%, #b9d5ee 75%, #e3eef8 100%) fixed; color: #0d2238; font: 500 17px/1.45 'SC Label', system-ui, sans-serif; text-align: center; overflow-x: hidden; }
   body.playing { overflow: hidden; }
   #end[hidden], #start[hidden] { display: none; }
+  /* The start screen is only a fallback (2026-11-18, Sevaan: "an animation glitch before the pack loads"): hidden in the HTML,
+     shown if the pack fails to load or hasn't started after 3 s (the script at the end). It shares its id with the game's
+     welcome screen, whose pale sky panel (css/sky-theme.css #start) must not land here. */
+  #start { background: none; }
   :is(#start, #end) .k { font-size: 13px; font-weight: 600; letter-spacing: .26em; text-transform: uppercase; color: #b42a20; }
   :is(#start, #end) h1 { margin: 6px 0 4px; font: 400 30px/1.05 'SC Display', sans-serif; text-transform: uppercase; color: #0d2238; }
   :is(#start, #end) p { margin: 8px auto 0; max-width: 340px; color: #16314c; }
@@ -89,12 +94,11 @@
   @media (prefers-reduced-motion: reduce) { .lc::after, .lc-ret, .lc-cloud, .lc-soon span i { animation: none; } }
 </style>
 </head><body class="sky-only">
-<main id="start">
+<main id="start" hidden>
   <div class="k">A sample pack</div>
-  <h1>Cards from the sky above you</h1>
-  <p>Real planes that fly over your own backyard. Open the pack.</p>
+  <h1>Cards from the sky</h1>
   <button class="open" id="open" type="button">Open the pack</button>
-  <noscript><p>This pack needs JavaScript to open.</p></noscript>
+  <noscript><p>This pack needs JavaScript to open.</p><style>#start { display: block !important; }</style></noscript>
 </main>
 <main id="end" hidden>
   <div class="k">Your turn</div>
@@ -123,5 +127,15 @@
   <p class="lc-fact">Every plane overhead is a <strong>real flight</strong>, and every one is a card: where it’s going, who’s flying it and what it is.</p>
   <div class="lc-soon"><span><i></i>Coming soon to iPhone and Android</span><a href="https://skycollector.app/" rel="noopener">skycollector.app</a></div>
 </div><span class="lc-foil" aria-hidden="true"></span><span class="lc-glare" aria-hidden="true"></span></div></template>
-<script type="module" src="pack.js"></script>
+<script type="module" src="pack.js" onerror="packFallback(true)"></script>
+<script>
+  /* The fallback start screen: when the pack's code fails to load (the module's error), or 3 s pass and the pack hasn't
+     appeared (pack.js unhides it itself when it cannot build the cards). */
+  function packFallback(failed) {
+    var s = document.getElementById('start'), b = document.getElementById('open');
+    if (failed) { b.textContent = 'Couldn\u2019t load the pack'; b.disabled = true; } /* no code, so the button could do nothing */
+    if (!document.getElementById('gift') && document.getElementById('end').hidden) s.hidden = false;
+  }
+  setTimeout(packFallback, 3000);
+</script>
 </body></html>

@@ -127,6 +127,6 @@ new MutationObserver(() => {
 $('open').addEventListener('click', () => { if (models) play(); });
 $('again').addEventListener('click', () => { if (models && !$('gift')) play(); });
 (async () => {
-  try { models = PLANES.map(model); if (models.some((m) => !m?.name)) throw new Error('cards'); } catch { $('open').textContent = 'Couldn’t load the pack'; $('open').disabled = true; return; }
-  play(); /* straight into the sealed pack; the start screen shows only while loading, or if something fails */
+  try { models = PLANES.map(model); if (models.some((m) => !m?.name)) throw new Error('cards'); } catch { $('open').textContent = 'Couldn’t load the pack'; $('open').disabled = true; $('start').hidden = false; return; }
+  play(); /* straight into the sealed pack; the start screen (hidden in the HTML) shows only if something fails or stalls */
 })();
