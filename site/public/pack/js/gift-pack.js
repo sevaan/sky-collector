@@ -146,11 +146,19 @@ export function playPack(o) {
         try { await o.emerge?.(pk.getBoundingClientRect(), () => pk.classList.add('drop')); } catch {}
         pk.classList.add('drop'); await W(300); finish('done'); return; }
       await Promise.race([ready, W(900)]); /* the pictures are ready (usually long since) */
-      const deck = q('.gp-deck'); deck.style.transition = 'none'; deck.style.opacity = '1';
+      const deck = q('.gp-deck'); deck.style.transition = 'none';
+      /* The cards wait behind the pack, their bottom only a few px above its crimped bottom edge: shown at full strength
+         here, the bottom of the first card peeked out under the pack for a moment, through the crimp and below the pack
+         as it leant under the finger (2026-11-18, Sevaan on his iPhone: "I can see the bottom of the card at the bottom of
+         the pack for a split second"). Hide anything lower than the pack's printed area until the pack falls away. */
+      { const pr = (q('.gp-tilt') ?? pk).getBoundingClientRect(), dr = deck.getBoundingClientRect(), k = deck.offsetHeight ? dr.height / deck.offsetHeight : 1;
+        const cut = Math.max(0, dr.bottom - (pr.bottom - pr.height * 0.14)) / (k || 1);
+        if (cut > 0) deck.style.clipPath = `inset(-60% -60% ${cut.toFixed(1)}px -60%)`; }
+      deck.style.opacity = '1';
       await W(220); sfx('arrive', 0.9);
-      if (reduced) { pk.classList.add('drop'); deck.style.zIndex = '7'; deck.style.transition = 'none'; deck.style.transform = 'none'; /* full size, in place (it started small and low for the slide) */ await W(200); } /* reduced motion: no deck slide (review 2026-11-07) */
+      if (reduced) { pk.classList.add('drop'); deck.style.clipPath = ''; deck.style.zIndex = '7'; deck.style.transition = 'none'; deck.style.transform = 'none'; /* full size, in place (it started small and low for the slide) */ await W(200); } /* reduced motion: no deck slide (review 2026-11-07) */
       else { deck.style.transition = 'transform .9s cubic-bezier(.2,.9,.25,1.02)'; deck.style.transform = `translateY(-58%) scale(${riseK()})`;
-        await W(760); pk.classList.add('drop'); deck.style.zIndex = '7'; deck.style.transform = 'translateY(0) scale(1)';
+        await W(760); pk.classList.add('drop'); deck.style.clipPath = ''; deck.style.zIndex = '7'; deck.style.transform = 'translateY(0) scale(1)';
         await W(650); }
       phase = 'dealing'; deck.classList.add('live');
       if (dcs.length) deal(0); else showHaul();
