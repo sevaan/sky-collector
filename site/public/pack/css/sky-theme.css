@@ -327,6 +327,17 @@ html.sky-cards #patch-view { background:var(--day-sky); background-color:#eef5fb
 html.sky-cards #patch-view::backdrop { background:rgba(13,34,56,.55); }
 html.sky-cards .pv-patch { filter:drop-shadow(0 14px 22px rgba(13,34,56,.3)); }
 html.sky-cards .pv-body h2 { color:#0d2238; } html.sky-cards .pv-body p { color:#23405c; }
+/* the patch on its card (playtest 2026-11-18: navy words on Space's dark card, 1.1:1): Sky's cream card paper, like the plane cards */
+html.sky-cards .pv-card { background:#fffdf6; border-color:#c9b98a; box-shadow:inset 0 0 0 1px #e8dfc4, 0 24px 50px rgba(13,34,56,.35); }
+html.sky-cards .pv-card > .starfield { display:none; }
+html.sky-cards :is(.pv-bar, .pv-foot) { color:#23405c; border-color:#c9b98a; }
+html.sky-cards .pv-bar span:last-child { color:#b42a20; }
+html.sky-cards .pv-foot b { color:#0d2238; }
+html.sky-cards .pv-card.locked .pv-foot span { color:#4a6178; }
+html.sky-cards .pv-hint { color:#4a6178; }
+html.sky-cards .pv-prog { color:#23405c; } html.sky-cards .pv-prog b { color:#b42a20; } html.sky-cards .pv-prog__bar { background:#dbe5ee; }
+html.sky-cards .pv-card .pv-tell { color:#fffdf6; }
+html.sky-cards .pv-card .ui-chip { color:#23405c; border-color:#c9b98a; background:#f4ecd6; } html.sky-cards .pv-card .ui-chip b { color:#0d2238; }
 
 /* card viewer (#viewer) */
 html.sky-cards #viewer, html.sky-cards body.sky-tone #viewer { background:var(--day-sky); background-color:#eef5fb; color:#0d2238; }
@@ -583,3 +594,16 @@ body.sky-only #debug :is(.set-row:has(#chk-snap), .set-row:has(#chk-milky), .set
 body.sky-only .tell-text { color:#23405c; }
 body.sky-only .tell-reward { background:#f2b6321f; box-shadow:inset 0 0 0 1px #c98f1c66; color:#5a4310; }
 body.sky-only .tell-reward i { color:#c98f1c; }
+/* Credits and sources (playtest 2026-11-18: three paragraphs were pale cream on white) */
+body.sky-only:not(.night) :is(.cr-row, .cr-pic) { color:#23405c; border-top-color:#dbe5ee; }
+body.sky-only:not(.night) :is(.cr-row, .cr-pic) b { color:#0d2238; }
+body.sky-only:not(.night) :is(.cr-row a, .cr-pic a, .cr-pics summary) { color:#b42a20; }
+/* Airmail edges on every notification (2026-11-18, Sevaan: "make the edges of the notifications be like airmail
+   stripes"): the red, cream and blue diagonal band round an airmail envelope, in place of the coloured strip on top.
+   A ring drawn over the ticket's edge (masked to the edge only), so it sits on the light day ticket and the dark night
+   one alike; the ticket's own colour still shows in its label. The patch coin's "Patch earned" tag on Explore too. */
+body.sky-only :is(#toasts .ticket, .pc-tag) { position:relative; border-top:0 !important; }
+body.sky-only :is(#toasts .ticket, .pc-tag)::after { content:''; position:absolute; inset:0; z-index:2; border-radius:inherit; padding:4px; pointer-events:none;
+  background:repeating-linear-gradient(-45deg, #c8312a 0 8px, #fffdf6 8px 12px, #24508c 12px 20px, #fffdf6 20px 24px);
+  -webkit-mask:linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); mask:linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor; }

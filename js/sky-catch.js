@@ -2,21 +2,23 @@
 // Collect does. Catches are kept in localStorage ('skyCatches') for now, apart from Space Collector's sightings, so the
 // old collection code never meets a flight. The Collection screen reads them in a later step.
 
-import { aircraftName, isHelicopter } from './planes.js?v=0.1.1720';
-import { lookupRoute } from './routes.js?v=0.1.1720';
-import { distText } from './units.js?v=0.1.1720';
-import { cardsFor, planeKey, unlisted, TIERS } from './flights.js?v=0.1.1720';
-import { glyphSvg, showCatch, miniCardHtml } from './flight-card.js?v=0.1.1720';
-import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1720';
+import { aircraftName, isHelicopter } from './planes.js?v=0.1.1721';
+import { lookupRoute } from './routes.js?v=0.1.1721';
+import { distText } from './units.js?v=0.1.1721';
+import { cardsFor, planeKey, unlisted, TIERS } from './flights.js?v=0.1.1721';
+import { glyphSvg, showCatch, miniCardHtml } from './flight-card.js?v=0.1.1721';
+import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1721';
 
-import { TIER_INFO } from './rarity.js?v=0.1.1720';
-import { allCatches, addCatch } from './catch-store.js?v=0.1.1720';
+import { TIER_INFO } from './rarity.js?v=0.1.1721';
+import { allCatches, addCatch } from './catch-store.js?v=0.1.1721';
 // Catches live in js/catch-store.js (IndexedDB, with a localStorage mirror the Collection page reads).
 // Where catches are read from: Space Collector's sightings once main.js says so (Milestone 1.5), the old store until then.
 let source = allCatches;
 export const setCatchSource = (fn) => { source = fn; };
 export function catches() { return source(); }
-const seenCount = (list, key) => list.filter((c) => c.key === key || c.planeKey === key).length;
+/* a stored sighting names its card in cardKey (one per card per catch); the old catch store had key / planeKey (2026-11-18) */
+const cardOf = (c, key) => (c.cardKey ? c.cardKey === key : c.key === key || c.planeKey === key);
+const seenCount = (list, key) => list.filter((c) => cardOf(c, key)).length;
 
 const ft = (p) => (Math.round(p.hKm * 3280.84 / 100) * 100).toLocaleString('en-US');
 const set = (el, sel, txt) => { const e = el.querySelector(sel); if (e && e.textContent !== txt) e.textContent = txt; };
@@ -53,7 +55,7 @@ export function catchPanel(el, hit, route) {
    compared to our neat and tidy Space Collector"): the tier line and name above the circle, the real mini card, the
    distance, and Collect below it, laid out and animated exactly as a satellite's. */
 // When you last caught this card (its newest catch), for the mini card's date line; null if it isn't yours yet.
-const lastSeen = (key) => { const l = catches(); for (let i = l.length - 1; i >= 0; i--) { const c = l[i]; if (c.key === key || c.planeKey === key || c.flight?.key === key || c.plane?.key === key) return c.time; } return null; };
+const lastSeen = (key) => { const l = catches(); for (let i = l.length - 1; i >= 0; i--) { const c = l[i]; if (cardOf(c, key)) return c.time; } return null; };
 function discoverPanel(el, hit, route) {
   const $ = (id) => document.getElementById(id), txt = (id, v) => { const e = $(id); if (e && e.textContent !== v) e.textContent = v; };
   const p = hit.plane, type = aircraftName(p) || (isHelicopter(p) ? 'Helicopter' : unlisted(planeKey(p))?.name ?? 'Aircraft'), full = route?.full;

@@ -5,13 +5,13 @@
 //  Everything scales with rarity (Legendary dims the sky, shockwave, held breath, slow flip, fanfare).
 // Waits use timers, not animation.finished, so a paused tab can never freeze the sequence.
 
-import { sfx, loadSfx } from './sfx.js?v=0.1.1720';
-import { audioCtx } from './audio-ctx.js?v=0.1.1720';
-import { TIER_INFO } from './rarity.js?v=0.1.1720';
-import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype } from './card.js?v=0.1.1720';
-import { applyBack } from './card-backs.js?v=0.1.1720';
-import { addStarfield } from './starfield.js?v=0.1.1720';
-import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1720';
+import { sfx, loadSfx } from './sfx.js?v=0.1.1721';
+import { audioCtx } from './audio-ctx.js?v=0.1.1721';
+import { TIER_INFO } from './rarity.js?v=0.1.1721';
+import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype } from './card.js?v=0.1.1721';
+import { applyBack } from './card-backs.js?v=0.1.1721';
+import { addStarfield } from './starfield.js?v=0.1.1721';
+import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1721';
 
 const FX = TIER_FX; /* one rarity table for every card moment (js/card-moment.js, 2026-11-11) */
 const NIGHT_MILESTONES = [3, 5, 10, 25, 50, 100, 200, 365], STAMP_MILESTONES = [5, 10, 25, 50, 100, 200, 300, 400];
@@ -178,7 +178,8 @@ export async function playReveal({ card, o, seen, origin, fleet = null, progress
   const root = $('reveal');
   root.style.setProperty('--fx', color);
   root.classList.remove('rv-done');
-  $('reveal-eyebrow').textContent = fresh ? 'NEW CARD' : newStamp ? (fleet?.line ? 'NEW PHASE STAMP' : 'NEW LAUNCH STAMP') : NIGHT_MILESTONES.includes(nights) ? `SEEN ON ${nights} NIGHTS` : 'SEEN AGAIN';
+  /* a plane or flight card (Sky Collector, playtest 2026-11-18: a repeat plane read "NEW PHASE STAMP"): a stamp is another aircraft of the type, or the flight on another day */
+  $('reveal-eyebrow').textContent = fresh ? 'NEW CARD' : newStamp ? (o.sky === 'plane' ? 'NEW AIRCRAFT STAMP' : o.sky === 'flight' ? 'NEW FLIGHT STAMP' : fleet?.line ? 'NEW PHASE STAMP' : 'NEW LAUNCH STAMP') : NIGHT_MILESTONES.includes(nights) ? `SEEN ON ${nights} ${o.sky ? 'DAYS' : 'NIGHTS'}` : 'SEEN AGAIN';
   /* what a screen reader says as the reveal opens: the news, the card and its rarity (accessibility pass 2026-11-09) */
   { const nm = card?.querySelector?.('.card__name')?.textContent?.trim() || o?.name || ''; const rv = $('reveal'); rv.removeAttribute('aria-labelledby'); rv.setAttribute('aria-label', `${$('reveal-eyebrow').textContent.trim().toLowerCase().replace(/^./, (c) => c.toUpperCase())}${nm ? `: ${nm}` : ''}, ${(TIER_INFO[tierKey] ?? TIER_INFO.common).label}${xp > 0 ? `, plus ${xp} XP` : ''}`); }
   if (xp > 0) $('reveal-eyebrow').insertAdjacentHTML('beforeend', `<span class="rv-xp"><span class="rv-roll"><span><i class="rv-dot">·</i>+${xp} XP</span></span></span>`); // rolls in when the card lands

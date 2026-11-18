@@ -5,14 +5,14 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { planeKey } from './flights.js?v=0.1.1720';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1720';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1720';
-import { airlineIcon } from './airline-icons.js?v=0.1.1720';
-import { catches } from './sky-catch.js?v=0.1.1720';
-import { noteLocal } from './sky-local.js?v=0.1.1720';
-import { planeSet } from './sky-sets.js?v=0.1.1720';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1720';
+import { planeKey } from './flights.js?v=0.1.1721';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1721';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1721';
+import { airlineIcon } from './airline-icons.js?v=0.1.1721';
+import { catches } from './sky-catch.js?v=0.1.1721';
+import { noteLocal } from './sky-local.js?v=0.1.1721';
+import { planeSet } from './sky-sets.js?v=0.1.1721';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1721';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -92,7 +92,9 @@ function heroSky(wx) {
 }
 const TARGET = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="2.4" fill="currentColor" stroke="none"/><path d="M12 1.8v3.4M12 18.8v3.4M1.8 12h3.4M18.8 12h3.4"/></svg>'; /* main.js ICON_TARGET */
 // The card keys you own, flight and plane (what makes a plane NEW to you)
-function ownedKeys() { const owned = new Set(); for (const c of catches()) { owned.add(c.key); if (c.planeKey) owned.add(c.planeKey); } return owned; }
+/* (playtest 2026-11-18: every plane stayed NEW) the list is stored sightings since main.js setCatchSource(skySightings),
+   with the card in cardKey; the old catch store had key / planeKey: read both */
+function ownedKeys() { const owned = new Set(); for (const c of catches()) for (const k of [c.cardKey, c.key, c.planeKey]) if (k) owned.add(k); return owned; }
 // A live plane's photo (the type in its airline's livery, its parent's, or the maker's), sm/ size, with the box the plane
 // sits in; null when there's none yet. For pictures outside a card: All around you, Today's rows.
 export function planePhoto(p) {

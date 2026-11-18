@@ -554,3 +554,13 @@ body.sky-only #sky-today { --sc-muted:#33495f; }
 
 .td2-tp.up { bottom:74px; } .td2-tp.up::after { height:40px; } /* the upper row inside the taller box */
 .td2-tp { min-width:44px; min-height:44px; justify-content:flex-end; } /* a fingertip-sized target */
+/* (playtest 2026-11-18) a 320 px phone: the mission cards are 72 px wide, so the goal was cut mid-phrase with no ellipsis
+   and the line under it sliced. A shorter photo and smaller words there: the goal gets three whole lines (an ellipsis if
+   longer) and the where-and-when lines show in full. */
+@media (max-width:359px) {
+  .td2-pic { aspect-ratio:16 / 10; }
+  .td2-w { padding:4px 5px 5px; }
+  .td2-w b { font-size:10.5px; line-height:1.14; -webkit-line-clamp:3; }
+  .td2-w i { font-size:10px; letter-spacing:.02em; margin-top:3px; }
+  .td2-w small { font-size:10.5px; }
+}
