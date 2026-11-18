@@ -94,3 +94,26 @@ Order for the day:
 ## Port back to Space Collector (offer, don't apply unasked)
 
 The `?resume=1` start hang; the cloud tint option; every orange reading `--gold`; the perf harness's PERF_URL.
+
+## Status, 2026-11-17 (letters from the task list given to Sevaan)
+
+Done and pushed: A (empty sky always explained, feed log; cause of the missed plane not confirmed), B (sync), C and D
+(loop designed, approved, built), E and F (routes bundled and checked), G and H (research: docs/DATA-TERMS.md,
+docs/DATA-EUROPE-ROUTES.md), N (plane week themes, no astronomy events), O (accent in scripts, rank card at 320 px),
+P (units), Q (lock-on and collect sound and tap), R (Observer stats), T (Albums), X (privacy page, docs/PRIVACY-AND-DATA.md).
+
+Running as helpers: I and J (photos), K (facts), L and M (catch timing, screens the first pass missed).
+
+Not done, and why:
+- S Circle highlights: needs a design call first (what a "kind" of plane is, and what highlighting means when planes
+  are the only things to catch). Hidden.
+- U Send cards: needs a backend (Z).
+- V Plus perks: needs Sevaan's pick.
+- W native apps, Y store pieces: need Sky's own app ids, signing and the art picks (AA); a session of their own.
+- Z, AA, AB: Sevaan's.
+- AD: fixes to offer Space Collector: the ?resume=1 start hang; the cloud tint option; every orange reading --gold
+  (stylesheets and scripts); PERF_URL in the perf harness; and adsb.lol's 500-a-day limit, which Space Collector's
+  phone app would hit in under 90 minutes of play.
+
+Open for Sevaan: the tier pyramid result in docs/DESIGN-LOOP.md (17 of 27 places outside the target); two extra sets
+(Military, Rare Birds); height stays in feet for everyone.
