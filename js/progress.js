@@ -1,9 +1,9 @@
 // Player progress from the sighting log: XP and observer rank, tonight’s three missions, a weekly streak and
 // achievements. Everything is derived from the saved sightings (nothing extra is stored), so it can’t drift.
 // info(cardKey) -> { tier, type, owner, launch, natural, con } | null. No DOM.
-import { nightKey } from './observation.js?v=0.1.1690';
-import { fleetThresholds } from './card-model.js?v=0.1.1690';
-import { distRound as distText } from './units.js?v=0.1.1690';
+import { nightKey } from './observation.js?v=0.1.1692';
+import { fleetThresholds } from './card-model.js?v=0.1.1692';
+import { distRound as distText } from './units.js?v=0.1.1692';
 
 // A longer climb (2026-10-12, playtest room: three ranks on night 1, Mission Control in about two weeks), with two
 // prestige ranks past Mission Control. Nobody drops a rank they had on the old curve (rankFloor below).
@@ -487,7 +487,7 @@ export function progress(sightings, info, { constellations = [], albums = [], no
   const achievements = activeAchievements().map((x) => ({ id: x.id, name: x.name, text: x.text, icon: x.icon, done: x.done(a), prog: PROG[x.id]?.(a) }));
   // Every constellation is its own mission patch (2026-10-09, Sevaan: they replace the gold constellation cards),
   // and so is the Solar System. The patch art is the stick figure (js/patches.js).
-  for (const c of constellations) achievements.push({ id: `con-${c.id}`, con: c.id, name: c.system ? 'Solar System' : c.name, sub: c.system ? 'Home system' : c.nick.replace(/^part of /, ''), icon: '',
+  if (!SKY) /* Sky Collector has no constellation patches (2026-11-17) */ for (const c of constellations) achievements.push({ id: `con-${c.id}`, con: c.id, name: c.system ? 'Solar System' : c.name, sub: c.system ? 'Home system' : c.nick.replace(/^part of /, ''), icon: '',
     text: c.system ? 'See the Sun, the Moon and all seven planets' : `Collect all ${c.stars.length} stars of ${c.name}`, done: c.stars.every((k) => seenCard.has(k)), prog: [c.stars.filter((k) => seenCard.has(k)).length, c.stars.length] });
   const ch = challengeFor(tonightKey), challenge = list.length && !firstNights.has(tonightKey) ? { id: ch.id, text: ch.text, done: ch.done(tonight, now) } : null; // not on a first night: the starter set is enough
   // A filled album earns its own gold-foil patch (2026-10-10, playtest #17).

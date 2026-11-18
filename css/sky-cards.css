@@ -246,7 +246,7 @@ body.sky-only #visible-sub { color:var(--sc-muted); }
 /* Satellite sweep (2026-11-15): Settings rows that only made sense for satellites */
 body.sky-only #row-tonight, body.sky-only #row-alerts, body.sky-only #row-live,
 body.sky-only .set-row:has(#chk-daysats), body.sky-only .set-row:has(#chk-meteor),
-body.sky-only #set-stats-open, body.sky-only #sky-plus-line { display:none !important; }
+body.sky-only #sky-plus-line { display:none !important; } /* Observer stats is back (2026-11-17): the page has a plane version */
 /* Settings sweep (2026-11-15): gifting has no planes yet; circle highlights only sort satellites, stars and UFOs; the test tools below are satellite-only */
 body.sky-only #set-send-open, body.sky-only #set-hl-open, body.sky-only #btn-next-pass, body.sky-only #btn-nightpack,
 body.sky-only #btn-ufo, body.sky-only #btn-santa, body.sky-only #btn-meteor, body.sky-only #btn-live-test { display:none !important; }

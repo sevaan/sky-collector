@@ -2,8 +2,8 @@
 // badges"). Your history under the sky, from the sighting log plus what the Collection page already knows (rank,
 // patches, constellations, stories, albums). computeStats(sightings, byKey, nightKey, year, ctx) -> numbers;
 // statsHtml(st) -> the panel. No network; the map uses js/geo.js’s coarse outlines.
-import { LAND } from './geo.js?v=0.1.1690';
-import { TIER_INFO, TIERS } from './rarity.js?v=0.1.1690';
+import { LAND } from './geo.js?v=0.1.1692';
+import { TIER_INFO, TIERS } from './rarity.js?v=0.1.1692';
 
 const RANK = { common: 0, uncommon: 1, rare: 2, epic: 3, legendary: 4 };
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -74,28 +74,28 @@ export function statsHtml(st) {
     ${x.events != null ? goal(x.events === 1 ? 'Event badge' : 'Event badges', x.events, null, 'Meteor showers') : ''}
     ${x.cons ? goal('Constellations', x.cons[0], x.cons[1], 'Every star found') : ''}
     ${x.stories ? goal('Hidden stories', x.stories[0], x.stories[1]) : ''}
-    ${goal(st.shinies === 1 ? 'Shiny card' : 'Shiny cards', st.shinies, null)}
+    ${x.sky ? '' : goal(st.shinies === 1 ? 'Shiny card' : 'Shiny cards', st.shinies, null)}
     ${x.albums ? goal('Gold albums', x.albums.gold, x.albums.total, `${x.albums.silver} silver · ${x.albums.bronze} bronze`) : ''}
   </div></section>`;
   // Your time out there.
   const tiles = `<section class="st-sec"><div class="st-head"><span>Time under the sky</span>${since ? `<span class="st-since">since ${esc(since)}</span>` : ''}</div><div class="st-tiles">
-    <div class="st-tile"><b>${n(st.nights)}</b><small>${st.nights === 1 ? 'night out' : 'nights out'}</small></div>
+    <div class="st-tile"><b>${n(st.nights)}</b><small>${x.sky ? (st.nights === 1 ? 'day out' : 'days out') : st.nights === 1 ? 'night out' : 'nights out'}</small></div>
     <div class="st-tile"><b>${n(st.sightings)}</b><small>${st.sightings === 1 ? 'sighting' : 'sightings'}</small></div>
-    <div class="st-tile"><b>${n(st.bestRun)}</b><small>Best night run</small></div>
+    <div class="st-tile"><b>${n(st.bestRun)}</b><small>${x.sky ? 'Best run of days' : 'Best night run'}</small></div>
     <div class="st-tile"><b>${n(st.places.length)}</b><small>${st.places.length === 1 ? 'place' : 'places'}</small></div></div>
-    <div class="st-bars" aria-label="Nights out by month">${st.months.map((v, i) => `<div class="st-bar${i === nowM ? ' now' : ''}"><em>${v || ''}</em><span style="height:${(v / max) * 100}%"></span><small>${MONTHS[i][0]}</small></div>`).join('')}</div></section>`;
+    <div class="st-bars" aria-label="${x.sky ? 'Days' : 'Nights'} out by month">${st.months.map((v, i) => `<div class="st-bar${i === nowM ? ' now' : ''}"><em>${v || ''}</em><span style="height:${(v / max) * 100}%"></span><small>${MONTHS[i][0]}</small></div>`).join('')}</div></section>`;
   // Highlights, each with its card’s picture.
   const thumb = (c) => { const u = x.art?.(c); const mark = `<span class="st-noart" style="color:${tierOf(c).color}">${c.natural === 'star' ? '✦' : tierOf(c).gem}</span>`; return u ? `<img src="${u}" alt="" loading="lazy" onerror="this.outerHTML=this.dataset.mark" data-mark="${esc(mark)}">` /* a picture that doesn't load shows the mark (final iPhone 14 check: Pili's box was empty) */ : `<span class="st-noart" style="color:${tierOf(c).color}">${c.natural === 'star' ? '✦' : tierOf(c).gem}</span>`; }; // stars have no painted picture: a mark, not an empty box (iOS playtest 2026-10-20)
   const hl = (label, c, line, tier) => c ? `<div class="st-hl">${thumb(c)}<div><small>${esc(label)}</small><b>${esc(title(c))}</b><span>${tier ? `<em style="color:${tierOf(c).color};font-style:normal">${tierOf(c).gem} ${tierOf(c).label}</em> · ` : ''}${esc(line)}</span></div></div>` : ''; /* the rarest find shows its rarity in its colour and shape (style audit 2026-10-28) */
   const top = st.rarest[0];
   const highlights = `<section class="st-sec"><div class="st-head"><span>Highlights</span></div><div class="st-hls">
     ${top ? hl('Rarest find', top.c, day(top.s.time), true) : ''}
-    ${st.most && st.most.nights > 1 ? hl('Most seen', st.most.c, `On ${plural(st.most.nights, 'night')}`) : ''}
+    ${st.most && st.most.nights > 1 ? hl('Most seen', st.most.c, `On ${plural(st.most.nights, x.sky ? 'day' : 'night')}`) : ''}
     ${st.firstCard ? hl('Your first card', st.firstCard.c, day(st.firstCard.s.time)) : ''}
     ${st.busiest ? `<div class="st-hl st-hl--day"><span class="st-cal"><small>${esc(day(st.busiest.t, { month: 'short' }))}</small><b>${new Date(st.busiest.t).getDate()}</b></span><div><small>Best day</small><b>${esc(day(st.busiest.t, { weekday: 'long', month: 'long', day: 'numeric' }))}</b><span>${plural(st.busiest.cards.size, 'card')} seen</span></div></div>` : ''}
   </div></section>`;
   const map = `<section class="st-sec"><div class="st-head"><span>Where you’ve looked up</span><span class="st-since">${plural(st.places.length, 'place')}</span></div>${mapSvg(st.places)}</section>`;
   const rare = st.rarest.length > 1 ? `<section class="st-sec"><div class="st-head"><span>Rarest finds</span></div><div class="st-rare">${st.rarest.map(({ s, c }) => { const t = tierOf(c); return `<div>${thumb(c)}<span class="st-rt" style="color:${t.color}">${t.gem} ${esc(t.label)}</span><b>${esc(title(c))}</b><small>${day(s.time, { month: 'short', day: 'numeric' })}</small></div>`; }).join('')}</div></section>` : '';
-  if (!st.sightings) return `${rank}<p class="st-empty">Your stats start with your first card. Head outside on a clear night and collect something.</p>`;
+  if (!st.sightings) return `${rank}<p class="st-empty">${x.sky ? 'Your stats start with your first card. Head outside and catch the first plane you see.' : 'Your stats start with your first card. Head outside on a clear night and collect something.'}</p>`;
   return `${rank}${coll}${goals}${highlights}${tiles}${map}${rare}`;
 }
