@@ -7,15 +7,16 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { TIERS } from './flights.js?v=0.1.1693';
-import { typePhoto } from './type-photos.js?v=0.1.1693';
-import { housePhoto } from './house-photos.js?v=0.1.1693';
-import { airlinePhoto } from './airline-photos.js?v=0.1.1693';
-import { airlineLogo } from './airline-logos.js?v=0.1.1693';
-import { fitStyle } from './photo-fit.js?v=0.1.1693';
-import { dist, speed } from './units.js?v=0.1.1693';
-import { localText } from './localize.js?v=0.1.1693';
-import { hasAirlineCallsign, planeLine, levelWord } from './sky-stamps.js?v=0.1.1693';
+import { TIERS } from './flights.js?v=0.1.1694';
+import { typePhoto } from './type-photos.js?v=0.1.1694';
+import { housePhoto } from './house-photos.js?v=0.1.1694';
+import { airlinePhoto } from './airline-photos.js?v=0.1.1694';
+import { airlineLogo } from './airline-logos.js?v=0.1.1694';
+import { fitStyle } from './photo-fit.js?v=0.1.1694';
+import { dist, speed } from './units.js?v=0.1.1694';
+import { typeFact } from './sky-facts.js?v=0.1.1694';
+import { localText } from './localize.js?v=0.1.1694';
+import { hasAirlineCallsign, planeLine, levelWord } from './sky-stamps.js?v=0.1.1694';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
@@ -168,7 +169,8 @@ export function flightCardHtml(f, opts = {}) {
   return shell('flight', f.tier, inner, `${f.from.city} to ${f.to.city}, ${f.airline}, ${TIERS[tierOf(f.tier)].label}${opts.stampInfo?.level && opts.stampInfo.level !== 'none' ? `, ${opts.stampInfo.level} level` : ''}`, opts.stampInfo?.level);
 }
 
-const planeFact = (p) => p.fact || (p.glyph === 'heli' ? 'Helicopters fly low and slow, so they’re among the hardest things in the sky to catch twice.'
+/* A checked fact for the type first (js/sky-facts.js, 2026-11-17: 131 types, sources in docs/FACTS-SOURCES.md) */
+const planeFact = (p) => p.fact || typeFact(p.type || (/^P:(.+)$/.exec(p.key ?? '') || [])[1]) || (p.glyph === 'heli' ? 'Helicopters fly low and slow, so they’re among the hardest things in the sky to catch twice.'
   : p.glyph === 'prop' ? 'Propeller planes cruise lower and slower than jets, which makes them easier to spot and to hear.'
     : 'Every different aircraft of this type you catch adds a **stamp** to this card, and every airline it flies for is another livery.');
 
