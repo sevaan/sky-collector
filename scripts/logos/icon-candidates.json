@@ -1,0 +1,1747 @@
+{
+ "AAE": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "AAL": {
+  "status": "icon",
+  "pick": {
+   "kind": "symbol",
+   "file": "American Airlines wordmark (2013).svg",
+   "licence": "Public domain",
+   "source": "https://commons.wikimedia.org/wiki/File:American_Airlines_wordmark_(2013).svg",
+   "title": "American Airlines wordmark (2013).svg",
+   "w": 245,
+   "h": 24,
+   "ok": true
+  },
+  "options": [
+   {
+    "kind": "symbol",
+    "file": "American Airlines wordmark (2013).svg",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:American_Airlines_wordmark_(2013).svg",
+    "title": "American Airlines wordmark (2013).svg",
+    "w": 245,
+    "h": 24,
+    "ok": true
+   },
+   {
+    "kind": "symbol",
+    "file": "AA Symbol.svg",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:AA_Symbol.svg",
+    "title": "AA Symbol.svg",
+    "w": 100,
+    "h": 100,
+    "ok": true
+   }
+  ]
+ },
+ "AAR": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "AAY": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "ABD": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "ABL": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "ABQ": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "ABX": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "ABY": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "ACA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "ADO": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "AEA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "AEE": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "AFL": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "AFR": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "AIC": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "AIH": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "AIQ": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "ALK": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "AMX": {
+  "status": "icon",
+  "pick": {
+   "kind": "symbol",
+   "file": "Aeroméxico wordmark.svg",
+   "licence": "Public domain",
+   "source": "https://commons.wikimedia.org/wiki/File:Aerom%C3%A9xico_wordmark.svg",
+   "title": "Aeroméxico wordmark.svg",
+   "w": 1920,
+   "h": 212,
+   "ok": true
+  },
+  "options": [
+   {
+    "kind": "symbol",
+    "file": "Aeroméxico wordmark.svg",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Aerom%C3%A9xico_wordmark.svg",
+    "title": "Aeroméxico wordmark.svg",
+    "w": 1920,
+    "h": 212,
+    "ok": true
+   }
+  ]
+ },
+ "ANA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "ANG": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "ANZ": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "APG": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "APJ": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "APZ": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "ARG": {
+  "status": "icon",
+  "pick": {
+   "kind": "symbol",
+   "file": "Logo wordmark Aerolíneas Argentinas (2010).svg",
+   "licence": "Public domain",
+   "source": "https://commons.wikimedia.org/wiki/File:Logo_wordmark_Aerol%C3%ADneas_Argentinas_(2010).svg",
+   "title": "Logo wordmark Aerolíneas Argentinas (2010).svg",
+   "w": 512,
+   "h": 181,
+   "ok": true
+  },
+  "options": [
+   {
+    "kind": "symbol",
+    "file": "Logo wordmark Aerolíneas Argentinas (2010).svg",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Logo_wordmark_Aerol%C3%ADneas_Argentinas_(2010).svg",
+    "title": "Logo wordmark Aerolíneas Argentinas (2010).svg",
+    "w": 512,
+    "h": 181,
+    "ok": true
+   }
+  ]
+ },
+ "ASA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "ASH": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "ASL": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "ASV": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "ATN": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "AUA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "AVA": {
+  "status": "icon",
+  "pick": {
+   "kind": "symbol",
+   "file": "Avianca 2023 wordmark.svg",
+   "licence": "Public domain",
+   "source": "https://commons.wikimedia.org/wiki/File:Avianca_2023_wordmark.svg",
+   "title": "Avianca 2023 wordmark.svg",
+   "w": 500,
+   "h": 114,
+   "ok": true
+  },
+  "options": [
+   {
+    "kind": "symbol",
+    "file": "Avianca 2023 wordmark.svg",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Avianca_2023_wordmark.svg",
+    "title": "Avianca 2023 wordmark.svg",
+    "w": 500,
+    "h": 114,
+    "ok": true
+   }
+  ]
+ },
+ "AWQ": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "AXB": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "AXM": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "AZU": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "AZW": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "BAW": {
+  "status": "icon",
+  "pick": {
+   "kind": "symbol",
+   "file": "Logo wordmark British Airways.png",
+   "licence": "Public domain",
+   "source": "https://commons.wikimedia.org/wiki/File:Logo_wordmark_British_Airways.png",
+   "title": "Logo wordmark British Airways.png",
+   "w": 1236,
+   "h": 184,
+   "ok": true
+  },
+  "options": [
+   {
+    "kind": "symbol",
+    "file": "Logo wordmark British Airways.png",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Logo_wordmark_British_Airways.png",
+    "title": "Logo wordmark British Airways.png",
+    "w": 1236,
+    "h": 184,
+    "ok": true
+   }
+  ]
+ },
+ "BCS": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "BEL": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "BFF": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "BGA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "BOX": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "BRU": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "BTK": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "CAI": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "CAL": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "CAO": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "CBJ": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "CCA": {
+  "status": "icon",
+  "pick": {
+   "kind": "symbol",
+   "file": "Air China wordmark.svg",
+   "licence": "Public domain",
+   "source": "https://commons.wikimedia.org/wiki/File:Air_China_wordmark.svg",
+   "title": "Air China wordmark.svg",
+   "w": 344,
+   "h": 52,
+   "ok": true
+  },
+  "options": [
+   {
+    "kind": "symbol",
+    "file": "Air China wordmark.svg",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Air_China_wordmark.svg",
+    "title": "Air China wordmark.svg",
+    "w": 344,
+    "h": 52,
+    "ok": true
+   }
+  ]
+ },
+ "CDG": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "CEB": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "CES": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "CFG": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "CHB": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "CHH": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "CJT": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "CKK": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "CKS": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "CLX": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "CMP": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "CNS": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "CPA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "CQH": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "CRK": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "CSA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "CSN": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "CSS": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "CSZ": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "CTV": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "CUA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "CVA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "CXA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "DAL": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "DHK": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "DHL": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "DLA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "DLH": {
+  "status": "icon",
+  "pick": {
+   "kind": "icon",
+   "file": "Lufthansa Logo 2018 crane.svg",
+   "licence": "Public domain",
+   "source": "https://commons.wikimedia.org/wiki/File:Lufthansa_Logo_2018_crane.svg",
+   "title": "Lufthansa Logo 2018 crane.svg",
+   "w": 512,
+   "h": 512,
+   "ok": true
+  },
+  "options": [
+   {
+    "kind": "icon",
+    "file": "Lufthansa Logo 2018 crane.svg",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Lufthansa_Logo_2018_crane.svg",
+    "title": "Lufthansa Logo 2018 crane.svg",
+    "w": 512,
+    "h": 512,
+    "ok": true
+   }
+  ]
+ },
+ "EDW": {
+  "status": "icon",
+  "pick": {
+   "kind": "symbol",
+   "file": "Edelweiss Air wordmark.svg",
+   "licence": "Public domain",
+   "source": "https://commons.wikimedia.org/wiki/File:Edelweiss_Air_wordmark.svg",
+   "title": "Edelweiss Air wordmark.svg",
+   "w": 500,
+   "h": 59,
+   "ok": true
+  },
+  "options": [
+   {
+    "kind": "symbol",
+    "file": "Edelweiss Air wordmark.svg",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Edelweiss_Air_wordmark.svg",
+    "title": "Edelweiss Air wordmark.svg",
+    "w": 500,
+    "h": 59,
+    "ok": true
+   }
+  ]
+ },
+ "EFW": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "EIN": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "EJA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "ELY": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "ENY": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "ESR": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "ETD": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "ETH": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "EVA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "EWG": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "EXS": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "EZS": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "EZY": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "FBU": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "FDB": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "FDX": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "FDY": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "FFT": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "FIN": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "FJI": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "FLE": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "GCR": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "GEC": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "GFA": {
+  "status": "icon",
+  "pick": {
+   "kind": "symbol",
+   "file": "Gulf Air 2018 wordmark.svg",
+   "licence": "Public domain",
+   "source": "https://commons.wikimedia.org/wiki/File:Gulf_Air_2018_wordmark.svg",
+   "title": "Gulf Air 2018 wordmark.svg",
+   "w": 500,
+   "h": 71,
+   "ok": true
+  },
+  "options": [
+   {
+    "kind": "symbol",
+    "file": "Gulf Air 2018 wordmark.svg",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Gulf_Air_2018_wordmark.svg",
+    "title": "Gulf Air 2018 wordmark.svg",
+    "w": 500,
+    "h": 71,
+    "ok": true
+   }
+  ]
+ },
+ "GIA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "GJS": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "GLO": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "GTI": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "HAL": {
+  "status": "icon",
+  "pick": {
+   "kind": "symbol",
+   "file": "Hawaiian Airlines 2017 wordmark.svg",
+   "licence": "Public domain",
+   "source": "https://commons.wikimedia.org/wiki/File:Hawaiian_Airlines_2017_wordmark.svg",
+   "title": "Hawaiian Airlines 2017 wordmark.svg",
+   "w": 500,
+   "h": 130,
+   "ok": true
+  },
+  "options": [
+   {
+    "kind": "symbol",
+    "file": "Hawaiian Airlines 2017 wordmark.svg",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Hawaiian_Airlines_2017_wordmark.svg",
+    "title": "Hawaiian Airlines 2017 wordmark.svg",
+    "w": 500,
+    "h": 130,
+    "ok": true
+   }
+  ]
+ },
+ "HGO": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "HVN": {
+  "status": "icon",
+  "pick": {
+   "kind": "symbol",
+   "file": "Vietnam Airlines 2015 wordmark.svg",
+   "licence": "Public domain",
+   "source": "https://commons.wikimedia.org/wiki/File:Vietnam_Airlines_2015_wordmark.svg",
+   "title": "Vietnam Airlines 2015 wordmark.svg",
+   "w": 500,
+   "h": 53,
+   "ok": true
+  },
+  "options": [
+   {
+    "kind": "symbol",
+    "file": "Vietnam Airlines 2015 wordmark.svg",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Vietnam_Airlines_2015_wordmark.svg",
+    "title": "Vietnam Airlines 2015 wordmark.svg",
+    "w": 500,
+    "h": 53,
+    "ok": true
+   }
+  ]
+ },
+ "IAW": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "IBE": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "IBS": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "ICE": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "ICL": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "IGO": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "IRA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "ITY": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "JAF": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "JAL": {
+  "status": "icon",
+  "pick": {
+   "kind": "symbol",
+   "file": "Japan Airlines Wordmark (2011).svg",
+   "licence": "Public domain",
+   "source": "https://commons.wikimedia.org/wiki/File:Japan_Airlines_Wordmark_(2011).svg",
+   "title": "Japan Airlines Wordmark (2011).svg",
+   "w": 451,
+   "h": 27,
+   "ok": true
+  },
+  "options": [
+   {
+    "kind": "symbol",
+    "file": "Japan Airlines Wordmark (2011).svg",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Japan_Airlines_Wordmark_(2011).svg",
+    "title": "Japan Airlines Wordmark (2011).svg",
+    "w": 451,
+    "h": 27,
+    "ok": true
+   }
+  ]
+ },
+ "JAV": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "JBU": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "JIA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "JJA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "JJP": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "JNA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "JST": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "JTA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "JZA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "KAC": {
+  "status": "icon",
+  "pick": {
+   "kind": "symbol",
+   "file": "Kuwait Airways wordmark.svg",
+   "licence": "Public domain",
+   "source": "https://commons.wikimedia.org/wiki/File:Kuwait_Airways_wordmark.svg",
+   "title": "Kuwait Airways wordmark.svg",
+   "w": 500,
+   "h": 378,
+   "ok": true
+  },
+  "options": [
+   {
+    "kind": "symbol",
+    "file": "Kuwait Airways wordmark.svg",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Kuwait_Airways_wordmark.svg",
+    "title": "Kuwait Airways wordmark.svg",
+    "w": 500,
+    "h": 378,
+    "ok": true
+   }
+  ]
+ },
+ "KAL": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "KLM": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "KMF": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "KQA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "LAN": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "LGL": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "LLM": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "LNI": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "LOG": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "LOT": {
+  "status": "icon",
+  "pick": {
+   "kind": "symbol",
+   "file": "LOT Polish Airlines wordmark.svg",
+   "licence": "Public domain",
+   "source": "https://commons.wikimedia.org/wiki/File:LOT_Polish_Airlines_wordmark.svg",
+   "title": "LOT Polish Airlines wordmark.svg",
+   "w": 500,
+   "h": 169,
+   "ok": true
+  },
+  "options": [
+   {
+    "kind": "symbol",
+    "file": "LOT Polish Airlines wordmark.svg",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:LOT_Polish_Airlines_wordmark.svg",
+    "title": "LOT Polish Airlines wordmark.svg",
+    "w": 500,
+    "h": 169,
+    "ok": true
+   }
+  ]
+ },
+ "LPE": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "LRT": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "MAS": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "MAU": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "MEA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "MNB": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "MPH": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "MSC": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "MSR": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "MSX": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "MXA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "MXY": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "NAC": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "NCA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "NCR": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "NOZ": {
+  "status": "icon",
+  "pick": {
+   "kind": "icon",
+   "file": "Norwegian Avatar logo (2024-).png",
+   "licence": "Public domain",
+   "source": "https://commons.wikimedia.org/wiki/File:Norwegian_Avatar_logo_(2024-).png",
+   "title": "Norwegian Avatar logo (2024-).png",
+   "w": 1080,
+   "h": 1080,
+   "ok": true
+  },
+  "options": [
+   {
+    "kind": "icon",
+    "file": "Norwegian Avatar logo (2024-).png",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Norwegian_Avatar_logo_(2024-).png",
+    "title": "Norwegian Avatar logo (2024-).png",
+    "w": 1080,
+    "h": 1080,
+    "ok": true
+   }
+  ]
+ },
+ "NPT": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "NSZ": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "OAL": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "OMA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "PAC": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "PAL": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "PAS": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "PGT": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "PIA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "POE": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "PVG": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "QAF": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "QFA": {
+  "status": "icon",
+  "pick": {
+   "kind": "symbol",
+   "file": "Qantas wordmark 2016.svg",
+   "licence": "Public domain",
+   "source": "https://commons.wikimedia.org/wiki/File:Qantas_wordmark_2016.svg",
+   "title": "Qantas wordmark 2016.svg",
+   "w": 156,
+   "h": 19,
+   "ok": true
+  },
+  "options": [
+   {
+    "kind": "symbol",
+    "file": "Qantas wordmark 2016.svg",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Qantas_wordmark_2016.svg",
+    "title": "Qantas wordmark 2016.svg",
+    "w": 156,
+    "h": 19,
+    "ok": true
+   }
+  ]
+ },
+ "QLK": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "QQE": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "QTR": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "QXE": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "RAM": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "RBA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "RJA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "ROU": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "RPA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "RUK": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "RWD": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "RXA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "RYR": {
+  "status": "icon",
+  "pick": {
+   "kind": "symbol",
+   "file": "Ryanair wordmark.svg",
+   "licence": "Public domain",
+   "source": "https://commons.wikimedia.org/wiki/File:Ryanair_wordmark.svg",
+   "title": "Ryanair wordmark.svg",
+   "w": 244,
+   "h": 30,
+   "ok": true
+  },
+  "options": [
+   {
+    "kind": "symbol",
+    "file": "Ryanair wordmark.svg",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Ryanair_wordmark.svg",
+    "title": "Ryanair wordmark.svg",
+    "w": 244,
+    "h": 30,
+    "ok": true
+   }
+  ]
+ },
+ "RYS": {
+  "status": "icon",
+  "pick": {
+   "kind": "symbol",
+   "file": "Buzz Poland wordmark.svg",
+   "licence": "Public domain",
+   "source": "https://commons.wikimedia.org/wiki/File:Buzz_Poland_wordmark.svg",
+   "title": "Buzz Poland wordmark.svg",
+   "w": 1637,
+   "h": 476,
+   "ok": true
+  },
+  "options": [
+   {
+    "kind": "symbol",
+    "file": "Buzz Poland wordmark.svg",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Buzz_Poland_wordmark.svg",
+    "title": "Buzz Poland wordmark.svg",
+    "w": 1637,
+    "h": 476,
+    "ok": true
+   }
+  ]
+ },
+ "RZO": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "SAA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "SAS": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "SBI": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "SCX": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "SDM": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "SEJ": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "SEY": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "SFJ": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "SIA": {
+  "status": "icon",
+  "pick": {
+   "kind": "symbol",
+   "file": "Singapore Airlines wordmark.svg",
+   "licence": "Public domain",
+   "source": "https://commons.wikimedia.org/wiki/File:Singapore_Airlines_wordmark.svg",
+   "title": "Singapore Airlines wordmark.svg",
+   "w": 300,
+   "h": 92,
+   "ok": true
+  },
+  "options": [
+   {
+    "kind": "symbol",
+    "file": "Singapore Airlines wordmark.svg",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Singapore_Airlines_wordmark.svg",
+    "title": "Singapore Airlines wordmark.svg",
+    "w": 300,
+    "h": 92,
+    "ok": true
+   }
+  ]
+ },
+ "SJO": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "SKP": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "SKU": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "SKW": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "SKX": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "SKY": {
+  "status": "icon",
+  "pick": {
+   "kind": "symbol",
+   "file": "Skymark Airlines Logo.svg",
+   "licence": "Public domain",
+   "source": "https://commons.wikimedia.org/wiki/File:Skymark_Airlines_Logo.svg",
+   "title": "Skymark Airlines Logo.svg",
+   "w": 1476,
+   "h": 252,
+   "ok": true
+  },
+  "options": [
+   {
+    "kind": "symbol",
+    "file": "Skymark Airlines Logo.svg",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Skymark_Airlines_Logo.svg",
+    "title": "Skymark Airlines Logo.svg",
+    "w": 1476,
+    "h": 252,
+    "ok": true
+   },
+   {
+    "kind": "symbol",
+    "file": "Skymark Airlines Logo (SKY).svg",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Skymark_Airlines_Logo_(SKY).svg",
+    "title": "Skymark Airlines Logo (SKY).svg",
+    "w": 821,
+    "h": 249,
+    "ok": true
+   }
+  ]
+ },
+ "SLI": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "SLM": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "SNJ": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "SRR": {
+  "status": "icon",
+  "pick": {
+   "kind": "symbol",
+   "file": "Star Air (Denmark) logo.png",
+   "licence": "Public domain",
+   "source": "https://commons.wikimedia.org/wiki/File:Star_Air_(Denmark)_logo.png",
+   "title": "Star Air (Denmark) logo.png",
+   "w": 257,
+   "h": 130,
+   "ok": true
+  },
+  "options": [
+   {
+    "kind": "symbol",
+    "file": "Star Air (Denmark) logo.png",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Star_Air_(Denmark)_logo.png",
+    "title": "Star Air (Denmark) logo.png",
+    "w": 257,
+    "h": 130,
+    "ok": true
+   }
+  ]
+ },
+ "STT": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "STW": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "SVA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "SWA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "SWR": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "SXS": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "TAI": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "TAM": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "TAP": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "TAR": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "TAY": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "TGW": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "THA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "THY": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "TKJ": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "TLM": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "TNU": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "TOM": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "TOW": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "TRA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "TSC": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "TTW": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "TVF": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "TVJ": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "TWB": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "TZP": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "UAE": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "UAL": {
+  "status": "icon",
+  "pick": {
+   "kind": "symbol",
+   "file": "United Airlines wordmark.svg",
+   "licence": "Public domain",
+   "source": "https://commons.wikimedia.org/wiki/File:United_Airlines_wordmark.svg",
+   "title": "United Airlines wordmark.svg",
+   "w": 2758,
+   "h": 435,
+   "ok": true
+  },
+  "options": [
+   {
+    "kind": "symbol",
+    "file": "United Airlines wordmark.svg",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:United_Airlines_wordmark.svg",
+    "title": "United Airlines wordmark.svg",
+    "w": 2758,
+    "h": 435,
+    "ok": true
+   }
+  ]
+ },
+ "UCA": {
+  "status": "icon",
+  "pick": {
+   "kind": "symbol",
+   "file": "Logo wordmark CommuteAir (2025).png",
+   "licence": "Public domain",
+   "source": "https://commons.wikimedia.org/wiki/File:Logo_wordmark_CommuteAir_(2025).png",
+   "title": "Logo wordmark CommuteAir (2025).png",
+   "w": 1475,
+   "h": 312,
+   "ok": true
+  },
+  "options": [
+   {
+    "kind": "symbol",
+    "file": "Logo wordmark CommuteAir (2025).png",
+    "licence": "Public domain",
+    "source": "https://commons.wikimedia.org/wiki/File:Logo_wordmark_CommuteAir_(2025).png",
+    "title": "Logo wordmark CommuteAir (2025).png",
+    "w": 1475,
+    "h": 312,
+    "ok": true
+   }
+  ]
+ },
+ "UPS": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "UTA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "UZB": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "VIR": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "VIV": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "VJC": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "VKG": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "VLG": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "VOI": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "VOZ": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "VTE": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "VXP": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "WEN": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "WIF": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "WJA": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "WMT": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "WUK": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "WZZ": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ },
+ "XUM": {
+  "status": "none",
+  "pick": null,
+  "options": []
+ }
+}

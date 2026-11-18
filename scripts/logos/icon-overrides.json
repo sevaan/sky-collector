@@ -1,0 +1,84 @@
+{
+ "_": "By eye from sheets/icons.png: [from, to] as fractions of the logo's width = crop the symbol there; or 'letter' / 'colour'",
+ "AAR": [
+  0.9,
+  1
+ ],
+ "AUA": [
+  0.78,
+  1
+ ],
+ "ANZ": [
+  0.86,
+  1
+ ],
+ "IBE": [
+  0.8,
+  1
+ ],
+ "IBS": [
+  0.78,
+  1
+ ],
+ "ICE": [
+  0.85,
+  1
+ ],
+ "EWG": [
+  0.86,
+  1
+ ],
+ "FBU": [
+  0.83,
+  1
+ ],
+ "ETH": [
+  0.76,
+  1
+ ],
+ "SWA": [
+  0.89,
+  1
+ ],
+ "WJA": [
+  0.86,
+  1
+ ],
+ "AIC": "colour",
+ "ABX": [
+  0,
+  0.3
+ ],
+ "CSA": [
+  0,
+  0.27
+ ],
+ "KLM": {
+  "crop": [
+   0.3,
+   0,
+   0.7,
+   0.42
+  ]
+ },
+ "JST": [
+  0.8,
+  1
+ ],
+ "JJP": [
+  0.8,
+  1
+ ],
+ "MXY": {
+  "crop": [
+   0.45,
+   0,
+   0.75,
+   0.5
+  ]
+ },
+ "KMF": [
+  0,
+  0.13
+ ]
+}

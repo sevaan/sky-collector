@@ -1,0 +1,725 @@
+{
+ "AAE": {
+  "colour": "#b49c84",
+  "kind": "initials"
+ },
+ "AAL": {
+  "colour": "#3c3c54",
+  "kind": "initials"
+ },
+ "AAR": {
+  "colour": "#545454",
+  "kind": "symbol"
+ },
+ "AAY": {
+  "colour": "#0c549c",
+  "kind": "initials"
+ },
+ "ABD": {
+  "colour": "#0c5484",
+  "kind": "letter"
+ },
+ "ABL": {
+  "colour": "#243c9c",
+  "kind": "initials"
+ },
+ "ABQ": {
+  "colour": "#242484",
+  "kind": "symbol"
+ },
+ "ABX": {
+  "colour": "#0c0c0c",
+  "kind": "symbol"
+ },
+ "ABY": {
+  "colour": "#e40c3c",
+  "kind": "initials"
+ },
+ "ACA": {
+  "colour": "#242424",
+  "kind": "symbol"
+ },
+ "ADO": {
+  "colour": "#0c0c0c",
+  "kind": "symbol"
+ },
+ "AEA": {
+  "colour": "#0c6ccc",
+  "kind": "letter"
+ },
+ "AEE": {
+  "colour": "#0c2484",
+  "kind": "symbol"
+ },
+ "AFL": {
+  "colour": "#0c549c",
+  "kind": "letter"
+ },
+ "AFR": {
+  "colour": "#0c0c3c",
+  "kind": "symbol"
+ },
+ "AIC": {
+  "colour": "#e40c24",
+  "kind": "initials"
+ },
+ "AIH": {
+  "colour": "#243c84",
+  "kind": "letter"
+ },
+ "AIQ": {
+  "colour": "#e42424",
+  "kind": "letter"
+ },
+ "AMX": {
+  "colour": "#0c0c3c",
+  "kind": "letter"
+ },
+ "ANA": {
+  "colour": "#243c9c",
+  "kind": "letter"
+ },
+ "ANZ": {
+  "colour": "#242424",
+  "kind": "symbol"
+ },
+ "APG": {
+  "colour": "#e42424",
+  "kind": "letter"
+ },
+ "APJ": {
+  "colour": "#cc9c84",
+  "kind": "letter"
+ },
+ "APZ": {
+  "colour": "#24243c",
+  "kind": "symbol"
+ },
+ "ARG": {
+  "colour": "#0c84b4",
+  "kind": "initials"
+ },
+ "ASA": {
+  "colour": "#0c3c54",
+  "kind": "initials"
+ },
+ "ASH": {
+  "colour": "#0c0ccc",
+  "kind": "parent",
+  "parent": "UAL"
+ },
+ "ASL": {
+  "colour": "#0c2454",
+  "kind": "letter"
+ },
+ "ASV": {
+  "colour": "#24b49c",
+  "kind": "symbol"
+ },
+ "AUA": {
+  "colour": "#e4240c",
+  "kind": "symbol"
+ },
+ "AVA": {
+  "colour": "#fc0c0c",
+  "kind": "letter"
+ },
+ "AWQ": {
+  "colour": "#e42424",
+  "kind": "letter"
+ },
+ "AXB": {
+  "colour": "#fc6c24",
+  "kind": "initials"
+ },
+ "AXM": {
+  "colour": "#fc0c0c",
+  "kind": "initials"
+ },
+ "AZU": {
+  "colour": "#0c243c",
+  "kind": "symbol"
+ },
+ "BAW": {
+  "colour": "#24549c",
+  "kind": "initials"
+ },
+ "BEL": {
+  "colour": "#0c0c3c",
+  "kind": "symbol"
+ },
+ "BOX": {
+  "colour": "#fccc0c",
+  "kind": "letter"
+ },
+ "BRU": {
+  "colour": "#3c54cc",
+  "kind": "letter"
+ },
+ "CAI": {
+  "colour": "#e42424",
+  "kind": "initials"
+ },
+ "CCA": {
+  "colour": "#0c0c0c",
+  "kind": "initials"
+ },
+ "CEB": {
+  "colour": "#0c6cb4",
+  "kind": "initials"
+ },
+ "CFG": {
+  "colour": "#0c0c0c",
+  "kind": "symbol"
+ },
+ "CKS": {
+  "colour": "#242424",
+  "kind": "symbol"
+ },
+ "CLX": {
+  "colour": "#0c0c0c",
+  "kind": "letter"
+ },
+ "CMP": {
+  "colour": "#0c6cb4",
+  "kind": "letter"
+ },
+ "CNS": {
+  "colour": "#54546c",
+  "kind": "symbol"
+ },
+ "CPA": {
+  "colour": "#0c546c",
+  "kind": "symbol"
+ },
+ "CSA": {
+  "colour": "#0c246c",
+  "kind": "symbol"
+ },
+ "CSS": {
+  "colour": "#0c0c0c",
+  "kind": "letter"
+ },
+ "CTV": {
+  "colour": "#0c843c",
+  "kind": "initials"
+ },
+ "DAL": {
+  "colour": "#0c3c84",
+  "kind": "symbol"
+ },
+ "DHK": {
+  "colour": "#fccc0c",
+  "kind": "initials"
+ },
+ "DHL": {
+  "colour": "#0c549c",
+  "kind": "initials"
+ },
+ "DLA": {
+  "colour": "#0cb4b4",
+  "kind": "initials"
+ },
+ "DLH": {
+  "colour": "#0c243c",
+  "kind": "symbol"
+ },
+ "EDW": {
+  "colour": "#0c2484",
+  "kind": "letter"
+ },
+ "EIN": {
+  "colour": "#0c6c6c",
+  "kind": "symbol"
+ },
+ "EJA": {
+  "colour": "#545454",
+  "kind": "letter"
+ },
+ "ELY": {
+  "colour": "#243c84",
+  "kind": "letter"
+ },
+ "ENY": {
+  "colour": "#240c6c",
+  "kind": "letter"
+ },
+ "ESR": {
+  "colour": "#cc2454",
+  "kind": "initials"
+ },
+ "ETD": {
+  "colour": "#b4840c",
+  "kind": "initials"
+ },
+ "ETH": {
+  "colour": "#cc2424",
+  "kind": "symbol"
+ },
+ "EVA": {
+  "colour": "#0c9c54",
+  "kind": "symbol"
+ },
+ "EWG": {
+  "colour": "#842454",
+  "kind": "symbol"
+ },
+ "EXS": {
+  "colour": "#e42424",
+  "kind": "initials"
+ },
+ "EZS": {
+  "colour": "#fc6c0c",
+  "kind": "initials"
+ },
+ "EZY": {
+  "colour": "#fc6c0c",
+  "kind": "initials"
+ },
+ "FBU": {
+  "colour": "#0c549c",
+  "kind": "symbol"
+ },
+ "FDB": {
+  "colour": "#0c6c9c",
+  "kind": "letter"
+ },
+ "FDX": {
+  "colour": "#240c84",
+  "kind": "initials"
+ },
+ "FFT": {
+  "colour": "#0c6c3c",
+  "kind": "initials"
+ },
+ "FIN": {
+  "colour": "#0c0c6c",
+  "kind": "initials"
+ },
+ "FLE": {
+  "colour": "#0c0c0c",
+  "kind": "letter"
+ },
+ "GEC": {
+  "colour": "#0c0c54",
+  "kind": "symbol"
+ },
+ "GFA": {
+  "colour": "#242454",
+  "kind": "symbol"
+ },
+ "GLO": {
+  "colour": "#fc6c24",
+  "kind": "initials"
+ },
+ "HAL": {
+  "colour": "#3c3c9c",
+  "kind": "initials"
+ },
+ "HVN": {
+  "colour": "#0c5484",
+  "kind": "letter"
+ },
+ "IAW": {
+  "colour": "#0c3c0c",
+  "kind": "letter"
+ },
+ "IBE": {
+  "colour": "#e42424",
+  "kind": "symbol"
+ },
+ "IBS": {
+  "colour": "#cc2424",
+  "kind": "symbol"
+ },
+ "ICE": {
+  "colour": "#0c246c",
+  "kind": "symbol"
+ },
+ "IGO": {
+  "colour": "#0c249c",
+  "kind": "initials"
+ },
+ "IRA": {
+  "colour": "#242454",
+  "kind": "initials"
+ },
+ "ITY": {
+  "colour": "#0c6c3c",
+  "kind": "initials"
+ },
+ "JAF": {
+  "colour": "#e4240c",
+  "kind": "letter"
+ },
+ "JAL": {
+  "colour": "#0c0c0c",
+  "kind": "initials"
+ },
+ "JBU": {
+  "colour": "#0c3c6c",
+  "kind": "initials"
+ },
+ "JJA": {
+  "colour": "#fc5424",
+  "kind": "initials"
+ },
+ "JJP": {
+  "colour": "#0c0c0c",
+  "kind": "symbol"
+ },
+ "JST": {
+  "colour": "#0c0c0c",
+  "kind": "symbol"
+ },
+ "JTA": {
+  "colour": "#0c0c0c",
+  "kind": "letter"
+ },
+ "JZA": {
+  "colour": "#242424",
+  "kind": "parent",
+  "parent": "ACA"
+ },
+ "KAC": {
+  "colour": "#242454",
+  "kind": "letter"
+ },
+ "KAL": {
+  "colour": "#0c0c6c",
+  "kind": "symbol"
+ },
+ "KLM": {
+  "colour": "#0c9ce4",
+  "kind": "symbol"
+ },
+ "KMF": {
+  "colour": "#0c549c",
+  "kind": "symbol"
+ },
+ "KQA": {
+  "colour": "#e42424",
+  "kind": "letter"
+ },
+ "LAN": {
+  "colour": "#240c84",
+  "kind": "symbol"
+ },
+ "LGL": {
+  "colour": "#0c9cb4",
+  "kind": "initials"
+ },
+ "LOT": {
+  "colour": "#24246c",
+  "kind": "initials"
+ },
+ "LPE": {
+  "colour": "#240c84",
+  "kind": "symbol"
+ },
+ "MEA": {
+  "colour": "#0c6c54",
+  "kind": "initials"
+ },
+ "MNB": {
+  "colour": "#545454",
+  "kind": "letter"
+ },
+ "MPH": {
+  "colour": "#0c3c54",
+  "kind": "letter"
+ },
+ "MSC": {
+  "colour": "#3c0c6c",
+  "kind": "initials"
+ },
+ "MSR": {
+  "colour": "#0c2454",
+  "kind": "initials"
+ },
+ "MXA": {
+  "colour": "#0c0c0c",
+  "kind": "symbol"
+ },
+ "MXY": {
+  "colour": "#0c0c3c",
+  "kind": "symbol"
+ },
+ "NAC": {
+  "colour": "#fc0c0c",
+  "kind": "initials"
+ },
+ "NCA": {
+  "colour": "#0c0c6c",
+  "kind": "letter"
+ },
+ "NCR": {
+  "colour": "#0c54b4",
+  "kind": "initials"
+ },
+ "NOZ": {
+  "colour": "#e42424",
+  "kind": "letter"
+ },
+ "NPT": {
+  "colour": "#242454",
+  "kind": "initials"
+ },
+ "NSZ": {
+  "colour": "#e42424",
+  "kind": "letter"
+ },
+ "PAC": {
+  "colour": "#0c3c84",
+  "kind": "letter"
+ },
+ "PAL": {
+  "colour": "#e42424",
+  "kind": "initials"
+ },
+ "PAS": {
+  "colour": "#0c3c6c",
+  "kind": "initials"
+ },
+ "PGT": {
+  "colour": "#e42424",
+  "kind": "initials"
+ },
+ "PIA": {
+  "colour": "#0c240c",
+  "kind": "initials"
+ },
+ "POE": {
+  "colour": "#242424",
+  "kind": "letter"
+ },
+ "QFA": {
+  "colour": "#3c3c3c",
+  "kind": "initials"
+ },
+ "QTR": {
+  "colour": "#540c3c",
+  "kind": "initials"
+ },
+ "QXE": {
+  "colour": "#3cb4cc",
+  "kind": "initials"
+ },
+ "RAM": {
+  "colour": "#cc0c3c",
+  "kind": "letter"
+ },
+ "RBA": {
+  "colour": "#fce40c",
+  "kind": "initials"
+ },
+ "ROU": {
+  "colour": "#9c0c3c",
+  "kind": "initials"
+ },
+ "RWD": {
+  "colour": "#0c549c",
+  "kind": "letter"
+ },
+ "RXA": {
+  "colour": "#0c3c6c",
+  "kind": "initials"
+ },
+ "RYR": {
+  "colour": "#0c3c9c",
+  "kind": "symbol"
+ },
+ "RYS": {
+  "colour": "#fccc0c",
+  "kind": "initials"
+ },
+ "SAA": {
+  "colour": "#0c3c84",
+  "kind": "initials"
+ },
+ "SAS": {
+  "colour": "#0c0cb4",
+  "kind": "initials"
+ },
+ "SBI": {
+  "colour": "#b4cc0c",
+  "kind": "letter"
+ },
+ "SDM": {
+  "colour": "#e40c24",
+  "kind": "symbol"
+ },
+ "SFJ": {
+  "colour": "#0c0c0c",
+  "kind": "letter"
+ },
+ "SIA": {
+  "colour": "#0c246c",
+  "kind": "initials"
+ },
+ "SJO": {
+  "colour": "#242424",
+  "kind": "initials"
+ },
+ "SKU": {
+  "colour": "#542484",
+  "kind": "letter"
+ },
+ "SKW": {
+  "colour": "#24549c",
+  "kind": "initials"
+ },
+ "SKY": {
+  "colour": "#243c84",
+  "kind": "initials"
+ },
+ "SLM": {
+  "colour": "#fc0c0c",
+  "kind": "initials"
+ },
+ "SNJ": {
+  "colour": "#84846c",
+  "kind": "initials"
+ },
+ "SRR": {
+  "colour": "#0c5484",
+  "kind": "initials"
+ },
+ "SWA": {
+  "colour": "#3c54b4",
+  "kind": "symbol"
+ },
+ "SWR": {
+  "colour": "#e40c0c",
+  "kind": "letter"
+ },
+ "SXS": {
+  "colour": "#243c84",
+  "kind": "symbol"
+ },
+ "TAM": {
+  "colour": "#240c84",
+  "kind": "symbol"
+ },
+ "TAP": {
+  "colour": "#0c0c0c",
+  "kind": "initials"
+ },
+ "TAY": {
+  "colour": "#0c549c",
+  "kind": "initials"
+ },
+ "TGW": {
+  "colour": "#fce40c",
+  "kind": "letter"
+ },
+ "THY": {
+  "colour": "#0c0c0c",
+  "kind": "symbol"
+ },
+ "TKJ": {
+  "colour": "#0c2454",
+  "kind": "letter"
+ },
+ "TOM": {
+  "colour": "#cc0c0c",
+  "kind": "letter"
+ },
+ "TRA": {
+  "colour": "#0ccc84",
+  "kind": "symbol"
+ },
+ "TSC": {
+  "colour": "#0c2454",
+  "kind": "letter"
+ },
+ "TTW": {
+  "colour": "#545454",
+  "kind": "letter"
+ },
+ "TVF": {
+  "colour": "#0ccc6c",
+  "kind": "symbol"
+ },
+ "TVJ": {
+  "colour": "#e40c0c",
+  "kind": "initials"
+ },
+ "TZP": {
+  "colour": "#242424",
+  "kind": "letter"
+ },
+ "UAE": {
+  "colour": "#cc2424",
+  "kind": "letter"
+ },
+ "UAL": {
+  "colour": "#0c0ccc",
+  "kind": "symbol"
+ },
+ "UCA": {
+  "colour": "#fccc54",
+  "kind": "symbol"
+ },
+ "UPS": {
+  "colour": "#3c0c0c",
+  "kind": "letter"
+ },
+ "UTA": {
+  "colour": "#0c3c9c",
+  "kind": "letter"
+ },
+ "VIR": {
+  "colour": "#540c6c",
+  "kind": "initials"
+ },
+ "VJC": {
+  "colour": "#e42424",
+  "kind": "initials"
+ },
+ "VLG": {
+  "colour": "#545454",
+  "kind": "initials"
+ },
+ "VOI": {
+  "colour": "#242424",
+  "kind": "symbol"
+ },
+ "VTE": {
+  "colour": "#0c3c84",
+  "kind": "symbol"
+ },
+ "VXP": {
+  "colour": "#540c9c",
+  "kind": "initials"
+ },
+ "WEN": {
+  "colour": "#0c3c84",
+  "kind": "parent",
+  "parent": "WJA"
+ },
+ "WIF": {
+  "colour": "#0c5424",
+  "kind": "initials"
+ },
+ "WJA": {
+  "colour": "#0c3c84",
+  "kind": "symbol"
+ },
+ "WMT": {
+  "colour": "#cc2484",
+  "kind": "initials"
+ },
+ "WUK": {
+  "colour": "#cc2484",
+  "kind": "initials"
+ },
+ "WZZ": {
+  "colour": "#cc2484",
+  "kind": "initials"
+ },
+ "XUM": {
+  "colour": "#242424",
+  "kind": "symbol"
+ }
+}

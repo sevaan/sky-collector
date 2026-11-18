@@ -5,13 +5,13 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { planeKey } from './flights.js?v=0.1.1703';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1703';
-import { glyphSvg } from './flight-card.js?v=0.1.1703';
-import { catches } from './sky-catch.js?v=0.1.1703';
-import { noteLocal } from './sky-local.js?v=0.1.1703';
-import { planeSet } from './sky-sets.js?v=0.1.1703';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1703';
+import { planeKey } from './flights.js?v=0.1.1704';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1704';
+import { glyphSvg, flightPhotoFor } from './flight-card.js?v=0.1.1704';
+import { catches } from './sky-catch.js?v=0.1.1704';
+import { noteLocal } from './sky-local.js?v=0.1.1704';
+import { planeSet } from './sky-sets.js?v=0.1.1704';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1704';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -89,16 +89,35 @@ function heroSky(wx) {
   const tint = grey ? [214, 223, 232] : [255, 255, 255];
   return { cls: ` cloudy${grey ? ' grey' : ''}`, html: `<div class="tn-sky" aria-hidden="true">${cloudsHtml(wet ? 1 : Math.max(0.45, cloud), { tint })}${wet ? rainHtml(50) : ''}</div>`, word };
 }
+const TARGET = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="12" r="2.4" fill="currentColor" stroke="none"/><path d="M12 1.8v3.4M12 18.8v3.4M1.8 12h3.4M18.8 12h3.4"/></svg>'; /* main.js ICON_TARGET */
+// The card keys you own, flight and plane (what makes a plane NEW to you)
+function ownedKeys() { const owned = new Set(); for (const c of catches()) { owned.add(c.key); if (c.planeKey) owned.add(c.planeKey); } return owned; }
+// A live plane's photo (the type in its airline's livery, its parent's, or the maker's), sm/ size, with the box the plane
+// sits in; null when there's none yet. For pictures outside a card: All around you, Today's rows.
+export function planePhoto(p) {
+  const ph = p?.type ? flightPhotoFor({ callsign: p.callsign || '' }, p.type) : null; if (!ph) return null;
+  return { ...ph, sm: String(ph.url).replace(/\/([^/]+)$/, '/sm/$1') };
+}
+// All around you in Sky Collector (2026-11-18): everything up now, worth first, and what's coming over next, named.
+export function aroundPlanes(positions, planes, obs, route) {
+  const owned = ownedKeys();
+  const up = (positions ?? []).filter((a) => a.el > 0).map((a) => ({ a, w: worth(a, route(a.plane.callsign), owned) })).sort((x, y) => y.w.score - x.w.score);
+  const next = obs ? forecast(planes ?? [], obs, Date.now(), new Set(up.map((u) => u.a.plane.hex))) : [];
+  return { up, next: next.map((n) => { const r = route(n.p.callsign), full = r?.full; return { ...n, name: full ? `To ${full.to.city}` : r?.airline || aircraftName(n.p) || 'Aircraft' }; }) };
+}
 export function renderToday(el, ctx) {
-  const owned = new Set(); for (const c of catches()) { owned.add(c.key); if (c.planeKey) owned.add(c.planeKey); }
+  const owned = ownedKeys();
   const up = (ctx.positions ?? []).filter((a) => a.el > 5).map((a) => ({ a, w: worth(a, ctx.route(a.plane.callsign), owned) })).sort((x, y) => y.w.score - x.w.score);
   const best = up[0];
   const next = forecast(ctx.planes.planes ?? [], ctx.obs, Date.now(), new Set(up.map((u) => u.a.plane.hex)));
   const seen = readSeen(), total = seen.hexes.length, maxH = Math.max(1, ...seen.hours), nowH = new Date().getHours();
-  const row = (u) => `<button type="button" class="td-row" data-hex="${esc(u.a.plane.hex)}">
+  /* Every row has Show me (2026-11-18, Sevaan: "see how I can be taken to where a plane is in the sky? That needs to happen
+     in Sky Collector"), the target button Space Collector puts on each Tonight row. The row itself still opens the card. */
+  const go = (hex, label, wait) => `<button type="button" class="td-go" data-go="${esc(hex)}"${wait ? ` data-az="${wait.az.toFixed(1)}" data-el="${wait.el.toFixed(1)}" data-at="${wait.at}" data-name="${esc(label)}"` : ''} aria-label="Show me ${esc(label)} in the sky">${TARGET}</button>`;
+  const row = (u) => `<div class="td-row" role="button" tabindex="0" data-hex="${esc(u.a.plane.hex)}">
       <span class="td-art">${glyphSvg(u.w.glyph)}</span>
       <span class="td-t"><b>${esc(u.w.name)}</b><span>${esc(u.w.sub || '')}</span><span class="td-where">${esc(dirWord(u.a.az))}, ${Math.round(u.a.el)}° up · ${ft(u.a.plane.hKm)}</span></span>
-      <span class="td-tag${u.w.isNew ? ' new' : ''}">${u.w.tag}</span></button>`;
+      <span class="td-tag${u.w.isNew ? ' new' : ''}">${u.w.tag}</span>${go(u.a.plane.hex, u.w.name)}</div>`;
   /* The top card is Space Collector's Tonight hero (2026-11-16, Sevaan: "this has cool weather effects on Space Collector"):
      its .tn-wx box with the forecast drawn in: Tonight's drifting clouds when it's cloudy, rain when it rains, in daylight
      white over the sky. ctx.wx is the forecast (js/weather.js). */
@@ -114,13 +133,17 @@ export function renderToday(el, ctx) {
     ${up.length > 1 ? `<p class="td-h">EVERYTHING UP <span>${up.length}</span></p><div class="td-list">${up.slice(0, 12).map(row).join('')}</div>` : ''}
     <p class="td-h">COMING OVER NEXT <span>${next.length ? 'NEXT 15 MIN' : ''}</span></p>
     <div class="td-list">${next.length ? next.map((n) => { const r = ctx.route(n.p.callsign), full = r?.full, nm = full ? `To ${full.to.city}` : r?.airline || aircraftName(n.p) || 'Aircraft';
+      /* Show me before it's up: the sky turns to where it will appear (15° up) and waits there, as Show me does for a pass in Space Collector */
       return `<div class="td-row td-row--next"><span class="td-when"><b>${Math.max(1, Math.round(n.inS / 60))} min</b><span>${esc(dirWord(n.az))}</span></span>
-        <span class="td-t"><b>${esc(nm)}</b><span>${esc([r?.airline && full ? r.airline : null, aircraftName(n.p)].filter(Boolean).join(' · '))}</span><span class="td-where">climbs to ${Math.round(n.peakEl)}° up</span></span></div>`; }).join('')
+        <span class="td-t"><b>${esc(nm)}</b><span>${esc([r?.airline && full ? r.airline : null, aircraftName(n.p)].filter(Boolean).join(' · '))}</span><span class="td-where">climbs to ${Math.round(n.peakEl)}° up</span></span>${go(n.p.hex, nm, { az: n.az, el: 15, at: Date.now() + n.inS * 1000 })}</div>`; }).join('')
       : '<p class="td-empty">Nothing heading your way in the next 15 minutes that we can see yet.</p>'}</div>
     <p class="td-h">TODAY SO FAR <span>${total.toLocaleString()} PLANE${total === 1 ? '' : 'S'} SEEN</span></p>
     <div class="td-chart" aria-label="Planes seen by hour">${seen.hours.map((n, h) => `<i class="${h === nowH ? 'now' : ''}${seen.open[h] ? '' : ' gap'}" style="height:${seen.open[h] ? Math.max(4, Math.round(n / maxH * 64)) : 4}px" title="${h}:00 · ${seen.open[h] ? n : 'app closed'}"></i>`).join('')}</div>
     <div class="td-axis"><span>12 AM</span><span>6</span><span>NOON</span><span>6</span><span>11 PM</span></div>
     <p class="td-note">Counts only the hours Sky Collector was open. Grey bars are hours it wasn’t.</p>`;
   /* a row opens that plane's card, as a Tonight row does in Sky Collector (2026-11-15); the hero's Show me steers you to it */
-  el.querySelectorAll('[data-hex]').forEach((b) => b.addEventListener('click', () => (b.classList.contains('td-row') && ctx.open ? ctx.open(b.dataset.hex, b.getBoundingClientRect()) : ctx.show(b.dataset.hex))));
+  el.querySelectorAll('[data-hex]').forEach((b) => { b.addEventListener('click', () => (b.classList.contains('td-row') && ctx.open ? ctx.open(b.dataset.hex, b.getBoundingClientRect()) : ctx.show(b.dataset.hex, b)));
+    if (b.classList.contains('td-row')) b.addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && e.target === b) { e.preventDefault(); b.click(); } }); });
+  el.querySelectorAll('[data-go]').forEach((b) => b.addEventListener('click', (e) => { e.stopPropagation(); const d = b.dataset;
+    ctx.show(d.go, b, d.at ? { az: Number(d.az), el: Number(d.el), at: Number(d.at), name: d.name } : null); }));
 }
