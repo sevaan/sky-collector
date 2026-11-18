@@ -104,11 +104,17 @@ export function playPack(o) {
       tearing = true; pk.classList.remove('idle'); pk.setPointerCapture?.(e.pointerId); sfx('step', 0.6);
       const dx0 = e.clientX, dy0 = e.clientY, start0 = Math.max(0, Math.min(.3, (e.clientX - r.left) / r.width)); let moved = 0, torn0 = false;
       /* the tear follows the finger from where it pressed, either way across (Fable pack hunt 2026-11-13: a right-to-left swipe jumped straight to 93%) */
-      const move = (ev) => { moved = Math.max(moved, Math.hypot(ev.clientX - dx0, ev.clientY - dy0)); const p = Math.max(prog, Math.min(1, start0 + Math.abs(ev.clientX - dx0) / r.width)); if (!torn0 && moved > 10) { torn0 = true; sfx('tear', { gap: 700, wait: 1500 }); } /* the tearing sound once the finger really tears (2026-11-14, Sevaan) */ if (p - tick > 0.08) { tick = p; feel('select'); } showProg(p); };
-      const up = () => { pk.removeEventListener('pointermove', move); pk.removeEventListener('pointerup', up); pk.removeEventListener('pointercancel', up); tearing = false; tick = 0;
+      /* A tear can never be left stuck (2026-11-18, Sevaan swiped a cold pack on his iPhone and it froze): if the browser
+         takes the pointer away (lostpointercapture) or no pointer event comes for 1.5 s, the tear ends as a release would:
+         open past the threshold, otherwise back to the sealed pack, ready for the next touch. A main thread that was
+         blocked (a long tick) doesn't count as the finger going quiet: its queued moves are still on the way. */
+      let lastEv = performance.now(), lastTick = lastEv, ended = false;
+      const dog = setInterval(() => { const now = performance.now(); if (now - lastTick > 600) lastEv = now; lastTick = now; if (now - lastEv > 1500) up(); }, 250);
+      const move = (ev) => { lastEv = performance.now(); moved = Math.max(moved, Math.hypot(ev.clientX - dx0, ev.clientY - dy0)); const p = Math.max(prog, Math.min(1, start0 + Math.abs(ev.clientX - dx0) / r.width)); if (!torn0 && moved > 10) { torn0 = true; sfx('tear', { gap: 700, wait: 1500 }); } /* the tearing sound once the finger really tears (2026-11-14, Sevaan) */ if (p - tick > 0.08) { tick = p; feel('select'); } showProg(p); };
+      const up = () => { if (ended) return; ended = true; clearInterval(dog); pk.removeEventListener('pointermove', move); pk.removeEventListener('pointerup', up); pk.removeEventListener('pointercancel', up); pk.removeEventListener('lostpointercapture', up); tearing = false; tick = 0;
         if (bare && moved < 14 && prog < 0.55) { autoTear(); return; } /* the opener: a plain tap on the top strip tears it too */
         if (prog > 0.55) open(); else animateProg(prog, 0, 220).then(() => { if (phase === 'sealed' && !tearing && !auto) pk.classList.add('idle'); }); };
-      pk.addEventListener('pointermove', move); pk.addEventListener('pointerup', up); pk.addEventListener('pointercancel', up);
+      pk.addEventListener('pointermove', move); pk.addEventListener('pointerup', up); pk.addEventListener('pointercancel', up); pk.addEventListener('lostpointercapture', up);
     });
     if (!bare) tap(q('[data-a="open"]'), autoTear);
     if (!bare) tap(q('.gp-x'), () => { if (phase === 'sealed') finish('later'); else if (phase === 'haul') finish('done'); else if (phase !== 'opening') showHaul(); });
