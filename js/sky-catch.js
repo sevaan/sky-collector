@@ -2,15 +2,15 @@
 // Collect does. Catches are kept in localStorage ('skyCatches') for now, apart from Space Collector's sightings, so the
 // old collection code never meets a flight. The Collection screen reads them in a later step.
 
-import { aircraftName, isHelicopter } from './planes.js?v=0.1.1700';
-import { lookupRoute } from './routes.js?v=0.1.1700';
-import { distText } from './units.js?v=0.1.1700';
-import { cardsFor, TIERS } from './flights.js?v=0.1.1700';
-import { glyphSvg, showCatch, miniCardHtml } from './flight-card.js?v=0.1.1700';
-import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1700';
+import { aircraftName, isHelicopter } from './planes.js?v=0.1.1701';
+import { lookupRoute } from './routes.js?v=0.1.1701';
+import { distText } from './units.js?v=0.1.1701';
+import { cardsFor, planeKey, unlisted, TIERS } from './flights.js?v=0.1.1701';
+import { glyphSvg, showCatch, miniCardHtml } from './flight-card.js?v=0.1.1701';
+import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1701';
 
-import { TIER_INFO } from './rarity.js?v=0.1.1700';
-import { allCatches, addCatch } from './catch-store.js?v=0.1.1700';
+import { TIER_INFO } from './rarity.js?v=0.1.1701';
+import { allCatches, addCatch } from './catch-store.js?v=0.1.1701';
 // Catches live in js/catch-store.js (IndexedDB, with a localStorage mirror the Collection page reads).
 // Where catches are read from: Space Collector's sightings once main.js says so (Milestone 1.5), the old store until then.
 let source = allCatches;
@@ -22,7 +22,7 @@ const ft = (p) => (Math.round(p.hKm * 3280.84 / 100) * 100).toLocaleString('en-U
 const set = (el, sel, txt) => { const e = el.querySelector(sel); if (e && e.textContent !== txt) e.textContent = txt; };
 
 // What Collect would do for this plane right now, from the catches on the phone (js/sky-stamps.js assess).
-const planeKeyOf = (p) => `P:${p.type || (isHelicopter(p) ? 'HELI' : 'UNKNOWN')}`;
+const planeKeyOf = planeKey;
 export function previewFor(hit, route, list = catches(), now = Date.now()) {
   const p = hit.plane, a3 = (p.callsign || '').slice(0, 3), full = route?.full;
   const fkey = full ? `F:${a3}:${full.from.icao}-${full.to.icao}` : null;
@@ -34,11 +34,11 @@ export function previewFor(hit, route, list = catches(), now = Date.now()) {
 export function catchPanel(el, hit, route) {
   el._hit = hit; el._route = route;
   if (el.id === 'discover') return discoverPanel(el, hit, route);
-  const p = hit.plane, type = aircraftName(p) || (isHelicopter(p) ? 'Helicopter' : 'Aircraft');
+  const p = hit.plane, type = aircraftName(p) || (isHelicopter(p) ? 'Helicopter' : unlisted(planeKey(p))?.name ?? 'Aircraft');
   const a3 = (p.callsign || '').slice(0, 3), full = route?.full;
   const { fkey, out } = previewFor(hit, route);
   const stamped = out.kind === 'none', again = out.kind === 'stamp';
-  set(el, '.cb-k', stamped ? 'STAMPED TODAY' : again ? (out.stampOn === 'flight' ? 'NEW STAMP · FLIGHT' : 'NEW STAMP · PLANE')
+  set(el, '.cb-k', stamped ? 'CAUGHT TODAY' : again ? (out.stampOn === 'flight' ? 'NEW DAY · FLIGHT' : 'NEW AIRCRAFT · PLANE')
     : fkey ? 'NEW FLIGHT' : route && !route.none && route.airline && !full ? 'FLIGHT' : 'NEW PLANE');
   set(el, '.cb-name', full ? `To ${full.to.city}` : route?.airline ? `${route.airline} ${(p.callsign || '').replace(/^[A-Z]{3}/, '')}` : type);
   set(el, '.cb-sub', [full ? `${route.airline || a3} · from ${full.from.city}` : null, type, `${ft(p)} ft`].filter(Boolean).join(' · '));
@@ -56,12 +56,12 @@ export function catchPanel(el, hit, route) {
 const lastSeen = (key) => { const l = catches(); for (let i = l.length - 1; i >= 0; i--) { const c = l[i]; if (c.key === key || c.planeKey === key || c.flight?.key === key || c.plane?.key === key) return c.time; } return null; };
 function discoverPanel(el, hit, route) {
   const $ = (id) => document.getElementById(id), txt = (id, v) => { const e = $(id); if (e && e.textContent !== v) e.textContent = v; };
-  const p = hit.plane, type = aircraftName(p) || (isHelicopter(p) ? 'Helicopter' : 'Aircraft'), full = route?.full;
+  const p = hit.plane, type = aircraftName(p) || (isHelicopter(p) ? 'Helicopter' : unlisted(planeKey(p))?.name ?? 'Aircraft'), full = route?.full;
   const { fkey, out } = previewFor(hit, route);
   const stamped = out.kind === 'none', again = out.kind === 'stamp';
   const { flight, plane } = cardsFor(p, full ?? null, route?.airline || '');
   const card = flight ?? plane, tier = TIERS[card?.tier] ?? TIERS.common;
-  const what = stamped ? 'Stamped today' : again ? 'New stamp' : fkey ? 'New flight' : route && !route.none && route.airline && !full ? 'Flight' : 'New plane';
+  const what = stamped ? 'Caught today' : again ? (out.stampOn === 'flight' ? 'New day' : 'New aircraft') : fkey ? 'New flight' : route && !route.none && route.airline && !full ? 'Flight' : 'New plane';
   txt('d-tier', stamped ? tier.label : `${tier.label} · ${what}`); /* seen before: just the tier, as Space Collector */
   const ti = TIER_INFO[card?.tier] ?? TIER_INFO.common, dt = $('d-tier'); /* the tier's own mark and colour, as a satellite's (▲ green for Uncommon) */
   if (dt) { dt.style.setProperty('--find-tier', again ? 'var(--cyan)' : ti.color); dt.dataset.gem = again ? '✦' : ti.gem; }

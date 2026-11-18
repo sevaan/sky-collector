@@ -6,7 +6,7 @@
 // Cards behave like Space Collector's fleet cards: a flight's stamps are the days you caught it, a plane type's are the
 // individual aircraft (hex). Levels: flights 1 / 5 / 15, plane types 1 / 10 / 50 (js/sky-stamps.js). No DOM here.
 
-import { localDay, levelFor, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1700';
+import { localDay, levelFor, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1701';
 
 export const isSkyCard = (o) => o?.sky === 'flight' || o?.sky === 'plane';
 export const skyKindOfKey = (key) => (/^F:/.test(String(key)) ? 'flight' : /^P:/.test(String(key)) ? 'plane' : null);
@@ -37,6 +37,7 @@ export function skyStampInfo(o, sightings) {
 }
 // The aircraft type code of a plane card model (an early import wrote 'flight'/'plane' over it; P:A321's code is in its key).
 export function skyTypeCode(o, sightings) {
+  if (/^P:UNKNOWN/.test(o.key ?? '')) return ''; /* no type: the card says so itself (js/flights.js unlisted) */
   if (o.type && !/^(flight|plane)$/.test(o.type)) return o.type;
   const last = (sightings ?? []).filter((s) => s.typeCode).sort((a, b) => b.time - a.time)[0];
   return last?.typeCode || (/^P:(.+)$/.exec(o.key ?? '') || [])[1] || '';

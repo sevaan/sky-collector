@@ -5,12 +5,13 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1700';
-import { glyphSvg } from './flight-card.js?v=0.1.1700';
-import { catches } from './sky-catch.js?v=0.1.1700';
-import { noteLocal } from './sky-local.js?v=0.1.1700';
-import { planeSet } from './sky-sets.js?v=0.1.1700';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1700';
+import { planeKey } from './flights.js?v=0.1.1701';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1701';
+import { glyphSvg } from './flight-card.js?v=0.1.1701';
+import { catches } from './sky-catch.js?v=0.1.1701';
+import { noteLocal } from './sky-local.js?v=0.1.1701';
+import { planeSet } from './sky-sets.js?v=0.1.1701';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1701';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -41,7 +42,7 @@ export function logSeen(list) {
 // ---------- what each plane is worth to you ----------
 function worth(a, route, owned) {
   const p = a.plane, a3 = (p.callsign || '').slice(0, 3), full = route?.full;
-  const fkey = full ? `F:${a3}:${full.from.icao}-${full.to.icao}` : null, pkey = `P:${p.type || (isHelicopter(p) ? 'HELI' : 'UNKNOWN')}`;
+  const fkey = full ? `F:${a3}:${full.from.icao}-${full.to.icao}` : null, pkey = planeKey(p);
   const newFlight = !!fkey && !owned.has(fkey), newPlane = !owned.has(pkey);
   const name = full ? `To ${full.to.city}` : route?.airline ? `${route.airline} ${(p.callsign || '').replace(/^[A-Z]{3}/, '')}` : aircraftName(p) || (isHelicopter(p) ? 'Helicopter' : 'Aircraft');
   const type = aircraftName(p) || null;

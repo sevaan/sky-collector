@@ -84,3 +84,23 @@ test('plane patches count what they say', async () => {
   for (const id of ['sky-airlines25', 'sky-regular', 'sky-rarehere', 'sky-freightnight', 'sky-fullhangar']) assert.ok(!done.has(id), `${id} should not be earned`);
   setSkyProgress(false);
 });
+
+// ---- aircraft the feed has no type for (2026-11-18) ----
+import { planeKey, unlisted, glyphFor, cardsFor as cardsFor2, retier as retier2 } from '../js/flights.js';
+import { planeSet as planeSet2 } from '../js/sky-sets.js';
+test('an aircraft with no type is a card named for its size category', () => {
+  const p = { hex: 'c0819f', callsign: 'ACA909', type: '', category: 'A3' };
+  assert.equal(planeKey(p), 'P:UNKNOWN-A3');
+  const { plane } = cardsFor2(p, null, 'Air Canada');
+  assert.equal(plane.name, 'Large Aircraft'); assert.equal(plane.type, ''); assert.equal(plane.stamp, 'Air Canada'); assert.equal(plane.tier, 'common');
+  assert.match(unlisted(plane.key).fact, /34 to 136 tonnes/);
+  assert.equal(planeKey({ type: '', category: '' }), 'P:UNKNOWN'); assert.equal(unlisted('P:UNKNOWN').name, 'Unidentified Aircraft');
+  assert.equal(planeKey({ type: '', category: 'A7' }), 'P:HELI'); assert.equal(unlisted('P:B738'), null);
+  assert.equal(planeSet2('UNKNOWN-A1').id, 'light'); assert.equal(planeSet2('UNKNOWN-A3').id, 'others');
+});
+test('a card saved as plain "Aircraft" is renamed, and a Citation is drawn as a jet', () => {
+  const old = retier2({ kind: 'plane', key: 'P:UNKNOWN', name: 'Aircraft', type: 'UNKNOWN', glyph: 'jet' });
+  assert.equal(old.name, 'Unidentified Aircraft'); assert.equal(old.type, ''); assert.equal(old.tier, 'common');
+  assert.equal(glyphFor('C25B'), 'jet'); assert.equal(glyphFor('C172'), 'prop'); assert.equal(glyphFor('DH8D'), 'prop'); assert.equal(glyphFor('PC24'), 'jet'); assert.equal(glyphFor('B738'), 'jet');
+  assert.equal(retier2({ kind: 'plane', key: 'P:C25B', name: 'x', glyph: 'prop' }).glyph, 'jet');
+});

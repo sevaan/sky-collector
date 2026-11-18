@@ -1,9 +1,9 @@
 // Player progress from the sighting log: XP and observer rank, tonight’s three missions, a weekly streak and
 // achievements. Everything is derived from the saved sightings (nothing extra is stored), so it can’t drift.
 // info(cardKey) -> { tier, type, owner, launch, natural, con } | null. No DOM.
-import { nightKey } from './observation.js?v=0.1.1700';
-import { fleetThresholds } from './card-model.js?v=0.1.1700';
-import { distRound as distText } from './units.js?v=0.1.1700';
+import { nightKey } from './observation.js?v=0.1.1701';
+import { fleetThresholds } from './card-model.js?v=0.1.1701';
+import { distRound as distText } from './units.js?v=0.1.1701';
 
 // A longer climb (2026-10-12, playtest room: three ranks on night 1, Mission Control in about two weeks), with two
 // prestige ranks past Mission Control. Nobody drops a rank they had on the old curve (rankFloor below).
@@ -164,7 +164,7 @@ export const SKY_MISSIONS = [
   { id: 'rarehere', text: 'Catch a plane that is rare where you are', done: (n) => n.some((s) => s.rareHere) },
   { id: 'families2', text: 'Catch planes from two different families', done: (n) => new Set(n.filter((s) => snap(s).sky === 'plane').map((s) => snap(s).setId ?? snap(s).set).filter(Boolean)).size >= 2 },
   { id: 'newflights2', get text() { return SIZE.cards === 1 ? 'Collect a new card' : `Collect ${NUM[SIZE.cards]} new cards`; }, done: (n) => n.filter((s) => s.first).length >= SIZE.cards },
-  { id: 'again', text: 'Stamp a card you own on a new day', done: (n) => n.some((s) => !s.first) },
+  { id: 'again', text: 'Catch a card you own on a new day', done: (n) => n.some((s) => !s.first) },
 ];
 export const SKY_STARTER = [
   { id: 'firstcard', text: 'Collect your first card', done: (n) => n.some((s) => s.first) },
@@ -172,7 +172,7 @@ export const SKY_STARTER = [
   { id: 'types2', text: 'Catch two different kinds of aircraft', done: (n) => new Set(n.map((s) => s.typeCode).filter(Boolean)).size >= 2 },
 ];
 export const SKY_CHALLENGES = [
-  { id: 'revisit3', text: 'Stamp 3 cards you own again', done: (n) => n.filter((s) => !s.first).length >= 3 },
+  { id: 'revisit3', text: 'Catch 3 cards you own again', done: (n) => n.filter((s) => !s.first).length >= 3 },
   { id: 'pair10', text: 'Catch two planes in 10 minutes', done: (n) => { const t = n.map((s) => s.time).sort((a, b) => a - b); return t.some((x, i) => i && x - t[i - 1] <= 600000); } },
   { id: 'levelup', text: 'Turn a card silver or gold', done: (n) => n.some((s) => s.lv) },
 ];
@@ -189,7 +189,7 @@ const SKY_WEEK_THEMES = [
   { id: 'sky-props', name: 'Propeller week', short: 'Propeller Week', text: 'Catch three propeller planes.', icon: 'PRP', need: 3, have: (w) => new Set(w.filter((s) => PROP.test(s.typeCode ?? '')).map((s) => s.hex ?? s.time)).size },
   { id: 'sky-longhaul', name: 'Long-haul week', short: 'Long-Haul Week', get text() { return `Catch three flights going more than ${distText(5000)}.`; }, icon: '5K', need: 3, have: (w) => new Set(w.filter((s) => snap(s).sky === 'flight' && (snap(s).km ?? 0) > 5000).map((s) => s.cardKey)).size },
   { id: 'sky-families', name: 'Family week', short: 'Family Week', text: 'Catch planes from four different families.', icon: 'FAM', need: 4, have: (w) => new Set(w.filter((s) => snap(s).sky === 'plane').map((s) => snap(s).setId ?? snap(s).set).filter(Boolean)).size },
-  { id: 'sky-regulars', name: 'Regulars week', short: 'Regulars Week', text: 'Stamp five cards you already own.', icon: 'x5', need: 5, have: (w) => new Set(w.filter((s) => !s.first).map((s) => s.cardKey)).size },
+  { id: 'sky-regulars', name: 'Regulars week', short: 'Regulars Week', text: 'Catch five cards you already own again.', icon: 'x5', need: 5, have: (w) => new Set(w.filter((s) => !s.first).map((s) => s.cardKey)).size },
   { id: 'sky-newcards', name: 'New cards week', short: 'New Cards Week', text: 'Collect eight new cards.', icon: '+8', need: 8, have: (w) => w.filter((s) => s.first).length },
   { id: 'sky-hops', name: 'Short hop week', short: 'Short Hop Week', get text() { return `Catch three flights under ${distText(500)}.`; }, icon: 'HOP', need: 3, have: (w) => new Set(w.filter((s) => snap(s).sky === 'flight' && snap(s).km != null && snap(s).km < 500).map((s) => s.cardKey)).size },
 ];
