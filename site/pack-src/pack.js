@@ -10,31 +10,30 @@ import { skyModel, catchSightings } from './js/sky-cards.js';
 import { skyCardPhotoUrl } from './js/flight-card.js';
 import { applyBack } from './js/card-backs.js';
 import { TIER_INFO } from './js/rarity.js';
-import { sfx as appSfx, loadSfx } from './js/sfx.js';
-import { audioCtx, audioOut } from './js/audio-ctx.js';
+import { sfx as appSfx, loadSfx, sfxOnly } from './js/sfx.js';
+import { audioCtx } from './js/audio-ctx.js';
 
 const $ = (id) => document.getElementById(id);
 const SITE = 'https://skycollector.app/';
 const PLANES = ['A388', 'EC35', 'DC3']; // keep in step with scripts/build-site-pack.mjs (it copies their photos)
 const tierColor = (t) => (TIER_INFO[t] ?? TIER_INFO.common).color;
 
-// ---- sound: nothing until the visitor has touched the page (browsers start audio only from a gesture) ----
-let touched = false, tearBuf = null;
-const tearBytes = fetch('assets/audio/sfx/tear.mp3').then((r) => (r.ok ? r.arrayBuffer() : null)).catch(() => null);
+// ---- sound (2026-11-18): only the sounds this page can play, fetched and decoded while the sealed pack sways, so the
+// first touch only has to start the audio (Sevaan, iPhone: "it freezes the first time I try to open it"; the first
+// touch used to start all 31 of the game's sounds). Browsers start audio only from a gesture: the context is made
+// suspended here and resumed by the first touch. The tear is the game's own sfx('tear') (it waits for its file and
+// for the context, js/sfx.js), so it goes through audioTrack and audioOut like every sound.
+const PAGE_SFX = ['tear', 'step', 'swipe', 'arrive', 'lock', 'flip', 'rattle', 'seen', 'stamp', 'r_common', 'r_uncommon', 'r_rare', 'r_epic', 'r_legend'];
+sfxOnly(PAGE_SFX);
+let touched = false;
+setTimeout(() => { try { if (audioCtx()) loadSfx(['tear', 'step', 'swipe']); } catch {} }, 900); /* after the pack has arrived, before anyone can reach it */
 function wake() {
   if (touched) return; touched = true;
-  const ctx = audioCtx(); if (!ctx) return;
-  try { ctx.resume?.(); } catch {}
-  loadSfx();
-  tearBytes.then((b) => (b ? new Promise((ok, no) => ctx.decodeAudioData(b.slice(0), ok, no)) : null)).then((d) => { tearBuf = d; }).catch(() => {});
+  try { const ctx = audioCtx(); if (ctx && ctx.state !== 'running') ctx.resume?.().catch(() => {}); } catch {}
+  setTimeout(() => { try { loadSfx(['tear']); } catch {} }, 0); /* anything not loaded yet (a touch inside the first second): after this touch, never in it */
 }
 addEventListener('pointerdown', wake, { capture: true }); addEventListener('keydown', wake, { capture: true });
-function sfx(name, o = {}) {
-  if (!touched) return;
-  if (name !== 'tear') return appSfx(name, o);
-  const play = () => { const ctx = audioCtx(); if (!ctx || !tearBuf) return; try { const src = ctx.createBufferSource(), g = ctx.createGain(); src.buffer = tearBuf; g.gain.value = 0.15; src.connect(g).connect(audioOut() ?? ctx.destination); src.start(); } catch {} };
-  if (tearBuf) play(); else setTimeout(play, 120);
-}
+function sfx(name, o = {}) { if (touched) return appSfx(name, o); }
 
 function lastCard() {
   const host = document.createElement('div'); host.className = 'lc-host';

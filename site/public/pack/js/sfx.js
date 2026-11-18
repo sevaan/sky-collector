@@ -17,12 +17,31 @@ const host = () => { try { return typeof window !== 'undefined' && window.top !=
 const LEVEL = 0.25; // halved again 2026-10-11
 export const sfxVolume = () => { try { const v = parseFloat(localStorage.getItem('sfxVol')); return Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : 0.5; } catch { return 0.5; } } /* 50% by default (2026-10-28, Sevaan) */; // default 75% (2026-10-19, Sevaan)
 const soundOff = () => { try { return localStorage.getItem('sound') === '0'; } catch { return false; } };
-export function loadSfx() {
-  { const h = host(); if (h) return h.loadSfx(); }
-  const ctx = audioCtx(); if (!ctx || loading) return loading;
+/* One file, fetched and decoded once however many ask for it at the same time. */
+const inflight = new Map();
+function loadOne(ctx, n) {
+  if (bufs.has(n)) return Promise.resolve(bufs.get(n));
+  if (inflight.has(n)) return inflight.get(n);
+  let sig; try { sig = AbortSignal.timeout(8000); } catch {} /* a fetch that never settles no longer blocks every later load */
+  const p = fetch(`${BASE}${n}.mp3?v=${VERSION}`, sig ? { signal: sig } : undefined).then((r) => { if (!r.ok) throw 0; return r.arrayBuffer(); })
+    .then((a) => new Promise((ok, no) => ctx.decodeAudioData(a, ok, no))).then((b) => { bufs.set(n, b); audible.set(n, audibleLength(b)); return b; })
+    .catch(() => null).finally(() => inflight.delete(n));
+  inflight.set(n, p); return p;
+}
+/* first: sounds to fetch and decode ahead of the rest (the welcome pack's tear, 2026-11-18: Sevaan tore the opener on his
+   first touch and heard nothing, because its file was still waiting in the queue of 31). */
+/* Sky's sample pack page (skycollector.app/pack, 2026-11-18) plays only a few of these: sfxOnly(names) limits every load to
+   them, so a first touch there no longer fetches and decodes all 31 (on a cold iPhone that could read as a freeze). */
+let only = null;
+export function sfxOnly(names) { only = names ? new Set(names) : null; }
+export function loadSfx(first = []) {
+  { const h = host(); if (h) return h.loadSfx(first); }
+  const ctx = audioCtx(); if (!ctx) return loading;
+  for (const n of first) if (SFX.includes(n)) loadOne(ctx, n);
+  if (only) return Promise.all([...only].filter((n) => SFX.includes(n)).map((n) => loadOne(ctx, n)));
+  if (loading) return loading;
   const need = SFX.filter((n) => !bufs.has(n)); if (!need.length || performance.now() - failedAt < 10000) return null; /* only what's missing, and not again within 10 s of a failed round (a missing file refetched all 30 on every play) */
-  const get = (n) => { let sig; try { sig = AbortSignal.timeout(8000); } catch {} return fetch(`${BASE}${n}.mp3?v=${VERSION}`, sig ? { signal: sig } : undefined); }; /* a fetch that never settles no longer blocks every later load */
-  return (loading = Promise.all(need.map((n) => get(n).then((r) => { if (!r.ok) throw 0; return r.arrayBuffer(); }).then((a) => new Promise((ok, no) => ctx.decodeAudioData(a, ok, no))).then((b) => { bufs.set(n, b); audible.set(n, audibleLength(b)); }).catch(() => {}))).then(() => { loading = null; if (bufs.size < SFX.length) failedAt = performance.now(); })); // some failed (offline): try again on a later tap (bug hunt 2026-10-20)
+  return (loading = Promise.all(need.map((n) => loadOne(ctx, n))).then(() => { loading = null; if (bufs.size < SFX.length) failedAt = performance.now(); })); // some failed (offline): try again on a later tap (bug hunt 2026-10-20)
 }
 // name: one of SFX. gain: 0–1 on top of the file’s own level. gap: skip if the same sound played less than gap ms ago.
 // delay: seconds from now (scheduled on the audio clock, so it stays in time with animations).
@@ -44,20 +63,45 @@ function audibleLength(b) {
   const th = peak * 0.02; let end = d.length - 1; while (end > 0 && Math.abs(d[end]) < th) end -= 8;
   return Math.max(0.05, end / b.sampleRate);
 }
-const UNCAPPED = new Set(['arrive']); // the reveal’s whoosh always plays
-export function sfx(name, { gain = 1, gap = 0, delay = 0 } = {}) {
-  { const h = host(); if (h) return h.sfx(name, { gain, gap, delay }); }
+const UNCAPPED = new Set(['arrive', 'tear']); // the reveal’s whoosh and the pack's tear always play
+function start(ctx, name, b, gain, delay) {
+  try { const src = ctx.createBufferSource(), g = ctx.createGain(); src.buffer = b; g.gain.value = gain * (NORM[name] ?? 1) * LEVEL * sfxVolume(); src.connect(g).connect(audioOut() ?? ctx.destination); playing++; let freed = false; const free = () => { if (!freed) { freed = true; playing = Math.max(0, playing - 1); } }; setTimeout(free, (delay + Math.min(1.2 /* a long sound (the 5.6 s secret) must not hold a slot and mute the reveal's sounds: Fable hunt 2026-11-17 */, audible.get(name) ?? b.duration)) * 1000 + 30); audioTrack(src); src.start(ctx.currentTime + delay); } catch {}
+}
+/* wait (2026-11-18, Sevaan tore the welcome pack on his first touch and heard nothing): a sound that must not be lost
+   can wait up to `wait` ms for its file to decode and for the context to run, then plays once, or is dropped. Only ever
+   one waiting per name, so nothing piles up into a burst. A finger lifting (or a click or key) during the wait resumes
+   the context: on iPhone a finger still moving across the pack doesn't count as a gesture that may start audio. */
+const waiting = new Map();
+const NUDGE = ['pointerup', 'touchend', 'click', 'keydown'];
+function later(ctx, name, gain, delay, t0, wait) {
+  if (waiting.has(name)) return;
+  const tok = {}; waiting.set(name, tok);
+  const nudge = () => { if (ctx.state !== 'running' && !document.hidden && !audioLeaving()) ctx.resume().catch(() => {}); };
+  for (const e of NUDGE) addEventListener(e, nudge, { capture: true, passive: true });
+  const end = () => { if (waiting.get(name) === tok) waiting.delete(name); for (const e of NUDGE) removeEventListener(e, nudge, { capture: true }); };
+  loadOne(ctx, name); nudge();
+  const tick = () => {
+    if (waiting.get(name) !== tok) return end();
+    if (performance.now() - t0 > wait || soundOff() || document.hidden || audioLeaving()) return end();
+    const b = bufs.get(name);
+    if (b && ctx.state === 'running') { end(); return start(ctx, name, b, gain, delay); }
+    setTimeout(tick, 25);
+  };
+  tick();
+}
+export function sfx(name, { gain = 1, gap = 0, delay = 0, wait = 0 } = {}) {
+  { const h = host(); if (h) return h.sfx(name, { gain, gap, delay, wait }); }
   if (soundOff() || document.hidden || audioLeaving()) return; // nothing to hear in the background, and audioCtx() would wake the suspended context (bug hunt 2026-10-22)
   const ctx = audioCtx(); if (!ctx) return;
-  const b = bufs.get(name); if (!b) { loadSfx(); return; }
+  const b = bufs.get(name); if (!b && !wait) { loadSfx([name]); return; }
   const now = performance.now(); if (gap && now - (last.get(name) ?? -1e9) < gap) return; last.set(name, now);
   if (playing >= 2 && !STINGERS.has(name) && !UNCAPPED.has(name)) return;
-  const play = () => { try { const src = ctx.createBufferSource(), g = ctx.createGain(); src.buffer = b; g.gain.value = gain * (NORM[name] ?? 1) * LEVEL * sfxVolume(); src.connect(g).connect(audioOut() ?? ctx.destination); playing++; let freed = false; const free = () => { if (!freed) { freed = true; playing = Math.max(0, playing - 1); } }; setTimeout(free, (delay + Math.min(1.2 /* a long sound (the 5.6 s secret) must not hold a slot and mute the reveal's sounds: Fable hunt 2026-11-17 */, audible.get(name) ?? b.duration)) * 1000 + 30); audioTrack(src); src.start(ctx.currentTime + delay); } catch {} };
   /* Only on a running context: on a suspended one the clock is frozen, so every sound asked for meanwhile would start
      together on resume (a welcome card left rattling for a minute played eleven rattles at the first tap). A context
-     that wakes within a quarter second (the tap that unlocks it) still gets its sound. */
-  if (ctx.state === 'running') play();
-  else ctx.resume().then(() => { if (ctx.state === 'running' && performance.now() - now < 250 && !document.hidden && !audioLeaving()) play(); }).catch(() => {});
+     that wakes within a quarter second (the tap that unlocks it) still gets its sound; one asked with `wait`, a little longer. */
+  if (b && ctx.state === 'running') start(ctx, name, b, gain, delay);
+  else if (wait) later(ctx, name, gain, delay, now, wait);
+  else ctx.resume().then(() => { if (ctx.state === 'running' && performance.now() - now < 250 && !document.hidden && !audioLeaving()) start(ctx, name, b, gain, delay); }).catch(() => {});
 }
 // Load on the first tap (the context can only start from one), so the first real sound is ready.
 if (typeof document !== 'undefined') document.addEventListener('pointerdown', () => loadSfx(), { once: true, capture: true });

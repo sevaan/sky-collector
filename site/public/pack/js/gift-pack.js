@@ -26,7 +26,7 @@ function tap(el, fn) {
 export function playPack(o) {
   return new Promise((resolve) => {
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches, W = (ms) => wait(ms, reduced);
-    const sfx = (n, v) => { try { o.sfx?.(n, { gain: v }); } catch {} }, feel = (k) => { try { o.feel?.(k); } catch {} };
+    const sfx = (n, v) => { try { o.sfx?.(n, typeof v === 'object' && v ? v : { gain: v ?? 1 }); } catch {} } /* a number is the gain; an object is passed through (2026-11-18: the tear's { gap, wait } arrived as the gain, so it was NaN and the tear never played, Sevaan: "didn't hear the pack opening sound"; Space Collector 925f6a71) */, feel = (k) => { try { o.feel?.(k); } catch {} };
     const best = o.highlights.at(-1)?.card;
     const bare = !!o.bare; /* the first-run opener (2026-11-12, Sevaan): just the pack and the swipe cue, no words; o.emerge(packRect, dropPack) brings the welcome card out of it */
     const root = document.createElement('div'); root.id = 'gift'; root.className = bare ? 'in bare' : 'in'; root.setAttribute('role', 'dialog'); root.setAttribute('aria-label', bare ? 'A sealed pack. Swipe across the top to open it.' : `Cards from ${o.from || 'a friend'}`); if (bare) root.tabIndex = 0;
@@ -92,7 +92,7 @@ export function playPack(o) {
       const f = () => { if (done) return; const k = Math.min(1, (performance.now() - t0) / (reduced ? 1 : ms)); showProg(a + (b - a) * (1 - (1 - k) ** 2)); if (k < 1) requestAnimationFrame(f); else end(); };
       requestAnimationFrame(f); setTimeout(end, (reduced ? 1 : ms) + 150); });
     /* the pack tears itself (Tap to open, a tap on the opener, Enter): once, however many times it's asked */
-    const autoTear = () => { if (phase !== 'sealed' || auto || closed) return; auto = true; sfx('tear', { gap: 700 }); pk.classList.remove('idle'); animateProg(prog, 1, 520).then(() => { auto = false; open(); }); };
+    const autoTear = () => { if (phase !== 'sealed' || auto || closed) return; auto = true; sfx('tear', { gap: 700, wait: 1500 }); pk.classList.remove('idle'); animateProg(prog, 1, 520).then(() => { auto = false; open(); }); };
     let tick = 0;
     pk.addEventListener('pointerdown', (e) => {
       if (phase !== 'sealed' || auto) return;
@@ -104,7 +104,7 @@ export function playPack(o) {
       tearing = true; pk.classList.remove('idle'); pk.setPointerCapture?.(e.pointerId); sfx('step', 0.6);
       const dx0 = e.clientX, dy0 = e.clientY, start0 = Math.max(0, Math.min(.3, (e.clientX - r.left) / r.width)); let moved = 0, torn0 = false;
       /* the tear follows the finger from where it pressed, either way across (Fable pack hunt 2026-11-13: a right-to-left swipe jumped straight to 93%) */
-      const move = (ev) => { moved = Math.max(moved, Math.hypot(ev.clientX - dx0, ev.clientY - dy0)); const p = Math.max(prog, Math.min(1, start0 + Math.abs(ev.clientX - dx0) / r.width)); if (!torn0 && moved > 10) { torn0 = true; sfx('tear', { gap: 700 }); } /* the tearing sound once the finger really tears (2026-11-14, Sevaan) */ if (p - tick > 0.08) { tick = p; feel('select'); } showProg(p); };
+      const move = (ev) => { moved = Math.max(moved, Math.hypot(ev.clientX - dx0, ev.clientY - dy0)); const p = Math.max(prog, Math.min(1, start0 + Math.abs(ev.clientX - dx0) / r.width)); if (!torn0 && moved > 10) { torn0 = true; sfx('tear', { gap: 700, wait: 1500 }); } /* the tearing sound once the finger really tears (2026-11-14, Sevaan) */ if (p - tick > 0.08) { tick = p; feel('select'); } showProg(p); };
       const up = () => { pk.removeEventListener('pointermove', move); pk.removeEventListener('pointerup', up); pk.removeEventListener('pointercancel', up); tearing = false; tick = 0;
         if (bare && moved < 14 && prog < 0.55) { autoTear(); return; } /* the opener: a plain tap on the top strip tears it too */
         if (prog > 0.55) open(); else animateProg(prog, 0, 220).then(() => { if (phase === 'sealed' && !tearing && !auto) pk.classList.add('idle'); }); };
