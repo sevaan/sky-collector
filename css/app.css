@@ -2543,7 +2543,7 @@ body.night .tc .acts.pick .pk svg * { stroke: #ff6a55; } body.night .tc .acts.pi
 #sky-match #sm-read { font: 500 12px/1.2 var(--label); letter-spacing: .12em; text-transform: uppercase; color: var(--gold); }
 #sky-match .sm-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 #sky-match #sm-done { flex: none; min-height: 40px; padding: 0 18px; border: 0; border-radius: 12px; background: #1d2a3c; color: var(--text); font: 500 13px/1 var(--label); letter-spacing: .16em; text-transform: uppercase; cursor: pointer; }
-#sky-match.done #sm-done { background: #4fd18b22; color: #4fd18b; }
+#sky-match.done #sm-done { background: #4fd18b22 !important; background-image: none !important; color: #4fd18b !important; } /* !important: the button system (ui.css) sets these */
 #sky-match.out { opacity: 0; transform: translate(-50%, 10px); transition: opacity .3s, transform .3s; }
 #sky-match .sm-arrow { position: absolute; left: 50%; bottom: -9px; width: 16px; height: 16px; margin-left: -8px; background: rgba(10, 18, 31, .96); transform: rotate(45deg); border-radius: 0 0 3px 0; }
 @keyframes smIn { from { opacity: 0; transform: translate(-50%, 14px); } to { opacity: 1; transform: translate(-50%, 0); } }
@@ -3707,3 +3707,16 @@ body.night .n2-av { filter: grayscale(1) sepia(1) saturate(4) hue-rotate(320deg)
 .n2-att.owned .th::before { filter: none; } .n2-att.owned .th::after { content: none; }
 .n2-pips { display: inline-flex; gap: 4px; vertical-align: middle; margin-left: 4px; }
 .n2-pips i { width: 16px; height: 5px; border-radius: 3px; background: #ffffff22; } .n2-pips i.on { background: #f2c14e; } .n2-pips i.now { background: transparent; box-shadow: inset 0 0 0 1.5px #f2c14e; }
+
+/* Tell a friend sheet (2026-11-18, design/share-pack.html) */
+.tell-card { padding-bottom: calc(18px + var(--safe-bottom, env(safe-area-inset-bottom, 0px))); }
+.tell-top { display: flex; gap: 14px; align-items: center; margin: 4px 0 10px; }
+.tell-patch { width: 64px; height: 64px; flex: none; display: block; }
+.tell-patch .patch { width: 64px; height: 64px; }
+.tell-eye { display: block; font: 500 12px var(--label); letter-spacing: .22em; text-transform: uppercase; color: var(--gold); }
+.tell-card h3 { margin: 4px 0 0; font: 400 22px/1.12 var(--display); letter-spacing: -.01em; color: #fff2b3; text-transform: none; }
+.tell-text { margin: 0 0 14px; color: #d6d2b8; font: 500 16px/1.35 var(--label); }
+.tell-reward { display: flex; align-items: center; gap: 8px; margin: 0 0 16px; padding: 8px 11px; border-radius: 10px; background: #f2c14e12; box-shadow: inset 0 0 0 1px #f2c14e33; font: 500 14px/1.3 var(--label); color: #f4e3a6; }
+.tell-reward i { font-style: normal; color: #f2c14e; }
+.tell-card .tell-go { display: block; width: 100%; min-height: 50px; font: 500 16px var(--label); letter-spacing: .16em; text-transform: uppercase; }
+.tell-card .tell-no { display: block; margin: 6px auto 0; }

@@ -3,6 +3,9 @@
 export const SECRET_PATCHES = {
   // Not a secret: the Plus Member patch (2026-10-16, Sevaan), earned by joining Plus and kept on the wall if Plus ends.
   plus: { id: 'plus', name: 'Plus Member', text: 'You joined Sky Collector Plus. Thank you for supporting the game.' },
+  // Not a secret either: Ambassador (2026-11-18, design/share-pack.html, Sevaan), earned by telling a friend about the game
+  // (the share sheet completes). Shown locked on the patch wall until then; tapping it there tells a friend.
+  ambassador: { id: 'ambassador', name: 'Ambassador', text: 'You told a friend about Sky Collector.' },
   santa: { id: 'santa', name: 'Nice List', text: 'You waved at Santa on Christmas Eve.' },
   roadster: { id: 'roadster', name: "Don’t Panic", text: 'You found Starman and his Roadster, still driving round the Sun.' },
   meteor: { id: 'meteor', name: 'Make a Wish', text: 'You caught a shooting star.' },

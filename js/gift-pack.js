@@ -92,7 +92,7 @@ export function playPack(o) {
       const f = () => { if (done) return; const k = Math.min(1, (performance.now() - t0) / (reduced ? 1 : ms)); showProg(a + (b - a) * (1 - (1 - k) ** 2)); if (k < 1) requestAnimationFrame(f); else end(); };
       requestAnimationFrame(f); setTimeout(end, (reduced ? 1 : ms) + 150); });
     /* the pack tears itself (Tap to open, a tap on the opener, Enter): once, however many times it's asked */
-    const autoTear = () => { if (phase !== 'sealed' || auto || closed) return; auto = true; sfx('tear', 1); pk.classList.remove('idle'); animateProg(prog, 1, 520).then(() => { auto = false; open(); }); };
+    const autoTear = () => { if (phase !== 'sealed' || auto || closed) return; auto = true; sfx('tear', { gap: 700 }); pk.classList.remove('idle'); animateProg(prog, 1, 520).then(() => { auto = false; open(); }); };
     let tick = 0;
     pk.addEventListener('pointerdown', (e) => {
       if (phase !== 'sealed' || auto) return;
@@ -104,7 +104,7 @@ export function playPack(o) {
       tearing = true; pk.classList.remove('idle'); pk.setPointerCapture?.(e.pointerId); sfx('step', 0.6);
       const dx0 = e.clientX, dy0 = e.clientY, start0 = Math.max(0, Math.min(.3, (e.clientX - r.left) / r.width)); let moved = 0, torn0 = false;
       /* the tear follows the finger from where it pressed, either way across (Fable pack hunt 2026-11-13: a right-to-left swipe jumped straight to 93%) */
-      const move = (ev) => { moved = Math.max(moved, Math.hypot(ev.clientX - dx0, ev.clientY - dy0)); const p = Math.max(prog, Math.min(1, start0 + Math.abs(ev.clientX - dx0) / r.width)); if (!torn0 && moved > 10) { torn0 = true; sfx('tear', 1); } /* the tearing sound once the finger really tears (2026-11-14, Sevaan) */ if (p - tick > 0.08) { tick = p; feel('select'); } showProg(p); };
+      const move = (ev) => { moved = Math.max(moved, Math.hypot(ev.clientX - dx0, ev.clientY - dy0)); const p = Math.max(prog, Math.min(1, start0 + Math.abs(ev.clientX - dx0) / r.width)); if (!torn0 && moved > 10) { torn0 = true; sfx('tear', { gap: 700 }); } /* the tearing sound once the finger really tears (2026-11-14, Sevaan) */ if (p - tick > 0.08) { tick = p; feel('select'); } showProg(p); };
       const up = () => { pk.removeEventListener('pointermove', move); pk.removeEventListener('pointerup', up); pk.removeEventListener('pointercancel', up); tearing = false; tick = 0;
         if (bare && moved < 14 && prog < 0.55) { autoTear(); return; } /* the opener: a plain tap on the top strip tears it too */
         if (prog > 0.55) open(); else animateProg(prog, 0, 220).then(() => { if (phase === 'sealed' && !tearing && !auto) pk.classList.add('idle'); }); };
@@ -270,7 +270,7 @@ export function playPack(o) {
       for (const sl of slots) { if (sl.k === 0) order.push(sl); else if (sl.k % 2) order.unshift(sl); else order.push(sl); }
       const n = order.length, mid = (n - 1) / 2;
       /* mini cards, like the Collection (2026-11-11, Sevaan); the footer says New card */
-      const make = (x) => { const t = document.createElement('div'); t.className = 't mini'; t.style.setProperty('--c', o.tierColor(x.card.tier) ?? '#556'); try { t.appendChild(o.mini(x.card, x.isNew ? 'New card' : '')); } catch { const a = o.artImage(x.card); if (a) t.style.backgroundImage = `url('${a}')`; } return t; };
+      const make = (x) => { const t = document.createElement('div'); t.className = 't mini'; t.style.setProperty('--c', o.tierColor(x.card.tier) ?? '#556'); try { t.appendChild(o.mini(x.card, x.isNew ? 'New card' : '', x.sightings)); } catch { const a = o.artImage(x.card); if (a) t.style.backgroundImage = `url('${a}')`; } return t; };
       const cards = order.map(({ x, k }, i) => { const t = make(x), off = i - mid; t.dataset.off = String(off); t.style.zIndex = String(10 - k); g.appendChild(t); return t; });
       if (extra > 0) { const m = document.createElement('div'); m.className = 'gp-more'; m.textContent = `+${extra.toLocaleString('en-US')} more`; g.appendChild(m); }
       const layoutFan = (animate) => { const W = g.clientWidth, H = g.clientHeight - (extra > 0 ? 34 : 0); if (!W || !H) return;

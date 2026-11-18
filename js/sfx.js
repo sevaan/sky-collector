@@ -52,7 +52,7 @@ export function sfx(name, { gain = 1, gap = 0, delay = 0 } = {}) {
   const b = bufs.get(name); if (!b) { loadSfx(); return; }
   const now = performance.now(); if (gap && now - (last.get(name) ?? -1e9) < gap) return; last.set(name, now);
   if (playing >= 2 && !STINGERS.has(name) && !UNCAPPED.has(name)) return;
-  const play = () => { try { const src = ctx.createBufferSource(), g = ctx.createGain(); src.buffer = b; g.gain.value = gain * (NORM[name] ?? 1) * LEVEL * sfxVolume(); src.connect(g).connect(audioOut() ?? ctx.destination); playing++; let freed = false; const free = () => { if (!freed) { freed = true; playing = Math.max(0, playing - 1); } }; src.onended = free; setTimeout(free, (delay + (audible.get(name) ?? b.duration)) * 1000 + 30); audioTrack(src); src.start(ctx.currentTime + delay); } catch {} };
+  const play = () => { try { const src = ctx.createBufferSource(), g = ctx.createGain(); src.buffer = b; g.gain.value = gain * (NORM[name] ?? 1) * LEVEL * sfxVolume(); src.connect(g).connect(audioOut() ?? ctx.destination); playing++; let freed = false; const free = () => { if (!freed) { freed = true; playing = Math.max(0, playing - 1); } }; setTimeout(free, (delay + Math.min(1.2 /* a long sound (the 5.6 s secret) must not hold a slot and mute the reveal's sounds: Fable hunt 2026-11-17 */, audible.get(name) ?? b.duration)) * 1000 + 30); audioTrack(src); src.start(ctx.currentTime + delay); } catch {} };
   /* Only on a running context: on a suspended one the clock is frozen, so every sound asked for meanwhile would start
      together on resume (a welcome card left rattling for a minute played eleven rattles at the first tap). A context
      that wakes within a quarter second (the tap that unlocks it) still gets its sound. */

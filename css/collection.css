@@ -1113,3 +1113,6 @@ body[data-view="find"] .grid.find-mode > .find-head:first-child { margin-top: 18
 .st-rank { box-shadow: inset 0 1px 0 #ffffff1c, 0 0 0 3px #0a1322, 0 0 0 4px #2a3d55, 0 14px 28px #000a; }
 :where(html[data-theme='night'], body.night) #logbook .lb-rot { box-shadow: inset 0 0 0 1px #3a1716, 0 0 0 3px #0a0303, 0 0 0 4px #3a1716; }
 :where(html[data-theme='night'], body.night) :is(.lb-rankrow .lb-name, .lb-dial .lb-name, .st-rank .lb-name) { background: none; -webkit-text-fill-color: currentColor; color: inherit; }
+
+/* Tell a friend from the locked Ambassador patch (2026-11-18, design/share-pack.html) */
+.pv-card .pv-tell { align-self: center; margin: 4px 0 14px; min-width: 60%; }

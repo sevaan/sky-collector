@@ -45,9 +45,9 @@ export function statsHtml(rows, { all = false, before = false, now = Date.now(),
      same minute or two, found by hand. A Plus purchase from a build marked as a test is a test purchase, whatever its
      version. "include tests" brings all of them back. */
   const testIid = new Set(rows.filter((e) => e.p !== 'web' && isTest(e)).map((e) => e.iid));
-  const testBuy = (e) => e.name === 'plus' && e.x === 1 && /"s"\s*:\s*"buy"/.test(e.d || '');
+  /* No separate "test purchase" rule (removed 2026-11-17): the Nov 7 Android yearly buy it hid was real (Play order GPA.3314-3804-9893-53697: free trial Nov 7, charged US$16.23 on Nov 14). A purchase from a test install is already left out with that install. */
   const mine = (e) => MINE.has(String(e.iid).slice(0, 8));
-  const ev = rows.filter((e) => (before || e.ts >= FRESH) && (all || (!isTest(e) && !testIid.has(e.iid) && !mine(e) && !testBuy(e)))).map((e) => { let d = {}; try { d = JSON.parse(e.d || '{}'); } catch {} return { ...e, d }; }).sort((a, b) => a.ts - b.ts);
+  const ev = rows.filter((e) => (before || e.ts >= FRESH) && (all || (!isTest(e) && !testIid.has(e.iid) && !mine(e)))).map((e) => { let d = {}; try { d = JSON.parse(e.d || '{}'); } catch {} return { ...e, d }; }).sort((a, b) => a.ts - b.ts);
   const today = dayNum(dayOf(now));
 
   // One record per install.
@@ -410,7 +410,7 @@ ${row('Went out after dark and caught nothing', pct(darkNo, dark.length), `${dar
   html += '</details>';
 
   const dayTitle = new Date(now).toLocaleDateString('en-US', { timeZone: TZ, weekday: 'long', month: 'long', day: 'numeric' });
-  const head = `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><meta name="color-scheme" content="dark"><title>Mission Control</title>
+  const head = `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><meta name="color-scheme" content="dark"><meta name="theme-color" content="#080f1b"><link rel="icon" type="image/png" href="/icon.png"><link rel="apple-touch-icon" href="/icon.png"><title>Mission Control</title>
 <style>${FONTS}:root{--bg:#080f1b;--ink:#e8eef6;--dim:#9fb0c6;--line:#22324a;--grid:#17243a;--gold:#fff2b3;--or:#fa8127;--tile:#0f1a2b;--tile2:#122039;--up:#7fd67f;--down:#ff8a7a;--disp:'SC Display',system-ui,sans-serif;--label:'SC Label','Arial Narrow',system-ui,sans-serif}
 *{box-sizing:border-box}html{background:var(--bg)}body{margin:0;padding:28px 16px 64px;background:radial-gradient(ellipse 120% 60% at 50% -10%,#13233a 0,var(--bg) 60%) no-repeat,var(--bg);color:var(--ink);font:15px/1.45 -apple-system,system-ui,sans-serif}main{max-width:860px;margin:0 auto}
 .eyebrow{font:500 13px var(--label);letter-spacing:.24em;text-transform:uppercase;color:var(--dim)}

@@ -349,7 +349,8 @@
  },
  "draw-nvs-02": {
   "ids": [
-   62850
+   62850,
+   101228
   ],
   "refs": [
    "https://commons.wikimedia.org/wiki/File:GSLV-F15_NVS-02_Pre-launch_image_of_NVS-02.webp",
@@ -381,7 +382,8 @@
  },
  "draw-amsat-microsat": {
   "ids": [
-   22826
+   22826,
+   24305
   ],
   "refs": [
    "https://space.skyrocket.de/doc_sdat/itamsat.htm (text only)",
@@ -651,7 +653,8 @@
    22828,
    20437,
    20438,
-   21575
+   21575,
+   25395
   ],
   "refs": [
    "https://space.skyrocket.de/doc_sdat/kitsat-1.htm",
@@ -1160,7 +1163,9 @@
    3133,
    2807,
    1514,
-   1420
+   1420,
+   4507,
+   6909
   ],
   "refs": [
    "https://commons.wikimedia.org/wiki/File:Transit-o.jpg",
@@ -1881,7 +1886,8 @@
  },
  "draw-strela-1m": {
   "ids": [
-   27560
+   27560,
+   27939
   ],
   "refs": [
    "https://space.skyrocket.de/doc_sdat/mozhayets.htm"
@@ -2479,7 +2485,11 @@
  },
  "draw-rigidsphere": {
   "ids": [
-   5398
+   5398,
+   2872,
+   39490,
+   39491,
+   41099
   ],
   "refs": [
    "https://space.skyrocket.de/doc_sdat/lcs-1.htm",
@@ -3134,7 +3144,8 @@
  "draw-elisa": {
   "ids": [
    38007,
-   38009
+   38009,
+   38010
   ],
   "refs": [
    "https://space.skyrocket.de/doc_sdat/elisa.htm",
@@ -3433,5 +3444,256 @@
   "description": "TanSat (CAST2000 bus, 620 kg). A box body about 1.4 x 1.4 x 1.5 m, gold MLI. Two dark-blue solar wings on opposite sides. On the Earth-facing side, the CO2 grating spectrometer (a large box) and the cloud and aerosol imager (a small camera).",
   "confidence": "medium",
   "drawn": "2026-11-12 named-satellite art pass (Nano Banana Pro, style refs draw-oko-us-k + tselina)"
+ },
+ "draw-beacon-explorer": {
+  "ids": [
+   899,
+   1328
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/Explorer_22",
+   "https://en.wikipedia.org/wiki/Explorer_27"
+  ],
+  "description": "Beacon Explorer (NASA Explorer 22 / Explorer 27, 1964-65, built by Johns Hopkins APL), a small 53-60 kg ionosphere and laser-ranging satellite. Body: a small squat octagonal prism only 46 cm across and 30 cm high, pale grey-white fibreglass honeycomb hull with metal edges. Solar panels: exactly FOUR long narrow flat rectangular paddles, each 25 cm wide and 170 cm long (nearly four times the body width), hinged to four sides of the octagon and sticking straight out like the blades of a windmill or a plus sign, covered in dark-blue solar cells with thin silver frames. On the Earth-facing end of the body sits a low truncated pyramid covered with rows of small glassy cube-corner laser retro-reflectors (360 of them, each 2.5 cm), sparkling like a faceted jewel. A few thin whip antennas project from the body. No dish, no boom mast. Overall: a tiny octagonal drum at the hub of four long dark blades, with a glittering reflector cap on one end.",
+  "confidence": "high",
+  "drawn": "2026-11-17 backlog art pass (Nano Banana Pro via scripts/draw-card.py, style refs draw-oko-us-k + tselina; description from text research only)"
+ },
+ "draw-image": {
+  "ids": [
+   26113
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/IMAGE_(spacecraft)"
+  ],
+  "description": "NASA IMAGE magnetosphere-imaging satellite (Explorer 78, launched 2000, built by Lockheed Martin). Body: a regular octagonal prism, a wide flat drum 2.25 m across and 1.52 m high, slowly spinning. All eight flat side faces are completely covered with body-mounted dark blue-black solar cells in a tidy grid; the flat top and bottom decks are also dark with solar cells, with gold foil trim and a few small instrument apertures set into the side panels. There are NO solar wings and no dish. Antennas: four extremely long, hair-thin wire antennas run straight out radially from four of the side faces at 90 degrees to each other, like the hands of a cross, continuing out of the frame (each 250 m long in reality); and two shorter thin stiff booms stick straight up and straight down along the spin axis from the centres of the top and bottom decks (10 m each). One short stubby medium-gain helix antenna on a deck. Overall: a dark eight-sided drum with four thin wires radiating out sideways and one thin rod above and below.",
+  "confidence": "high",
+  "drawn": "2026-11-17 backlog art pass (Nano Banana Pro via scripts/draw-card.py, style refs draw-oko-us-k + tselina; description from text research only)"
+ },
+ "draw-crres": {
+  "ids": [
+   20712
+  ],
+  "refs": [
+   "https://en.wikipedia.org/wiki/CRRES",
+   "https://space.physics.uiowa.edu/crres/handbook/introduction.html",
+   "https://space.skyrocket.de/doc_sdat/crres.htm (text only)"
+  ],
+  "description": "CRRES, the Combined Release and Radiation Effects Satellite (NASA / US Air Force, launched 1990, built by Ball Aerospace), a 1.7-tonne slowly spinning science satellite. Body: a wide, low octagonal prism, 3 m across between opposite faces and only 1 m high, like a thick eight-sided slab. The flat TOP face is covered with dark-blue solar cell panels (wedge-shaped segments filling the octagon); the eight side faces are silver and gold thermal blanket with small instrument boxes and a few round chemical-release canisters set into bays. There are NO deployable solar wings and no dish. Booms: exactly ONE rigid open-lattice magnetometer boom about 6 m long (twice the body width) sticks straight out sideways from one side face with a small sensor at its tip. Separately, four hair-thin wire antennas (not lattice, just thin lines) run straight out radially from four side faces at 90 degrees to each other, each ending far away in a tiny sphere (they run out of frame). Overall: a broad eight-sided pancake with a dark solar-cell top, a single lattice boom on one side and four thin wires radiating from its rim.",
+  "confidence": "medium",
+  "drawn": "2026-11-17 backlog art pass (Nano Banana Pro via scripts/draw-card.py, style refs draw-oko-us-k + tselina; description from text research only)"
+ },
+ "draw-prisma-mango": {
+  "ids": [
+   36599
+  ],
+  "refs": [
+   "https://www.eoportal.org/satellite-missions/prisma-prototype"
+  ],
+  "description": "PRISMA \"Mango\" (the Main spacecraft of the Swedish PRISMA formation-flying mission, 2010, Swedish Space Corporation), about 145 kg. Body: an upright rectangular box about 80 x 83 x 130 cm, wrapped in gold-black thermal blanket with some bare silver panels. Solar panels: exactly TWO deployable rectangular solar wings, one on each of two opposite sides of the box, each a single flat dark-blue panel about the size of a body side (about 2 square metres in total), held out on short hinges. On the body: small round camera lens heads (star trackers and vision cameras) on one face, three small stubby radio antennas (a triplet) on a face, two flat GPS patch antennas, and a few tiny thruster nozzles on the corners. No dish, no boom. Overall: a compact gold box with one dark panel wing on each side.",
+  "confidence": "high",
+  "drawn": "2026-11-17 backlog art pass (Nano Banana Pro via scripts/draw-card.py, style refs draw-oko-us-k + tselina; description from text research only)"
+ },
+ "draw-prisma-tango": {
+  "ids": [
+   36827
+  ],
+  "refs": [
+   "https://www.eoportal.org/satellite-missions/prisma-prototype"
+  ],
+  "description": "PRISMA \"Tango\" (the small Target spacecraft of the Swedish PRISMA formation-flying mission, 2010), about 40-50 kg. Body: a low, flat square box about 80 x 75 cm and only 32 cm thick, like a thick square tile. Its whole top face is ONE body-mounted solar panel of dark-blue cells (about 0.5 square metre). The four shallow side faces are wrapped in gold-black thermal blanket and carry a few small stubby radio antennas, a flat GPS patch antenna, small sun sensors and a pattern of small indicator lights (LEDs). There are NO deployable solar wings, no thrusters, no dish, no boom. Overall: a small flat square slab, dark solar cells on top, gold foil sides.",
+  "confidence": "high",
+  "drawn": "2026-11-17 backlog art pass (Nano Banana Pro via scripts/draw-card.py, style refs draw-oko-us-k + tselina; description from text research only)"
+ },
+ "draw-orsted": {
+  "ids": [
+   25635
+  ],
+  "refs": [
+   "https://www.eoportal.org/satellite-missions/oersted",
+   "https://en.wikipedia.org/wiki/%C3%98rsted_(satellite)"
+  ],
+  "description": "Ørsted, Denmark's first satellite (1999), a 61 kg geomagnetic research microsatellite. Body: a small upright rectangular box 34 x 45 x 72 cm, its sides covered with body-mounted dark-blue gallium-arsenide solar cells in framed panels (no deployable solar wings). From the top of the box a very long, slender open lattice boom (three thin longerons with cross-bracing, a coilable mast) rises straight up to 8 m, about eleven times the height of the body. Three-quarters of the way up the boom (at 6 m) sits a small pod, the \"gondola\", carrying a spherical magnetometer and a small star camera; at the very tip (8 m) is a second small cylindrical magnetometer sensor. A few short whip antennas and a small flat GPS antenna on the body. No dish. Overall: a small dark box at the foot of a very tall, hair-thin lattice mast with two small sensor pods on it.",
+  "confidence": "high",
+  "drawn": "2026-11-17 backlog art pass (Nano Banana Pro via scripts/draw-card.py, style refs draw-oko-us-k + tselina; description from text research only)"
+ },
+ "draw-dubaisat-1": {
+  "ids": [
+   35682
+  ],
+  "refs": [
+   "https://www.eoportal.org/satellite-missions/dubaisat-1"
+  ],
+  "description": "DubaiSat-1 (UAE Earth-observation satellite, 2009, built by Satrec Initiative of South Korea on the SI-200 bus), under 200 kg. Body: an upright hexagonal prism (a six-sided cylinder) about 1.2 m across and 1.35 m tall, wrapped in gold-black thermal blanket with silver frame edges. Solar panels: exactly THREE flat rectangular deployable solar panels with dark-blue cells, hinged at the top (space-facing) end of three alternate sides of the hexagon and folded outward like three petals, roughly level, 120 degrees apart. The camera looks out of the bottom (Earth-facing) end: one round telescope barrel about 40 cm wide with a 30 cm aperture, slightly protruding. Small S-band antennas (short stubs) on the top and bottom, and a small X-band antenna on the Earth face. No dish, no boom. Overall: a gold hexagonal drum with three dark petals spread from its top and a telescope looking down.",
+  "confidence": "high",
+  "drawn": "2026-11-17 backlog art pass (Nano Banana Pro via scripts/draw-card.py, style refs draw-oko-us-k + tselina; description from text research only)"
+ },
+ "draw-egyptsat-2": {
+  "ids": [
+   39678
+  ],
+  "refs": [
+   "https://www.eoportal.org/satellite-missions/egyptsat-2"
+  ],
+  "description": "EgyptSat-2 (Egyptian Earth-imaging satellite, 2014, built by RKK Energia of Russia on its 559GK bus), 1050 kg. Body: a tall hexagonal prism (six flat sides) of light composite panels, wrapped in white and silver thermal blanket, with a large telescope inside whose round dark aperture opens at the Earth-facing end. Solar panels: exactly THREE fixed deployable solar panels, long flat rectangles with dark-blue cells, hinged around the body 120 degrees apart at the end opposite the telescope aperture and swept outward and back like three petals or the fins of a dart (they do not rotate). A small X-band antenna and short S-band antennas on the body; a couple of small star-tracker tubes. No big dish, no boom. Overall: a white six-sided column with a telescope opening at one end and three dark petal panels spread at the other.",
+  "confidence": "medium",
+  "drawn": "2026-11-17 backlog art pass (Nano Banana Pro via scripts/draw-card.py, style refs draw-oko-us-k + tselina; description from text research only)"
+ },
+ "draw-msx": {
+  "ids": [
+   23851
+  ],
+  "refs": [
+   "https://www.eoportal.org/satellite-missions/msx",
+   "https://space.skyrocket.de/doc_sdat/msx.htm (text only)"
+  ],
+  "description": "MSX, the Midcourse Space Experiment (US ballistic-missile-defence observatory, 1996, built by Johns Hopkins APL), 2.8 tonnes. Body: a tall rectangular tower about 1.6 x 1.6 m square and 5.2 m long, in three stacked sections: at the base a boxy electronics section; in the middle an open graphite truss (dark lattice struts) around a large pale cryogen tank; at the top a four-sided instrument box wrapped in gold-silver thermal blanket. The big SPIRIT III infrared telescope, a fat cylinder about 1 m across, runs through the middle and its open circular aperture looks out of the top end. Several smaller telescope and sensor tubes are clustered on the top instrument section beside it, all pointing the same way. Solar panels: exactly TWO long solar wings, one on each side of the base electronics section, each a row of four dark-blue rectangular panels on a boom, able to rotate. A small bench with four little dish antennas folded out from the side of the base. Overall: a tall square tower with a truss waist, a telescope mouth at the top, and two long wings at the bottom.",
+  "confidence": "high",
+  "drawn": "2026-11-17 backlog art pass (Nano Banana Pro via scripts/draw-card.py, style refs draw-oko-us-k + tselina; description from text research only)"
+ },
+ "draw-sentinel-3": {
+  "ids": [
+   41335
+  ],
+  "refs": [
+   "https://www.eoportal.org/satellite-missions/copernicus-sentinel-3",
+   "https://en.wikipedia.org/wiki/Sentinel-3"
+  ],
+  "description": "Sentinel-3 (European Copernicus ocean and land satellite, Sentinel-3A launched 2016, built by Thales Alenia Space), about 1150 kg. Body: a tall rectangular box about 3.9 m long and 2.2 x 2.2 m across, flying lengthwise, wrapped in gold-black thermal blanket with silver-white radiator panels. Solar array: exactly ONE solar wing on ONE side only (the satellite is asymmetric): a single long wing of three dark-blue rectangular panels in a row (10.5 square metres) on a short yoke, sticking out sideways from the middle of one long side. On the Earth-facing face: one round white dish antenna about 1.2 m across pointing straight down (the radar altimeter), a boxy optical camera housing with a fan of five small lens windows (the ocean colour instrument), a larger black box with two angled view openings (the temperature radiometer), and a small offset reflector dish of the microwave radiometer near one end. A few short stub antennas (one cone-shaped) on the Earth face. No second wing. Overall: a long gold box with a single three-panel wing on one side and a white dish looking down.",
+  "confidence": "high",
+  "drawn": "2026-11-17 backlog art pass (Nano Banana Pro via scripts/draw-card.py, style refs draw-oko-us-k + tselina; description from text research only)"
+ },
+ "draw-sert-2": {
+  "ids": [
+   4327
+  ],
+  "refs": [
+   "https://www.nasa.gov/centers-and-facilities/glenn/nasas-sert-ii-a-genuine-space-success-story/",
+   "https://ntrs.nasa.gov/api/citations/19710002423/downloads/19710002423.pdf (as summarised by web search)",
+   "https://keeptrack.space/satellite/04327"
+  ],
+  "description": "SERT II (NASA Space Electric Rocket Test II, 1970), an ion-engine test spacecraft that stayed attached to its spent Agena D rocket stage. Main body: the Agena stage, a long plain cylinder 1.5 m in diameter and about 7 m long, white and bare silver metal with a few ribs and small fittings, its small engine bell at the aft end. Solar array: at the AFT (engine) end of the Agena, two very long, narrow, flat rectangular solar wings stick straight out on opposite sides, each about 1.5 m wide and 5.8 m long (together 1.5 by 12 m, far wider than the stage is thick), covered in dark-blue solar cells with silver frames; they are fixed, not rotating. At the opposite, FORWARD end of the cylinder sits the short gold-coloured spacecraft section of the same 1.5 m diameter, and on its end face are two small round ion thrusters, each a 15 cm drum, mounted on opposite sides of the face and tilted slightly outward. No dish, no boom, no exhaust shown. Overall: a long cylinder flying upright, with a pair of long dark wings like a propeller at one end and two small thruster drums at the other.",
+  "confidence": "medium",
+  "drawn": "2026-11-17 backlog art pass (Nano Banana Pro via scripts/draw-card.py, style refs draw-oko-us-k + tselina; description from text research only)"
+ },
+ "draw-freja": {
+  "ids": [
+   22161
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/freja.htm (text only)",
+   "https://www.fplib.org/partners/mwade/craft/freja.htm",
+   "https://keeptrack.space/satellite/22161",
+   "https://www.space.irfu.se/freja/f4.html"
+  ],
+  "description": "Freja (Swedish auroral research satellite, 1992, Swedish Space Corporation), about 214 kg, a sun-pointing spinning satellite. Body: a low, wide round shape 2.2 m in diameter, like a shallow cone or a sombrero: a central drum with a wide sloping ring-shaped skirt around it (a truncated cone, a frustum). The sloping upper ring surface, which faces the Sun, is completely covered with dark-blue solar cells in wedge-shaped segments (an annular solar array); the centre of the top carries a small flat platform with a short antenna. The underside and rim are wrapped in gold thermal blanket, with small instrument boxes and sensor heads around the rim. There are no solar wings and no dish. From the rim, six very thin wire booms stretch straight out radially, evenly spaced like spokes, each ending in a tiny sphere (some run out of frame), plus two short stiff rod booms about 1-2 m long carrying small sensors. Overall: a dark solar-cell sombrero with thin wire spokes radiating from its rim.",
+  "confidence": "medium",
+  "drawn": "2026-11-17 backlog art pass (Nano Banana Pro via scripts/draw-card.py, style refs draw-oko-us-k + tselina; description from text research only)"
+ },
+ "draw-spot-6": {
+  "ids": [
+   38755,
+   40053
+  ],
+  "refs": [
+   "https://www.eoportal.org/satellite-missions/spot-6-7",
+   "https://en.wikipedia.org/wiki/SPOT_(satellite)",
+   "https://keeptrack.space/satellite/38755",
+   "https://space.skyrocket.de/doc_sdat/spot-6.htm (text only)"
+  ],
+  "description": "SPOT 6 / SPOT 7 (French Earth-imaging satellites, 2012 and 2014, built by Airbus/Astrium on the AstroBus-L platform, the same layout as the Pleiades satellites), about 714 kg. Body: a compact upright hexagonal prism (six flat sides) about 1.6 m across and 2.7 m tall, wrapped in gold-black thermal blanket with dark panel edges. The camera, two side-by-side telescopes each with a 20 cm aperture, sits in the centre of the body and looks out of the Earth-facing end through a dark rectangular opening with a short baffle. Solar panels: exactly THREE flat rectangular solar panels with dark-blue cells (5.4 square metres in total), hinged to three alternate sides at the space-facing end of the hexagon and fixed splayed outward, 120 degrees apart, like three petals or a three-bladed propeller seen from above; they do not rotate. Small star-tracker tubes on the space-facing end, a small cone-shaped X-band antenna and short stub antennas on the Earth-facing end. No dish, no boom. Overall: a gold hexagonal column with three dark petals spread around its top and a camera opening underneath.",
+  "confidence": "medium",
+  "drawn": "2026-11-17 backlog art pass (Nano Banana Pro via scripts/draw-card.py, style refs draw-oko-us-k + tselina; description from text research only)"
+ },
+ "draw-sich-2": {
+  "ids": [
+   37794
+  ],
+  "refs": [
+   "https://www.eoportal.org/satellite-missions/sich-2"
+  ],
+  "description": "Sich-2 (Ukrainian Earth-observation minisatellite, 2011, built by Yuzhnoye/Yuzhmash on the MS-2 platform), 176 kg, overall deployed size 2.38 x 2.38 x 1.12 m. Body: a compact open frame about 1 m tall: a base block and two rectangular plates joined by six thin tie rods, the equipment boxes between them, side faces covered by white and silver heat shields. Solar panels: exactly FOUR flat rectangular solar panels with dark-blue cells, attached to the base plate and folded out at right angles to the body's long axis so they lie in one flat plane like a four-armed cross or plus sign around the base (each panel roughly 0.7 m long), fixed. On the Earth-facing end: a boxy optical camera with a round lens (the multispectral imager), a second smaller infrared camera, and a small cluster of nine glass corner reflectors. A few short rod antennas. No dish, no boom. Overall: a small boxy frame sitting at the centre of a flat cross of four dark panels, cameras pointing down.",
+  "confidence": "medium",
+  "drawn": "2026-11-17 backlog art pass (Nano Banana Pro via scripts/draw-card.py, style refs draw-oko-us-k + tselina; description from text research only)"
+ },
+ "draw-gokturk-1": {
+  "ids": [
+   41875
+  ],
+  "refs": [
+   "https://www.eoportal.org/satellite-missions/gokturk-1",
+   "https://keeptrack.space/satellite/41875"
+  ],
+  "description": "Göktürk-1 (Turkish military Earth-imaging satellite, 2016, built by Telespazio and Thales Alenia Space on the Proteus platform), about 1060 kg. Draw it upright with the Earth at the bottom of the picture. Body: one tall rectangular box 4.2 m long and about 2.5 x 1.6 m across, wrapped in gold-black thermal blanket. The whole lower two-thirds of the body is the telescope: a single wide dark barrel with ONE round 65 cm aperture that opens at the BOTTOM end and looks straight DOWN toward the Earth (there is only one telescope opening, and nothing telescope-like on the top). The upper third is the cube-like service module, and its flat top (space-facing) end is closed, with only small star-tracker tubes on it. Solar arrays: exactly TWO fixed (non-rotating) solar wings, each a straight row of three dark-blue rectangular panels, rigidly attached at the very TOP (space-facing) end of the body, one on the left and one on the right, sticking straight out sideways like the bar of a letter T. Near the bottom, beside the telescope opening: a small cone-shaped antenna on a short gimbal arm and two tiny horn antennas. No big dish. Overall: a T shape, a tall gold box hanging down from two stiff three-panel wings, with a single telescope mouth at the bottom facing the Earth.",
+  "confidence": "medium",
+  "drawn": "2026-11-17 backlog art pass (Nano Banana Pro via scripts/draw-card.py, style refs draw-oko-us-k + tselina; description from text research only)"
+ },
+ "draw-tempsat": {
+  "ids": [
+   4168
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/tempsat-1.htm (text only)",
+   "https://keeptrack.space/satellite/4168"
+  ],
+  "description": "Tempsat 2 (US Naval Research Laboratory, 1969), a tiny passive thermal-control test satellite: a simple plain sphere only about 40 cm in diameter. No solar cells, no antennas, no booms, no windows, no hatches, no ports. The whole smooth shell is painted matt BLACK all over (it was built to test black thermal-control paint): draw it as a very dark charcoal-black ball, shaded with fine cream hatching only along its sunlit edge so its roundness shows, the rest nearly as dark as the sky but outlined by a thin cream rim line. One thin bare-metal seam runs around its equator where the two hemispheres join. Draw the sphere SMALL, filling only about a quarter of the frame width, alone in a wide starry sky above the Earth's limb. Nothing else attached.",
+  "confidence": "medium",
+  "drawn": "2026-11-17 backlog art pass (Nano Banana Pro via scripts/draw-card.py, style refs draw-oko-us-k + tselina; description from text research only)"
+ },
+ "draw-vigoride": {
+  "ids": [
+   55056
+  ],
+  "refs": [
+   "https://fcc.report/IBFS/SAT-STA-20210210-00020/3871678.pdf (Vigoride VR-1 debris assessment, as summarised by web search)",
+   "https://spacetech-i.com/news/news-details/sti-solar-arrays-with-multi-hinge-deployment-mechanism-ready-to-fly"
+  ],
+  "description": "Momentus Vigoride orbital transfer vehicle (a small space tug that carries and releases customer cubesats, flown from 2022; Vigoride-5 flew in January 2023). Body: a compact box-shaped open aluminium frame about 0.65 m on each side (roughly 0.62 x 0.69 x 0.62 m), bare silver-grey machined metal with dark equipment boxes, round propellant tanks visible inside, a few black rectangular cubesat dispenser boxes bolted to its top deck, and a round launch-adapter ring on the bottom. Solar arrays: exactly TWO long narrow solar wings, one on each of two opposite sides, each a straight row of four rectangular dark-blue panels on a short yoke, each wing about 3.5 m long and 0.64 m wide (more than five times the body width), flat and in line with each other. A small thruster nozzle on one side face; short stub antennas. No dish. Overall: a small silver cube-shaped frame with two very long, slim four-panel wings.",
+  "confidence": "medium",
+  "drawn": "2026-11-17 backlog art pass (Nano Banana Pro via scripts/draw-card.py, style refs draw-oko-us-k + tselina; description from text research only)"
+ },
+ "draw-aureole-1": {
+  "ids": [
+   5729
+  ],
+  "refs": [
+   "https://ru.wikipedia.org/wiki/ДС-У2-ГКА"
+  ],
+  "description": "Aureole 1 (Oreol 1, Soviet-French auroral research satellite, 1971, Yuzhnoye DS-U2-GKA type), 348 kg, overall about 2.4 m long and 2.3 m wide. Body: a sealed aluminium cylinder 0.8 m in diameter and 1.46 m long with rounded (domed) ends, pale silver-grey metal. Solar array: wrapped around the middle of the cylinder is a fixed eight-sided drum of solar panels (an octagonal prism wider than the body, its eight flat faces and its end rims covered with dark-blue solar cells in silver frames); in addition exactly FOUR rectangular solar panels are hinged to this drum and unfolded straight outward, 90 degrees apart, like the four short blades of a windmill, each about 0.7 m long. Several thin rod antennas and a couple of short instrument booms with small sensors project from the two domed ends. No dish. Overall: a silver capsule-shaped cylinder passing through a dark eight-sided collar of solar cells with four panel blades sticking out of it.",
+  "confidence": "medium",
+  "drawn": "2026-11-17 backlog art pass (Nano Banana Pro via scripts/draw-card.py, style refs draw-oko-us-k + tselina; description from text research only)"
+ },
+ "draw-upm-sat-1": {
+  "ids": [
+   23607
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/upm-lbsat.htm (text only)",
+   "https://en.wikipedia.org/wiki/UPM-Sat"
+  ],
+  "description": "UPM-Sat 1 (also catalogued UPM/LBSAT; Spanish university microsatellite built by the Universidad Politécnica de Madrid, launched 1995 on Ariane 4), 47 kg. Body: a plain upright rectangular box (parallelepiped) about 45 x 45 cm across and 53 cm tall, built from four stacked aluminium trays held by corner bars, with bare silver-grey aluminium top and bottom plates. Each of the four side faces carries one body-mounted solar panel of dark-blue cells in a metal frame covering most of the face (four panels in all; one of them of a slightly different, darker cell type). There are NO deployable solar wings, no dish and no boom. A few thin whip antennas stick out from the top and bottom plates, and a round launch-adapter ring is on the bottom. Overall: a small, simple, slightly tall silver box with a dark solar panel on each side.",
+  "confidence": "medium",
+  "drawn": "2026-11-17 backlog art pass (Nano Banana Pro via scripts/draw-card.py, style refs draw-oko-us-k + tselina; description from text research only)"
+ },
+ "draw-miranda-x4": {
+  "ids": [
+   7213
+  ],
+  "refs": [
+   "https://space.skyrocket.de/doc_sdat/miranda.htm (text only)",
+   "https://en.wikipedia.org/wiki/Miranda_(spacecraft)"
+  ],
+  "description": "Miranda (X-4), a British technology-test satellite launched in 1974 (built by Hawker Siddeley Dynamics, three-axis stabilised with small gas jets), 92 kg. Body: an upright rectangular box with a square base 66.5 cm on each side and 83.5 cm high, bare silver aluminium panels with some gold-foil and black thermal patches and visible panel fasteners. Solar arrays: exactly TWO long, narrow deployable solar wings, one on each of two opposite sides of the box, each a straight flat strip about 2.5 m long (three times the body height) made of several hinged rectangular sections covered in dark-blue solar cells with thin silver frames; the two wings lie in one line, so the satellite looks like a small box at the middle of a long straight bar. A few small sensor windows and tiny gas-jet nozzles on the body faces and two or three short rod antennas on the top and bottom. No dish, no boom. Overall: a small silver box with one long dark wing out each side.",
+  "confidence": "medium",
+  "drawn": "2026-11-17 backlog art pass (Nano Banana Pro via scripts/draw-card.py, style refs draw-oko-us-k + tselina; description from text research only)"
+ },
+ "draw-envisat": {
+  "ids": [
+   27386
+  ],
+  "refs": [
+   "https://earth.esa.int/eogateway/missions/envisat",
+   "https://commons.wikimedia.org/wiki/File:Envisat.jpg"
+  ],
+  "description": "Envisat, the European Space Agency's Earth-observation satellite (launched 2002, 8 tonnes, now silent and drifting). Shape, exactly: ONE long rectangular box body about 10 m long and roughly 2.5 m square in cross-section, lying horizontally, wrapped in crinkled GOLD / amber thermal foil with a few silver-white radiator panels. Along the whole underside of the body runs ONE long flat dark-grey radar antenna panel (as long as the body, narrow, like a plank), fixed flat against the bottom. At the FRONT end of the box: a cluster of instrument boxes, a fan of small camera lenses, and one small round dish antenna on a short mast pointing up. At the REAR end: a thin boom carrying ONE single very large rectangular solar panel of dark navy-blue solar cells (one wing only, about 14 m by 5 m: it must be LONGER than the whole 10 m body and about twice as wide as the body is tall, a huge dark sail that dominates one side of the picture), set at an angle to the body, extending off to one side. No second solar wing. Overall silhouette: a long gold bar with a flat dark radar plank underneath and one huge dark blue solar sail at its back end. Earth's curved horizon low in the frame below it."
  }
 }

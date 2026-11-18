@@ -1332,6 +1332,7 @@ function renderPatches() {
   let sec = {}; try { sec = JSON.parse(localStorage.getItem('secrets')) || {}; } catch {}
   const SEC = Object.fromEntries(Object.values(SECRET_PATCHES).map((x) => [x.id, [x.name, x.text.replace(/\.$/, '')]])); // every secret, from js/secrets.js
   const secs = Object.keys(SEC).filter((k) => sec[k] && hasPatch(k, sec[k])).map((k) => ({ id: k, name: SEC[k][0], text: SEC[k][1], icon: '', secret: true, done: true }));
+  if (!secs.some((x) => x.id === 'ambassador')) secs.push({ id: 'ambassador', name: SECRET_PATCHES.ambassador.name, text: SKY ? 'Tell a friend about Sky Collector' : 'Tell a friend about Space Collector', icon: '', done: false }); /* shown locked until earned; tapping it tells a friend (2026-11-18) */
   const all = [...secs, ...(fossil ? [{ id: 'fossil', name: 'Fossil Hunter', text: 'Found dinosaur bones buried under your feet', icon: '', secret: true, done: true }] : []), ...(ufo ? [{ id: 'ufo', name: 'Close Encounter', text: "Something crossed your sky that isn’t in any catalogue", icon: '', secret: true, done: true }] : []), ...(state.achievements ?? [])];
   if (ufo) dates.ufo ??= ufo.at;
   for (const k of Object.keys(sec)) dates[k] ??= sec[k];
@@ -1360,6 +1361,7 @@ function openPatch(id, from = null) {
   let sec = {}; try { sec = JSON.parse(localStorage.getItem('secrets')) || {}; } catch {}
   const SEC = Object.fromEntries(Object.values(SECRET_PATCHES).map((x) => [x.id, [x.name, x.text.replace(/\.$/, '')]])); // every secret, from js/secrets.js
   const secs = Object.keys(SEC).filter((k) => sec[k] && hasPatch(k, sec[k])).map((k) => ({ id: k, name: SEC[k][0], text: SEC[k][1], icon: '', secret: true, done: true }));
+  if (!secs.some((x) => x.id === 'ambassador')) secs.push({ id: 'ambassador', name: SECRET_PATCHES.ambassador.name, text: SKY ? 'Tell a friend about Sky Collector' : 'Tell a friend about Space Collector', icon: '', done: false }); /* shown locked until earned; tapping it tells a friend (2026-11-18) */
   const all = [...secs, ...(fossil ? [{ id: 'fossil', name: 'Fossil Hunter', text: 'Found dinosaur bones buried under your feet', icon: '', secret: true, done: true }] : []), ...(ufo ? [{ id: 'ufo', name: 'Close Encounter', text: "Something crossed your sky that isn’t in any catalogue", icon: '', secret: true, done: true }] : []), ...(state.achievements ?? [])], a = all.find((x) => x.id === id); if (!a) return;
   const date = earnedDates()[id] ?? (id === 'fossil' ? fossil?.at : id === 'ufo' ? ufo?.at : sec[id] ?? null), f = finishOf(a);
   $('pv-position').textContent = `PATCH · ${all.filter((x) => x.done).length} of ${all.length} earned`;
@@ -1369,8 +1371,10 @@ function openPatch(id, from = null) {
     <h2>${esc(a.name)}</h2><p>${esc(localText(a.text))}</p>
     ${!a.done && a.prog && a.prog[1] > 1 ? `<div class="pv-prog"><div class="pv-prog__bar"><i style="width:${Math.min(100, (a.prog[0] / a.prog[1]) * 100).toFixed(1)}%"></i></div><span><b>${a.prog[0].toLocaleString()}</b> of ${a.prog[1].toLocaleString()}</span></div>` : ''}
     <div class="pv-meta">${f ? `<span class="ui-chip"><b>${f === 'gold' ? 'Gold foil' : 'Holo'}</b></span>` : ''}${a.secret ? '<span class="ui-chip"><b>Secret</b></span>' : ''}${['catalogue', 'curator', 'months12', 'anniversary', 'streak12', 'cons44'].includes(a.id) && !a.done ? '<span class="ui-chip"><b>Legendary goal</b><span class="ui-chip__k">years, not weeks</span></span>' : ''}</div>
+    ${a.id === 'ambassador' && !a.done ? '<button type="button" class="ui-btn ui-btn--primary pv-tell" id="pv-tell">Tell a friend</button>' : ''}
     <div class="pv-foot"><span>${a.done ? (date ? fmtEarned(date) : 'EARNED') : 'NOT YET EARNED'}</span><b>SKY COLLECTOR</b></div></div>
     <span class="pv-hint" aria-hidden="true">Swipe up to put it away</span>`;
+  $('pv-tell')?.addEventListener('click', (e) => { e.stopPropagation(); closePatch(); if (EMBED) try { window.parent.postMessage({ sc: 'tellfriend' }, location.origin); } catch {} }); /* Explore runs the share (2026-11-18) */
   addStarfield($('pv-body').querySelector('.pv-card'), 46); // twinkling stars inside the patch card (2026-10-25, Sevaan)
   const d = $('patch-view'); if (!d.open) d.showModal();
   // Grow out of the patch you tapped (2026-10-08 polish), and shrink back into it on close.

@@ -1,0 +1,81 @@
+// Sound effects (2026-10-11, Sevaan’s picks from the v2 sound board). All but one are the designed set: glass bells,
+// soft mallets, kalimba and airy breaths, all in G major so they sit inside the music ("Permafrost"). The toast is
+// "Notification Sound 2" by deadrobotmusic (Freesound, CC0), softened. Files: assets/audio/sfx/<name>.mp3.
+// Decoded once into memory after the first tap, played through the shared context (js/audio-ctx.js) so they’re instant.
+// Off with Settings → Sounds and vibration (localStorage sound = '0').
+import { audioCtx, audioOut, audioLeaving, audioTrack } from './audio-ctx.js';
+import { VERSION } from './version.js';
+export const SFX = ['lock', 'collect', 'arrive', 'flip', 'r_common', 'r_uncommon', 'r_rare', 'r_epic', 'r_legend', 'shiny', 'seen', 'stamp', 'levelup', 'xp',
+  'mission', 'rankup', 'patch', 'coinroll', 'complete', 'secret', 'fossil', 'ufo', 'welcome', 'swipe', 'step', 'toggle', 'toast', 'page', 'rattle', 'plane', 'tear'];
+const BASE = new URL('../assets/audio/sfx/', import.meta.url).href;
+const bufs = new Map(), last = new Map();
+let loading = null, failedAt = -1e9;
+/* The Collection runs in a frame, which would get its own audio context, volume and decoded files, none of them faded or
+   suspended when the app leaves (the deep review, 2026-11-12). Framed, every sound is played by the app's window instead. */
+const host = () => { try { return typeof window !== 'undefined' && window.top !== window && window.top.scAudio ? window.top.scAudio : null; } catch { return null; } }; /* asked each time: the frame can load before or after the app's own modules */
+// Everything plays at a quarter of the files' level (2026-10-11, Sevaan halved it twice), times the Settings volume (0–1).
+const LEVEL = 0.25; // halved again 2026-10-11
+export const sfxVolume = () => { try { const v = parseFloat(localStorage.getItem('sfxVol')); return Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : 0.5; } catch { return 0.5; } } /* 50% by default (2026-10-28, Sevaan) */; // default 75% (2026-10-19, Sevaan)
+const soundOff = () => { try { return localStorage.getItem('sound') === '0'; } catch { return false; } };
+export function loadSfx() {
+  { const h = host(); if (h) return h.loadSfx(); }
+  const ctx = audioCtx(); if (!ctx || loading) return loading;
+  const need = SFX.filter((n) => !bufs.has(n)); if (!need.length || performance.now() - failedAt < 10000) return null; /* only what's missing, and not again within 10 s of a failed round (a missing file refetched all 30 on every play) */
+  const get = (n) => { let sig; try { sig = AbortSignal.timeout(8000); } catch {} return fetch(`${BASE}${n}.mp3?v=${VERSION}`, sig ? { signal: sig } : undefined); }; /* a fetch that never settles no longer blocks every later load */
+  return (loading = Promise.all(need.map((n) => get(n).then((r) => { if (!r.ok) throw 0; return r.arrayBuffer(); }).then((a) => new Promise((ok, no) => ctx.decodeAudioData(a, ok, no))).then((b) => { bufs.set(n, b); audible.set(n, audibleLength(b)); }).catch(() => {}))).then(() => { loading = null; if (bufs.size < SFX.length) failedAt = performance.now(); })); // some failed (offline): try again on a later tap (bug hunt 2026-10-20)
+}
+// name: one of SFX. gain: 0–1 on top of the file’s own level. gap: skip if the same sound played less than gap ms ago.
+// delay: seconds from now (scheduled on the audio clock, so it stays in time with animations).
+// Sounds: Sevaan’s picks from the sound board (design/sound-board.html, 2026-10-18): mostly the original designed set
+// ("old", scripts/sfx-synth.py / sfx-round.py), plus a few UI SFX cues (uisfx.com, CC0): lock zen snap, flip zen forward,
+// seen zen select, stamp zen check, levelup zen streak, xp mechanical progress-step,
+// secret soft wake, rattle zen drag-start. NORM is written by scripts/sfx-levels.py from each file’s measured
+// loudness (EBU R128) and a target per event: payoffs loudest, taps and ticks quietest. Rerun it after changing a file.
+const NORM = {"arrive": 1.2, "coinroll": 1.66, "collect": 1.14, "complete": 1.4, "flip": 1.24, "fossil": 2.6, "levelup": 1.58, "lock": 0.71, "mission": 1.11, "page": 3.35, "patch": 1.17, "plane": 1.01, "r_common": 0.95, "r_epic": 1.36, "r_legend": 1.32, "r_rare": 1.45, "r_uncommon": 0.95, "rankup": 1.26, "rattle": 1.35, "secret": 1.19, "seen": 1.93, "shiny": 2.4, "stamp": 2.32, "step": 1.74, "swipe": 1.78, "toast": 2.66, "toggle": 7.08, "ufo": 1.58, "welcome": 1.02, "xp": 0.61};
+// At most two at once: a third small sound is skipped rather than piling on (a Saturn catch stacked four over 5 s).
+const STINGERS = new Set(['r_common', 'r_uncommon', 'r_rare', 'r_epic', 'r_legend', 'shiny', 'rankup', 'levelup', 'mission', 'complete', 'secret', 'welcome']);
+let playing = 0;
+// How long each file is actually audible (2026-10-17 haptics playtest: the cap counted silent tails, e.g. lock is heard
+// for 0.22 s of 1.05 s, so lock + collect filled both slots and the reveal’s whoosh was dropped). Measured once on load:
+// the last sample louder than 2% of the file’s peak.
+const audible = new Map();
+function audibleLength(b) {
+  const d = b.getChannelData(0); let peak = 0; for (let i = 0; i < d.length; i += 4) peak = Math.max(peak, Math.abs(d[i]));
+  const th = peak * 0.02; let end = d.length - 1; while (end > 0 && Math.abs(d[end]) < th) end -= 8;
+  return Math.max(0.05, end / b.sampleRate);
+}
+const UNCAPPED = new Set(['arrive']); // the reveal’s whoosh always plays
+export function sfx(name, { gain = 1, gap = 0, delay = 0 } = {}) {
+  { const h = host(); if (h) return h.sfx(name, { gain, gap, delay }); }
+  if (soundOff() || document.hidden || audioLeaving()) return; // nothing to hear in the background, and audioCtx() would wake the suspended context (bug hunt 2026-10-22)
+  const ctx = audioCtx(); if (!ctx) return;
+  const b = bufs.get(name); if (!b) { loadSfx(); return; }
+  const now = performance.now(); if (gap && now - (last.get(name) ?? -1e9) < gap) return; last.set(name, now);
+  if (playing >= 2 && !STINGERS.has(name) && !UNCAPPED.has(name)) return;
+  const play = () => { try { const src = ctx.createBufferSource(), g = ctx.createGain(); src.buffer = b; g.gain.value = gain * (NORM[name] ?? 1) * LEVEL * sfxVolume(); src.connect(g).connect(audioOut() ?? ctx.destination); playing++; let freed = false; const free = () => { if (!freed) { freed = true; playing = Math.max(0, playing - 1); } }; setTimeout(free, (delay + Math.min(1.2 /* a long sound (the 5.6 s secret) must not hold a slot and mute the reveal's sounds: Fable hunt 2026-11-17 */, audible.get(name) ?? b.duration)) * 1000 + 30); audioTrack(src); src.start(ctx.currentTime + delay); } catch {} };
+  /* Only on a running context: on a suspended one the clock is frozen, so every sound asked for meanwhile would start
+     together on resume (a welcome card left rattling for a minute played eleven rattles at the first tap). A context
+     that wakes within a quarter second (the tap that unlocks it) still gets its sound. */
+  if (ctx.state === 'running') play();
+  else ctx.resume().then(() => { if (ctx.state === 'running' && performance.now() - now < 250 && !document.hidden && !audioLeaving()) play(); }).catch(() => {});
+}
+// Load on the first tap (the context can only start from one), so the first real sound is ready.
+if (typeof document !== 'undefined') document.addEventListener('pointerdown', () => loadSfx(), { once: true, capture: true });
+
+// A heartbeat thump (2026-10-21, slick idea 05): a low, soft beat drawn on the fly (no file), for the held breath before
+// an Epic or Legendary card turns over. Follows the Sounds switch and volume like every other sound.
+export function heartbeat(strong = false) {
+  { const h = host(); if (h) return h.heartbeat(strong); }
+  if (soundOff() || document.hidden || audioLeaving()) return; // nothing to hear in the background, and audioCtx() would wake the suspended context (bug hunt 2026-10-22)
+  const ctx = audioCtx(); if (!ctx || ctx.state !== 'running') return;
+  try {
+    const t = ctx.currentTime, o = ctx.createOscillator(), g = ctx.createGain(), f = ctx.createBiquadFilter();
+    o.type = 'sine'; o.frequency.setValueAtTime(strong ? 68 : 60, t); o.frequency.exponentialRampToValueAtTime(40, t + 0.16);
+    f.type = 'lowpass'; f.frequency.value = 180;
+    const peak = (strong ? 0.9 : 0.6) * LEVEL * 2.4 * sfxVolume();
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(Math.max(0.001, peak), t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
+    o.connect(f).connect(g).connect(audioOut() ?? ctx.destination); audioTrack(o); o.start(t); o.stop(t + 0.25);
+  } catch {}
+}
+/* the app's own window plays the frame's sounds too (see host above) */
+try { if (typeof window !== 'undefined' && window.top === window) window.scAudio = { sfx, heartbeat, loadSfx }; } catch {}

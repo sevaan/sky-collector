@@ -26,7 +26,7 @@ const GROUP_OF = {
   time: 'twilight owl dawn marathon double hattrick months3 months12 streak4 streak12 anniversary',
 };
 const groupById = new Map(Object.entries(GROUP_OF).flatMap(([g, ids]) => ids.split(' ').map((id) => [id, g])));
-export const groupOf = (a) => (a.id === 'plus' ? 'member' : a.secret ? 'secret' : a.week ? 'week' : a.album ? 'album' : a.con === 'solar' ? 'planet' : a.con ? 'con' : groupById.get(a.id) ?? 'collect');
+export const groupOf = (a) => (a.id === 'plus' || a.id === 'ambassador' ? 'member' : a.secret ? 'secret' : a.week ? 'week' : a.album ? 'album' : a.con === 'solar' ? 'planet' : a.con ? 'con' : groupById.get(a.id) ?? 'collect');
 
 // Picture icons where one reads better than the achievement’s text icon.
 const GLYPH = {
@@ -130,7 +130,7 @@ const UFO_ART = (id) => `<defs><linearGradient id="${id}beam" x1="0" y1="0" x2="
   ${[[-30, -22], [26, -26], [-18, -34], [34, -6], [-36, 0], [12, -38]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1" fill="${INK}" opacity=".7"/>`).join('')}
   <path d="M-9 -4 L-24 30 L24 30 L9 -4Z" fill="url(#${id}beam)"/>
   <g transform="translate(0 -8) scale(1.7)"><path d="M-6 -1 Q-5 -7 0 -7 Q5 -7 6 -1Z" fill="#cfe8ff" fill-opacity=".85"/><ellipse rx="14" ry="4.2" fill="${INK}"/><ellipse rx="14" ry="4.2" fill="none" stroke="#c9b67a" stroke-width=".8"/><circle cx="-8" cy=".5" r="1.3" fill="#7dff8a"/><circle cx="0" cy="1.6" r="1.3" fill="#7dff8a"/><circle cx="8" cy=".5" r="1.3" fill="#7dff8a"/></g>`;
-const SECRET_TWILL = { ghost2026: '#123a2a', plus: '#14284a', santa: '#6a1d1d', roadster: '#14284a', meteor: '#22265a', voyager: '#0f1b2a', dizzy: '#3a2259', voyager2: '#0f1b2a', pioneer10: '#2a1d0c', pioneer11: '#1f1a2e', newhorizons: '#101c2c', wow: '#2a0f12' };
+const SECRET_TWILL = { ghost2026: '#123a2a', plus: '#14284a', ambassador: '#14284a', santa: '#6a1d1d', roadster: '#14284a', meteor: '#22265a', voyager: '#0f1b2a', dizzy: '#3a2259', voyager2: '#0f1b2a', pioneer10: '#2a1d0c', pioneer11: '#1f1a2e', newhorizons: '#101c2c', wow: '#2a0f12' };
 const SLEIGH = '<g fill="#fff2b3">' + [0, 1, 2].map((k) => `<g transform="translate(${k * 13 - 30} ${4 - k * 2})"><path d="M0 5 Q3 1 8 2 L10 0 L9.5 4 Q11 6 8 7 L3 7 Z"/><path d="M8.5 1 l1.5 -3.5 M10 1 l2 -3" stroke="#fff2b3" stroke-width=".8"/></g>`).join('') + '</g><path d="M10 6 Q11 0 20 0 L30 0 Q34 0 33 5 L32 8 L12 8 Z" fill="#d94f38"/><path d="M8 11 L34 11 Q37 11 36 8" fill="none" stroke="#fff2b3" stroke-width="1.6"/><circle cx="24" cy="-3" r="3" fill="#fff2b3"/><circle cx="-28" cy="5" r="1.4" fill="#ff4a3a"/>';
 const SKY_PATCH = () => typeof document !== 'undefined' && (document.body?.classList.contains('sky-only') || document.documentElement.classList.contains('sky-cards'));
 const SECRET_ART = {
@@ -147,6 +147,9 @@ const SECRET_ART = {
     + '<g transform="translate(-1 2) scale(.82)"><g stroke="#8a5a36" stroke-width="3" stroke-linecap="round"><path d="M0 4 L-14 30 M0 4 L0 32 M0 4 L14 30"/></g>'
     + '<g transform="rotate(-30)"><rect x="-28" y="-6" width="46" height="12" rx="2" fill="#d9a441" stroke="#f4d27a" stroke-width="1.2"/><rect x="18" y="-8" width="7" height="16" rx="1.6" fill="#e8c068"/><rect x="-34" y="-3.5" width="6" height="7" rx="1" fill="#b88a2e"/><path d="M-11 -6 V6 M5 -6 V6" stroke="#8a6420" stroke-width="1.4"/><rect x="-9" y="-13" width="16" height="5" rx="1.5" fill="#c9952f"/></g>'
     + '<circle cy="4" r="3.4" fill="#8a6420"/></g>'),
+  // Ambassador (2026-11-18, design/share-pack.html): two cards fanned, the front one with a star, as sent to a friend.
+  ambassador: () => '<g transform="scale(1.05)"><g stroke="#fff2b3" stroke-width="2" stroke-linejoin="round"><rect x="-16" y="-20" width="24" height="34" rx="3" fill="#0c1c33" transform="rotate(-12 -4 -3)"/><rect x="-6" y="-22" width="24" height="34" rx="3" fill="#14284a" transform="rotate(9 6 -5)"/></g>'
+    + '<path d="M6 -14 l2.3 4.8 5.2 .7 -3.8 3.7 .9 5.2 -4.6 -2.5 -4.6 2.5 .9 -5.2 -3.8 -3.7 5.2 -.7z" fill="#fa8127" transform="rotate(9 6 -5)"/><circle cx="-24" cy="-22" r="1.1" fill="#fff2b3" opacity=".7"/><circle cx="25" cy="16" r=".9" fill="#fff2b3" opacity=".6"/></g>',
   santa: () => `<g transform="translate(-2 -6) scale(1.25)">${SLEIGH}</g>`,
   roadster: () => '<g transform="translate(-27 -12)"><path d="M2 16 Q4 8 16 7 L24 2 L36 2 L44 8 Q52 9 52 16 Z" fill="#d22b2b"/><circle cx="13" cy="17" r="4" fill="#111"/><circle cx="41" cy="17" r="4" fill="#111"/><circle cx="29" cy="6" r="3.4" fill="#f4f4f4"/></g>',
   // Halloween 2026: a little ghost with solar panels for arms (Envisat), a green glow and the year.

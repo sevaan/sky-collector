@@ -718,7 +718,12 @@ body.night :where(.d-cta.o, .tn-btn.solid, #help-card .hc-show, #calib .cb-b.p, 
   background-image: none !important; box-shadow: 0 3px 0 #3a0b07, 0 6px 12px #0008 !important; }
 body.night :where(.d-cta.ghost, #help-card > span button:not(.hc-show), :is(#moon-check, #sun-check, #d-check) .mc-off, #sm-done, #calib .cb-b:not(.p), #v-preview) {
   background-color: #1a0907 !important; background-image: none !important; color: #ff7f70 !important; box-shadow: 0 0 0 1px #ff6a5540, 0 3px 0 #000, 0 6px 12px #0008 !important; }
-@media (prefers-reduced-motion: reduce) { :where(.d-cta.o, .tn-btn.solid, .d-cta.ghost, .tc .acts button, #sm-done, #v-preview):active { transform: none !important; } }
+@media (prefers-reduced-motion: reduce) { :where(.d-cta.o, .tn-btn.solid, .d-cta.ghost, .tc .acts button, #sm-done, #v-preview, #help-card > span button, #calib .cb-b, .mc-yes, .mc-off, #gh-remind, .cf-danger):active { transform: none !important; } }
+/* Two buttons whose own rules outrank :where() (Fable hunt 2026-11-17): give them the gloss and the lip directly. */
+#gh-remind:not(.on) { background-image: linear-gradient(#ffffff2e, #ffffff00 55%, #00000026) !important; box-shadow: inset 0 1px 0 #ffffff59, inset 0 -2px 0 #0000002e, 0 3px 0 #3c5f96, 0 8px 16px #0008 !important; }
+#gh-remind:not(.on):active { box-shadow: inset 0 1px 0 #ffffff40, inset 0 2px 6px #0000004d, 0 0 0 #3c5f96, 0 3px 6px #0007 !important; }
+#help-card .hc-show { background-image: linear-gradient(#ffffff2e, #ffffff00 55%, #00000026) !important; }
+body.night #gh-remind:not(.on), body.night #help-card .hc-show { background-image: none !important; box-shadow: 0 3px 0 #3a0b07, 0 6px 12px #0008 !important; }
 /* Tour cards (2026-11-14, Sevaan: "Allow looks weird, shouldn't be smaller than the secondary option"): the main button was
    a fixed 50px holding 20px type, so the words nearly touched its edges, and a wrapped label made it a different height on
    each card. It is now one height on every card (58px) with 17px type and room around it; the text link under it stays smaller. */

@@ -201,6 +201,13 @@
     <button class="d-cta o" id="ud-set" type="button"><span>Set reminder</span><span></span></button><button class="set-link" id="ud-cancel" type="button" hidden>Cancel the reminder</button></div></div>
   <div class="set-sheet" id="pr-sheet" hidden><div class="set-sheet-card"><div class="set-grab"></div><div class="pr-head" id="pr-title"></div><div id="pr-opts"></div>
     <button class="set-link" id="pr-cancel" type="button" hidden>Cancel the reminder</button></div></div>
+  <!-- Tell a friend (2026-11-18, design/share-pack.html): asked after a great catch (from night 2), then from day 3, then every two months -->
+  <div class="set-sheet" id="tell-sheet" hidden><div class="set-sheet-card tell-card" role="dialog" aria-labelledby="tell-title"><div class="set-grab"></div>
+    <div class="tell-top"><span class="tell-patch" id="tell-patch" aria-hidden="true"></span><div><span class="tell-eye" id="tell-eye">Tell a friend</span><h3 id="tell-title">Got a plane-spotting friend?</h3></div></div>
+    <p class="tell-text">Send them a sample pack of plane cards. It opens in their browser, no app needed.</p>
+    <div class="tell-reward" id="tell-reward"><i aria-hidden="true">✦</i><span>Earn the Ambassador patch for telling someone about Sky Collector</span></div>
+    <button class="ui-btn ui-btn--primary tell-go" id="tell-go" type="button">Tell a friend</button>
+    <button class="set-link tell-no" id="tell-no" type="button">Not now</button></div></div>
   <button id="secret-cta" type="button" hidden></button>
   <button id="ufo-cta" type="button" hidden>Tap to collect<small>Quick, it won’t stay</small></button>
   <!-- Line up the sky (2026-10-22, design/compass-calibrate.html): a lining-up mode over the live sky -->
@@ -452,6 +459,7 @@
       <button class="set-row" type="button" id="btn-next-pass"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="sight"></span></span><span class="set-main">Jump to next visible pass<small>Moves the clock only</small></span><span class="set-chev">›</span></button>
     </div>
     <div class="set-group set-card set-test"><div class="set-bar"><h3>Try it now</h3><b aria-hidden="true">T2</b></div>
+      <button class="set-row" type="button" id="btn-tell"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="cards"></span></span><span class="set-main">Tell a friend<small>Send a sample pack of cards to open in a browser</small></span><span class="set-chev">›</span></button>
       <button class="set-row" type="button" id="btn-replay-setup"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="replay"></span></span><span class="set-main">Replay the tour<small>From the sealed welcome card, as a new player</small></span><span class="set-chev">›</span></button>
       <button class="set-row" type="button" id="btn-perfmeter"><span class="set-ic" aria-hidden="true"><span class="ico" data-ico="chart"></span></span><span class="set-main">Performance meter<small id="pm-sub">Records frame times while you use the app. Tap to start</small></span><span class="set-chev">›</span></button>
       <pre id="pm-out" class="pm-out" hidden></pre>

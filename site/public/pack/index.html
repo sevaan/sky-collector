@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<base href="/pack/">
+<title>A pack from the sky · Sky Collector</title>
+<meta name="description" content="A sample pack of Sky Collector cards: real planes that fly over your own backyard. Open it in your browser.">
+<meta property="og:title" content="A pack from the sky above you">
+<meta property="og:description" content="Open a sample pack of Sky Collector cards: real planes that fly over your own backyard.">
+<meta property="og:url" content="https://skycollector.app/pack"><meta property="og:image" content="https://skycollector.app/icon-512.png"><meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#5d97cf">
+<link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="css/fonts.css"><link rel="stylesheet" href="css/cards.css"><link rel="stylesheet" href="css/gift.css"><link rel="stylesheet" href="css/ui.css"><link rel="stylesheet" href="css/sky-theme.css"><link rel="stylesheet" href="css/sky-cards.css">
+<style>
+  /* Sky Collector's sample pack (2026-11-18; Space Collector's is its site/public/pack). The pack, its cards and sounds are
+     the game's own (scripts/build-site-pack.mjs, driver pack.js); this page is what shows before it starts and after it's
+     put away. Hand-written here in site/pack-src and copied into site/public/pack by the build. */
+  :root { --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px); }
+  * { box-sizing: border-box; }
+  html { background: #86b6e0; }
+  body { margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: calc(28px + var(--safe-top)) max(20px, env(safe-area-inset-right)) calc(28px + var(--safe-bottom)) max(20px, env(safe-area-inset-left)); background: linear-gradient(180deg, #5d97cf 0%, #86b6e0 40%, #b9d5ee 75%, #e3eef8 100%) fixed; color: #0d2238; font: 500 17px/1.45 'SC Label', system-ui, sans-serif; text-align: center; overflow-x: hidden; }
+  body.playing { overflow: hidden; }
+  #end[hidden], #start[hidden] { display: none; }
+  :is(#start, #end) .k { font-size: 13px; font-weight: 600; letter-spacing: .26em; text-transform: uppercase; color: #b42a20; }
+  :is(#start, #end) h1 { margin: 6px 0 4px; font: 400 30px/1.05 'SC Display', sans-serif; text-transform: uppercase; color: #0d2238; }
+  :is(#start, #end) p { margin: 8px auto 0; max-width: 340px; color: #16314c; }
+  .open { display: flex; align-items: center; justify-content: center; width: min(100%, 320px); height: 54px; margin: 26px auto 0; border: 0; border-radius: 14px; background: #d7362b; color: #fffdf6; font: 600 17px 'SC Label', sans-serif; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; box-shadow: 0 3px 0 #8c1c14, 0 8px 16px rgba(13,34,56,.28); }
+  a.open.site { text-decoration: none; margin-top: 20px; height: 50px; letter-spacing: .1em; text-transform: none; }
+  .again { margin-top: 14px; background: none; border: 0; color: #23405c; font: 600 15px 'SC Label', sans-serif; letter-spacing: .14em; text-transform: uppercase; cursor: pointer; padding: 8px; }
+  #end .lc-host { font-size: min(11px, calc((100vw - 48px) / 28), calc((100dvh - 262px) / 42)); margin: 8px auto 0; }
+
+  /* The sealed pack (2026-11-18, Sevaan: "a little crowded" top and bottom): a smaller pack, so the title above and the
+     button below have air, and no "Swipe across the top to open · 3 cards" lines under it (the pack says 3 cards itself;
+     swiping still works). Only this page: the game's own packs keep their hint. */
+  html body #gift { --cf: min(11px, calc((100vw - 90px) / 31), calc((100dvh - 340px) / 50)); }
+  #gift .gp-hint { font-size: 0; letter-spacing: 0; }
+  #gift .gp-hint > b, #gift .gp-hint .sub { display: none; }
+  #gift .gp-hint button { margin-top: 0; }
+
+  /* ===== the last card: Space Collector's "Your turn" card in Sky's daylight paper, navy ink and red ===== */
+  .lc-host { line-height: 1.2; text-align: left; }
+  #gift .gp-dc .lc-host { font-size: var(--dcf); }
+  .lc { position: relative; width: 28em; height: 42em; border-radius: 1.5em; padding: .5em; color: #0d2238; transform-style: preserve-3d;
+    background: linear-gradient(145deg, #fff3c4 0%, #f2b632 22%, #c98f1c 48%, #ffd86a 70%, #c98f1c 100%);
+    box-shadow: 0 0 0 1px #8a6420, 0 1.6em 3.4em rgba(13,34,56,.4); }
+  .lc-turn { position: relative; }
+  .lc-back { display: none; width: 28em; height: 42em; border-radius: 1.5em; background: #fdf6e9 center / contain no-repeat; box-shadow: 0 0 0 1px #0d223822, 0 1.6em 3.4em rgba(13,34,56,.4); }
+  .lc-host.flipped .lc { display: none; } .lc-host.flipped .lc-back { display: block; }
+  #gift.gp-final .gp-x, #gift.gp-final .gp-count2 { display: none !important; } /* the last card stays: nothing to skip or close */
+  .lc-in { position: relative; height: 100%; border-radius: 1.05em; padding: .85em .95em .8em; display: flex; flex-direction: column; overflow: hidden; background: #fffdf6; box-shadow: inset 0 0 0 1px #c9b98a; }
+  .lc-art { position: relative; height: 14.6em; flex: none; border-radius: .7em; overflow: hidden; box-shadow: inset 0 0 0 1px #0d223833; background: linear-gradient(180deg, #5d97cf 0%, #86b6e0 55%, #cfe2f3 100%); }
+  .lc-art svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .lc-pill { position: absolute; top: .75em; left: .75em; z-index: 2; display: flex; align-items: center; gap: .45em; padding: .3em .7em .28em; border-radius: .45em; font: 600 .95em 'SC Label', sans-serif; letter-spacing: .2em; color: #fffdf6; background: #0d2238e6; }
+  .lc-set { position: absolute; top: .9em; right: .9em; z-index: 2; font: 600 .95em 'SC Label', sans-serif; letter-spacing: .22em; color: #0d2238cc; }
+  .lc h5 { margin: .55em 0 0; font: 400 2.4em/.98 'SC Display', sans-serif; letter-spacing: -.005em; text-transform: uppercase; color: #0d2238; }
+  .lc-sub { display: flex; justify-content: space-between; align-items: baseline; margin: .4em 0 .6em; padding-bottom: .55em; border-bottom: 1px solid #c9b98a; }
+  .lc-sub b { font: 600 1.35em 'SC Label', sans-serif; color: #23405c; letter-spacing: .02em; }
+  .lc-sub span { font: 600 1.05em 'SC Label', sans-serif; letter-spacing: .2em; color: #0d2238; padding-left: .7em; border-left: 2px solid #c9b98a; }
+  .lc-steps { display: grid; grid-template-columns: repeat(3, 1fr); margin-bottom: .65em; padding-bottom: .65em; border-bottom: 1px solid #c9b98a; }
+  .lc-steps div { padding: 0 .6em; } .lc-steps div + div { border-left: 1px solid #c9b98a; } .lc-steps div:first-child { padding-left: 0; }
+  .lc-steps i { display: inline-block; font: 600 .9em 'SC Label', sans-serif; font-style: normal; letter-spacing: .16em; color: #b42a20; padding-bottom: .25em; border-bottom: 1px solid #d7362b99; }
+  .lc-steps b { display: block; margin-top: .45em; font: 400 1.32em/1 'SC Display', sans-serif; color: #0d2238; white-space: nowrap; }
+  .lc .lc-fact { margin: 0 0 auto; padding-left: .8em; border-left: 3px solid #d7362b; font: 1.1em/1.36 Georgia, 'Times New Roman', serif; color: #16314c; }
+  .lc-fact strong { color: #0d2238; }
+  .lc-soon { display: flex; flex-direction: column; align-items: center; gap: .5em; padding-top: .8em; border-top: 1px solid #c9b98a; }
+  .lc-soon span { display: inline-flex; align-items: center; gap: .6em; padding: .55em 1em .5em; border-radius: 99em; background: #0d2238; color: #fffdf6; font: 600 1.02em 'SC Label', sans-serif; letter-spacing: .18em; text-transform: uppercase; white-space: nowrap; }
+  .lc-soon span i { width: .55em; height: .55em; border-radius: 50%; background: #d7362b; animation: lcblip 2.4s ease-in-out infinite; }
+  .lc-soon a { font: 600 1.05em 'SC Label', sans-serif; letter-spacing: .18em; text-transform: uppercase; color: #0d2238; text-decoration: none; border-bottom: 1.5px solid #b42a20; padding-bottom: 1px; }
+  @keyframes lcblip { 50% { opacity: .25; } }
+  /* The last card answers a finger (or the mouse) like every card in the game (2026-11-18, Sevaan): it leans, a soft
+     light follows the touch and a foil band slides across. The numbers come from the game's own attachTilt (js/card.js),
+     which the pack calls on each card and pack.js calls on the end screen's; the look is the game's .card__glare / .card__foil. */
+  .lc-host { perspective: 90em; }
+  .lc { transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale(calc(1 + var(--o, 0) * .02)); will-change: transform; }
+  .lc-glare, .lc-foil { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 4; }
+  .lc-glare { background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), hsla(0, 0%, 100%, .75) 0, hsla(0, 0%, 100%, .22) 18%, transparent 44%); mix-blend-mode: overlay; opacity: calc(var(--o, 0) * .55); }
+  .lc-foil { background: linear-gradient(115deg, transparent 47.6%, rgba(255, 255, 255, .55) 49.3%, rgba(255, 255, 255, .8) 49.8%, rgba(255, 255, 255, .55) 50.3%, transparent 52%) var(--bgx, 50%) var(--bgy, 50%) / 300% 300%,
+      linear-gradient(115deg, transparent 41.5%, hsla(350, 100%, 66%, .55) 43.5%, hsla(30, 100%, 60%, .6) 45%, hsla(55, 100%, 62%, .6) 46.5%, hsla(120, 85%, 58%, .55) 48%, hsla(180, 95%, 60%, .6) 49.5%, hsla(215, 95%, 66%, .6) 51%, hsla(265, 90%, 70%, .55) 52.5%, hsla(310, 90%, 70%, .4) 54.5%, transparent 56.5%) var(--bgx, 50%) var(--bgy, 50%) / 300% 300%;
+    mix-blend-mode: color-dodge; opacity: calc(var(--o, 0) * .2); }
+  @media (prefers-reduced-motion: reduce) { .lc { transform: none; } }
+  .lc::after { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; mix-blend-mode: soft-light; background: linear-gradient(115deg, transparent 30%, #ffffff55 44%, #ffffffaa 48%, #ffffff55 52%, transparent 66%) -60% 0 / 260% 100% no-repeat; animation: lcsweep 5s ease-in-out infinite; }
+  @keyframes lcsweep { 0%, 35% { background-position: 160% 0; } 75%, 100% { background-position: -60% 0; } }
+  .lc-ret { animation: lcpulse 2.6s ease-in-out infinite; } @keyframes lcpulse { 50% { opacity: .7; } }
+  .lc-cloud { animation: lcdrift 16s ease-in-out infinite alternate; } @keyframes lcdrift { from { transform: translateX(-10px); } to { transform: translateX(12px); } }
+  @media (prefers-reduced-motion: reduce) { .lc::after, .lc-ret, .lc-cloud, .lc-soon span i { animation: none; } }
+</style>
+</head><body class="sky-only">
+<main id="start">
+  <div class="k">A sample pack</div>
+  <h1>Cards from the sky above you</h1>
+  <p>Real planes that fly over your own backyard. Open the pack.</p>
+  <button class="open" id="open" type="button">Open the pack</button>
+  <noscript><p>This pack needs JavaScript to open.</p></noscript>
+</main>
+<main id="end" hidden>
+  <div class="k">Your turn</div>
+  <div class="lc-host" id="end-card"></div>
+  <a class="open site" href="https://skycollector.app/" rel="noopener">Visit SkyCollector.app</a>
+  <button class="again" id="again" type="button">Open the pack again</button>
+</main>
+<template id="lastcard"><div class="lc" role="group" aria-label="Collect the sky above you. Sky Collector: look up, line up a plane, collect it. Coming soon to iPhone and Android."><div class="lc-in">
+  <div class="lc-art">
+    <span class="lc-pill">✦ YOUR TURN</span><span class="lc-set">4 OF 4</span>
+    <svg viewBox="0 0 300 160" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <g class="lc-cloud" fill="#ffffff"><ellipse cx="52" cy="124" rx="46" ry="13" opacity=".85"/><ellipse cx="86" cy="114" rx="30" ry="12" opacity=".9"/><ellipse cx="246" cy="134" rx="52" ry="14" opacity=".8"/><ellipse cx="218" cy="124" rx="26" ry="10" opacity=".85"/><ellipse cx="262" cy="34" rx="34" ry="8" opacity=".5"/><ellipse cx="36" cy="40" rx="28" ry="7" opacity=".45"/></g>
+      <path d="M-10 150 Q 110 110 150 84" fill="none" stroke="#fffdf6" stroke-opacity=".7" stroke-width="1.4"/>
+      <path d="M150 84 Q 226 44 310 20" fill="none" stroke="#d7362b" stroke-width="1.6" stroke-dasharray="4 6"/>
+      <g class="lc-ret"><circle cx="150" cy="84" r="34" fill="none" stroke="#d7362b" stroke-width="2.2"/><circle cx="150" cy="84" r="28" fill="none" stroke="#d7362b" stroke-opacity=".5" stroke-width="1"/>
+        <g stroke="#d7362b" stroke-width="2.2" stroke-linecap="round"><path d="M150 46v6M150 116v6M112 84h6M182 84h6"/></g></g>
+      <g transform="translate(150 84) rotate(62)"><path d="M0 -15 C2 -15 3 -11 3 -7 L3 -2 L17 6 L17 9 L3 5 L3 11 L7 14 L7 16.5 L0 14.5 L-7 16.5 L-7 14 L-3 11 L-3 5 L-17 9 L-17 6 L-3 -2 L-3 -7 C-3 -11 -2 -15 0 -15 Z" fill="#0d2238" stroke="#fffdf6" stroke-width="1" stroke-linejoin="round"/></g>
+      <text x="150" y="32" text-anchor="middle" font-family="SC Display" font-size="10.5" fill="#0d2238">AIRBUS A380</text>
+      <text x="150" y="42" text-anchor="middle" font-family="SC Label" font-weight="600" font-size="8" letter-spacing="1.6" fill="#7a2fb8">◆ EPIC</text>
+      <rect x="120" y="126" width="60" height="16" rx="8" fill="#d7362b"/><text x="150" y="137.2" text-anchor="middle" font-family="SC Label" font-weight="600" font-size="8" letter-spacing="1.8" fill="#fffdf6">COLLECT</text>
+    </svg>
+  </div>
+  <h5>Collect the sky<br>above you</h5>
+  <div class="lc-sub"><b>Sky Collector</b><span>FREE · NO ADS</span></div>
+  <div class="lc-steps"><div><i>STEP 1</i><b>Look up</b></div><div><i>STEP 2</i><b>Line it up</b></div><div><i>STEP 3</i><b>Collect</b></div></div>
+  <p class="lc-fact">Every plane overhead is a <strong>real flight</strong>, and every one is a card: where it’s going, who’s flying it and what it is.</p>
+  <div class="lc-soon"><span><i></i>Coming soon to iPhone and Android</span><a href="https://skycollector.app/" rel="noopener">skycollector.app</a></div>
+</div><span class="lc-foil" aria-hidden="true"></span><span class="lc-glare" aria-hidden="true"></span></div></template>
+<script type="module" src="pack.js"></script>
+</body></html>

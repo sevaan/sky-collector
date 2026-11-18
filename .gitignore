@@ -11,3 +11,4 @@ store/zen-sounds-reel.mp3
 scripts/perf/out/
 node_modules
 __pycache__/
+scripts/qa/out/

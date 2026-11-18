@@ -1,0 +1,556 @@
+/* Sky Collector's own components (rebuild, 2026-11-16): the plane card face (js/flight-card.js), its mini card, stamps and
+   levels, airline logos, photo framing, Today's layout (js/sky-today.js) and the satellite-only interface hidden in Sky.
+   Colours for the daylight look live in css/sky-theme.css; nothing here restyles a Space Collector component. */
+
+/* Space Collector's night-sky helpers have nothing to say about planes. */
+#nextpass, #event-banner, #tk, #ud-now, #until-dark, #gh-remind, #plane, #skybar, #catchbar { display:none !important; } /* #discover is back: planes use it (2026-11-15) */
+
+
+/* ---- The card (2026-11-15 fidelity pass, js/flight-card.js) ----
+   28 × 42em like Space Collector's retro cards, so inside #reveal-card it sizes off the reveal's --cf and lines up with
+   the sealed back it flips from; elsewhere --fc-u (default: fits the screen, max 11.8px). The photo takes whatever height
+   the words leave, so every card is the same shape. Layers, back to front: a metal frame by rarity
+   (.fc-face), cream card stock with grain and a double rule (.fc-in), a recessed photo window, then foil, gloss and glare
+   over the whole card. Tilt values come from js/card.js attachTilt on the card or an ancestor, so every var() here has a
+   fallback and the card never sets them itself (that would block the inherited ones). */
+.fc, .sct-face {
+  --paper:#fffdf6; --ink:#0d2238; --ink2:#1b3047; --muted:#4a6178; --rule:#cdbb8c; --orange:var(--gold, #d7362b); --orange-ink:#b42a20; /* the card's accent is the app's red (2026-11-17, Sevaan: replace all oranges with reds) */
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 .05 0 0 0 0 .13 0 0 0 0 .22 0 0 0 .32 -.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --glitter:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='1' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 11 -7.6'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --sparkle:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.3' numOctaves='1' seed='9'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 9 -5.4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23s)'/%3E%3C/svg%3E");
+  --holo:linear-gradient(115deg, transparent 38%, hsla(350,100%,72%,.55) 41%, hsla(32,100%,66%,.6) 43.5%, hsla(56,100%,64%,.6) 46%, hsla(130,80%,62%,.55) 48.5%, hsla(185,95%,62%,.6) 51%, hsla(220,95%,70%,.6) 53.5%, hsla(270,90%,74%,.55) 56%, hsla(320,90%,74%,.4) 58.5%, transparent 62%);
+  --streak:linear-gradient(115deg, transparent 47%, rgba(255,255,255,.5) 49.2%, rgba(255,255,255,.85) 50%, rgba(255,255,255,.5) 50.8%, transparent 53%);
+}
+/* Metals by rarity: steel, sage steel, gold, iridescent pearl, gold foil */
+.fc--common, .sct--common { --tier-ink:#3d5266; --frame:linear-gradient(150deg,#f4f7f9 0%,#aab7c3 18%,#e6ecf1 36%,#8495a6 55%,#d9e1e8 74%,#71839a 100%); --edge:#5d6f82; }
+.fc--uncommon, .sct--uncommon { --tier-ink:#18693f; --frame:linear-gradient(150deg,#f1f8f2 0%,#9dbca8 18%,#e0eee4 36%,#6f9a80 55%,#d2e5d8 74%,#5b8169 100%); --edge:#4f735d; }
+.fc--rare, .sct--rare { --tier-ink:#1a52a6; --frame:linear-gradient(150deg,#fff4c4 0%,#e3ac2f 18%,#ffe594 36%,#b47d17 55%,#ffd866 74%,#9c6a12 100%); --edge:#9a6a12; }
+.fc--epic, .sct--epic { --tier-ink:#6a31ae; --frame:linear-gradient(125deg,#ffc9ea 0%,#ac8cff 14%,#7fdfe6 28%,#ffe48a 42%,#f592c8 56%,#8fa6ff 70%,#9be8c4 84%,#e4b8ff 100%); --edge:#7a58ad; }
+.fc--legendary, .sct--legendary { --tier-ink:#7a5200; --frame:linear-gradient(150deg,#fff8d6 0%,#e9b53a 16%,#fff0b0 30%,#c48a1c 46%,#ffe07a 62%,#a87414 80%,#ffeaa0 100%); --edge:#8f6210; }
+
+.fc { --u:var(--fc-u, min(11.8px, calc((100vw - 40px) / 28))); font-size:var(--u); width:28em; flex:none; color:var(--ink); text-align:left;
+  -webkit-user-select:none; user-select:none; perspective:90em; font-family:Inter,'Helvetica Neue',Helvetica,Arial,sans-serif; }
+.fc *, .fc *::before, .fc *::after { box-sizing:border-box; }
+#reveal-card .fc { --fc-u:var(--cf); }
+.fc-rot { position:relative; border-radius:1.45em; transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) scale(calc(1 + var(--o,0) * .015)); transform-style:preserve-3d;
+  box-shadow:0 calc(.9em + var(--o,0) * .8em) calc(2.2em + var(--o,0) * 1.6em) rgba(13,34,56,.26), 0 .15em .4em rgba(13,34,56,.2); }
+.fc--gilt .fc-rot { box-shadow:0 calc(.9em + var(--o,0) * .8em) calc(2.2em + var(--o,0) * 1.6em) rgba(13,34,56,.26), 0 .15em .4em rgba(13,34,56,.2), 0 0 2.2em rgba(242,182,50,.32); }
+.fc--epic .fc-rot { box-shadow:0 calc(.9em + var(--o,0) * .8em) calc(2.2em + var(--o,0) * 1.6em) rgba(13,34,56,.26), 0 .15em .4em rgba(13,34,56,.2), 0 0 2.2em rgba(170,140,255,.35); }
+/* The frame: metal with a bevel (light top-left lip, dark lower edge) and a hairline where it meets the paper */
+.fc-face { position:relative; border-radius:1.45em; padding:.62em; height:42em; display:flex; background:var(--frame);
+  box-shadow:inset .08em .08em 0 rgba(255,255,255,.85), inset -.08em -.1em 0 rgba(0,0,0,.28), inset 0 0 0 .3em rgba(255,255,255,.08); }
+.fc--epic .fc-face { background:var(--frame) calc(100% - var(--mx,50%)) var(--my,50%) / 260% 260%; }
+.fc--legendary .fc-face { background:linear-gradient(110deg, transparent 38%, rgba(255,255,255,.95) 48%, rgba(255,246,200,.6) 52%, transparent 62%) 0 0 / 320% 100% no-repeat, var(--frame);
+  animation:fc-sweep 3.8s cubic-bezier(.45,.05,.55,.95) infinite; }
+.fc-face::before { content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none; padding:.62em;
+  background:repeating-linear-gradient(90deg, rgba(255,255,255,.16) 0 .06em, transparent .06em .2em), repeating-linear-gradient(0deg, rgba(0,0,0,.05) 0 .05em, transparent .05em .26em);
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask:linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+.fc--gilt .fc-face::before { background:repeating-linear-gradient(45deg, rgba(255,255,255,.18) 0 .07em, transparent .07em .32em), repeating-linear-gradient(-45deg, rgba(120,70,0,.1) 0 .07em, transparent .07em .32em); }
+.fc--legendary .fc-face::before { padding:.78em; }
+@keyframes fc-sweep { 0% { background-position:130% 0, 0 0; } 55%, 100% { background-position:-30% 0, 0 0; } }
+/* Card stock: cream, a fine grain, a soft light from top-left, a double rule printed just inside the edge */
+.fc-in { position:relative; flex:1; min-height:0; overflow:hidden; display:flex; flex-direction:column; border-radius:.95em; padding:.78em .8em .62em;
+  background:radial-gradient(ellipse 90% 60% at 15% 0%, rgba(255,255,255,.9), transparent 70%), var(--grain), var(--paper);
+  box-shadow:0 0 0 .07em color-mix(in srgb, var(--edge) 70%, #000), inset 0 .1em .25em rgba(13,34,56,.18); }
+.fc-in::before { content:''; position:absolute; inset:.3em; border-radius:.72em; pointer-events:none;
+  box-shadow:inset 0 0 0 .07em color-mix(in srgb, var(--edge) 55%, transparent), inset 0 0 0 .2em var(--paper), inset 0 0 0 .26em color-mix(in srgb, var(--rule) 70%, transparent); }
+.fc-in > * { position:relative; }
+
+/* The picture window: recessed under the print, with the rarity pill and set chip over it */
+.fc-art { flex:1 1 0; min-height:13em; display:flex; flex-direction:column; border-radius:.6em; overflow:hidden; background:#0d2238; box-shadow:0 0 0 .08em color-mix(in srgb, var(--edge) 80%, #000), 0 .1em 0 rgba(255,255,255,.9); }
+.fc-pic { position:relative; flex:1 1 0; min-height:8em; overflow:hidden; background:linear-gradient(180deg,#5f9fd6,#bcdaf2); }
+.fc-pic::after { content:''; position:absolute; inset:0; z-index:2; pointer-events:none; box-shadow:inset 0 .5em .9em rgba(13,34,56,.38), inset 0 -.3em .6em rgba(13,34,56,.18); }
+.fc-photo { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; -webkit-user-drag:none; }
+.fc-holo { position:absolute; inset:0; z-index:1; pointer-events:none; }
+.fc-tier { position:absolute; z-index:3; left:.6em; top:.6em; display:flex; align-items:center; gap:.45em; padding:.28em .65em .26em .5em; border-radius:.45em;
+  background:rgba(255,253,246,.95); border:.09em solid var(--tier); color:var(--tier-ink); box-shadow:0 .15em .4em rgba(13,34,56,.2);
+  font:600 .86em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.16em; }
+.fc-tier i { font-style:normal; color:var(--tier); font-size:1.05em; letter-spacing:0; }
+.fc-set { position:absolute; z-index:3; right:.6em; top:.6em; padding:.36em .6em .32em; border-radius:.4em; background:rgba(13,34,56,.8); color:#fffdf6;
+  font:600 .78em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.18em; -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px); }
+.fc-credit { position:absolute; z-index:3; right:.5em; bottom:.45em; max-width:70%; padding:.18em .45em; border-radius:.3em; background:rgba(13,34,56,.66); color:#fff;
+  font:500 .64em/1.2 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.04em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+/* No photo: a daylight panel with cloud banks and the silhouette crossing it */
+.fc-sky { position:absolute; inset:0; display:grid; place-items:center; overflow:hidden;
+  background:radial-gradient(ellipse 70% 50% at 70% 20%, rgba(255,255,255,.55), transparent 70%), linear-gradient(180deg,#4f93d0 0%,#8fc0e8 55%,#d6e9f7 100%); }
+.fc-sky::before { content:''; position:absolute; inset:0; opacity:.35; background-image:linear-gradient(rgba(255,255,255,.35) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.35) 1px,transparent 1px); background-size:2.4em 2.4em; }
+.fc-cloud { position:absolute; border-radius:50%; background:radial-gradient(ellipse at 50% 60%, rgba(255,255,255,.95), rgba(255,255,255,.55) 45%, transparent 70%); filter:blur(.15em); }
+.fc-cloud--a { width:60%; height:32%; left:-12%; bottom:6%; } .fc-cloud--b { width:48%; height:26%; right:-10%; top:18%; opacity:.8; }
+.fc-glyph { position:relative; width:52%; height:auto; aspect-ratio:1; fill:#fffdf6; stroke:var(--ink); stroke-width:1.1; transform:rotate(-28deg); filter:drop-shadow(1.2em 1.6em .5em rgba(13,34,56,.28)); }
+.fc-sky--big .fc-glyph { width:58%; }
+.fc-sky-mark { position:absolute; left:.25em; bottom:-.12em; font:400 5.2em/1 'SC Display','Russo One',sans-serif; letter-spacing:-.02em; color:transparent; -webkit-text-stroke:.022em rgba(255,255,255,.75); }
+.fc-sky-ring { position:absolute; left:50%; top:50%; width:72%; aspect-ratio:1; transform:translate(-50%,-50%); border-radius:50%; border:.1em dashed rgba(255,255,255,.6); box-shadow:0 0 0 2.4em rgba(255,255,255,.07), inset 0 0 0 2.4em rgba(255,255,255,.07); }
+/* The route: a boarding-pass strip under the photo, perforated along its top */
+.fc-route { position:relative; display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:.6em; padding:.55em .8em .5em; background:linear-gradient(180deg,#132d49,#0d2238); color:#fffdf6; }
+.fc-route::before { content:''; position:absolute; left:0; right:0; top:-.22em; height:.44em; background:radial-gradient(circle at 50% 50%, #0d2238 .14em, transparent .16em) 0 0 / .62em .44em repeat-x; }
+.fc-route-end { display:flex; flex-direction:column; gap:.12em; min-width:0; }
+.fc-route-end--b { align-items:flex-end; text-align:right; }
+.fc-route-end b { font:400 1.55em/1 'SC Display','Russo One',sans-serif; letter-spacing:.02em; }
+.fc-route-end small { font:500 .74em/1.1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.1em; text-transform:uppercase; color:#c3d3e2; max-width:8em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.fc-route-mid { position:relative; height:2.6em; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; }
+.fc-route-mid > svg:first-child { position:absolute; left:0; right:0; top:.1em; width:100%; height:1.7em; overflow:visible; }
+.fc-route-arc { fill:none; stroke:var(--orange); stroke-width:1.6; stroke-dasharray:4 4; vector-effect:non-scaling-stroke; }
+.fc-route-a { fill:#fffdf6; } .fc-route-b { fill:var(--orange); }
+.fc-route-plane { position:absolute; left:50%; top:-.05em; width:1.15em; height:1.15em; transform:translateX(-50%) rotate(90deg); fill:#fffdf6; }
+.fc-route-mid small { font:500 .7em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; text-transform:uppercase; color:#c3d3e2; white-space:nowrap; }
+
+/* Title, identity, stats, fact, footer: Space Collector's hierarchy in navy ink */
+.fc-name { margin:.62em 0 0; display:flex; flex-direction:column; font:400 2.5em/.98 'SC Display','Russo One',sans-serif; letter-spacing:-.02em; text-transform:uppercase; color:var(--ink); overflow-wrap:anywhere; }
+.fc-name--long { font-size:2.05em; }
+.fc-name i { font-style:normal; color:var(--orange-ink); }
+.fc--gilt .fc-name > span, .fc--epic .fc-name > span { background:linear-gradient(105deg, #0d2238 0 45%, #33598a 48.5%, #5a7fa8 50%, #33598a 51.5%, #0d2238 55% 100%) var(--mx,50%) 0 / 320% 100%;
+  -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent; }
+.fc--gilt .fc-name i, .fc--epic .fc-name i { -webkit-text-fill-color:var(--orange-ink); }
+.fc--legendary .fc-name > span { background-image:linear-gradient(105deg, #2a1d00 0 44%, #7a5200 47.5%, #b88a2a 50%, #7a5200 52.5%, #2a1d00 56% 100%); }
+.fc-id { display:flex; justify-content:space-between; align-items:center; gap:.7em; margin-top:.45em; padding-top:.42em; border-top:.08em solid var(--rule);
+  font:500 1.02em/1.2 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.06em; color:var(--ink2); }
+.fc-id-l { min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.fc-id-r { flex:none; border-left:.12em solid var(--ink); padding-left:.7em; letter-spacing:.12em; white-space:nowrap; color:var(--ink); }
+.fc-stats { display:grid; grid-template-columns:1.2fr 1.05fr 1.05fr .7fr; margin-top:.5em; padding:.5em 0 .55em; border-top:.08em solid var(--rule); border-bottom:.08em solid var(--rule); }
+.fc-stat { display:flex; flex-direction:column; gap:.35em; padding:0 .55em; border-right:.08em solid var(--rule); min-width:0; }
+.fc-stat:first-child { padding-left:0; } .fc-stat:last-child { border-right:0; padding-right:0; }
+.fc-stat-l { font:600 .74em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; color:var(--muted); padding-bottom:.35em; border-bottom:.1em solid var(--rule); white-space:nowrap; }
+.fc-stat-v { font:400 1.42em/1.05 'SC Display','Russo One',sans-serif; letter-spacing:-.03em; white-space:nowrap; color:var(--ink); }
+.fc-stat-v small { font:500 .56em 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.02em; margin-left:.15em; color:var(--ink2); }
+.fc-fact { margin:.62em 0 .2em; border-left:.22em solid var(--orange); padding:.05em 0 .05em .85em; font:400 .9em/1.45 Georgia,'Times New Roman',serif; letter-spacing:.02em; color:var(--ink2); }
+.fc-fact b { color:var(--ink); }
+.fc-foot { display:flex; align-items:center; gap:.6em; margin-top:auto; padding-top:.5em; border-top:.08em solid var(--rule); font:500 .8em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.11em; color:var(--ink); }
+.fc-check { width:1.9em; height:1.9em; flex:none; border-radius:50%; border:.1em solid var(--ink); display:grid; place-items:center; font:600 1.05em/1 Arial,sans-serif; }
+.fc-foot-t { white-space:nowrap; }
+.fc-foot-n { border-left:.1em solid var(--rule); padding-left:.6em; white-space:nowrap; flex:1; }
+.fc-brand { display:flex; flex-direction:column; gap:.25em; border-left:.1em solid var(--rule); padding:.15em 0 .15em .75em; font:400 1.05em/1 'SC Display','Russo One',sans-serif; letter-spacing:-.03em; white-space:nowrap; }
+.fc-brand small { font:500 .74em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; color:var(--muted); }
+
+/* Over the print: foil by rarity, a gloss coat that slides against the tilt, a soft glare under the finger */
+.fc-foil, .fc-coat, .fc-glare { position:absolute; inset:0; border-radius:1.45em; pointer-events:none; }
+.fc-coat { background:linear-gradient(118deg, transparent 26%, rgba(255,255,255,.22) 40%, rgba(255,255,255,.42) 47%, rgba(255,255,255,.1) 55%, transparent 66%) calc(100% - var(--mx,50%)) 0 / 260% 100% no-repeat;
+  mix-blend-mode:soft-light; }
+.fc-glare { background:radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(255,255,255,.75) 0, rgba(255,255,255,.2) 20%, transparent 45%); mix-blend-mode:soft-light; opacity:calc(var(--o,0) * .8); }
+.fc--uncommon .fc-foil { background:linear-gradient(115deg, transparent 25%, hsla(165,70%,80%,.6) 40%, hsla(60,90%,82%,.55) 50%, hsla(200,80%,84%,.6) 60%, transparent 75%) var(--bgx,50%) var(--bgy,50%) / 300% 300%;
+  mix-blend-mode:multiply; opacity:calc(.25 + var(--o,0) * .3); }
+.fc--rare .fc-holo, .fc--epic .fc-holo { background:var(--streak) var(--bgx,50%) var(--bgy,50%) / 300% 300%, var(--holo) var(--bgx,50%) var(--bgy,50%) / 300% 300%; mix-blend-mode:screen; opacity:calc(.12 + var(--o,0) * .28); }
+.fc--epic .fc-foil { background:var(--holo) var(--bgx,50%) var(--bgy,50%) / 300% 300%; mix-blend-mode:multiply; opacity:calc(.28 + var(--o,0) * .22); }
+/* Epic and Legendary frames carry glitter in the metal itself (a ring mask leaves the paper clear) */
+.fc--epic .fc-face::after, .fc--legendary .fc-face::after { content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none; padding:.62em;
+  background:var(--sparkle) var(--bgx,50%) var(--bgy,50%) / 7em 7em; mix-blend-mode:normal; opacity:calc(.5 + var(--o,0) * .4);
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask:linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+.fc--legendary .fc-face, .fc--legendary .fc-face::after { padding:.78em; }
+.fc--legendary { --paper:#fffaf0; --rule:#d7b46a; }
+.fc--legendary .fc-tier { background:linear-gradient(150deg,#fff6d0,#f2c44e 45%,#ffe591 70%,#d9a12c); border-color:#8f6210; color:#3d2a00; }
+.fc--legendary .fc-tier i { color:#3d2a00; }
+.fc--epic .fc-holo::after, .fc--legendary .fc-holo::after { content:''; position:absolute; inset:0; background:var(--glitter) calc(100% - var(--bgx,50%)) calc(100% - var(--bgy,50%)) / 14em 14em;
+  -webkit-mask:linear-gradient(115deg, transparent 36%, #000 46%, #000 54%, transparent 64%) var(--bgx,50%) var(--bgy,50%) / 300% 300%; mask:linear-gradient(115deg, transparent 36%, #000 46%, #000 54%, transparent 64%) var(--bgx,50%) var(--bgy,50%) / 300% 300%; opacity:.7; }
+.fc--legendary .fc-holo { background:linear-gradient(115deg, transparent 42%, rgba(255,214,120,.6) 47%, rgba(255,250,225,.9) 50%, rgba(255,214,120,.6) 53%, transparent 58%) var(--bgx,50%) var(--bgy,50%) / 300% 300%; mix-blend-mode:screen; opacity:calc(.5 + var(--o,0) * .35); }
+.fc--legendary .fc-foil { background:linear-gradient(115deg, transparent 40%, rgba(255,205,90,.55) 47%, rgba(255,236,170,.7) 50%, rgba(255,205,90,.55) 53%, transparent 60%) 0 0 / 300% 100% no-repeat;
+  mix-blend-mode:multiply; animation:fc-glint 5.5s ease-in-out infinite; }
+@keyframes fc-glint { 0%, 30% { background-position:120% 0; } 75%, 100% { background-position:-20% 0; } }
+.fc-rot.turning :is(.fc-foil, .fc-coat, .fc-glare), .turning .fc :is(.fc-foil, .fc-coat, .fc-glare) { opacity:0 !important; }
+@media (prefers-reduced-motion: reduce) {
+  .fc-rot { transform:none; }
+  .fc--legendary .fc-face, .fc--legendary .fc-foil { animation:none; }
+}
+
+
+/* Mini cards (js/flight-card.js miniCardHtml): the full card's frame, photo, rarity, title and footer at grid size, 5:7 */
+.sct { display:block; width:100%; aspect-ratio:5 / 7; padding:0; border:0; border-radius:10px; background:none; color:var(--sc-ink); text-align:left; font:inherit; cursor:pointer;
+  -webkit-tap-highlight-color:transparent; transition:transform .15s; }
+.sct:active { transform:scale(.97); }
+.sct:focus-visible { outline:3px solid var(--sc-orange-ink); outline-offset:2px; }
+.sct-face { position:relative; display:block; height:100%; padding:3px; border-radius:10px; background:var(--frame); overflow:hidden;
+  box-shadow:inset 1px 1px 0 rgba(255,255,255,.85), inset -1px -1px 0 rgba(0,0,0,.25), 0 4px 10px rgba(13,34,56,.16), 0 1px 2px rgba(13,34,56,.18); }
+.sct-face.sct--rare, .sct-face.sct--legendary { box-shadow:inset 1px 1px 0 rgba(255,255,255,.85), inset -1px -1px 0 rgba(0,0,0,.25), 0 4px 12px rgba(201,143,28,.3), 0 1px 2px rgba(13,34,56,.18); }
+.sct-face.sct--epic { background:var(--frame) 30% 50% / 220% 220%; box-shadow:inset 1px 1px 0 rgba(255,255,255,.85), inset -1px -1px 0 rgba(0,0,0,.2), 0 4px 12px rgba(150,120,230,.32), 0 1px 2px rgba(13,34,56,.18); }
+.sct-face.sct--legendary { background:linear-gradient(110deg, transparent 38%, rgba(255,255,255,.95) 48%, transparent 60%) 0 0 / 320% 100% no-repeat, var(--frame); animation:fc-sweep 3.8s cubic-bezier(.45,.05,.55,.95) infinite; }
+.sct-in { display:flex; flex-direction:column; gap:2px; height:100%; padding:4px 5px 4px; border-radius:7.5px; overflow:hidden;
+  background:radial-gradient(ellipse 90% 60% at 15% 0%, rgba(255,255,255,.9), transparent 70%), var(--grain), var(--paper); box-shadow:0 0 0 1px color-mix(in srgb, var(--edge) 70%, #000); }
+.sct-art { position:relative; display:block; flex:1 1 0; min-height:38px; margin:-1px -2px 2px; border-radius:5px; overflow:hidden; background:linear-gradient(180deg,#5f9fd6,#bcdaf2);
+  box-shadow:0 0 0 1px color-mix(in srgb, var(--edge) 80%, #000); }
+.sct-art::after { content:''; position:absolute; inset:0; pointer-events:none; box-shadow:inset 0 3px 6px rgba(13,34,56,.35); }
+.sct-photo { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
+.sct-sky .fc-glyph { width:58%; filter:drop-shadow(5px 7px 2px rgba(13,34,56,.25)); }
+.sct-sky::before { background-size:12px 12px; }
+.sct-tier { position:absolute; z-index:1; left:3px; top:3px; display:flex; align-items:center; gap:2px; padding:1px 4px 1px 3px; border-radius:3px; background:rgba(255,253,246,.95);
+  border:1px solid var(--tier); color:var(--tier-ink); font:700 10px/1.25 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.06em; }
+.sct-tier i { font-style:normal; color:var(--tier); }
+.sct-route { position:absolute; z-index:1; left:0; right:0; bottom:0; display:flex; align-items:center; gap:3px; padding:2px 5px 2px; background:rgba(13,34,56,.86); color:#fffdf6; }
+.sct-route b { font:400 11px/1.2 'SC Display','Russo One',sans-serif; letter-spacing:.02em; }
+.sct-route svg { flex:1; height:7px; overflow:visible; }
+.sct-route path { fill:none; stroke:var(--sc-orange); stroke-width:1.3; stroke-dasharray:2.5 2.5; vector-effect:non-scaling-stroke; }
+.sct-name { flex:none; font:400 12px/1.04 'SC Display','Russo One',sans-serif; letter-spacing:-.01em; text-transform:uppercase; color:var(--ink);
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; overflow-wrap:anywhere; }
+.sct-sub { flex:none; padding-bottom:2px; border-bottom:1px solid var(--rule); font:500 11px/1.15 'SC Label','Barlow Condensed',sans-serif; color:var(--ink2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sct-stats { flex:none; display:grid; grid-template-columns:1fr 1fr; }
+.sct-stats > span { display:flex; flex-direction:column; min-width:0; font:400 11px/1.1 'SC Display','Russo One',sans-serif; letter-spacing:-.02em; white-space:nowrap; overflow:hidden; color:var(--ink); }
+.sct-stats > span + span { border-left:1px solid var(--rule); padding-left:4px; }
+.sct-stats small { font:600 10px/1.1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.08em; color:var(--muted); }
+.sct-foot { flex:none; display:flex; justify-content:space-between; padding-top:2px; border-top:1px solid var(--rule); font:600 10px/1.1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.06em; color:var(--ink2); }
+.sct-shine { position:absolute; inset:0; border-radius:10px; pointer-events:none; }
+.sct--epic .sct-shine { background:var(--holo) 30% 30% / 300% 300%; mix-blend-mode:multiply; opacity:.22; }
+.sct--rare .sct-shine { background:linear-gradient(115deg, transparent 40%, rgba(255,255,255,.7) 50%, transparent 60%) 20% 0 / 300% 100% no-repeat; mix-blend-mode:soft-light; }
+.sct--legendary .sct-shine { background:linear-gradient(115deg, transparent 40%, rgba(255,205,90,.5) 50%, transparent 60%) 0 0 / 300% 100% no-repeat; mix-blend-mode:multiply; animation:fc-glint 5.5s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .sct-face.sct--legendary, .sct--legendary .sct-shine { animation:none; } }
+.scc-empty { margin:28px 4px; text-align:center; }
+.scc-empty h2 { font:400 22px/1.1 'SC Display','Russo One',sans-serif; margin:0 0 8px; }
+.scc-empty p { color:var(--sc-muted); margin:0 0 16px; }
+.scc-empty a { display:inline-flex; align-items:center; min-height:44px; padding:0 18px; border-radius:10px; background:var(--sc-orange); color:var(--sc-ink); text-decoration:none; font:600 14px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.16em; text-transform:uppercase; }
+.sky-viewer { position:fixed; inset:0; width:100%; height:100%; max-width:none; max-height:none; margin:0; border:0; padding:0; background:linear-gradient(180deg,#a9d2f0 0%,#e4f1fa 45%,#f6fafd 100%); color:var(--sc-ink); overflow-y:auto; }
+.sky-viewer::backdrop { background:rgba(13,34,56,.4); }
+.scv-head { display:flex; justify-content:space-between; align-items:center; padding:var(--col-top, calc(env(safe-area-inset-top,0px) + 14px)) 12px 4px 20px; }
+.scv-head .ui-eyebrow { color:var(--sc-ink); }
+.scv-x { width:44px; height:44px; border:0; background:none; color:var(--sc-ink); font-size:18px; }
+.scv-body { display:flex; flex-direction:column; align-items:center; padding:0 20px calc(env(safe-area-inset-bottom,0px) + 30px); }
+.scv-card { margin:4px 0 16px; }
+.scv-k { align-self:stretch; max-width:360px; margin:10px auto 4px; width:100%; font:600 13px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.2em; color:var(--sc-orange-ink); }
+.scv-stamps { display:flex; flex-wrap:wrap; gap:6px; max-width:360px; width:100%; margin:0 auto; }
+.scv-stamps span { border:1px solid var(--sc-line); background:#fff; border-radius:12px; padding:4px 10px; font:500 13px/1.2 'SC Label','Barlow Condensed',sans-serif; }
+.scv-list { list-style:none; margin:0 auto; padding:0; max-width:360px; width:100%; }
+.scv-list li { display:flex; justify-content:space-between; gap:10px; padding:8px 0; border-top:1px solid var(--sc-line); font:500 14px/1.2 'SC Label','Barlow Condensed',sans-serif; }
+.scv-list li span:last-child { color:var(--sc-muted); text-align:right; }
+html:has(body.sky-col-mode) { background:#eef5fb; }
+body.sky-col-mode { --bg:#eef5fb; --text:#0d2238; }
+
+#wc-holder .wc-a-title { background:none !important; -webkit-text-fill-color:var(--sc-ink) !important; color:var(--sc-ink) !important; text-shadow:none !important; } /* the newer gold-foil title is unreadable on cream */
+
+
+/* ---- Today (the Tonight panel, js/sky-today.js) ---- */
+body.sky-only #visible > :not(.panel-head):not(#sky-today) { display:none !important; }
+body.sky-only #visible { background:#eef5fb; color:var(--sc-ink); }
+body.sky-only #visible .panel-head h2, body.sky-only #visible .panel-head .x-close { color:var(--sc-ink); }
+body.sky-only #visible-sub { color:var(--sc-muted); }
+#sky-today { padding:0 16px calc(var(--nav-h, 112px) + 30px); max-width:620px; margin:0 auto; }
+.td-lead { margin:0 0 12px; font-size:15px; line-height:1.35; color:#1b3047; }
+.td-h { display:flex; justify-content:space-between; margin:18px 4px 6px; font:600 13px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.2em; color:var(--sc-orange-ink); }
+.td-h span { color:var(--sc-muted); letter-spacing:.12em; }
+.td-list { background:#fff; border:1px solid var(--sc-line); border-radius:12px; padding:0 10px; }
+.td-row { width:100%; display:flex; align-items:center; gap:10px; padding:9px 0; border:0; border-bottom:1px solid #e2ebf2; background:none; color:var(--sc-ink); text-align:left; }
+.td-row:last-child { border-bottom:0; }
+.td-art { width:40px; height:40px; flex:none; border-radius:9px; background:linear-gradient(180deg,#78b3e3,#d8eaf8); display:grid; place-items:center; }
+.td-art svg { width:28px; height:28px; fill:#fff; stroke:var(--sc-ink); stroke-width:1.6; }
+.td-t { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+.td-t b { font:400 15px/1.1 'SC Display','Russo One',sans-serif; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.td-t span { font:500 13px/1.2 'SC Label','Barlow Condensed',sans-serif; color:var(--sc-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.td-t .td-where { color:#23405c; }
+.td-tag { flex:none; font:600 11px/1.1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.1em; color:var(--sc-muted); text-align:right; max-width:76px; }
+.td-tag.new { color:var(--sc-orange-ink); }
+.td-row[role="button"] { cursor:pointer; }
+/* Show me on every row (2026-11-18): the target button, as on Space Collector's Tonight rows */
+.td-go { flex:none; width:40px; height:40px; margin:-4px -6px -4px 0; display:grid; place-items:center; border:0; border-radius:50%; background:none; color:var(--sc-orange-ink); cursor:pointer; -webkit-tap-highlight-color:transparent; }
+.td-go:active { background:#d7362b14; transform:scale(.92); }
+.td-go:focus-visible { outline:2px solid var(--sc-orange-ink); outline-offset:-2px; }
+.td-row--next .td-t { flex:1; }
+.td-when { width:58px; flex:none; display:flex; flex-direction:column; }
+.td-when b { font:400 16px/1 'SC Display','Russo One',sans-serif; }
+.td-when span { font:500 12px/1.3 'SC Label','Barlow Condensed',sans-serif; color:var(--sc-muted); }
+.td-empty { margin:0; padding:12px 2px; color:var(--sc-muted); font-size:14px; }
+.td-chart { display:flex; align-items:flex-end; gap:3px; height:70px; padding:6px 8px 0; background:#fff; border:1px solid var(--sc-line); border-radius:10px; }
+.td-chart i { flex:1; background:var(--sc-orange); border-radius:2px 2px 0 0; }
+.td-chart i.gap { background:#d5e0ea; }
+.td-chart i.now { background:var(--sc-ink); }
+.td-axis { display:flex; justify-content:space-between; margin-top:4px; padding:0 4px; font:500 12px/1 'SC Label','Barlow Condensed',sans-serif; color:var(--sc-muted); }
+.td-note { margin:8px 4px 0; font-size:12.5px; color:var(--sc-muted); }
+
+/* Satellite sweep (2026-11-15): Settings rows that only made sense for satellites */
+body.sky-only #row-tonight, body.sky-only #row-alerts, body.sky-only #row-live,
+body.sky-only .set-row:has(#chk-daysats), body.sky-only .set-row:has(#chk-meteor),
+body.sky-only #sky-plus-line { display:none !important; } /* Observer stats is back (2026-11-17): the page has a plane version */
+/* Settings sweep (2026-11-15): gifting has no planes yet; circle highlights only sort satellites, stars and UFOs; the test tools below are satellite-only */
+body.sky-only #set-send-open, body.sky-only #set-hl-open, body.sky-only #btn-next-pass, body.sky-only #btn-nightpack,
+body.sky-only #btn-ufo, body.sky-only #btn-santa, body.sky-only #btn-meteor, body.sky-only #btn-live-test { display:none !important; }
+
+
+/* ===== Stamps and levels (2026-11-15, Sevaan: catching a card again stamps it) =====
+   Level metals follow Space Collector's fleet frames: bronze #b8793e, silver #b9c1cc, gold #e2b53c. The passport row
+   (.fc-pass) sits between the stats and the fact on the full card; the medal (.sct-lvl) sits on the mini card's picture. */
+.fc { --lvl:#b8793e; --lvl-ink:#6e4416; --ink-stamp:#2d4f86; }
+.fc--lvl-silver, .sct-face--silver { --lvl:#aab4c0; --lvl-ink:#4a5663; }
+.fc--lvl-gold, .sct-face--gold { --lvl:#e2b53c; --lvl-ink:#7a5200; }
+.sct-face--bronze { --lvl:#b8793e; --lvl-ink:#6e4416; }
+/* Level frame: the printed double rule just inside the card edge takes the level's metal. */
+.fc--lvl .fc-in::before { box-shadow:inset 0 0 0 .12em var(--lvl), inset 0 0 0 .2em var(--paper), inset 0 0 0 .26em color-mix(in srgb, var(--lvl) 60%, transparent); }
+.fc--lvl-gold .fc-in::before { box-shadow:inset 0 0 0 .16em var(--lvl), inset 0 0 0 .22em var(--paper), inset 0 0 0 .3em color-mix(in srgb, var(--lvl) 70%, transparent), inset 0 0 1.2em rgba(226,181,60,.25); }
+.sct-face--lvl .sct-in { box-shadow:0 0 0 1.5px var(--lvl); }
+.sct-face--gold .sct-in { box-shadow:0 0 0 2px var(--lvl), 0 0 6px rgba(226,181,60,.55); }
+
+.fc-pass { margin-top:.5em; padding:.32em 0 .1em; }
+.fc-pass-h { display:flex; align-items:center; justify-content:space-between; gap:.6em; }
+.fc-pass-k { font:600 .74em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.fc-lvl { flex:none; padding:.2em .6em .18em; border-radius:.3em; font:700 .76em/1.1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.14em; color:#1a1305;
+  background:linear-gradient(150deg, color-mix(in srgb, var(--lvl) 55%, #fff), var(--lvl) 55%, color-mix(in srgb, var(--lvl) 80%, #000)); box-shadow:0 .08em .2em rgba(13,34,56,.25); }
+.fc-lvl--bronze { color:#fff7ee; }
+.fc-prog { display:flex; align-items:center; gap:.7em; margin-top:.5em; }
+.fc-prog-bar { flex:1; height:.42em; border-radius:1em; overflow:hidden; background:color-mix(in srgb, var(--ink-stamp) 14%, transparent); }
+.fc-prog-bar i { display:block; height:100%; min-width:.42em; border-radius:1em; background:linear-gradient(90deg, color-mix(in srgb, var(--lvl) 65%, #fff), var(--lvl)); }
+.fc-prog-t { flex:none; font:600 .7em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; color:var(--muted); }
+.fc-prog--new .fc-prog-bar i { animation:fc-prog-in .9s cubic-bezier(.2,.8,.2,1) .35s both; }
+@keyframes fc-prog-in { from { width:var(--from); } }
+@media (prefers-reduced-motion: reduce) { .fc-prog--new .fc-prog-bar i { animation:none; } }
+.fc--lvl .fc-fact { margin-top:.5em; }
+
+.sct-lvl { position:absolute; z-index:2; right:3px; top:3px; display:grid; place-items:center; min-width:17px; height:17px; padding:0 3px; border-radius:9px; color:#1a1305;
+  background:linear-gradient(150deg, color-mix(in srgb, var(--lvl) 55%, #fff), var(--lvl) 60%, color-mix(in srgb, var(--lvl) 80%, #000)); border:1px solid rgba(13,34,56,.4); box-shadow:0 1px 2px rgba(13,34,56,.3); }
+.sct-lvl--bronze { color:#fff7ee; }
+.sct-lvl i { font:400 11px/1 'SC Display','Russo One',sans-serif; font-style:normal; }
+.sct-lvl em { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); } /* the word is for screen readers; the metal says it */
+/* Catch panel: a plane already stamped today (same aircraft, same local day) */
+#catchbar.stamped #cb-collect { background:#eef3f8; color:var(--sc-muted); opacity:.7; }
+#cb-collect:disabled { cursor:default; }
+.fcatch--stamp .fcatch-k { color:#2d4f86; }
+
+/* Photos never crop the plane (2026-11-15): js/flight-card.js fitPhoto. When no crop can hold the whole aircraft the photo is
+   shown whole (contain) over a blurred, enlarged copy of itself, so the frame still fills with that sky. */
+.ph-blur { display:none; position:absolute; inset:-8%; width:116%; height:116%; object-fit:cover; pointer-events:none; } /* a 32 px copy stretched (assets/photos/*/tiny): soft with no live filter (2026-11-16 scroll pass) */
+.ph-contain > .ph-blur { display:block; }
+
+/* The mini card in the target ticket (2026-11-15 alignment pass): drawn at its Collection size (112 × 157) and scaled
+   into Space Collector's 72 × 108 slot, the way Space Collector scales its own mini card (--mini-s), so nothing crams. */
+#discover.sky-plane .d-ticket.has-mini .d-mini { overflow:visible; }
+#discover.sky-plane .d-mini > .sct-face { width:112px; height:157px; transform:scale(calc(72 / 112)); transform-origin:0 0; }
+@media (max-height:720px) { #discover.sky-plane .d-mini > .sct-face { transform:scale(calc(56 / 112)); } }
+body.night #discover.sky-plane .d-mini { filter:drop-shadow(0 6px 12px #000c); } /* not brightened: it's a daylight card, not a night picture */
+
+/* Airline logos beside the airline's name (2026-11-15): sized to the name's cap height, never bigger than the name. */
+.fc-id-l { display:inline-flex; align-items:center; gap:.45em; min-width:0; }
+.fc-logo { height:1.5em; width:auto; max-width:6.5em; object-fit:contain; flex:none; }
+.sct-sub { display:flex; align-items:center; gap:4px; min-width:0; } .sct-sub > span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.sct-logo { height:13px; width:auto; max-width:72px; object-fit:contain; flex:none; }
+/* The card back sits over the card it belongs to when the viewer's card turns (js/card.js attachFlip) */
+#sky-viewer .scv-card .fc { position:relative; }
+
+/* Plane cards inside Space Collector's .card (Milestone 1.5): the card element keeps Space Collector's sizing (font-size =
+   the card unit, 28em wide) and the plane face fills it at 28 × 42em, the shape of the card backs. */
+.card.card--sky { min-height:42em; position:relative; }
+.card.card--sky > .fc { --u:1em; font-size:1em; width:100%; }
+.card.card--sky > .card__back { border-radius:1.15em; }
+
+/* Sky's Collection on Space Collector's page (Milestone 1.5): Mine and Patches. Albums (sets with a known size) and Find
+   (satellite pass search) come back once plane sets exist (docs/PROJECT-PLAN.md task 13). */
+html.sky-cards #tab-discover { display:none !important; } /* Albums are back (2026-11-17, plane sets); Find stays hidden: it is about what passes tonight */
+html.sky-cards .collection-tabs { justify-content:flex-start; gap:28px; }
+
+/* Small faces in grids (2026-11-16 scroll pass): no live filters, as Space Collector's tiles have none. The sky panel's
+   clouds are already soft at this size; the plane's drop shadow is drawn flat. */
+.mini-face .fc-cloud { filter:none; }
+.mini-face .fc-glyph { filter:none; }
+
+/* Today's top card is Space Collector's Tonight hero (.tn-wx, css/app.css) with the weather drawn in (js/sky-today.js
+   heroSky, 2026-11-16): Space Collector's layout and button, a daylight sky behind it. */
+body.sky-only .tn-wx.td-wx { position:relative; overflow:hidden; isolation:isolate; margin-top:8px; border-color:var(--sc-line); background:linear-gradient(180deg,#5d97cf 0%,#9cc8ee 55%,#e0eefa 100%); }
+body.sky-only .tn-wx.td-wx.clear { background:radial-gradient(circle at 88% -10%, #fff8dccc, #fff8dc00 38%), linear-gradient(180deg,#4d8fd0 0%,#93c4ee 60%,#e0eefa 100%); }
+body.sky-only .tn-wx.td-wx.grey { background:linear-gradient(180deg,#8399ad 0%,#b8c7d4 55%,#e1e8ee 100%); }
+body.sky-only .tn-wx.td-wx > .tn-sky { position:absolute; inset:0; z-index:-1; pointer-events:none; }
+body.sky-only .tn-wx.td-wx > .tn-sky .wx-clouds { top:-30px; height:300px; }
+body.sky-only .tn-wx.td-wx .k { color:var(--sc-orange-ink); }
+body.sky-only .tn-wx.td-wx .k em { margin-left:auto; font-style:normal; letter-spacing:.12em; color:#0d2238; }
+body.sky-only .tn-wx.td-wx :is(h3, p) { color:#0d2238; text-shadow:0 1px 0 #ffffff66; }
+body.sky-only .tn-wx.td-wx h3 { letter-spacing:0 !important; text-transform:none; }
+/* After dark the hero's sky is night, like Space Collector's Tonight hero; the words go light on it */
+body.sky-only:not(.day) .tn-wx.td-wx, body.sky-only:not(.day) .tn-wx.td-wx.clear { background:radial-gradient(ellipse at 80% -20%, #3a5f9455, transparent 60%), linear-gradient(180deg,#0e1f38 0%,#1d3a5f 70%,#2c4d73 100%); border-color:#2c4d73; }
+body.sky-only:not(.day) .tn-wx.td-wx.grey { background:linear-gradient(180deg,#1c2836 0%,#2b3a4b 100%); }
+body.sky-only:not(.day) .tn-wx.td-wx > .tn-sky { opacity:.45; }
+body.sky-only:not(.day) .tn-wx.td-wx :is(h3, p, .k em) { color:#f4f8fc; text-shadow:none; }
+body.sky-only:not(.day) #visible .tn-wx.td-wx .k, body.sky-only:not(.day) #sky-today .tn-wx.td-wx .k { color:#ff9d8f !important; }
+/* Why the sky is empty, where "N overhead" sits under the radar (2026-11-17) */
+#radar-why { font:500 12px/1.25 var(--label); letter-spacing:.14em; text-transform:uppercase; color:color-mix(in srgb,var(--text) 70%,transparent); max-width:190px; }
+body.day #radar-why { color:#143046; }
+/* "Rare here" ribbon on a plane card's picture (docs/DESIGN-LOOP.md §1) */
+.fc-here { position:absolute; z-index:3; right:.6em; bottom:.6em; padding:.36em .6em .32em; border-radius:.4em; background:var(--sc-orange-ink, #b42a20); color:#fff;
+  font:600 .82em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.16em; box-shadow:0 .15em .4em rgba(13,34,56,.3); }
+.mini-face .fc-here { font-size:.7em; }
+/* An album whose lead card has no photo: the drawn plane on a sky panel (2026-11-17) */
+.album__plane { display:grid; place-items:center; width:100%; height:100%; background:linear-gradient(180deg,#5f9fd6,#bcdaf2); }
+.album__plane svg { width:62%; height:auto; filter:drop-shadow(3px 4px 2px rgba(13,34,56,.25)); }
+.album.empty .album__plane { filter:grayscale(1) opacity(.55); }
+.album__plane { color:#fffdf6; } .album__plane svg :is(path, polygon) { fill:currentColor; }
+
+/* ---- All around you (the radar), Sky Collector (2026-11-18, Sevaan: "when I tap on the radar … I still get a Space
+   Collector experience"): the page in daylight, the plane tiles with their photos, the four numbers on cream. At night it
+   keeps Space Collector's dark page, as Explore does. ---- */
+body.sky-only:not(.night) #around { background:#eef5fb; color:var(--sc-ink); }
+body.sky-only:not(.night) #around .t-head { color:var(--sc-orange-ink); }
+body.sky-only:not(.night) #around .ar-hint { color:var(--sc-muted); }
+body.sky-only:not(.night) #around #ar-strip { border-radius:14px; box-shadow:0 6px 18px rgba(13,34,56,.14); }
+body.sky-only:not(.night) .ar-facing { background:#fffdf6e6; border-color:var(--sc-line); color:var(--sc-ink); box-shadow:0 3px 10px rgba(13,34,56,.15); }
+body.sky-only #around .ar-pcard { width:132px; padding:5px 5px 8px; text-align:left; cursor:pointer; }
+body.sky-only:not(.night) #around .ar-pcard { background:#fff; border-color:var(--sc-line); color:var(--sc-ink); box-shadow:0 2px 8px rgba(13,34,56,.08); }
+body.sky-only:not(.night) #around .ar-pcard.new { border-color:#d7362b99; box-shadow:0 0 0 1px #d7362b33, 0 2px 8px rgba(13,34,56,.08); }
+body.sky-only #around .ar-pcard .ac-art { height:82px; background-color:#dfeaf5; background-size:cover; }
+body.sky-only #around .ar-pcard .ac-none { display:grid; place-items:center; color:#7aa4cc; }
+body.sky-only #around .ar-pcard .ac-none svg { width:40px; height:40px; }
+body.sky-only #around .ar-pcard b { margin-top:3px; }
+body.sky-only:not(.night) #around .ar-pcard small { color:var(--sc-muted); }
+body.sky-only #around .ar-pcard em { top:9px; right:9px; background:var(--gold); color:#fff; }
+body.sky-only #around .ar-pcard.next em { background:#0d2238; }
+body.sky-only:not(.night) #around .ar-chips { background:#fffdf6; border-color:var(--sc-rule); }
+body.sky-only:not(.night) #around .ap + .ap { border-left-color:#e7dcbd; }
+body.sky-only:not(.night) #around .ap b { color:var(--sc-ink); }
+body.sky-only:not(.night) #around .ap b i, body.sky-only:not(.night) #around .ap small, body.sky-only:not(.night) #around .ap-k { color:var(--sc-muted); }
+body.sky-only:not(.night) #around .ap-k .ico { color:var(--sc-orange-ink); }
+body.sky-only:not(.night) #around .hint { color:var(--sc-muted); }
+
+/* ================= Today, "the mix" (2026-11-18, design/today-options.html D; js/sky-today.js renderToday) ================= */
+#sky-today { --td-red:#d7362b; --td-redink:#b42a20; }
+#sky-today .td2-tail { width:26px; height:30px; object-fit:contain; flex:none; filter:drop-shadow(0 2px 3px rgba(13,34,56,.25)); }
+/* 1 · live card */
+.td2-live { border-radius:18px; overflow:hidden; background:#12355d; color:#fff; box-shadow:0 12px 26px rgba(13,34,56,.22); }
+.td2-ph { position:relative; height:168px; background:#2f6fb3 center / cover no-repeat; }
+.td2-ph::after { content:''; position:absolute; inset:0; background:linear-gradient(transparent 45%, #12355d 100%); }
+.td2-ph .td2-tail--live { position:absolute; left:12px; top:12px; width:34px; height:40px; z-index:1; }
+.td2-leave { position:absolute; right:10px; top:10px; z-index:1; padding:5px 10px; border-radius:99px; background:#0d2238cc; font:500 12px 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.14em; }
+.td2-leave b { font:400 14px 'SC Display','Russo One',sans-serif; letter-spacing:0; color:#ffd27a; font-variant-numeric:tabular-nums; }
+.td2-bd { padding:0 14px 14px; margin-top:-2px; }
+.td2-k { font:500 12px 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.2em; text-transform:uppercase; color:#ffb3a8; }
+.td2-live h3 { margin:4px 0 2px; font:400 26px/1.02 'SC Display','Russo One',sans-serif; color:#fff; }
+.td2-sub { font:500 14px 'SC Label','Barlow Condensed',sans-serif; color:#c7dcf0; letter-spacing:.03em; }
+.td2-chips { display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 12px; }
+.td2-chip { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:6px; font:500 12px 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.08em; background:color-mix(in srgb, var(--c, #9aa4b1) 25%, transparent); color:color-mix(in srgb, var(--c, #9aa4b1) 55%, #fff); }
+.td2-chip--new { background:#d7362b40; color:#ffc2ba; } .td2-chip--ms { background:#e3a32133; color:#ffd27a; }
+.td2-aim { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+.td2-arrow { width:50px; height:50px; flex:none; border-radius:50%; border:2px solid #ffb3a8; display:grid; place-items:center; color:#ffb3a8; transition:transform .5s ease-out; }
+.td2-arrow svg { width:24px; height:24px; }
+.td2-aim b { display:block; font:500 15px 'SC Label','Barlow Condensed',sans-serif; color:#fff; font-weight:500; }
+.td2-aim small { font:500 12.5px 'SC Label','Barlow Condensed',sans-serif; color:#c7dcf0; letter-spacing:.06em; }
+.td2-btn { width:100%; display:flex; align-items:center; justify-content:center; gap:8px; height:48px; border:0; border-radius:13px; background:linear-gradient(#e8493c,#c42d22); color:#fff; font:500 15px 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.18em; text-transform:uppercase; box-shadow:inset 0 1px 0 #ffffff59, 0 3px 0 #8c1c14, 0 8px 16px rgba(13,34,56,.25); cursor:pointer; }
+.td2-btn:active { transform:translateY(3px); box-shadow:inset 0 2px 6px #0000004d, 0 0 0 #8c1c14; }
+/* 2 · rare alert */
+.td2-alert { position:relative; display:grid; grid-template-columns:96px 1fr 44px; align-items:center; margin-top:14px; border-radius:14px; overflow:hidden; color:#fff; background:linear-gradient(120deg, color-mix(in srgb, var(--c) 30%, #1a0d2b), color-mix(in srgb, var(--c) 60%, #2a1240)); box-shadow:0 0 0 1.5px var(--c), 0 10px 24px color-mix(in srgb, var(--c) 35%, transparent); }
+.td2-alert::before { content:''; position:absolute; inset:0; background:linear-gradient(115deg, transparent 30%, #ffffff22 45%, transparent 60%); animation:td2shine 3.6s ease-in-out infinite; pointer-events:none; }
+@keyframes td2shine { from { transform:translateX(-100%); } to { transform:translateX(100%); } }
+.td2-alert-pic { position:relative; align-self:stretch; min-height:86px; background:#2f6fb3 center / cover; }
+.td2-alert-pic .td2-tail { position:absolute; left:5px; bottom:5px; width:20px; height:24px; }
+.td2-alert-w { padding:10px 4px 10px 12px; }
+.td2-alert-w i { font:500 11px 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.2em; font-style:normal; color:color-mix(in srgb, var(--c) 55%, #fff); }
+.td2-alert-w b { display:block; font:400 16px/1.1 'SC Display','Russo One',sans-serif; margin:2px 0 3px; }
+.td2-alert-w span { font:500 13px 'SC Label','Barlow Condensed',sans-serif; color:#eadff5; } .td2-alert-w em { font-style:normal; color:#ffd27a; }
+.td2-alert-go { width:40px; height:40px; border:0; background:none; color:#fff; display:grid; place-items:center; cursor:pointer; position:relative; z-index:1; }
+/* 3 · mission cards, dealt face down and turned over (Space Collector's mcFlipWhenSeen) */
+.td2-mcs { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; }
+.td2-mc { position:relative; aspect-ratio:2 / 3; padding:0; border:0; background:none; perspective:700px; text-align:left; cursor:pointer; color:var(--sc-ink); }
+.td2-flip { position:absolute; inset:0; transform-style:preserve-3d; transition:transform .7s cubic-bezier(.3,1.3,.5,1); }
+.td2-bk, .td2-face { position:absolute; inset:0; border-radius:10px; padding:4px; backface-visibility:hidden; -webkit-backface-visibility:hidden; background:linear-gradient(150deg,#fff3c4,#e3a321 40%,#fff0b8 60%,#c98f1c); box-shadow:0 6px 14px rgba(13,34,56,.18); }
+.td2-face { transform:rotateY(180deg); }
+.td2-mcs.on .td2-flip { transform:rotateY(180deg); }
+.td2-mcs.on .td2-mc:nth-child(2) .td2-flip { transition-delay:.38s; } .td2-mcs.on .td2-mc:nth-child(3) .td2-flip { transition-delay:.76s; }
+.td2-in { position:absolute; inset:4px; border-radius:7px; overflow:hidden; background:var(--sc-paper,#fffdf6); display:flex; flex-direction:column; }
+.td2-bk .td2-in { background:var(--pk-base); }
+.td2-bk .td2-in::after { content:''; position:absolute; inset:0; background:#fff; -webkit-mask:var(--pk-mask) 50% 52% / 118% auto no-repeat; mask:var(--pk-mask) 50% 52% / 118% auto no-repeat; opacity:.9; }
+.td2-pic { position:relative; aspect-ratio:4 / 3; background:#cfe2f2 center / cover no-repeat; flex:none; }
+.td2-pic .td2-tail { position:absolute; right:4px; bottom:3px; width:18px; height:21px; }
+.td2-w { padding:5px 6px 6px; display:flex; flex-direction:column; flex:1; min-height:0; }
+.td2-w b { font:400 11.5px/1.15 'SC Display','Russo One',sans-serif; }
+.td2-w i { font:500 9.5px/1.2 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; color:var(--sc-muted); font-style:normal; text-transform:uppercase; margin-top:2px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+.td2-w small { margin-top:auto; font:500 11px/1.2 'SC Label','Barlow Condensed',sans-serif; color:var(--td-redink); letter-spacing:.04em; }
+.td2-w small.ok { color:#1d7a46; }
+.td2-mc.done .td2-pic { filter:saturate(.6); }
+.td2-mc.done .td2-face::after { content:'COMPLETE'; position:absolute; left:50%; top:36%; transform:translate(-50%,-50%) rotate(-12deg); padding:3px 7px; border:2px solid #1d7a46; border-radius:5px; color:#1d7a46; background:#ffffffd9; font:400 11px 'SC Display','Russo One',sans-serif; letter-spacing:.08em; }
+@media (prefers-reduced-motion: reduce) { .td2-flip { transition:none; } .td2-alert::before { animation:none; } }
+/* 4 · coming over next */
+.td2-tl { position:relative; height:96px; background:#fff; border:1px solid var(--sc-line); border-radius:14px; }
+.td2-axis { position:absolute; left:12px; right:12px; bottom:24px; height:2px; background:#c9d9e6; }
+.td2-axis span { position:absolute; top:7px; font:600 10.5px 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.14em; color:var(--sc-muted); } .td2-axis span:first-child { left:0; color:var(--td-redink); } .td2-axis span:last-child { right:0; }
+.td2-tp { position:absolute; bottom:28px; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:2px; padding:0; border:0; background:none; cursor:pointer; transition:left 1s linear; }
+.td2-tp .td2-tail { width:22px; height:26px; }
+.td2-tp small { font:500 10.5px/1.1 'SC Label','Barlow Condensed',sans-serif; white-space:nowrap; color:var(--sc-ink); }
+.td2-tdot { width:26px; height:20px; border-radius:5px; background:#cfe2f2 center / cover; }
+.td2-card { background:#fff; border:1px solid var(--sc-line); border-radius:12px; padding:12px; }
+/* 5 · over you now: the departures board */
+.td2-fids { background:#0d2238; border-radius:16px; padding:10px 10px 6px; color:#f2f6fa; box-shadow:0 12px 26px rgba(13,34,56,.25); }
+.td2-fcols { display:flex; justify-content:space-between; padding:0 34px 5px 34px; font:500 10px 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.2em; text-transform:uppercase; color:#6f8fae; }
+.td2-fr { display:grid; grid-template-columns:26px 1fr auto 30px; gap:8px; align-items:center; padding:7px 0 7px 4px; border-top:1px solid #ffffff14; cursor:pointer; }
+.td2-fr .td2-tail { width:22px; height:26px; }
+.td2-fpic { width:26px; height:20px; border-radius:4px; background:#2f6fb3 center / cover; }
+.td2-fw { min-width:0; }
+.td2-flap { display:flex; gap:2px; overflow:hidden; }
+.td2-flap i { flex:none; width:13px; height:20px; border-radius:2px; background:#1a3352; color:#fff; font:400 13px/20px 'SC Display','Russo One',sans-serif; text-align:center; font-style:normal; position:relative; }
+.td2-flap i::after { content:''; position:absolute; left:0; right:0; top:50%; border-top:1px solid #0d2238; }
+.td2-flap.roll i { animation:td2roll .5s steps(4) both; } .td2-flap.roll i:nth-child(2) { animation-delay:.06s; } .td2-flap.roll i:nth-child(3) { animation-delay:.12s; } .td2-flap.roll i:nth-child(4) { animation-delay:.18s; } .td2-flap.roll i:nth-child(5) { animation-delay:.24s; } .td2-flap.roll i:nth-child(6) { animation-delay:.3s; } .td2-flap.roll i:nth-child(n+7) { animation-delay:.36s; }
+@keyframes td2roll { 0% { transform:scaleY(.1); color:transparent; } 60% { transform:scaleY(1); color:transparent; } }
+.td2-who { display:block; margin-top:3px; font:500 11px 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.08em; color:#8fb0cf; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.td2-who em { font-style:normal; display:inline-block; margin-right:6px; padding:0 4px; border-radius:3px; background:var(--td-red); color:#fff; font:600 10px/15px 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; }
+.td2-st { text-align:right; font:500 11px 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; color:#c7dcf0; white-space:nowrap; }
+.td2-st b { display:block; font:400 14px 'SC Display','Russo One',sans-serif; letter-spacing:0; color:#fff; }
+.td2-st.go { color:#ffd27a; } .td2-st.soon { color:#ffb3a8; }
+.td2-go { width:30px; height:30px; padding:0; border:0; background:none; color:#ffb3a8; display:grid; place-items:center; cursor:pointer; }
+.td2-more { display:block; width:100%; margin-top:2px; padding:9px 0 5px; border:0; border-top:1px solid #ffffff14; background:none; color:#ffd27a; font:500 12px 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.18em; text-transform:uppercase; cursor:pointer; }
+@media (prefers-reduced-motion: reduce) { .td2-flap.roll i { animation:none; } }
+/* 6 · where they're going */
+.td2-map { position:relative; background:radial-gradient(circle at 50% 48%, #fff 0, #e3eef8 70%); border:1px solid var(--sc-line); border-radius:14px; overflow:hidden; }
+.td2-map svg { display:block; width:100%; height:auto; margin-bottom:30px; }
+.td2-arcs path { stroke-dasharray:400; stroke-dashoffset:400; animation:td2draw 2.4s ease-out forwards; }
+@keyframes td2draw { to { stroke-dashoffset:0; } }
+@media (prefers-reduced-motion: reduce) { .td2-arcs path { animation:none; stroke-dashoffset:0; } }
+.td2-cap { position:absolute; left:12px; right:12px; bottom:10px; font:500 13px 'SC Label','Barlow Condensed',sans-serif; color:var(--sc-ink); }
+.td2-cap b { font:400 17px 'SC Display','Russo One',sans-serif; }
+/* 7 · today so far */
+.td2-story { background:var(--sc-paper,#fffdf6); border:1px solid var(--sc-rule,#c9b98a); border-radius:14px; padding:12px 14px 8px; box-shadow:inset 0 0 0 4px var(--sc-paper,#fffdf6), inset 0 0 0 5px #c9b98a55; }
+.td2-big { display:flex; gap:14px; }
+.td2-big div { flex:1; } .td2-big b { display:block; font:400 24px/1 'SC Display','Russo One',sans-serif; color:var(--sc-ink); }
+.td2-big span { font:500 11px 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.16em; color:var(--sc-muted); text-transform:uppercase; }
+.td2-far { display:flex; align-items:center; gap:10px; margin-top:12px; padding-top:10px; border-top:1px solid #e7dcbd; }
+.td2-farpic { width:62px; height:46px; border-radius:7px; background:#cfe2f2 center / cover; flex:none; }
+.td2-far b { display:block; font:400 14px 'SC Display','Russo One',sans-serif; color:var(--sc-ink); }
+.td2-far span { font:500 12.5px 'SC Label','Barlow Condensed',sans-serif; color:var(--sc-muted); }
+.td2-story .td-chart { margin-top:12px; }
+/* (fit) the live card's name in its own case; mission cards a touch taller, the goal at most three lines so where-and-when always shows */
+.td2-live h3 { text-transform:none; }
+.td2-mc { aspect-ratio:2 / 3.3; }
+.td2-w b { font-size:10.5px; line-height:1.12; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+.td2-w small { padding-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+/* (playtest 2026-11-18) on a tablet or a wide window the mission cards grew to a third of the screen each: Today keeps a phone's width, centred */
+body.sky-only #sky-today { max-width:520px; margin-inline:auto; }
+/* (2026-11-18, Sevaan: "a little padding at the top before these dividing lines") room between the header's rule and the first card */
+body.sky-only #sky-today { padding-top:14px; }
+
+/* the split-flap tiles (js/sky-today.js flapIn): blanks are dark tiles; a flip is a transform only (backface and origin fixed here) */
+.td2-flap i { backface-visibility:hidden; transform-origin:50% 50%; will-change:auto; }
+.td2-flap i.sp { color:transparent; }
+
+/* the board's names in up to two lines of ten tiles that fill the column (tiles scale with it, so a name always fits) */
+.td2-fw { container-type:inline-size; }
+.td2-flap { display:flex; flex-direction:column; gap:3px; overflow:visible; }
+.td2-fl { display:grid; grid-template-columns:repeat(10, minmax(0, 1fr)); gap:2px; max-width:200px; }
+.td2-flap i { width:auto; height:auto; aspect-ratio:13 / 19; display:grid; place-items:center; line-height:1; font-size:13px; font-size:clamp(11px, 7cqi, 16px); }
+
+/* Coming over next: two planes due close together, the second a row higher so the names don't overlap */
+.td2-tl { height:134px; } .td2-tp.up { bottom:76px; } .td2-tp.up::after { content:''; position:absolute; left:50%; top:100%; height:42px; border-left:1px dashed #c9d9e6; }
+
+/* ---- Today, easier to read for every age (2026-11-18, the age playtest; Sevaan approved the before/after): no text under
+   13 px, secondary text darker (#33495f, was #4a6178), fewer spaced-out capitals, every button at least 44 px. ---- */
+body.sky-only #sky-today { --sc-muted:#33495f; }
+#sky-today .td-h { font-size:14px !important; letter-spacing:.12em !important; color:#a3241b !important; margin-top:24px !important; }
+#sky-today .td-h span { font-size:13px !important; letter-spacing:.08em !important; color:#33495f !important; }
+/* live card */
+.td2-k { font-size:13.5px; letter-spacing:.1em; }
+.td2-live h3 { font-size:28px; }
+.td2-sub { font-size:16px; color:#dce9f6; }
+.td2-chip { font-size:14px; padding:4px 10px; }
+.td2-aim b { font-size:17px; } .td2-aim small { font-size:14px; color:#dce9f6; }
+.td2-leave { font-size:13px; letter-spacing:.08em; } .td2-leave b { font-size:16px; }
+.td2-btn { height:54px; font-size:17px; }
+/* rare alert */
+.td2-alert-w i { font-size:13px; letter-spacing:.1em; } .td2-alert-w b { font-size:18px; } .td2-alert-w span { font-size:15px; }
+.td2-alert { grid-template-columns:96px 1fr 52px; } .td2-alert-go { width:48px; height:48px; }
+/* mission cards: a touch taller so the goal reads at 13 px */
+.td2-mc { aspect-ratio:2 / 3.75; }
+.td2-w b { font-size:13px; line-height:1.15; -webkit-line-clamp:4; }
+.td2-w i { font-size:12.5px; letter-spacing:.04em; text-transform:none; color:#33495f; }
+.td2-w small { font-size:13px; }
+/* timeline */
+.td2-tl { height:146px; } .td2-tp small { font-size:13px; } .td2-tp .td2-tail { width:26px; height:30px; }
+.td2-axis span { font-size:12.5px; }
+/* departures board */
+.td2-fcols { font-size:12.5px; letter-spacing:.12em; color:#9db8d3; }
+.td2-fr { grid-template-columns:28px 1fr auto 44px; padding:9px 0 9px 4px; }
+.td2-flap i { font-size:14px; font-size:clamp(13px, 8cqi, 17px); }
+.td2-who { font-size:13.5px; letter-spacing:.03em; color:#b8cde2; }
+.td2-who em { font-size:12px; line-height:17px; }
+.td2-st { font-size:12.5px; letter-spacing:.06em; } .td2-st b { font-size:17px; }
+.td2-go { width:44px; height:44px; }
+.td2-more { font-size:14px; padding:12px 0 8px; }
+/* map and story */
+.td2-cap { font-size:15px; } .td2-cap b { font-size:19px; }
+.td2-big b { font-size:28px; } .td2-big span { font-size:13px; letter-spacing:.08em; color:#33495f; }
+.td2-far b { font-size:16px; } .td2-far span { font-size:14px; color:#33495f; }
+#sky-today .td-axis { font-size:12.5px !important; } #sky-today .td-note { font-size:14px !important; color:#33495f !important; }
+
+.td2-tp.up { bottom:74px; } .td2-tp.up::after { height:40px; } /* the upper row inside the taller box */
+.td2-tp { min-width:44px; min-height:44px; justify-content:flex-end; } /* a fingertip-sized target */

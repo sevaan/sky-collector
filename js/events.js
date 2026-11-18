@@ -3,15 +3,18 @@
 // Meteor Organization calendar); the window runs from the evening before the peak to the morning after.
 // No DOM.
 import { SKY_EVENTS } from './sky-events-data.js?v=0.1.1708';
+/* best: the hours worth being out (the radiant has to be up). from: where they seem to come from, in words that hold
+   in both hemispheres. src: what the dust is from. All standard facts (International Meteor Organization, NASA). Added
+   2026-11-18 (Sevaan: the Leonids note "didn't say when or anything"). */
 const SHOWERS = [
-  { id: 'quadrantids', name: 'Quadrantids', month: 1, day: 3, rate: 'up to 80 an hour, in a short peak' },
-  { id: 'lyrids', name: 'Lyrids', month: 4, day: 22, rate: 'up to 18 an hour' },
-  { id: 'etaaquariids', name: 'Eta Aquariids', month: 5, day: 6, rate: 'up to 50 an hour, best before dawn' },
-  { id: 'perseids', name: 'Perseids', month: 8, day: 12, rate: 'up to 100 an hour' },
-  { id: 'draconids', name: 'Draconids', month: 10, day: 8, rate: 'usually a few an hour, best in the evening' },
-  { id: 'orionids', name: 'Orionids', month: 10, day: 21, rate: 'up to 20 an hour, from Halley’s Comet' },
-  { id: 'leonids', name: 'Leonids', month: 11, day: 17, rate: 'up to 15 an hour' },
-  { id: 'geminids', name: 'Geminids', month: 12, day: 14, rate: 'up to 150 an hour, the best of the year' },
+  { id: 'quadrantids', name: 'Quadrantids', month: 1, day: 3, rate: 'up to 80 an hour, in a short peak', best: 'in the hours before dawn', from: 'from near the Big Dipper’s handle, in the northeast', src: 'the asteroid 2003 EH1' },
+  { id: 'lyrids', name: 'Lyrids', month: 4, day: 22, rate: 'up to 18 an hour', best: 'from midnight to dawn', from: 'from near the bright star Vega', src: 'Comet Thatcher' },
+  { id: 'etaaquariids', name: 'Eta Aquariids', month: 5, day: 6, rate: 'up to 50 an hour, best before dawn', best: 'in the last two hours before dawn', from: 'from Aquarius, low in the east', src: 'Halley’s Comet' },
+  { id: 'perseids', name: 'Perseids', month: 8, day: 12, rate: 'up to 100 an hour', best: 'from late evening to dawn', from: 'from Perseus, in the northeast', src: 'Comet Swift–Tuttle' },
+  { id: 'draconids', name: 'Draconids', month: 10, day: 8, rate: 'usually a few an hour, best in the evening', best: 'in the evening, as soon as it’s dark', from: 'from Draco, in the northern sky', src: 'Comet Giacobini–Zinner' },
+  { id: 'orionids', name: 'Orionids', month: 10, day: 21, rate: 'up to 20 an hour, from Halley’s Comet', best: 'from midnight to dawn', from: 'from near Orion’s raised club', src: 'Halley’s Comet' },
+  { id: 'leonids', name: 'Leonids', month: 11, day: 17, rate: 'up to 15 an hour', best: 'from midnight to dawn', from: 'from Leo, which rises in the east around midnight', src: 'Comet Tempel–Tuttle' },
+  { id: 'geminids', name: 'Geminids', month: 12, day: 14, rate: 'up to 150 an hour, the best of the year', best: 'from mid-evening to dawn, most around 2 AM', from: 'from near the star Castor in Gemini', src: 'the asteroid 3200 Phaethon' },
 ];
 // Events around a time: [{ id: 'orionids-2026', kind: 'shower', name, start, end, rate }] for this year and next, plus
 // the one-night sky events (2026-10-25, Sevaan: fill the gaps between showers; js/sky-events-data.js, written by
@@ -26,7 +29,7 @@ export function eventsAround(time = Date.now()) {
   const out = [];
   for (const yr of [y - 1, y, y + 1]) for (const s of SHOWERS) {
     const peak = new Date(yr, s.month - 1, s.day, 12);
-    out.push({ id: `${s.id}-${yr}`, kind: 'shower', name: `${s.name} ${yr}`, shower: s.name, rate: s.rate, peak: peak.getTime(), day: peak.getTime(), start: peak.getTime() - 30 * 3600e3, end: peak.getTime() + 20 * 3600e3 });
+    out.push({ id: `${s.id}-${yr}`, kind: 'shower', name: `${s.name} ${yr}`, shower: s.name, rate: s.rate, best: s.best, from: s.from, src: s.src, peak: peak.getTime(), day: peak.getTime(), start: peak.getTime() - 30 * 3600e3, end: peak.getTime() + 20 * 3600e3 });
   }
   for (const e of SKY_EVENTS) { const [yy, mm, dd] = e.date.split('-').map(Number); if (Math.abs(yy - y) > 1) continue;
     const start = new Date(yy, mm - 1, dd, 12).getTime();
@@ -40,7 +43,7 @@ export const nextEvent = (time = Date.now()) => eventsAround(time).find((e) => e
 export const activeShower = (time = Date.now()) => eventsAround(time).find((e) => e.kind === 'shower' && time >= e.start && time <= e.end) ?? null;
 export const nextShower = (time = Date.now()) => eventsAround(time).find((e) => e.kind === 'shower' && e.start > time) ?? null;
 // One line for any event: a shower's rate, or the sky event's own words.
-export const eventLine = (e) => (e?.kind === 'shower' ? `${e.rate[0].toUpperCase()}${e.rate.slice(1)}. Collect any card to earn its badge.` : e?.text ?? '');
+export const eventLine = (e) => (e?.kind === 'shower' ? `Best ${e.best}: ${e.rate.split(',')[0]}. Collect any card to earn its badge.` : e?.text ?? '');
 // A meteor-shower badge is for a night sighting (2026-10-08, Sevaan earned the Draconids badge with the Sun at noon):
 // not the Sun, and between 6 pm and 7 am local time.
 export const countsForEvent = (s) => !s.sim && s.cardKey !== 'sun' && s.objectId !== 'sun' && ((h) => h >= 18 || h < 7)(new Date(s.time).getHours());

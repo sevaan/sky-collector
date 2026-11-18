@@ -226,7 +226,7 @@
 .card--retro .card__fact p {margin:0;font:400 .87em/1.45 Georgia,'Times New Roman',serif;letter-spacing:.045em;}
 .card--retro .card__fact b {font-weight:700;}
 .card--retro.uncaught .card__fact {color:var(--grey);}
-.card--retro .card__footer {margin:auto 0 0;padding:.65em 1.35em .2em;border-top:1px solid var(--rule);color:var(--ink);font:500 .72em/1.3 var(--label);letter-spacing:.1em;align-items:center;gap:.65em;}
+.card--retro .card__footer {margin:auto 0 0;padding:.42em 1.35em .42em;border-top:1px solid var(--rule);color:var(--ink);font:500 .72em/1.3 var(--label);letter-spacing:.1em;align-items:center;gap:.65em;}
 .card--retro .card__status {display:flex;align-items:center;gap:.65em;flex:1;min-width:0;}
 .card--retro .card__status-icon {width:1.5em;height:1.5em;display:grid;place-items:center;flex:none;border:.08em solid currentColor;border-radius:50%;font:500 1.35em/1 Arial,sans-serif;}
 .card--retro .card__brand {font:400 .98em/1.2 var(--display);letter-spacing:-.04em;border-left:1px solid var(--rule);padding:.6em 0 .6em 1em;flex:none;}
@@ -519,7 +519,7 @@
 .card--mission .card__stats.m4 b small { font: 600 .55em var(--label); color: #c9cdb8; margin-left: .15em; }
 .card--mission .card__fact { flex: 1 1 auto; min-height: 0; overflow: hidden; margin: .6em .25em .3em; font-size: .98em; }
 .card--mission .fl-dots { margin: .5em .25em 0; }
-.card--mission .card__footer { flex: none; margin: 0 .25em; padding: .45em 0 .1em; }
+.card--mission .card__footer { flex: none; margin: 0 .25em; padding: .28em 0 .27em; } /* even: the status circle sits centred (2026-11-18, Sevaan) */
 .card--mission .card__lc { font-size: .95em; }
 .card--mission .shiny-tag { top: auto; bottom: .7em; left: .65em; } /* the rarity chip owns the top-left of the picture */
 .card--mission .art-stars { z-index: 3; } /* above the picture, which is absolutely positioned on mission cards (2026-10-14) */
