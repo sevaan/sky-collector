@@ -19,6 +19,16 @@ export const SKY_SECRET_PATCHES = {
   jetstream: { id: 'jetstream', name: 'Jet Stream', text: 'You caught an airliner going faster than 1,000 km/h over the ground, pushed along by the jet stream.' },
   ceiling: { id: 'ceiling', name: 'Ceiling', text: 'You caught a plane flying higher than 45,000 ft.' },
   formation: { id: 'formation', name: 'Two of a Kind', /* not 'Formation': that means military or airshow flying (avgeek playtest 2026-11-19); the id stays so earned patches keep */ text: 'You caught a plane with another of the same airline, a different type, in your circle.' },
+  /* aviation anniversaries (2026-11-19, review Part 2 F): Space Collector's dated secrets (js/secrets.js DATED,
+     datedCrossing), found by tapping what crosses the sky on the day; by day or night, since planes fly by day */
+  wright: { id: 'wright', name: 'First Flight', text: 'You remembered the Wright brothers’ first powered flight, at Kitty Hawk on 17 December 1903.' },
+  dreamliner: { id: 'dreamliner', name: 'Dreamliner', text: 'You remembered the Boeing 787’s first flight, on 15 December 2009.' },
+  jumbo: { id: 'jumbo', name: 'Queen of the Skies', text: 'You remembered the Boeing 747’s first flight, on 9 February 1969.' },
+  concorde: { id: 'concorde', name: 'Mach 2', text: 'You remembered Concorde’s first flight, at Toulouse on 2 March 1969.' },
+  a380: { id: 'a380', name: 'Superjumbo', text: 'You remembered the Airbus A380’s first flight, on 27 April 2005.' },
+  lindbergh: { id: 'lindbergh', name: 'Spirit of St. Louis', text: 'You remembered Charles Lindbergh’s solo flight from New York to Paris, which landed on 21 May 1927.' },
+  bleriot: { id: 'bleriot', name: 'Across the Channel', text: 'You remembered Louis Blériot’s flight across the English Channel, on 25 July 1909.' },
+  airline: { id: 'airline', name: 'First Airline', text: 'You remembered the first scheduled airline flight, St. Petersburg to Tampa in Florida, on 1 January 1914.' },
   sixcont: { id: 'sixcont', name: 'Six Continents', text: 'Your flights have been heading to all six inhabited continents.' },
 };
 
@@ -100,6 +110,14 @@ const SKY_ART = {
   jetstream: () => `<g fill="none" stroke="#8fd0ff" stroke-width="2.4" stroke-linecap="round"><path d="M-34 -10 Q-10 -18 14 -10"/><path d="M-34 12 Q-8 4 18 12"/><path d="M-30 1 H-12"/></g>${JET(12, 0, 1, 90)}`,
   ceiling: () => `<path d="M-30 -18 H30" stroke="${R}" stroke-width="2.4" stroke-dasharray="4 3"/>${JET(0, 4, 1, 0)}<path d="M-30 24 Q0 16 30 24" fill="none" stroke="${I}" stroke-opacity=".5" stroke-width="1.4"/>`,
   formation: () => `${JET(-10, -6, .85)}${JET(12, 8, .85)}<circle r="26" fill="none" stroke="${I}" stroke-width="1.6" stroke-opacity=".6"/>`,
+  wright: () => `<g fill="none" stroke="${I}" stroke-width="2.2" stroke-linecap="round"><path d="M-30 -6 H30 M-30 6 H30"/><path d="M-22 -6 V6 M-8 -6 V6 M8 -6 V6 M22 -6 V6"/><path d="M-30 0 H-40 M30 0 H38"/></g><path d="M-30 18 Q0 10 30 18" fill="none" stroke="${I}" stroke-opacity=".5" stroke-width="1.4"/>`,
+  dreamliner: () => `${JET(0, 0, 1.3, 70)}<path d="M-30 18 Q0 8 30 18" fill="none" stroke="${I}" stroke-opacity=".5" stroke-width="1.4"/>`,
+  jumbo: () => `${JET(0, 0, 1.6, 0)}<circle cx="0" cy="-12" r="3" fill="${I}"/>`,
+  concorde: () => `<path d="M0 -30 L5 -10 L22 18 L4 12 L0 22 L-4 12 L-22 18 L-5 -10Z" fill="${I}"/><path d="M-26 -22 L-14 -22 M-30 -14 L-16 -14" stroke="${I}" stroke-opacity=".6" stroke-width="1.6"/>`,
+  a380: () => `${JET(0, 0, 1.7, 0)}<path d="M-14 4 H14" stroke="#14284a" stroke-width="1.4"/>`,
+  lindbergh: () => `${JET(-6, 4, .9, 80)}<path d="M-32 18 Q-6 0 28 -14" fill="none" stroke="${I}" stroke-width="1.6" stroke-dasharray="3 3"/><circle cx="28" cy="-14" r="3" fill="${R}"/>`,
+  bleriot: () => `<g fill="none" stroke="${I}" stroke-width="2.2" stroke-linecap="round"><path d="M-28 -2 H28"/><path d="M0 -10 V14 M-6 14 H6"/></g><path d="M-32 20 Q-16 14 0 20 T32 20" fill="none" stroke="#8fd0ff" stroke-width="2"/>`,
+  airline: () => `<g fill="none" stroke="${I}" stroke-width="2.2" stroke-linecap="round"><path d="M-28 -6 H28 M-28 4 H28"/><path d="M-6 4 V12 Q0 16 6 12 V4"/></g><path d="M-32 20 Q-16 15 0 20 T32 20" fill="none" stroke="#8fd0ff" stroke-width="2"/>`,
   sixcont: () => `<circle r="22" fill="none" stroke="${I}" stroke-width="2.2"/><path d="M-22 0 H22 M0 -22 V22 M-16 -15 Q0 -6 16 -15 M-16 15 Q0 6 16 15" fill="none" stroke="${I}" stroke-opacity=".55" stroke-width="1.2"/>${[[-14, -8], [10, -12], [-6, 10], [14, 6], [0, -2], [-16, 4]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2.2" fill="${R}"/>`).join('')}`,
 };
 const SKY_TWILL = { overhead: '#14284a', balloon: '#5a2a1a', glider: '#1f3d3a', airship: '#22265a', whale: '#173d5c', heavylift: '#3a3a3a', firebird: '#5a2a1a', hurricane: '#1f2a3a', vintage: '#4a3a22', jetstream: '#173d5c', ceiling: '#14284a', formation: '#10433f', sixcont: '#3f2a58' };
@@ -108,3 +126,15 @@ export function registerSkySecrets(SECRET_PATCHES, addSecretArt, patchArt = {}) 
   for (const p of Object.values(SKY_SECRET_PATCHES)) SECRET_PATCHES[p.id] = { ...p, secret: true, icon: '' };
   addSecretArt?.({ ...SKY_ART, ...patchArt }, SKY_TWILL); /* patchArt: js/sky-patches.js's patches, drawn the same way */
 }
+
+// The anniversaries' crossings (Space Collector's js/secrets.js DATED format: [id, month 0-11, day, title, sub, colour, tap label])
+export const SKY_DATED = [
+  ['airline', 0, 1, 'The first airliner', 'St. Petersburg–Tampa · 1 Jan 1914', '#8fd0ff', 'Tap to remember'],
+  ['jumbo', 1, 9, 'Boeing 747', 'First flight · 9 Feb 1969', '#ffc93d', 'Tap to remember'],
+  ['concorde', 2, 2, 'Concorde', 'First flight · 2 Mar 1969', '#e8e3c8', 'Tap to remember'],
+  ['a380', 3, 27, 'Airbus A380', 'First flight · 27 Apr 2005', '#8fd0ff', 'Tap to remember'],
+  ['lindbergh', 4, 21, 'Spirit of St. Louis', 'New York to Paris · 21 May 1927', '#ffc93d', 'Tap to remember'],
+  ['bleriot', 6, 25, 'Blériot XI', 'Across the Channel · 25 Jul 1909', '#e8e3c8', 'Tap to remember'],
+  ['dreamliner', 11, 15, 'Boeing 787', 'First flight · 15 Dec 2009', '#8fd0ff', 'Tap to remember'],
+  ['wright', 11, 17, 'Wright Flyer', 'Kitty Hawk · 17 Dec 1903', '#ffc93d', 'Tap to remember'],
+];
