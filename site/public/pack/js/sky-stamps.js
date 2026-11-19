@@ -64,7 +64,7 @@ export function planeLine(info, label) {
   const n = info.count, l = info.liveryCount ?? 0, name = label || 'aircraft';
   const base = `${n} ${name}${n === 1 ? '' : name === 'aircraft' ? '' : 's'}`;
   const seen = (info.days ?? 0) > n ? ` · seen on ${info.days} days` : ''; /* the local helicopter, a private plane: the days you've seen it (2026-11-19) */
-  return (l ? `${base} in ${l} ${l === 1 ? 'livery' : 'liveries'}` : base) + seen;
+  return (l ? `${base} with ${l} ${l === 1 ? 'operator' : 'operators'}` : base) + seen; /* it counts callsign prefixes, which are operators, not paint schemes (avgeek playtest 2026-11-19) */
 }
 export const levelWord = (l) => (l === 'none' ? '' : l.toUpperCase());
 

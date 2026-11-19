@@ -18,7 +18,7 @@ export const SKY_SECRET_PATCHES = {
   vintage: { id: 'vintage', name: 'Vintage', text: 'You caught a plane of a type built more than 50 years ago.' },
   jetstream: { id: 'jetstream', name: 'Jet Stream', text: 'You caught an airliner going faster than 1,000 km/h over the ground, pushed along by the jet stream.' },
   ceiling: { id: 'ceiling', name: 'Ceiling', text: 'You caught a plane flying higher than 45,000 ft.' },
-  formation: { id: 'formation', name: 'Formation', text: 'You caught a plane with another of the same airline in your circle.' },
+  formation: { id: 'formation', name: 'Two of a Kind', /* not 'Formation': that means military or airshow flying (avgeek playtest 2026-11-19); the id stays so earned patches keep */ text: 'You caught a plane with another of the same airline, a different type, in your circle.' },
   sixcont: { id: 'sixcont', name: 'Six Continents', text: 'Your flights have been heading to all six inhabited continents.' },
 };
 
@@ -60,7 +60,7 @@ export function secretsForCatch(p, { el = 0, others = [], now = Date.now() } = {
   if (gs >= 540 && AIRLINE.test(up(p?.callsign ?? p?.flight))) out.push('jetstream'); /* 540 kt = 1,000 km/h */
   if (a != null && a >= 45000) out.push('ceiling');
   const a3 = up(p?.callsign ?? p?.flight).slice(0, 3);
-  if (AIRLINE.test(up(p?.callsign ?? p?.flight)) && others.some((o) => up(o?.callsign).slice(0, 3) === a3 && up(o?.callsign) !== up(p.callsign))) out.push('formation');
+  if (AIRLINE.test(up(p?.callsign ?? p?.flight)) && others.some((o) => up(o?.callsign).slice(0, 3) === a3 && up(o?.callsign) !== up(p.callsign) && typeOf(o) && typeOf(o) !== typeOf(p)) /* a different type: two of the same at a hub was near-constant */) out.push('formation');
   return out;
 }
 // NOAA's hurricane hunters (Lockheed WP-3D Orions N42RF "NOAA42" and N43RF "NOAA43", the Gulfstream IV N49RF "NOAA49").

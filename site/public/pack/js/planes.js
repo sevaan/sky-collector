@@ -9,6 +9,7 @@ import { plugin } from './native.js';
 import { lookupRoute } from './routes.js';
 import { typeName } from './sky-type-names.js';
 import { noteFeed } from './sky-local.js';
+import { DEFAULTS, clampDial, freshFeed, pickSource, nextGap, afterAnswer, feedDown, maxAgeS, easeLeft } from './plane-feed.js';
 // Empty = feature off. localStorage 'planeRelay' overrides it (testing). Our server's /planes (adsb.lol only) once it's
 // deployed; until then the Val Town relay (relay/handler.ts).
 // Sky Collector (2026-11-15): Space Collector's Val Town relay is turned away by adsb.lol now, so the website needs Sky
@@ -17,9 +18,16 @@ import { noteFeed } from './sky-local.js';
 const SKY_RELAY = 'https://sevaan--a2362084e15311f195931607ee4eb77e.web.val.run';
 // A list, tried in order each poll: the first that answers wins. Add a second relay here (another host) as a fallback.
 const RELAYS = SERVER ? [`${SERVER}/planes`] : [SKY_RELAY];
-const POLL_MS = 10000;
+const POLL_MS = 10000;   // the website: every 10 s, as before
 const RADIUS_NM = 40;    // ~75 km: an airliner at cruise height is ~8° up at that distance
-const MAX_AGE_S = 60;    // drop planes we haven’t heard about for a minute
+// The apps (2026-11-19, native/): Space Collector's phone-first feed (js/plane-feed.js). Each phone asks adsb.lol itself
+// through CapacitorHttp; Sky's own relay (server/, Cloud Run "api" in sky-collector-app, FlyItalyADSB) is the backup.
+// The website keeps the relay list above. No dial yet (Space's is spacecollector.app/dial/planes.json): DEFAULTS.
+const APP_RELAY = 'https://api-ybymfwdlgq-uc.a.run.app/planes';
+const DIAL = 'https://skycollector.app/dial/planes.json'; /* the plane feed's pacing without a release (js/plane-feed.js clampDial; scripts/build-site.mjs writes it) */
+const phoneHttp = () => { let over = null; try { over = localStorage.getItem('planeRelay'); } catch {} return over ? null : plugin('CapacitorHttp'); };
+const header = (h, name) => { if (!h) return undefined; for (const k of Object.keys(h)) if (k.toLowerCase() === name) return Number(h[k]); return undefined; };
+const jsonOf = (r) => (r?.status === 200 ? (typeof r.data === 'string' ? JSON.parse(r.data) : r.data) : null);
 
 const RAD = Math.PI / 180, A = 6378.137, E2 = 0.00669437999014; // WGS84, km
 const FT = 0.0003048, KT = 0.000514444; // feet -> km, knots -> km/s
@@ -31,7 +39,7 @@ function relayUrls() {
   let list = null; try { const j = JSON.parse(o); if (Array.isArray(j)) list = j; } catch {}
   return (list ?? o.split(/[\s,]+/)).map((u) => String(u).trim()).filter(Boolean);
 }
-export function planesAvailable() { return relayUrls().length > 0; }
+export function planesAvailable() { return !!phoneHttp() || relayUrls().length > 0; }
 const relayQuery = (url, obs) => `${url.replace(/\/$/, '')}${/\/planes$/.test(url) ? '' : '/'}?lat=${obs.lat.toFixed(2)}&lon=${obs.lon.toFixed(2)}&dist=${RADIUS_NM}`;
 
 function ecef(lat, lon, hKm) {
@@ -53,6 +61,12 @@ export function skyPosition(obs, lat, lon, hKm) {
 }
 
 // Move a plane forward `s` seconds along its track (flat-earth step, fine for a few seconds).
+/* Where a plane is drawn now: moved along its own track from its own position time, plus what's left of an eased correction (Space Collector 5585f2e5) */
+function drawnAt(p, nowMs) {
+  const q = extrapolate(p, Math.max(0, (nowMs - p.at) / 1000)), e = p.ease; if (!e) return q;
+  const k = easeLeft(e.t0, nowMs); if (!k) { p.ease = null; return q; }
+  return { ...q, lat: q.lat + e.lat * k, lon: q.lon + e.lon * k, hKm: q.hKm + e.hKm * k };
+}
 function extrapolate(p, s) {
   const d = p.gs * KT * s;
   const lat = p.lat + (d * Math.cos(p.track * RAD)) / 111.195;
@@ -78,7 +92,20 @@ export function planePath(p, obs, nowMs = Date.now(), from = -60, to = 120, step
 // and their transponder code is replaced by a salted hash that never leaves the phone (different on every phone), so a
 // card can count different aircraft without anyone being able to look one up or follow it.
 const AIRLINE_CS = /^[A-Z]{3}\d/;
-export const isAnonymous = (a) => (Number(a?.dbFlags) & 13) !== 0 || !AIRLINE_CS.test(String(a?.flight ?? a?.callsign ?? '').trim().toUpperCase());
+/* Not airlines though their callsigns look like one (aviation-enthusiast playtest 2026-11-19): military, police, coast
+   guard and government operators (the airline table's own names: air force, navy, army, police, government, ministry…,
+   plus Air Mobility Command RCH, Canadian Forces CFC, the RAF's RRR, the USAF's SAM, the US Army's PAT, France's CTM, the
+   UK Home Office UKP) are anonymous and have no type either (no military or police content; js/planes.js parse); and
+   fractional / charter business-jet operators (NetJets, Flexjet, XO, flyExclusive, AirSprint, VistaJet, Executive Jet
+   Management) are anonymous like any private plane: type only, no registration or callsign. */
+export const GOV_OPS = new Set('AAC ACW AFP AIO AME ASF ASY AYB BAF BFW BRS CEF CFC CGX CIE CNV CTG CTM CWP DAF DAR DCN DEF DNY DOD EEF EGY EVY EXB FAC FAF FAG FNF FNY FPR GAF GAM GDB GKA GNY GRY GRZ HAF HKG HNA HRZ HUF HVK IAF IAM ICG IFC INP JMM KIW KRC LAF LEG LMG LSV LYF MBR MED MJN MNV NAF NDF NGR NOW NRN NVY NYB PAT PLC PLF PNY POA POF POL PON PRD QUE RCH RFF RFR RGP RIF RJZ RMF ROF ROP RRF RRR RSF SAF SAM SGF SGS SHF SIV SLG SQF SSG SUI SVF TRI TRP UAF UFA UKP WDG'.split(' '));
+const BIZ_OPS = new Set(['EJA', 'NJE', 'EJM', 'LXJ', 'XOJ', 'JRE', 'ASP', 'VJT']);
+/* military types (whatever the operator says) are shown by their size class only; not the P-3, which NOAA's civil
+   hurricane hunters fly */
+const MIL_TYPES = /^(C17|C130|C30J|C5M|A400|K35[ER]|KC10|KC46|E3[TC]F|E6|B52|B1|B2|P8|C2|C295|V22|U2|F16|F18|F15|F22|F35|EUFI|A10|H47|H53|H60|AN12|IL76|T38|T6|TEX2|HAWK|TOR|RFAL|GRIF|MRF1|C160|CN35|E2|R135|C40|C32|C37[AB]|VC25)$/;
+const opOf = (a) => String(a?.flight ?? a?.callsign ?? '').trim().toUpperCase().slice(0, 3);
+export const isGovOrMil = (a) => (Number(a?.dbFlags) & 1) !== 0 || GOV_OPS.has(opOf(a)) || MIL_TYPES.test(String(a?.t ?? a?.type ?? '').toUpperCase());
+export const isAnonymous = (a) => (Number(a?.dbFlags) & 13) !== 0 || !AIRLINE_CS.test(String(a?.flight ?? a?.callsign ?? '').trim().toUpperCase()) || GOV_OPS.has(opOf(a)) || BIZ_OPS.has(opOf(a));
 let anonSalt = null;
 export function anonId(hex) {
   if (anonSalt == null) { try { anonSalt = localStorage.getItem('anonSalt'); if (!anonSalt) { anonSalt = Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem('anonSalt', anonSalt); } } catch { anonSalt = 'x'; } }
@@ -94,14 +121,16 @@ function parse(json) {
     if (a.lat == null || a.lon == null || a.alt_baro === 'ground') continue;
     const ft = typeof a.alt_geom === 'number' ? a.alt_geom : a.alt_baro;
     if (typeof ft !== 'number') continue;
-    const anon = isAnonymous(a);
+    const anon = isAnonymous(a), gov = isGovOrMil(a);
     /* a type that the aircraft can't be (2026-11-19, real records: "BALL" on an H125 helicopter at 63 kt, "GLID" on an
        Air Canada jet at 35,000 ft) is dropped, so it's known by its size category instead */
     const t0 = String(a.t ?? '').toUpperCase(), gs0 = Number(a.gs) || 0, cs0 = String(a.flight ?? '').trim();
-    const badType = (t0 === 'BALL' && gs0 >= 40) || (t0 === 'SHIP' && gs0 >= 75) || (t0 === 'GLID' && (gs0 >= 130 || ft >= 25000 || /^[A-Z]{3}\d/.test(cs0)));
+    /* slow light aircraft can't make 300 kt over the ground even in a jet stream (avgeek playtest 2026-11-19: a Twin Otter at 589 km/h): the type is wrong */
+    const SLOW_T = /^(C15[02]|C17[0-7]|C172|C182|P28A|DA40|DV20|SR20|DHC[26]|PC6T?|AN2|PA18|C140|J3)$/;
+    const badType = (SLOW_T.test(t0) && gs0 > 300) || (t0 === 'BALL' && gs0 >= 40) || (t0 === 'SHIP' && gs0 >= 75) || (t0 === 'GLID' && (gs0 >= 130 || ft >= 25000 || /^[A-Z]{3}\d/.test(cs0)));
     out.push({
-      hex: anon ? anonId(a.hex) : a.hex, callsign: anon ? '' : (a.flight ?? '').trim(), reg: anon ? '' : a.r ?? '', anon, tag: tagOf(a), year: Number(a.year) || undefined, type: badType ? '' : a.t ?? '', desc: a.desc ?? '', category: a.category ?? '',
-      lat: a.lat, lon: a.lon, hKm: ft * FT, altFt: ft, gs: a.gs ?? 0, track: a.track ?? a.true_heading ?? 0,
+      hex: anon ? anonId(a.hex) : a.hex, callsign: anon ? '' : (a.flight ?? '').trim(), reg: anon ? '' : a.r ?? '', anon, tag: tagOf(a), year: Number(a.year) || undefined, type: badType || gov ? '' : a.t ?? '', desc: gov || badType ? '' : a.desc ?? '', /* a dropped type takes its description with it */ category: a.category ?? '',
+      lat: a.lat, lon: a.lon, hKm: ft * FT, altFt: ft, altBaro: typeof a.alt_baro === 'number' ? a.alt_baro : undefined /* what Flightradar24 and pilots read (alt_geom is GPS height, used for where it is in the sky) */, gs: a.gs ?? 0, track: a.track ?? a.true_heading ?? 0,
       climb: a.geom_rate ?? a.baro_rate ?? 0, at: at - (a.seen_pos ?? 0) * 1000,
     });
     out[out.length - 1].heli = isHelicopter(out[out.length - 1]);
@@ -110,7 +139,18 @@ function parse(json) {
 }
 
 export class PlaneTracker {
-  constructor() { this.planes = []; this.lastFetch = 0; this.busy = false; this.routes = new Map(); this.failures = 0; this.lastOk = 0; this.sources = null; this.log = (() => { try { return JSON.parse(localStorage.getItem('planeFeedLog') || '[]').slice(-40); } catch { return []; } })(); }
+  constructor() {
+    this.planes = []; this.lastFetch = 0; this.busy = false; this.routes = new Map(); this.failures = 0; this.lastOk = 0; this.sources = null; this.log = (() => { try { return JSON.parse(localStorage.getItem('planeFeedLog') || '[]').slice(-40); } catch { return []; } })();
+    /* the apps' feed state (js/plane-feed.js), kept in localStorage 'planeFeed' */
+    this.gapS = POLL_MS / 1000; this.down = false; this.src = ''; this.cfg = DEFAULTS; this.feed = freshFeed(); this.counts = { phone: 0, relay: 0 }; this.tally = null;
+    try { this.feed = { ...freshFeed(), ...JSON.parse(localStorage.getItem('planeFeed') || '{}') }; } catch {}
+    this.loadDial();
+  }
+  /* the dial: fetched once at start in the apps; the defaults stand if it can't be (as Space Collector's) */
+  loadDial() {
+    const http = phoneHttp(); if (!http) return;
+    http.request({ url: DIAL, method: 'GET', connectTimeout: 6000, readTimeout: 6000 }).then(jsonOf).then((j) => { if (j) this.cfg = clampDial(j); }).catch(() => {});
+  }
 
   // The last 40 fetches (2026-11-17, Sevaan outdoors: Space Collector showed a plane Sky didn't, and nothing said why):
   // [{ t, ok, n, ms, src | err }], newest last; kept in localStorage 'planeFeedLog' so a miss can be read afterwards
@@ -123,14 +163,17 @@ export class PlaneTracker {
   // known to be quiet when status is 'ok'. lastOk is the time of the last good fetch (0 = never); sources is the relay's
   // per-feed counts {adsblol, adsbfi, airplaneslive, merged}, or null (phone apps ask adsb.lol directly).
   get status() {
+    if (this.down) return 'failing'; /* the apps: both sources out for now */
     if (this.failures >= 2 || (this.failures >= 1 && !this.lastOk)) return 'failing';
     return this.lastOk ? 'ok' : 'loading';
   }
 
-  // Call every frame; fetches at most every POLL_MS (backs off after errors).
-  update(obs) {
+  // Call every frame; fetches at most every POLL_MS (backs off after errors). near (the apps): a plane is near the
+  // circle or something is pinned, so ask every 10 s rather than 30 (js/plane-feed.js).
+  update(obs, { near = false } = {}) {
     const urls = relayUrls();
     loadAirlines();
+    if (phoneHttp()) return this.updateApp(obs, near);
     if (!urls.length || this.busy || (typeof document !== 'undefined' && document.hidden)) return; // no polling while the app is in the background
     const wait = POLL_MS * Math.min(6, 2 ** this.failures);
     if (Date.now() - this.lastFetch < wait) return;
@@ -150,13 +193,67 @@ export class PlaneTracker {
       .finally(() => { this.busy = false; });
   }
 
+  // The apps (Space Collector 5585f2e5 + 1b496281): adsb.lol from the phone first, Sky's relay as the backup, when
+  // and from where as js/plane-feed.js says.
+  updateApp(obs, near) {
+    if (this.busy || (typeof document !== 'undefined' && document.hidden)) return; // no asking while the app is in the background
+    const http = phoneHttp(), now = Date.now(), env = { phoneOk: true, relayOk: true, now };
+    const src = pickSource(this.feed, env);
+    this.down = feedDown(this.feed, env);
+    this.gapS = nextGap(this.feed, src, { near }, this.cfg);
+    if (src === 'none' || now - this.lastFetch < this.gapS * 1000) return;
+    this.busy = true; this.lastFetch = now; this.src = src; this.counts[src]++;
+    const lat = obs.lat.toFixed(2), lon = obs.lon.toFixed(2), t0 = now;
+    const url = src === 'phone' ? `https://api.adsb.lol/v2/point/${lat}/${lon}/${RADIUS_NM}` /* adsb.lol turns cloud servers away (2026-10-26), but not phones */
+      : `${APP_RELAY}?lat=${lat}&lon=${lon}&dist=${RADIUS_NM}`;
+    http.request({ url, method: 'GET', connectTimeout: 8000, readTimeout: 8000 })
+      .then((r) => ({ status: r?.status, remaining: src === 'phone' ? header(r?.headers, 'x-ratelimit-remaining') : undefined, retryAfter: src === 'phone' ? header(r?.headers, 'retry-after') : undefined, data: jsonOf(r) }))
+      .then((r) => ({ ...r, ok: !!r.data, net: !r?.status }), () => ({ ok: false, status: 0, net: true }))
+      .then((r) => {
+        const at = `${obs.lat.toFixed(1)},${obs.lon.toFixed(1)}`;
+        if (r.ok) {
+          this.take(parse(r.data)); this.failures = 0; this.lastOk = Date.now(); this.sources = r.data.sources ?? null;
+          try { noteFeed((r.data.ac ?? r.data.aircraft ?? []).length); } catch {}
+          this.note({ t: t0, ok: 1, n: this.planes.length, ms: Date.now() - t0, src: src === 'phone' ? `phone${r.remaining != null ? ' ' + r.remaining + ' left' : ''}` : 'relay', at });
+        } else { this.failures++; this.note({ t: t0, ok: 0, ms: Date.now() - t0, err: `${src} ${r.net ? 'no answer' : r.status}`, at }); }
+        const before = this.feed;
+        this.feed = afterAnswer(this.feed, { src, ok: r.ok, status: r.status, remaining: r.remaining, retryAfter: r.retryAfter, net: r.net, online: typeof navigator === 'undefined' ? undefined : navigator.onLine }, Date.now(), this.cfg);
+        this.count(src, r, before);
+        try { localStorage.setItem('planeFeed', JSON.stringify(this.feed)); } catch {}
+      })
+      .finally(() => { this.busy = false; });
+  }
+
+  /* The session's feed numbers for the stats page (2026-11-19, the feed-cost question): asks to each source and how many
+     were answered, adsb.lol's 429s, the lowest allowance it reported, and why the phone handed over to the relay. No
+     place, no aircraft. main.js sends them as a 'feed' note when the app goes to the background (takeTally). */
+  count(src, r, before) {
+    const t = (this.tally ??= { ph: 0, phOk: 0, rl: 0, rlOk: 0, q: 0, low: -1, sw: '' });
+    if (src === 'phone') { t.ph++; if (r.ok) t.phOk++; if (r.status === 429) { t.q++; t.sw = '429'; } if (Number.isFinite(r.remaining) && (t.low < 0 || r.remaining < t.low)) t.low = r.remaining; }
+    else { t.rl++; if (r.ok) t.rlOk++; }
+    if (src === 'phone' && !t.sw && this.feed.phoneOff && this.feed.phoneOff !== before.phoneOff) t.sw = Number.isFinite(this.feed.remaining) && this.feed.remaining <= this.cfg.switchAt ? 'low' : 'fails';
+  }
+  takeTally() { const t = this.tally; this.tally = null; return t && t.ph + t.rl ? t : null; }
+
+  /* A fresh answer: a plane already drawn somewhere else slides to its new place (plane-feed.js easeLeft) instead of jumping */
+  take(fresh) {
+    const now = Date.now(), old = new Map(this.planes.map((p) => [p.hex, p]));
+    for (const p of fresh) {
+      const o = old.get(p.hex); if (!o) continue;
+      const a = drawnAt(o, now), b = extrapolate(p, Math.max(0, (now - p.at) / 1000));
+      const d = { lat: a.lat - b.lat, lon: a.lon - b.lon, hKm: a.hKm - b.hKm };
+      if (Math.abs(d.lat) + Math.abs(d.lon) < 0.2) p.ease = { ...d, t0: now }; /* a big jump (a wrong old fix) just moves */
+    }
+    this.planes = fresh;
+  }
+
   // Planes above the horizon right now: [{ plane, az, el, rangeKm, enu }]
   positions(obs, nowMs = Date.now()) {
     const out = [];
     for (const p of this.planes) {
       const s = (nowMs - p.at) / 1000;
-      if (s > MAX_AGE_S) continue;
-      const q = extrapolate(p, Math.max(0, s));
+      if (s > maxAgeS(this.gapS)) continue; /* 60 s on the website (10 s polls), longer between the apps' 30 s asks */
+      const q = drawnAt(p, nowMs);
       const pos = skyPosition(obs, q.lat, q.lon, q.hKm);
       if (pos.el > 0) out.push({ plane: p, ...pos });
     }
@@ -187,14 +284,14 @@ export class PlaneTracker {
 // The airline from the callsign's ICAO prefix (playtest 2026-10-22: adsbdb named ROU1908, Air Canada Rouge, as
 // "Transportes Aereos I.R. Crusoe"). Common North American and long-haul operators by prefix first; otherwise adsbdb's
 // name only when its own ICAO code matches the prefix; otherwise no airline (the flight number still shows).
-const AIRLINES = { ACA: 'Air Canada', ROU: 'Air Canada Rouge', JZA: 'Air Canada Jazz', WJA: 'WestJet', WEN: 'WestJet Encore', POE: 'Porter',
+const AIRLINES = { ACA: 'Air Canada', ROU: 'Air Canada Rouge', JZA: 'Jazz (Air Canada Express)', WJA: 'WestJet', WEN: 'WestJet Encore', POE: 'Porter',
   TSC: 'Air Transat', FLE: 'Flair', SWG: 'Sunwing', CJT: 'Cargojet', PCO: 'Pacific Coastal', AAL: 'American', DAL: 'Delta', UAL: 'United',
   SWA: 'Southwest', JBU: 'JetBlue', ASA: 'Alaska', NKS: 'Spirit', FFT: 'Frontier', AAY: 'Allegiant', SKW: 'SkyWest', RPA: 'Republic',
   ENY: 'Envoy', EDV: 'Endeavor', JIA: 'PSA', PDT: 'Piedmont', GJS: 'GoJet', CPZ: 'Compass', ASH: 'Mesa', QXE: 'Horizon', FDX: 'FedEx',
   UPS: 'UPS', BAW: 'British Airways', VIR: 'Virgin Atlantic', AFR: 'Air France', DLH: 'Lufthansa', KLM: 'KLM', ICE: 'Icelandair',
   UAE: 'Emirates', QTR: 'Qatar Airways', ETD: 'Etihad', THY: 'Turkish Airlines', AMX: 'Aeroméxico', CPA: 'Cathay Pacific', JAL: 'Japan Airlines',
-  ANA: 'All Nippon', KAL: 'Korean Air', EIN: 'Aer Lingus', SAS: 'SAS', IBE: 'Iberia', SWR: 'Swiss', AUA: 'Austrian', TAP: 'TAP Air Portugal',
-  KOW: 'Baker Aviation', TWB: 'Trinity Airways', VIV: 'Viva', UCA: 'CommutAir', ARE: 'LATAM Colombia', LNE: 'LATAM Ecuador' }; /* names the airline facts' research found missing or changed (2026-11-18) */
+  ANA: 'ANA', KAL: 'Korean Air', EIN: 'Aer Lingus', SAS: 'SAS', IBE: 'Iberia', SWR: 'Swiss', AUA: 'Austrian', TAP: 'TAP Air Portugal',
+  KOW: 'Baker Aviation', TWB: 'T’way Air', VIV: 'Viva', UCA: 'CommutAir', ARE: 'LATAM Colombia', LNE: 'LATAM Ecuador' }; /* names the airline facts' research found missing or changed (2026-11-18) */
 // Every ICAO airline code -> name (js/airlines.js, built by scripts/build-airlines.mjs), loaded once, lazily.
 let airlineTable = null, airlineLoad = null;
 export function loadAirlines() {

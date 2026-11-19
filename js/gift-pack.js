@@ -6,9 +6,9 @@
 //         renderCard, attachTilt, artImage, applyBack, sfx, feel, tierColor }
 const wait = (ms, reduced) => new Promise((r) => setTimeout(r, reduced ? Math.min(ms, 120) : ms));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-import { TIERS, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1773';
-import { attachGyro } from './card.js?v=0.1.1773';
-import { cloudsHtml } from './weather-art.js?v=0.1.1773';
+import { TIERS, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1774';
+import { attachGyro } from './card.js?v=0.1.1774';
+import { cloudsHtml } from './weather-art.js?v=0.1.1774';
 // Cards turn with the catch reveal's own flip and rarity table (js/card-moment.js, 2026-11-11): one turn for a catch, a
 // gift and the morning pack.
 // A tap that answers on the finger lifting, like main.js tapOn: the pack animates every frame, and WebKit drops a click
@@ -163,7 +163,15 @@ export function playPack(o) {
       deck.style.opacity = '1';
       await W(220); sfx('arrive', 0.9);
       if (reduced) { pk.classList.add('drop'); deck.style.clipPath = ''; deck.style.zIndex = '7'; deck.style.transition = 'none'; deck.style.transform = 'none'; /* full size, in place (it started small and low for the slide) */ await W(200); } /* reduced motion: no deck slide (review 2026-11-07) */
-      else { deck.style.transition = 'transform .9s cubic-bezier(.2,.9,.25,1.02)'; deck.style.transform = `translateY(-58%) scale(${riseK()})`;
+      else { /* the rise never takes the card's top off the screen (Space Collector 16b87951, 2026-11-19, Sevaan on the sample pack page: "part of the card is
+           visibly missing as it comes out"; there the pack sits high under the headline and a 58% rise put the card’s top 67–116px
+           above the screen). Measure where the full rise would end and come down by any overshoot. */
+        const k = riseK(), was = deck.style.transform, sp = document.createElement('div');
+        sp.style.cssText = 'position:fixed;top:0;height:env(safe-area-inset-top,0px);visibility:hidden;pointer-events:none'; document.body.appendChild(sp);
+        const minTop = sp.offsetHeight + 14; sp.remove();
+        deck.style.transform = `translateY(-58%) scale(${k})`; const over = Math.max(0, minTop - deck.getBoundingClientRect().top);
+        deck.style.transform = was; void deck.offsetWidth;
+        deck.style.transition = 'transform .9s cubic-bezier(.2,.9,.25,1.02)'; deck.style.transform = `translateY(calc(-58% + ${over.toFixed(1)}px)) scale(${k})`;
         await W(760); pk.classList.add('drop'); deck.style.clipPath = ''; deck.style.zIndex = '7'; deck.style.transform = 'translateY(0) scale(1)';
         await W(650); }
       phase = 'dealing'; deck.classList.add('live');

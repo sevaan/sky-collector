@@ -193,19 +193,19 @@
 .scc-empty h2 { font:400 22px/1.1 'SC Display','Russo One',sans-serif; margin:0 0 8px; }
 .scc-empty p { color:var(--sc-muted); margin:0 0 16px; }
 .scc-empty a { display:inline-flex; align-items:center; min-height:44px; padding:0 18px; border-radius:10px; background:var(--sc-orange); color:var(--sc-ink); text-decoration:none; font:600 14px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.16em; text-transform:uppercase; }
-.sky-viewer { position:fixed; inset:0; width:100%; height:100%; max-width:none; max-height:none; margin:0; border:0; padding:0; background:linear-gradient(180deg,#a9d2f0 0%,#e4f1fa 45%,#f6fafd 100%); color:var(--sc-ink); overflow-y:auto; }
-.sky-viewer::backdrop { background:rgba(13,34,56,.4); }
-.scv-head { display:flex; justify-content:space-between; align-items:center; padding:var(--col-top, calc(env(safe-area-inset-top,0px) + 14px)) 12px 4px 20px; }
-.scv-head .ui-eyebrow { color:var(--sc-ink); }
-.scv-x { width:44px; height:44px; border:0; background:none; color:var(--sc-ink); font-size:18px; }
-.scv-body { display:flex; flex-direction:column; align-items:center; padding:0 20px calc(env(safe-area-inset-bottom,0px) + 30px); }
-.scv-card { margin:4px 0 16px; }
-.scv-k { align-self:stretch; max-width:360px; margin:10px auto 4px; width:100%; font:600 13px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.2em; color:var(--sc-orange-ink); }
-.scv-stamps { display:flex; flex-wrap:wrap; gap:6px; max-width:360px; width:100%; margin:0 auto; }
-.scv-stamps span { border:1px solid var(--sc-line); background:#fff; border-radius:12px; padding:4px 10px; font:500 13px/1.2 'SC Label','Barlow Condensed',sans-serif; }
-.scv-list { list-style:none; margin:0 auto; padding:0; max-width:360px; width:100%; }
-.scv-list li { display:flex; justify-content:space-between; gap:10px; padding:8px 0; border-top:1px solid var(--sc-line); font:500 14px/1.2 'SC Label','Barlow Condensed',sans-serif; }
-.scv-list li span:last-child { color:var(--sc-muted); text-align:right; }
+
+
+
+
+
+
+
+
+
+
+
+
+
 html:has(body.sky-col-mode) { background:#eef5fb; }
 body.sky-col-mode { --bg:#eef5fb; --text:#0d2238; }
 
@@ -217,30 +217,30 @@ body.sky-only #visible > :not(.panel-head):not(#sky-today) { display:none !impor
 body.sky-only #visible { background:#eef5fb; color:var(--sc-ink); }
 body.sky-only #visible .panel-head h2, body.sky-only #visible .panel-head .x-close { color:var(--sc-ink); }
 body.sky-only #visible-sub { color:var(--sc-muted); }
-#sky-today { padding:0 16px calc(var(--nav-h, 112px) + 30px); max-width:620px; margin:0 auto; }
+#sky-today { padding:0 0 calc(var(--nav-h, 112px) + 30px); /* no side padding: the panel already has 20px, as Space's Today (2026-11-19: it was 16px more, inset from the header rule) */ max-width:620px; margin:0 auto; }
 .td-lead { margin:0 0 12px; font-size:15px; line-height:1.35; color:#1b3047; }
-.td-h { display:flex; justify-content:space-between; margin:18px 4px 6px; font:600 13px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.2em; color:var(--sc-orange-ink); }
-.td-h span { color:var(--sc-muted); letter-spacing:.12em; }
-.td-list { background:#fff; border:1px solid var(--sc-line); border-radius:12px; padding:0 10px; }
-.td-row { width:100%; display:flex; align-items:center; gap:10px; padding:9px 0; border:0; border-bottom:1px solid #e2ebf2; background:none; color:var(--sc-ink); text-align:left; }
-.td-row:last-child { border-bottom:0; }
-.td-art { width:40px; height:40px; flex:none; border-radius:9px; background:linear-gradient(180deg,#78b3e3,#d8eaf8); display:grid; place-items:center; }
-.td-art svg { width:28px; height:28px; fill:#fff; stroke:var(--sc-ink); stroke-width:1.6; }
-.td-t { flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
-.td-t b { font:400 15px/1.1 'SC Display','Russo One',sans-serif; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.td-t span { font:500 13px/1.2 'SC Label','Barlow Condensed',sans-serif; color:var(--sc-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.td-t .td-where { color:#23405c; }
-.td-tag { flex:none; font:600 11px/1.1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.1em; color:var(--sc-muted); text-align:right; max-width:76px; }
-.td-tag.new { color:var(--sc-orange-ink); }
-.td-row[role="button"] { cursor:pointer; }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* Show me on every row (2026-11-18): the target button, as on Space Collector's Tonight rows */
-.td-go { flex:none; width:40px; height:40px; margin:-4px -6px -4px 0; display:grid; place-items:center; border:0; border-radius:50%; background:none; color:var(--sc-orange-ink); cursor:pointer; -webkit-tap-highlight-color:transparent; }
-.td-go:active { background:#d7362b14; transform:scale(.92); }
-.td-go:focus-visible { outline:2px solid var(--sc-orange-ink); outline-offset:-2px; }
-.td-row--next .td-t { flex:1; }
-.td-when { width:58px; flex:none; display:flex; flex-direction:column; }
-.td-when b { font:400 16px/1 'SC Display','Russo One',sans-serif; }
-.td-when span { font:500 12px/1.3 'SC Label','Barlow Condensed',sans-serif; color:var(--sc-muted); }
+
+
+
+
+
+
+
 .td-empty { margin:0; padding:12px 2px; color:var(--sc-muted); font-size:14px; }
 .td-chart { display:flex; align-items:flex-end; gap:3px; height:70px; padding:6px 8px 0; background:#fff; border:1px solid var(--sc-line); border-radius:10px; }
 .td-chart i { flex:1; background:var(--sc-orange); border-radius:2px 2px 0 0; }
@@ -250,12 +250,12 @@ body.sky-only #visible-sub { color:var(--sc-muted); }
 .td-note { margin:8px 4px 0; font-size:12.5px; color:var(--sc-muted); }
 
 /* Satellite sweep (2026-11-15): Settings rows that only made sense for satellites */
-body.sky-only #row-tonight, body.sky-only #row-alerts, body.sky-only #row-live,
+body.sky-only #row-tonight, body.sky-only #row-alerts, body.sky-only #row-live, body.sky-only #row-quiet /* Quiet hours: no notifications to quiet yet (review 2026-11-19; back with Part 2's notifications) */,
 body.sky-only .set-row:has(#chk-daysats), body.sky-only .set-row:has(#chk-meteor),
 body.sky-only #sky-plus-line { display:none !important; } /* Observer stats is back (2026-11-17): the page has a plane version */
 /* Settings sweep (2026-11-15): gifting has no planes yet; circle highlights only sort satellites, stars and UFOs; the test tools below are satellite-only */
-body.sky-only #set-send-open, body.sky-only #set-hl-open, body.sky-only #btn-next-pass, body.sky-only #btn-nightpack,
-body.sky-only #btn-ufo, body.sky-only #btn-santa, body.sky-only #btn-meteor, body.sky-only #btn-live-test { display:none !important; }
+/* Send cards is back (2026-11-19, review Part 2 A: plane snapshots travel in the link; short links on Sky's server) */ body.sky-only #set-hl-open, body.sky-only #btn-next-pass, body.sky-only #btn-nightpack,
+/* UFO and Santa's test buttons are back with them (2026-11-19) */ body.sky-only #btn-meteor, body.sky-only #btn-live-test { display:none !important; }
 
 
 /* ===== Stamps and levels (2026-11-15, Sevaan: catching a card again stamps it) =====
@@ -292,9 +292,9 @@ body.sky-only #btn-ufo, body.sky-only #btn-santa, body.sky-only #btn-meteor, bod
 .sct-lvl i { font:400 11px/1 'SC Display','Russo One',sans-serif; font-style:normal; }
 .sct-lvl em { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); } /* the word is for screen readers; the metal says it */
 /* Catch panel: a plane already stamped today (same aircraft, same local day) */
-#catchbar.stamped #cb-collect { background:#eef3f8; color:var(--sc-muted); opacity:.7; }
-#cb-collect:disabled { cursor:default; }
-.fcatch--stamp .fcatch-k { color:#2d4f86; }
+
+
+
 
 /* Photos never crop the plane (2026-11-15): js/flight-card.js fitPhoto. When no crop can hold the whole aircraft the photo is
    shown whole (contain) over a blurred, enlarged copy of itself, so the frame still fills with that sky. */
@@ -314,7 +314,7 @@ body.night #discover.sky-plane .d-mini { filter:drop-shadow(0 6px 12px #000c); }
 .sct-sub { display:flex; align-items:center; gap:4px; min-width:0; } .sct-sub > span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .sct-logo { height:13px; width:auto; max-width:72px; object-fit:contain; flex:none; }
 /* The card back sits over the card it belongs to when the viewer's card turns (js/card.js attachFlip) */
-#sky-viewer .scv-card .fc { position:relative; }
+
 
 /* Plane cards inside Space Collector's .card (Milestone 1.5): the card element keeps Space Collector's sizing (font-size =
    the card unit, 28em wide) and the plane face fills it at 28 × 42em, the shape of the card backs. */
@@ -325,7 +325,7 @@ body.night #discover.sky-plane .d-mini { filter:drop-shadow(0 6px 12px #000c); }
 /* Sky's Collection on Space Collector's page (Milestone 1.5): Mine and Patches. Albums (sets with a known size) and Find
    (satellite pass search) come back once plane sets exist (docs/PROJECT-PLAN.md task 13). */
 /* Find is back in Sky (2026-11-19): the planes that fly over you and are not caught yet (js/cards-page.js renderSkyFind) */
-html.sky-cards .collection-tabs { justify-content:flex-start; gap:28px; }
+/* (the tabs bunched left by a rule from when Albums and Find were hidden: gone, so they spread like Space's, 2026-11-19) */
 
 /* Small faces in grids (2026-11-16 scroll pass): no live filters, as Space Collector's tiles have none. The sky panel's
    clouds are already soft at this size; the plane's drop shadow is drawn flat. */
@@ -370,16 +370,16 @@ html:not(.sky-night) body.sky-only:not(.night) #around .t-head { color:var(--sc-
 html:not(.sky-night) body.sky-only:not(.night) #around .ar-hint { color:var(--sc-muted); }
 html:not(.sky-night) body.sky-only:not(.night) #around #ar-strip { border-radius:14px; box-shadow:0 6px 18px rgba(13,34,56,.14); }
 html:not(.sky-night) body.sky-only:not(.night) .ar-facing { background:#fffdf6e6; border-color:var(--sc-line); color:var(--sc-ink); box-shadow:0 3px 10px rgba(13,34,56,.15); }
-body.sky-only #around .ar-pcard { width:132px; padding:5px 5px 8px; text-align:left; cursor:pointer; }
-html:not(.sky-night) body.sky-only:not(.night) #around .ar-pcard { background:#fff; border-color:var(--sc-line); color:var(--sc-ink); box-shadow:0 2px 8px rgba(13,34,56,.08); }
-html:not(.sky-night) body.sky-only:not(.night) #around .ar-pcard.new { border-color:#d7362b99; box-shadow:0 0 0 1px #d7362b33, 0 2px 8px rgba(13,34,56,.08); }
-body.sky-only #around .ar-pcard .ac-art { height:82px; background-color:#dfeaf5; background-size:cover; }
-body.sky-only #around .ar-pcard .ac-none { display:grid; place-items:center; color:#7aa4cc; }
-body.sky-only #around .ar-pcard .ac-none svg { width:40px; height:40px; }
-body.sky-only #around .ar-pcard b { margin-top:3px; }
-html:not(.sky-night) body.sky-only:not(.night) #around .ar-pcard small { color:var(--sc-muted); }
-body.sky-only #around .ar-pcard em { top:9px; right:9px; background:var(--gold); color:#fff; }
-body.sky-only #around .ar-pcard.next em { background:#0d2238; }
+
+
+
+
+
+
+
+
+
+
 body.sky-only.day #around .ar-chips { background:#fffdf6; border-color:var(--sc-rule); }
 body.sky-only.day #around .ap + .ap { border-left-color:#e7dcbd; }
 body.sky-only.day #around .ap b { color:var(--sc-ink); }
@@ -391,87 +391,87 @@ html:not(.sky-night) body.sky-only:not(.night) #around .hint { color:var(--sc-mu
 #sky-today { --td-red:#d7362b; --td-redink:#b42a20; }
 #sky-today .td2-tail { width:26px; height:30px; object-fit:contain; flex:none; filter:drop-shadow(0 2px 3px rgba(13,34,56,.25)); }
 /* 1 · live card */
-.td2-live { border-radius:18px; overflow:hidden; background:#12355d; color:#fff; box-shadow:0 12px 26px rgba(13,34,56,.22); }
-.td2-ph { position:relative; height:168px; background:#2f6fb3 center / cover no-repeat; }
-.td2-ph::after { content:''; position:absolute; inset:0; background:linear-gradient(transparent 45%, #12355d 100%); }
-.td2-ph .td2-tail--live { position:absolute; left:12px; top:12px; width:34px; height:40px; z-index:1; }
-.td2-leave { position:absolute; right:10px; top:10px; z-index:1; padding:5px 10px; border-radius:99px; background:#0d2238cc; font:500 12px 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.14em; }
-.td2-leave b { font:400 14px 'SC Display','Russo One',sans-serif; letter-spacing:0; color:#ffd27a; font-variant-numeric:tabular-nums; }
-.td2-bd { padding:0 14px 14px; margin-top:-2px; }
-.td2-k { font:500 12px 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.2em; text-transform:uppercase; color:#ffb3a8; }
-.td2-live h3 { margin:4px 0 2px; font:400 26px/1.02 'SC Display','Russo One',sans-serif; color:#fff; }
-.td2-sub { font:500 14px 'SC Label','Barlow Condensed',sans-serif; color:#c7dcf0; letter-spacing:.03em; }
-.td2-chips { display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 12px; }
-.td2-chip { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:6px; font:500 12px 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.08em; background:color-mix(in srgb, var(--c, #9aa4b1) 25%, transparent); color:color-mix(in srgb, var(--c, #9aa4b1) 55%, #fff); }
-.td2-chip--new { background:#d7362b40; color:#ffc2ba; } .td2-chip--ms { background:#e3a32133; color:#ffd27a; }
-.td2-aim { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
-.td2-arrow { width:50px; height:50px; flex:none; border-radius:50%; border:2px solid #ffb3a8; display:grid; place-items:center; color:#ffb3a8; transition:transform .5s ease-out; }
-.td2-arrow svg { width:24px; height:24px; }
-.td2-aim b { display:block; font:500 15px 'SC Label','Barlow Condensed',sans-serif; color:#fff; font-weight:500; }
-.td2-aim small { font:500 12.5px 'SC Label','Barlow Condensed',sans-serif; color:#c7dcf0; letter-spacing:.06em; }
-.td2-btn { width:100%; display:flex; align-items:center; justify-content:center; gap:8px; height:48px; border:0; border-radius:13px; background:linear-gradient(#e8493c,#c42d22); color:#fff; font:500 15px 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.18em; text-transform:uppercase; box-shadow:inset 0 1px 0 #ffffff59, 0 3px 0 #8c1c14, 0 8px 16px rgba(13,34,56,.25); cursor:pointer; }
-.td2-btn:active { transform:translateY(3px); box-shadow:inset 0 2px 6px #0000004d, 0 0 0 #8c1c14; }
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
 /* 2 · rare alert */
-.td2-alert { position:relative; display:grid; grid-template-columns:96px 1fr 44px; align-items:center; margin-top:14px; border-radius:14px; overflow:hidden; color:#fff; background:linear-gradient(120deg, color-mix(in srgb, var(--c) 30%, #1a0d2b), color-mix(in srgb, var(--c) 60%, #2a1240)); box-shadow:0 0 0 1.5px var(--c), 0 10px 24px color-mix(in srgb, var(--c) 35%, transparent); }
-.td2-alert::before { content:''; position:absolute; inset:0; background:linear-gradient(115deg, transparent 30%, #ffffff22 45%, transparent 60%); animation:td2shine 3.6s ease-in-out infinite; pointer-events:none; }
+
+
 @keyframes td2shine { from { transform:translateX(-100%); } to { transform:translateX(100%); } }
-.td2-alert-pic { position:relative; align-self:stretch; min-height:86px; background:#2f6fb3 center / cover; }
-.td2-alert-pic .td2-tail { position:absolute; left:5px; bottom:5px; width:20px; height:24px; }
-.td2-alert-w { padding:10px 4px 10px 12px; }
-.td2-alert-w i { font:500 11px 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.2em; font-style:normal; color:color-mix(in srgb, var(--c) 55%, #fff); }
-.td2-alert-w b { display:block; font:400 16px/1.1 'SC Display','Russo One',sans-serif; margin:2px 0 3px; }
-.td2-alert-w span { font:500 13px 'SC Label','Barlow Condensed',sans-serif; color:#eadff5; } .td2-alert-w em { font-style:normal; color:#ffd27a; }
-.td2-alert-go { width:40px; height:40px; border:0; background:none; color:#fff; display:grid; place-items:center; cursor:pointer; position:relative; z-index:1; }
+
+
+
+
+
+ 
+
 /* 3 · mission cards, dealt face down and turned over (Space Collector's mcFlipWhenSeen) */
-.td2-mcs { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; }
-.td2-mc { position:relative; aspect-ratio:2 / 3; padding:0; border:0; background:none; perspective:700px; text-align:left; cursor:pointer; color:var(--sc-ink); }
-.td2-flip { position:absolute; inset:0; transform-style:preserve-3d; transition:transform .7s cubic-bezier(.3,1.3,.5,1); }
-.td2-bk, .td2-face { position:absolute; inset:0; border-radius:10px; padding:4px; backface-visibility:hidden; -webkit-backface-visibility:hidden; background:linear-gradient(150deg,#fff3c4,#e3a321 40%,#fff0b8 60%,#c98f1c); box-shadow:0 6px 14px rgba(13,34,56,.18); }
-.td2-face { transform:rotateY(180deg); }
-.td2-mcs.on .td2-flip { transform:rotateY(180deg); }
-.td2-mcs.on .td2-mc:nth-child(2) .td2-flip { transition-delay:.38s; } .td2-mcs.on .td2-mc:nth-child(3) .td2-flip { transition-delay:.76s; }
-.td2-in { position:absolute; inset:4px; border-radius:7px; overflow:hidden; background:var(--sc-paper,#fffdf6); display:flex; flex-direction:column; }
-.td2-bk .td2-in { background:var(--pk-base); }
-.td2-bk .td2-in::after { content:''; position:absolute; inset:0; background:#fff; -webkit-mask:var(--pk-mask) 50% 52% / 118% auto no-repeat; mask:var(--pk-mask) 50% 52% / 118% auto no-repeat; opacity:.9; }
-.td2-pic { position:relative; aspect-ratio:4 / 3; background:#cfe2f2 center / cover no-repeat; flex:none; }
-.td2-pic .td2-tail { position:absolute; right:4px; bottom:3px; width:18px; height:21px; }
-.td2-w { padding:5px 6px 6px; display:flex; flex-direction:column; flex:1; min-height:0; }
-.td2-w b { font:400 11.5px/1.15 'SC Display','Russo One',sans-serif; }
-.td2-w i { font:500 9.5px/1.2 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; color:var(--sc-muted); font-style:normal; text-transform:uppercase; margin-top:2px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
-.td2-w small { margin-top:auto; font:500 11px/1.2 'SC Label','Barlow Condensed',sans-serif; color:var(--td-redink); letter-spacing:.04em; }
-.td2-w small.ok { color:#1d7a46; }
-.td2-mc.done .td2-pic { filter:saturate(.6); }
-.td2-mc.done .td2-face::after { content:'COMPLETE'; position:absolute; left:50%; top:36%; transform:translate(-50%,-50%) rotate(-12deg); padding:3px 7px; border:2px solid #1d7a46; border-radius:5px; color:#1d7a46; background:#ffffffd9; font:400 11px 'SC Display','Russo One',sans-serif; letter-spacing:.08em; }
-@media (prefers-reduced-motion: reduce) { .td2-flip { transition:none; } .td2-alert::before { animation:none; } }
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* 4 · coming over next */
-.td2-tl { position:relative; height:96px; background:#fff; border:1px solid var(--sc-line); border-radius:14px; }
-.td2-axis { position:absolute; left:12px; right:12px; bottom:24px; height:2px; background:#c9d9e6; }
-.td2-axis span { position:absolute; top:7px; font:600 10.5px 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.14em; color:var(--sc-muted); } .td2-axis span:first-child { left:0; color:var(--td-redink); } .td2-axis span:last-child { right:0; }
-.td2-tp { position:absolute; bottom:28px; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:2px; padding:0; border:0; background:none; cursor:pointer; transition:left 1s linear; }
-.td2-tp .td2-tail { width:22px; height:26px; }
-.td2-tp small { font:500 10.5px/1.1 'SC Label','Barlow Condensed',sans-serif; white-space:nowrap; color:var(--sc-ink); }
-.td2-tdot { width:26px; height:20px; border-radius:5px; background:#cfe2f2 center / cover; }
+
+
+  
+
+
+
+
 .td2-card { background:#fff; border:1px solid var(--sc-line); border-radius:12px; padding:12px; }
 /* 5 · over you now: the departures board */
-.td2-fids { background:#0d2238; border-radius:16px; padding:10px 10px 6px; color:#f2f6fa; box-shadow:0 12px 26px rgba(13,34,56,.25); }
-.td2-fcols { display:flex; justify-content:space-between; padding:0 34px 5px 34px; font:500 10px 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.2em; text-transform:uppercase; color:#6f8fae; }
-.td2-fr { display:grid; grid-template-columns:26px 1fr auto 30px; gap:8px; align-items:center; padding:7px 0 7px 4px; border-top:1px solid #ffffff14; cursor:pointer; }
-.td2-fr .td2-tail { width:22px; height:26px; }
-.td2-fpic { width:26px; height:20px; border-radius:4px; background:#2f6fb3 center / cover; }
-.td2-fw { min-width:0; }
-.td2-flap { display:flex; gap:2px; overflow:hidden; }
-.td2-flap i { flex:none; width:13px; height:20px; border-radius:2px; background:#1a3352; color:#fff; font:400 13px/20px 'SC Display','Russo One',sans-serif; text-align:center; font-style:normal; position:relative; }
-.td2-flap i::after { content:''; position:absolute; left:0; right:0; top:50%; border-top:1px solid #0d2238; }
-.td2-flap.roll i { animation:td2roll .5s steps(4) both; } .td2-flap.roll i:nth-child(2) { animation-delay:.06s; } .td2-flap.roll i:nth-child(3) { animation-delay:.12s; } .td2-flap.roll i:nth-child(4) { animation-delay:.18s; } .td2-flap.roll i:nth-child(5) { animation-delay:.24s; } .td2-flap.roll i:nth-child(6) { animation-delay:.3s; } .td2-flap.roll i:nth-child(n+7) { animation-delay:.36s; }
+
+
+
+
+
+
+
+
+
+      
 @keyframes td2roll { 0% { transform:scaleY(.1); color:transparent; } 60% { transform:scaleY(1); color:transparent; } }
-.td2-who { display:block; margin-top:3px; font:500 11px 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.08em; color:#8fb0cf; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.td2-who em { font-style:normal; display:inline-block; margin-right:6px; padding:0 4px; border-radius:3px; background:var(--td-red); color:#fff; font:600 10px/15px 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; }
-.td2-st { text-align:right; font:500 11px 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; color:#c7dcf0; white-space:nowrap; }
-.td2-st b { display:block; font:400 14px 'SC Display','Russo One',sans-serif; letter-spacing:0; color:#fff; }
-.td2-st.go { color:#ffd27a; } .td2-st.soon { color:#ffb3a8; }
-.td2-go { width:30px; height:30px; padding:0; border:0; background:none; color:#ffb3a8; display:grid; place-items:center; cursor:pointer; }
-.td2-more { display:block; width:100%; margin-top:2px; padding:9px 0 5px; border:0; border-top:1px solid #ffffff14; background:none; color:#ffd27a; font:500 12px 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.18em; text-transform:uppercase; cursor:pointer; }
-@media (prefers-reduced-motion: reduce) { .td2-flap.roll i { animation:none; } }
+
+
+
+
+ 
+
+
+
 /* 6 · where they're going */
 .td2-map { position:relative; background:radial-gradient(circle at 50% 48%, #fff 0, #e3eef8 70%); border:1px solid var(--sc-line); border-radius:14px; overflow:hidden; }
 .td2-map svg { display:block; width:100%; height:auto; margin-bottom:30px; }
@@ -491,79 +491,73 @@ html:not(.sky-night) body.sky-only:not(.night) #around .hint { color:var(--sc-mu
 .td2-far span { font:500 12.5px 'SC Label','Barlow Condensed',sans-serif; color:var(--sc-muted); }
 .td2-story .td-chart { margin-top:12px; }
 /* (fit) the live card's name in its own case; mission cards a touch taller, the goal at most three lines so where-and-when always shows */
-.td2-live h3 { text-transform:none; }
-.td2-mc { aspect-ratio:2 / 3.3; }
-.td2-w b { font-size:10.5px; line-height:1.12; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
-.td2-w small { padding-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+
+
+
 /* (playtest 2026-11-18) on a tablet or a wide window the mission cards grew to a third of the screen each: Today keeps a phone's width, centred */
 body.sky-only #sky-today { max-width:520px; margin-inline:auto; }
 /* (2026-11-18, Sevaan: "a little padding at the top before these dividing lines") room between the header's rule and the first card */
 body.sky-only #sky-today { padding-top:14px; }
 
 /* the split-flap tiles (js/sky-today.js flapIn): blanks are dark tiles; a flip is a transform only (backface and origin fixed here) */
-.td2-flap i { backface-visibility:hidden; transform-origin:50% 50%; will-change:auto; }
-.td2-flap i.sp { color:transparent; }
+
+
 
 /* the board's names in up to two lines of ten tiles that fill the column (tiles scale with it, so a name always fits) */
-.td2-fw { container-type:inline-size; }
-.td2-flap { display:flex; flex-direction:column; gap:3px; overflow:visible; }
-.td2-fl { display:grid; grid-template-columns:repeat(10, minmax(0, 1fr)); gap:2px; max-width:200px; }
-.td2-flap i { width:auto; height:auto; aspect-ratio:13 / 19; display:grid; place-items:center; line-height:1; font-size:13px; font-size:clamp(11px, 7cqi, 16px); }
+
+
+
+
 
 /* Coming over next: two planes due close together, the second a row higher so the names don't overlap */
-.td2-tl { height:134px; } .td2-tp.up { bottom:76px; } .td2-tp.up::after { content:''; position:absolute; left:50%; top:100%; height:42px; border-left:1px dashed #c9d9e6; }
+  
 
 /* ---- Today, easier to read for every age (2026-11-18, the age playtest; Sevaan approved the before/after): no text under
    13 px, secondary text darker (#33495f, was #4a6178), fewer spaced-out capitals, every button at least 44 px. ---- */
 body.sky-only #sky-today { --sc-muted:#33495f; }
-#sky-today .td-h { font-size:14px !important; letter-spacing:.12em !important; color:#a3241b !important; margin-top:24px !important; }
-#sky-today .td-h span { font-size:13px !important; letter-spacing:.08em !important; color:#33495f !important; }
+
+
 /* live card */
-.td2-k { font-size:13.5px; letter-spacing:.1em; }
-.td2-live h3 { font-size:28px; }
-.td2-sub { font-size:16px; color:#dce9f6; }
-.td2-chip { font-size:14px; padding:4px 10px; }
-.td2-aim b { font-size:17px; } .td2-aim small { font-size:14px; color:#dce9f6; }
-.td2-leave { font-size:13px; letter-spacing:.08em; } .td2-leave b { font-size:16px; }
-.td2-btn { height:54px; font-size:17px; }
+
+
+
+
+ 
+ 
+
 /* rare alert */
-.td2-alert-w i { font-size:13px; letter-spacing:.1em; } .td2-alert-w b { font-size:18px; } .td2-alert-w span { font-size:15px; }
-.td2-alert { grid-template-columns:96px 1fr 52px; } .td2-alert-go { width:48px; height:48px; }
+  
+ 
 /* mission cards: a touch taller so the goal reads at 13 px */
-.td2-mc { aspect-ratio:2 / 3.75; }
-.td2-w b { font-size:13px; line-height:1.15; -webkit-line-clamp:4; }
-.td2-w i { font-size:12.5px; letter-spacing:.04em; text-transform:none; color:#33495f; }
-.td2-w small { font-size:13px; }
+
+
+
+
 /* timeline */
-.td2-tl { height:146px; } .td2-tp small { font-size:13px; } .td2-tp .td2-tail { width:26px; height:30px; }
-.td2-axis span { font-size:12.5px; }
+  
+
 /* departures board */
-.td2-fcols { font-size:12.5px; letter-spacing:.12em; color:#9db8d3; }
-.td2-fr { grid-template-columns:28px 1fr auto 44px; padding:9px 0 9px 4px; }
-.td2-flap i { font-size:14px; font-size:clamp(13px, 8cqi, 17px); }
-.td2-who { font-size:13.5px; letter-spacing:.03em; color:#b8cde2; }
-.td2-who em { font-size:12px; line-height:17px; }
-.td2-st { font-size:12.5px; letter-spacing:.06em; } .td2-st b { font-size:17px; }
-.td2-go { width:44px; height:44px; }
-.td2-more { font-size:14px; padding:12px 0 8px; }
+
+
+
+
+
+ 
+
+
 /* map and story */
 .td2-cap { font-size:15px; } .td2-cap b { font-size:19px; }
 .td2-big b { font-size:28px; } .td2-big span { font-size:13px; letter-spacing:.08em; color:#33495f; }
 .td2-far b { font-size:16px; } .td2-far span { font-size:14px; color:#33495f; }
 #sky-today .td-axis { font-size:12.5px !important; } #sky-today .td-note { font-size:14px !important; color:#33495f !important; }
 
-.td2-tp.up { bottom:74px; } .td2-tp.up::after { height:40px; } /* the upper row inside the taller box */
-.td2-tp { min-width:44px; min-height:44px; justify-content:flex-end; } /* a fingertip-sized target */
+  /* the upper row inside the taller box */
+ /* a fingertip-sized target */
 /* (playtest 2026-11-18) a 320 px phone: the mission cards are 72 px wide, so the goal was cut mid-phrase with no ellipsis
    and the line under it sliced. A shorter photo and smaller words there: the goal gets three whole lines (an ellipsis if
    longer) and the where-and-when lines show in full. */
-@media (max-width:359px) {
-  .td2-pic { aspect-ratio:16 / 10; }
-  .td2-w { padding:4px 5px 5px; }
-  .td2-w b { font-size:10.5px; line-height:1.14; -webkit-line-clamp:3; }
-  .td2-w i { font-size:10px; letter-spacing:.02em; margin-top:3px; }
-  .td2-w small { font-size:10.5px; }
-}
+
 /* All around you's mini card tiles (Space Collector's Worth a look): Sky's cream by day, the night navy panel after dark */
 body.sky-only.day #around .tn-chip.tile { background:#fffdf6; border-color:#c9b98a; box-shadow:0 1px 3px rgba(13,34,56,.08); }
 body.sky-only.day #around .tn-chip.tile b:not(:where(.mini-face *)) { color:#0d2238; }
@@ -594,3 +588,13 @@ html.sky-night .td2-reg em { color:#7fd6a3; }
 @keyframes pf-fly-left { from { transform:translateX(0); } to { transform:translateX(calc(-1 * var(--w, 340px) - 40px)); } }
 @media (prefers-reduced-motion: reduce) { .planefield .pf { animation:none; left:calc(var(--i, 0) * 15%); } }
 body.sky-only .tc .art .ob-stars { display:none; } /* the location picture's drawn stars: Sky's tour has its flying planes instead */
+/* Shiny plane cards (2026-11-19, js/shiny.js shinyForPlane): a soft gold-and-rose sweep over the face and the moment's name
+   on a small ribbon at the top, as a satellite's shiny card shines. */
+.card--sky.shiny { position:relative; }
+.card--sky.shiny .fc-shine { position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:5; mix-blend-mode:screen;
+  background:linear-gradient(115deg, transparent 32%, rgba(255,236,170,.55) 45%, rgba(255,170,215,.35) 52%, transparent 64%) 0 0 / 260% 100% no-repeat; animation:fcShine 3.2s ease-in-out infinite; }
+@keyframes fcShine { 0% { background-position:120% 0; } 70%, 100% { background-position:-30% 0; } }
+.card--sky.shiny .fc-shiny { position:absolute; z-index:6; left:50%; top:-.55em; transform:translateX(-50%); white-space:nowrap; padding:.2em .7em; border-radius:99px; font:500 .62em/1.2 'SC Label', sans-serif; letter-spacing:.12em; text-transform:uppercase;
+  color:#5a3a00; background:linear-gradient(90deg, #ffe28a, #ffc8e6, #ffe28a); box-shadow:0 2px 6px rgba(13,34,56,.25); }
+.card--sky.shiny .fc-shiny b { font-weight:inherit; color:#b42a20; }
+@media (prefers-reduced-motion: reduce) { .card--sky.shiny .fc-shine { animation:none; background-position:50% 0; opacity:.6; } }
