@@ -2,14 +2,14 @@
 // e.g. Icelandair Toronto → Reykjavík), and every catch also counts toward PLANES (the aircraft type). Anything with no
 // route (helicopters, light planes, balloons, private jets) is a Planes card only. No DOM here.
 
-import { isProp } from './sky-props.js?v=0.1.1760';
-import { aircraftName, isHelicopter } from './planes.js?v=0.1.1760';
-import { routeKm } from './routes.js?v=0.1.1760';
-import { hasAirlineCallsign } from './sky-stamps.js?v=0.1.1760';
-import { typeTier } from './sky-tiers.js?v=0.1.1760';
-import { planeSet, flightSet, homeCountry } from './sky-sets.js?v=0.1.1760';
-import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1760';
-import { typeName } from './sky-type-names.js?v=0.1.1760';
+import { isProp } from './sky-props.js?v=0.1.1762';
+import { aircraftName, isHelicopter } from './planes.js?v=0.1.1762';
+import { routeKm } from './routes.js?v=0.1.1762';
+import { hasAirlineCallsign } from './sky-stamps.js?v=0.1.1762';
+import { typeTier } from './sky-tiers.js?v=0.1.1762';
+import { planeSet, flightSet, homeCountry } from './sky-sets.js?v=0.1.1762';
+import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1762';
+import { typeName } from './sky-type-names.js?v=0.1.1762';
 
 export const TIERS = {
   common: { label: 'Common', mark: '●', color: '#4a6178' },
@@ -31,7 +31,7 @@ export const SIZE_CLASSES = {
   A3: { name: 'Large Aircraft', mark: 'LARGE', glyph: 'jet', fact: `${UNLISTED} Its transponder says it weighs **34 to 136 tonnes**: the size of a Boeing 737 or an Airbus A320.` },
   A4: { name: 'Large Aircraft', mark: 'LARGE', glyph: 'jet', fact: `${UNLISTED} Its transponder says it is a large aircraft that leaves a **strong wake**, like a Boeing 757.` },
   A5: { name: 'Heavy Aircraft', mark: 'HEAVY', glyph: 'jet', fact: `${UNLISTED} Its transponder says it weighs **more than 136 tonnes**: a wide-body, like a Boeing 777 or an Airbus A350.` },
-  A6: { name: 'Fast Jet', mark: 'FAST', glyph: 'jet', fact: `${UNLISTED} Its transponder says it can fly **faster than 740 km/h** and turn harder than 5 g, which usually means a military jet.` },
+  A6: { name: 'Fast Jet', mark: 'FAST', glyph: 'jet', fact: `${UNLISTED} Its transponder says it can fly **faster than 740 km/h** and pull more than 5 g.` },
   B1: { name: 'Glider', mark: 'GLIDER', glyph: 'glider', fact: 'A glider has **no engine**: it is towed or winched up, then stays up on rising air.' },
   B2: { name: 'Balloon or Airship', mark: 'BALLOON', glyph: 'balloon', fact: 'Lighter than air: a **balloon or an airship**, drifting or cruising far slower than anything with wings.' },
   B4: { name: 'Ultralight', mark: 'ULTRA', glyph: 'prop', fact: 'An **ultralight**: one or two seats, a small engine, and often an open cockpit.' },

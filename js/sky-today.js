@@ -5,16 +5,16 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { isProp } from './sky-props.js?v=0.1.1760';
-import { planeKey } from './flights.js?v=0.1.1760';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1760';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1760';
-import { airlineIcon } from './airline-icons.js?v=0.1.1760';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1760';
-import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1760';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1760';
-import { planeSet } from './sky-sets.js?v=0.1.1760';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1760';
+import { isProp } from './sky-props.js?v=0.1.1762';
+import { planeKey } from './flights.js?v=0.1.1762';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1762';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1762';
+import { airlineIcon } from './airline-icons.js?v=0.1.1762';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1762';
+import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1762';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1762';
+import { planeSet } from './sky-sets.js?v=0.1.1762';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1762';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -132,7 +132,7 @@ export function aroundPlanes(positions, planes, obs, route) {
 // cardPhoto(cardKey) -> { url, tail } | null, facing() -> degrees | null, hint({az, el}) -> words, visible() -> bool.
 const WIDE_T = /^(A3[3-9]|A35|A38|B74|B76|B77|B78|IL96|A30)/;
 const PROP_T = { test: isProp }; /* js/sky-props.js: whole type codes (QA 2026-11-19: the old pattern counted Citation jets, the C-17 and the Beechjet) */
-const altFt = (p) => (p.hKm ?? 0) * 3280.84;
+const altFt = (p) => p.altBaro ?? (p.hKm ?? 0) * 3280.84; /* barometric, as flight trackers show it (2026-11-19) */
 const mins = (s) => Math.max(1, Math.round(s / 60));
 const kmOf = (full) => { try { return full?.from?.lat != null && full?.to?.lat != null ? hav(full.from.lat, full.from.lon, full.to.lat, full.to.lon) : null; } catch { return null; } };
 function hav(a1, o1, a2, o2) { const R = Math.PI / 180, s = Math.sin((a2 - a1) * R / 2) ** 2 + Math.cos(a1 * R) * Math.cos(a2 * R) * Math.sin((o2 - o1) * R / 2) ** 2; return 2 * 6371 * Math.asin(Math.min(1, Math.sqrt(s))); }

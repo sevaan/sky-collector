@@ -28,8 +28,12 @@ Sevaan has a domain and address for Sky.
    transponder hex is replaced at parse time by a salted hash (per phone, never sent) so plane cards can count
    different aircraft. Catches stored before this were scrubbed the same way on the next launch (main.js
    anonymizeStored). The sample pack's live flight skips flagged aircraft. Still to add: a removal request route.
-5. **Military and government aircraft. Done 2026-11-19:** catchable only as generic type cards (anonymous as above);
-   no secret or patch names a military or police aircraft. No history beyond the type card's count.
+5. **Military and government aircraft. Done 2026-11-19, tightened the same day** (aviation-enthusiast playtest: a
+   Military set with Epic fighters, and RCH/RRR/Home Office callsigns passing as airlines): military, police, coast guard
+   and government aircraft (dbFlags 1, the operators in js/planes.js GOV_OPS, or a military type code) are anonymous and
+   have no type, so they are only a size-class card ("Large Aircraft"); no Military set, no military types in any tier
+   list; no secret or patch names one. Fractional and charter business-jet operators (NetJets, Flexjet, XO, flyExclusive,
+   AirSprint, VistaJet, EJM: BIZ_OPS) are anonymous like private planes.
 6. **Rewrite privacy.html for the store build** once the backend exists: the server, purchases (RevenueCat), backups
    (iCloud key 'sky-backup'), notifications, any usage reports, a real contact address.
 7. **Airline logos and names**: identification only, with the hide-all switch that exists; keep the per-airline
