@@ -250,7 +250,7 @@ body.sky-only #visible-sub { color:var(--sc-muted); }
 .td-note { margin:8px 4px 0; font-size:12.5px; color:var(--sc-muted); }
 
 /* Satellite sweep (2026-11-15): Settings rows that only made sense for satellites */
-body.sky-only #row-tonight, body.sky-only #row-alerts, body.sky-only #row-live,
+body.sky-only #row-tonight, body.sky-only #row-alerts, body.sky-only #row-live, body.sky-only #row-quiet /* Quiet hours: no notifications to quiet yet (review 2026-11-19; back with Part 2's notifications) */,
 body.sky-only .set-row:has(#chk-daysats), body.sky-only .set-row:has(#chk-meteor),
 body.sky-only #sky-plus-line { display:none !important; } /* Observer stats is back (2026-11-17): the page has a plane version */
 /* Settings sweep (2026-11-15): gifting has no planes yet; circle highlights only sort satellites, stars and UFOs; the test tools below are satellite-only */
@@ -325,7 +325,7 @@ body.night #discover.sky-plane .d-mini { filter:drop-shadow(0 6px 12px #000c); }
 /* Sky's Collection on Space Collector's page (Milestone 1.5): Mine and Patches. Albums (sets with a known size) and Find
    (satellite pass search) come back once plane sets exist (docs/PROJECT-PLAN.md task 13). */
 /* Find is back in Sky (2026-11-19): the planes that fly over you and are not caught yet (js/cards-page.js renderSkyFind) */
-html.sky-cards .collection-tabs { justify-content:flex-start; gap:28px; }
+/* (the tabs bunched left by a rule from when Albums and Find were hidden: gone, so they spread like Space's, 2026-11-19) */
 
 /* Small faces in grids (2026-11-16 scroll pass): no live filters, as Space Collector's tiles have none. The sky panel's
    clouds are already soft at this size; the plane's drop shadow is drawn flat. */

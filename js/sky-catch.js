@@ -2,15 +2,15 @@
 // Collect does. Catches are kept in localStorage ('skyCatches') for now, apart from Space Collector's sightings, so the
 // old collection code never meets a flight. The Collection screen reads them in a later step.
 
-import { aircraftName, isHelicopter } from './planes.js?v=0.1.1764';
-import { lookupRoute } from './routes.js?v=0.1.1764';
-import { distText } from './units.js?v=0.1.1764';
-import { cardsFor, planeKey, unlisted, TIERS } from './flights.js?v=0.1.1764';
-import { glyphSvg, showCatch, miniCardHtml } from './flight-card.js?v=0.1.1764';
-import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1764';
+import { aircraftName, isHelicopter } from './planes.js?v=0.1.1765';
+import { lookupRoute } from './routes.js?v=0.1.1765';
+import { distText } from './units.js?v=0.1.1765';
+import { cardsFor, planeKey, unlisted, TIERS } from './flights.js?v=0.1.1765';
+import { glyphSvg, showCatch, miniCardHtml } from './flight-card.js?v=0.1.1765';
+import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1765';
 
-import { TIER_INFO } from './rarity.js?v=0.1.1764';
-import { allCatches, addCatch } from './catch-store.js?v=0.1.1764';
+import { TIER_INFO } from './rarity.js?v=0.1.1765';
+import { allCatches, addCatch } from './catch-store.js?v=0.1.1765';
 // Catches live in js/catch-store.js (IndexedDB, with a localStorage mirror the Collection page reads).
 // Where catches are read from: Space Collector's sightings once main.js says so (Milestone 1.5), the old store until then.
 let source = allCatches;
@@ -35,9 +35,9 @@ export function previewFor(hit, route, list = catches(), now = Date.now()) {
 
 // Fill the panel for the plane in the circle. `route` is planes.js's route object (airline now, cities once loaded).
 // A plane you already stamped today (same aircraft, same local day) reads "STAMPED TODAY" with Collect switched off.
-export function catchPanel(el, hit, route) {
+export function catchPanel(el, hit, route, opts = {}) {
   el._hit = hit; el._route = route;
-  if (el.id === 'discover') return discoverPanel(el, hit, route);
+  if (el.id === 'discover') return discoverPanel(el, hit, route, opts);
   const p = hit.plane, type = aircraftName(p) || (isHelicopter(p) ? 'Helicopter' : unlisted(planeKey(p))?.name ?? 'Aircraft');
   const a3 = (p.callsign || '').slice(0, 3), full = route?.full;
   const { fkey, out } = previewFor(hit, route);
@@ -59,7 +59,7 @@ export function catchPanel(el, hit, route) {
    distance, and Collect below it, laid out and animated exactly as a satellite's. */
 // When you last caught this card (its newest catch), for the mini card's date line; null if it isn't yours yet.
 const lastSeen = (key) => { const l = catches(); for (let i = l.length - 1; i >= 0; i--) { const c = l[i]; if (cardOf(c, key)) return c.time; } return null; };
-function discoverPanel(el, hit, route) {
+function discoverPanel(el, hit, route, opts = {}) {
   const $ = (id) => document.getElementById(id), txt = (id, v) => { const e = $(id); if (e && e.textContent !== v) e.textContent = v; };
   const p = hit.plane, type = aircraftName(p) || (isHelicopter(p) ? 'Helicopter' : unlisted(planeKey(p))?.name ?? 'Aircraft'), full = route?.full;
   const { fkey, out } = previewFor(hit, route);
@@ -73,6 +73,8 @@ function discoverPanel(el, hit, route) {
   txt('d-name', full ? `To ${full.to.city}` : route?.airline ? `${route.airline} ${(p.callsign || '').replace(/^[A-Z]{3}/, '')}` : type);
   txt('d-dist', hit.rangeKm != null ? distText(hit.rangeKm) : `${ft(p)} ft`);
   const mk = `${card?.key}|${out.kind}|${catches().length}`, mini = $('d-mini');
+  /* Space Collector's ticket card (2026-11-19, review Part 1): main.js's miniCard via opts.mini, the same card as the Collection's, with its level medal */
+  if (mini && mini.dataset.k !== mk && opts.mini && card) { try { const m = opts.mini(card, flight ? 'flight' : 'plane'); if (m) { mini.dataset.k = mk; mini.replaceChildren(m); } } catch {} }
   if (mini && mini.dataset.k !== mk) { mini.dataset.k = mk; try { mini.innerHTML = card ? miniCardHtml({ kind: flight ? 'flight' : 'plane', card, type: p.type, last: lastSeen(card.key), n: seenCount(catches(), card.key) || 1 }) : ''; } catch { mini.innerHTML = ''; } }
   /* Already stamped today: Space Collector's seen-before state, a View card button that opens your card (2026-11-15, Sevaan) */
   el.dataset.key = card?.key ?? '';
