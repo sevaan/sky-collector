@@ -612,3 +612,11 @@ body.sky-only :is(#toasts .ticket, .pc-tag)::after { content:''; position:absolu
   background:repeating-linear-gradient(-45deg, #c8312a 0 8px, #fffdf6 8px 12px, #24508c 12px 20px, #fffdf6 20px 24px);
   -webkit-mask:linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); mask:linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
   -webkit-mask-composite:xor; }
+/* All around you at night (2026-11-18, Sevaan: "In night time this page should be dark mode too"): when Explore is dark
+   (no .day: the sun more than 2° down), the panel is too, in Sky's night navy rather than Space Collector's. */
+body.sky-only:not(.day):not(.night) #around {
+  --bg:#0b1626; --panel:#11223a; --text:#e6eef7; --muted:#9fb3c6; --line:#24384f; --accent:#ff6a5c;
+  --ink:#e6eef7; --gold:#ff6a5c; --cream:#e6eef7; --cyan:#8fb3cf; --edge:#2b4058; --edge-soft:#24384f; --rule:#24384f; --glass:#11223af2; --glass-strong:#11223a;
+  --ui-ink:#e6eef7; --ui-muted:#9fb3c6; --ui-link-ink:#c9d9e6; --ui-gold:#ff6a5c; --ui-edge:#2b4058; --ui-edge-soft:#24384f; --ui-glass:#11223ad9; --ui-bar:#11223a;
+  --h-text:#e6eef7; --h-muted:#9fb3c6; --h-edge:#2b4058; --h-glass:#11223ad9;
+  background:#0b1626; color:#e6eef7; color-scheme:dark; }
