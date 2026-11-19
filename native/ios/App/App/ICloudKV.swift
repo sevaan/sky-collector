@@ -69,8 +69,8 @@ class MainViewController: CAPBridgeViewController {
     override open func capacitorDidLoad() {
         bridge?.registerPluginInstance(ICloudKVPlugin())
         bridge?.registerPluginInstance(ReviewPlugin())
-        // Sky Collector (2026-11-19): no widget extension or Live Activity yet, so WidgetBridgePlugin and
-        // PassActivityPlugin (App/WidgetBridge.swift, kept as Space Collector's) are not registered.
+        bridge?.registerPluginInstance(WidgetBridgePlugin())   // Sky's widgets (2026-11-19, review Part 2 I)
+        bridge?.registerPluginInstance(PassActivityPlugin())   // the Live Activity: built, not used by Sky's app yet
     }
 
     // iPhone Duo (2026-10-22): tell the page when the phone is half-folded like a book, so the sky moves its circle off

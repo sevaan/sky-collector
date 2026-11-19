@@ -16,7 +16,7 @@ public class WidgetBridgePlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "save", returnType: CAPPluginReturnPromise),
     ]
 
-    static var groupId: String { "group." + (Bundle.main.bundleIdentifier ?? "io.github.sevaan.spacecollector") }
+    static var groupId: String { "group." + (Bundle.main.bundleIdentifier ?? "app.skycollector") }
 
     // The small card pictures a widget or the Live Activity names, copied into the shared container as art/<name>.png.
     static func copyArt(_ art: [String], to dir: URL) {
