@@ -6,9 +6,9 @@
 //   iCloud key 'sky-backup' = { v: 1, s: [sightings], gone: [ids deleted], st: { progress keys }, at }
 // Sync merges both ways and never loses anything earned: sightings are a union by a stable id (time + card + object),
 // minus ids someone deleted; progress keys merge as in the old account sync.
-import { allSightings, addSighting, deleteSighting } from './store.js?v=0.1.1778';
-import { plugin, onNative, isNative } from './native.js?v=0.1.1778';
-import { backupId } from './gift.js?v=0.1.1778';
+import { allSightings, addSighting, deleteSighting } from './store.js?v=0.1.1779';
+import { plugin, onNative, isNative } from './native.js?v=0.1.1779';
+import { backupId } from './gift.js?v=0.1.1779';
 export { backupId };
 
 const KEY = 'sky-backup'; /* Sky's own iCloud key (2026-11-16, decoupled from Space Collector's 'sc-backup') */
@@ -17,6 +17,14 @@ const ls = { get: (k) => { try { return localStorage.getItem(k); } catch { retur
 const json = (k, d) => { try { return JSON.parse(ls.get(k)) ?? d; } catch { return d; } };
 const kv = () => (isNative() && /iP(hone|ad|od)|Mac/.test(navigator.userAgent) ? plugin('ICloudKV') : null);
 
+/* Compressed (2026-11-19): iCloud key-value storage takes about 1 MB per key, and a Sky catch is two sightings that each carry
+   their card's snapshot (route, airports, fact), about 3 KB, so a keen player would fill the key after about 300 catches and
+   every backup after would fail. The JSON is very repetitive, so it's deflated: 'z1' + base64. Old plain backups still read. */
+const b64 = (u8) => { let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode(...u8.subarray(i, i + 0x8000)); return btoa(s); };
+const unb64 = (str) => { const s = atob(str), b = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) b[i] = s.charCodeAt(i); return b; };
+const pipe = async (bytes, stream) => new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(stream)).arrayBuffer());
+export async function packBackup(obj) { const j = JSON.stringify(obj); if (typeof CompressionStream !== 'function') return j; return `z1${b64(await pipe(new TextEncoder().encode(j), new CompressionStream('deflate-raw')))}`; }
+export async function unpackBackup(v) { if (typeof v !== 'string') return null; if (!v.startsWith('z1')) return JSON.parse(v); return JSON.parse(new TextDecoder().decode(await pipe(unb64(v.slice(2)), new DecompressionStream('deflate-raw')))); }
 const strip = (s) => { const { key, synced, cloudId, ...rest } = s; return JSON.parse(JSON.stringify(rest)); }; // local-only fields out
 
 const listeners = new Set();
@@ -42,7 +50,7 @@ export function backupNow() {
     if (Date.now() < offUntil) return null;
     try { const r = await store.status(); if (!r?.available) { offUntil = Date.now() + 5 * 60e3; failed = true; return null; } } catch {}
     let cloud = { v: 1, s: [], gone: [], st: {} };
-    try { const r = await store.get({ key: KEY }); if (r?.found && r.value) cloud = { ...cloud, ...JSON.parse(r.value) }; } catch (e) { console.warn('icloud read failed', e); return null; }
+    try { const r = await store.get({ key: KEY }); if (r?.found && r.value) cloud = { ...cloud, ...(await unpackBackup(r.value)) }; } catch (e) { console.warn('icloud read failed', e); return null; }
     const back = new Set(json('backupBack', [])); // sent back to this phone (a received pack, an undone Move): no longer deleted (2026-11-07)
     const gone = new Set([...(cloud.gone ?? []), ...json('backupGone', [])].filter((id) => !back.has(id)));
     const local = (await allSightings()).filter((s) => !s.sim);
@@ -56,7 +64,7 @@ export function backupNow() {
     /* an id for this iCloud account's collection, so a pack sent between two phones on the same Apple ID can say so (2026-11-07) */
     const bid = cloud.bid ?? ls.get('backupBid') ?? `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`; ls.set('backupBid', bid);
     const out = { v: 1, bid, s: [...merged.values()], gone: [...gone].slice(-2000), st, at: Date.now() };
-    try { await store.set({ key: KEY, value: JSON.stringify(out) }); failed = false; ls.set('backupGone', null); ls.set('backupBack', null); ls.set('backupAt', String(Date.now())); }
+    try { await store.set({ key: KEY, value: await packBackup(out) }); failed = false; ls.set('backupGone', null); ls.set('backupBack', null); ls.set('backupAt', String(Date.now())); }
     catch (e) { failed = true; console.warn('icloud write failed', e?.message ?? e); }
     if (added) listeners.forEach((fn) => { try { fn({ added }); } catch {} });
     return { added, total: out.s.length };
