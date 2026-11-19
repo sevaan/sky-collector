@@ -3,8 +3,8 @@
 // "Notification Sound 2" by deadrobotmusic (Freesound, CC0), softened. Files: assets/audio/sfx/<name>.mp3.
 // Decoded once into memory after the first tap, played through the shared context (js/audio-ctx.js) so they’re instant.
 // Off with Settings → Sounds and vibration (localStorage sound = '0').
-import { audioCtx, audioOut, audioLeaving, audioTrack } from './audio-ctx.js?v=0.1.1734';
-import { VERSION } from './version.js?v=0.1.1734';
+import { audioCtx, audioOut, audioLeaving, audioTrack } from './audio-ctx.js?v=0.1.1735';
+import { VERSION } from './version.js?v=0.1.1735';
 export const SFX = ['lock', 'collect', 'arrive', 'flip', 'r_common', 'r_uncommon', 'r_rare', 'r_epic', 'r_legend', 'shiny', 'seen', 'stamp', 'levelup', 'xp',
   'mission', 'rankup', 'patch', 'coinroll', 'complete', 'secret', 'fossil', 'ufo', 'welcome', 'swipe', 'step', 'toggle', 'toast', 'page', 'rattle', 'plane', 'tear'];
 const BASE = new URL('../assets/audio/sfx/', import.meta.url).href;
@@ -23,7 +23,7 @@ function loadOne(ctx, n) {
   if (bufs.has(n)) return Promise.resolve(bufs.get(n));
   if (inflight.has(n)) return inflight.get(n);
   let sig; try { sig = AbortSignal.timeout(8000); } catch {} /* a fetch that never settles no longer blocks every later load */
-  const p = fetch(`${BASE}${n}.mp3?v=${VERSION}`, sig ? { signal: sig } : undefined).then((r) => { if (!r.ok) throw 0; return r.arrayBuffer(); })
+  const p = fetch(`${BASE}${n}.mp3?v=${VERSION}`, sig ? { signal: sig } : undefined).then((r) => { if (!r.ok && r.status !== 0) throw 0; return r.arrayBuffer(); }) /* status 0: an app serves its bundled mp3 files with no HTTP status (Capacitor), so ok is false though the file is there (Space Collector 65f05e01; Sky's future app would have had no sound effects) */
     .then((a) => new Promise((ok, no) => ctx.decodeAudioData(a, ok, no))).then((b) => { bufs.set(n, b); audible.set(n, audibleLength(b)); return b; })
     .catch(() => null).finally(() => inflight.delete(n));
   inflight.set(n, p); return p;
