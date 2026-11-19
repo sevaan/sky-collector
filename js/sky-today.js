@@ -5,16 +5,16 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { isProp } from './sky-props.js?v=0.1.1770';
-import { planeKey } from './flights.js?v=0.1.1770';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1770';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1770';
-import { airlineIcon } from './airline-icons.js?v=0.1.1770';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1770';
-import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1770';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1770';
-import { planeSet } from './sky-sets.js?v=0.1.1770';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1770';
+import { isProp } from './sky-props.js?v=0.1.1771';
+import { planeKey } from './flights.js?v=0.1.1771';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1771';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1771';
+import { airlineIcon } from './airline-icons.js?v=0.1.1771';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1771';
+import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1771';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1771';
+import { planeSet } from './sky-sets.js?v=0.1.1771';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1771';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -339,6 +339,7 @@ export function renderToday(el, ctx) {
       return `<div class="td2-reg"><b>${esc(name)}</b><span>Usually ${esc(clockText(r.minute))} · seen ${r.days} of the last ${r.of} days · ${mins <= 2 ? 'due now' : mins < 60 ? `in ${mins} min` : `at ${esc(clockText(r.minute))}`}${mine ? ' · <em>in your collection</em>' : ''}</span></div>`; }).join('')}</div>`; } catch {}
   el.innerHTML = live + missions + regs + tl + board + map + story;
   try { ctx.fillMinis?.(el); } catch {} /* the real mini cards in the hero and the tiles (js/main.js skyFillMinis) */
+  try { const n2 = ctx.note?.(); if (n2) el.prepend(n2); } catch {} /* Space's daily note, the app talking (js/main.js skyDailyNote) */
   { const box = el.querySelector('#sky-missions'); if (box) try { ctx.missionCards?.(box, mcItems); } catch {} }
 
   lastRender = t; /* the departures board and its split-flap spin-in were replaced by Space's Up now tiles (2026-11-19) */
