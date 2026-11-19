@@ -16,7 +16,7 @@ const RAD = Math.PI / 180;
 // Country names, with "the" where English uses it
 const THE = new Set(['US', 'GB', 'NL', 'AE', 'PH', 'BS', 'DO', 'CF', 'GM', 'MV', 'SC', 'KM', 'MH', 'SB', 'KY', 'VG', 'VI', 'TC', 'FO', 'CK', 'FK', 'VA', 'CD', 'CG']);
 let names = null;
-const SHORT = { HK: 'Hong Kong', MO: 'Macao', TW: 'Taiwan', KR: 'South Korea', KP: 'North Korea', RU: 'Russia', IR: 'Iran', SY: 'Syria', LA: 'Laos', VN: 'Vietnam', BO: 'Bolivia', VE: 'Venezuela', TZ: 'Tanzania', MD: 'Moldova', BN: 'Brunei', CI: 'Ivory Coast', CV: 'Cape Verde', MM: 'Myanmar', PS: 'the Palestinian territories', TR: 'Turkey' }; /* the everyday names, not Intl's "Hong Kong SAR China" */
+const SHORT = { CN: 'China', HK: 'Hong Kong', MO: 'Macao', TW: 'Taiwan', KR: 'South Korea', KP: 'North Korea', RU: 'Russia', IR: 'Iran', SY: 'Syria', LA: 'Laos', VN: 'Vietnam', BO: 'Bolivia', VE: 'Venezuela', TZ: 'Tanzania', MD: 'Moldova', BN: 'Brunei', CI: 'Ivory Coast', CV: 'Cape Verde', MM: 'Myanmar', PS: 'the Palestinian territories', TR: 'Turkey' }; /* the everyday names, not Intl's "Hong Kong SAR China" */
 export function countryName(cc) {
   const c = String(cc || '').toUpperCase(); if (!/^[A-Z]{2}$/.test(c)) return '';
   try { names ??= new Intl.DisplayNames(['en'], { type: 'region' }); } catch { return ''; }
