@@ -21,11 +21,11 @@ test('real records: GLID on an airliner at 35,000 ft is not a glider; a slow, lo
 });
 test('the recorded Toronto feed has no secrets but the everyday ones', () => {
   const found = new Set((yyz.ac ?? yyz.aircraft).flatMap((a) => secretsForCatch(as(a), { el: 30 })));
-  for (const id of ['whale', 'heavylift', 'firebird', 'hurricane', 'balloon', 'airship', 'glider', 'vintage', 'zenith']) assert.ok(!found.has(id), id);
+  for (const id of ['whale', 'heavylift', 'firebird', 'hurricane', 'balloon', 'airship', 'glider', 'vintage', 'overhead']) assert.ok(!found.has(id), id);
 });
 test('each rule', () => {
-  assert.ok(secretsForCatch({ type: 'B738', callsign: 'ACA1' }, { el: 88.5 }).includes('zenith'));
-  assert.ok(!secretsForCatch({ type: 'B738', callsign: 'ACA1' }, { el: 87 }).includes('zenith'));
+  assert.ok(secretsForCatch({ type: 'B738', callsign: 'ACA1' }, { el: 88.5 }).includes('overhead'));
+  assert.ok(!secretsForCatch({ type: 'B738', callsign: 'ACA1' }, { el: 87 }).includes('overhead'));
   assert.ok(secretsForCatch({ type: 'A124' }).includes('heavylift')); assert.ok(secretsForCatch({ type: 'BLCF' }).includes('heavylift'));
   assert.ok(secretsForCatch({ type: 'CL2T' }).includes('firebird'));
   assert.equal(tagOf({ flight: 'NOAA43 ' }), 'hurricane'); assert.equal(tagOf({ flight: 'TEAL71' }), '', 'the Air Force hurricane hunters are military');

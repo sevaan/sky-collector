@@ -7,7 +7,7 @@
 
 // The patches. The text is what the patch's card says once found.
 export const SKY_SECRET_PATCHES = {
-  zenith: { id: 'zenith', name: 'Zenith', text: 'You caught a plane flying almost straight over your head.' },
+  overhead: { id: 'overhead', name: 'Zenith', /* not 'zenith': that's a Space Collector patch id */ text: 'You caught a plane flying almost straight over your head.' },
   balloon: { id: 'balloon', name: 'Up, Up and Away', text: 'You caught a hot-air balloon.' },
   glider: { id: 'glider', name: 'Silent Wings', text: 'You caught a glider, flying with no engine at all.' },
   airship: { id: 'airship', name: 'Lighter Than Air', text: 'You caught an airship.' },
@@ -49,7 +49,7 @@ export const isVintage = (p, now = Date.now()) => VINTAGE.has(typeOf(p)) || (Num
 // the callsign of a non-airline aircraft is blanked before anything else sees it.
 export function secretsForCatch(p, { el = 0, others = [], now = Date.now() } = {}) {
   const out = [], t = typeOf(p), gs = Number(p?.gs) || 0, a = ft(p);
-  if (el >= 88) out.push('zenith');
+  if (el >= 88) out.push('overhead');
   const lta = lighterThanAir(p); if (lta) out.push(lta);
   if (isGlider(p)) out.push('glider');
   if (t === 'A337' || t === 'A3ST') out.push('whale');
@@ -88,7 +88,7 @@ export function sixContinents(flights) {
 const I = '#fff2b3', R = '#e8493c';
 const JET = (x = 0, y = 0, s = 1, rot = 0) => `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})" fill="${I}"><path d="M0 -16 C1.6 -16 2.4 -14 2.4 -12 V-3 L15 4 V7 L2.4 3 V11 L6 14 V16 L0 14.6 L-6 16 V14 L-2.4 11 V3 L-15 7 V4 L-2.4 -3 V-12 C-2.4 -14 -1.6 -16 0 -16Z"/></g>`;
 const SKY_ART = {
-  zenith: () => `<circle r="20" fill="none" stroke="${I}" stroke-width="2" stroke-dasharray="2 4"/>${JET(0, 0, 1.15)}<path d="M-28 22 H28" stroke="${I}" stroke-width="2"/><path d="M0 22 V27" stroke="${R}" stroke-width="3"/>`,
+  overhead: () => `<circle r="20" fill="none" stroke="${I}" stroke-width="2" stroke-dasharray="2 4"/>${JET(0, 0, 1.15)}<path d="M-28 22 H28" stroke="${I}" stroke-width="2"/><path d="M0 22 V27" stroke="${R}" stroke-width="3"/>`,
   balloon: () => `<path d="M0 -26 C16 -26 20 -12 14 0 C10 8 5 11 4 14 H-4 C-5 11 -10 8 -14 0 C-20 -12 -16 -26 0 -26Z" fill="${R}" stroke="${I}" stroke-width="1.6"/><path d="M0 -26 C-6 -18 -6 4 -4 14 M0 -26 C6 -18 6 4 4 14" fill="none" stroke="${I}" stroke-width="1.4"/><path d="M-4 14 L-4 18 M4 14 L4 18" stroke="${I}" stroke-width="1.2"/><rect x="-5" y="18" width="10" height="7" rx="1" fill="#a8743a" stroke="${I}" stroke-width="1"/>`,
   glider: () => `<path d="M-34 2 Q0 -4 34 2 L34 4 Q0 0 -34 4Z" fill="${I}"/><path d="M-2 -6 L2 -6 L1.6 18 L-1.6 18Z" fill="${I}"/><path d="M-9 17 H9 V19.5 H-9Z" fill="${I}"/><path d="M-30 18 Q-10 10 6 14" fill="none" stroke="${I}" stroke-opacity=".5" stroke-width="1.2" stroke-dasharray="2 3"/>`,
   airship: () => `<ellipse rx="27" ry="11" fill="${I}"/><path d="M22 -4 L33 -12 L33 12 L22 4Z" fill="${R}"/><path d="M-6 9 H8 V15 H-6Z" fill="#a8743a" stroke="${I}" stroke-width="1"/><path d="M-20 0 H18" stroke="#c9b98a" stroke-width="1.2"/>`,
@@ -102,9 +102,9 @@ const SKY_ART = {
   formation: () => `${JET(-10, -6, .85)}${JET(12, 8, .85)}<circle r="26" fill="none" stroke="${I}" stroke-width="1.6" stroke-opacity=".6"/>`,
   sixcont: () => `<circle r="22" fill="none" stroke="${I}" stroke-width="2.2"/><path d="M-22 0 H22 M0 -22 V22 M-16 -15 Q0 -6 16 -15 M-16 15 Q0 6 16 15" fill="none" stroke="${I}" stroke-opacity=".55" stroke-width="1.2"/>${[[-14, -8], [10, -12], [-6, 10], [14, 6], [0, -2], [-16, 4]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2.2" fill="${R}"/>`).join('')}`,
 };
-const SKY_TWILL = { zenith: '#14284a', balloon: '#5a2a1a', glider: '#1f3d3a', airship: '#22265a', whale: '#173d5c', heavylift: '#3a3a3a', firebird: '#5a2a1a', hurricane: '#1f2a3a', vintage: '#4a3a22', jetstream: '#173d5c', ceiling: '#14284a', formation: '#10433f', sixcont: '#3f2a58' };
+const SKY_TWILL = { overhead: '#14284a', balloon: '#5a2a1a', glider: '#1f3d3a', airship: '#22265a', whale: '#173d5c', heavylift: '#3a3a3a', firebird: '#5a2a1a', hurricane: '#1f2a3a', vintage: '#4a3a22', jetstream: '#173d5c', ceiling: '#14284a', formation: '#10433f', sixcont: '#3f2a58' };
 // Into Space Collector's secrets (js/secrets.js) and patch art (js/patches.js); called by main.js and cards-page.js in Sky.
-export function registerSkySecrets(SECRET_PATCHES, addSecretArt) {
+export function registerSkySecrets(SECRET_PATCHES, addSecretArt, patchArt = {}) {
   for (const p of Object.values(SKY_SECRET_PATCHES)) SECRET_PATCHES[p.id] = { ...p, secret: true, icon: '' };
-  addSecretArt?.(SKY_ART, SKY_TWILL);
+  addSecretArt?.({ ...SKY_ART, ...patchArt }, SKY_TWILL); /* patchArt: js/sky-patches.js's patches, drawn the same way */
 }

@@ -1,10 +1,11 @@
 // Player progress from the sighting log: XP and observer rank, tonight’s three missions, a weekly streak and
 // achievements. Everything is derived from the saved sightings (nothing extra is stored), so it can’t drift.
 // info(cardKey) -> { tier, type, owner, launch, natural, con } | null. No DOM.
-import { isProp } from './sky-props.js?v=0.1.1740';
-import { nightKey, useCalendarDays } from './observation.js?v=0.1.1740';
-import { fleetThresholds } from './card-model.js?v=0.1.1740';
-import { distRound as distText } from './units.js?v=0.1.1740';
+import { isProp } from './sky-props.js?v=0.1.1741';
+import { SKY_PATCHES_MORE, freshSky2, noteSky2 } from './sky-patches.js?v=0.1.1741';
+import { nightKey, useCalendarDays } from './observation.js?v=0.1.1741';
+import { fleetThresholds } from './card-model.js?v=0.1.1741';
+import { distRound as distText } from './units.js?v=0.1.1741';
 
 // A longer climb (2026-10-12, playtest room: three ranks on night 1, Mission Control in about two weeks), with two
 // prestige ranks past Mission Control. Nobody drops a rank they had on the old curve (rankFloor below).
@@ -207,7 +208,7 @@ export function setSkyProgress(on) { SKY = !!on; useCalendarDays(SKY); for (cons
 const SKY_REPEAT_XP = 3, RARE_HERE_XP = 10; /* a stamp on a card you own; a plane that is unusual where you stand */
 export const isSkyProgress = () => SKY;
 const activeMissions = () => (SKY ? SKY_MISSIONS : MISSIONS);
-export const activeAchievements = () => (SKY ? [...ACHIEVEMENTS.filter((x) => SKY_PATCHES.has(x.id)), ...SKY_ACHIEVEMENTS] : ACHIEVEMENTS);
+export const activeAchievements = () => (SKY ? [...ACHIEVEMENTS.filter((x) => SKY_PATCHES.has(x.id)), ...SKY_ACHIEVEMENTS, ...SKY_PATCHES_MORE] : ACHIEVEMENTS);
 const MISSION_BY_ID = new Map([...MISSIONS, ...RETIRED, ...STARTER, ...SKY_MISSIONS, ...SKY_STARTER].map((m) => [m.id, m]));
 // Seeded by the night (a day index from nightKey): integer mixing with Math.imul, so the picks spread evenly
 // from one night to the next. (The old float LCG overflowed 2^53 and kept dealing the same few missions.)
@@ -465,6 +466,7 @@ export function progress(sightings, info, { constellations = [], albums = [], no
       if (/^[A-Z]{3}\d/.test(s.callsign ?? '')) k.airlines.add(s.callsign.slice(0, 3));
       if (c.sky === 'flight') { if (c.km != null && c.km < 300) k.hop++; if ((c.km ?? 0) >= 10000) k.far++; if (c.setId === 'cargo' && (hr >= 21 || hr < 5)) k.freightNight++;
         const fd = k.flightDays.get(s.cardKey) ?? k.flightDays.set(s.cardKey, new Set()).get(s.cardKey); fd.add(day); }
+      noteSky2(a.sky2 ??= freshSky2(), s, c); /* the patches in js/sky-patches.js */
     }
     let lv = false;
     if (!seenNight.has(nk) && !i?.natural && !fam) { const c = (nightsOnCard.get(s.cardKey) ?? 0) + 1; /* no levels for the Moon, planets, stars… (2026-10-21, Sevaan) */ nightsOnCard.set(s.cardKey, c); lv = c === 3 || c === 10; }
@@ -530,7 +532,7 @@ export function progress(sightings, info, { constellations = [], albums = [], no
   ri = Math.max(ri, rankFloor(xp));
   const rank = { name: RANKS[ri][1], index: ri, at: RANKS[ri][0], next: RANKS[ri + 1]?.[0] ?? null, nextName: RANKS[ri + 1]?.[1] ?? null };
   a.albumsSilver = albums.filter((al) => al.silver && al.keys.filter((k) => seenCard.has(k)).length >= al.silver).length; /* Sky's Full Hangar patch */
-  const achievements = activeAchievements().map((x) => ({ id: x.id, name: x.name, text: x.text, icon: x.icon, done: x.done(a), prog: PROG[x.id]?.(a) }));
+  const achievements = activeAchievements().map((x) => ({ id: x.id, name: x.name, text: x.text, icon: x.icon, done: x.done(a), prog: PROG[x.id]?.(a) ?? x.prog?.(a) }));
   // Every constellation is its own mission patch (2026-10-09, Sevaan: they replace the gold constellation cards),
   // and so is the Solar System. The patch art is the stick figure (js/patches.js).
   if (!SKY) /* Sky Collector has no constellation patches (2026-11-17) */ for (const c of constellations) achievements.push({ id: `con-${c.id}`, con: c.id, name: c.system ? 'Solar System' : c.name, sub: c.system ? 'Home system' : c.nick.replace(/^part of /, ''), icon: '',
