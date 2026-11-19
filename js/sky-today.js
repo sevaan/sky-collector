@@ -5,16 +5,16 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { isProp } from './sky-props.js?v=0.1.1759';
-import { planeKey } from './flights.js?v=0.1.1759';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1759';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1759';
-import { airlineIcon } from './airline-icons.js?v=0.1.1759';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1759';
-import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1759';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1759';
-import { planeSet } from './sky-sets.js?v=0.1.1759';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1759';
+import { isProp } from './sky-props.js?v=0.1.1760';
+import { planeKey } from './flights.js?v=0.1.1760';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1760';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1760';
+import { airlineIcon } from './airline-icons.js?v=0.1.1760';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1760';
+import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1760';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1760';
+import { planeSet } from './sky-sets.js?v=0.1.1760';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1760';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -303,7 +303,7 @@ export function renderToday(el, ctx) {
   const map = dests.size >= 2 ? (() => { const W = 340, H = 230, cx = 170, cy = 112, R = 98; const kmTo = (d) => hav(obs.lat, obs.lon, d.to.lat, d.to.lon), maxKm = Math.max(800, ...[...dests.values()].map(kmTo)); /* scaled to the farthest one up there, so a sky of short hops still fills the map */
     const dl = [...dests.values()].slice(0, 14).map((d) => { const km = kmTo(d), b = brg(obs.lat, obs.lon, d.to.lat, d.to.lon), r = 20 + (R - 20) * Math.sqrt(km / maxKm); return { ...d, x: cx + r * Math.sin(b * Math.PI / 180), y: cy - r * Math.cos(b * Math.PI / 180) * .92, b }; });
     const arcs = dl.map((d, i) => { const mx = (cx + d.x) / 2, my = (cy + d.y) / 2, dx = d.x - cx, dy = d.y - cy, k = .22; return `<path style="animation-delay:${(i * .15).toFixed(2)}s" d="M${cx} ${cy} Q${(mx - dy * k).toFixed(1)} ${(my + dx * k).toFixed(1)} ${d.x.toFixed(1)} ${d.y.toFixed(1)}"/>`; }).join('');
-    const placed = []; const labels = dl.map((d) => { const right = d.x > cx, w = d.to.city.length * 5.6, lx = right ? d.x + 5 : d.x - 5 - w, ly = d.y - 6; if (placed.some((q) => Math.abs(q.y - ly) < 11 && lx < q.x + q.w && lx + w > q.x)) return `<circle cx="${d.x.toFixed(1)}" cy="${d.y.toFixed(1)}" r="2.6" fill="#d7362b"/>`; placed.push({ x: lx, y: ly, w }); return `<circle cx="${d.x.toFixed(1)}" cy="${d.y.toFixed(1)}" r="3" fill="#d7362b"/><text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}">${esc(d.to.city)}</text>`; }).join('');
+    const placed = []; const labels = dl.map((d) => { const right = d.x > cx, w = d.to.city.length * 5.6, lx = Math.max(3, Math.min(W - 3 - w, right ? d.x + 5 : d.x - 5 - w)) /* kept inside the card (visual playtest 2026-11-19: "an Francisco") */, ly = d.y - 6; if (placed.some((q) => Math.abs(q.y - ly) < 11 && lx < q.x + q.w && lx + w > q.x)) return `<circle cx="${d.x.toFixed(1)}" cy="${d.y.toFixed(1)}" r="2.6" fill="#d7362b"/>`; placed.push({ x: lx, y: ly, w }); return `<circle cx="${d.x.toFixed(1)}" cy="${d.y.toFixed(1)}" r="3" fill="#d7362b"/><text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}">${esc(d.to.city)}</text>`; }).join('');
     const nC = new Set(dl.map((d) => d.to.cc).filter(Boolean)).size;
     return `<p class="td-h">WHERE THEY'RE GOING <span>RIGHT NOW</span></p><div class="td2-map"><svg viewBox="0 0 ${W} ${H}" aria-hidden="true"><circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="#c9d9e6" stroke-dasharray="2 4"/><circle cx="${cx}" cy="${cy}" r="${R / 2}" fill="none" stroke="#c9d9e6" stroke-dasharray="2 4"/><g class="td2-arcs" fill="none" stroke="#d7362b" stroke-width="1.6" stroke-linecap="round">${arcs}</g><circle cx="${cx}" cy="${cy}" r="16" fill="#d7362b22"/><circle cx="${cx}" cy="${cy}" r="5" fill="#0d2238"/><g font-family="SC Label, sans-serif" font-size="11" fill="#0d2238">${labels}<text x="${cx + 8}" y="${cy - 6}" font-size="10" fill="#4a6178">YOU</text></g></svg><div class="td2-cap"><b>Flights to ${dests.size} ${dests.size === 1 ? 'city' : 'cities'}</b> in ${nC} ${nC === 1 ? 'country' : 'countries'} are over you</div></div>`; })() : '';
 

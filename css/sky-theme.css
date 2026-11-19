@@ -720,3 +720,31 @@ html:not(.sky-night) body.sky-only #sky-missions .mc.done { box-shadow:0 0 0 2px
 body.sky-only #sky-missions .mc.done::after { top:calc(8px + 22px + (100% - 16px) * .375 * .5); }
 html:not(.sky-night) body.sky-only #sky-missions .mc.done::after { color:#1f7a45; border-color:#1f7a45; background:#fffdf6e6; }
 html:not(.sky-night) body.sky-only #sky-missions .mc.sealed { box-shadow:0 0 0 2px #d9b65a88, 0 8px 18px rgba(13,34,56,.18); }
+
+/* ---- Visual playtest fixes, 2026-11-19 (Space's dark design on Sky's light pages) ---- */
+/* Explore's COLLECT: white on red, like every red button (css/app.css #discover .d-ticket #d-cta set a black label) */
+body.sky-only #discover:not(.owned) .d-ticket #d-cta { color:#fff !important; }
+/* Send cards, by day: navy tabs, a cream bar, red NEXT with a white label (css/gift.css was cream-on-navy) */
+html:not(.sky-night) body.sky-only .sv-tabs button { border-color:#c9d6e3; color:#4a6178; }
+html:not(.sky-night) body.sky-only .sv-tabs button[aria-selected="true"] { background:#0d2238; border-color:#0d2238; color:#fff; }
+html:not(.sky-night) body.sky-only :is(.sv-back, .sv-link, .sv-sa) { color:#b42a20; }
+html:not(.sky-night) body.sky-only .sv-selrow { color:#4a6178; }
+html:not(.sky-night) body.sky-only .sv-gap button { border-color:#c9d6e3; color:#4a6178; } html:not(.sky-night) body.sky-only .sv-gap button.o { background:#0d2238; border-color:#0d2238; color:#fff; }
+html:not(.sky-night) body.sky-only .sv-bar { background:linear-gradient(transparent, #eef5fb 22%); }
+html:not(.sky-night) body.sky-only .sv-bar .sv-n { background:#fffdf6; border-color:#d9b65a; color:#0d2238; box-shadow:0 6px 16px rgba(13,34,56,.12); }
+html:not(.sky-night) body.sky-only .sv-bar .sv-n small { color:#4a6178; }
+html:not(.sky-night) body.sky-only .sv-bar .sv-btn { background:linear-gradient(#e8493c, #c42d22); color:#fff; } html:not(.sky-night) body.sky-only .sv-bar .sv-btn:disabled { background:#d9a19b; color:#fffdf6; }
+/* The tour before a place is chosen: the page's light colour behind it, not Space's night navy; Skip as a light pill */
+html:not(.sky-night) body.sky-only.day { background-color:#eef5fb; }
+html:not(.sky-night) body.sky-only.day #ob-skip.ob-exit { background:#fffdf6e6 !important; color:#0d2238 !important; border-color:#c9d6e3 !important; }
+/* A sheet over a page: the strip behind the status bar takes the sheet's grey scrim too (it stayed light above it) */
+html:not(.sky-night) body.sky-only:has(.set-sheet.in)::before { background:transparent; }
+/* Location sheet: the search field like the coordinates fields under it */
+html:not(.sky-night) body.sky-only #loc-q { background:#fffdf6; color:#0d2238; border:1px solid #c9d6e3; }
+html:not(.sky-night) body.sky-only #loc-q::placeholder { color:#4a6178; }
+/* Albums: the Silver level readable on cream */
+html:not(.sky-night) body.sky-only .album__level.l2, html.sky-cards:not(.sky-night) .album__level.l2 { color:#6d7f92; }
+/* The catch panel's tier line ("◆ RARE · NEW PLANE"): the tier colours were made for navy; deepened on the light panel */
+html:not(.sky-night) body.sky-only:not(.night) #discover #d-tier { filter:brightness(.62) saturate(1.35); }
+/* Every red .d-cta.o button (Use my location, How to play's Next…) with a white label by day: Space's was gold with a dark label */
+html:not(.sky-night) body.sky-only:not(.night) .d-cta.o, html:not(.sky-night) body.sky-only:not(.night) .d-cta.o * { color:#fff !important; }

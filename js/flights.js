@@ -2,14 +2,14 @@
 // e.g. Icelandair Toronto → Reykjavík), and every catch also counts toward PLANES (the aircraft type). Anything with no
 // route (helicopters, light planes, balloons, private jets) is a Planes card only. No DOM here.
 
-import { isProp } from './sky-props.js?v=0.1.1759';
-import { aircraftName, isHelicopter } from './planes.js?v=0.1.1759';
-import { routeKm } from './routes.js?v=0.1.1759';
-import { hasAirlineCallsign } from './sky-stamps.js?v=0.1.1759';
-import { typeTier } from './sky-tiers.js?v=0.1.1759';
-import { planeSet, flightSet, homeCountry } from './sky-sets.js?v=0.1.1759';
-import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1759';
-import { typeName } from './sky-type-names.js?v=0.1.1759';
+import { isProp } from './sky-props.js?v=0.1.1760';
+import { aircraftName, isHelicopter } from './planes.js?v=0.1.1760';
+import { routeKm } from './routes.js?v=0.1.1760';
+import { hasAirlineCallsign } from './sky-stamps.js?v=0.1.1760';
+import { typeTier } from './sky-tiers.js?v=0.1.1760';
+import { planeSet, flightSet, homeCountry } from './sky-sets.js?v=0.1.1760';
+import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1760';
+import { typeName } from './sky-type-names.js?v=0.1.1760';
 
 export const TIERS = {
   common: { label: 'Common', mark: '●', color: '#4a6178' },
@@ -89,7 +89,7 @@ export function cardsFor(p, route, airline) {
     type: p.type || '', typeName, // the aircraft that flew it: the card shows its photo (js/type-photos.js)
     km, kmText: fmtKm(km), air: t, set, setId: st.id, homeCc, tier: flightTier(km, a3), /* homeCc: where it was caught, so its set doesn't change when you travel */
     fact: km == null ? `${route.to.city} is where this ${airline || ''} flight is headed.`.replace('  ', ' ')
-      : `${route.from.city} to ${route.to.city} is **${fmtKm(km)} km**, about ${t.h ? `${t.h}\u00a0h ${String(t.m).padStart(2, '0')}\u00a0m` : `${t.m} minutes`} in the air, on ${/^[AEIOU]/i.test(typeName) ? 'an' : 'a'} ${typeName}.`,
+      : `${route.from.city} to ${route.to.city} is **${fmtKm(km)} km**, about ${t.h ? `${t.h}\u00a0h ${String(t.m).padStart(2, '0')}\u00a0m` : `${t.m} minutes`} in the air${typeName === 'Aircraft' || typeName === 'Helicopter' ? '' : `, on ${/^[AEIOU]/i.test(typeName) ? 'an' : 'a'} ${typeName}`}.` /* no "on an Aircraft" when the type isn't known (visual playtest 2026-11-19) */,
   };
   return { flight, plane };
 }
