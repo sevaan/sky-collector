@@ -6,9 +6,9 @@
 //         renderCard, attachTilt, artImage, applyBack, sfx, feel, tierColor }
 const wait = (ms, reduced) => new Promise((r) => setTimeout(r, reduced ? Math.min(ms, 120) : ms));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-import { TIERS, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1728';
-import { attachGyro } from './card.js?v=0.1.1728';
-import { cloudsHtml } from './weather-art.js?v=0.1.1728';
+import { TIERS, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1729';
+import { attachGyro } from './card.js?v=0.1.1729';
+import { cloudsHtml } from './weather-art.js?v=0.1.1729';
 // Cards turn with the catch reveal's own flip and rarity table (js/card-moment.js, 2026-11-11): one turn for a catch, a
 // gift and the morning pack.
 // A tap that answers on the finger lifting, like main.js tapOn: the pack animates every frame, and WebKit drops a click
@@ -220,6 +220,7 @@ export function playPack(o) {
         const b = document.createElement('button'); b.type = 'button'; b.className = 'gp-tailbtn'; b.textContent = d._tail.button.label; root.appendChild(b); d._btn = b;
         tap(b, async () => { if (b.disabled) return; b.disabled = true; let r = null; try { r = await d._tail.button.fn(); } catch {} if (r) { b.textContent = r; b.classList.add('done'); } else b.disabled = false; }); }
       try { o.attachTilt?.(d._card); } catch {}
+      if (d._tail?.stays) { d._busy = false; try { d._tail.onLand?.(d); } catch {} return; } /* a last card that stays (the sample pack page, 2026-11-18; Space Collector 5585f2e5): never armed to be put away; the page takes it as it lands (a tap 200-380 ms after it settled could throw it away before the page claimed it) */
       await W(200); d._busy = false;
       /* a tap is the browser's own click (iOS doesn't always send pointer events for a quick tap: iPhone 14 simulator
          2026-11-07); a flick is pointer movement */

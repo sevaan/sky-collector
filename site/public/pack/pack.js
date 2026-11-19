@@ -130,7 +130,7 @@ async function play() {
       { card: dc3, sightings: [], tags: [['new', 'Flying since 1935']] },
     ],
     tiles: [{ card: a380, isNew: false }, { card: dc3, isNew: false }],
-    tail: { card: last, label: 'Your turn', tags: [], button: { label: 'Visit SkyCollector.app', fn: () => { location.href = SITE; return null; } } }, /* something to do under the last card (2026-11-18, Sevaan): the game's page */
+    tail: { card: last, label: 'Your turn', tags: [], stays: true, onLand: claimLast, button: { label: 'Visit SkyCollector.app', fn: () => { location.href = SITE; return null; } } }, /* something to do under the last card (2026-11-18, Sevaan): the game's page */
     onOpen: async () => { /* a live flight that's nearly here gets what's left of its 2.5 s, at most 0.7 s after the tear; then the cards are what they are */
       await Promise.race([swapped, new Promise((ok) => setTimeout(ok, Math.min(700, Math.max(0, LIVE_MS - (performance.now() - T0)))))]); sealedDone = true; return true; },
     renderCard: render, attachTilt, artImage: (c) => skyCardPhotoUrl(c, c.type) ?? '', mini: (c) => sample(miniCard(c, { status: 'Sample pack', preview: true, sightings: seen(c) })), applyBack, sfx, feel: () => {}, tierColor,
@@ -154,22 +154,13 @@ function flipLast(host) {
     turn.animate([{ transform: 'rotateY(-90deg)' }, { transform: 'rotateY(0deg)' }], { duration: half, easing: 'ease-out' }).onfinish = () => { host._busy = false; };
   };
 }
-function holdLast() {
-  const root = $('gift'); if (!root) return;
-  if (root.querySelector('.gp-count2 b')?.textContent !== 'Your turn') return; /* every card is built up front: wait until the last one is dealt */
-  const host = root.querySelector('.gp-dc .lc-host'), dc = host?.closest('.gp-dc'); if (!dc) return;
-  if (dc.classList.contains('lc-dealt')) return; dc.classList.add('lc-dealt'); root.classList.add('gp-final');
-  const keep = () => { /* the pack sets its own tap and flick on the card once it has landed: replace them */
-    if (!dc.classList.contains('settled')) { setTimeout(keep, 120); return; }
-    setTimeout(() => {
-      let last = 0; dc.onpointerdown = dc.onpointerup = null;
-      dc._tap = () => { const t = performance.now(); if (t - last < 380) { last = 0; flipLast(host); } else last = t; };
-      host.addEventListener('dblclick', (e) => e.preventDefault());
-    }, 260);
-  };
-  keep();
+function claimLast(dc) { /* the pack hands the last card over as it lands (tail.stays; Space Collector 5585f2e5): it never arms its own tap or flick on it */
+  const host = dc.querySelector('.lc-host'); if (!host) return;
+  dc.classList.add('lc-dealt'); $('gift')?.classList.add('gp-final');
+  let last = 0; dc.onpointerdown = dc.onpointerup = null;
+  dc._tap = () => { const t = performance.now(); if (t - last < 380) { last = 0; flipLast(host); } else last = t; };
+  host.addEventListener('dblclick', (e) => e.preventDefault());
 }
-new MutationObserver(() => holdLast()).observe(document.body, { childList: true, subtree: true, characterData: true });
 /* The summary's first button, "See Sky Collector", goes to the game's page */
 new MutationObserver(() => {
   const root = $('gift'); const go = root?.querySelector('.gp-btns .go'); if (!go || go.dataset.wired) return; go.dataset.wired = '1';
