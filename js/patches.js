@@ -3,7 +3,7 @@
 // group (or the date earned) along the bottom, one icon in the middle. Milestones get gold foil, the rarest holo
 // (css/ui.css .patch--gold / .patch--holo). Shared by Explore (the earning moment, its toast) and Collection (the wall).
 
-import { CON_BY_ID } from './constellations.js?v=0.1.1756';
+import { CON_BY_ID } from './constellations.js?v=0.1.1757';
 
 export const GROUPS = {
   collect: { c: '#14284a', t: 'Collection' }, rarity: { c: '#3a2259', t: 'Rarity' }, rocket: { c: '#5a2a1a', t: 'Rockets' },
@@ -143,6 +143,7 @@ const SECRET_ART = {
   plus: () => (SKY_PATCH() ? '<path d="M19 -24 l1.4 3.6 3.6 1.4 -3.6 1.4 -1.4 3.6 -1.4 -3.6 -3.6 -1.4 3.6 -1.4z" fill="#fff2b3"/><circle cx="-22" cy="-16" r="1.1" fill="#fff2b3" opacity=".7"/><circle cx="24" cy="14" r=".9" fill="#fff2b3" opacity=".6"/>'
     + '<g transform="translate(2 4) rotate(-18) scale(.9)"><path d="M-46 3 H-26 M-44 -1 H-27" stroke="#fff2b3" stroke-width="1.6" stroke-linecap="round" opacity=".55"/>'
     + '<path d="M-24 -3 L-31 -17 L-23 -17 L-13 -4 Z" fill="#c9952f" stroke="#f4d27a" stroke-width="1"/>'
+    + '<path d="M0 -3.5 L-9 -12.5 L-4.5 -12.5 L8 -3.5 Z" fill="#8a6420" stroke="#c9952f" stroke-width=".9"/>' /* the far wing, behind the fuselage (2026-11-19, Sevaan: "Where is the other wing") */
     + '<path d="M-26 0 Q-27 -4 -21 -4.5 L20 -4.5 Q29 -4.5 32 0 Q29 4 20 4 L-21 4 Q-27 4 -26 0 Z" fill="#d9a441" stroke="#f4d27a" stroke-width="1.2"/>'
     + '<path d="M-2 1.5 L-14 15 L-6 15 L9 1.5 Z" fill="#b88a2e" stroke="#f4d27a" stroke-width="1"/><rect x="-6" y="5.5" width="9" height="4.5" rx="2" fill="#8a6420"/>'
     + '<path d="M-14 -2 H18" stroke="#8a6420" stroke-width="1.2" stroke-dasharray="2 2.2"/><path d="M24 -2.6 Q27 -2.6 28.5 -0.6 H23 Z" fill="#8a6420"/></g>'
