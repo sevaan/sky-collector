@@ -1,28 +1,28 @@
 // Retro space-age cards. Text remains live; the foil follows pointer or optional phone tilt.
-import { fallWords } from './last-chance.js?v=0.1.1742';
-import { useMiles } from './units.js?v=0.1.1742';
-import { feel } from './native.js?v=0.1.1742';
-import { sfx } from './sfx.js?v=0.1.1742';
-import { cardArt } from './art.js?v=0.1.1742';
-import { TIER_INFO } from './rarity.js?v=0.1.1742';
-import { SET_BY_ID } from './sets.js?v=0.1.1742';
-import { TYPE_LABEL, orbitStats, sizeLabel, formatDate, titleCase } from './facts.js?v=0.1.1742';
-import { FLEET_ABOUT, fleetAbout, factSourceUrl, debrisOf, roleOf, ownerWord, titleFor, factFor, yearsUp, lapsPerDay, thirdStat, richText, seriesKeyOf } from './lore.js?v=0.1.1742';
-import { artFileFor } from './art-keys.js?v=0.1.1742';
-import { ART_FILES, ART_STARS } from './art-files.js?v=0.1.1742';
+import { fallWords } from './last-chance.js?v=0.1.1743';
+import { useMiles } from './units.js?v=0.1.1743';
+import { feel } from './native.js?v=0.1.1743';
+import { sfx } from './sfx.js?v=0.1.1743';
+import { cardArt } from './art.js?v=0.1.1743';
+import { TIER_INFO } from './rarity.js?v=0.1.1743';
+import { SET_BY_ID } from './sets.js?v=0.1.1743';
+import { TYPE_LABEL, orbitStats, sizeLabel, formatDate, titleCase } from './facts.js?v=0.1.1743';
+import { FLEET_ABOUT, fleetAbout, factSourceUrl, debrisOf, roleOf, ownerWord, titleFor, factFor, yearsUp, lapsPerDay, thirdStat, richText, seriesKeyOf } from './lore.js?v=0.1.1743';
+import { artFileFor } from './art-keys.js?v=0.1.1743';
+import { ART_FILES, ART_STARS } from './art-files.js?v=0.1.1743';
 /* the orbit view (and its 66 KB coastline) loads when a card first needs it (perf audit 2026-10-29) */
-let orbitP = null; const orbitMod = () => (orbitP ??= import('./orbit-view.js?v=0.1.1742'));
-import { ART_SHARED } from './art-shared.js?v=0.1.1742';
-import { ART_CREDITS } from './art-credits.js?v=0.1.1742';
-import { stampsIn, fleetLevel, fleetThresholds, sightingKeys, MOON_PHASES, moonPhaseOf } from './card-model.js?v=0.1.1742';
-import { nightsIn } from './observation.js?v=0.1.1742';
-import { CON_BY_ID, conProgress } from './constellations.js?v=0.1.1742';
-import { SHINY } from './shiny.js?v=0.1.1742';
-import { conArt, cometArt } from './con-art.js?v=0.1.1742';
-import { CON_FIGURES } from './con-figures.js?v=0.1.1742';
-import { localText } from './localize.js?v=0.1.1742';
-import { isSkyCard, skyStampInfo, skyTypeCode } from './sky-cards.js?v=0.1.1742';
-import { flightCardHtml, planeCardHtml } from './flight-card.js?v=0.1.1742';
+let orbitP = null; const orbitMod = () => (orbitP ??= import('./orbit-view.js?v=0.1.1743'));
+import { ART_SHARED } from './art-shared.js?v=0.1.1743';
+import { ART_CREDITS } from './art-credits.js?v=0.1.1743';
+import { stampsIn, fleetLevel, fleetThresholds, sightingKeys, MOON_PHASES, moonPhaseOf } from './card-model.js?v=0.1.1743';
+import { nightsIn } from './observation.js?v=0.1.1743';
+import { CON_BY_ID, conProgress } from './constellations.js?v=0.1.1743';
+import { SHINY } from './shiny.js?v=0.1.1743';
+import { conArt, cometArt } from './con-art.js?v=0.1.1743';
+import { CON_FIGURES } from './con-figures.js?v=0.1.1743';
+import { localText } from './localize.js?v=0.1.1743';
+import { isSkyCard, skyStampInfo, skyTypeCode } from './sky-cards.js?v=0.1.1743';
+import { flightCardHtml, planeCardHtml } from './flight-card.js?v=0.1.1743';
 // The animal/symbol figure belongs to the completed (gold) constellation card only (2026-10-05): a single
 // star’s card draws just the star pattern with its star marked, so the figure is a reward for finishing the set.
 // A star card’s constellation figure comes into focus as you collect the constellation’s stars (design/con-focus.html B).
@@ -200,7 +200,7 @@ export function renderCard(o, opts = {}) {
   const fleet = !!o.launches, stamps = fleet ? stampsIn(sightings) : null;
   const level = opts.forceLevel ?? (conCard ? prog.level : fleet ? fleetLevel(o.family, stamps.size) : cardLevel(own, o));
   const tier = o.story ? { gem: '❖', label: 'Story', color: '#3fc7b5' } : TIER_INFO[o.tier] ?? TIER_INFO.common; // story cards (js/stories.js) wear their own teal label
-  const set = SET_BY_ID[o.set] ?? { name: 'Field archive', color: '#d74730' };
+  const set = SET_BY_ID[o.set] ?? (o.story ? { name: 'Stories', color: '#3fc7b5' } /* a story with no album of its own (Sky Collector's) */ : { name: 'Field archive', color: '#d74730' });
   const stats = orbitStats(o), age = yearsUp(o.launches ? { launch: o.launches[0]?.launch } : o), laps = lapsPerDay(o); // a fleet’s age is from its FIRST launch, the date shown (Starlink said 6 years for 2019)
   // A crew count changes often and is not supplied by the orbital catalogue.
   const loreStat = thirdStat(o, sizeLabel(o.rcs), opts.seenMembers ?? 0);
@@ -379,7 +379,7 @@ export function renderCardTile(o, opts = {}) {
   const caught = conCard ? prog.level === 'gold' : sightings.length > 0; // a constellation joins your collection only when complete
   const shinyOf = o.launches ? null : sightings.find((x) => x.shiny && SHINY[x.shiny])?.shiny; // a shiny sighting makes the card shiny (js/shiny.js)
   const tier = TIER_INFO[o.tier] ?? TIER_INFO.common;
-  const set = SET_BY_ID[o.set] ?? { name: 'Field archive', color: '#d74730' };
+  const set = SET_BY_ID[o.set] ?? (o.story ? { name: 'Stories', color: '#3fc7b5' } /* a story with no album of its own (Sky Collector's) */ : { name: 'Field archive', color: '#d74730' });
   const title = titleFor(o);
   const tile = document.createElement('button');
   tile.type = 'button';
