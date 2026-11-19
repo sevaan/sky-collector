@@ -2,14 +2,14 @@
 // e.g. Icelandair Toronto → Reykjavík), and every catch also counts toward PLANES (the aircraft type). Anything with no
 // route (helicopters, light planes, balloons, private jets) is a Planes card only. No DOM here.
 
-import { isProp } from './sky-props.js?v=0.1.1739';
-import { aircraftName, isHelicopter } from './planes.js?v=0.1.1739';
-import { routeKm } from './routes.js?v=0.1.1739';
-import { hasAirlineCallsign } from './sky-stamps.js?v=0.1.1739';
-import { typeTier } from './sky-tiers.js?v=0.1.1739';
-import { planeSet, flightSet, homeCountry } from './sky-sets.js?v=0.1.1739';
-import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1739';
-import { typeName } from './sky-type-names.js?v=0.1.1739';
+import { isProp } from './sky-props.js?v=0.1.1740';
+import { aircraftName, isHelicopter } from './planes.js?v=0.1.1740';
+import { routeKm } from './routes.js?v=0.1.1740';
+import { hasAirlineCallsign } from './sky-stamps.js?v=0.1.1740';
+import { typeTier } from './sky-tiers.js?v=0.1.1740';
+import { planeSet, flightSet, homeCountry } from './sky-sets.js?v=0.1.1740';
+import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1740';
+import { typeName } from './sky-type-names.js?v=0.1.1740';
 
 export const TIERS = {
   common: { label: 'Common', mark: '●', color: '#4a6178' },
@@ -32,8 +32,8 @@ export const SIZE_CLASSES = {
   A4: { name: 'Large Aircraft', mark: 'LARGE', glyph: 'jet', fact: `${UNLISTED} Its transponder says it is a large aircraft that leaves a **strong wake**, like a Boeing 757.` },
   A5: { name: 'Heavy Aircraft', mark: 'HEAVY', glyph: 'jet', fact: `${UNLISTED} Its transponder says it weighs **more than 136 tonnes**: a wide-body, like a Boeing 777 or an Airbus A350.` },
   A6: { name: 'Fast Jet', mark: 'FAST', glyph: 'jet', fact: `${UNLISTED} Its transponder says it can fly **faster than 740 km/h** and turn harder than 5 g, which usually means a military jet.` },
-  B1: { name: 'Glider', mark: 'GLIDER', glyph: 'prop', fact: 'A glider has **no engine**: it is towed or winched up, then stays up on rising air.' },
-  B2: { name: 'Balloon or Airship', mark: 'BALLOON', glyph: 'jet', fact: 'Lighter than air: a **balloon or an airship**, drifting or cruising far slower than anything with wings.' },
+  B1: { name: 'Glider', mark: 'GLIDER', glyph: 'glider', fact: 'A glider has **no engine**: it is towed or winched up, then stays up on rising air.' },
+  B2: { name: 'Balloon or Airship', mark: 'BALLOON', glyph: 'balloon', fact: 'Lighter than air: a **balloon or an airship**, drifting or cruising far slower than anything with wings.' },
   B4: { name: 'Ultralight', mark: 'ULTRA', glyph: 'prop', fact: 'An **ultralight**: one or two seats, a small engine, and often an open cockpit.' },
   B6: { name: 'Drone', mark: 'DRONE', glyph: 'prop', fact: 'An aircraft with **nobody on board**, flown from the ground.' },
 };
@@ -44,7 +44,7 @@ export const unlisted = (key) => { const m = /^P:UNKNOWN(?:-(\w+))?$/.exec(Strin
 export const planeKey = (p) => `P:${p.type || (isHelicopter(p) ? 'HELI' : SIZE_CLASSES[p.category] ? `UNKNOWN-${p.category}` : 'UNKNOWN')}`;
 /* The drawn plane when there is no photo. Straight wings for light and propeller types only (it read C2 as propeller, so a
    Citation CJ3, C25B, was drawn as one, 2026-11-18). */
-export const glyphFor = (type, heli = false) => (heli ? 'heli' : isProp(type) ? 'prop' : 'jet'); /* js/sky-props.js since 2026-11-19 (QA: the DC-3, C-130J, A400M, C295 and An-12 were drawn as jets, the Beechjet as a prop) */
+export const glyphFor = (type, heli = false, cat = '') => { const t = String(type ?? '').toUpperCase(), c = String(cat ?? '').toUpperCase(); return t === 'BALL' || (c === 'B2' && t !== 'SHIP') ? 'balloon' : t === 'SHIP' ? 'airship' : t === 'GLID' || c === 'B1' ? 'glider' : heli ? 'heli' : isProp(t) ? 'prop' : 'jet'; }; /* js/sky-props.js since 2026-11-19 (QA: the DC-3, C-130J, A400M, C295 and An-12 were drawn as jets, the Beechjet as a prop) */
 /* Tiers and sets (docs/DESIGN-LOOP.md, approved 2026-11-17). A flight's tier is how far it goes; cargo is Rare, not
    Epic (cargo hubs made every card Epic); 14,000 km and beyond is Legendary. A plane's tier is how much of the world's
    traffic its type is (js/sky-tiers.js). Sets: js/sky-sets.js. */
@@ -76,7 +76,7 @@ export function cardsFor(p, route, airline) {
   const typeName = aircraftName(p) || (heli ? 'Helicopter' : un ? un.name : 'Aircraft');
   const plane = {
     kind: 'plane', key, name: typeName, type: p.type || '',
-    glyph: un ? un.glyph : glyphFor(p.type, heli),
+    glyph: un ? un.glyph : glyphFor(p.type, heli, p.category),
     tier: typeTier(p.type, heli), set: planeSet(un ? code : p.type, heli).name, setId: planeSet(un ? code : p.type, heli).id,
     stamp: airline || '', reg: hasAirlineCallsign(p.callsign) ? (p.reg || '') : '', // no airline callsign: the callsign is the registration, so it isn't kept
   };

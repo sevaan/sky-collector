@@ -3,11 +3,12 @@
 // on the website, because adsb.lol doesn’t allow browser requests directly. The airline comes from the callsign's prefix.
 // No DOM here. Positions are extrapolated between fetches using ground speed, track and climb rate.
 
-import { SERVER } from './server.js?v=0.1.1739';
-import { plugin } from './native.js?v=0.1.1739';
-import { lookupRoute } from './routes.js?v=0.1.1739';
-import { typeName } from './sky-type-names.js?v=0.1.1739';
-import { noteFeed } from './sky-local.js?v=0.1.1739';
+import { tagOf } from './sky-secrets.js?v=0.1.1740';
+import { SERVER } from './server.js?v=0.1.1740';
+import { plugin } from './native.js?v=0.1.1740';
+import { lookupRoute } from './routes.js?v=0.1.1740';
+import { typeName } from './sky-type-names.js?v=0.1.1740';
+import { noteFeed } from './sky-local.js?v=0.1.1740';
 // Empty = feature off. localStorage 'planeRelay' overrides it (testing). Our server's /planes (adsb.lol only) once it's
 // deployed; until then the Val Town relay (relay/handler.ts).
 // Sky Collector (2026-11-15): Space Collector's Val Town relay is turned away by adsb.lol now, so the website needs Sky
@@ -94,8 +95,12 @@ function parse(json) {
     const ft = typeof a.alt_geom === 'number' ? a.alt_geom : a.alt_baro;
     if (typeof ft !== 'number') continue;
     const anon = isAnonymous(a);
+    /* a type that the aircraft can't be (2026-11-19, real records: "BALL" on an H125 helicopter at 63 kt, "GLID" on an
+       Air Canada jet at 35,000 ft) is dropped, so it's known by its size category instead */
+    const t0 = String(a.t ?? '').toUpperCase(), gs0 = Number(a.gs) || 0, cs0 = String(a.flight ?? '').trim();
+    const badType = (t0 === 'BALL' && gs0 >= 40) || (t0 === 'SHIP' && gs0 >= 75) || (t0 === 'GLID' && (gs0 >= 130 || ft >= 25000 || /^[A-Z]{3}\d/.test(cs0)));
     out.push({
-      hex: anon ? anonId(a.hex) : a.hex, callsign: anon ? '' : (a.flight ?? '').trim(), reg: anon ? '' : a.r ?? '', anon, type: a.t ?? '', desc: a.desc ?? '', category: a.category ?? '',
+      hex: anon ? anonId(a.hex) : a.hex, callsign: anon ? '' : (a.flight ?? '').trim(), reg: anon ? '' : a.r ?? '', anon, tag: tagOf(a), year: Number(a.year) || undefined, type: badType ? '' : a.t ?? '', desc: a.desc ?? '', category: a.category ?? '',
       lat: a.lat, lon: a.lon, hKm: ft * FT, altFt: ft, gs: a.gs ?? 0, track: a.track ?? a.true_heading ?? 0,
       climb: a.geom_rate ?? a.baro_rate ?? 0, at: at - (a.seen_pos ?? 0) * 1000,
     });
@@ -193,7 +198,7 @@ const AIRLINES = { ACA: 'Air Canada', ROU: 'Air Canada Rouge', JZA: 'Air Canada 
 // Every ICAO airline code -> name (js/airlines.js, built by scripts/build-airlines.mjs), loaded once, lazily.
 let airlineTable = null, airlineLoad = null;
 export function loadAirlines() {
-  return (airlineLoad ??= import('./airlines.js?v=0.1.1739').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
+  return (airlineLoad ??= import('./airlines.js?v=0.1.1740').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
 }
 export function airlineName(callsign) { return /^[A-Z]{3}\d/.test(callsign ?? '') ? airlineFor(callsign, null) : ''; }
 function airlineFor(callsign, a) {
@@ -222,7 +227,7 @@ export function aircraftName(p) { return typeName(p.type) ?? TYPES[p.type] ?? (p
 // QA 2026-11-19: B17 (the B-17 bomber, a Legendary card) was a helicopter; added the H500, H269, MD 500/600/900, AW149,
 // Bell 427/430/222/230/47, Cabri, Super Puma and KA32 codes.
 const HELI_TYPES = /^(A1(09|19|39|69|89)|AS(32|35|50|55|65)|AW(09|39|69|89)|B(06|06T|105|212|222|230|407|412|427|429|430|47G|505)|B4(07|12|29)|A149|AS3B|G2CA|H(269|500)|MD(52|60|90)|BK17|EC(20|25|30|35|45|55|75|130|135|145|155|175|225)|EH10|EN(28|48)|EXPL|H(12|13|25|46|47|53|60|64|72)|H1(25|30|35|45|55|60|75)|H(215|225)|HUCO|K(32|A32|MAX)|LYNX|MI(2|8|17|24|26)|NH90|PUMA|R(22|44|66)|S(55|58|61|64|70|76|92)|SCHW|TIGR|UH1|UH60|V22|NOTA)$/;
-export function isHelicopter(p) { return p.category === 'A7' || HELI_TYPES.test(String(p.type ?? '').toUpperCase()); }
+export function isHelicopter(p) { const t = String(p.type ?? '').toUpperCase(); if (/^(BALL|SHIP|GLID)$/.test(t)) return false; /* a real balloon broadcast category A7 (2026-11-19) */ return p.category === 'A7' || HELI_TYPES.test(t); }
 
 /* The rest of the world (2026-11-15, Sevaan: "does it work anywhere?"): major airlines by ICAO code, so flights outside
    North America and Europe get a name even when the route lookup has none. */
