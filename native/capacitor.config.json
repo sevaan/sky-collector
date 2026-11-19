@@ -1,0 +1,33 @@
+{
+  "appId": "app.skycollector",
+  "appName": "Sky Collector",
+  "webDir": "www",
+  "backgroundColor": "#8cc2ec",
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#8cc2ec"
+  },
+  "android": {
+    "backgroundColor": "#8cc2ec"
+  },
+  "plugins": {
+    "SystemBars": {
+      "style": "LIGHT"
+    },
+    "StatusBar": {
+      "style": "LIGHT",
+      "overlaysWebView": true
+    },
+    "LocalNotifications": {
+      "iconColor": "#E8493C",
+      "smallIcon": "ic_stat_sc"
+    }
+  },
+  "experimental": {
+    "ios": {
+      "spm": {
+        "swiftToolsVersion": "6.1"
+      }
+    }
+  }
+}

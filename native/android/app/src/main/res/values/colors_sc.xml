@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="sc_navy">#080F1B</color>
+    <!-- Sky Collector's launch and window colour: the top of the loading screen's daylight sky (css/sky-theme.css #start) -->
+    <color name="sky_day">#8CC2EC</color>
+</resources>
