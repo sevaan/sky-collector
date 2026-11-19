@@ -3,7 +3,7 @@
 // (2026-10-16): the purchase belongs to the player’s Apple ID / Google account, no sign-in of ours. The last answer is
 // kept (localStorage 'plusStore') so Plus holds offline. The testing toggle (Settings → Testing tools → "Plus
 // (testing)", 'plusTest') still turns it on anywhere; the website never sells Plus.
-import { plugin, isNative, onNative } from './native.js?v=0.1.1779';
+import { plugin, isNative, onNative } from './native.js?v=0.1.1780';
 
 // RevenueCat public SDK keys (safe in the app). The Test Store key works with no App Store / Play setup; swap in the
 // appl_ / goog_ keys from RevenueCat → Project settings → API keys once the store apps are connected.
@@ -34,7 +34,7 @@ export const rcTestStore = (on) => (on === undefined ? ls.get('rcTestStore') ===
 export function storeOpen() {
   if (!isNative()) return false;
   const ios = /iP(hone|ad|od)|Mac/.test(navigator.userAgent), key = ls.get('rcTestStore') === '1' ? TEST_KEY : ios ? RC_KEYS.ios : RC_KEYS.android;
-  return !(key.startsWith('test_') && ls.get('rcTestStore') !== '1');
+  return !!key && !(key.startsWith('test_') && ls.get('rcTestStore') !== '1'); /* no key: not open (Sky on Android) */
 }
 let watching = false;
 export function initStore() {
@@ -43,6 +43,7 @@ export function initStore() {
   // RevenueCat closes a release build (TestFlight, the App Store) that uses a Test Store key (2026-10-18, Sevaan: "the app
   // will close now"). So the Test Store key is only used when Settings → Testing tools → "RevenueCat Test Store" is on
   // (simulator and Xcode debug builds); otherwise there’s no store until the real appl_/goog_ keys are in RC_KEYS.
+  if (!key) return null; /* no key for this platform yet (Sky on Android until its Play app exists): RevenueCat's configure throws and the Android app closed at launch (emulator, 2026-11-19) */
   if (key.startsWith('test_') && ls.get('rcTestStore') !== '1') return null;
   // A release build closes itself a few seconds after setup with the Test Store key, and did so on every launch after,
   // so the switch could never be turned off again (iPhone playtest 2026-10-26, build 33). A launch that dies within 20 s
