@@ -33,7 +33,7 @@ export function normalize(json) {
   for (const a of json?.ac ?? json?.aircraft ?? []) {
     if (a.lat == null || a.lon == null || a.alt_baro === 'ground') continue;
     const ft = typeof a.alt_geom === 'number' ? a.alt_geom : a.alt_baro; if (typeof ft !== 'number') continue;
-    out.push({ hex: a.hex, callsign: String(a.flight ?? '').trim().toUpperCase(), reg: a.r ?? '', type: a.t ?? '', desc: a.desc ?? '', category: a.category ?? '',
+    out.push({ hex: a.hex, flags: Number(a.dbFlags) & 13 /* LADD, PIA, military: never shown (js/planes.js isAnonymous) */, callsign: String(a.flight ?? '').trim().toUpperCase(), reg: a.r ?? '', type: a.t ?? '', desc: a.desc ?? '', category: a.category ?? '',
       lat: a.lat, lon: a.lon, hKm: ft * 0.0003048, altFt: ft, gs: a.gs ?? 0, track: a.track ?? a.true_heading ?? 0, climb: a.geom_rate ?? a.baro_rate ?? 0, at: at - (a.seen_pos ?? 0) * 1000 });
   }
   return out;
@@ -45,7 +45,7 @@ export function normalize(json) {
 // look like a flight (8,000 ft and up) ahead of ones just off the runway.
 export function rankFlights(planes, center, hasArt) {
   return (planes ?? [])
-    .filter((p) => /^[A-Z]{3}\d/.test(p.callsign ?? '') && p.category !== 'A7' && p.type && p.altFt >= 2500 && p.gs >= 120 && hasArt(p.callsign.slice(0, 3), p.type))
+    .filter((p) => !p.flags && /^[A-Z]{3}\d/.test(p.callsign ?? '') && p.category !== 'A7' && p.type && p.altFt >= 2500 && p.gs >= 120 && hasArt(p.callsign.slice(0, 3), p.type))
     .map((p) => ({ p, score: km(center.lat, center.lon, p.lat, p.lon) + (p.altFt < 8000 ? 40 : 0) }))
     .sort((a, b) => a.score - b.score).map((x) => x.p);
 }

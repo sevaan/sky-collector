@@ -1,0 +1,4 @@
+{
+  "_about": "Sky Collector's compass dial (js/sensors.js setFuseDial). androidFuse: true = Android draws the sky from the gyro and learns north from the compass; false = the old direct compass. Testing tools can override it per phone.",
+  "androidFuse": true
+}

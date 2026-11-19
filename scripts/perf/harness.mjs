@@ -10,7 +10,7 @@ export const OUT = new URL('./out', import.meta.url).pathname; // git-ignored
 export const URL0 = process.env.PERF_URL || 'http://localhost:8765/';
 export const SKY = process.env.PERF_SKY === '1';
 import { readFileSync } from 'node:fs';
-const FEED = SKY ? JSON.parse(readFileSync(new URL('./fixtures/planes-yyz.json', import.meta.url))) : null;
+const FEED = SKY ? JSON.parse(readFileSync(process.env.PERF_FEED || new URL('./fixtures/planes-yyz.json', import.meta.url))) : null; /* PERF_FEED: another recorded feed (a path) */
 
 const instr = ({ at, attrib }) => {
   if (at) {

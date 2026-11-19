@@ -5,15 +5,16 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { isProp } from './sky-props.js?v=0.1.1739';
-import { planeKey } from './flights.js?v=0.1.1739';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1739';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1739';
-import { airlineIcon } from './airline-icons.js?v=0.1.1739';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1739';
-import { noteLocal, rareHere } from './sky-local.js?v=0.1.1739';
-import { planeSet } from './sky-sets.js?v=0.1.1739';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1739';
+import { isProp } from './sky-props.js?v=0.1.1747';
+import { planeKey } from './flights.js?v=0.1.1747';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1747';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1747';
+import { airlineIcon } from './airline-icons.js?v=0.1.1747';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1747';
+import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1747';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1747';
+import { planeSet } from './sky-sets.js?v=0.1.1747';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1747';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -33,6 +34,7 @@ let seenCache = null, seenSaved = 0;
 const localFlags = (p) => { const f = [], st = planeSet(p.type, isHelicopter(p)).id; if (st === 'helicopters') f.push('heli'); if (st === 'twinaisle' || st === 'giants') f.push('wide'); if (st === 'props' || st === 'light') f.push('prop'); if ((p.altFt ?? 0) >= 35000) f.push('high'); if (p.altFt != null && p.altFt < 5000) f.push('low'); if (/^[A-Z]{3}\d/.test(p.callsign ?? '')) f.push('airline'); return f; };
 // Called with the planes above the horizon each poll (about every 10 s while Explore or Today is open).
 export function logSeen(list) {
+  try { noteRegulars((list ?? []).map((a) => a.plane)); } catch {} /* Regulars: airline callsigns and when they pass (js/sky-regulars.js) */
   const s = seenCache && seenCache.day === dayKey() ? seenCache : (seenCache = readSeen());
   const h = new Date().getHours(), have = new Set(s.hexes), newHour = !s.open[h], fresh = [];
   s.open[h] = 1;
@@ -80,6 +82,10 @@ function skyState(ctx) {
   if (st === 'failing') return `<h3>Can’t reach the plane feed</h3><p class="td-lead">No word from the plane feed${ctx.planes?.lastOk ? ` since ${new Date(ctx.planes.lastOk).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}` : ''}. Check your connection, and we’ll keep trying.</p>`;
   if (st === 'loading' || !ctx.positions) return '<h3>Checking what’s flying</h3><p class="td-lead">Finding the planes near you…</p>';
   if (ctx.noCoverage) return '<h3>No plane tracking here yet</h3><p class="td-lead">Sky Collector hears about planes from volunteers’ receivers, and none of them reach this place. It will work as soon as one does, and anywhere you travel that has them.</p>'; /* docs/DESIGN-LOOP.md §6 */
+  /* pacing from your own sky (js/sky-local.js, 30 days here): how many usually pass, so how long until the next is likely (QA 2026-11-19, #6) */
+  let ls = null; try { ls = localStats(); } catch {}
+  if (ls && ls.hours >= 3 && ls.perHour > 0) { const n = ls.perHour, lo = Math.max(1, Math.floor(n)), hi = Math.max(lo + 1, Math.ceil(n * 1.25)), wait = Math.max(2, Math.round(60 / n / 5) * 5 || 2);
+    return `<h3>Quiet sky</h3><p class="td-lead">Nothing above the trees right now. Usually ${n < 1 ? 'about one plane every hour or two' : `about ${lo} to ${hi} planes an hour`} pass over here, so the next is likely ${n < 1 ? 'within the hour' : `within about ${wait} min`}.</p>`; }
   return '<h3>Quiet sky</h3><p class="td-lead">Nothing above the trees right now. Planes come and go every few minutes.</p>';
 }
 
@@ -192,7 +198,7 @@ const FIELD = 10, FLAP_CH = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 // though... maybe multiline"): the destination, else the callsign, else the type; words wrap to the second line, and a
 // single word longer than a line runs on into it. Longer than two lines: cut at the last whole word that fits.
 function boardLines(c) {
-  const u = String(c.full?.to?.city || c.p.callsign || c.p.type || 'Aircraft').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^A-Z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim() || 'AIRCRAFT';
+  const u = String(c.full?.to?.city || c.p.callsign || aircraftName(c.p) || c.p.type || 'Aircraft').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^A-Z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim() || 'AIRCRAFT';
   const lines = ['']; for (const w of u.split(' ')) { let x = w;
     while (x) { const cur = lines.at(-1), room = FIELD - (cur ? cur.length + 1 : 0);
       if (x.length <= room) { lines[lines.length - 1] = cur ? `${cur} ${x}` : x; x = ''; }
@@ -305,7 +311,12 @@ export function renderToday(el, ctx) {
     <div class="td-axis"><span>12 AM</span><span>6</span><span>NOON</span><span>6</span><span>11 PM</span></div></div>
     <p class="td-note">Counts only the hours Sky Collector was open. Grey bars are hours it wasn’t.</p>`;
 
-  el.innerHTML = live + alert + missions + tl + board + map + story;
+  /* Your regulars (js/sky-regulars.js): flights that pass at about the same time most days, the next three due today */
+  let regs = ''; try { const now = Date.now(), rl = regulars(now).filter((r) => r.next - now < 12 * 3600e3).slice(0, 3);
+    if (rl.length) regs = `<p class="td-h">YOUR REGULARS <span>LEARNED HERE</span></p><div class="td2-card td2-regs">${rl.map((r) => { const rt = ctx.route(r.callsign), full = rt?.full, a3 = r.callsign.slice(0, 3), fkey = full ? `F:${a3}:${full.from.icao}-${full.to.icao}` : null, mine = fkey && owned.has(fkey), mins = Math.round((r.next - now) / 60000);
+      const name = full ? `${rt.airline || a3} ${r.callsign.replace(/^[A-Z]{3}/, '')} to ${full.to.city}` : `${rt?.airline || a3} ${r.callsign.replace(/^[A-Z]{3}/, '')}`;
+      return `<div class="td2-reg"><b>${esc(name)}</b><span>Usually ${esc(clockText(r.minute))} · seen ${r.days} of the last ${r.of} days · ${mins <= 2 ? 'due now' : mins < 60 ? `in ${mins} min` : `at ${esc(clockText(r.minute))}`}${mine ? ' · <em>in your collection</em>' : ''}</span></div>`; }).join('')}</div>`; } catch {}
+  el.innerHTML = live + alert + missions + regs + tl + board + map + story;
 
   // the board: on the first view after Today opens every row spins in; on later refreshes only rows new to the board.
   // Today redraws every 10 s, so until the first spin has played the watcher moves to each new board.

@@ -324,7 +324,7 @@ body.night #discover.sky-plane .d-mini { filter:drop-shadow(0 6px 12px #000c); }
 
 /* Sky's Collection on Space Collector's page (Milestone 1.5): Mine and Patches. Albums (sets with a known size) and Find
    (satellite pass search) come back once plane sets exist (docs/PROJECT-PLAN.md task 13). */
-html.sky-cards #tab-discover { display:none !important; } /* Albums are back (2026-11-17, plane sets); Find stays hidden: it is about what passes tonight */
+/* Find is back in Sky (2026-11-19): the planes that fly over you and are not caught yet (js/cards-page.js renderSkyFind) */
 html.sky-cards .collection-tabs { justify-content:flex-start; gap:28px; }
 
 /* Small faces in grids (2026-11-16 scroll pass): no live filters, as Space Collector's tiles have none. The sky panel's
@@ -571,3 +571,11 @@ body.sky-only.day #around .tn-chip.tile small:not(:where(.mini-face *)) { color:
 body.sky-only:not(.day):not(.night) #around .tn-chip.tile { background:#11223a; border-color:#24384f; }
 /* 320 px phones: the tier line ("Uncommon · New flight") fits whole instead of ending "New flig…" (QA 2026-11-19) */
 @media (max-width: 340px) { body.sky-only #discover .d-ticket #d-tier { letter-spacing: .02em !important; font-size: 11px !important; } } /* beats css/app.css's own small-phone rules */
+/* Your regulars on Today (js/sky-regulars.js, 2026-11-19) */
+.td2-regs { display:grid; gap:10px; }
+.td2-reg b { display:block; font:600 15px/1.25 var(--label); letter-spacing:.02em; }
+.td2-reg span { display:block; font:400 13px/1.35 var(--label); color:var(--sc-muted); margin-top:2px; }
+.td2-reg em { font-style:normal; color:#1f7a50; }
+html.sky-night .td2-reg em { color:#7fd6a3; }
+.fc-reg { margin:6px 0 0; font:500 11px/1.3 var(--label); letter-spacing:.06em; color:#1f5a3a; }
+.fc-reg span { display:inline-block; padding:1px 6px; margin-right:6px; border-radius:4px; background:#1f7a50; color:#fffdf6; letter-spacing:.12em; }

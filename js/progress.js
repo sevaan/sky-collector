@@ -1,10 +1,11 @@
 // Player progress from the sighting log: XP and observer rank, tonight’s three missions, a weekly streak and
 // achievements. Everything is derived from the saved sightings (nothing extra is stored), so it can’t drift.
 // info(cardKey) -> { tier, type, owner, launch, natural, con } | null. No DOM.
-import { isProp } from './sky-props.js?v=0.1.1739';
-import { nightKey, useCalendarDays } from './observation.js?v=0.1.1739';
-import { fleetThresholds } from './card-model.js?v=0.1.1739';
-import { distRound as distText } from './units.js?v=0.1.1739';
+import { isProp } from './sky-props.js?v=0.1.1747';
+import { SKY_PATCHES_MORE, freshSky2, noteSky2 } from './sky-patches.js?v=0.1.1747';
+import { nightKey, useCalendarDays } from './observation.js?v=0.1.1747';
+import { fleetThresholds } from './card-model.js?v=0.1.1747';
+import { distRound as distText } from './units.js?v=0.1.1747';
 
 // A longer climb (2026-10-12, playtest room: three ranks on night 1, Mission Control in about two weeks), with two
 // prestige ranks past Mission Control. Nobody drops a rank they had on the old curve (rankFloor below).
@@ -145,7 +146,7 @@ const ccOf = (a) => a?.cc || a?.country || ''; /* airports carry cc (js/routes.j
 const firstFlight = (s) => s.first && snap(s).sky === 'flight';
 // Sized to your sky (docs/DESIGN-LOOP.md §3, approved 2026-11-17): counts follow how busy the place is (js/sky-local.js
 // localStats().sky → setSkySize). A quiet sky asks for one airline; a busy one for five.
-const SIZES = { new: { airlines: 2, cards: 1 }, quiet: { airlines: 1, cards: 1 }, steady: { airlines: 3, cards: 2 }, busy: { airlines: 5, cards: 4 } };
+const SIZES = { new: { airlines: 2, cards: 1 }, quiet: { airlines: 1, cards: 1 }, steady: { airlines: 2, cards: 2 }, busy: { airlines: 4, cards: 3 } }; /* sized for a 15-minute look (QA 2026-11-19, #6): steady is 1 to 5 planes in 15 min, busy 5 or more */
 let SIZE = SIZES.steady;
 export function setSkySize(sky) { SIZE = SIZES[sky] ?? SIZES.steady; }
 const NUM = ['', 'one', 'two', 'three', 'four', 'five'];
@@ -200,14 +201,14 @@ const SKY_WEEK_THEMES = [
   { id: 'sky-hops', name: 'Short hop week', short: 'Short Hop Week', get text() { return `Catch three flights under ${distText(500)}.`; }, icon: 'HOP', need: 3, have: (w) => new Set(w.filter((s) => snap(s).sky === 'flight' && snap(s).km != null && snap(s).km < 500).map((s) => s.cardKey)).size },
 ];
 const SPACE_WEEK_THEMES = WEEK_THEMES.slice();
-const RANK_AT = RANKS.map((r) => r[0]), SKY_RANK_AT = { 1: 700, 2: 2000 }; /* a plane catch makes two cards, so the first two ranks sit further out and the first rank-up still lands on day 2 (docs/DESIGN-LOOP.md §4) */
+const RANK_AT = RANKS.map((r) => r[0]), SKY_RANK_AT = { 1: 480, 2: 2000 }; /* 480 (was 700) with the starter missions worth 20 XP each (2026-11-19, scripts/sim/week.mjs: the first rank-up now lands on day 2 for light, normal and heavy players) */ /* a plane catch makes two cards, so the first two ranks sit further out and the first rank-up still lands on day 2 (docs/DESIGN-LOOP.md §4) */
 /* Space words on a shared patch, renamed for planes (playtest 2026-11-18: "First Light" is a telescope's first look) */
 const SKY_PATCH_NAMES = { first: 'Wheels Up' }, SPACE_PATCH_NAMES = {};
 export function setSkyProgress(on) { SKY = !!on; useCalendarDays(SKY); for (const x of ACHIEVEMENTS) if (x.id in SKY_PATCH_NAMES) { SPACE_PATCH_NAMES[x.id] ??= x.name; x.name = SKY ? SKY_PATCH_NAMES[x.id] : SPACE_PATCH_NAMES[x.id]; } RANKS.forEach((r, i) => { r[1] = (SKY ? SKY_RANK_NAMES : RANK_NAMES)[i] ?? r[1]; r[0] = SKY ? SKY_RANK_AT[i] ?? RANK_AT[i] : RANK_AT[i]; }); WEEK_THEMES.splice(0, WEEK_THEMES.length, ...(SKY ? SKY_WEEK_THEMES : SPACE_WEEK_THEMES)); }
-const SKY_REPEAT_XP = 3, RARE_HERE_XP = 10; /* a stamp on a card you own; a plane that is unusual where you stand */
+const SKY_REPEAT_XP = 3, RARE_HERE_XP = 10, SKY_STARTER_XP = 20; /* the first day's three missions: their own badge (Cleared for Takeoff), less XP than a day's missions (QA 2026-11-19: the first session gave 460 XP and 8 patches) */ /* a stamp on a card you own; a plane that is unusual where you stand */
 export const isSkyProgress = () => SKY;
 const activeMissions = () => (SKY ? SKY_MISSIONS : MISSIONS);
-export const activeAchievements = () => (SKY ? [...ACHIEVEMENTS.filter((x) => SKY_PATCHES.has(x.id)), ...SKY_ACHIEVEMENTS] : ACHIEVEMENTS);
+export const activeAchievements = () => (SKY ? [...ACHIEVEMENTS.filter((x) => SKY_PATCHES.has(x.id)), ...SKY_ACHIEVEMENTS, ...SKY_PATCHES_MORE] : ACHIEVEMENTS);
 const MISSION_BY_ID = new Map([...MISSIONS, ...RETIRED, ...STARTER, ...SKY_MISSIONS, ...SKY_STARTER].map((m) => [m.id, m]));
 // Seeded by the night (a day index from nightKey): integer mixing with Math.imul, so the picks spread evenly
 // from one night to the next. (The old float LCG overflowed 2^53 and kept dealing the same few missions.)
@@ -258,6 +259,7 @@ const T_HAS = (t) => (a) => a.tiers.has(t);
 const skyK = (a) => a.sky ?? { wide: 0, b747: 0, a380: 0, heli: 0, freightNight: 0, hop: 0, far: 0, airlines: new Set(), propDays: new Map(), flightDays: new Map() };
 const maxSize = (m) => { let n = 0; for (const v of m.values()) n = Math.max(n, v.size); return n; };
 const SKY_ACHIEVEMENTS = [
+  { id: 'sky-starter', name: 'Cleared for Takeoff', text: 'Finish your three first-day missions', icon: '', done: (a) => !!a.starterDone },
   { id: 'sky-heavy', name: 'Heavy Metal', text: 'Catch a twin-aisle jet', icon: '2✈', done: (a) => skyK(a).wide >= 1 },
   { id: 'sky-jumbo', name: 'Jumbo', text: 'Catch a Boeing 747', icon: '747', done: (a) => skyK(a).b747 >= 1 },
   { id: 'sky-superjumbo', name: 'Superjumbo', text: 'Catch an Airbus A380', icon: '380', done: (a) => skyK(a).a380 >= 1 },
@@ -465,6 +467,7 @@ export function progress(sightings, info, { constellations = [], albums = [], no
       if (/^[A-Z]{3}\d/.test(s.callsign ?? '')) k.airlines.add(s.callsign.slice(0, 3));
       if (c.sky === 'flight') { if (c.km != null && c.km < 300) k.hop++; if ((c.km ?? 0) >= 10000) k.far++; if (c.setId === 'cargo' && (hr >= 21 || hr < 5)) k.freightNight++;
         const fd = k.flightDays.get(s.cardKey) ?? k.flightDays.set(s.cardKey, new Set()).get(s.cardKey); fd.add(day); }
+      noteSky2(a.sky2 ??= freshSky2(), s, c); /* the patches in js/sky-patches.js */
     }
     let lv = false;
     if (!seenNight.has(nk) && !i?.natural && !fam) { const c = (nightsOnCard.get(s.cardKey) ?? 0) + 1; /* no levels for the Moon, planets, stars… (2026-10-21, Sevaan) */ nightsOnCard.set(s.cardKey, c); lv = c === 3 || c === 10; }
@@ -509,7 +512,8 @@ export function progress(sightings, info, { constellations = [], albums = [], no
   const firstNights = new Set(firstKey == null ? [] : morningOnly ? [...[...nights.keys()].filter((k) => k <= firstEvening), firstEvening] : [firstKey]), firstNight = firstKey;
   for (const [night, n] of nights) {
     const done = missionsOf(night, { first: firstNights.has(night), deals }).filter((m) => m.done(n, n[0].time)).length;
-    xp += done * MISSION_XP; a.missionsDone += done; if (done === 3 && !(SKY && firstNights.has(night))) a.fullHouse = true; /* Sky: the starter day's three (done in two catches) don't earn Full House (QA 2026-11-19) */
+    xp += done * (SKY && firstNights.has(night) ? SKY_STARTER_XP : MISSION_XP); a.missionsDone += done; if (done === 3 && !(SKY && firstNights.has(night))) a.fullHouse = true;
+    if (SKY && done === 3 && firstNights.has(night)) a.starterDone = true; /* Cleared for Takeoff */ /* Sky: the starter day's three (done in two catches) don't earn Full House (QA 2026-11-19) */
     if (!firstNights.has(night) && challengeFor(night).done(n, n[0].time)) xp += MISSION_XP;
   }
   a.reunions = [...reunionRoles.values()].filter((r) => r.size === 2).length; // launches where you own the stage and its satellite
@@ -530,7 +534,7 @@ export function progress(sightings, info, { constellations = [], albums = [], no
   ri = Math.max(ri, rankFloor(xp));
   const rank = { name: RANKS[ri][1], index: ri, at: RANKS[ri][0], next: RANKS[ri + 1]?.[0] ?? null, nextName: RANKS[ri + 1]?.[1] ?? null };
   a.albumsSilver = albums.filter((al) => al.silver && al.keys.filter((k) => seenCard.has(k)).length >= al.silver).length; /* Sky's Full Hangar patch */
-  const achievements = activeAchievements().map((x) => ({ id: x.id, name: x.name, text: x.text, icon: x.icon, done: x.done(a), prog: PROG[x.id]?.(a) }));
+  const achievements = activeAchievements().map((x) => ({ id: x.id, name: x.name, text: x.text, icon: x.icon, done: x.done(a), prog: PROG[x.id]?.(a) ?? x.prog?.(a) }));
   // Every constellation is its own mission patch (2026-10-09, Sevaan: they replace the gold constellation cards),
   // and so is the Solar System. The patch art is the stick figure (js/patches.js).
   if (!SKY) /* Sky Collector has no constellation patches (2026-11-17) */ for (const c of constellations) achievements.push({ id: `con-${c.id}`, con: c.id, name: c.system ? 'Solar System' : c.name, sub: c.system ? 'Home system' : c.nick.replace(/^part of /, ''), icon: '',

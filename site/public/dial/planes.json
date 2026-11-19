@@ -1,0 +1,11 @@
+{
+  "_about": "Sky Collector's plane feed dial (js/plane-feed.js clampDial). Seconds and request counts; anything missing keeps the app's default.",
+  "idleS": 30,
+  "nearS": 10,
+  "lowAt": 120,
+  "slowS": 60,
+  "switchAt": 25,
+  "maxFails": 2,
+  "relayDownS": 300,
+  "maxBackoff": 6
+}
