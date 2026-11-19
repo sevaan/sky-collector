@@ -3,14 +3,16 @@
 // (2026-10-16): the purchase belongs to the player’s Apple ID / Google account, no sign-in of ours. The last answer is
 // kept (localStorage 'plusStore') so Plus holds offline. The testing toggle (Settings → Testing tools → "Plus
 // (testing)", 'plusTest') still turns it on anywhere; the website never sells Plus.
-import { plugin, isNative, onNative } from './native.js?v=0.1.1751';
+import { plugin, isNative, onNative } from './native.js?v=0.1.1752';
 
 // RevenueCat public SDK keys (safe in the app). The Test Store key works with no App Store / Play setup; swap in the
 // appl_ / goog_ keys from RevenueCat → Project settings → API keys once the store apps are connected.
 // RevenueCat public SDK keys (safe to ship). iOS is the real App Store key (2026-10-19); Android the real Play key
 // (2026-11-05, app.spacecollector). TEST_KEY is used anywhere when Testing tools → "RevenueCat Test Store" is on.
-const TEST_KEY = ''; // Sky Collector has no RevenueCat project yet
-const RC_KEYS = { ios: '', android: '' }; // Sky Collector has no store apps yet
+/* Sky Collector's own RevenueCat project (2026-11-19, separate from Space Collector's): App Store app app.skycollector,
+   products sky_plus_monthly / sky_plus_yearly / sky_plus_forever, offering 'default'. No Play app yet (docs/STORES.md). */
+const TEST_KEY = 'test_HGiDdKNXGZeDqSATGXsjbRpoHtS';
+const RC_KEYS = { ios: 'appl_vgcqsIxuwiDKZCgqvnKKtpcWHvo', android: '' };
 const ENTITLEMENT = 'sky_collector_plus'; // RevenueCat → Entitlements (display name Sky Collector Plus)
 const listeners = new Set();
 const ls = { get: (k) => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
@@ -24,7 +26,7 @@ export function onPlus(f) { listeners.add(f); return () => listeners.delete(f); 
 // ---- the store (native apps only) ----
 const rc = () => (isNative() ? plugin('Purchases') : null);
 let ready = null;
-// Plus = the space_collector_plus entitlement; any other active one counts too, in case it’s ever renamed.
+// Plus = the sky_collector_plus entitlement; any other active one counts too, in case it’s ever renamed.
 const active = (info) => { const a = info?.entitlements?.active ?? {}; return !!(a[ENTITLEMENT] ?? Object.values(a).find((e) => e?.isActive)); };
 function apply(info, how = 'store') { if (!info) return; const was = isPlus(); ls.set('plusStore', active(info) ? '1' : '0'); emit(was, how); }
 export const rcTestStore = (on) => (on === undefined ? ls.get('rcTestStore') === '1' : ls.set('rcTestStore', on ? '1' : '0'));

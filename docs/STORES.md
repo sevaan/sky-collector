@@ -40,13 +40,18 @@ Not done on Apple:
 Play: the Subscriptions page only offers "Upload a new APK". Products can't be created until a build that includes
 Play Billing has been uploaded, so this waits for the Android project.
 
-RevenueCat: nothing set up. Sevaan is weighing a link between the two apps' Plus (free or half-price in the other
-app), which decides whether Sky gets a project of its own or joins Space Collector's. js/plus.js RC_KEYS stay empty
-and its entitlement name is still `space_collector_plus`.
+RevenueCat (2026-11-19): a project of Sky's own, "Sky Collector" (d30f3dad), separate from Space Collector's
+(Sevaan's choice).
+- App "Sky Collector (App Store)", bundle `app.skycollector`, using the in-app purchase key already on the account
+  (3HK2L8K8G8, the same Apple key Space Collector's app uses; credentials show as valid).
+- Products `sky_plus_yearly`, `sky_plus_monthly` (subscriptions) and `sky_plus_forever` (non-consumable), all attached
+  to the entitlement `sky_collector_plus` ("Sky Collector Plus").
+- Offering `default` with `$rc_annual`, `$rc_monthly` and `$rc_lifetime`.
+- js/plus.js has the project's public SDK keys (the App Store key and the Test Store key; both are meant to ship in
+  the app). No Play app or key yet. The Test Store has no products, so the Testing tools switch shows no plans.
 
 ## Still to do
-- **Plus from day one** (Sevaan, 2026-11-19, "like Space Collector did"): Apple's products exist (above); Play's and
-  RevenueCat are still to do.
+- **Plus from day one** (Sevaan, 2026-11-19, "like Space Collector did"): Apple's products and RevenueCat exist (above); Play's are still to do.
 - Listing text, screenshots, category, age and content ratings, privacy answers, pricing and countries.
 - Play: the 15% service fee enrolment, the closed test (12 testers for 14 days) before production, an upload key of
   Sky's own, and the Android project under `app.skycollector`.
