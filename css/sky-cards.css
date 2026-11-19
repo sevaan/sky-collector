@@ -254,8 +254,8 @@ body.sky-only #row-tonight, body.sky-only #row-alerts, body.sky-only #row-live, 
 body.sky-only .set-row:has(#chk-daysats), body.sky-only .set-row:has(#chk-meteor),
 body.sky-only #sky-plus-line { display:none !important; } /* Observer stats is back (2026-11-17): the page has a plane version */
 /* Settings sweep (2026-11-15): gifting has no planes yet; circle highlights only sort satellites, stars and UFOs; the test tools below are satellite-only */
-/* Send cards is back (2026-11-19, review Part 2 A: plane snapshots travel in the link; short links on Sky's server) */ body.sky-only #set-hl-open, body.sky-only #btn-next-pass, body.sky-only #btn-nightpack,
-/* UFO and Santa's test buttons are back with them (2026-11-19) */ body.sky-only #btn-meteor, body.sky-only #btn-live-test { display:none !important; }
+/* Send cards is back (2026-11-19, review Part 2 A: plane snapshots travel in the link; short links on Sky's server); Circle highlights too (G) */ body.sky-only #btn-next-pass, body.sky-only #btn-nightpack,
+/* UFO and Santa's test buttons are back with them (2026-11-19) */ body.sky-only #btn-meteor, body.sky-only #set-hl-sheet .set-chips:not(.sky-hl), body.sky-only #btn-live-test { display:none !important; }
 
 
 /* ===== Stamps and levels (2026-11-15, Sevaan: catching a card again stamps it) =====
@@ -598,3 +598,6 @@ body.sky-only .tc .art .ob-stars { display:none; } /* the location picture's dra
   color:#5a3a00; background:linear-gradient(90deg, #ffe28a, #ffc8e6, #ffe28a); box-shadow:0 2px 6px rgba(13,34,56,.25); }
 .card--sky.shiny .fc-shiny b { font-weight:inherit; color:#b42a20; }
 @media (prefers-reduced-motion: reduce) { .card--sky.shiny .fc-shine { animation:none; background-position:50% 0; opacity:.6; } }
+
+/* Circle highlights: Space's satellite chips are hidden in Sky, the plane choices shown (2026-11-19) */
+body:not(.sky-only) #set-hl-sheet .sky-hl { display:none; }
