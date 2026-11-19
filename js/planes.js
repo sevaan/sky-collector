@@ -3,12 +3,12 @@
 // on the website, because adsb.lol doesn’t allow browser requests directly. The airline comes from the callsign's prefix.
 // No DOM here. Positions are extrapolated between fetches using ground speed, track and climb rate.
 
-import { tagOf } from './sky-secrets.js?v=0.1.1747';
-import { SERVER } from './server.js?v=0.1.1747';
-import { plugin } from './native.js?v=0.1.1747';
-import { lookupRoute } from './routes.js?v=0.1.1747';
-import { typeName } from './sky-type-names.js?v=0.1.1747';
-import { noteFeed } from './sky-local.js?v=0.1.1747';
+import { tagOf } from './sky-secrets.js?v=0.1.1748';
+import { SERVER } from './server.js?v=0.1.1748';
+import { plugin } from './native.js?v=0.1.1748';
+import { lookupRoute } from './routes.js?v=0.1.1748';
+import { typeName } from './sky-type-names.js?v=0.1.1748';
+import { noteFeed } from './sky-local.js?v=0.1.1748';
 // Empty = feature off. localStorage 'planeRelay' overrides it (testing). Our server's /planes (adsb.lol only) once it's
 // deployed; until then the Val Town relay (relay/handler.ts).
 // Sky Collector (2026-11-15): Space Collector's Val Town relay is turned away by adsb.lol now, so the website needs Sky
@@ -198,7 +198,7 @@ const AIRLINES = { ACA: 'Air Canada', ROU: 'Air Canada Rouge', JZA: 'Air Canada 
 // Every ICAO airline code -> name (js/airlines.js, built by scripts/build-airlines.mjs), loaded once, lazily.
 let airlineTable = null, airlineLoad = null;
 export function loadAirlines() {
-  return (airlineLoad ??= import('./airlines.js?v=0.1.1747').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
+  return (airlineLoad ??= import('./airlines.js?v=0.1.1748').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
 }
 export function airlineName(callsign) { return /^[A-Z]{3}\d/.test(callsign ?? '') ? airlineFor(callsign, null) : ''; }
 function airlineFor(callsign, a) {
@@ -221,7 +221,10 @@ const TYPES = {
   AT72: 'ATR 72', AT76: 'ATR 72', C172: 'Cessna 172', C182: 'Cessna 182', C208: 'Cessna Caravan', PC12: 'Pilatus PC-12', P28A: 'Piper Cherokee', SR22: 'Cirrus SR22',
 };
 // Sky Collector: the exact type name first (js/sky-type-names.js, 2026-11-17), then the short one, then the feed's own description.
-export function aircraftName(p) { return typeName(p.type) ?? TYPES[p.type] ?? (p.desc ? p.desc.replace(/\b([A-Z])([A-Z]+)\b/g, (m, a, b) => a + b.toLowerCase()) : ''); }
+/* The feed's own description, made readable (2026-11-19, Sevaan: "PIPER PA-31-300/310/325/350/425" was cut off): a list of
+   variants is dropped ("Piper PA-31"), and only plain words are lower-cased, never a model code ("PA-31", not "Pa-31"). */
+export const cleanDesc = (d) => String(d ?? '').trim().replace(/-[A-Z0-9]+(?:\/[A-Z0-9]+)+$/i, '').replace(/\s*\/\s*[A-Z0-9-]+$/i, '').replace(/\b([A-Z])([A-Z]{1,})\b(?![-\d])/g, (m, a, b) => a + b.toLowerCase());
+export function aircraftName(p) { return typeName(p.type) ?? TYPES[p.type] ?? (p.desc ? cleanDesc(p.desc) : ''); }
 // Helicopters: ADS-B emitter category A7, or an ICAO type designator that is a helicopter (many helicopters don’t
 // broadcast a category). Covers the common civil, medical, police and military types.
 // QA 2026-11-19: B17 (the B-17 bomber, a Legendary card) was a helicopter; added the H500, H269, MD 500/600/900, AW149,

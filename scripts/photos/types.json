@@ -76,5 +76,18 @@
  "A124": "Antonov An-124",
  "BLCF": "Boeing 747 Dreamlifter",
  "A3ST": "Airbus Beluga",
- "CL2T": "Canadair CL-415"
+ "CL2T": "Canadair CL-415",
+ "PA31": "Piper Navajo",
+ "PA23": "Piper Aztec",
+ "GALX": "Gulfstream G200",
+ "T206": "Cessna 206",
+ "C310": "Cessna 310",
+ "C340": "Cessna 340A",
+ "C414": "Cessna 414",
+ "C421": "Cessna Golden Eagle",
+ "BE33": "Beechcraft Debonair",
+ "BE55": "Beechcraft Baron 55",
+ "AS55": "Airbus AS355 Ecureuil 2",
+ "A109": "AgustaWestland AW109",
+ "AT8T": "Air Tractor AT-802"
 }
