@@ -27,13 +27,11 @@ same ids on Play.
 | Plus Monthly | `sky_plus_monthly` | 6836892618 | $1.99 | level 2 |
 | Plus Forever | `sky_plus_forever` | 6836893373 | $29.99 | non-consumable |
 
-All three: all 175 countries, Apple's calculated prices elsewhere, English (Canada) name and description, status
+All three: Family Sharing on (Sevaan's yes, 2026-11-19; it can't be turned off), all 175 countries, Apple's calculated prices elsewhere, English (Canada) name and description, status
 Prepare for Submission. The descriptions are generic ("Card backs, alerts and more extras for collectors.") because
 Sky's Plus perks aren't decided; js/plus.js still lists Space Collector's.
 
 Not done on Apple:
-- **Family Sharing** is off on all three. Space Collector has it on; it can never be turned off again, so it waits for
-  Sevaan's yes.
 - The App Review screenshot on each product (the Plus sheet), and review notes.
 - The first subscription and first in-app purchase must be submitted together with an app version.
 
