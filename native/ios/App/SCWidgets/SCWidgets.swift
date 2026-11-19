@@ -34,6 +34,7 @@ struct Plan: Codable {
     let at: Double, place: String, plus: Bool, dusk: Double?, dawn: Double, eve: Double
     let chain: [Step], list: [Pass], run: [Pass], back: Double?, haul: Haul, bars: [Double], wx: Wx?, missions: Int
     let clock: String? // the app's Settings → Clock: "12", "24" or "auto" (2026-10-25: the widget used the phone's own)
+    var sky: Int? = nil
     var streak: Streak? = nil
     var dark: [[Double]]? = nil // Sky: [from, to] when the sky is dark over the next day (ms)
     func isDark(_ d: Date) -> Bool {
@@ -101,9 +102,12 @@ struct Provider: TimelineProvider {
             if let d = p.duskDate { dates.insert(d.addingTimeInterval(-45 * 60)); dates.insert(d) }
             dates.insert(p.dawnDate)
             for d in p.dark ?? [] { for x in d { dates.insert(Date(timeIntervalSince1970: x / 1000)) } }
+            if p.sky != nil, let next = p.chain.map(\.pass.startDate).first(where: { $0 > now }) { // Sky: whole minutes, so a step each time the count drops a minute, up to 3 h before the regular
+                for k in 1...180 { let u = next.addingTimeInterval(-60 * Double(k)); if u > now { dates.insert(u) } }
+            }
             var t = now; while t < p.dawnDate { t = t.addingTimeInterval(1800); dates.insert(t) }
         }
-        let list = dates.filter { $0 >= now.addingTimeInterval(-1) }.sorted().prefix(80)
+        let list = dates.filter { $0 >= now.addingTimeInterval(-1) }.sorted().prefix(240)
         let entries = list.map { Entry(date: $0, plan: plan) }
         completion(Timeline(entries: Array(entries), policy: .after((list.last ?? now).addingTimeInterval(1800))))
     }
@@ -163,6 +167,14 @@ func timeText(_ d: Date) -> Text {
     return Text(f.string(from: d))
 }
 
+// Sky (2026-11-19, Boss Maxx for the approved design): a regular's time is "usually 6:28 PM", so its countdown is in
+// whole minutes ("12 min", "1 h 05"), never a ticking m:ss that claims a precision the data doesn't have. The timeline
+// has an entry each minute before a regular is due, so it counts down without the app.
+func minutesText(to d: Date, from now: Date) -> String {
+    let m = max(0, Int((d.timeIntervalSince(now) / 60).rounded(.up)))
+    return m >= 60 ? "\(m / 60) h \(String(format: "%02d", m % 60))" : "\(m) min"
+}
+
 // The target circle with the card's picture in it; the ring empties over the last hour before the pass.
 struct RingArt: View {
     let pass: Pass?; var size: CGFloat = 62; var full = false; var until: Date? = nil
@@ -200,7 +212,7 @@ struct Stars: View {
 // MARK: - Small (free): the next catch
 
 struct NextCatch: View {
-    let m: Moment; var compact = false
+    let m: Moment; var compact = false; var now: Date = .now
     var body: some View {
         let ring: CGFloat = compact ? 54 : 62
         VStack(alignment: .leading, spacing: 0) {
@@ -221,7 +233,7 @@ struct NextCatch: View {
                     (Text("Usually ") + timeText(p.startDate) + Text(p.where.isEmpty ? "" : " · \(p.where)"))
                         .font(.label(12)).foregroundStyle(Color.muted).lineLimit(1).minimumScaleFactor(0.8)
                 } else {
-                    Text(timerInterval: Date.now...p.startDate, countsDown: true).font(.display(32)).foregroundStyle(Color.orange).monospacedDigit().lineLimit(1).minimumScaleFactor(0.7)
+                    Text(minutesText(to: p.startDate, from: now)).font(.display(32)).foregroundStyle(Color.orange).monospacedDigit().lineLimit(1).minimumScaleFactor(0.7)
                     (Text("Usually ") + timeText(p.startDate) + Text(p.where.isEmpty ? "" : " · \(p.where)"))
                         .font(.label(12)).foregroundStyle(Color.muted).lineLimit(1).minimumScaleFactor(0.8)
                 }
@@ -302,7 +314,7 @@ struct Medium: View {
         let main: Pass? = { switch m { case .next(let p), .upNow(let p): return p; default: return nil } }()
         let after = plan.list.filter { $0.endDate > now && $0.key != main?.key }.prefix(3) // what's next tonight, before or after the main pick (2026-10-22: rows only after the headliner left the list empty)
         HStack(spacing: 13) {
-            NextCatch(m: m, compact: true).frame(width: 140)
+            NextCatch(m: m, compact: true, now: now).frame(width: 140)
             Rectangle().fill(Color.line).frame(width: 1)
             VStack(alignment: .leading, spacing: 4) {
                 HStack { Lab(text: "Then", color: .orange); Spacer(); if plan.wx != nil { Lab(text: "☾ " + wxWord(plan), color: .cream, size: 11) } }
@@ -380,7 +392,7 @@ func shortName(_ p: Pass) -> String {
 }
 struct LockView: View {
     @Environment(\.widgetFamily) var family
-    let plan: Plan?; let m: Moment
+    let plan: Plan?; let m: Moment; var now: Date = .now
     var body: some View {
         if plan?.plus != true {
             switch family {
@@ -410,7 +422,7 @@ struct LockView: View {
         switch m {
         case .next(let p):
             ProgressView(timerInterval: p.startDate.addingTimeInterval(-3600)...p.startDate, countsDown: true) { EmptyView() } currentValueLabel: {
-                VStack(spacing: 0) { Text(shortName(p)).font(.system(size: 9, weight: .semibold)); Text(timerInterval: Date.now...p.startDate, countsDown: true).font(.system(size: 11, weight: .bold)).monospacedDigit().multilineTextAlignment(.center) }
+                VStack(spacing: 0) { Text(shortName(p)).font(.system(size: 9, weight: .semibold)); Text(minutesText(to: p.startDate, from: now)).font(.system(size: 11, weight: .bold)).monospacedDigit().multilineTextAlignment(.center).minimumScaleFactor(0.7) }
             }.progressViewStyle(.circular)
         case .upNow(let p):
             ZStack { AccessoryWidgetBackground(); VStack(spacing: 0) { Text(shortName(p)).font(.system(size: 9, weight: .semibold)); Text("UP").font(.system(size: 16, weight: .bold)) } }
@@ -469,12 +481,12 @@ struct SCWidgetView: View {
         Group {
             switch family {
             case .systemSmall:
-                if let p = entry.plan, !p.plus { PlusOnly(compact: true) } else { NextCatch(m: m) }
+                if let p = entry.plan, !p.plus { PlusOnly(compact: true) } else { NextCatch(m: m, now: entry.date) }
             case .systemMedium:
-                if let p = entry.plan, p.plus { Medium(plan: p, m: m, now: entry.date) } else if entry.plan == nil { NextCatch(m: m) } else { PlusOnly() }
+                if let p = entry.plan, p.plus { Medium(plan: p, m: m, now: entry.date) } else if entry.plan == nil { NextCatch(m: m, now: entry.date) } else { PlusOnly() }
             case .systemLarge:
-                if let p = entry.plan, p.plus { Large(plan: p, now: entry.date) } else if entry.plan == nil { NextCatch(m: m) } else { PlusOnly() }
-            default: LockView(plan: entry.plan, m: m)
+                if let p = entry.plan, p.plus { Large(plan: p, now: entry.date) } else if entry.plan == nil { NextCatch(m: m, now: entry.date) } else { PlusOnly() }
+            default: LockView(plan: entry.plan, m: m, now: entry.date)
             }
         }
         .padding(home ? 14 : 0)
