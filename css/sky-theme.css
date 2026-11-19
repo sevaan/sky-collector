@@ -724,15 +724,15 @@ html:not(.sky-night) body.sky-only #sky-missions .mc.sealed { box-shadow:0 0 0 2
 /* Explore's COLLECT: white on red, like every red button (css/app.css #discover .d-ticket #d-cta set a black label) */
 body.sky-only #discover:not(.owned) .d-ticket #d-cta { color:#fff !important; }
 /* Send cards, by day: navy tabs, a cream bar, red NEXT with a white label (css/gift.css was cream-on-navy) */
-html:not(.sky-night) body.sky-only .sv-tabs button { border-color:#c9d6e3; color:#4a6178; }
-html:not(.sky-night) body.sky-only .sv-tabs button[aria-selected="true"] { background:#0d2238; border-color:#0d2238; color:#fff; }
-html:not(.sky-night) body.sky-only :is(.sv-back, .sv-link, .sv-sa) { color:#b42a20; }
-html:not(.sky-night) body.sky-only .sv-selrow { color:#4a6178; }
-html:not(.sky-night) body.sky-only .sv-gap button { border-color:#c9d6e3; color:#4a6178; } html:not(.sky-night) body.sky-only .sv-gap button.o { background:#0d2238; border-color:#0d2238; color:#fff; }
-html:not(.sky-night) body.sky-only .sv-bar { background:linear-gradient(transparent, #eef5fb 22%); }
-html:not(.sky-night) body.sky-only .sv-bar .sv-n { background:#fffdf6; border-color:#d9b65a; color:#0d2238; box-shadow:0 6px 16px rgba(13,34,56,.12); }
-html:not(.sky-night) body.sky-only .sv-bar .sv-n small { color:#4a6178; }
-html:not(.sky-night) body.sky-only .sv-bar .sv-btn { background:linear-gradient(#e8493c, #c42d22); color:#fff; } html:not(.sky-night) body.sky-only .sv-bar .sv-btn:disabled { background:#d9a19b; color:#fffdf6; }
+:is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-tabs button { border-color:#c9d6e3; color:#4a6178; }
+:is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-tabs button[aria-selected="true"] { background:#0d2238; border-color:#0d2238; color:#fff; }
+:is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) :is(.sv-back, .sv-link, .sv-sa) { color:#b42a20; }
+:is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-selrow { color:#4a6178; }
+:is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-gap button { border-color:#c9d6e3; color:#4a6178; } :is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-gap button.o { background:#0d2238; border-color:#0d2238; color:#fff; }
+:is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-bar { background:linear-gradient(transparent, #eef5fb 22%); }
+:is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-bar .sv-n { background:#fffdf6; border-color:#d9b65a; color:#0d2238; box-shadow:0 6px 16px rgba(13,34,56,.12); }
+:is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-bar .sv-n small { color:#4a6178; }
+:is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-bar .sv-btn { background:linear-gradient(#e8493c, #c42d22); color:#fff; } :is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-bar .sv-btn:disabled { background:#d9a19b; color:#fffdf6; }
 /* The tour before a place is chosen: the page's light colour behind it, not Space's night navy; Skip as a light pill */
 html:not(.sky-night) body.sky-only.day { background-color:#eef5fb; }
 html:not(.sky-night) body.sky-only.day #ob-skip.ob-exit { background:#fffdf6e6 !important; color:#0d2238 !important; border-color:#c9d6e3 !important; }
@@ -762,3 +762,11 @@ html:not(.sky-night) body.sky-only #sky-today .tn-r { --text:#0d2238; --ink:#0d2
 html:not(.sky-night) body.sky-only #sky-today .tn-sec .k { color:#b42a20; } html:not(.sky-night) body.sky-only #sky-today .tn-sec > span:last-child { color:#4a6178; }
 html.sky-night body.sky-only #sky-today .tn-sec .k, body.sky-only.night #sky-today .tn-sec .k { color:#ff7f70; }
 html.sky-night body.sky-only #sky-today .tn-sec > span:last-child { color:#9fb3c8; }
+
+/* Send cards' pack page by day (it lives in the Collection frame, html.sky-cards): the manifest and the note in Sky's colours */
+html.sky-cards:not(.sky-night) .sv-manifest { background:#fffdf6; border:1px solid #d9b65a; color:#0d2238; box-shadow:0 8px 18px rgba(13,34,56,.12); }
+html.sky-cards:not(.sky-night) .sv-manifest :is(.hd, small, .more) { color:#4a6178; }
+html.sky-cards:not(.sky-night) .sv-manifest .lbl { color:#0d2238; }
+html.sky-cards:not(.sky-night) .sv-plain { color:#4a6178; }
+html.sky-cards:not(.sky-night) .sv-night .sv-box { border-color:#9fb3c6; }
+html.sky-cards:not(.sky-night) .sv-btn.o { background:linear-gradient(#e8493c, #c42d22); color:#fff; } /* Share N cards: white on red */
