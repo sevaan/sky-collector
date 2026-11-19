@@ -3,8 +3,8 @@
 // "Notification Sound 2" by deadrobotmusic (Freesound, CC0), softened. Files: assets/audio/sfx/<name>.mp3.
 // Decoded once into memory after the first tap, played through the shared context (js/audio-ctx.js) so they’re instant.
 // Off with Settings → Sounds and vibration (localStorage sound = '0').
-import { audioCtx, audioOut, audioLeaving, audioTrack } from './audio-ctx.js?v=0.1.1735';
-import { VERSION } from './version.js?v=0.1.1735';
+import { audioCtx, audioOut, audioLeaving, audioTrack } from './audio-ctx.js?v=0.1.1736';
+import { VERSION } from './version.js?v=0.1.1736';
 export const SFX = ['lock', 'collect', 'arrive', 'flip', 'r_common', 'r_uncommon', 'r_rare', 'r_epic', 'r_legend', 'shiny', 'seen', 'stamp', 'levelup', 'xp',
   'mission', 'rankup', 'patch', 'coinroll', 'complete', 'secret', 'fossil', 'ufo', 'welcome', 'swipe', 'step', 'toggle', 'toast', 'page', 'rattle', 'plane', 'tear'];
 const BASE = new URL('../assets/audio/sfx/', import.meta.url).href;
@@ -34,10 +34,11 @@ function loadOne(ctx, n) {
    them, so a first touch there no longer fetches and decodes all 31 (on a cold iPhone that could read as a freeze). */
 let only = null;
 export function sfxOnly(names) { only = names ? new Set(names) : null; }
-export function loadSfx(first = []) {
-  { const h = host(); if (h) return h.loadSfx(first); }
+export function loadSfx(first = [], { rest = true } = {}) {
+  { const h = host(); if (h) return h.loadSfx(first, { rest }); }
   const ctx = audioCtx(); if (!ctx) return loading;
   for (const n of first) if (SFX.includes(n)) loadOne(ctx, n);
+  if (!rest) return null; /* only these now (a new player's pack sounds under the loader); the rest later, in idle time */
   if (only) return Promise.all([...only].filter((n) => SFX.includes(n)).map((n) => loadOne(ctx, n)));
   if (loading) return loading;
   const need = SFX.filter((n) => !bufs.has(n)); if (!need.length || performance.now() - failedAt < 10000) return null; /* only what's missing, and not again within 10 s of a failed round (a missing file refetched all 30 on every play) */

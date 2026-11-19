@@ -125,7 +125,7 @@ body.night #plane { --plane:#ff3b2b; }
 .tc { position:absolute; left:50%; top:0; width:min(360px, calc(var(--vws) - 28px)); height:150%; margin-left:calc(min(360px, calc(var(--vws) - 28px)) / -2); border-radius:22px; background:var(--bg); border:4px solid #adbcc8; box-shadow:inset 0 0 0 5px var(--bg), inset 0 0 0 6px #bcb58566, 0 -14px 50px #000b; overflow:hidden; pointer-events:auto; touch-action:none;
   transform:translate(var(--x, 0px), var(--y, 0px)) rotate(var(--r, 0deg)); transition:transform .5s cubic-bezier(.2,.9,.3,1), opacity .4s, filter .5s ease; }
 .tc.under { --y:26px; --r:-2.5deg; filter:brightness(.6); } .tc.under2 { --y:46px; --r:3deg; filter:brightness(.45); }
-.tc.gone { opacity:0; transition:transform .45s cubic-bezier(.5,0,.8,.4), opacity .45s; }
+.tc.gone { opacity:0; pointer-events:none; transition:transform .45s cubic-bezier(.5,0,.8,.4), opacity .45s; }
 .tc .in { position:relative; z-index:2; height:66.6%; display:flex; flex-direction:column; padding:16px 20px 18px; }
 .tc .bar { display:flex; justify-content:space-between; align-items:center; padding-bottom:8px; border-bottom:1px solid #bcb58588; font:500 12px/1.2 var(--label); letter-spacing:.18em; text-transform:uppercase; }
 .tc .bar .tier { color:var(--gold); }
@@ -3737,3 +3737,16 @@ body.night .n2-av { filter: grayscale(1) sepia(1) saturate(4) hue-rotate(320deg)
 .tell-card.earned .tell-copy { justify-content: center; text-align: center; }
 @media (prefers-reduced-motion: reduce) { .tell-card .sv-pk, .tell-card .sv-pk-art, .tell-card .sv-pk-sheen { animation: none !important; } }
 body.night .tell-text { color: #e8a59a; } body.night .tell-patch { filter: none; }
+/* Short phones (Space Collector 1b496281): the notifications card's "Not now" ended below a 360x640 and 375x667 screen,
+   and the first-catch card's Skip below 360x640. A taller deck and tighter spacing keep every card's buttons on screen. */
+@media (max-height: 700px) {
+  .ob-deck { height: min(68%, 470px); }
+  .tc .in { padding: 12px 18px 12px; }
+  .tc h3 { margin: 9px 0 3px; }
+  .tc .sub { padding-bottom: 8px; }
+  .tc .art { margin: 8px 0; min-height: 44px; }
+  .tc p { margin: 0 0 8px; font-size: 13.5px; line-height: 1.38; }
+  .tc .acts:not(.pick) { min-height: 0; }
+  .tc .acts:not(.pick) .no { margin-top: 2px; min-height: 40px; }
+}
+@media (max-height: 600px) { .ob-deck { height: min(72%, 470px); } }

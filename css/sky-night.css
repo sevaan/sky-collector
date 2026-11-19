@@ -20,3 +20,6 @@ html.sky-night .td2-map { background:radial-gradient(circle at 50% 48%, #1a2c46 
 html.sky-night .td2-map :is(text, .td2-cap) { fill:#e6eef7; color:#e6eef7; }
 /* Tell a friend's line (Sky's day ink was navy on the dark sheet) */
 html.sky-night body.sky-only .tell-text { color:#c9d9e6; }
+/* The tour's cards are cream printed cards at night too: their ink stays the day's navy (2026-11-19: the night ink made
+   "Catch a plane" and its top line pale on cream) */
+html.sky-night body.sky-only .tc { --sc-ink:#0d2238; --sc-muted:#4a6178; --sc-rule:#c9b98a; --sc-paper:#fffdf6; --sc-orange-ink:#b42a20; --text:#0d2238; --muted:#4a6178; }
