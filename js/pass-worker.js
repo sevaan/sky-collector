@@ -1,9 +1,5 @@
 // Keep the existing orbital search off the rendering thread.
-<<<<<<< HEAD
-import { nextVisiblePass, setBinocularMode, setSkyLimit, withSatrecs } from './orbit.js?v=0.1.1779';
-=======
-import { nextVisiblePass, setBinocularMode, setSkyLimit, withSatrecs } from './orbit.js?v=0.1.1779';
->>>>>>> main
+import { nextVisiblePass, setBinocularMode, setSkyLimit, withSatrecs } from './orbit.js?v=0.1.1780';
 let objects = [];
 self.onmessage = ({ data }) => {
   if (data.objects) objects = withSatrecs(data.objects);

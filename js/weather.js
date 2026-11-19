@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import { SERVER } from './server.js?v=0.1.1779';
-=======
-import { SERVER } from './server.js?v=0.1.1779';
->>>>>>> main
+import { SERVER } from './server.js?v=0.1.1780';
 // Local weather from Open-Meteo (free, no key, CORS-open): what the sky is doing now, and whether tonight is
 // worth it. No DOM. Cached half an hour per place. Everything here is best-effort: no weather, no change.
 //
