@@ -1757,6 +1757,9 @@ body:has(.overlay.panel:not([hidden])) #toasts { top: calc(var(--safe-top) + 76p
 /* Never over a page like Now or Settings (2026-10-18, Sevaan): notices from the sky wait (hidden, clock stopped) until it
    closes; only one made while the page is open (a reminder set from it, data-panel) shows. */
 body:has(.overlay.panel:not([hidden])) #toasts .ticket:not([data-panel]) { display: none !important; }
+/* the day pack's ticket waits for the sky even if it was made while a page was open (QA 2026-11-19: it sat over the top of
+   Today, All around you and Settings) */
+body:has(.overlay.panel:not([hidden])) #toasts .ticket[data-id="nightpack"] { display: none !important; }
 body:is(.patch-run, .patch-waiting, :has(.patch-coins)) .radar-tip { visibility: hidden !important; }
 /* The Headliner chip on small phones (2026-10-18 playtest: "LANDSAT 1 (ER… · 8:17 …" on an SE): the time is never cut;
    the name gives way, with a little less letter-spacing below 400px. */

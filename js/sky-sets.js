@@ -5,7 +5,7 @@
 // Not built: "Freighters" as a plane set (a type code doesn't say cargo: a B77L is both the 777 freighter and the
 // 777-200LR), so cargo is a flight set only; and "Next door" has no border data, so it is any international flight
 // under 1,500 km.
-import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1736';
+import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1737';
 
 // Order matters: the first match is the card's set.
 export const PLANE_SETS = [
@@ -21,7 +21,7 @@ export const PLANE_SETS = [
   { id: 'regional', name: 'Regional Jets', color: '#1f7a50', goals: [2, 4, 7], test: (t) => /^(E170|E75[LS]|E190|E195|E29[05]|E135|E145|E45X|CRJ[1279X]|BCS[13]|F100|F70|RJ[0-9]|B46[1-3]|SU95)/.test(t) },
   { id: 'props', name: 'Propeller Airliners', color: '#8a6a2a', goals: [1, 2, 4], test: (t) => /^(DH8[A-D]|AT4[3-6]|AT7[2-6]|DHC6|DHC7|SF34|SB20|B190|E120|JS[34][12]|D228|D328|SW4|C208|BE99|L410|AN2[46])/.test(t) },
   { id: 'bizjets', name: 'Business Jets', color: '#4a4f66', goals: [2, 5, 10], test: (t) => /^(C25[0-9ABCM]|C5[0-9]{2}|C56X|C68[0A]|C700|C750|CL3[05]|CL60|GL[567E][TX]|GLF[2-6]|GA[5-8]C|G[12]50|G280|E5[05]P|E545|E550|F2TH|F900|FA[5-8]X|FA[0-9]{2}|LJ[2-7][0-9]|H25[A-C]|HDJT|PC24|PRM1|BE40|ASTR|GALX|HA4T|E35L|SF50|EA50)/.test(t) },
-  { id: 'light', name: 'Light Aircraft', color: '#b08a1e', goals: [2, 4, 8], test: (t) => /^(UNKNOWN-A1|UNKNOWN-B[14]|C1[2-9][0-9]|C2[01][0-9]|C[0-9]{2}[RT]|P28[A-U]|PA[1-4][0-9]|P32[RT]?|P46T?|SR2[02]T?|DA[2-6][0-9]|DV20|BE[1-3][0-9]|BE[5-9][0-9]|BE9[LT]|BE20|B350|PC12|TBM[7-9]|M20[A-Z]|RV[0-9]+|TWEN|AA5|GLAS|COL[34]|EVOT|SIRA|ULAC|GLID)/.test(t) },
+  { id: 'light', name: 'Light Aircraft', color: '#b08a1e', goals: [2, 4, 8], test: (t) => /^(UNKNOWN-A1|UNKNOWN-B[14]|C1[2-9][0-9]|C2[01][0-9]|C[0-9]{2}[RT]|P28[A-U]|PA[1-4][0-9]|P32[RT]?|P46T?|SR2[02]T?|S22T|DHC[23]|DA[2-6][0-9]|DV20|BE[1-3][0-9]|BE[5-9][0-9]|BE9[LT]|BE20|B350|PC12|TBM[7-9]|M20[A-Z]|RV[0-9]+|TWEN|AA5|GLAS|COL[34]|EVOT|SIRA|ULAC|GLID)/.test(t) },
   { id: 'others', name: 'Everything Else', color: '#6b7785', goals: [3, 8, 20], test: () => true },
 ];
 // km: route length (null when unknown); from/to: airports with a country code (cc); a3: the airline's ICAO prefix.
@@ -30,12 +30,17 @@ export const FLIGHT_SETS = [
   { id: 'longway', name: 'The Long Way', color: '#7a3fc4', goals: [1, 2, 5], test: (km) => km != null && km >= 10000 },
   { id: 'crossings', name: 'Ocean Crossings', color: '#1f5fbf', goals: [1, 4, 10], test: (km, from, to) => km != null && km >= 5000 && from?.cc !== to?.cc },
   { id: 'hops', name: 'Short Hops', color: '#1f7a50', goals: [3, 8, 20], test: (km) => km != null && km < 500 },
-  { id: 'home', name: 'Home Skies', color: '#c0562e', goals: [3, 10, 25], test: (km, from, to) => !!from?.cc && from.cc === to?.cc },
+  /* the player's own country (DESIGN-LOOP §2; QA 2026-11-19: Boston to San Francisco caught in Toronto said Home Skies).
+     home: the country code where it was caught (setHomeCountry); unknown, any domestic flight as before */
+  { id: 'home', name: 'Home Skies', color: '#c0562e', goals: [3, 10, 25], test: (km, from, to, a3, home) => !!from?.cc && from.cc === to?.cc && (!home || from.cc === home) },
   { id: 'nextdoor', name: 'Next Door', color: '#2a8a9a', goals: [2, 6, 15], test: (km, from, to) => km != null && km < 1500 && !!from?.cc && !!to?.cc && from.cc !== to.cc },
   { id: 'world', name: 'Around the World', color: '#3f58a8', goals: [3, 8, 20], test: () => true },
 ];
 export const planeSet = (type, heli = false) => PLANE_SETS.find((s) => s.test(String(type || '').toUpperCase(), !!heli));
-export const flightSet = (km, from, to, a3) => FLIGHT_SETS.find((s) => s.test(km, from, to, a3));
+let HOME = '';
+export const setHomeCountry = (cc) => { HOME = /^[A-Z]{2}$/.test(cc ?? '') ? cc : ''; };
+export const homeCountry = () => HOME;
+export const flightSet = (km, from, to, a3, home = HOME) => FLIGHT_SETS.find((s) => s.test(km, from, to, a3, home));
 export const SKY_SETS = [...FLIGHT_SETS, ...PLANE_SETS];
 export const SKY_SET_BY_ID = Object.fromEntries(SKY_SETS.map((s) => [s.id, s]));
 // A set's level from how many of its cards you own: 0 none, 1 bronze, 2 silver, 3 gold.

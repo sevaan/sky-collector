@@ -5,14 +5,15 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { planeKey } from './flights.js?v=0.1.1736';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1736';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1736';
-import { airlineIcon } from './airline-icons.js?v=0.1.1736';
-import { catches } from './sky-catch.js?v=0.1.1736';
-import { noteLocal } from './sky-local.js?v=0.1.1736';
-import { planeSet } from './sky-sets.js?v=0.1.1736';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1736';
+import { isProp } from './sky-props.js?v=0.1.1737';
+import { planeKey } from './flights.js?v=0.1.1737';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1737';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1737';
+import { airlineIcon } from './airline-icons.js?v=0.1.1737';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1737';
+import { noteLocal, rareHere } from './sky-local.js?v=0.1.1737';
+import { planeSet } from './sky-sets.js?v=0.1.1737';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1737';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -48,9 +49,13 @@ function worth(a, route, owned) {
   const name = full ? `To ${full.to.city}` : route?.airline ? `${route.airline} ${(p.callsign || '').replace(/^[A-Z]{3}/, '')}` : aircraftName(p) || (isHelicopter(p) ? 'Helicopter' : 'Aircraft');
   const type = aircraftName(p) || null;
   const sub = [full ? `${route.airline || a3} · from ${full.from.city}` : null, type && type !== name ? type : null].filter(Boolean).join(' · ');
-  const tag = newFlight ? 'NEW FLIGHT' : newPlane ? 'NEW PLANE' : fkey ? 'IN YOUR COLLECTION' : 'SEEN BEFORE';
-  const score = (newFlight ? 100 : 0) + (newPlane ? 60 : 0) + (isHelicopter(p) ? 25 : 0) + (full ? 10 : 0) + a.el / 10;
-  return { name, sub, tag, score, isNew: newFlight || newPlane, glyph: isHelicopter(p) ? 'heli' : 'jet' };
+  /* what Collect would give now (js/sky-catch.js previewFor): a plane caught today gives nothing and goes to the bottom, a
+     stamp (a new day on a flight, a new aircraft on a plane card) sits between those and a new card (QA 2026-11-19: Today's
+     top pick was a plane already caught today) */
+  let gain = 'new'; try { const k = previewFor(a, route).out?.kind; gain = k === 'none' ? 'none' : k === 'stamp' ? 'stamp' : (newFlight || newPlane) ? 'new' : 'stamp'; } catch {}
+  const tag = gain === 'none' ? 'CAUGHT TODAY' : newFlight ? 'NEW FLIGHT' : newPlane ? 'NEW PLANE' : gain === 'stamp' ? 'NEW STAMP' : fkey ? 'IN YOUR COLLECTION' : 'SEEN BEFORE';
+  const score = gain === 'none' ? a.el / 100 - 1000 : (newFlight ? 100 : 0) + (newPlane ? 60 : 0) + (gain === 'stamp' && !newFlight && !newPlane ? 30 : 0) + (isHelicopter(p) ? 25 : 0) + (full ? 10 : 0) + a.el / 10;
+  return { name, sub, tag, score, gain, isNew: newFlight || newPlane, glyph: isHelicopter(p) ? 'heli' : 'jet' };
 }
 
 // ---------- Coming over next: straight-line projection from position, speed and track ----------
@@ -120,7 +125,7 @@ export function aroundPlanes(positions, planes, obs, route) {
 // open(hex, rect), tierOf(plane) -> {id, label, color} | null, missions() -> [{ id, text, done, by }],
 // cardPhoto(cardKey) -> { url, tail } | null, facing() -> degrees | null, hint({az, el}) -> words, visible() -> bool.
 const WIDE_T = /^(A3[3-9]|A35|A38|B74|B76|B77|B78|IL96|A30)/;
-const PROP_T = /^(DH8|AT[4-7]|C208|PC12|SF34|B190|DHC|JS4|D228|SW4|C130|E120|BE[0-9]|C1[5-9]|C2[0-9]|PA[0-9])/;
+const PROP_T = { test: isProp }; /* js/sky-props.js: whole type codes (QA 2026-11-19: the old pattern counted Citation jets, the C-17 and the Beechjet) */
 const altFt = (p) => (p.hKm ?? 0) * 3280.84;
 const mins = (s) => Math.max(1, Math.round(s / 60));
 const kmOf = (full) => { try { return full?.from?.lat != null && full?.to?.lat != null ? hav(full.from.lat, full.from.lon, full.to.lat, full.to.lon) : null; } catch { return null; } };
@@ -151,6 +156,9 @@ function noteTally(up, route) {
 }
 
 // ---------- missions: the plane that would finish each one ----------
+const rareHereT = (t) => { try { return rareHere(t); } catch { return false; } };
+/* the plane families caught today (a plane card's set), for "planes from two families" */
+const famsToday = () => { const d = dayKey(), f = new Set(); for (const c of catches()) if (dayKey(c.time) === d) { const id = c.cardSnapshot?.setId ?? c.cardSnapshot?.set; if (id && c.cardSnapshot?.sky === 'plane') f.add(id); } return f; };
 function finisherFor(m, cands, route) {
   const test = {
     wide: (c) => WIDE_T.test(c.p.type ?? ''), heli: (c) => isHelicopter(c.p), prop: (c) => PROP_T.test(c.p.type ?? ''),
@@ -158,7 +166,7 @@ function finisherFor(m, cands, route) {
     abroad: (c) => c.full?.from?.cc && c.full?.to?.cc && c.full.from.cc !== c.full.to.cc,
     airlines3: (c) => !!c.r?.airline, high: (c) => altFt(c.p) >= 35000, low: (c) => altFt(c.p) > 0 && altFt(c.p) < 5000,
     bands: (c) => altFt(c.p) >= 35000 || (altFt(c.p) > 0 && altFt(c.p) < 5000), rarenew: (c) => c.isNew && ['rare', 'epic', 'legendary'].includes(c.tier?.id),
-    rarehere: (c) => c.isNew, families2: (c) => c.isNew, newflights2: (c) => c.isNew, again: (c) => !c.isNew,
+    rarehere: (c) => c.w?.gain !== 'none' && rareHereT(c.p.type), families2: (c) => c.w?.gain !== 'none' && !famsToday().has(planeSet(c.p.type, isHelicopter(c.p)).id), newflights2: (c) => c.isNew, again: (c) => !c.isNew && c.w?.gain !== 'none', /* QA 2026-11-19: 'rare here' and 'two families' took any new plane, 'again' a plane caught today */
     firstcard: () => true, firstflight: (c) => !!c.full, types2: () => true,
   }[m.id];
   return test ? cands.find((c) => { try { return test(c); } catch { return false; } }) ?? null : null;
@@ -265,7 +273,7 @@ export function renderToday(el, ctx) {
   const missions = ms.length ? `<p class="td-h">TODAY'S MISSIONS <span>${nDone} OF ${ms.length}</span></p><div class="td2-mcs${dealt ? ' on' : ''}" data-deal>${ms.map(mcard).join('')}</div>` : '';
 
   // 4 · coming over next
-  const tl = nexts.length ? `<p class="td-h">COMING OVER NEXT <span>NEXT 15 MIN</span></p><div class="td2-tl"><div class="td2-axis"><span>NOW</span><span>15 MIN</span></div>${nexts.slice(0, 5).map((c, i, arr) => `<button type="button" class="td2-tp${tlUp(arr, i) ? ' up' : ''}" data-show="${esc(c.p.hex)}" data-az="${c.n.az.toFixed(1)}" data-el="15" data-at="${t + c.n.inS * 1000}" data-name="${esc(c.name)}" style="left:${(4 + Math.min(1, c.n.inS / 900) * 88).toFixed(1)}%">${tailImg(tailOf(c.p)) || `<span class="td2-tdot" style="${bg(picOf(c.p))}"></span>`}<small>${esc(c.name.replace(/^To /, ''))} · ${mins(c.n.inS)}</small></button>`).join('')}</div>` : `<p class="td-h">COMING OVER NEXT <span></span></p><p class="td-empty td2-card">Nothing heading your way in the next 15 minutes that we can see yet.</p>`;
+  const tl = nexts.length ? `<p class="td-h">COMING OVER NEXT <span>NEXT 15 MIN</span></p><div class="td2-tl"><div class="td2-axis"><span>NOW</span><span>15 MIN</span></div>${nexts.slice(0, 5).map((c, i, arr) => `<button type="button" class="td2-tp${tlUp(arr, i) ? ' up' : ''}" data-show="${esc(c.p.hex)}" data-az="${c.n.az.toFixed(1)}" data-el="15" data-at="${t + c.n.inS * 1000}" data-name="${esc(c.name)}" style="left:${(4 + Math.min(1, c.n.inS / 900) * 88).toFixed(1)}%">${tailImg(tailOf(c.p)) || `<span class="td2-tdot" style="${bg(picOf(c.p))}"></span>`}<small>${esc(c.name.replace(/^To /, ''))} · ${mins(c.n.inS)}</small></button>`).join('')}</div>` : `<p class="td-h">COMING OVER NEXT <span></span></p><p class="td-empty td2-card">${ctx.planes?.status === 'failing' ? 'Waiting for the plane feed to answer.' /* not a quiet sky (QA 2026-11-19) */ : 'Nothing heading your way in the next 15 minutes that we can see yet.'}</p>`;
 
   // 5 · over you now: the departures board
   const status = (c) => (c.left != null && c.left < 240 ? ['LEAVING SOON', 'soon'] : obs && justUp(c.p, obs, t) ? ['JUST ARRIVED', 'go'] : ['OVERHEAD', '']);

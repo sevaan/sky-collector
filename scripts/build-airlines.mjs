@@ -22,13 +22,15 @@ function parseCsv(txt) {
   return rows;
 }
 
+/* the source has some names HTML-escaped ("D &amp; D Aviation") and some UTF-8 read as Latin-1 ("Hydro-QuÃ©bec"); QA 2026-11-19 */
+const fixText = (s) => { let t = s.replace(/&amp;/g, '&').replace(/&#39;|&apos;/g, "'").replace(/&quot;/g, '"'); if (/Ã|Â/.test(t)) { const u = Buffer.from(t, 'latin1').toString('utf8'); if (!u.includes('\uFFFD')) t = u; } return t; };
 const arg = process.argv[2];
 const csv = (arg ? readFileSync(arg, 'utf8') : await (await fetch(URL_CSV)).text()).replace(/^﻿/, '');
 const [head, ...rows] = parseCsv(csv).filter((r) => r.length > 1);
 const iName = head.indexOf('Name'), iIcao = head.indexOf('ICAO');
 const out = {};
 for (const r of rows) {
-  const icao = (r[iIcao] ?? '').trim().toUpperCase(), name = (r[iName] ?? '').trim().replace(/\s+/g, ' ');
+  const icao = (r[iIcao] ?? '').trim().toUpperCase(), name = fixText((r[iName] ?? '').trim().replace(/\s+/g, ' '));
   if (/^[A-Z]{3}$/.test(icao) && name && !out[icao]) out[icao] = name;
 }
 const planes = readFileSync(new URL('js/planes.js', root), 'utf8');
