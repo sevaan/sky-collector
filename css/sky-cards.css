@@ -217,7 +217,7 @@ body.sky-only #visible > :not(.panel-head):not(#sky-today) { display:none !impor
 body.sky-only #visible { background:#eef5fb; color:var(--sc-ink); }
 body.sky-only #visible .panel-head h2, body.sky-only #visible .panel-head .x-close { color:var(--sc-ink); }
 body.sky-only #visible-sub { color:var(--sc-muted); }
-#sky-today { padding:0 16px calc(var(--nav-h, 112px) + 30px); max-width:620px; margin:0 auto; }
+#sky-today { padding:0 0 calc(var(--nav-h, 112px) + 30px); /* no side padding: the panel already has 20px, as Space's Today (2026-11-19: it was 16px more, inset from the header rule) */ max-width:620px; margin:0 auto; }
 .td-lead { margin:0 0 12px; font-size:15px; line-height:1.35; color:#1b3047; }
 .td-h { display:flex; justify-content:space-between; margin:18px 4px 6px; font:600 13px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.2em; color:var(--sc-orange-ink); }
 .td-h span { color:var(--sc-muted); letter-spacing:.12em; }

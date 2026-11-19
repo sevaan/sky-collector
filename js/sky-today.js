@@ -5,16 +5,16 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { isProp } from './sky-props.js?v=0.1.1758';
-import { planeKey } from './flights.js?v=0.1.1758';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1758';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1758';
-import { airlineIcon } from './airline-icons.js?v=0.1.1758';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1758';
-import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1758';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1758';
-import { planeSet } from './sky-sets.js?v=0.1.1758';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1758';
+import { isProp } from './sky-props.js?v=0.1.1759';
+import { planeKey } from './flights.js?v=0.1.1759';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1759';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1759';
+import { airlineIcon } from './airline-icons.js?v=0.1.1759';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1759';
+import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1759';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1759';
+import { planeSet } from './sky-sets.js?v=0.1.1759';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1759';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -270,18 +270,23 @@ export function renderToday(el, ctx) {
   // 3 · mission cards
   const ms = (() => { try { return ctx.missions?.() ?? []; } catch { return []; } })();
   const pool = [...ups, ...nexts];
-  let dealt = true; try { dealt = localStorage.getItem(DEAL) === dayKey(); } catch {}
-  const mcard = (m) => {
-    if (m.done) { const cp = m.by?.cardKey ? ctx.cardPhoto?.(m.by.cardKey) : null;
-      return `<div class="td2-mc done"><div class="td2-flip"><div class="td2-bk"><div class="td2-in"></div></div><div class="td2-face"><div class="td2-in"><div class="td2-pic" style="${cp ? `background-image:url('${esc(cp.url)}')` : ''}">${tailImg(cp?.tail)}</div><div class="td2-w"><b>${esc(m.text)}</b><small class="ok">Done</small></div></div></div></div></div>`; }
-    const f = finisherFor(m, pool, ctx.route), p = f?.p, ph = p ? picOf(p) : null;
-    const where = f ? (f.n ? `In ${mins(f.n.inS)} min · ${dirWord(f.n.az)}` : `Up now · ${dirWord(f.a.az)}`) : 'Watch for one';
-    const who = f ? (f.w?.name ?? f.name) : '';
-    const go = f ? ` data-show="${esc(p.hex)}"${f.n ? ` data-az="${f.n.az.toFixed(1)}" data-el="15" data-at="${t + f.n.inS * 1000}" data-name="${esc(f.name)}"` : ''}` : '';
-    return `<button type="button" class="td2-mc"${go}><div class="td2-flip"><div class="td2-bk"><div class="td2-in"></div></div><div class="td2-face"><div class="td2-in"><div class="td2-pic" style="${bg(ph || picOf({ type: m.id === 'wide' ? 'B789' : m.id === 'heli' ? 'EC35' : m.id === 'prop' ? 'AT76' : 'A320', callsign: '' }))}">${tailImg(p ? tailOf(p) : null)}</div><div class="td2-w"><b>${esc(m.text)}</b>${who ? `<i>${esc(who)}</i>` : ''}<small>${esc(where)}</small></div></div></div></div></button>`;
-  };
+  /* Space Collector's mission cards (2026-11-19, Sevaan: "They should look like real cards in space collector and let me
+     tap and shuffle them like space collector"): this works out each card's words and picture; js/main.js skyMissionCards
+     draws them with Space's deck (main.js mcTap: tap to turn one over, all face down and they shuffle; dealt face down
+     the first time each day). Each card its own picture: the plane that would finish it, else one that fits the mission,
+     never the same photo twice. */
+  const FIT = { firstcard: 'B738', firstflight: 'B789', types2: 'AT76', high: 'A359', low: 'C172', bands: 'DH8D', rarenew: 'A388', rarehere: 'B748', families2: 'E190', newflights2: 'A21N', again: 'A320', airlines3: 'B38M', revisit3: 'CRJ9', pair10: 'A321', levelup: 'B77W' };
+  const SPARE = ['B789', 'A359', 'AT76', 'E190', 'B38M', 'A21N', 'DH8D', 'B77W', 'CRJ9', 'A320', 'B738', 'A388'];
+  const used = new Set(), smOf = (ph) => (ph ? (ph.sm ?? String(ph.url).replace(/\/([^/]+)$/, '/sm/$1')) : null), take = (u) => (u && !used.has(u) ? (used.add(u), u) : null);
+  const mcItems = ms.map((m) => {
+    if (m.done) { const cp = m.by?.cardKey ? ctx.cardPhoto?.(m.by.cardKey) : null; return { id: m.id, text: m.text, done: true, sub: 'Done', art: take(cp?.url) }; }
+    const f = finisherFor(m, pool, ctx.route), p = f?.p;
+    const sub = f ? `${f.w?.name ?? f.name} · ${f.n ? `in ${mins(f.n.inS)} min` : 'up now'}` : 'Watch for one';
+    return { id: m.id, text: m.text, done: false, sub, art: p ? take(smOf(picOf(p))) : null };
+  });
+  for (const it of mcItems) if (!it.art) for (const ty of [FIT[it.id], ...SPARE].filter(Boolean)) { const u = take(smOf(photoFor(ty))); if (u) { it.art = u; break; } }
   const nDone = ms.filter((m) => m.done).length;
-  const missions = ms.length ? `<p class="td-h">TODAY'S MISSIONS <span>${nDone} OF ${ms.length}</span></p><div class="td2-mcs${dealt ? ' on' : ''}" data-deal>${ms.map(mcard).join('')}</div>` : '';
+  const missions = ms.length ? `<p class="td-h">TODAY'S MISSIONS <span>${nDone} OF ${ms.length}</span></p><div id="sky-missions"></div>` : '';
 
   // 4 · coming over next
   const tl = nexts.length ? `<p class="td-h">COMING OVER NEXT <span>NEXT 15 MIN</span></p><div class="td2-tl"><div class="td2-axis"><span>NOW</span><span>15 MIN</span></div>${nexts.slice(0, 5).map((c, i, arr) => `<button type="button" class="td2-tp${tlUp(arr, i) ? ' up' : ''}" data-show="${esc(c.p.hex)}" data-az="${c.n.az.toFixed(1)}" data-el="15" data-at="${t + c.n.inS * 1000}" data-name="${esc(c.name)}" style="left:${(4 + Math.min(1, c.n.inS / 900) * 88).toFixed(1)}%">${tailImg(tailOf(c.p)) || `<span class="td2-tdot" style="${bg(picOf(c.p))}"></span>`}<small>${esc(c.name.replace(/^To /, ''))} · ${mins(c.n.inS)}</small></button>`).join('')}</div>` : `<p class="td-h">COMING OVER NEXT <span></span></p><p class="td-empty td2-card">${ctx.planes?.status === 'failing' ? 'Waiting for the plane feed to answer.' /* not a quiet sky (QA 2026-11-19) */ : 'Nothing heading your way in the next 15 minutes that we can see yet.'}</p>`;
@@ -317,6 +322,7 @@ export function renderToday(el, ctx) {
       const name = full ? `${rt.airline || a3} ${r.callsign.replace(/^[A-Z]{3}/, '')} to ${full.to.city}` : `${rt?.airline || a3} ${r.callsign.replace(/^[A-Z]{3}/, '')}`;
       return `<div class="td2-reg"><b>${esc(name)}</b><span>Usually ${esc(clockText(r.minute))} · seen ${r.days} of the last ${r.of} days · ${mins <= 2 ? 'due now' : mins < 60 ? `in ${mins} min` : `at ${esc(clockText(r.minute))}`}${mine ? ' · <em>in your collection</em>' : ''}</span></div>`; }).join('')}</div>`; } catch {}
   el.innerHTML = live + alert + missions + regs + tl + board + map + story;
+  { const box = el.querySelector('#sky-missions'); if (box) try { ctx.missionCards?.(box, mcItems); } catch {} }
 
   // the board: on the first view after Today opens every row spins in; on later refreshes only rows new to the board.
   // Today redraws every 10 s, so until the first spin has played the watcher moves to each new board.
@@ -328,10 +334,7 @@ export function renderToday(el, ctx) {
       boardIo?.disconnect(); boardIo = null; boardSpun = true; flapIn([...fids.querySelectorAll('.td2-flap')]); } }, { threshold: [0, .05, .1, .2, .3, .4, .5] }); boardIo.observe(fids); }
     else { const fresh = rows.filter((x) => !boardShown.has(x.dataset.hex)); if (fresh.length) flapIn(fresh); }
     rows.forEach((x) => boardShown.add(x.dataset.hex)); }
-  // the deal: face down until the cards are well on screen, then turned over one by one (once a day)
-  const deal = el.querySelector('[data-deal]');
-  dealIo?.disconnect(); dealIo = null; /* one watcher, not one more every 10 s refresh */
-  if (deal && !deal.classList.contains('on')) { const io = dealIo = new IntersectionObserver((es) => { for (const e of es) if (e.isIntersecting && e.intersectionRect.height >= e.boundingClientRect.height * .6) { deal.classList.add('on'); try { localStorage.setItem(DEAL, dayKey()); } catch {} io.disconnect(); } }, { threshold: [0, .6, 1] }); io.observe(deal); }
+  dealIo?.disconnect(); dealIo = null; /* the old tiles' deal; the mission cards are dealt by main.js now (Space's mcFlipWhenSeen) */
   // taps: Show me, a row's card, the board's All
   el.onclick = (e) => {
     const more = e.target.closest('[data-more]'); if (more) { expanded = !expanded; renderToday(el, ctx); return; }

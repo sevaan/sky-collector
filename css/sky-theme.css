@@ -705,3 +705,18 @@ body.sky-only .ht-upnow .td2-ph { height:120px; } body.sky-only .ht-upnow h3 { c
 body.sky-only .ht-upnow .td2-btn { margin-top:10px; }
 /* the How to play button's label white (2026-11-19, Sevaan) */
 body.sky-only #ht-next, body.sky-only #ht-next * { color:#fff !important; }
+/* Today's mission cards (Space Collector's .mc deck, js/main.js skyMissionCards) dressed as Sky's cards (2026-11-19, Sevaan:
+   "look like real cards"): a cream face in a gold frame, the photo in a thin keyline, navy title, red MISSION line, the
+   COMPLETE stamp on the photo (never over the title). Dark night mode keeps Space's own. */
+html:not(.sky-night) body.sky-only #sky-missions .mc { background:linear-gradient(#fffdf6, #f7f0dd); color:#0d2238;
+  box-shadow:0 0 0 2px #d9b65a, inset 0 0 0 3px #fffdf6, inset 0 0 0 4px #d9b65a88, 0 8px 18px rgba(13,34,56,.18); }
+html:not(.sky-night) body.sky-only #sky-missions .mc .top span:first-child { color:#b42a20; }
+html:not(.sky-night) body.sky-only #sky-missions .mc .top span:last-child { color:#8a6420; }
+html:not(.sky-night) body.sky-only #sky-missions .mc .art { background-color:#cfe5f6; box-shadow:0 0 0 1px #0d22381f; }
+html:not(.sky-night) body.sky-only #sky-missions .mc b { color:#0d2238; background:none; -webkit-text-fill-color:#0d2238; text-shadow:none; filter:none; }
+html:not(.sky-night) body.sky-only #sky-missions .mc small { color:#b42a20; }
+html:not(.sky-night) body.sky-only #sky-missions .mc.done small { color:#1f7a45; }
+html:not(.sky-night) body.sky-only #sky-missions .mc.done { box-shadow:0 0 0 2px #e2b53c, 0 0 14px rgba(226,181,60,.55), inset 0 0 0 3px #fffdf6, 0 8px 18px rgba(13,34,56,.18); }
+body.sky-only #sky-missions .mc.done::after { top:calc(8px + 22px + (100% - 16px) * .375 * .5); }
+html:not(.sky-night) body.sky-only #sky-missions .mc.done::after { color:#1f7a45; border-color:#1f7a45; background:#fffdf6e6; }
+html:not(.sky-night) body.sky-only #sky-missions .mc.sealed { box-shadow:0 0 0 2px #d9b65a88, 0 8px 18px rgba(13,34,56,.18); }
