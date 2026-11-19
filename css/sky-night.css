@@ -23,3 +23,6 @@ html.sky-night body.sky-only .tell-text { color:#c9d9e6; }
 /* The tour's cards are cream printed cards at night too: their ink stays the day's navy (2026-11-19: the night ink made
    "Catch a plane" and its top line pale on cream) */
 html.sky-night body.sky-only .tc { --sc-ink:#0d2238; --sc-muted:#4a6178; --sc-rule:#c9b98a; --sc-paper:#fffdf6; --sc-orange-ink:#b42a20; --text:#0d2238; --muted:#4a6178; }
+/* The reveal stays Sky's light sky at night (css/sky-theme.css #reveal), so it keeps the day's navy ink too (2026-11-19,
+   Android app: at night "New card · +130 XP" and the chips were pale on the light sky) */
+html.sky-night body.sky-only #reveal { --sc-ink:#0d2238; --sc-muted:#4a6178; --sc-orange-ink:#b42a20; --sc-line:#c9d9e6; --text:#0d2238; --muted:#4a6178; }
