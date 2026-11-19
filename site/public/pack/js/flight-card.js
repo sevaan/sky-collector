@@ -7,6 +7,7 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
+import { regularFor, clockText } from './sky-regulars.js';
 import { TIERS, unlisted } from './flights.js';
 import { flightFact } from './flight-facts.js';
 import { typePhoto } from './type-photos.js';
@@ -148,7 +149,7 @@ const levelChip = (level, cls = 'fc-lvl') => (level && level !== 'none' ? `<span
 function passport(info, { newest = false } = {}) {
   if (!info?.count) return '';
   const plane = info.kind === 'plane', n = info.count, T = THRESHOLDS[info.kind] ?? THRESHOLDS.flight, next = T.find((x) => n < x);
-  const head = plane ? `${n} AIRCRAFT${info.liveryCount ? ` · ${info.liveryCount} LIVER${info.liveryCount === 1 ? 'Y' : 'IES'}` : ''}` : `CAUGHT ON ${n} DAY${n === 1 ? '' : 'S'}`;
+  const head = plane ? `${n} AIRCRAFT${info.liveryCount ? ` · ${info.liveryCount} LIVER${info.liveryCount === 1 ? 'Y' : 'IES'}` : ''}` : `CAUGHT ON ${n} DAY${n === 1 ? '' : 'S'}${info.nights ? ` · ${info.nights === n ? (n === 1 ? 'AT NIGHT' : 'ALL AT NIGHT') : `${info.nights} AT NIGHT`}` : ''}`;
   const to = next ? `${next - n} MORE TO ${next === T[1] ? 'SILVER' : 'GOLD'}` : 'TOP LEVEL';
   const pct = next ? Math.round(n / next * 100) : 100, from = next && newest ? Math.round((n - 1) / next * 100) : pct;
   return `<div class="fc-pass" aria-label="${esc(`${head.toLowerCase()}, ${info.level}, ${to.toLowerCase()}`)}"><div class="fc-pass-h"><span class="fc-pass-k">${head}</span>${levelChip(info.level)}</div>
@@ -171,6 +172,7 @@ export function flightCardHtml(f, opts = {}) {
     <div class="fc-id"><span class="fc-id-l">${airlineMark(f, 'fc-logo')}</span><span class="fc-id-r">FLIGHT ${esc(f.callsign || '—')}</span></div>
     <div class="fc-stats">${stat('DISTANCE', dist(f.km ?? null).v, dist(f.km ?? null).u)}${stat('IN THE AIR', air)}${stat('CAUGHT AT', feet(opts.heightFt), 'ft')}${stat('SEEN', opts.sightings ?? 1, '×')}</div>
     ${passport(opts.stampInfo, { newest: opts.newStamp })}
+    ${(() => { try { const r = regularFor(f.callsign); return r ? `<div class="fc-reg"><span>REGULAR</span> Usually over you about ${esc(clockText(r.minute))} · ${r.days} of the last ${r.of} days</div>` : ''; } catch { return ''; } })()}
     <p class="fc-fact">${rich(localText(flightFact({ ...f, fact: String(f.fact ?? '').replace(' as the crow flies: about ', ', about ').replace(/ on a (?=[AEIOU])/, ' on an ') }, opts.stampInfo?.count ?? 1)))}</p>
     ${footer(opts.caughtAt, type ? `TYPE ${type}` : 'FLIGHTS')}`;
   return shell('flight', f.tier, inner, `${f.from.city} to ${f.to.city}, ${f.airline}, ${TIERS[tierOf(f.tier)].label}${opts.stampInfo?.level && opts.stampInfo.level !== 'none' ? `, ${opts.stampInfo.level} level` : ''}`, opts.stampInfo?.level);
