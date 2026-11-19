@@ -9,8 +9,8 @@
 // The worked-out facts are true whatever path the plane really flies: the countries of the two airports, the
 // equator (crossed by any path between two hemispheres), where one city lies from the other, and what the SHORTEST path
 // between them passes (the date line, the Arctic or Antarctic Circle), said as that. No DOM here.
-import { AIRLINE_FACTS } from './airline-facts.js?v=0.1.1753';
-import { AIRPORT_FACTS } from './airport-facts.js?v=0.1.1753';
+import { AIRLINE_FACTS } from './airline-facts.js?v=0.1.1754';
+import { AIRPORT_FACTS } from './airport-facts.js?v=0.1.1754';
 
 const RAD = Math.PI / 180;
 // Country names, with "the" where English uses it
