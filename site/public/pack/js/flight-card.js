@@ -8,6 +8,7 @@
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
 import { TIERS, unlisted } from './flights.js';
+import { flightFact } from './flight-facts.js';
 import { typePhoto } from './type-photos.js';
 import { housePhoto } from './house-photos.js';
 import { gapPhoto } from './gap-photos.js'; /* the types that had no photo (2026-11-18) */
@@ -166,7 +167,7 @@ export function flightCardHtml(f, opts = {}) {
     <div class="fc-id"><span class="fc-id-l">${airlineMark(f, 'fc-logo')}</span><span class="fc-id-r">FLIGHT ${esc(f.callsign || '—')}</span></div>
     <div class="fc-stats">${stat('DISTANCE', dist(f.km ?? null).v, dist(f.km ?? null).u)}${stat('IN THE AIR', air)}${stat('CAUGHT AT', feet(opts.heightFt), 'ft')}${stat('SEEN', opts.sightings ?? 1, '×')}</div>
     ${passport(opts.stampInfo, { newest: opts.newStamp })}
-    <p class="fc-fact">${rich(localText(String(f.fact ?? '').replace(' as the crow flies: about ', ', about ').replace(/ on a (?=[AEIOU])/, ' on an ')))}</p>
+    <p class="fc-fact">${rich(localText(flightFact({ ...f, fact: String(f.fact ?? '').replace(' as the crow flies: about ', ', about ').replace(/ on a (?=[AEIOU])/, ' on an ') }, opts.stampInfo?.count ?? 1)))}</p>
     ${footer(opts.caughtAt, type ? `TYPE ${type}` : 'FLIGHTS')}`;
   return shell('flight', f.tier, inner, `${f.from.city} to ${f.to.city}, ${f.airline}, ${TIERS[tierOf(f.tier)].label}${opts.stampInfo?.level && opts.stampInfo.level !== 'none' ? `, ${opts.stampInfo.level} level` : ''}`, opts.stampInfo?.level);
 }
