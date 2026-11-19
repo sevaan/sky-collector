@@ -40,3 +40,17 @@ test('alliances, four engines, turboprops, rotors, distance', () => {
   assert.ok(done(['EC35', 'B407', 'R44'].map((t) => pl(t, { heli: true }))).has('sky-rotors3'));
   assert.ok(done(Array.from({ length: 4 }, () => fl(JFK, HKG, 'CPA831', { km: 12980 }))).has('sky-world'));
 });
+test('the first day: starter missions give their own badge (Cleared for Takeoff), not Full House, and 20 XP each', () => {
+  const t = new Date(2026, 6, 20, 14).getTime();
+  const list = [fl(YVR, YYZ, 'ACA101', { time: t }), pl('B789', { time: t }), pl('A320', { time: t + 60e3 })];
+  const d = done(list); assert.ok(d.has('sky-starter')); assert.ok(!d.has('fullhouse'));
+});
+test('liveries: a type you own in a new airline\'s colours; the livery patches', async () => {
+  const { assess } = await import('../js/sky-stamps.js');
+  const list = [{ time: 1, hex: 'a1', callsign: 'ACA1', plane: { key: 'P:A321' } }];
+  assert.equal(assess(list, { time: 2, hex: 'b2', callsign: 'DAL2', plane: { key: 'P:A321' } }).planeStamps.newLivery, true);
+  assert.equal(assess(list, { time: 2, hex: 'b3', callsign: 'ACA9', plane: { key: 'P:A321' } }).planeStamps.newLivery, false);
+  const cs = ['ACA', 'DAL', 'UAL', 'AAL', 'WJA', 'BAW', 'AFR', 'KLM', 'DLH', 'SWR'];
+  assert.ok(done(cs.map((a, i) => pl('A321', { cs: `${a}${i + 1}` }))).has('sky-livery10'));
+  assert.ok(!done(cs.map((a, i) => pl('A321', { cs: `ACA${i + 1}` }))).has('sky-livery10'), 'one airline is one livery');
+});

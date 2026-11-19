@@ -2,15 +2,15 @@
 // Collect does. Catches are kept in localStorage ('skyCatches') for now, apart from Space Collector's sightings, so the
 // old collection code never meets a flight. The Collection screen reads them in a later step.
 
-import { aircraftName, isHelicopter } from './planes.js?v=0.1.1744';
-import { lookupRoute } from './routes.js?v=0.1.1744';
-import { distText } from './units.js?v=0.1.1744';
-import { cardsFor, planeKey, unlisted, TIERS } from './flights.js?v=0.1.1744';
-import { glyphSvg, showCatch, miniCardHtml } from './flight-card.js?v=0.1.1744';
-import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1744';
+import { aircraftName, isHelicopter } from './planes.js?v=0.1.1745';
+import { lookupRoute } from './routes.js?v=0.1.1745';
+import { distText } from './units.js?v=0.1.1745';
+import { cardsFor, planeKey, unlisted, TIERS } from './flights.js?v=0.1.1745';
+import { glyphSvg, showCatch, miniCardHtml } from './flight-card.js?v=0.1.1745';
+import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1745';
 
-import { TIER_INFO } from './rarity.js?v=0.1.1744';
-import { allCatches, addCatch } from './catch-store.js?v=0.1.1744';
+import { TIER_INFO } from './rarity.js?v=0.1.1745';
+import { allCatches, addCatch } from './catch-store.js?v=0.1.1745';
 // Catches live in js/catch-store.js (IndexedDB, with a localStorage mirror the Collection page reads).
 // Where catches are read from: Space Collector's sightings once main.js says so (Milestone 1.5), the old store until then.
 let source = allCatches;
@@ -28,7 +28,7 @@ const planeKeyOf = planeKey;
 export function previewFor(hit, route, list = catches(), now = Date.now()) {
   const p = hit.plane, a3 = (p.callsign || '').slice(0, 3), full = route?.full;
   const fkey = full ? `F:${a3}:${full.from.icao}-${full.to.icao}` : null;
-  return { fkey, out: assess(list, { time: now, hex: p.hex, callsign: p.callsign, flight: fkey ? { key: fkey } : null, plane: { key: planeKeyOf(p) } }) };
+  return { fkey, out: assess(list, { time: now, hex: p.hex, callsign: p.callsign, flight: fkey ? { key: fkey } : null, plane: { key: planeKeyOf(p), daily: !!(p.anon || isHelicopter(p)) } }) };
 }
 
 // Fill the panel for the plane in the circle. `route` is planes.js's route object (airline now, cities once loaded).
@@ -42,6 +42,7 @@ export function catchPanel(el, hit, route) {
   const stamped = out.kind === 'none', again = out.kind === 'stamp';
   set(el, '.cb-k', stamped ? 'CAUGHT TODAY' : again ? (out.stampOn === 'flight' ? 'NEW DAY · FLIGHT' : 'NEW AIRCRAFT · PLANE')
     : fkey ? 'NEW FLIGHT' : route && !route.none && route.airline && !full ? 'FLIGHT' : 'NEW PLANE');
+  if (again && out.planeStamps?.day && out.stampOn === 'plane') set(el, '.cb-k', 'NEW DAY · PLANE');
   set(el, '.cb-name', full ? `To ${full.to.city}` : route?.airline ? `${route.airline} ${(p.callsign || '').replace(/^[A-Z]{3}/, '')}` : type);
   set(el, '.cb-sub', [full ? `${route.airline || a3} · from ${full.from.city}` : null, type, `${ft(p)} ft`].filter(Boolean).join(' · '));
   const art = el.querySelector('.cb-art'), g = isHelicopter(p) ? 'heli' : 'jet';
@@ -63,7 +64,7 @@ function discoverPanel(el, hit, route) {
   const stamped = out.kind === 'none', again = out.kind === 'stamp';
   const { flight, plane } = cardsFor(p, full ?? null, route?.airline || '');
   const card = flight ?? plane, tier = TIERS[card?.tier] ?? TIERS.common;
-  const what = stamped ? 'Caught today' : again ? (out.stampOn === 'flight' ? 'New day' : 'New aircraft') : fkey ? 'New flight' : route && !route.none && route.airline && !full ? 'Flight' : 'New plane';
+  const what = stamped ? 'Caught today' : again ? (out.stampOn === 'flight' || out.planeStamps?.day ? 'New day' : 'New aircraft') : fkey ? 'New flight' : route && !route.none && route.airline && !full ? 'Flight' : 'New plane';
   txt('d-tier', stamped ? tier.label : `${tier.label} · ${what}`); /* seen before: just the tier, as Space Collector */
   const ti = TIER_INFO[card?.tier] ?? TIER_INFO.common, dt = $('d-tier'); /* the tier's own mark and colour, as a satellite's (▲ green for Uncommon) */
   if (dt) { dt.style.setProperty('--find-tier', again ? 'var(--cyan)' : ti.color); dt.dataset.gem = again ? '✦' : ti.gem; }

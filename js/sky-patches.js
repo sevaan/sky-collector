@@ -2,8 +2,8 @@
 // earned in plain sight, read off the sightings like every patch (js/progress.js), nothing stored. Each catch's own
 // context (the sun's height, the weather, where you stood) is kept on its sighting when it is caught (main.js
 // capturePlane: sunEl, wx), so older catches count only for what they already carry. No DOM here.
-import { greatCircle } from './flight-facts.js?v=0.1.1744';
-import { isProp } from './sky-props.js?v=0.1.1744';
+import { greatCircle } from './flight-facts.js?v=0.1.1745';
+import { isProp } from './sky-props.js?v=0.1.1745';
 
 const R = 6371, RAD = Math.PI / 180;
 const km = (a, b) => { const s = Math.sin((b.lat - a.lat) * RAD / 2) ** 2 + Math.cos(a.lat * RAD) * Math.cos(b.lat * RAD) * Math.sin((b.lon - a.lon) * RAD / 2) ** 2; return 2 * R * Math.asin(Math.min(1, Math.sqrt(s))); };
@@ -26,7 +26,7 @@ const isSnow = (code) => (code >= 71 && code <= 77) || code === 85 || code === 8
 const dayNo = (t) => { const d = new Date(t); return Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())) / 864e5); };
 
 export const freshSky2 = () => ({ redeye: 0, homerun: 0, outbound: 0, alliances: { star: new Set(), oneworld: new Set(), skyteam: new Set() }, days: new Set(), catches: [], golden: 0, seasons: new Map(),
-  clouds: 0, snow: 0, coast: 0, equator: 0, dateline: 0, pole: 0, countries: new Set(), quad: 0, turboprops: new Set(), rotors: new Set(), distance: 0 });
+  liveries: new Set(), clouds: 0, snow: 0, coast: 0, equator: 0, dateline: 0, pole: 0, countries: new Set(), quad: 0, turboprops: new Set(), rotors: new Set(), distance: 0 });
 // One sighting (s) with its card snapshot (c), counted once per catch for the flight side. Called by progress().
 export function noteSky2(k, s, c) {
   const d = new Date(s.time), hr = d.getHours(), tc = String(s.typeCode ?? '').toUpperCase(), cs = String(s.callsign ?? '');
@@ -38,6 +38,7 @@ export function noteSky2(k, s, c) {
   const al = ALLIANCE_OF.get(cs.slice(0, 3)); if (al && /^[A-Z]{3}\d/.test(cs)) k.alliances[al].add(cs.slice(0, 3));
   if (c.sky === 'plane') {
     if (QUAD.test(tc)) k.quad++;
+    if (tc && /^[A-Z]{3}\d/.test(cs)) k.liveries.add(`${tc}|${cs.slice(0, 3)}`); /* a type in an airline's colours (#9) */
     if (TURBOPROP.test(tc)) k.turboprops.add(tc);
     if ((c.glyph === 'heli' || c.setId === 'helicopters') && tc && tc !== 'HELI') k.rotors.add(tc);
   }
@@ -88,6 +89,9 @@ export const SKY_PATCHES_MORE = [
   P('sky-rotors3', 'Rotor Club', 'Catch three kinds of helicopter', 3, (a) => K(a).rotors.size),
   P('sky-airlines50', 'Fifty Airlines', 'Catch 50 different airlines', 50, (a) => a.sky?.airlines?.size ?? 0),
   P('sky-airlines100', 'Hundred Airlines', 'Catch 100 different airlines', 100, (a) => a.sky?.airlines?.size ?? 0),
+  P('sky-livery10', 'Livery Spotter', 'Catch 10 liveries: a type in an airline’s colours', 10, (a) => K(a).liveries.size),
+  P('sky-livery25', 'Livery Collector', 'Catch 25 liveries', 25, (a) => K(a).liveries.size),
+  P('sky-livery50', 'Paint Shop', 'Catch 50 liveries', 50, (a) => K(a).liveries.size),
   P('sky-world', 'Round the World', 'Catch flights adding up to 40,075 km, once round the Earth', 40075, (a) => Math.round(K(a).distance)),
   P('sky-moon', 'To the Moon', 'Catch flights adding up to 384,400 km, the distance to the Moon', 384400, (a) => Math.round(K(a).distance)),
 ];
@@ -128,3 +132,5 @@ export const SKY_PATCH_ART = {
   'sky-world': () => `${GLOBE}<path d="M-26 -12 A28 14 0 1 0 26 -12" fill="none" stroke="${RD}" stroke-width="2" stroke-dasharray="3 3"/>${JET(24, -14, .45, 60)}`,
   'sky-moon': () => `<circle cx="10" cy="-8" r="14" fill="${I}"/><circle cx="6" cy="-12" r="3" fill="#c9b98a"/><circle cx="14" cy="-2" r="2" fill="#c9b98a"/>${JET(-16, 14, .55, 45)}`,
 };
+const LIVERY = (n, c = I) => `<path d="M-6 -24 L-2 -24 L14 -2 L14 4 L-2 0 L-2 14 L4 18 L4 22 L-4 20 L-12 22 L-12 18 L-6 14 L-6 0 L-22 4 L-22 -2 L-6 -24Z" fill="${c}" transform="translate(4 2)"/><path d="M4 -12 L12 -2" stroke="${RD}" stroke-width="3"/><path d="M0 -6 L8 4" stroke="${BL}" stroke-width="3"/><text x="16" y="26" font-size="11" text-anchor="middle" fill="${I}" font-family="SC Display, Impact, sans-serif">${n}</text>`;
+Object.assign(SKY_PATCH_ART, { 'sky-livery10': () => LIVERY(10), 'sky-livery25': () => LIVERY(25), 'sky-livery50': () => LIVERY(50, '#f2b632') });

@@ -23,9 +23,15 @@ html.sky-night body.sky-only .tell-text { color:#c9d9e6; }
 /* The tour's cards are cream printed cards at night too: their ink stays the day's navy (2026-11-19: the night ink made
    "Catch a plane" and its top line pale on cream) */
 html.sky-night body.sky-only .tc { --sc-ink:#0d2238; --sc-muted:#4a6178; --sc-rule:#c9b98a; --sc-paper:#fffdf6; --sc-orange-ink:#b42a20; --text:#0d2238; --muted:#4a6178; }
-/* The reveal stays Sky's light sky at night (css/sky-theme.css #reveal), so it keeps the day's navy ink too (2026-11-19,
-   Android app: at night "New card · +130 XP" and the chips were pale on the light sky) */
-html.sky-night body.sky-only #reveal { --sc-ink:#0d2238; --sc-muted:#4a6178; --sc-orange-ink:#b42a20; --sc-line:#c9d9e6; --text:#0d2238; --muted:#4a6178; }
+/* The reveal keeps the night (2026-11-19, #8: a catch after dark opened on a daylight sky): Sky's night sky behind the
+   card, the night's light ink, dark chips. The card itself is a printed card and keeps its own colours. */
+html.sky-night body.sky-only #reveal { background:radial-gradient(ellipse at 50% 35%, #1a2c46 0%, #0f1d33 55%, #0b1626 100%) !important; }
+html.sky-night body.sky-only #reveal #rv-top, html.sky-night body.sky-only #reveal #rv-top .icon-button, html.sky-night body.sky-only #reveal-eyebrow, html.sky-night body.sky-only #reveal #rv-top .x-close { color:#e6eef7 !important; }
+html.sky-night body.sky-only #reveal .rv-chip { background:#11223ad9; border-color:#2b4058; color:#e6eef7; box-shadow:0 2px 10px #0006; }
+html.sky-night body.sky-only #reveal .rv-xp, html.sky-night body.sky-only #reveal-eyebrow b, html.sky-night body.sky-only #reveal .rv-chip b { color:#ff6a5c; }
+html.sky-night body.sky-only #reveal .rv-rank-row { color:#9fb3c6; }
+html.sky-night body.sky-only #reveal .rv-bar { background:#24384f; }
+html.sky-night body.sky-only #reveal a#reveal-view { color:#c9d9e6 !important; }
 /* Today is dark at night like every other screen (QA 2026-11-19: css/sky-cards.css gave it the day's #eef5fb with no
    night guard, so at 23:30 it stayed light) */
 html.sky-night body.sky-only #visible { background:#0b1626; }

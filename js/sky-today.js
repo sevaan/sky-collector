@@ -5,15 +5,15 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { isProp } from './sky-props.js?v=0.1.1744';
-import { planeKey } from './flights.js?v=0.1.1744';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1744';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1744';
-import { airlineIcon } from './airline-icons.js?v=0.1.1744';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1744';
-import { noteLocal, rareHere } from './sky-local.js?v=0.1.1744';
-import { planeSet } from './sky-sets.js?v=0.1.1744';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1744';
+import { isProp } from './sky-props.js?v=0.1.1745';
+import { planeKey } from './flights.js?v=0.1.1745';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1745';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1745';
+import { airlineIcon } from './airline-icons.js?v=0.1.1745';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1745';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1745';
+import { planeSet } from './sky-sets.js?v=0.1.1745';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1745';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -80,6 +80,10 @@ function skyState(ctx) {
   if (st === 'failing') return `<h3>Can’t reach the plane feed</h3><p class="td-lead">No word from the plane feed${ctx.planes?.lastOk ? ` since ${new Date(ctx.planes.lastOk).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}` : ''}. Check your connection, and we’ll keep trying.</p>`;
   if (st === 'loading' || !ctx.positions) return '<h3>Checking what’s flying</h3><p class="td-lead">Finding the planes near you…</p>';
   if (ctx.noCoverage) return '<h3>No plane tracking here yet</h3><p class="td-lead">Sky Collector hears about planes from volunteers’ receivers, and none of them reach this place. It will work as soon as one does, and anywhere you travel that has them.</p>'; /* docs/DESIGN-LOOP.md §6 */
+  /* pacing from your own sky (js/sky-local.js, 30 days here): how many usually pass, so how long until the next is likely (QA 2026-11-19, #6) */
+  let ls = null; try { ls = localStats(); } catch {}
+  if (ls && ls.hours >= 3 && ls.perHour > 0) { const n = ls.perHour, lo = Math.max(1, Math.floor(n)), hi = Math.max(lo + 1, Math.ceil(n * 1.25)), wait = Math.max(2, Math.round(60 / n / 5) * 5 || 2);
+    return `<h3>Quiet sky</h3><p class="td-lead">Nothing above the trees right now. Usually ${n < 1 ? 'about one plane every hour or two' : `about ${lo} to ${hi} planes an hour`} pass over here, so the next is likely ${n < 1 ? 'within the hour' : `within about ${wait} min`}.</p>`; }
   return '<h3>Quiet sky</h3><p class="td-lead">Nothing above the trees right now. Planes come and go every few minutes.</p>';
 }
 

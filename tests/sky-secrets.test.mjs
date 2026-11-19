@@ -54,3 +54,13 @@ test('a type the aircraft cannot be is dropped (the H125 typed BALL stays a heli
   assert.equal(g.type, '');
   assert.equal(b.type, 'BALL'); assert.equal(isHelicopter(b), false);
 });
+test('the local helicopter or a private plane: a new day is a small stamp, the same day nothing', async () => {
+  const { assess, planeLine, planeStampInfo } = await import('../js/sky-stamps.js');
+  const d1 = new Date(2026, 10, 1, 12).getTime(), d2 = d1 + 86400e3;
+  const list = [{ time: d1, hex: '~abc', callsign: '', plane: { key: 'P:EC35' } }];
+  assert.equal(assess(list, { time: d1 + 3600e3, hex: '~abc', plane: { key: 'P:EC35', daily: true } }).kind, 'none', 'same day');
+  const o = assess(list, { time: d2, hex: '~abc', plane: { key: 'P:EC35', daily: true } });
+  assert.equal(o.kind, 'stamp'); assert.equal(o.planeStamps.day, true); assert.equal(o.planeStamps.count, 1, 'still one aircraft');
+  assert.equal(assess(list, { time: d2, hex: 'c0ffee', callsign: 'ACA1', plane: { key: 'P:EC35' } }).planeStamps.day, false, 'airline aircraft: aircraft stamps only');
+  assert.match(planeLine(planeStampInfo([...list, { time: d2, hex: '~abc', plane: { key: 'P:EC35' } }], 'P:EC35'), 'EC135'), /seen on 2 days/);
+});

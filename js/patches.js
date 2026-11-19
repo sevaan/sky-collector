@@ -3,7 +3,7 @@
 // group (or the date earned) along the bottom, one icon in the middle. Milestones get gold foil, the rarest holo
 // (css/ui.css .patch--gold / .patch--holo). Shared by Explore (the earning moment, its toast) and Collection (the wall).
 
-import { CON_BY_ID } from './constellations.js?v=0.1.1744';
+import { CON_BY_ID } from './constellations.js?v=0.1.1745';
 
 export const GROUPS = {
   collect: { c: '#14284a', t: 'Collection' }, rarity: { c: '#3a2259', t: 'Rarity' }, rocket: { c: '#5a2a1a', t: 'Rockets' },
@@ -22,7 +22,7 @@ const GROUP_OF = {
   con: 'stars10 deep3 deep10 cons5 zodiac cons25 cons44',
   time: 'twilight owl dawn marathon double hattrick months3 months12 streak4 streak12 anniversary sky-redeye sky-seven sky-thirty sky-rush sky-golden sky-seasons sky-freightnight',
   sky: 'zenith horizon compass faint brilliant close far roadtrip sky-clouds sky-snow sky-homerun sky-outbound',
-  fleet: 'starlink starlink10 starlink50 fleets choochoo sky-star sky-oneworld sky-skyteam sky-airlines5 sky-airlines25 sky-airlines50 sky-airlines100 sky-quad sky-turboprop10 sky-rotors3',
+  fleet: 'starlink starlink10 starlink50 fleets choochoo sky-star sky-oneworld sky-skyteam sky-airlines5 sky-airlines25 sky-airlines50 sky-airlines100 sky-quad sky-turboprop10 sky-rotors3 sky-livery10 sky-livery25 sky-livery50',
   /* Sky Collector's patches (js/progress.js, js/sky-patches.js) */
   nation: 'nations diplomat bigthree redstar stripes longmarch europe japan india sky-passport10 sky-passport25 sky-passport50 sky-equator sky-dateline sky-pole sky-coast sky-globetrotter sky-hopper',
 };

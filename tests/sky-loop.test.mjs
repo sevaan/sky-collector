@@ -51,12 +51,12 @@ test('"Rare here": under 1% of 200+ aircraft seen at this place', () => {
 test('missions sized to the sky', () => {
   const m = SKY_MISSIONS.find((x) => x.id === 'airlines3'), cs = (a) => ({ callsign: `${a}123` });
   setSkySize('quiet'); assert.match(m.text, /an airline flight/); assert.equal(m.done([cs('ACA')]), true);
-  setSkySize('busy'); assert.match(m.text, /five different airlines/); assert.equal(m.done([cs('ACA'), cs('WJA'), cs('DAL')]), false);
+  setSkySize('busy'); assert.match(m.text, /four different airlines/); assert.equal(m.done([cs('ACA'), cs('WJA'), cs('DAL')]), false); /* sized for 15 minutes (2026-11-19) */
   setSkySize('steady'); assert.equal(m.done([cs('ACA'), cs('WJA'), cs('DAL')]), true);
   assert.equal(SKY_MISSIONS.find((x) => x.id === 'rarehere').done([{ rareHere: true }]), true);
 });
 test('Sky ranks: the first two stretched, Space Collector\'s restored when off', () => {
-  setSkyProgress(true); assert.deepEqual(RANKS.slice(0, 4).map((r) => r[0]), [0, 700, 2000, 4000]); assert.equal(RANKS[1][1], 'Plane Spotter');
+  setSkyProgress(true); assert.deepEqual(RANKS.slice(0, 4).map((r) => r[0]), [0, 480, 2000, 4000]); assert.equal(RANKS[1][1], 'Plane Spotter');
   setSkyProgress(false); assert.deepEqual(RANKS.slice(0, 3).map((r) => r[0]), [0, 500, 1500]); assert.equal(RANKS[1][1], 'Spotter');
 });
 test('distances follow the Units setting; missions say them in the player\'s units', async () => {
