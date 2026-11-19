@@ -636,3 +636,24 @@ body.sky-only:has(#gift) .wx-layer { animation: none; will-change: auto; }
 #wc-holder .wc-a-foot { padding: .72em 0 0; }
 @media (max-width: 340px) { #wc-holder .wc-a { gap: .75em; padding-top: 1.1em; } } /* 320 px: one more line of text */
 html:not(.sky-night) body.sky-only #toasts .ticket .tn-go { color:#b42a20; } /* "Show me ›" was pale cream on the day ticket */
+
+/* The Plus page's plane fly-by (2026-11-19, Sevaan: "Make a plane fly by instead of a shooting star"): a small jet crosses
+   behind the member patch from the left, climbing a little, its contrail fading behind it; once every 7 s, day and night.
+   Moves only transform and opacity (smooth on phones). None under Reduce Motion. */
+.crew-plane { position:absolute; left:50%; top:40%; z-index:0; width:26px; height:26px; margin:-13px 0 0 -13px; pointer-events:none; opacity:0;
+  animation:crewPlane 7s 1.2s cubic-bezier(.35,.1,.65,.9) infinite; will-change:transform, opacity; }
+.crew-plane > svg { position:relative; display:block; width:100%; height:100%; transform:rotate(80deg); fill:#0d2238; }
+.crew-trail { position:absolute; right:60%; top:50%; width:120px; height:2px; margin-top:-1px; border-radius:2px; transform:rotate(-10deg); transform-origin:100% 50%;
+  background:linear-gradient(90deg, #0d223800, #0d22384d); } /* by day a faint navy line: a white contrail vanished on the pale page */
+@keyframes crewPlane {
+  0% { transform:translate(-190px, 26px); opacity:0; }
+  4% { opacity:1; }
+  30% { opacity:1; }
+  36% { transform:translate(190px, -40px); opacity:0; }
+  100% { transform:translate(190px, -40px); opacity:0; }
+}
+html.sky-night body.sky-only .crew-plane > svg, body.sky-only.night .crew-plane > svg { fill:#fff2b3; }
+html.sky-night body.sky-only .crew-trail { background:linear-gradient(90deg, #fff2b300, #fff2b399); filter:none; }
+body.sky-only.night .crew-trail { background:linear-gradient(90deg, #ff6a5500, #ff6a55aa); filter:none; }
+body.sky-only.night .crew-plane > svg { fill:#ff6a55; }
+@media (prefers-reduced-motion: reduce) { .crew-plane { display:none; } }

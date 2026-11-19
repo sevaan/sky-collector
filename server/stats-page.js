@@ -330,7 +330,7 @@ ${big('Pressed buy', tried, opened, 'of those who looked')}
 ${big('Bought', bought, opened, `of those who looked · plans: ${list(plans)}`)}
 ${row('Didn’t go through', list(fails), 'cancelled = they backed out; error = the store said no')}
 ${row('What opened the Plus page', list(whys))}
-</table><p class="m">Money, renewals and refunds are in <a href="https://app.revenuecat.com/projects/3f25355f/overview">RevenueCat</a>.</p>`;
+</table><p class="m">Money, renewals and refunds are in <a href="https://app.revenuecat.com/projects/d30f3dad/overview">RevenueCat</a>.</p>`;
 
   // What people catch, sharing, pages, notifications, clouds, start-up time and secrets (all counted from v0.1.1527 on).
   const since = (n) => ev.filter((e) => e.name === n && e.ts > now - 30 * DAY);
