@@ -127,7 +127,7 @@ export class PlaneTracker {
   constructor() {
     this.planes = []; this.lastFetch = 0; this.busy = false; this.routes = new Map(); this.failures = 0; this.lastOk = 0; this.sources = null; this.log = (() => { try { return JSON.parse(localStorage.getItem('planeFeedLog') || '[]').slice(-40); } catch { return []; } })();
     /* the apps' feed state (js/plane-feed.js), kept in localStorage 'planeFeed' */
-    this.gapS = POLL_MS / 1000; this.down = false; this.src = ''; this.cfg = DEFAULTS; this.feed = freshFeed(); this.counts = { phone: 0, relay: 0 };
+    this.gapS = POLL_MS / 1000; this.down = false; this.src = ''; this.cfg = DEFAULTS; this.feed = freshFeed(); this.counts = { phone: 0, relay: 0 }; this.tally = null;
     try { this.feed = { ...freshFeed(), ...JSON.parse(localStorage.getItem('planeFeed') || '{}') }; } catch {}
     this.loadDial();
   }
@@ -201,11 +201,24 @@ export class PlaneTracker {
           try { noteFeed((r.data.ac ?? r.data.aircraft ?? []).length); } catch {}
           this.note({ t: t0, ok: 1, n: this.planes.length, ms: Date.now() - t0, src: src === 'phone' ? `phone${r.remaining != null ? ' ' + r.remaining + ' left' : ''}` : 'relay', at });
         } else { this.failures++; this.note({ t: t0, ok: 0, ms: Date.now() - t0, err: `${src} ${r.net ? 'no answer' : r.status}`, at }); }
+        const before = this.feed;
         this.feed = afterAnswer(this.feed, { src, ok: r.ok, status: r.status, remaining: r.remaining, retryAfter: r.retryAfter, net: r.net, online: typeof navigator === 'undefined' ? undefined : navigator.onLine }, Date.now(), this.cfg);
+        this.count(src, r, before);
         try { localStorage.setItem('planeFeed', JSON.stringify(this.feed)); } catch {}
       })
       .finally(() => { this.busy = false; });
   }
+
+  /* The session's feed numbers for the stats page (2026-11-19, the feed-cost question): asks to each source and how many
+     were answered, adsb.lol's 429s, the lowest allowance it reported, and why the phone handed over to the relay. No
+     place, no aircraft. main.js sends them as a 'feed' note when the app goes to the background (takeTally). */
+  count(src, r, before) {
+    const t = (this.tally ??= { ph: 0, phOk: 0, rl: 0, rlOk: 0, q: 0, low: -1, sw: '' });
+    if (src === 'phone') { t.ph++; if (r.ok) t.phOk++; if (r.status === 429) { t.q++; t.sw = '429'; } if (Number.isFinite(r.remaining) && (t.low < 0 || r.remaining < t.low)) t.low = r.remaining; }
+    else { t.rl++; if (r.ok) t.rlOk++; }
+    if (src === 'phone' && !t.sw && this.feed.phoneOff && this.feed.phoneOff !== before.phoneOff) t.sw = Number.isFinite(this.feed.remaining) && this.feed.remaining <= this.cfg.switchAt ? 'low' : 'fails';
+  }
+  takeTally() { const t = this.tally; this.tally = null; return t && t.ph + t.rl ? t : null; }
 
   /* A fresh answer: a plane already drawn somewhere else slides to its new place (plane-feed.js easeLeft) instead of jumping */
   take(fresh) {

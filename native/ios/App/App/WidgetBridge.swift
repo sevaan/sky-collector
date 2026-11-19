@@ -67,7 +67,17 @@ public class ReviewPlugin: CAPPlugin, CAPBridgedPlugin {
     public let pluginMethods: [CAPPluginMethod] = [
         CAPPluginMethod(name: "request", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "openSettings", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "env", returnType: CAPPluginReturnPromise),
     ]
+    // Is this the Simulator? (Space Collector 8cd90a33, 2026-11-19: simulator playtests of store builds were counted as
+    // players in the usage stats; js/field-notes.js marks them as tests.)
+    @objc func env(_ call: CAPPluginCall) {
+        #if targetEnvironment(simulator)
+        call.resolve(["virtual": true])
+        #else
+        call.resolve(["virtual": false])
+        #endif
+    }
     // The phone's Settings page for this app, where notifications can be turned back on (iOS playtest 2026-11-10: an
     // app-settings: link from the web view did nothing, so it opens from here).
     @objc func openSettings(_ call: CAPPluginCall) {
