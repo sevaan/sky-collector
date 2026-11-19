@@ -221,7 +221,10 @@ const TYPES = {
   AT72: 'ATR 72', AT76: 'ATR 72', C172: 'Cessna 172', C182: 'Cessna 182', C208: 'Cessna Caravan', PC12: 'Pilatus PC-12', P28A: 'Piper Cherokee', SR22: 'Cirrus SR22',
 };
 // Sky Collector: the exact type name first (js/sky-type-names.js, 2026-11-17), then the short one, then the feed's own description.
-export function aircraftName(p) { return typeName(p.type) ?? TYPES[p.type] ?? (p.desc ? p.desc.replace(/\b([A-Z])([A-Z]+)\b/g, (m, a, b) => a + b.toLowerCase()) : ''); }
+/* The feed's own description, made readable (2026-11-19, Sevaan: "PIPER PA-31-300/310/325/350/425" was cut off): a list of
+   variants is dropped ("Piper PA-31"), and only plain words are lower-cased, never a model code ("PA-31", not "Pa-31"). */
+export const cleanDesc = (d) => String(d ?? '').trim().replace(/-[A-Z0-9]+(?:\/[A-Z0-9]+)+$/i, '').replace(/\s*\/\s*[A-Z0-9-]+$/i, '').replace(/\b([A-Z])([A-Z]{1,})\b(?![-\d])/g, (m, a, b) => a + b.toLowerCase());
+export function aircraftName(p) { return typeName(p.type) ?? TYPES[p.type] ?? (p.desc ? cleanDesc(p.desc) : ''); }
 // Helicopters: ADS-B emitter category A7, or an ICAO type designator that is a helicopter (many helicopters don’t
 // broadcast a category). Covers the common civil, medical, police and military types.
 // QA 2026-11-19: B17 (the B-17 bomber, a Legendary card) was a helicopter; added the H500, H269, MD 500/600/900, AW149,
