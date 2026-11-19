@@ -7,6 +7,6 @@ const PROP_RE = new RegExp('^(' + [
   'E110', 'E120', 'JS3[12]', 'JS41', 'D228', 'D328', 'SW[34]', 'C208', 'C212', 'CN35', 'C295', 'C130', 'C30J', 'A400',
   'AN(2|12|24|26|28|30|32)', 'L410', 'PC(6T|12)', 'TBM[7-9]', 'P46T', 'PAY[1-4]', 'KODI', 'Y12', 'MA60', 'P180',
   'C1[5-9][0-9]', 'C2[01][0-9]', 'C3[14][0-9]', 'C4[0-2][0-9]', 'P28[A-U]', 'P32[RT]', 'PA[1-4][0-9]', 'SR2[02]', 'S22T',
-  'DA[2-6][0-9]', 'M20[A-Z]', 'DC3', 'DC6', 'B17', 'B25', 'P51', 'SPIT', 'T6', 'AA5', 'GA8', 'BN2P', 'TRIS', 'CVLT', 'F27', 'F50',
+  'DA[2-6][0-9]', 'M20[A-Z]', 'DC3', 'DC6', 'TWEN', 'B17', 'B25', 'P51', 'SPIT', 'T6', 'AA5', 'GA8', 'BN2P', 'TRIS', 'CVLT', 'F27', 'F50',
 ].join('|') + ')$');
 export const isProp = (type) => PROP_RE.test(String(type ?? '').toUpperCase());

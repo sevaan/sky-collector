@@ -123,7 +123,7 @@ function noteChannels() {
   const ln = plugin('LocalNotifications');
   channelsReady ??= Promise.all([
     ['asked', 'Reminders you set', 'The passes and moments you asked to be told about', 4],
-    ['tonight', 'Tonight', 'Tonight’s headliner, and when a clear night is worth it', 3],
+    globalThis.__skyOnly ? ['tonight', 'Today', 'Your streak, and planes worth looking up for', 3] /* Sky Collector's words (QA 2026-11-19) */ : ['tonight', 'Tonight', 'Tonight’s headliner, and when a clear night is worth it', 3],
     ['events', 'Sky events', 'Meteor showers, Halloween and constellations coming back', 3],
     ['alerts', 'Pass alerts', 'Rare passes and Starlink trains (Plus)', 3],
   ].map(([id, name, description, importance]) => ln.createChannel({ id, name, description, importance, visibility: 1 }).catch(() => {})));

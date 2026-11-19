@@ -48,8 +48,12 @@ test('Home Skies is a domestic flight in the country you are in', async () => {
   setHomeCountry('CA');
   assert.equal(flightSet(4300, { cc: 'US' }, { cc: 'US' }, 'UAL').id === 'home', false);
   assert.equal(flightSet(500, { cc: 'CA' }, { cc: 'CA' }, 'ACA').id, 'home');
-  setHomeCountry('');
-  assert.equal(flightSet(4300, { cc: 'US' }, { cc: 'US' }, 'UAL').id, 'home', 'no home known: any domestic flight');
+  assert.equal(flightSet(4300, { cc: 'US' }, { cc: 'US' }, 'UAL', '').id, 'home', 'no home known: any domestic flight');
+});
+
+test("Sky's weeks start Monday at midnight", async () => {
+  const { weekStartOf, setSkyProgress } = await import('../js/progress.js'); setSkyProgress(true);
+  assert.equal(weekStartOf(new Date(2026, 10, 23, 9).getTime()), new Date(2026, 10, 23).getTime());
 });
 
 test("Sky's day runs midnight to midnight on the phone's clock", async () => {

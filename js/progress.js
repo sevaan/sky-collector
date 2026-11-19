@@ -1,10 +1,10 @@
 // Player progress from the sighting log: XP and observer rank, tonight’s three missions, a weekly streak and
 // achievements. Everything is derived from the saved sightings (nothing extra is stored), so it can’t drift.
 // info(cardKey) -> { tier, type, owner, launch, natural, con } | null. No DOM.
-import { isProp } from './sky-props.js?v=0.1.1737';
-import { nightKey, useCalendarDays } from './observation.js?v=0.1.1737';
-import { fleetThresholds } from './card-model.js?v=0.1.1737';
-import { distRound as distText } from './units.js?v=0.1.1737';
+import { isProp } from './sky-props.js?v=0.1.1738';
+import { nightKey, useCalendarDays } from './observation.js?v=0.1.1738';
+import { fleetThresholds } from './card-model.js?v=0.1.1738';
+import { distRound as distText } from './units.js?v=0.1.1738';
 
 // A longer climb (2026-10-12, playtest room: three ranks on night 1, Mission Control in about two weeks), with two
 // prestige ranks past Mission Control. Nobody drops a rank they had on the old curve (rankFloor below).
@@ -62,7 +62,7 @@ export const WEEK_THEMES = [
 ];
 // Weeks run on observing nights (noon to noon), so Sunday night after midnight still counts for Sunday's week; the
 // theme index is the local calendar week, so it's the same for everyone whatever their time zone (bug hunt 2026-10-25).
-export const weekStartOf = (t) => { const d = new Date(t - 12 * 3600e3); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d.getTime(); };
+export const weekStartOf = (t) => { const d = new Date(SKY ? t : t - 12 * 3600e3); /* Sky's weeks start Monday at midnight (QA 2026-11-19) */ d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d.getTime(); };
 const weekIndex = (ws) => { const d = new Date(ws); return Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5 + 3) / 7); };
 export const weekThemeFor = (ws, chosen = null) => WEEK_THEMES.find((x) => x.id === chosen?.[ws]) ?? WEEK_THEMES[weekIndex(ws) % WEEK_THEMES.length];
 const WEEKS_FROM = new Date(2026, 9, 26).getTime(); // weeks count from when they started (an update gave old weeks' XP at once)
@@ -171,6 +171,7 @@ export const SKY_MISSIONS = [
   { id: 'newflights2', get text() { return SIZE.cards === 1 ? 'Collect a new card' : `Collect ${NUM[SIZE.cards]} new cards`; }, done: (n) => n.filter((s) => s.first).length >= SIZE.cards },
   { id: 'again', text: 'Catch a plane you’ve caught before', done: (n) => n.some((s) => !s.first) },
 ];
+const ALWAYS = new Set(['newflights2', 'airlines3', 'again', 'high']);
 export const SKY_STARTER = [
   { id: 'firstcard', text: 'Collect your first card', done: (n) => n.some((s) => s.first) },
   { id: 'firstflight', text: 'Catch a plane on its way somewhere', done: (n) => n.some(firstFlight) },
@@ -216,7 +217,10 @@ export function missionsFor(night, possible = null) {
   let h = 0; for (const c of String(night)) h = Math.imul(h ^ c.charCodeAt(0), 2654435761) >>> 0;
   const next = () => { h = (h + 0x6d2b79f5) >>> 0; let t = Math.imul(h ^ (h >>> 15), 1 | h); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0); };
   const M = activeMissions(), ok = possible ? M.filter((m) => possible.has(m.id)) : [];
-  const pick = [], pool = (ok.length >= 3 ? ok : M).slice();
+  /* Sky: too few possible missions are topped up from ones any sky allows, never from impossible ones (QA 2026-11-19: a new
+     place was dealt "rare around here" with no local log) */
+  const fill = SKY && possible && ok.length < 3 ? M.filter((m) => ALWAYS.has(m.id) && !ok.includes(m)) : null;
+  const pick = [], pool = (ok.length >= 3 ? ok : fill ? [...ok, ...fill] : M).slice();
   while (pick.length < 3) pick.push(pool.splice(next() % pool.length, 1)[0]);
   return pick;
 }
@@ -395,7 +399,7 @@ function cloudyDays() { try { return JSON.parse(localStorage.getItem('skyNights'
 export function streaks(sightings, now = Date.now(), cloudy = cloudyDays()) {
   // Counted by observing night (noon to noon), so a session that runs past midnight is one night, not two days that
   // can land in two streak weeks (bug hunt 2026-10-20). Cloudy nights are keyed by the evening's day, which matches.
-  const night = (t) => dayNum(t - 12 * 3600e3);
+  const night = (t) => dayNum(SKY ? t : t - 12 * 3600e3); /* Sky: calendar days (QA 2026-11-19) */
   const days = real(sightings).map((s) => night(s.time)); if (!days.length) return { current: 0, best: 0, thisWeek: false };
   const first = Math.min(...days), weekIndex = (t) => Math.floor((night(t) - first) / 7), cur = weekIndex(now);
   const seen = new Set(days.map((d) => Math.floor((d - first) / 7)));

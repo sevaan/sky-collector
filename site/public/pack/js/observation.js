@@ -35,7 +35,13 @@ export function canCapture({ visible = false, aligned = false, practice = false,
 
 // An observing night runs from local noon to the next local noon, using the longitude where the
 // sighting was made (local solar time), so it doesn’t depend on the phone’s time zone.
+// Sky Collector's day runs midnight to midnight on the phone's clock (QA 2026-11-19: missions, repeat XP and the day
+// pack rolled over at about 12:18 in Toronto, so a morning's catches counted toward the day before; stamps already used
+// the calendar day, js/sky-stamps.js localDay). Switched on with Sky's rules (js/progress.js setSkyProgress).
+let calendarDays = false;
+export function useCalendarDays(on) { calendarDays = !!on; }
 export function nightKey(time, lon = 0) {
+  if (calendarDays) { const t = Number(time); return Math.floor((t - new Date(t).getTimezoneOffset() * 60e3) / 86400e3); }
   return Math.floor((Number(time) + (Number(lon) || 0) / 15 * 3600e3 - 12 * 3600e3) / 86400e3);
 }
 export function nightsIn(sightings) {

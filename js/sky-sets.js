@@ -5,7 +5,7 @@
 // Not built: "Freighters" as a plane set (a type code doesn't say cargo: a B77L is both the 777 freighter and the
 // 777-200LR), so cargo is a flight set only; and "Next door" has no border data, so it is any international flight
 // under 1,500 km.
-import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1737';
+import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1738';
 
 // Order matters: the first match is the card's set.
 export const PLANE_SETS = [
@@ -37,8 +37,10 @@ export const FLIGHT_SETS = [
   { id: 'world', name: 'Around the World', color: '#3f58a8', goals: [3, 8, 20], test: () => true },
 ];
 export const planeSet = (type, heli = false) => PLANE_SETS.find((s) => s.test(String(type || '').toUpperCase(), !!heli));
-let HOME = '';
-export const setHomeCountry = (cc) => { HOME = /^[A-Z]{2}$/.test(cc ?? '') ? cc : ''; };
+/* kept in localStorage 'homeCc' so the Collection frame and the next launch know it before any card is drawn; a card
+   caught before 2026-11-19 has no homeCc of its own and uses this (QA 2026-11-19) */
+let HOME = ''; try { HOME = /^[A-Z]{2}$/.test(localStorage.getItem('homeCc') ?? '') ? localStorage.getItem('homeCc') : ''; } catch {}
+export const setHomeCountry = (cc) => { const v = /^[A-Z]{2}$/.test(cc ?? '') ? cc : ''; if (!v) return; HOME = v; try { localStorage.setItem('homeCc', v); } catch {} };
 export const homeCountry = () => HOME;
 export const flightSet = (km, from, to, a3, home = HOME) => FLIGHT_SETS.find((s) => s.test(km, from, to, a3, home));
 export const SKY_SETS = [...FLIGHT_SETS, ...PLANE_SETS];

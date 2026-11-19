@@ -101,6 +101,7 @@ export async function lookupRoute(callsign, plane) {
   if (codes.length < 2) return null;
   const airports = await Promise.all(codes.map(airport));
   const r = { callsign, from: airports[0], to: airports[airports.length - 1], stops: codes.length, airports };
+  if (!r.from || !r.to || airports.some((x) => !x)) return null; /* a code that isn't an airport (EDDF-QKL): no route, not a TypeError (QA 2026-11-19) */
   if (plane) return sameCity(routeForPlane(r, plane));
   if (r.from.icao === r.to.icao && airports.length > 2) { r.to = airports[1]; return sameCity(r); } // A-B-A: first leg
   return r.from.icao === r.to.icao ? null : sameCity(r);

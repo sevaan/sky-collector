@@ -620,3 +620,7 @@ body.sky-only:not(.day):not(.night) #around {
   --ui-ink:#e6eef7; --ui-muted:#9fb3c6; --ui-link-ink:#c9d9e6; --ui-gold:#ff6a5c; --ui-edge:#2b4058; --ui-edge-soft:#24384f; --ui-glass:#11223ad9; --ui-bar:#11223a;
   --h-text:#e6eef7; --h-muted:#9fb3c6; --h-edge:#2b4058; --h-glass:#11223ad9;
   background:#0b1626; color:#e6eef7; color-scheme:dark; }
+/* While a pack is open (#gift exists only then), the weather clouds hold still and aren't their own layers (Android app
+   2026-11-19: the pack's layers plus six drifting cloud layers passed Android WebView's tile memory, about 314 MB at
+   2.6x, and the sealed pack drew as a strip; with the clouds still it's 232 MB and draws whole). */
+body.sky-only:has(#gift) .wx-layer { animation: none; will-change: auto; }

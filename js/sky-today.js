@@ -5,15 +5,15 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { isProp } from './sky-props.js?v=0.1.1737';
-import { planeKey } from './flights.js?v=0.1.1737';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1737';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1737';
-import { airlineIcon } from './airline-icons.js?v=0.1.1737';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1737';
-import { noteLocal, rareHere } from './sky-local.js?v=0.1.1737';
-import { planeSet } from './sky-sets.js?v=0.1.1737';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1737';
+import { isProp } from './sky-props.js?v=0.1.1738';
+import { planeKey } from './flights.js?v=0.1.1738';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1738';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1738';
+import { airlineIcon } from './airline-icons.js?v=0.1.1738';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1738';
+import { noteLocal, rareHere } from './sky-local.js?v=0.1.1738';
+import { planeSet } from './sky-sets.js?v=0.1.1738';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1738';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -155,6 +155,11 @@ function noteTally(up, route) {
   return tally;
 }
 
+/* every plane up now is caught today (QA 2026-11-19: the top card still offered Show me on a plane that gives nothing) */
+function allCaught(nexts) {
+  const n = nexts.find((c) => c.isNew) ?? nexts[0];
+  return `<h3>Everything up is caught</h3><p class="td-lead">You’ve caught every plane in your sky today.${n ? ` Next over: <b>${esc(n.name)}</b> in about ${Math.max(1, Math.round(n.n.inS / 60))} min.` : ' New ones come over every few minutes.'}</p>`;
+}
 // ---------- missions: the plane that would finish each one ----------
 const rareHereT = (t) => { try { return rareHere(t); } catch { return false; } };
 /* the plane families caught today (a plane card's set), for "planes from two families" */
@@ -236,7 +241,7 @@ export function renderToday(el, ctx) {
 
   // 1 · live card
   let live = '';
-  if (best) {
+  if (best && best.w?.gain !== 'none') {
     const p = best.p, ph = picOf(p), tier = best.tier, type = aircraftName(p);
     const fin = (ctx.missions?.() ?? []).some((m) => !m.done && finisherFor(m, [best], ctx.route));
     live = `<section class="td2-live" data-hex="${esc(p.hex)}">
@@ -247,7 +252,7 @@ export function renderToday(el, ctx) {
         <div class="td2-chips">${tier ? `<span class="td2-chip" style="--c:${tier.color}">${esc(tier.gem ?? '')} ${esc(tier.label)}</span>` : ''}${best.isNew ? `<span class="td2-chip td2-chip--new">${esc(best.w.tag === 'NEW FLIGHT' ? 'New flight' : 'New plane')}</span>` : ''}${fin ? '<span class="td2-chip td2-chip--ms">◇ Finishes a mission</span>' : ''}</div>
         <div class="td2-aim"><span class="td2-arrow" data-az="${best.a.az.toFixed(1)}"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 20 21 12 16 4 21z"/></svg></span><span><b data-hint>${esc(ctx.hint?.({ az: best.a.az, el: best.a.el }) || `Look ${dirWord(best.a.az)}, ${Math.round(best.a.el)}° up`)}</b><small>${esc(dirWord(best.a.az))}, ${Math.round(best.a.el)}° up</small></span></div>
         <button type="button" class="td2-btn" data-show="${esc(p.hex)}">${TARGET}<span>Show me</span></button></div></section>`;
-  } else live = `<section class="tn-wx td-wx${sky.cls}">${sky.html}<span class="k">Up now${sky.word ? `<em>${esc(sky.word)}</em>` : ''}</span>${skyState(ctx)}</section>`;
+  } else live = `<section class="tn-wx td-wx${sky.cls}">${sky.html}<span class="k">Up now${sky.word ? `<em>${esc(sky.word)}</em>` : ''}</span>${best ? allCaught(nexts) : skyState(ctx)}</section>`;
 
   // 2 · rare alert: the rarest Epic or Legendary up (not the live card) or coming over
   const rares = [...ups.slice(1), ...nexts].filter((c) => (RANK[c.tier?.id] ?? 0) >= 3).sort((x, y) => (RANK[y.tier.id] - RANK[x.tier.id]) || ((x.n?.inS ?? 0) - (y.n?.inS ?? 0)));
