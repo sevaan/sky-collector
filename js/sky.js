@@ -1,18 +1,18 @@
 // Canvas renderer for the sky view. Gnomonic (pinhole camera) projection around where the phone points.
-import { extinction } from './sky-limit.js?v=0.1.1748';
+import { extinction } from './sky-limit.js?v=0.1.1749';
 // Two themes: 'glass' (ink, cream and orange celestial chart) and 'night' (all red, keeps dark adaptation).
-import { pmTime } from './perf-meter.js?v=0.1.1748';
-import { createMilkyGL } from './milkyway-gl.js?v=0.1.1748';
+import { pmTime } from './perf-meter.js?v=0.1.1749';
+import { createMilkyGL } from './milkyway-gl.js?v=0.1.1749';
 
-import { enuFromAzEl, compassPoint } from './orbit.js?v=0.1.1748';
-import { createCloudGL } from './clouds-gl.js?v=0.1.1748';
+import { enuFromAzEl, compassPoint } from './orbit.js?v=0.1.1749';
+import { createCloudGL } from './clouds-gl.js?v=0.1.1749';
 // Cloud colours by light: sunlit tops, shadowed bellies, and the horizon haze they melt into (0–1 RGB).
 const CLOUD_LIGHT = {
   day: { lit: [1, 1, 1], shade: [0.62, 0.68, 0.77], haze: [0.82, 0.87, 0.93] },
   dusk: { lit: [1, 0.8, 0.68], shade: [0.36, 0.33, 0.42], haze: [0.62, 0.5, 0.52] },
   night: { lit: [0.22, 0.25, 0.31], shade: [0.1, 0.12, 0.16], haze: [0.14, 0.15, 0.2] },
 };
-import { TIER_INFO } from './rarity.js?v=0.1.1748';
+import { TIER_INFO } from './rarity.js?v=0.1.1749';
 // The accent for canvas drawing: the page's --gold (orange in Space Collector, red in Sky Collector), read once (2026-11-17).
 const ACCENT = (() => { try { return getComputedStyle(document.documentElement).getPropertyValue('--gold').trim() || '#fa8127'; } catch { return '#fa8127'; } })();
 
@@ -1370,11 +1370,13 @@ export class SkyView {
     const base = mag == null ? 9 : Math.max(9, Math.min(17, 13.5 - mag * 1.1));
     return o?.type === 'station' ? Math.max(base, 16) : base;
   }
-  drawIcon(kind, x, y, size, color) {
+  drawIcon(kind, x, y, size, color, mode = null) {
     const ctx = this.ctx, u = size / 2;
     ctx.save();
     ctx.translate(x, y);
     ctx.fillStyle = color; ctx.strokeStyle = color;
+    /* 'outline': the same shapes stroked instead of filled, at the caller's lineWidth (caught planes, the white keyline) */
+    if (mode === 'outline') { ctx.fill = () => ctx.stroke(); ctx.fillRect = (a, b, c, d) => ctx.strokeRect(a, b, c, d); }
     const rect = (x0, y0, w, h) => ctx.fillRect(x0 * u, y0 * u, w * u, h * u);
     if (kind === 'sat') {
       ctx.rotate(-0.35);
@@ -1438,6 +1440,7 @@ export class SkyView {
       P([[0.3, -0.75], [0.75, -0.55], [0.55, -0.25]]);
       P([[0.35, 0.3], [0.8, 0.2], [0.65, 0.65], [0.4, 0.6]]);
     }
+    if (mode === 'outline') { delete ctx.fill; delete ctx.fillRect; }
     ctx.restore();
   }
 
@@ -1774,7 +1777,17 @@ export class SkyView {
          strength and about 1.5× the satellite scale. Off in Space Collector, where planes are passers-by. */
       const big = !!this.planesFirst;
       ctx.globalAlpha = big || hit ? 1 : 0.85; /* was .55: too dim (2026-10-30, Sevaan) */
-      this.drawIcon(a.plane.heli ? 'heli' : 'plane', 0, 0, big ? (hit ? 27 : a.plane.heli ? 17 : 15) : hit ? 20 : 10, big || hit ? t.plane : t.planeDim); // same scale as satellites (9–12, ×1.3 when targeted)
+      const kind = a.plane.heli ? 'heli' : 'plane', size = big ? (hit ? 27 : a.plane.heli ? 17 : 15) : hit ? 20 : 10;
+      /* Airline colours (2026-11-19, Sevaan picked option E with B's outline, design/sky-icon-colours.html): a plane that
+         would give you something new is drawn in its airline's colour with a white keyline; one that wouldn't (caught
+         before) is a quiet outline in the sky's ink. this.planeLook comes from main.js; the red night mode stays all red. */
+      const look = this.theme !== THEMES.night ? this.planeLook?.(a.plane) : null;
+      if (!look) this.drawIcon(kind, 0, 0, size, big || hit ? t.plane : t.planeDim); // same scale as satellites (9–12, ×1.3 when targeted)
+      else {
+        const day = (this.dayF ?? 0) > 0.3;
+        if (look.caught) { ctx.lineWidth = hit ? 1.8 : 1.4; ctx.lineJoin = 'round'; this.drawIcon(kind, 0, 0, size, day ? 'rgba(20,40,62,.85)' : 'rgba(214,226,238,.85)', 'outline'); }
+        else { ctx.lineWidth = 2.4; ctx.lineJoin = 'round'; this.drawIcon(kind, 0, 0, size, '#ffffff', 'outline'); this.drawIcon(kind, 0, 0, size, day ? look.colour : look.light); }
+      }
       ctx.restore();
       if (hit) hitAt = { x: p.x, y: p.y };
     }
