@@ -2,7 +2,11 @@
 // peak nights to earn that year’s badge (Logbook). Peak dates are the usual annual ones (International
 // Meteor Organization calendar); the window runs from the evening before the peak to the morning after.
 // No DOM.
-import { SKY_EVENTS } from './sky-events-data.js?v=0.1.1778';
+<<<<<<< HEAD
+import { SKY_EVENTS } from './sky-events-data.js?v=0.1.1779';
+=======
+import { SKY_EVENTS } from './sky-events-data.js?v=0.1.1779';
+>>>>>>> main
 /* best: the hours worth being out (the radiant has to be up). from: where they seem to come from, in words that hold
    in both hemispheres. src: what the dust is from. All standard facts (International Meteor Organization, NASA). Added
    2026-11-18 (Sevaan: the Leonids note "didn't say when or anything"). */

@@ -31,7 +31,7 @@ body.sky-only, html.sky-cards { --sc-ink:#0d2238; --sc-muted:#4a6178; --sc-paper
 #wc-holder .wc-a-pic i { background:var(--sc-orange); color:var(--sc-ink); }
 #wc-holder .wc-a-foot { border-top-color:var(--sc-rule); }
 #wc-holder .wc-a-foot > span:first-child { color:var(--sc-orange-ink); }
-#ob-pips i:nth-child(3) { display:none; } /* Sky Collector: two steps, then the first catch */
+html:not(.native-app) #ob-pips i:nth-child(3) { display:none; } /* Sky Collector on the web: two steps, then the first catch (the apps have When to look up too) */
 
 /* Tour cards in cream with navy ink (2026-11-15, canvas row D). The art keeps its drawings; their cream strokes and
    fills turn navy so they read on a daylight panel. */

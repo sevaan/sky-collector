@@ -3,8 +3,13 @@
 // Every star in a stick figure (magnitude <= 5) is its own card; the constellation card turns gold when
 // you own all of them. Bright stars that already have cards (Regulus, Spica…) count as members.
 // No DOM.
-import { NATURAL, NATURAL_BY_KEY, SOLAR_SYSTEM, lightLeft } from './natural.js?v=0.1.1778';
-import { starVector } from './celestial.js?v=0.1.1778';
+<<<<<<< HEAD
+import { NATURAL, NATURAL_BY_KEY, SOLAR_SYSTEM, lightLeft } from './natural.js?v=0.1.1779';
+import { starVector } from './celestial.js?v=0.1.1779';
+=======
+import { NATURAL, NATURAL_BY_KEY, SOLAR_SYSTEM, lightLeft } from './natural.js?v=0.1.1779';
+import { starVector } from './celestial.js?v=0.1.1779';
+>>>>>>> main
 
 const GEN = { Ari: 'Arietis', Tau: 'Tauri', Gem: 'Geminorum', Cnc: 'Cancri', Leo: 'Leonis', Vir: 'Virginis', Lib: 'Librae', Sco: 'Scorpii', Sgr: 'Sagittarii',
   Cap: 'Capricorni', Aqr: 'Aquarii', Psc: 'Piscium', Ori: 'Orionis', BigDipper: 'Ursae Majoris', UMi: 'Ursae Minoris', Cas: 'Cassiopeiae', Cyg: 'Cygni', Cru: 'Crucis',
