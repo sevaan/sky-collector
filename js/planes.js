@@ -3,11 +3,11 @@
 // on the website, because adsb.lol doesn’t allow browser requests directly. The airline comes from the callsign's prefix.
 // No DOM here. Positions are extrapolated between fetches using ground speed, track and climb rate.
 
-import { SERVER } from './server.js?v=0.1.1738';
-import { plugin } from './native.js?v=0.1.1738';
-import { lookupRoute } from './routes.js?v=0.1.1738';
-import { typeName } from './sky-type-names.js?v=0.1.1738';
-import { noteFeed } from './sky-local.js?v=0.1.1738';
+import { SERVER } from './server.js?v=0.1.1739';
+import { plugin } from './native.js?v=0.1.1739';
+import { lookupRoute } from './routes.js?v=0.1.1739';
+import { typeName } from './sky-type-names.js?v=0.1.1739';
+import { noteFeed } from './sky-local.js?v=0.1.1739';
 // Empty = feature off. localStorage 'planeRelay' overrides it (testing). Our server's /planes (adsb.lol only) once it's
 // deployed; until then the Val Town relay (relay/handler.ts).
 // Sky Collector (2026-11-15): Space Collector's Val Town relay is turned away by adsb.lol now, so the website needs Sky
@@ -71,6 +71,21 @@ export function planePath(p, obs, nowMs = Date.now(), from = -60, to = 120, step
   return out;
 }
 
+// Privacy (2026-11-19, docs/PRIVACY-AND-DATA.md): an aircraft that isn't flying an airline flight is anonymous here.
+// Private and general-aviation planes (their callsign is their registration), aircraft whose owners asked not to be
+// tracked (dbFlags 8 LADD, 4 PIA) and military aircraft (dbFlags 1) keep only their type: no callsign, no registration,
+// and their transponder code is replaced by a salted hash that never leaves the phone (different on every phone), so a
+// card can count different aircraft without anyone being able to look one up or follow it.
+const AIRLINE_CS = /^[A-Z]{3}\d/;
+export const isAnonymous = (a) => (Number(a?.dbFlags) & 13) !== 0 || !AIRLINE_CS.test(String(a?.flight ?? a?.callsign ?? '').trim().toUpperCase());
+let anonSalt = null;
+export function anonId(hex) {
+  if (anonSalt == null) { try { anonSalt = localStorage.getItem('anonSalt'); if (!anonSalt) { anonSalt = Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem('anonSalt', anonSalt); } } catch { anonSalt = 'x'; } }
+  let h1 = 0x811c9dc5, h2 = 0x01000193; const s = anonSalt + '|' + String(hex ?? '').toLowerCase();
+  for (let i = 0; i < s.length; i++) { const c = s.charCodeAt(i); h1 = Math.imul(h1 ^ c, 16777619) >>> 0; h2 = Math.imul(h2 ^ c, 2246822519) >>> 0; }
+  return `~${h1.toString(36)}${h2.toString(36)}`; /* "~" marks it: never a real ICAO hex */
+}
+export const parsePlanes = (json) => parse(json); // tests
 function parse(json) {
   const at = json.now < 1e12 ? json.now * 1000 : json.now;
   const out = [];
@@ -78,8 +93,9 @@ function parse(json) {
     if (a.lat == null || a.lon == null || a.alt_baro === 'ground') continue;
     const ft = typeof a.alt_geom === 'number' ? a.alt_geom : a.alt_baro;
     if (typeof ft !== 'number') continue;
+    const anon = isAnonymous(a);
     out.push({
-      hex: a.hex, callsign: (a.flight ?? '').trim(), reg: a.r ?? '', type: a.t ?? '', desc: a.desc ?? '', category: a.category ?? '',
+      hex: anon ? anonId(a.hex) : a.hex, callsign: anon ? '' : (a.flight ?? '').trim(), reg: anon ? '' : a.r ?? '', anon, type: a.t ?? '', desc: a.desc ?? '', category: a.category ?? '',
       lat: a.lat, lon: a.lon, hKm: ft * FT, altFt: ft, gs: a.gs ?? 0, track: a.track ?? a.true_heading ?? 0,
       climb: a.geom_rate ?? a.baro_rate ?? 0, at: at - (a.seen_pos ?? 0) * 1000,
     });
@@ -177,7 +193,7 @@ const AIRLINES = { ACA: 'Air Canada', ROU: 'Air Canada Rouge', JZA: 'Air Canada 
 // Every ICAO airline code -> name (js/airlines.js, built by scripts/build-airlines.mjs), loaded once, lazily.
 let airlineTable = null, airlineLoad = null;
 export function loadAirlines() {
-  return (airlineLoad ??= import('./airlines.js?v=0.1.1738').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
+  return (airlineLoad ??= import('./airlines.js?v=0.1.1739').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
 }
 export function airlineName(callsign) { return /^[A-Z]{3}\d/.test(callsign ?? '') ? airlineFor(callsign, null) : ''; }
 function airlineFor(callsign, a) {

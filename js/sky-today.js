@@ -5,15 +5,15 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { isProp } from './sky-props.js?v=0.1.1738';
-import { planeKey } from './flights.js?v=0.1.1738';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1738';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1738';
-import { airlineIcon } from './airline-icons.js?v=0.1.1738';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1738';
-import { noteLocal, rareHere } from './sky-local.js?v=0.1.1738';
-import { planeSet } from './sky-sets.js?v=0.1.1738';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1738';
+import { isProp } from './sky-props.js?v=0.1.1739';
+import { planeKey } from './flights.js?v=0.1.1739';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1739';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1739';
+import { airlineIcon } from './airline-icons.js?v=0.1.1739';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1739';
+import { noteLocal, rareHere } from './sky-local.js?v=0.1.1739';
+import { planeSet } from './sky-sets.js?v=0.1.1739';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1739';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -192,7 +192,7 @@ const FIELD = 10, FLAP_CH = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 // though... maybe multiline"): the destination, else the callsign, else the type; words wrap to the second line, and a
 // single word longer than a line runs on into it. Longer than two lines: cut at the last whole word that fits.
 function boardLines(c) {
-  const u = String(c.full?.to?.city || c.p.callsign || c.p.type || 'Aircraft').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^A-Z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim() || 'AIRCRAFT';
+  const u = String(c.full?.to?.city || c.p.callsign || aircraftName(c.p) || c.p.type || 'Aircraft').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^A-Z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim() || 'AIRCRAFT';
   const lines = ['']; for (const w of u.split(' ')) { let x = w;
     while (x) { const cur = lines.at(-1), room = FIELD - (cur ? cur.length + 1 : 0);
       if (x.length <= room) { lines[lines.length - 1] = cur ? `${cur} ${x}` : x; x = ''; }
