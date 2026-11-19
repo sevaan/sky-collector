@@ -515,7 +515,10 @@ html:not(.sky-night) body.sky-only:not(.night) .crew-sec::after { background:#d5
 html:not(.sky-night) body.sky-only:not(.night) .crew-kit .kt { background:#ffffff; border-color:#c9d9e6; box-shadow:0 1px 2px rgba(13,34,56,.06); }
 html:not(.sky-night) body.sky-only:not(.night) .crew-kit .kt-i { color:var(--gold); }
 html:not(.sky-night) body.sky-only:not(.night) .crew-kit small { color:#4a6178; }
-html:not(.sky-night) body.sky-only:not(.night) :is(.crew-patch, .kt-patch) { filter:drop-shadow(0 6px 14px rgba(13,34,56,.3)); }
+html:not(.sky-night) body.sky-only:not(.night) :is(.crew-patch, .kt-patch) { filter:drop-shadow(0 8px 16px rgba(13,34,56,.2)); }
+/* the patch art's own hard, offset shadow disc (js/patches.js patchSvg) read as a grey crescent on the light page
+   (2026-11-19, Sevaan: "The shadow of this patch doesn't look good"): only the soft drop shadow above on light pages */
+html:not(.sky-night) body.sky-only:not(.night) :is(.crew-patch, .kt-patch) .patch-svg > circle:first-of-type { display:none; }
 html:not(.sky-night) body.sky-only:not(.night) .kt-fan img { border-color:#ffffff; box-shadow:0 3px 8px rgba(13,34,56,.3); }
 html:not(.sky-night) body.sky-only:not(.night) #set-plus-sheet :is(.starfield, .crew-meteor) { display:none; } /* stars and a shooting star belong to the night page */
 html:not(.sky-night) body.sky-only:not(.night) #recap .starfield { display:none; } /* night stars on the daylight recap page */
@@ -527,6 +530,13 @@ html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.ni
   background-color:#fffffff5 !important; background-image:repeating-linear-gradient(0deg, #0d223805 0 1px, transparent 1px 3px) !important; color:#0d2238;
   box-shadow:0 10px 28px rgba(13,34,56,.22), 0 0 0 1px #c9d9e6 !important; }
 html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts .ticket :is(.ticket__line, b) { color:#0d2238 !important; }
+/* The icon tiles in the colours of a light ticket (2026-11-19, Sevaan: the info icon was pale cream on white): each tone
+   deepened so its icon reads, info in the airmail stripe's blue. */
+html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts .ticket.tone-info { --k:#24508c; }
+html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts .ticket.tone-orange { --k:#b42a20; }
+html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts .ticket.tone-gold { --k:#a8780f; }
+html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts .ticket.tone-steel { --k:#2f5f8a; }
+html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts .ticket.tone-red { --k:#b42a20; }
 html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts .ticket :is(.ticket__sub, .ticket__x, .ticket__xp small) { color:#4a6178 !important; }
 /* Rank card leftovers from the screen check (2026-11-17): the "Last week" link and the XP line were pale yellow or grey
    on the light panel; on a 320 px phone "5,530 XP to Air Traffic Controller" ran off the card. */
@@ -636,3 +646,127 @@ body.sky-only:has(#gift) .wx-layer { animation: none; will-change: auto; }
 #wc-holder .wc-a-foot { padding: .72em 0 0; }
 @media (max-width: 340px) { #wc-holder .wc-a { gap: .75em; padding-top: 1.1em; } } /* 320 px: one more line of text */
 html:not(.sky-night) body.sky-only #toasts .ticket .tn-go { color:#b42a20; } /* "Show me ›" was pale cream on the day ticket */
+
+/* The Plus page's plane fly-by (2026-11-19, Sevaan: "Make a plane fly by instead of a shooting star"): a small jet crosses
+   behind the member patch from the left, climbing a little, its contrail fading behind it; once every 7 s, day and night.
+   Moves only transform and opacity (smooth on phones). None under Reduce Motion. */
+.crew-plane { position:absolute; left:50%; top:40%; z-index:0; width:26px; height:26px; margin:-13px 0 0 -13px; pointer-events:none; opacity:0;
+  animation:crewPlane 7s 1.2s cubic-bezier(.35,.1,.65,.9) infinite; will-change:transform, opacity; }
+.crew-plane > svg { position:relative; display:block; width:100%; height:100%; transform:rotate(80deg); fill:#0d2238; }
+.crew-trail { position:absolute; right:60%; top:50%; width:120px; height:2px; margin-top:-1px; border-radius:2px; transform:rotate(-10deg); transform-origin:100% 50%;
+  background:linear-gradient(90deg, #0d223800, #0d22384d); } /* by day a faint navy line: a white contrail vanished on the pale page */
+@keyframes crewPlane {
+  0% { transform:translate(-190px, 26px); opacity:0; }
+  4% { opacity:1; }
+  30% { opacity:1; }
+  36% { transform:translate(190px, -40px); opacity:0; }
+  100% { transform:translate(190px, -40px); opacity:0; }
+}
+html.sky-night body.sky-only .crew-plane > svg, body.sky-only.night .crew-plane > svg { fill:#fff2b3; }
+html.sky-night body.sky-only .crew-trail { background:linear-gradient(90deg, #fff2b300, #fff2b399); filter:none; }
+body.sky-only.night .crew-trail { background:linear-gradient(90deg, #ff6a5500, #ff6a55aa); filter:none; }
+body.sky-only.night .crew-plane > svg { fill:#ff6a55; }
+@media (prefers-reduced-motion: reduce) { .crew-plane { display:none; } }
+
+/* The strip behind the status bar over an open page (css/app.css body::before) took the body's night colour, so light
+   pages had a dark band fading at the top (2026-11-19, Sevaan: "Weird fade at the top here too"): the light pages' own
+   colour, solid. */
+html:not(.sky-night) body.sky-only:has(.overlay.panel:not([hidden]))::before { background:#eef5fb; }
+
+/* Explore's header in the sky's own colour (2026-11-19, Sevaan: "Not a fan of this fade into the white header. What if the
+   header was the same colour as the sky"): js/main.js sets --sky-top to the colour the sky is painted at the top of the
+   screen (js/sky.js tone), so the header and the status bar are the sky, with a short blend into it, by day and at night.
+   Light lettering on it. Only on Explore itself, not under a page that has its own header colour. */
+body.sky-only[data-page="explore"]:not(.col-open):not(.set-open):not(.sky-open):not(.plus-open):not(.credits-open):not(.around-open):not(:has(.overlay.panel:not([hidden]))) #sky-header::before {
+  background:linear-gradient(var(--sky-top, #3f7fbf) calc(100% - 26px), color-mix(in srgb, var(--sky-top, #3f7fbf) 0%, transparent)); height:calc(var(--safe-top) + 106px); }
+body.sky-only.day[data-page="explore"]:not(.col-open):not(.set-open):not(.sky-open):not(.plus-open):not(.credits-open):not(.around-open):not(:has(.overlay.panel:not([hidden]))) #sky-header {
+  --text:#fff; --ink:#fff; --muted:#e6f0fa; --edge:#ffffff80; color:#fff; text-shadow:0 1px 2px rgba(13,34,56,.25); }
+body.sky-only.day[data-page="explore"]:not(.col-open):not(.set-open):not(.sky-open):not(.plus-open):not(.credits-open):not(.around-open):not(:has(.overlay.panel:not([hidden]))) #sky-header :is(.wordmark, .wordmark span, button, .icon-button) { color:#fff !important; -webkit-text-fill-color:currentColor; }
+body.sky-only.day[data-page="explore"]:not(.col-open):not(.set-open):not(.sky-open):not(.plus-open):not(.credits-open):not(.around-open):not(:has(.overlay.panel:not([hidden]))) #sky-header .wordmark span { color:#e6f0fa !important; }
+
+/* How to play's picture frame drawn over the picture (2026-11-19, Sevaan: "These animated images are breaking the border"):
+   the pictures were painted over the frame's inset lines, which css/app.css draws as the box's own inset shadow. */
+body.sky-only .ht-pic { position:relative; }
+body.sky-only .ht-pic::after { content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none; box-shadow:inherit; z-index:2; }
+body.sky-only .ht-pic > svg { -webkit-mask-image:none; mask-image:none; }
+/* How to play's real pieces (js/main.js htFlight, htLevels, htPatches, htUpNow): sized to the 190px frame, soft light-page
+   shadows. The flight card on its own is larger; three in a row are smaller. */
+body.sky-only .ht-pic .ht-real .mini-face { --mini-s:.33; filter:drop-shadow(0 6px 12px rgba(13,34,56,.3)); }
+body.sky-only .ht-pic .ht-lv .ht-real .mini-face { --mini-s:.27; }
+body.sky-only .ht-pic .ht-real.lvl-b .mini-face { box-shadow:0 0 0 3px #b8793e; }
+body.sky-only .ht-pic .ht-real.lvl-s .mini-face { box-shadow:0 0 0 3px #c9d1da, 0 0 12px rgba(201,209,218,.8); }
+body.sky-only .ht-pic .ht-real.lvl-g .mini-face { box-shadow:0 0 0 3px #e2b53c, 0 0 16px rgba(226,181,60,.7); }
+body.sky-only .ht-pic .ht-lv { gap:10px; }
+body.sky-only .ht-patches { gap:10px; } body.sky-only .ht-patch { width:76px; display:block; filter:drop-shadow(0 6px 10px rgba(13,34,56,.28)); }
+body.sky-only .ht-patch .patch, body.sky-only .ht-patch svg { display:block; width:100%; height:auto; }
+body.sky-only .ht-patch .patch-svg > circle:first-of-type { display:none; }
+body.sky-only .ht-upnow { display:block; width:330px; transform:scale(.56); transform-origin:50% 50%; margin:-90px 0; pointer-events:none; text-align:left; } /* Today's own hero (heroHtml), shrunk into the frame */
+body.sky-only .ht-upnow .now-hero { margin:0; }
+/* the How to play button's label white (2026-11-19, Sevaan) */
+body.sky-only #ht-next, body.sky-only #ht-next * { color:#fff !important; }
+/* Today's mission cards (Space Collector's .mc deck, js/main.js skyMissionCards) dressed as Sky's cards (2026-11-19, Sevaan:
+   "look like real cards"): a cream face in a gold frame, the photo in a thin keyline, navy title, red MISSION line, the
+   COMPLETE stamp on the photo (never over the title). Dark night mode keeps Space's own. */
+html:not(.sky-night) body.sky-only #sky-missions .mc { background:linear-gradient(#fffdf6, #f7f0dd); color:#0d2238;
+  box-shadow:0 0 0 2px #d9b65a, inset 0 0 0 3px #fffdf6, inset 0 0 0 4px #d9b65a88, 0 8px 18px rgba(13,34,56,.18); }
+html:not(.sky-night) body.sky-only #sky-missions .mc .top span:first-child { color:#b42a20; }
+html:not(.sky-night) body.sky-only #sky-missions .mc .top span:last-child { color:#8a6420; }
+html:not(.sky-night) body.sky-only #sky-missions .mc .art { background-color:#cfe5f6; box-shadow:0 0 0 1px #0d22381f; }
+html:not(.sky-night) body.sky-only #sky-missions .mc b { color:#0d2238; background:none; -webkit-text-fill-color:#0d2238; text-shadow:none; filter:none; }
+html:not(.sky-night) body.sky-only #sky-missions .mc small { color:#b42a20; }
+html:not(.sky-night) body.sky-only #sky-missions .mc.done small { color:#1f7a45; }
+html:not(.sky-night) body.sky-only #sky-missions .mc.done { box-shadow:0 0 0 2px #e2b53c, 0 0 14px rgba(226,181,60,.55), inset 0 0 0 3px #fffdf6, 0 8px 18px rgba(13,34,56,.18); }
+body.sky-only #sky-missions .mc.done::after { top:calc(8px + 22px + (100% - 16px) * .375 * .5); }
+html:not(.sky-night) body.sky-only #sky-missions .mc.done::after { color:#1f7a45; border-color:#1f7a45; background:#fffdf6e6; }
+html:not(.sky-night) body.sky-only #sky-missions .mc.sealed { box-shadow:0 0 0 2px #d9b65a88, 0 8px 18px rgba(13,34,56,.18); }
+
+/* ---- Visual playtest fixes, 2026-11-19 (Space's dark design on Sky's light pages) ---- */
+/* Explore's COLLECT: white on red, like every red button (css/app.css #discover .d-ticket #d-cta set a black label) */
+body.sky-only #discover:not(.owned) .d-ticket #d-cta { color:#fff !important; }
+/* Send cards, by day: navy tabs, a cream bar, red NEXT with a white label (css/gift.css was cream-on-navy) */
+:is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-tabs button { border-color:#c9d6e3; color:#4a6178; }
+:is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-tabs button[aria-selected="true"] { background:#0d2238; border-color:#0d2238; color:#fff; }
+:is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) :is(.sv-back, .sv-link, .sv-sa) { color:#b42a20; }
+:is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-selrow { color:#4a6178; }
+:is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-gap button { border-color:#c9d6e3; color:#4a6178; } :is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-gap button.o { background:#0d2238; border-color:#0d2238; color:#fff; }
+:is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-bar { background:linear-gradient(transparent, #eef5fb 22%); }
+:is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-bar .sv-n { background:#fffdf6; border-color:#d9b65a; color:#0d2238; box-shadow:0 6px 16px rgba(13,34,56,.12); }
+:is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-bar .sv-n small { color:#4a6178; }
+:is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-bar .sv-btn { background:linear-gradient(#e8493c, #c42d22); color:#fff; } :is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-bar .sv-btn:disabled { background:#d9a19b; color:#fffdf6; }
+/* The tour before a place is chosen: the page's light colour behind it, not Space's night navy; Skip as a light pill */
+html:not(.sky-night) body.sky-only.day { background-color:#eef5fb; }
+html:not(.sky-night) body.sky-only.day #ob-skip.ob-exit { background:#fffdf6e6 !important; color:#0d2238 !important; border-color:#c9d6e3 !important; }
+/* A sheet over a page: the strip behind the status bar takes the sheet's grey scrim too (it stayed light above it) */
+html:not(.sky-night) body.sky-only:has(.set-sheet.in)::before { background:transparent; }
+/* Location sheet: the search field like the coordinates fields under it */
+html:not(.sky-night) body.sky-only #loc-q { background:#fffdf6; color:#0d2238; border:1px solid #c9d6e3; }
+html:not(.sky-night) body.sky-only #loc-q::placeholder { color:#4a6178; }
+/* Albums: the Silver level readable on cream */
+html:not(.sky-night) body.sky-only .album__level.l2, html.sky-cards:not(.sky-night) .album__level.l2 { color:#6d7f92; }
+/* The catch panel's tier line ("◆ RARE · NEW PLANE"): the tier colours were made for navy; deepened on the light panel */
+html:not(.sky-night) body.sky-only:not(.night) #discover #d-tier { filter:brightness(.62) saturate(1.35); }
+/* Every red .d-cta.o button (Use my location, How to play's Next…) with a white label by day: Space's was gold with a dark label */
+html:not(.sky-night) body.sky-only:not(.night) .d-cta.o, html:not(.sky-night) body.sky-only:not(.night) .d-cta.o * { color:#fff !important; }
+
+/* Today on Space's Tonight pieces (2026-11-19, review Part 1): the hero (.now-hero), the Up now tiles (.tn-chip.tile), the
+   run (.tn-r) and the section heads (.tn-sec), in Sky's light colours by day. Space's own dark look at night. */
+html:not(.sky-night) body.sky-only :is(#sky-today, .ht-upnow) .now-hero { background:linear-gradient(160deg, #fffdf6, #f6efdd); border:1px solid color-mix(in srgb, var(--c) 55%, #d9b65a); box-shadow:0 8px 20px rgba(13,34,56,.12); --text:#0d2238; --ink:#0d2238; --muted:#4a6178; --gold:#d7362b; color:#0d2238; }
+html:not(.sky-night) body.sky-only :is(#sky-today, .ht-upnow) .now-hero .nh-k { color:#b42a20; }
+html:not(.sky-night) body.sky-only :is(#sky-today, .ht-upnow) .now-hero .nh-tier { color:color-mix(in srgb, var(--c) 60%, #0d2238); }
+html:not(.sky-night) body.sky-only :is(#sky-today, .ht-upnow) .now-hero .pill-o { background:linear-gradient(#e8493c, #c42d22); border:0; color:#fff; box-shadow:0 3px 0 #8c1c14; }
+html:not(.sky-night) body.sky-only :is(#sky-today, .ht-upnow) .now-hero .nh-card { box-shadow:0 10px 18px rgba(13,34,56,.25); }
+html:not(.sky-night) body.sky-only #sky-today .tn-chip.tile { background:#fffdf6; border-color:#d6e0ea; box-shadow:0 4px 12px rgba(13,34,56,.08); --text:#0d2238; --muted:#4a6178; color:#0d2238; }
+html:not(.sky-night) body.sky-only #sky-today .tn-chip.tile.seen { border-color:#c9d6e3; opacity:.85; }
+html:not(.sky-night) body.sky-only #sky-today .tn-chip.tile .gm { background:none; color:color-mix(in srgb, var(--c) 60%, #0d2238); }
+html:not(.sky-night) body.sky-only #sky-today .tn-r { --text:#0d2238; --ink:#0d2238; --muted:#4a6178; color:#0d2238; }
+html:not(.sky-night) body.sky-only #sky-today .tn-sec .k { color:#b42a20; } html:not(.sky-night) body.sky-only #sky-today .tn-sec > span:last-child { color:#4a6178; }
+html.sky-night body.sky-only #sky-today .tn-sec .k, body.sky-only.night #sky-today .tn-sec .k { color:#ff7f70; }
+html.sky-night body.sky-only #sky-today .tn-sec > span:last-child { color:#9fb3c8; }
+
+/* Send cards' pack page by day (it lives in the Collection frame, html.sky-cards): the manifest and the note in Sky's colours */
+html.sky-cards:not(.sky-night) .sv-manifest { background:#fffdf6; border:1px solid #d9b65a; color:#0d2238; box-shadow:0 8px 18px rgba(13,34,56,.12); }
+html.sky-cards:not(.sky-night) .sv-manifest :is(.hd, small, .more) { color:#4a6178; }
+html.sky-cards:not(.sky-night) .sv-manifest .lbl { color:#0d2238; }
+html.sky-cards:not(.sky-night) .sv-plain { color:#4a6178; }
+html.sky-cards:not(.sky-night) .sv-night .sv-box { border-color:#9fb3c6; }
+html.sky-cards:not(.sky-night) .sv-btn.o { background:linear-gradient(#e8493c, #c42d22); color:#fff; } /* Share N cards: white on red */

@@ -179,9 +179,10 @@ function renderSkyCard(o0, opts) {
     ? flightCardHtml(o, { caughtAt, heightFt: last?.altFt, sightings: own.length, type: last?.typeCode, planeName: last?.plane?.name, eager: !opts.mini, small: !!opts.mini, stampInfo, newStamp: !!opts.newStamp })
     : planeCardHtml(o, { caughtAt, heightFt: last?.altFt, speedKmh: last?.gsKt > 30 ? Math.round(last.gsKt * 1.852) : null, awayKm: Math.round(last?.rangeKm ?? 0), sightings: own.length, stampInfo, newStamp: !!opts.newStamp, callsign: last?.callsign, small: !!opts.mini, eager: !opts.mini, rareHere: sightings.some((x) => x.rareHere) });
   const el = document.createElement('article');
-  el.className = `card card--sky card--${o.sky} tier-${o.tier ?? 'common'} level-${opts.forceLevel ?? stampInfo.level}${own.length || opts.preview ? '' : ' card--unseen'}`;
+  const shinyOf = own.find((x) => x.shiny && SHINY[x.shiny])?.shiny; /* a shiny moment (js/shiny.js shinyForPlane) makes the card shiny, as a satellite's */
+  el.className = `card card--sky card--${o.sky} tier-${o.tier ?? 'common'} level-${opts.forceLevel ?? stampInfo.level}${own.length || opts.preview ? '' : ' card--unseen'}${shinyOf ? ' shiny' : ''}`;
   el.dataset.id = o.id; el.setAttribute('aria-label', `${o.name}, ${TIER_INFO[o.tier]?.label ?? 'Common'}, ${own.length ? 'collected' : 'not collected'}`);
-  el.innerHTML = `${html}<div class="card__back"></div>`;
+  el.innerHTML = `${html}${shinyOf ? `<span class="fc-shiny" aria-label="Shiny: ${SHINY[shinyOf].label}"><b>✦</b> ${SHINY[shinyOf].label}</span><span class="fc-shine" aria-hidden="true"></span>` : ''}<div class="card__back"></div>`;
   el._card = o;
   return el;
 }

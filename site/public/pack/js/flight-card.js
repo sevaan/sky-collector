@@ -61,8 +61,8 @@ export function photoFor(type) {
 const airlineIcao = (f) => f?.airlineIcao || (/^F:([A-Z]{3}):/.exec(f?.key || '') || [])[1] || (f?.callsign || '').slice(0, 3);
 // The airline's logo beside its name (2026-11-15, Sevaan: "the cards need the airline logos too"). Logos only identify the
 // airline: they sit next to its name and nowhere else, come from Wikimedia Commons in the public domain (js/airline-logos.js,
-// scripts/logos/), and Settings → Airline logos hides them all (localStorage 'skyLogos' = 'off').
-const logosOn = () => { try { return localStorage.getItem('skyLogos') !== 'off'; } catch { return true; } };
+// scripts/logos/).
+const logosOn = () => true; /* always on: the Settings switch was removed (2026-11-19) */
 // The airline as its logo when we have one (the logo is the name: a wordmark next to the same name read twice), else its name.
 function airlineMark(f, cls) {
   const lg = logosOn() ? airlineLogo(airlineIcao(f)) : null;
@@ -160,7 +160,7 @@ export const passportHtml = passport;
 // opts: { caughtAt: Date, heightFt, sightings, type (ICAO, for older catches), planeName, eager, stampInfo (flightStampInfo), newStamp }
 export function flightCardHtml(f, opts = {}) {
   const type = f.type || opts.type || '', ph = flightPhotoFor(f, type), typeName = f.typeName || opts.planeName || '';
-  const air = !f.air ? '—' : f.air.h ? `${f.air.h} h ${String(f.air.m).padStart(2, '0')}` : `${f.air.m} min`;
+  const air = !f.air ? '—' : f.air.h ? `≈${f.air.h} h ${String(f.air.m).padStart(2, '0')}` : `≈${f.air.m} min`; /* an estimate from the distance (flights.js airTime), so it says so */
   const long = Math.max(f.from.city.length, f.to.city.length) > 11;
   const art = ph ? `${photoImg(ph, 'fc-photo', opts.eager, opts.small)}${credit(ph)}` : skyPanel('jet', 'fc-sky', type);
   const inner = `
@@ -169,7 +169,7 @@ export function flightCardHtml(f, opts = {}) {
       ${routeStrip(f, typeName)}
     </div>
     <h2 class="fc-name${long ? ' fc-name--long' : ''}"><span>${esc(f.from.city)} <i aria-label="to">→</i></span><span>${esc(f.to.city)}</span></h2>
-    <div class="fc-id"><span class="fc-id-l">${airlineMark(f, 'fc-logo')}</span><span class="fc-id-r">FLIGHT ${esc(f.callsign || '—')}</span></div>
+    <div class="fc-id"><span class="fc-id-l">${airlineMark(f, 'fc-logo')}</span><span class="fc-id-r">CALLSIGN ${esc(f.callsign || '—')}</span></div>
     <div class="fc-stats">${stat('DISTANCE', dist(f.km ?? null).v, dist(f.km ?? null).u)}${stat('IN THE AIR', air)}${stat('CAUGHT AT', feet(opts.heightFt), 'ft')}${stat('SEEN', opts.sightings ?? 1, '×')}</div>
     ${passport(opts.stampInfo, { newest: opts.newStamp })}
     ${(() => { try { const r = regularFor(f.callsign); return r ? `<div class="fc-reg"><span>REGULAR</span> Usually over you about ${esc(clockText(r.minute))} · ${r.days} of the last ${r.of} days</div>` : ''; } catch { return ''; } })()}
@@ -200,7 +200,7 @@ export function planeCardHtml(p, opts = {}) {
     </div>
     <h2 class="fc-name${long ? ' fc-name--long' : ''}"><span>${esc(name)}</span></h2>
     <div class="fc-id"><span class="fc-id-l">${esc(un && (si?.count ?? 1) <= 1 ? (p.stamp || 'Type not listed') : si?.count ? planeLine(si, type) : p.stamp ? `${p.stamp}${stamps > 1 ? ` + ${stamps - 1} more` : ''}` : p.glyph === 'heli' ? 'Helicopter' : 'Aircraft')}</span><span class="fc-id-r">${esc(type || (un ? 'TYPE NOT LISTED' : '—'))}${showReg ? ` · ${esc(p.reg)}` : ''}</span></div>
-    <div class="fc-stats">${stat('CAUGHT AT', feet(opts.heightFt), 'ft')}${stat('SPEED', speed(opts.speedKmh ?? null).v, speed(0).u)}${stat('AWAY', dist(opts.awayKm ?? null).v, dist(0).u)}${stat('SEEN', opts.sightings ?? stamps ?? 1, '×')}</div>
+    <div class="fc-stats">${stat('CAUGHT AT', feet(opts.heightFt), 'ft')}${stat('GND SPEED', speed(opts.speedKmh ?? null).v, speed(0).u)}${stat('AWAY', dist(opts.awayKm ?? null).v, dist(0).u)}${stat('SEEN', opts.sightings ?? stamps ?? 1, '×')}</div>
     ${passport(si, { newest: opts.newStamp })}
     <p class="fc-fact">${rich(localText(planeFact(p, si?.count ?? 1)))}</p>
     ${footer(opts.caughtAt, type ? `TYPE ${type}` : 'PLANES')}`;
@@ -219,7 +219,7 @@ export function miniCardHtml({ kind, card: c, type, last, n = 1, stamps = 0, sta
   const medal = lvl ? `<span class="sct-lvl sct-lvl--${lvl}" title="${lvl} · ${stampInfo.count}"><i>${stampInfo.count}</i><em>${lvl.toUpperCase()}</em></span>` : '';
   const when = last ? `<span class="sct-foot"><span>✓ ${dateShort(new Date(last))}</span><span>${n}×</span></span>` : '<span class="sct-foot"><span>NOT YET COLLECTED</span></span>'; /* the target ticket shows a card you don't have yet */
   if (kind === 'flight') {
-    const air = !c.air ? '—' : c.air.h ? `${c.air.h}h${String(c.air.m).padStart(2, '0')}` : `${c.air.m} min`;
+    const air = !c.air ? '—' : c.air.h ? `≈${c.air.h}h${String(c.air.m).padStart(2, '0')}` : `≈${c.air.m} min`;
     return `<span class="sct-face sct--${t}${lvl ? ` sct-face--lvl sct-face--${lvl}` : ''}" style="--tier:${TIERS[t].color}"><span class="sct-in">
       <span class="sct-art${ph ? '' : ' sct-art--sky'}">${pic}${gem}${medal}<span class="sct-route"><b>${esc(code(c.from))}</b><svg viewBox="0 0 40 10" preserveAspectRatio="none" aria-hidden="true"><path d="M2 9 Q20 -3 38 9"/></svg><b>${esc(code(c.to))}</b></span></span>
       <span class="sct-name">${esc(c.to.city)}</span>
@@ -238,35 +238,4 @@ export function miniCardHtml({ kind, card: c, type, last, n = 1, stamps = 0, sta
 // The catch screen. kind 'new' (default): the new-card screen, the flight card (or the plane card when there's no route)
 // plus the Planes strip. kind 'stamp': the "new stamp" moment for a card you own: the card with its newest stamp
 // inking in and, on a level-up, the new level. Takes sky-catch.js collect()'s result. Resolves when it's closed.
-export function showCatch(r) {
-  const { flight, plane, isNewFlight, isNewPlane, heightFt, speedKmh, awayKm, flightSeen, planeSeen, kind = 'new', stampOn = 'flight',
-    level, levelUp, stampCount, flightStampInfo: fInfo = null, planeStampInfo: pInfo = null, callsign } = r;
-  const at = new Date(), stamp = kind === 'stamp', onPlane = stamp && (stampOn === 'plane' || !flight);
-  const el = document.createElement('section');
-  el.className = `fcatch${stamp ? ' fcatch--stamp' : ''}`; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', stamp ? 'Caught again' : 'New card');
-  const asFlight = flight && !onPlane;
-  const main = asFlight ? flightCardHtml(flight, { caughtAt: at, heightFt, sightings: flightSeen, type: plane?.type, planeName: plane?.name, eager: true, stampInfo: fInfo, newStamp: stamp })
-    : planeCardHtml(plane, { caughtAt: at, heightFt, speedKmh, awayKm, sightings: planeSeen, eager: true, stampInfo: pInfo, newStamp: stamp, callsign });
-  const noun = asFlight ? 'DAY' : 'AIRCRAFT';
-  const head = stamp ? `CAUGHT AGAIN <span>· ${noun} ${stampCount}${levelUp ? ` · ${String(level).toUpperCase()}!` : ''}</span>`
-    : `${flight ? (isNewFlight ? 'NEW FLIGHT' : 'SEEN AGAIN') : (isNewPlane ? 'NEW PLANE' : 'SEEN AGAIN')} <span>· +${flight ? (isNewFlight ? 80 : 10) : (isNewPlane ? 60 : 10)} XP</span>`;
-  const ph = photoFor(plane?.type);
-  const planeNote = flight && !onPlane ? (isNewPlane ? 'NEW PLANE' : r.planeStamps?.gained ? `AIRCRAFT ${r.planeStamps.count}${r.planeStamps.levelUp ? ` · ${String(r.planeStamps.level).toUpperCase()}!` : ''}` : `SEEN ${planeSeen}×`) : '';
-  const strip = flight && !onPlane ? `<div class="fcatch-strip">
-      <span class="fcatch-strip-art${ph ? ' has-photo' : ''}">${ph ? `<img src="${esc(ph.url)}" alt="">` : glyphSvg(plane.glyph)}</span>
-      <span class="fcatch-strip-t"><span class="fcatch-strip-k">+ PLANES · ${planeNote}</span>
-      <span class="fcatch-strip-n">${esc(plane.name)}</span></span></div>` : '';
-  el.innerHTML = `<div class="fcatch-top"><span class="fcatch-k">${head}</span>
-      <button class="fcatch-x" type="button" aria-label="Close"><svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-    <div class="fcatch-card">${main}</div>${strip}
-    <button class="fcatch-done" type="button">KEEP SPOTTING</button>`;
-  document.body.appendChild(el);
-  requestAnimationFrame(() => el.classList.add('on'));
-  return new Promise((resolve) => {
-    const close = () => { el.classList.remove('on'); setTimeout(() => el.remove(), 250); resolve(); };
-    el.querySelector('.fcatch-x').addEventListener('click', close);
-    el.querySelector('.fcatch-done').addEventListener('click', close);
-  });
-}
-// The same screen by its other name, for callers that only ever show a stamp.
-export const showStamp = (r) => showCatch({ ...r, kind: 'stamp' });
+/* showCatch / showStamp (the old catch panel's own reveal) are gone (2026-11-19): Space's reveal shows every catch */

@@ -3,13 +3,13 @@
 // on the website, because adsb.lol doesn’t allow browser requests directly. The airline comes from the callsign's prefix.
 // No DOM here. Positions are extrapolated between fetches using ground speed, track and climb rate.
 
-import { SERVER } from './server.js?v=0.1.1754';
-import { plugin } from './native.js?v=0.1.1754';
-import { lookupRoute } from './routes.js?v=0.1.1754';
-import { typeName } from './sky-type-names.js?v=0.1.1754';
-import { noteFeed } from './sky-local.js?v=0.1.1754';
-import { DEFAULTS, clampDial, freshFeed, pickSource, nextGap, afterAnswer, feedDown, maxAgeS, easeLeft } from './plane-feed.js?v=0.1.1754';
-import { tagOf } from './sky-secrets.js?v=0.1.1754';
+import { tagOf } from './sky-secrets.js?v=0.1.1778';
+import { SERVER } from './server.js?v=0.1.1778';
+import { plugin } from './native.js?v=0.1.1778';
+import { lookupRoute } from './routes.js?v=0.1.1778';
+import { typeName } from './sky-type-names.js?v=0.1.1778';
+import { noteFeed } from './sky-local.js?v=0.1.1778';
+import { DEFAULTS, clampDial, freshFeed, pickSource, nextGap, afterAnswer, feedDown, maxAgeS, easeLeft } from './plane-feed.js?v=0.1.1778';
 // Empty = feature off. localStorage 'planeRelay' overrides it (testing). Our server's /planes (adsb.lol only) once it's
 // deployed; until then the Val Town relay (relay/handler.ts).
 // Sky Collector (2026-11-15): Space Collector's Val Town relay is turned away by adsb.lol now, so the website needs Sky
@@ -92,7 +92,20 @@ export function planePath(p, obs, nowMs = Date.now(), from = -60, to = 120, step
 // and their transponder code is replaced by a salted hash that never leaves the phone (different on every phone), so a
 // card can count different aircraft without anyone being able to look one up or follow it.
 const AIRLINE_CS = /^[A-Z]{3}\d/;
-export const isAnonymous = (a) => (Number(a?.dbFlags) & 13) !== 0 || !AIRLINE_CS.test(String(a?.flight ?? a?.callsign ?? '').trim().toUpperCase());
+/* Not airlines though their callsigns look like one (aviation-enthusiast playtest 2026-11-19): military, police, coast
+   guard and government operators (the airline table's own names: air force, navy, army, police, government, ministry…,
+   plus Air Mobility Command RCH, Canadian Forces CFC, the RAF's RRR, the USAF's SAM, the US Army's PAT, France's CTM, the
+   UK Home Office UKP) are anonymous and have no type either (no military or police content; js/planes.js parse); and
+   fractional / charter business-jet operators (NetJets, Flexjet, XO, flyExclusive, AirSprint, VistaJet, Executive Jet
+   Management) are anonymous like any private plane: type only, no registration or callsign. */
+export const GOV_OPS = new Set('AAC ACW AFP AIO AME ASF ASY AYB BAF BFW BRS CEF CFC CGX CIE CNV CTG CTM CWP DAF DAR DCN DEF DNY DOD EEF EGY EVY EXB FAC FAF FAG FNF FNY FPR GAF GAM GDB GKA GNY GRY GRZ HAF HKG HNA HRZ HUF HVK IAF IAM ICG IFC INP JMM KIW KRC LAF LEG LMG LSV LYF MBR MED MJN MNV NAF NDF NGR NOW NRN NVY NYB PAT PLC PLF PNY POA POF POL PON PRD QUE RCH RFF RFR RGP RIF RJZ RMF ROF ROP RRF RRR RSF SAF SAM SGF SGS SHF SIV SLG SQF SSG SUI SVF TRI TRP UAF UFA UKP WDG'.split(' '));
+const BIZ_OPS = new Set(['EJA', 'NJE', 'EJM', 'LXJ', 'XOJ', 'JRE', 'ASP', 'VJT']);
+/* military types (whatever the operator says) are shown by their size class only; not the P-3, which NOAA's civil
+   hurricane hunters fly */
+const MIL_TYPES = /^(C17|C130|C30J|C5M|A400|K35[ER]|KC10|KC46|E3[TC]F|E6|B52|B1|B2|P8|C2|C295|V22|U2|F16|F18|F15|F22|F35|EUFI|A10|H47|H53|H60|AN12|IL76|T38|T6|TEX2|HAWK|TOR|RFAL|GRIF|MRF1|C160|CN35|E2|R135|C40|C32|C37[AB]|VC25)$/;
+const opOf = (a) => String(a?.flight ?? a?.callsign ?? '').trim().toUpperCase().slice(0, 3);
+export const isGovOrMil = (a) => (Number(a?.dbFlags) & 1) !== 0 || GOV_OPS.has(opOf(a)) || MIL_TYPES.test(String(a?.t ?? a?.type ?? '').toUpperCase());
+export const isAnonymous = (a) => (Number(a?.dbFlags) & 13) !== 0 || !AIRLINE_CS.test(String(a?.flight ?? a?.callsign ?? '').trim().toUpperCase()) || GOV_OPS.has(opOf(a)) || BIZ_OPS.has(opOf(a));
 let anonSalt = null;
 export function anonId(hex) {
   if (anonSalt == null) { try { anonSalt = localStorage.getItem('anonSalt'); if (!anonSalt) { anonSalt = Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem('anonSalt', anonSalt); } } catch { anonSalt = 'x'; } }
@@ -108,14 +121,16 @@ function parse(json) {
     if (a.lat == null || a.lon == null || a.alt_baro === 'ground') continue;
     const ft = typeof a.alt_geom === 'number' ? a.alt_geom : a.alt_baro;
     if (typeof ft !== 'number') continue;
-    const anon = isAnonymous(a);
+    const anon = isAnonymous(a), gov = isGovOrMil(a);
     /* a type that the aircraft can't be (2026-11-19, real records: "BALL" on an H125 helicopter at 63 kt, "GLID" on an
        Air Canada jet at 35,000 ft) is dropped, so it's known by its size category instead */
     const t0 = String(a.t ?? '').toUpperCase(), gs0 = Number(a.gs) || 0, cs0 = String(a.flight ?? '').trim();
-    const badType = (t0 === 'BALL' && gs0 >= 40) || (t0 === 'SHIP' && gs0 >= 75) || (t0 === 'GLID' && (gs0 >= 130 || ft >= 25000 || /^[A-Z]{3}\d/.test(cs0)));
+    /* slow light aircraft can't make 300 kt over the ground even in a jet stream (avgeek playtest 2026-11-19: a Twin Otter at 589 km/h): the type is wrong */
+    const SLOW_T = /^(C15[02]|C17[0-7]|C172|C182|P28A|DA40|DV20|SR20|DHC[26]|PC6T?|AN2|PA18|C140|J3)$/;
+    const badType = (SLOW_T.test(t0) && gs0 > 300) || (t0 === 'BALL' && gs0 >= 40) || (t0 === 'SHIP' && gs0 >= 75) || (t0 === 'GLID' && (gs0 >= 130 || ft >= 25000 || /^[A-Z]{3}\d/.test(cs0)));
     out.push({
-      hex: anon ? anonId(a.hex) : a.hex, callsign: anon ? '' : (a.flight ?? '').trim(), reg: anon ? '' : a.r ?? '', anon, tag: tagOf(a), year: Number(a.year) || undefined, type: badType ? '' : a.t ?? '', desc: a.desc ?? '', category: a.category ?? '',
-      lat: a.lat, lon: a.lon, hKm: ft * FT, altFt: ft, gs: a.gs ?? 0, track: a.track ?? a.true_heading ?? 0,
+      hex: anon ? anonId(a.hex) : a.hex, callsign: anon ? '' : (a.flight ?? '').trim(), reg: anon ? '' : a.r ?? '', anon, tag: tagOf(a), year: Number(a.year) || undefined, type: badType || gov ? '' : a.t ?? '', desc: gov || badType ? '' : a.desc ?? '', /* a dropped type takes its description with it */ category: a.category ?? '',
+      lat: a.lat, lon: a.lon, hKm: ft * FT, altFt: ft, altBaro: typeof a.alt_baro === 'number' ? a.alt_baro : undefined /* what Flightradar24 and pilots read (alt_geom is GPS height, used for where it is in the sky) */, gs: a.gs ?? 0, track: a.track ?? a.true_heading ?? 0,
       climb: a.geom_rate ?? a.baro_rate ?? 0, at: at - (a.seen_pos ?? 0) * 1000,
     });
     out[out.length - 1].heli = isHelicopter(out[out.length - 1]);
@@ -269,18 +284,18 @@ export class PlaneTracker {
 // The airline from the callsign's ICAO prefix (playtest 2026-10-22: adsbdb named ROU1908, Air Canada Rouge, as
 // "Transportes Aereos I.R. Crusoe"). Common North American and long-haul operators by prefix first; otherwise adsbdb's
 // name only when its own ICAO code matches the prefix; otherwise no airline (the flight number still shows).
-const AIRLINES = { ACA: 'Air Canada', ROU: 'Air Canada Rouge', JZA: 'Air Canada Jazz', WJA: 'WestJet', WEN: 'WestJet Encore', POE: 'Porter',
+const AIRLINES = { ACA: 'Air Canada', ROU: 'Air Canada Rouge', JZA: 'Jazz (Air Canada Express)', WJA: 'WestJet', WEN: 'WestJet Encore', POE: 'Porter',
   TSC: 'Air Transat', FLE: 'Flair', SWG: 'Sunwing', CJT: 'Cargojet', PCO: 'Pacific Coastal', AAL: 'American', DAL: 'Delta', UAL: 'United',
   SWA: 'Southwest', JBU: 'JetBlue', ASA: 'Alaska', NKS: 'Spirit', FFT: 'Frontier', AAY: 'Allegiant', SKW: 'SkyWest', RPA: 'Republic',
   ENY: 'Envoy', EDV: 'Endeavor', JIA: 'PSA', PDT: 'Piedmont', GJS: 'GoJet', CPZ: 'Compass', ASH: 'Mesa', QXE: 'Horizon', FDX: 'FedEx',
   UPS: 'UPS', BAW: 'British Airways', VIR: 'Virgin Atlantic', AFR: 'Air France', DLH: 'Lufthansa', KLM: 'KLM', ICE: 'Icelandair',
   UAE: 'Emirates', QTR: 'Qatar Airways', ETD: 'Etihad', THY: 'Turkish Airlines', AMX: 'Aeroméxico', CPA: 'Cathay Pacific', JAL: 'Japan Airlines',
-  ANA: 'All Nippon', KAL: 'Korean Air', EIN: 'Aer Lingus', SAS: 'SAS', IBE: 'Iberia', SWR: 'Swiss', AUA: 'Austrian', TAP: 'TAP Air Portugal',
-  KOW: 'Baker Aviation', TWB: 'Trinity Airways', VIV: 'Viva', UCA: 'CommutAir', ARE: 'LATAM Colombia', LNE: 'LATAM Ecuador' }; /* names the airline facts' research found missing or changed (2026-11-18) */
+  ANA: 'ANA', KAL: 'Korean Air', EIN: 'Aer Lingus', SAS: 'SAS', IBE: 'Iberia', SWR: 'Swiss', AUA: 'Austrian', TAP: 'TAP Air Portugal',
+  KOW: 'Baker Aviation', TWB: 'T’way Air', VIV: 'Viva', UCA: 'CommutAir', ARE: 'LATAM Colombia', LNE: 'LATAM Ecuador' }; /* names the airline facts' research found missing or changed (2026-11-18) */
 // Every ICAO airline code -> name (js/airlines.js, built by scripts/build-airlines.mjs), loaded once, lazily.
 let airlineTable = null, airlineLoad = null;
 export function loadAirlines() {
-  return (airlineLoad ??= import('./airlines.js?v=0.1.1754').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
+  return (airlineLoad ??= import('./airlines.js?v=0.1.1778').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
 }
 export function airlineName(callsign) { return /^[A-Z]{3}\d/.test(callsign ?? '') ? airlineFor(callsign, null) : ''; }
 function airlineFor(callsign, a) {

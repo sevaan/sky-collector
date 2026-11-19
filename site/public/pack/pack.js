@@ -171,5 +171,6 @@ $('open').addEventListener('click', () => { if (models) play(); });
 $('again').addEventListener('click', () => { if (models && !$('gift')) play(); });
 (async () => {
   try { models = PLANES.map(model); if (models.some((m) => !m?.name)) throw new Error('cards'); } catch { $('open').textContent = 'Couldn’t load the pack'; $('open').disabled = true; $('start').hidden = false; return; }
+  window.__packReady = true; /* index.html's 3 s fallback: a tap on Open the pack reloads only if this never happened (Space's) */
   play(); /* straight into the sealed pack; the start screen (hidden in the HTML) shows only if something fails or stalls */
 })();

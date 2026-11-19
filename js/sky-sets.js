@@ -5,14 +5,14 @@
 // Not built: "Freighters" as a plane set (a type code doesn't say cargo: a B77L is both the 777 freighter and the
 // 777-200LR), so cargo is a flight set only; and "Next door" has no border data, so it is any international flight
 // under 1,500 km.
-import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1754';
+import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1778';
 
 // Order matters: the first match is the card's set.
 export const PLANE_SETS = [
   /* Two sets beyond the approved ten (2026-11-17), so fighters and museum pieces don't sit in "Everything Else"; whole codes
      throughout: 'C17' must not take the Cessna C172. */
-  { id: 'rarebirds', name: 'Rare Birds', color: '#9a6a00', goals: [1, 2, 4], test: (t) => /^(DC3|CONI|B17|B29|LANC|SPIT|P51|JU52|CONC|SHIP|BALL|A124|A225|A3ST|A337|BLCF)$/.test(t) },
-  { id: 'military', name: 'Military', color: '#55633a', goals: [1, 3, 6], test: (t) => /^(C17|C130|C30J|C5M|A400|K35[ER]|KC10|E3[TC]F|E6|B52|B1|B2|P8|C2|C295|V22|U2|F16|F18|F15|F35|EUFI|A10|H47|H53|H60|AN12|IL76)$/.test(t) },
+  { id: 'rarebirds', name: 'Rare Birds', color: '#9a6a00', goals: [1, 2, 4], test: (t) => /^(DC3|B17|B29|LANC|SPIT|P51|JU52|SHIP|BALL|A124|A3ST|A337|BLCF)$/ /* no retired types (A225, Concorde, Constellation: 2026-11-19) */.test(t) },
+  /* no Military set (2026-11-19: no military content; military aircraft are shown by size class only, js/planes.js isGovOrMil) */
   { id: 'giants', name: 'Giants', color: '#7a3fc4', goals: [1, 2, 4], test: (t) => /^(B74.|A38.|A34.|MD11|DC10)$/.test(t) },
   { id: 'helicopters', name: 'Helicopters', color: '#c0562e', goals: [1, 3, 6], test: (t, heli) => heli },
   { id: 'b737', name: 'The 737 Family', color: '#1f5fbf', goals: [2, 3, 5], test: (t) => /^(B73[0-9]|B3[789X]M|B37M)/.test(t) },
@@ -28,13 +28,13 @@ export const PLANE_SETS = [
 export const FLIGHT_SETS = [
   { id: 'cargo', name: 'Cargo Runs', color: '#8a6a2a', goals: [1, 4, 10], test: (km, from, to, a3) => CARGO_AIRLINES.has(a3) },
   { id: 'longway', name: 'The Long Way', color: '#7a3fc4', goals: [1, 2, 5], test: (km) => km != null && km >= 10000 },
-  { id: 'crossings', name: 'Ocean Crossings', color: '#1f5fbf', goals: [1, 4, 10], test: (km, from, to) => km != null && km >= 5000 && from?.cc !== to?.cc },
+  { id: 'crossings', name: 'Long Haul', /* not 'Ocean Crossings': it counts overland flights too (avgeek playtest 2026-11-19) */ color: '#1f5fbf', goals: [1, 4, 10], test: (km, from, to) => km != null && km >= 5000 && from?.cc !== to?.cc },
   { id: 'hops', name: 'Short Hops', color: '#1f7a50', goals: [3, 8, 20], test: (km) => km != null && km < 500 },
   /* the player's own country (DESIGN-LOOP §2; QA 2026-11-19: Boston to San Francisco caught in Toronto said Home Skies).
      home: the country code where it was caught (setHomeCountry); unknown, any domestic flight as before */
   { id: 'home', name: 'Home Skies', color: '#c0562e', goals: [3, 10, 25], test: (km, from, to, a3, home) => !!from?.cc && from.cc === to?.cc && (!home || from.cc === home) },
   { id: 'nextdoor', name: 'Next Door', color: '#2a8a9a', goals: [2, 6, 15], test: (km, from, to) => km != null && km < 1500 && !!from?.cc && !!to?.cc && from.cc !== to.cc },
-  { id: 'world', name: 'Around the World', color: '#3f58a8', goals: [3, 8, 20], test: () => true },
+  { id: 'world', name: 'Other Routes', /* the catch-all, so a domestic flight can land here: not 'Around the World' (2026-11-19) */ color: '#3f58a8', goals: [3, 8, 20], test: () => true },
 ];
 export const planeSet = (type, heli = false) => PLANE_SETS.find((s) => s.test(String(type || '').toUpperCase(), !!heli));
 /* kept in localStorage 'homeCc' so the Collection frame and the next launch know it before any card is drawn; a card

@@ -4,7 +4,7 @@
 // or removes sightings; nothing on the other phone is overwritten and every card fact stays true.
 // This module is the rules and the link format (no DOM); the screens are js/send-cards.js (sending, in the Collection)
 // and js/gift-pack.js (receiving, the booster pack). Tests: tests/gift.test.mjs.
-import { nightKey } from './observation.js?v=0.1.1754';
+import { nightKey } from './observation.js?v=0.1.1778';
 
 export const GIFT_HOST = 'https://skycollector.app/c/';
 
@@ -43,7 +43,11 @@ export function packGift(sightings, { from = '', bid = null, deals = {}, themes 
   let prev = 0;
   const out = rows.map((s) => { const r = [s.time - prev, K(s.cardKey), O(s), S(s.stampKey), null, null, null, null, r1(s.mag), null, S(s.shiny), S(s.phase)]; /* no places: a sent card is a card, not your night (2026-11-11) */ prev = s.time; return r; });
   void deals; void themes; /* missions no longer travel: a sent card doesn't count toward the receiver's nights */
-  return { v: 1, f: String(from ?? '').slice(0, 40), m: 0, b: bid ?? null, at: Date.now(), k: keys, o: objs, s: strs, r: out, d: {}, w: {}, ...(kind ? { n: String(kind).slice(0, 12) } : {}) }; /* n: what the pack is ('night': Share my night; older apps ignore it) */
+  /* Sky Collector's plane cards are drawn from the snapshot taken when they were caught (js/sky-cards.js skyModel), which
+     a satellite's card never needed: one copy per card goes along (2026-11-19, review Part 2 A: without it a sent plane
+     card arrived with nothing to draw). Older apps ignore 'c'. */
+  const snaps = {}; for (const r of rows) if (r.cardSnapshot && typeof r.cardSnapshot === 'object' && !(r.cardKey in snaps)) snaps[r.cardKey] = r.cardSnapshot;
+  return { v: 1, f: String(from ?? '').slice(0, 40), m: 0, b: bid ?? null, at: Date.now(), k: keys, o: objs, s: strs, r: out, d: {}, w: {}, ...(Object.keys(snaps).length ? { c: snaps } : {}), ...(kind ? { n: String(kind).slice(0, 12) } : {}) }; /* n: what the pack is ('night': Share my night; older apps ignore it) */
 }
 export const MAX_ROWS = 20000; // sightings in one pack; a link is untrusted input
 export function unpackGift(g) {
@@ -70,6 +74,13 @@ export function unpackGift(g) {
     return s;
   });
   if (list.some((s) => !s.cardKey || !Number.isFinite(s.time) || s.time < 1e12 || s.time > late)) throw new Error('bad'); /* 1e12 = Sept 2001: a real sighting time in ms */
+  /* plane card snapshots (packGift 'c'): untrusted too, so only plain data of a bounded size, for a card that's in the pack */
+  const C = g.c && typeof g.c === 'object' && !Array.isArray(g.c) ? g.c : null;
+  if (C) { const inPack = new Set(list.map((x) => x.cardKey)); let n = 0;
+    for (const [k, v] of Object.entries(C)) { if (++n > 2000) break; if (!inPack.has(k) || !v || typeof v !== 'object' || Array.isArray(v)) continue;
+      let j; try { j = JSON.stringify(v); } catch { continue; } if (j.length > 8000) continue;
+      const snap = JSON.parse(j); if (snap.key !== k || !['flight', 'plane'].includes(snap.sky)) continue;
+      for (const x of list) if (x.cardKey === k) x.cardSnapshot = snap; } }
   return { from, bid: typeof g.b === 'string' ? g.b.slice(0, 80) : null, at: num(g.at) ?? null, sightings: list, deals: g.d && typeof g.d === 'object' ? g.d : {}, themes: g.w && typeof g.w === 'object' ? g.w : {}, kind: typeof g.n === 'string' ? g.n.slice(0, 12) : '' };
 }
 // base64url of the deflated JSON. CompressionStream is in every browser the app runs in (iOS 16.4+, Android WebView 80+).

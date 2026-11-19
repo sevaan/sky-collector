@@ -3,10 +3,10 @@
 // know who sent it; 2026-11-07, Sevaan).
 // Sharing only copies: the cards stay on this phone too (2026-11-07, Sevaan: "we don't need Move as a concept... I don't
 // see anyone getting rid of cards they've collected"). Built by cards-page.js, which hands in what it knows (ctx).
-import { plural, ownSightings } from './gift.js?v=0.1.1754';
-import { nightKey } from './observation.js?v=0.1.1754';
-import { TIER_INFO } from './rarity.js?v=0.1.1754';
-import { packLinkFor, shareLink } from './pack-share.js?v=0.1.1754';
+import { plural, ownSightings } from './gift.js?v=0.1.1778';
+import { nightKey } from './observation.js?v=0.1.1778';
+import { TIER_INFO } from './rarity.js?v=0.1.1778';
+import { packLinkFor, shareLink } from './pack-share.js?v=0.1.1778';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const day = (t) => new Date(t).toLocaleDateString([], { weekday: 'short', day: 'numeric', month: 'short' });
@@ -16,6 +16,7 @@ const eveningOf = (s) => new Date(s.time - (new Date(s.time).getHours() < 12 ? 8
 let ctx = null, view = null, sel = null;
 const $ = (id) => document.getElementById(id);
 
+const SKY = document.documentElement.classList.contains('sky-cards') || (() => { try { return !!window.parent?.__skyOnly; } catch { return false; } })(); /* Sky Collector: days, not nights (2026-11-19) */
 export function initSend(c) { ctx = c; view = $('send-view'); if (!view) return; try { new Image().src = 'assets/art/backs/back-collector-mask.webp'; } catch {} /* the pack's gold artwork is ready before the pack shows */ view.addEventListener('cancel', (e) => { e.preventDefault(); closeSend(); }); view.addEventListener('click', onClick); view.addEventListener('input', onInput); }
 
 // ---------- data ----------
@@ -69,7 +70,7 @@ function head(eyebrow, title, { back = false } = {}) {
 }
 function renderPick() {
   view.dataset.step = 'pick'; sendRun++; sending = false;
-  const tabs = `<div class="sv-tabs" role="tablist"><button type="button" role="tab" data-tab="card" aria-selected="${sel.tab === 'card'}">By card</button><button type="button" role="tab" data-tab="night" aria-selected="${sel.tab === 'night'}">By night</button></div>`;
+  const tabs = `<div class="sv-tabs" role="tablist"><button type="button" role="tab" data-tab="card" aria-selected="${sel.tab === 'card'}">By card</button><button type="button" role="tab" data-tab="night" aria-selected="${sel.tab === 'night'}">${SKY ? 'By day' : 'By night'}</button></div>`;
   view.innerHTML = `<div class="sv-page">${head('Pick what to share', 'Send cards')}${tabs}<div id="sv-body"></div></div><div class="sv-bar" id="sv-bar"></div>`;
   renderBody(); renderBar();
 }
@@ -155,7 +156,7 @@ function renderSheet() {
         <div class="sv-stamp">Sealed</div></div></div></div>
     <div class="sv-manifest"><div class="hd"><span>In the pack</span><span>${esc(dates)}</span></div>
       <div class="row"><span class="sv-thumbs">${thumbs.map((x, i) => `<i data-t="${i}"></i>`).join('')}${more > 0 ? `<i class="more">+${more}</i>` : ''}</span>
-        <span class="lbl">${esc(plural(n, 'card'))}<small>${esc(plural(p.length, 'sighting'))}, ${p.length === 1 ? 'with the night it was seen' : 'each with the night it was seen'}</small></span></div></div>
+        <span class="lbl">${esc(plural(n, 'card'))}<small>${esc(plural(p.length, 'sighting'))}, ${p.length === 1 ? `with the ${SKY ? 'day' : 'night'} it was seen` : `each with the ${SKY ? 'day' : 'night'} it was seen`}</small></span></div></div>
     <p class="sv-plain">They get a copy to keep. Yours stay right here.</p>
     <button type="button" class="sv-btn o w" data-act="send">Share ${esc(single ? single : plural(n, 'card'))}</button></div>`;
   // the real mini cards: big ones sticking out of the pack, small ones in the manifest

@@ -101,3 +101,17 @@ test('a shared night says so through the link', async () => {
   assert.equal(g.kind, 'night');
   assert.equal((await readGiftCode(await giftCode(packGift([sight('25544', N(1))])))).kind, '');
 });
+
+// Sky Collector (2026-11-19, review Part 2 A): a plane card's snapshot travels with it, once per card; a bad one is dropped.
+test('plane card snapshots ride in the pack, checked on the way in', async () => {
+  const { packGift, unpackGift } = await import('../js/gift.js');
+  const snap = { key: 'F:ACA:CYYZ-EGLL', id: 'F:ACA:CYYZ-EGLL', sky: 'flight', name: 'Toronto to London', tier: 'rare', from: { city: 'Toronto' }, to: { city: 'London' } };
+  const t = Date.UTC(2026, 10, 1);
+  const g = packGift([{ cardKey: snap.key, objectId: snap.key, time: t, cardSnapshot: snap }, { cardKey: snap.key, objectId: snap.key, time: t + 86400e3, cardSnapshot: snap }, { cardKey: 'iss', objectId: 25544, time: t + 1 }]);
+  assert.deepEqual(Object.keys(g.c), [snap.key], 'one copy per card');
+  const back = unpackGift(JSON.parse(JSON.stringify(g)));
+  assert.equal(back.sightings.filter((s) => s.cardSnapshot?.name === 'Toronto to London').length, 2);
+  assert.ok(!back.sightings.find((s) => s.cardKey === 'iss').cardSnapshot);
+  const bad = JSON.parse(JSON.stringify(g)); bad.c[snap.key] = { key: 'other', sky: 'flight' }; bad.c.nothere = { key: 'nothere', sky: 'plane' };
+  assert.ok(unpackGift(bad).sightings.every((s) => !s.cardSnapshot), 'a snapshot for another key, or a card not in the pack, is dropped');
+});

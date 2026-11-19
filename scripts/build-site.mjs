@@ -20,6 +20,8 @@ cp(`assets/photos/house/${TYPE}.webp`); cp(`assets/photos/house/tiny/${TYPE}.web
    share preview and the hero's icon (2026-11-18, it replaced the placeholder plane-in-a-reticle) */
 for (const [f, to] of [['favicon.ico'], ['favicon-32.png'], ['icon-180.png', 'apple-touch-icon.png'], ['icon-512.png'], ['icon.svg']]) cp(`icons/${f}`, to ?? f);
 cp('css/fonts.css'); cp('css/sky-cards.css'); cp('js/weather-art.js'); cpSync(ROOT + 'fonts', OUT + 'fonts', { recursive: true });
+/* Send cards' landing page (2026-11-19): skycollector.app/c/#<code> and /c/<id> (scripts/deploy-site.py rewrites /c/* to it) */
+mkdirSync(OUT + 'c', { recursive: true }); cp('site/c.html', 'c/index.html');
 writeFileSync(OUT + 'privacy.html', readFileSync(ROOT + 'privacy.html', 'utf8').replaceAll("url('fonts/", "url('/fonts/").replaceAll('href="icons/favicon', 'href="/favicon').replace('href="icons/icon-180.png"', 'href="/apple-touch-icon.png"'));
 const html = `<!doctype html>
 <html lang="en">

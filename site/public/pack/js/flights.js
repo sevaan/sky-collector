@@ -31,7 +31,7 @@ export const SIZE_CLASSES = {
   A3: { name: 'Large Aircraft', mark: 'LARGE', glyph: 'jet', fact: `${UNLISTED} Its transponder says it weighs **34 to 136 tonnes**: the size of a Boeing 737 or an Airbus A320.` },
   A4: { name: 'Large Aircraft', mark: 'LARGE', glyph: 'jet', fact: `${UNLISTED} Its transponder says it is a large aircraft that leaves a **strong wake**, like a Boeing 757.` },
   A5: { name: 'Heavy Aircraft', mark: 'HEAVY', glyph: 'jet', fact: `${UNLISTED} Its transponder says it weighs **more than 136 tonnes**: a wide-body, like a Boeing 777 or an Airbus A350.` },
-  A6: { name: 'Fast Jet', mark: 'FAST', glyph: 'jet', fact: `${UNLISTED} Its transponder says it can fly **faster than 740 km/h** and turn harder than 5 g, which usually means a military jet.` },
+  A6: { name: 'Fast Jet', mark: 'FAST', glyph: 'jet', fact: `${UNLISTED} Its transponder says it can fly **faster than 740 km/h** and pull more than 5 g.` },
   B1: { name: 'Glider', mark: 'GLIDER', glyph: 'glider', fact: 'A glider has **no engine**: it is towed or winched up, then stays up on rising air.' },
   B2: { name: 'Balloon or Airship', mark: 'BALLOON', glyph: 'balloon', fact: 'Lighter than air: a **balloon or an airship**, drifting or cruising far slower than anything with wings.' },
   B4: { name: 'Ultralight', mark: 'ULTRA', glyph: 'prop', fact: 'An **ultralight**: one or two seats, a small engine, and often an open cockpit.' },
@@ -89,7 +89,7 @@ export function cardsFor(p, route, airline) {
     type: p.type || '', typeName, // the aircraft that flew it: the card shows its photo (js/type-photos.js)
     km, kmText: fmtKm(km), air: t, set, setId: st.id, homeCc, tier: flightTier(km, a3), /* homeCc: where it was caught, so its set doesn't change when you travel */
     fact: km == null ? `${route.to.city} is where this ${airline || ''} flight is headed.`.replace('  ', ' ')
-      : `${route.from.city} to ${route.to.city} is **${fmtKm(km)} km**, about ${t.h ? `${t.h}\u00a0h ${String(t.m).padStart(2, '0')}\u00a0m` : `${t.m} minutes`} in the air, on ${/^[AEIOU]/i.test(typeName) ? 'an' : 'a'} ${typeName}.`,
+      : `${route.from.city} to ${route.to.city} is **${fmtKm(km)} km**, about ${t.h ? `${t.h}\u00a0h ${String(t.m).padStart(2, '0')}\u00a0m` : `${t.m} minutes`} in the air${typeName === 'Aircraft' || typeName === 'Helicopter' ? '' : `, on ${/^[AEIOU]/i.test(typeName) ? 'an' : 'a'} ${typeName}`}.` /* no "on an Aircraft" when the type isn't known (visual playtest 2026-11-19) */,
   };
   return { flight, plane };
 }

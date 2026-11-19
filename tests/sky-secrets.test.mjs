@@ -33,7 +33,8 @@ test('each rule', () => {
   assert.ok(secretsForCatch({ type: 'B77W', callsign: 'UAE1', gs: 560 }).includes('jetstream'));
   assert.ok(!secretsForCatch({ type: 'C25B', callsign: '', gs: 560 }).includes('jetstream'), 'airliners only');
   assert.ok(secretsForCatch({ type: 'GLF6', altFt: 51000 }).includes('ceiling'));
-  assert.ok(secretsForCatch({ type: 'A320', callsign: 'ACA12' }, { others: [{ callsign: 'ACA899' }] }).includes('formation'));
+  assert.ok(secretsForCatch({ type: 'A320', callsign: 'ACA12' }, { others: [{ callsign: 'ACA899', type: 'B38M' }] }).includes('formation'));
+  assert.ok(!secretsForCatch({ type: 'A320', callsign: 'ACA12' }, { others: [{ callsign: 'ACA899', type: 'A320' }] }).includes('formation'), 'two of the same type is not it');
   assert.ok(!secretsForCatch({ type: 'A320', callsign: 'ACA12' }, { others: [{ callsign: 'WJA899' }] }).includes('formation'));
   assert.equal(lighterThanAir({ t: 'SHIP', gs: 30 }), 'airship'); assert.equal(lighterThanAir({ category: 'B2', gs: 35 }), 'balloon');
   assert.ok(isVintage({ type: 'C172', year: 1968 }, new Date(2026, 10, 19).getTime())); assert.ok(!isVintage({ type: 'C172', year: 1990 }));

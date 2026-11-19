@@ -62,8 +62,8 @@ test('plane types count distinct aircraft and distinct liveries (by ICAO prefix,
   const list = [c('a', 'ACA101', 'Air Canada'), c('a', 'ACA202', 'Air Canada Ltd'), c('b', 'ACA303', 'AIR CANADA'), c('c', 'DLH9', 'Lufthansa'), c('d', 'ROU12', 'Rouge'), c('e', 'ROU13', 'Air Canada Rouge')];
   const i = planeStampInfo(list, PK);
   assert.equal(i.count, 5); assert.equal(i.liveryCount, 3); assert.deepEqual(i.liveries.sort(), ['ACA', 'DLH', 'ROU']);
-  assert.equal(planeLine(i, 'A321'), '5 A321s in 3 liveries');
-  assert.equal(planeLine({ count: 1, liveryCount: 1 }, 'A321'), '1 A321 in 1 livery');
+  assert.equal(planeLine(i, 'A321'), '5 A321s with 3 operators');
+  assert.equal(planeLine({ count: 1, liveryCount: 1 }, 'A321'), '1 A321 with 1 operator');
 });
 
 test('registration only counts with an airline-style callsign', () => {

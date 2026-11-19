@@ -20,7 +20,7 @@ test('flight tiers: distance bands, cargo is Rare not Epic, ultra-long is Legend
   assert.equal(flightTier(900, 'FDX'), 'rare'); assert.equal(flightTier(11000, 'FDX'), 'epic'); assert.equal(flightTier(null, 'ACA'), 'common');
 });
 test('plane sets: families, and the Cessna 172 is not a C-17', () => {
-  assert.equal(planeSet('C172').id, 'light'); assert.equal(planeSet('C17').id, 'military'); assert.equal(planeSet('A124').id, 'rarebirds'); assert.equal(planeSet('B744').id, 'giants');
+  assert.equal(planeSet('C172').id, 'light'); assert.ok(!PLANE_SETS.some((s) => s.id === 'military'), 'no military set'); assert.notEqual(planeSet('C17').id, 'light'); assert.equal(planeSet('A124').id, 'rarebirds'); assert.equal(planeSet('B744').id, 'giants');
   assert.equal(planeSet('B38M').id, 'b737'); assert.equal(planeSet('A21N').id, 'a320'); assert.equal(planeSet('B77W').id, 'twinaisle');
   assert.equal(planeSet('E75L').id, 'regional'); assert.equal(planeSet('DH8D').id, 'props'); assert.equal(planeSet('C56X').id, 'bizjets');
   assert.equal(planeSet('EC35', true).id, 'helicopters'); assert.equal(planeSet('ZZZZ').id, 'others');
@@ -103,4 +103,14 @@ test('a card saved as plain "Aircraft" is renamed, and a Citation is drawn as a 
   assert.equal(old.name, 'Unidentified Aircraft'); assert.equal(old.type, ''); assert.equal(old.tier, 'common');
   assert.equal(glyphFor('C25B'), 'jet'); assert.equal(glyphFor('C172'), 'prop'); assert.equal(glyphFor('DH8D'), 'prop'); assert.equal(glyphFor('PC24'), 'jet'); assert.equal(glyphFor('B738'), 'jet');
   assert.equal(retier2({ kind: 'plane', key: 'P:C25B', name: 'x', glyph: 'prop' }).glyph, 'jet');
+});
+
+// Shiny planes (2026-11-19, review Part 2 E): real moments only, kept rare.
+test('a plane catch is shiny by the Moon, with the sun on the horizon, or in new colours on a rare type', async () => {
+  const { shinyForPlane, SHINY } = await import('../js/shiny.js');
+  const up = [0, 0.6, 0.8], n = Math.hypot(...up), e = up.map((v) => v / n);
+  assert.equal(shinyForPlane({ planeEnu: e, moon: { enu: e } }), 'moon');
+  assert.equal(shinyForPlane({ sunEl: 1.2 }), 'golden'); assert.equal(shinyForPlane({ sunEl: 6 }), null); assert.equal(shinyForPlane({ sunEl: -3 }), null);
+  assert.equal(shinyForPlane({ newColours: true, tier: 'rare' }), 'colours'); assert.equal(shinyForPlane({ newColours: true, tier: 'common' }), null, 'not every new airline on an A320');
+  for (const k of ['golden', 'colours']) assert.ok(SHINY[k].label && SHINY[k].line);
 });

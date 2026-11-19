@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Cards for you · Sky Collector</title>
+<meta name="description" content="Someone sent you cards from Sky Collector.">
+<meta property="og:title" content="Cards for you · Sky Collector"><meta property="og:description" content="Tap to open the cards someone sent you.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/css/fonts.css">
+<style>
+  /* Send cards landing page (2026-11-19, Space Collector's site/public/c/index.html, review Part 2 A): skycollector.app/c/#<code>
+     (the cards ride in the # part, which never reaches this server) or skycollector.app/c/<id> (a short link: the pack waits
+     on Sky's server). Until Sky is in the app stores the cards open in the game on the web. */
+  :root { color-scheme: light; --ink: #0d2238; --muted: #4a6178; --red: #d7362b; --red-ink: #b42a20; --cream: #fffdf6; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px 20px calc(28px + env(safe-area-inset-bottom)); text-align: center;
+    background: linear-gradient(180deg, #8cc2ec 0, #cfe5f6 45%, #eef5fb 100%); color: var(--ink); font: 500 17px/1.4 'SC Label', 'Arial Narrow', sans-serif; }
+  .pk { width: 168px; aspect-ratio: 2 / 3; margin: 0 0 26px; border-radius: 12px; background: #fffdf6 url('/assets/art/backs/back-flight-plan.webp') center / cover no-repeat; border: 3px solid #fffdf6;
+    box-shadow: 0 0 0 2px #d9b65a, 0 18px 34px rgba(13, 34, 56, .28); animation: bob 4.2s ease-in-out infinite; }
+  @keyframes bob { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-7px) rotate(1deg); } }
+  @media (prefers-reduced-motion: reduce) { .pk { animation: none; } }
+  .k { font-size: 13px; letter-spacing: .26em; text-transform: uppercase; color: var(--red-ink); }
+  h1 { margin: 6px 0 4px; font: 400 30px/1.05 'SC Display', sans-serif; text-transform: uppercase; }
+  p { margin: 8px 0 0; max-width: 340px; color: var(--muted); }
+  .btn { display: flex; align-items: center; justify-content: center; width: min(100%, 340px); height: 54px; margin-top: 22px; border-radius: 14px; background: linear-gradient(#e8493c, #c42d22); color: #fff;
+    text-decoration: none; font: 500 16px 'SC Label', sans-serif; letter-spacing: .14em; text-transform: uppercase; box-shadow: 0 4px 0 #8c1c14, 0 10px 20px rgba(13, 34, 56, .2); }
+  .small { font-size: 14px; color: var(--muted); margin-top: 22px; }
+  .bad .ok { display: none; } .ok .bad { display: none; } .bad .btn { display: none; }
+</style></head>
+<body class="ok">
+  <div class="pk" aria-hidden="true"></div>
+  <div class="k">Cards for you</div>
+  <h1>A pack of cards</h1>
+  <p class="ok">Someone sent you cards from Sky Collector: planes they caught over them. Open them to add them to your collection.</p>
+  <p class="bad">This link doesn’t have any cards in it. It may have been cut short when it was sent; ask for it again.</p>
+  <a class="btn" id="open" href="https://sevaan.github.io/sky-collector/">Open the cards</a>
+  <p class="small ok">Sky Collector is coming soon to iPhone and Android.</p>
+<script>
+  /* the code from the # part (#g1…, as js/gift.js giftLink makes it) or the short id in the path (/c/<id>, js/gift.js packLink) */
+  (function () {
+    var game = 'https://sevaan.github.io/sky-collector/', m = /(?:#|[?&]g=)(g\d[A-Za-z0-9_~-]+)/.exec(location.hash + location.search), id = /\/c\/([A-Za-z0-9]{7})(?![A-Za-z0-9])/.exec(location.pathname);
+    var to = m ? game + '#' + m[1] : id ? game + '?p=' + id[1] : null;
+    if (!to) { document.body.className = 'bad'; return; }
+    document.getElementById('open').href = to;
+  })();
+</script>
+</body></html>

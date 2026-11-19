@@ -3,7 +3,7 @@
 // group (or the date earned) along the bottom, one icon in the middle. Milestones get gold foil, the rarest holo
 // (css/ui.css .patch--gold / .patch--holo). Shared by Explore (the earning moment, its toast) and Collection (the wall).
 
-import { CON_BY_ID } from './constellations.js?v=0.1.1754';
+import { CON_BY_ID } from './constellations.js?v=0.1.1778';
 
 export const GROUPS = {
   collect: { c: '#14284a', t: 'Collection' }, rarity: { c: '#3a2259', t: 'Rarity' }, rocket: { c: '#5a2a1a', t: 'Rockets' },
@@ -45,7 +45,7 @@ const GLYPH = {
 // Finishes: gold foil for milestones, holo for the rarest few.
 const GOLD = new Set('deep10 con-solar hundred archivist curator gold gold3 starlink50 wanderers streak12 anniversary months12 cons5 legends5'.split(' '));
 const HOLO = new Set('plus legends25 shiny5 cons25 cons44 catalogue diplomat zodiac'.split(' '));
-export const finishOf = (a) => (HOLO.has(a.id) ? 'holo' : GOLD.has(a.id) || a.album ? 'gold' : '');
+export const finishOf = (a) => (HOLO.has(a.id) && !(a.id === 'plus' && SKY_PATCH()) /* Sky: no rainbow rim on the member patch, it read as the wrong colour family on the light pages (2026-11-19) */ ? 'holo' : GOLD.has(a.id) || a.album ? 'gold' : '');
 
 const INK = '#fff2b3', OR = 'var(--gold)'; /* the accent: orange in Space Collector, red in Sky (2026-11-17) */
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -140,9 +140,10 @@ const SECRET_ART = {
   // Plus Member (2026-10-16, design/plus-sheet-card.html): the brass telescope from the Plus card and one star, all inside
   // the inner ring so nothing crosses the lettering (Sevaan: the comet overlapped the text).
   // Sky Collector's member patch (2026-11-16): the same brass and gold, an airliner climbing out with its contrail in place of the telescope.
-  plus: () => (SKY_PATCH() ? '<path d="M19 -24 l1.4 3.6 3.6 1.4 -3.6 1.4 -1.4 3.6 -1.4 -3.6 -3.6 -1.4 3.6 -1.4z" fill="#fff2b3"/><circle cx="-22" cy="-16" r="1.1" fill="#fff2b3" opacity=".7"/><circle cx="24" cy="14" r=".9" fill="#fff2b3" opacity=".6"/>'
+  plus: () => (SKY_PATCH() ? '' /* Sky: no star and sparkle (Space's night sky) round the plane (2026-11-19) */
     + '<g transform="translate(2 4) rotate(-18) scale(.9)"><path d="M-46 3 H-26 M-44 -1 H-27" stroke="#fff2b3" stroke-width="1.6" stroke-linecap="round" opacity=".55"/>'
     + '<path d="M-24 -3 L-31 -17 L-23 -17 L-13 -4 Z" fill="#c9952f" stroke="#f4d27a" stroke-width="1"/>'
+    + '<path d="M0 -3.5 L-9 -12.5 L-4.5 -12.5 L8 -3.5 Z" fill="#8a6420" stroke="#c9952f" stroke-width=".9"/>' /* the far wing, behind the fuselage (2026-11-19, Sevaan: "Where is the other wing") */
     + '<path d="M-26 0 Q-27 -4 -21 -4.5 L20 -4.5 Q29 -4.5 32 0 Q29 4 20 4 L-21 4 Q-27 4 -26 0 Z" fill="#d9a441" stroke="#f4d27a" stroke-width="1.2"/>'
     + '<path d="M-2 1.5 L-14 15 L-6 15 L9 1.5 Z" fill="#b88a2e" stroke="#f4d27a" stroke-width="1"/><rect x="-6" y="5.5" width="9" height="4.5" rx="2" fill="#8a6420"/>'
     + '<path d="M-14 -2 H18" stroke="#8a6420" stroke-width="1.2" stroke-dasharray="2 2.2"/><path d="M24 -2.6 Q27 -2.6 28.5 -0.6 H23 Z" fill="#8a6420"/></g>'
@@ -192,7 +193,7 @@ let uid = 0;
 export function patchSvg(a, opts = {}) {
   const { locked = false, date = '', stitch = false } = opts;
   const con = a.con && a.con !== 'solar' ? CON_BY_ID.get(a.con) : null;
-  const g0 = GROUPS[groupOf(a)], g = con ? { ...g0, c: CON_TWILL[[...CON_BY_ID.keys()].indexOf(a.con) % CON_TWILL.length] } : a.id === 'ufo' ? { ...g0, c: '#123a2a' } : SECRET_TWILL[a.id] ? { ...g0, c: SECRET_TWILL[a.id] } : g0, id = `pt${uid++}`, R = 60, fossil = a.id === 'fossil' || a.id === 'ufo' || !!SECRET_ART[a.id];
+  const g0 = GROUPS[groupOf(a)], g = a.id === 'plus' && SKY_PATCH() ? { ...g0, c: '#24508c' } /* Sky: airmail blue (2026-11-19) */ : con ? { ...g0, c: CON_TWILL[[...CON_BY_ID.keys()].indexOf(a.con) % CON_TWILL.length] } : a.id === 'ufo' ? { ...g0, c: '#123a2a' } : SECRET_TWILL[a.id] ? { ...g0, c: SECRET_TWILL[a.id] } : g0, id = `pt${uid++}`, R = 60, fossil = a.id === 'fossil' || a.id === 'ufo' || !!SECRET_ART[a.id];
   // Fossil Hunter (design/fossil-patch.html A): the T. rex skeleton art, centred on its bones, no inner ring.
   const ic = SECRET_ART[a.id] ? SECRET_ART[a.id](id) : a.id === 'ufo' ? UFO_ART(id) : fossil ? '<image href="assets/art/fossils/patch.svg" x="-46" y="-17.5" width="92" height="43"/>' : con ? conGlyph(con.data) : a.con === 'solar' ? SOLAR_GLYPH : a.album ? (ALBUM_ICON[a.album] ? glyph(ALBUM_ICON[a.album], a.icon) : ALBUM_GLYPH) : glyph(GLYPH[a.id], a.icon);
   if (locked) {
@@ -202,6 +203,17 @@ export function patchSvg(a, opts = {}) {
     // the ones that count something, the border stitched part-way round with "3 / 10" along the bottom.
     const C = 2 * Math.PI * (R - 3), pr = opts.prog && opts.prog[1] > 1 ? Math.max(0, Math.min(1, opts.prog[0] / opts.prog[1])) : 0;
     const name = a.name.toUpperCase(), nameSize = name.length > 16 ? 8.5 : name.length > 12 ? 9.5 : 11;
+    /* Sky by day (2026-11-19, visual playtest: dark khaki blobs on the light wall): a pale field, slate stitching and lettering, the progress in gold */
+    if (SKY_PATCH() && !document.documentElement.classList.contains('sky-night') && !document.body?.classList.contains('night')) {
+      const ghostL = ic.replace(/fill="(?!none)[^"]*"/g, 'fill="none"').replace(/<(polygon|rect|circle|path|ellipse|polyline|text)/g, '<$1 stroke="#7d8fa1" stroke-width="1.5"');
+      return `<svg class="patch-svg" viewBox="-64 -64 128 128" aria-hidden="true"><defs><path id="${id}t" d="M-42 0 A42 42 0 0 1 42 0"/><path id="${id}b" d="M-41 0 A41 41 0 0 0 41 0"/></defs>
+      <circle r="${R - 3}" fill="#e6eef6"/><circle r="${R - 3}" fill="none" stroke="#7d8fa1" stroke-opacity=".7" stroke-width="1.2" stroke-dasharray="3 3"/>
+      ${pr > 0 ? `<circle r="${R - 3}" fill="none" stroke="#d9b65a" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="${(pr * C).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90)"/>` : ''}
+      <circle r="${R - 22}" fill="none" stroke="#7d8fa1" stroke-opacity=".35" stroke-width=".9" stroke-dasharray="1.6 1.6"/>
+      <text font-family="SC Label, Arial Narrow, sans-serif" font-size="${nameSize}" letter-spacing="2" fill="#4a6178" text-anchor="middle"><textPath href="#${id}t" startOffset="50%">${esc(name)}</textPath></text>
+      ${pr > 0 ? `<text font-family="SC Label, Arial Narrow, sans-serif" font-size="9" letter-spacing="2" fill="#b42a20" text-anchor="middle" dy="7"><textPath href="#${id}b" startOffset="50%">${opts.prog[0]} / ${opts.prog[1]}</textPath></text>` : ''}
+      <g opacity=".75" transform="scale(.82)">${ghostL}</g></svg>`;
+    }
     return `<svg class="patch-svg" viewBox="-64 -64 128 128" aria-hidden="true"><defs><path id="${id}t" d="M-42 0 A42 42 0 0 1 42 0"/><path id="${id}b" d="M-41 0 A41 41 0 0 0 41 0"/>
       <pattern id="${id}w" width="3" height="3" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="3" height="3" fill="${g.c}"/><rect width="1.4" height="3" fill="#ffffff0c"/></pattern></defs>
       <circle r="${R - 3}" fill="url(#${id}w)" fill-opacity=".55"/><circle r="${R - 3}" fill="#080f1b" fill-opacity=".35"/>
