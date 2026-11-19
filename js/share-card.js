@@ -1,8 +1,8 @@
-import { isNative, shareFile } from './native.js?v=0.1.1750';
+import { isNative, shareFile } from './native.js?v=0.1.1751';
 // Share a card as an image (1080 × 1350, Instagram portrait): the card on screen, drawn as it looks (js/dom-snap.js, so
 // the image always matches the card's design; 2026-10-31, Sevaan), on a starry background with the game's web address under
 // it (was the observer rank; 2026-11-02, Sevaan), then handed to the share sheet (navigator.share with a file) or downloaded.
-import { snapElement } from './dom-snap.js?v=0.1.1750';
+import { snapElement } from './dom-snap.js?v=0.1.1751';
 const W = 1080, H = 1350, INK = '#fff2b3', MUTED = '#bdbea9';
 // Left out of the picture: the tilt glare and foil (they depend on how the phone was held), twinkles, the back face, the
 // fact's Source link and the "Tap for its orbit" hint.
