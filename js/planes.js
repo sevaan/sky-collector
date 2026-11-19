@@ -3,13 +3,13 @@
 // on the website, because adsb.lol doesn’t allow browser requests directly. The airline comes from the callsign's prefix.
 // No DOM here. Positions are extrapolated between fetches using ground speed, track and climb rate.
 
-import { tagOf } from './sky-secrets.js?v=0.1.1780';
-import { SERVER } from './server.js?v=0.1.1780';
-import { plugin } from './native.js?v=0.1.1780';
-import { lookupRoute } from './routes.js?v=0.1.1780';
-import { typeName } from './sky-type-names.js?v=0.1.1780';
-import { noteFeed } from './sky-local.js?v=0.1.1780';
-import { DEFAULTS, clampDial, freshFeed, pickSource, nextGap, afterAnswer, feedDown, maxAgeS, easeLeft } from './plane-feed.js?v=0.1.1780';
+import { tagOf } from './sky-secrets.js?v=0.1.1781';
+import { SERVER } from './server.js?v=0.1.1781';
+import { plugin } from './native.js?v=0.1.1781';
+import { lookupRoute } from './routes.js?v=0.1.1781';
+import { typeName } from './sky-type-names.js?v=0.1.1781';
+import { noteFeed } from './sky-local.js?v=0.1.1781';
+import { DEFAULTS, clampDial, freshFeed, pickSource, nextGap, afterAnswer, feedDown, maxAgeS, easeLeft } from './plane-feed.js?v=0.1.1781';
 // Empty = feature off. localStorage 'planeRelay' overrides it (testing). Our server's /planes (adsb.lol only) once it's
 // deployed; until then the Val Town relay (relay/handler.ts).
 // Sky Collector (2026-11-15): Space Collector's Val Town relay is turned away by adsb.lol now, so the website needs Sky
@@ -219,6 +219,9 @@ export class PlaneTracker {
         const before = this.feed;
         this.feed = afterAnswer(this.feed, { src, ok: r.ok, status: r.status, remaining: r.remaining, retryAfter: r.retryAfter, net: r.net, online: typeof navigator === 'undefined' ? undefined : navigator.onLine }, Date.now(), this.cfg);
         this.count(src, r, before);
+        /* the phone's own ask failed and the relay takes over: not a failure yet, and the relay is asked now, not a gap
+           later (iOS simulator 2026-11-19: a 429 on the first ask said "Plane feed down" for 30 s before the relay answered) */
+        if (src === 'phone' && !r.ok && pickSource(this.feed, { phoneOk: true, relayOk: true, now: Date.now() }) === 'relay') { this.failures = Math.max(0, this.failures - 1); this.lastFetch = 0; }
         try { localStorage.setItem('planeFeed', JSON.stringify(this.feed)); } catch {}
       })
       .finally(() => { this.busy = false; });
@@ -295,7 +298,7 @@ const AIRLINES = { ACA: 'Air Canada', ROU: 'Air Canada Rouge', JZA: 'Jazz (Air C
 // Every ICAO airline code -> name (js/airlines.js, built by scripts/build-airlines.mjs), loaded once, lazily.
 let airlineTable = null, airlineLoad = null;
 export function loadAirlines() {
-  return (airlineLoad ??= import('./airlines.js?v=0.1.1780').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
+  return (airlineLoad ??= import('./airlines.js?v=0.1.1781').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
 }
 export function airlineName(callsign) { return /^[A-Z]{3}\d/.test(callsign ?? '') ? airlineFor(callsign, null) : ''; }
 function airlineFor(callsign, a) {
