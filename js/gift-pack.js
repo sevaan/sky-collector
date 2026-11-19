@@ -6,9 +6,9 @@
 //         renderCard, attachTilt, artImage, applyBack, sfx, feel, tierColor }
 const wait = (ms, reduced) => new Promise((r) => setTimeout(r, reduced ? Math.min(ms, 120) : ms));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-import { TIERS, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1741';
-import { attachGyro } from './card.js?v=0.1.1741';
-import { cloudsHtml } from './weather-art.js?v=0.1.1741';
+import { TIERS, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1742';
+import { attachGyro } from './card.js?v=0.1.1742';
+import { cloudsHtml } from './weather-art.js?v=0.1.1742';
 // Cards turn with the catch reveal's own flip and rarity table (js/card-moment.js, 2026-11-11): one turn for a catch, a
 // gift and the morning pack.
 // A tap that answers on the finger lifting, like main.js tapOn: the pack animates every frame, and WebKit drops a click
