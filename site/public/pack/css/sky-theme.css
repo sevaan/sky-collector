@@ -591,8 +591,12 @@ body.sky-only #debug :is(.set-row:has(#chk-snap), .set-row:has(#chk-milky), .set
   @keyframes obRing { 0%, 44% { transform:scale(1); } 50% { transform:scale(.88); } 58%, 100% { transform:scale(1); } }
   .ob-route { animation:waDash 1.6s linear infinite; }
 }
-/* the welcome card's pictures taller: the card had room to spare under its words */
-#wc-holder .wc-mission .wc-a-pic { height:14.5em; }
+/* The welcome card's pictures at Space Collector's height (2026-11-19, Sevaan: "too high/long", was 14.5em) and smooth
+   on iPhone ("animations on this card are janky"): each picture is its own layer, so its moving parts repaint just the
+   picture and not the glossy, tilting card around it, and the plane tracks stand still (a stroke-dashoffset animation
+   repaints the whole SVG every frame); the plane moving along them is the motion. The phone's red beam still runs. */
+#wc-holder .wc-mission .wc-a-pic { height:11.5em; transform:translateZ(0); contain:paint; }
+#wc-holder .wc-mission .wc-a-pic .wa-path { animation:none; }
 
 /* Tell a friend sheet (Space Collector's, 2026-11-18): its cream and gold text was written for a dark sheet; on Sky's
    light one the paragraph and the reward line were unreadable. Navy ink and a deeper gold. */
@@ -628,7 +632,7 @@ body.sky-only:has(#gift) .wx-layer { animation: none; will-change: auto; }
 /* The welcome card's footer ("↑ Swipe up to begin · Sky Collector") sits in the middle of its band (2026-11-19, Sevaan):
    Sky's longer text pushed the card's content 4 px past the face, so the footer touched the bottom edge. A little less
    space between the sections, and the footer's room shared above and below its words. */
-#wc-holder .wc-a { gap: 1.05em; padding-bottom: .55em; }
+#wc-holder .wc-a { gap: 1.25em; padding-bottom: .55em; } /* Space's gap again: the shorter pictures left room */
 #wc-holder .wc-a-foot { padding: .72em 0 0; }
 @media (max-width: 340px) { #wc-holder .wc-a { gap: .75em; padding-top: 1.1em; } } /* 320 px: one more line of text */
 html:not(.sky-night) body.sky-only #toasts .ticket .tn-go { color:#b42a20; } /* "Show me ›" was pale cream on the day ticket */
