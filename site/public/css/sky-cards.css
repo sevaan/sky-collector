@@ -569,3 +569,5 @@ body.sky-only.day #around .tn-chip.tile { background:#fffdf6; border-color:#c9b9
 body.sky-only.day #around .tn-chip.tile b:not(:where(.mini-face *)) { color:#0d2238; }
 body.sky-only.day #around .tn-chip.tile small:not(:where(.mini-face *)) { color:#4a6178; }
 body.sky-only:not(.day):not(.night) #around .tn-chip.tile { background:#11223a; border-color:#24384f; }
+/* 320 px phones: the tier line ("Uncommon · New flight") fits whole instead of ending "New flig…" (QA 2026-11-19) */
+@media (max-width: 340px) { body.sky-only #discover .d-ticket #d-tier { letter-spacing: .02em !important; font-size: 11px !important; } } /* beats css/app.css's own small-phone rules */

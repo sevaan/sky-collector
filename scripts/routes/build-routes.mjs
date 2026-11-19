@@ -18,16 +18,23 @@ const table = (p) => { const t = parseCsv(readFileSync(p, 'utf8').replace(/^﻿/
 rmSync(out, { recursive: true, force: true }); mkdirSync(join(out, 'r'), { recursive: true });
 const used = new Set(), prefixes = []; let routes = 0;
 const rd = join(src, 'routes', 'schema-01');
-for (const d of readdirSync(rd)) for (const f of readdirSync(join(rd, d))) {
-  const m = /^([A-Z0-9]{3})-all\.csv$/.exec(f); if (!m) continue;
-  const o = {};
-  for (const r of table(join(rd, d, f))) {
-    const codes = (r.AirportCodes || '').split('-').filter(Boolean);
-    if (codes.length < 2 || !r.Callsign.startsWith(m[1])) continue;
-    o[r.Callsign.slice(3)] = codes.join('-'); codes.forEach((c) => used.add(c)); routes++;
+// An airline's routes are one file (AAA-all.csv) or, for big airlines, numbered parts (RYR-1.csv, RYR-2.csv …: Ryanair,
+// easyJet, Air France, Turkish, Wizz and others; QA 2026-11-19 found none of them had routes). Parts are merged per prefix.
+for (const d of readdirSync(rd)) {
+  const files = new Map();
+  for (const f of readdirSync(join(rd, d))) { const m = /^([A-Z0-9]{3})-(all|\d+)\.csv$/.exec(f); if (m) files.set(m[1], [...(files.get(m[1]) ?? []), f]); }
+  for (const [pre, list] of files) {
+    const o = {};
+    for (const f of list.sort()) for (const r of table(join(rd, d, f))) {
+      const codes = (r.AirportCodes || '').split('-').filter(Boolean);
+      if (codes.length < 2 || !r.Callsign.startsWith(pre)) continue;
+      if (!(r.Callsign.slice(3) in o)) routes++;
+      o[r.Callsign.slice(3)] = codes.join('-'); codes.forEach((c) => used.add(c));
+    }
+    if (Object.keys(o).length) { writeFileSync(join(out, 'r', pre + '.json'), JSON.stringify(o)); prefixes.push(pre); }
   }
-  if (Object.keys(o).length) { writeFileSync(join(out, 'r', m[1] + '.json'), JSON.stringify(o)); prefixes.push(m[1]); }
 }
+prefixes.sort();
 const ap = {}, ad = join(src, 'airports', 'schema-01');
 for (const d of readdirSync(ad)) for (const f of readdirSync(join(ad, d))) for (const a of table(join(ad, d, f))) {
   if (!used.has(a.ICAO)) continue;

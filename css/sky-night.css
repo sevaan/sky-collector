@@ -26,3 +26,9 @@ html.sky-night body.sky-only .tc { --sc-ink:#0d2238; --sc-muted:#4a6178; --sc-ru
 /* The reveal stays Sky's light sky at night (css/sky-theme.css #reveal), so it keeps the day's navy ink too (2026-11-19,
    Android app: at night "New card · +130 XP" and the chips were pale on the light sky) */
 html.sky-night body.sky-only #reveal { --sc-ink:#0d2238; --sc-muted:#4a6178; --sc-orange-ink:#b42a20; --sc-line:#c9d9e6; --text:#0d2238; --muted:#4a6178; }
+/* Today is dark at night like every other screen (QA 2026-11-19: css/sky-cards.css gave it the day's #eef5fb with no
+   night guard, so at 23:30 it stayed light) */
+html.sky-night body.sky-only #visible { background:#0b1626; }
+html.sky-night body.sky-only #sky-today :is(.td2-card, .td-chart) { background:#11223a; border-color:#24384f; color:#e6eef7; }
+html.sky-night body.sky-only #sky-today .td-chart i.gap { background:#24384f; }
+html.sky-night body.sky-only #sky-today .td2-big span { color:#9fb3c6; }

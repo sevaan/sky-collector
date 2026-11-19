@@ -3,12 +3,12 @@
 // on the website, because adsb.lol doesn’t allow browser requests directly. The airline comes from the callsign's prefix.
 // No DOM here. Positions are extrapolated between fetches using ground speed, track and climb rate.
 
-import { SERVER } from './server.js?v=0.1.1737';
-import { plugin } from './native.js?v=0.1.1737';
-import { lookupRoute } from './routes.js?v=0.1.1737';
-import { typeName } from './sky-type-names.js?v=0.1.1737';
-import { noteFeed } from './sky-local.js?v=0.1.1737';
-import { DEFAULTS, freshFeed, pickSource, nextGap, afterAnswer, feedDown, maxAgeS, easeLeft } from './plane-feed.js?v=0.1.1737';
+import { SERVER } from './server.js?v=0.1.1739';
+import { plugin } from './native.js?v=0.1.1739';
+import { lookupRoute } from './routes.js?v=0.1.1739';
+import { typeName } from './sky-type-names.js?v=0.1.1739';
+import { noteFeed } from './sky-local.js?v=0.1.1739';
+import { DEFAULTS, freshFeed, pickSource, nextGap, afterAnswer, feedDown, maxAgeS, easeLeft } from './plane-feed.js?v=0.1.1739';
 // Empty = feature off. localStorage 'planeRelay' overrides it (testing). Our server's /planes (adsb.lol only) once it's
 // deployed; until then the Val Town relay (relay/handler.ts).
 // Sky Collector (2026-11-15): Space Collector's Val Town relay is turned away by adsb.lol now, so the website needs Sky
@@ -235,11 +235,11 @@ const AIRLINES = { ACA: 'Air Canada', ROU: 'Air Canada Rouge', JZA: 'Air Canada 
   UPS: 'UPS', BAW: 'British Airways', VIR: 'Virgin Atlantic', AFR: 'Air France', DLH: 'Lufthansa', KLM: 'KLM', ICE: 'Icelandair',
   UAE: 'Emirates', QTR: 'Qatar Airways', ETD: 'Etihad', THY: 'Turkish Airlines', AMX: 'Aeroméxico', CPA: 'Cathay Pacific', JAL: 'Japan Airlines',
   ANA: 'All Nippon', KAL: 'Korean Air', EIN: 'Aer Lingus', SAS: 'SAS', IBE: 'Iberia', SWR: 'Swiss', AUA: 'Austrian', TAP: 'TAP Air Portugal',
-  KOW: 'Baker Aviation', TWB: 'Trinity Airways', VIV: 'Viva' }; /* names the airline facts' research found missing or changed (2026-11-18) */
+  KOW: 'Baker Aviation', TWB: 'Trinity Airways', VIV: 'Viva', UCA: 'CommutAir', ARE: 'LATAM Colombia', LNE: 'LATAM Ecuador' }; /* names the airline facts' research found missing or changed (2026-11-18) */
 // Every ICAO airline code -> name (js/airlines.js, built by scripts/build-airlines.mjs), loaded once, lazily.
 let airlineTable = null, airlineLoad = null;
 export function loadAirlines() {
-  return (airlineLoad ??= import('./airlines.js?v=0.1.1737').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
+  return (airlineLoad ??= import('./airlines.js?v=0.1.1739').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
 }
 export function airlineName(callsign) { return /^[A-Z]{3}\d/.test(callsign ?? '') ? airlineFor(callsign, null) : ''; }
 function airlineFor(callsign, a) {
@@ -265,7 +265,9 @@ const TYPES = {
 export function aircraftName(p) { return typeName(p.type) ?? TYPES[p.type] ?? (p.desc ? p.desc.replace(/\b([A-Z])([A-Z]+)\b/g, (m, a, b) => a + b.toLowerCase()) : ''); }
 // Helicopters: ADS-B emitter category A7, or an ICAO type designator that is a helicopter (many helicopters don’t
 // broadcast a category). Covers the common civil, medical, police and military types.
-const HELI_TYPES = /^(A1(09|19|39|69|89)|AS(32|35|50|55|65)|AW(09|39|69|89)|B(06|05|07|12|17|22|212|412|407|429|505)|B4(07|12|29)|BK17|EC(20|25|30|35|45|55|75|130|135|145|155|175|225)|EH10|EN(28|48)|EXPL|H(12|13|25|46|47|53|60|64|72)|H1(25|30|35|45|55|60|75)|H(215|225)|HUCO|K(32|MAX)|LYNX|MI(2|8|17|24|26)|NH90|PUMA|R(22|44|66)|S(55|58|61|64|70|76|92)|SCHW|TIGR|UH1|UH60|V22|NOTA)$/;
+// QA 2026-11-19: B17 (the B-17 bomber, a Legendary card) was a helicopter; added the H500, H269, MD 500/600/900, AW149,
+// Bell 427/430/222/230/47, Cabri, Super Puma and KA32 codes.
+const HELI_TYPES = /^(A1(09|19|39|69|89)|AS(32|35|50|55|65)|AW(09|39|69|89)|B(06|06T|105|212|222|230|407|412|427|429|430|47G|505)|B4(07|12|29)|A149|AS3B|G2CA|H(269|500)|MD(52|60|90)|BK17|EC(20|25|30|35|45|55|75|130|135|145|155|175|225)|EH10|EN(28|48)|EXPL|H(12|13|25|46|47|53|60|64|72)|H1(25|30|35|45|55|60|75)|H(215|225)|HUCO|K(32|A32|MAX)|LYNX|MI(2|8|17|24|26)|NH90|PUMA|R(22|44|66)|S(55|58|61|64|70|76|92)|SCHW|TIGR|UH1|UH60|V22|NOTA)$/;
 export function isHelicopter(p) { return p.category === 'A7' || HELI_TYPES.test(String(p.type ?? '').toUpperCase()); }
 
 /* The rest of the world (2026-11-15, Sevaan: "does it work anywhere?"): major airlines by ICAO code, so flights outside
@@ -283,6 +285,6 @@ Object.assign(AIRLINES, {
   AEE: 'Aegean', TVF: 'Transavia', TRA: 'Transavia', CSA: 'Czech Airlines', SXS: 'SunExpress', PGT: 'Pegasus', AFL: 'Aeroflot',
   LOG: 'Loganair', SHT: 'British Airways', CLH: 'Lufthansa CityLine', DLA: 'Air Dolomiti', CLX: 'Cargolux', GEC: 'Lufthansa Cargo',
   BCS: 'DHL', DHK: 'DHL', LAN: 'LATAM', TAM: 'LATAM', LPE: 'LATAM', GLO: 'Gol', AZU: 'Azul', AVA: 'Avianca', CMP: 'Copa Airlines',
-  ARG: 'Aerolíneas Argentinas', VIV: 'Viva Aerobus', VOI: 'Volaris', HAL: 'Hawaiian', SCX: 'Sun Country', MXY: 'Breeze',
+  ARG: 'Aerolíneas Argentinas', VIV: 'Viva', VOI: 'Volaris', HAL: 'Hawaiian', SCX: 'Sun Country', MXY: 'Breeze',
   GTI: 'Atlas Air', ABX: 'ABX Air', CKS: 'Kalitta Air',
 });

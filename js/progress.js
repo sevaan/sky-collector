@@ -1,9 +1,10 @@
 // Player progress from the sighting log: XP and observer rank, tonight’s three missions, a weekly streak and
 // achievements. Everything is derived from the saved sightings (nothing extra is stored), so it can’t drift.
 // info(cardKey) -> { tier, type, owner, launch, natural, con } | null. No DOM.
-import { nightKey } from './observation.js?v=0.1.1737';
-import { fleetThresholds } from './card-model.js?v=0.1.1737';
-import { distRound as distText } from './units.js?v=0.1.1737';
+import { isProp } from './sky-props.js?v=0.1.1739';
+import { nightKey, useCalendarDays } from './observation.js?v=0.1.1739';
+import { fleetThresholds } from './card-model.js?v=0.1.1739';
+import { distRound as distText } from './units.js?v=0.1.1739';
 
 // A longer climb (2026-10-12, playtest room: three ranks on night 1, Mission Control in about two weeks), with two
 // prestige ranks past Mission Control. Nobody drops a rank they had on the old curve (rankFloor below).
@@ -61,7 +62,7 @@ export const WEEK_THEMES = [
 ];
 // Weeks run on observing nights (noon to noon), so Sunday night after midnight still counts for Sunday's week; the
 // theme index is the local calendar week, so it's the same for everyone whatever their time zone (bug hunt 2026-10-25).
-export const weekStartOf = (t) => { const d = new Date(t - 12 * 3600e3); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d.getTime(); };
+export const weekStartOf = (t) => { const d = new Date(SKY ? t : t - 12 * 3600e3); /* Sky's weeks start Monday at midnight (QA 2026-11-19) */ d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d.getTime(); };
 const weekIndex = (ws) => { const d = new Date(ws); return Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5 + 3) / 7); };
 export const weekThemeFor = (ws, chosen = null) => WEEK_THEMES.find((x) => x.id === chosen?.[ws]) ?? WEEK_THEMES[weekIndex(ws) % WEEK_THEMES.length];
 const WEEKS_FROM = new Date(2026, 9, 26).getTime(); // weeks count from when they started (an update gave old weeks' XP at once)
@@ -139,7 +140,8 @@ export const STARTER = [
 // card as cardSnapshot (js/sky-cards.js), so these read it there.
 const snap = (s) => s.cardSnapshot ?? {};
 const WIDE = /^(A3[3-9]|A35|A38|B74|B76|B77|B78|IL96|A30)/;
-const PROP = /^(DH8|AT[4-7]|C208|PC12|SF34|B190|DHC|JS4|D228|SW4|C130|E120|BE[0-9]|C1[5-9]|C2[0-9]|PA[0-9])/;
+const PROP = { test: isProp }; /* js/sky-props.js: whole type codes (QA 2026-11-19: the old pattern counted Citation jets, the C-17 and the Beechjet) */
+const ccOf = (a) => a?.cc || a?.country || ''; /* airports carry cc (js/routes.js); the mission read .country and could never be done (QA 2026-11-19) */
 const firstFlight = (s) => s.first && snap(s).sky === 'flight';
 // Sized to your sky (docs/DESIGN-LOOP.md §3, approved 2026-11-17): counts follow how busy the place is (js/sky-local.js
 // localStats().sky → setSkySize). A quiet sky asks for one airline; a busy one for five.
@@ -158,7 +160,7 @@ export const SKY_MISSIONS = [
   { id: 'far', get text() { return `Catch a long flight (over ${distText(3000)})`; }, done: (n) => n.some((s) => (snap(s).km ?? 0) > 3000) },
   { id: 'ocean', get text() { return `Catch a very long flight (over ${distText(5000)})`; }, done: (n) => n.some((s) => (snap(s).km ?? 0) > 5000) },
   { id: 'short', get text() { return `Catch a short hop (under ${distText(500)})`; }, done: (n) => n.some((s) => snap(s).sky === 'flight' && snap(s).km != null && snap(s).km < 500) },
-  { id: 'abroad', text: 'Catch a flight to another country', done: (n) => n.some((s) => snap(s).sky === 'flight' && snap(s).from?.country && snap(s).to?.country && snap(s).from.country !== snap(s).to.country) },
+  { id: 'abroad', text: 'Catch a flight to another country', done: (n) => n.some((s) => snap(s).sky === 'flight' && ccOf(snap(s).from) && ccOf(snap(s).to) && ccOf(snap(s).from) !== ccOf(snap(s).to)) },
   { id: 'airlines3', get text() { return SIZE.airlines === 1 ? 'Catch an airline flight' : `Catch ${NUM[SIZE.airlines]} different airlines`; }, done: (n) => airlinesOf(n) >= SIZE.airlines },
   { id: 'high', text: 'Catch a plane flying really high', done: (n) => n.some((s) => (s.altFt ?? 0) >= 35000) },
   { id: 'low', text: 'Catch a plane flying low', done: (n) => n.some((s) => s.altFt != null && s.altFt < 5000) },
@@ -169,6 +171,7 @@ export const SKY_MISSIONS = [
   { id: 'newflights2', get text() { return SIZE.cards === 1 ? 'Collect a new card' : `Collect ${NUM[SIZE.cards]} new cards`; }, done: (n) => n.filter((s) => s.first).length >= SIZE.cards },
   { id: 'again', text: 'Catch a plane you’ve caught before', done: (n) => n.some((s) => !s.first) },
 ];
+const ALWAYS = new Set(['newflights2', 'airlines3', 'again', 'high']);
 export const SKY_STARTER = [
   { id: 'firstcard', text: 'Collect your first card', done: (n) => n.some((s) => s.first) },
   { id: 'firstflight', text: 'Catch a plane on its way somewhere', done: (n) => n.some(firstFlight) },
@@ -200,7 +203,7 @@ const SPACE_WEEK_THEMES = WEEK_THEMES.slice();
 const RANK_AT = RANKS.map((r) => r[0]), SKY_RANK_AT = { 1: 700, 2: 2000 }; /* a plane catch makes two cards, so the first two ranks sit further out and the first rank-up still lands on day 2 (docs/DESIGN-LOOP.md §4) */
 /* Space words on a shared patch, renamed for planes (playtest 2026-11-18: "First Light" is a telescope's first look) */
 const SKY_PATCH_NAMES = { first: 'Wheels Up' }, SPACE_PATCH_NAMES = {};
-export function setSkyProgress(on) { SKY = !!on; for (const x of ACHIEVEMENTS) if (x.id in SKY_PATCH_NAMES) { SPACE_PATCH_NAMES[x.id] ??= x.name; x.name = SKY ? SKY_PATCH_NAMES[x.id] : SPACE_PATCH_NAMES[x.id]; } RANKS.forEach((r, i) => { r[1] = (SKY ? SKY_RANK_NAMES : RANK_NAMES)[i] ?? r[1]; r[0] = SKY ? SKY_RANK_AT[i] ?? RANK_AT[i] : RANK_AT[i]; }); WEEK_THEMES.splice(0, WEEK_THEMES.length, ...(SKY ? SKY_WEEK_THEMES : SPACE_WEEK_THEMES)); }
+export function setSkyProgress(on) { SKY = !!on; useCalendarDays(SKY); for (const x of ACHIEVEMENTS) if (x.id in SKY_PATCH_NAMES) { SPACE_PATCH_NAMES[x.id] ??= x.name; x.name = SKY ? SKY_PATCH_NAMES[x.id] : SPACE_PATCH_NAMES[x.id]; } RANKS.forEach((r, i) => { r[1] = (SKY ? SKY_RANK_NAMES : RANK_NAMES)[i] ?? r[1]; r[0] = SKY ? SKY_RANK_AT[i] ?? RANK_AT[i] : RANK_AT[i]; }); WEEK_THEMES.splice(0, WEEK_THEMES.length, ...(SKY ? SKY_WEEK_THEMES : SPACE_WEEK_THEMES)); }
 const SKY_REPEAT_XP = 3, RARE_HERE_XP = 10; /* a stamp on a card you own; a plane that is unusual where you stand */
 export const isSkyProgress = () => SKY;
 const activeMissions = () => (SKY ? SKY_MISSIONS : MISSIONS);
@@ -214,7 +217,10 @@ export function missionsFor(night, possible = null) {
   let h = 0; for (const c of String(night)) h = Math.imul(h ^ c.charCodeAt(0), 2654435761) >>> 0;
   const next = () => { h = (h + 0x6d2b79f5) >>> 0; let t = Math.imul(h ^ (h >>> 15), 1 | h); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0); };
   const M = activeMissions(), ok = possible ? M.filter((m) => possible.has(m.id)) : [];
-  const pick = [], pool = (ok.length >= 3 ? ok : M).slice();
+  /* Sky: too few possible missions are topped up from ones any sky allows, never from impossible ones (QA 2026-11-19: a new
+     place was dealt "rare around here" with no local log) */
+  const fill = SKY && possible && ok.length < 3 ? M.filter((m) => ALWAYS.has(m.id) && !ok.includes(m)) : null;
+  const pick = [], pool = (ok.length >= 3 ? ok : fill ? [...ok, ...fill] : M).slice();
   while (pick.length < 3) pick.push(pool.splice(next() % pool.length, 1)[0]);
   return pick;
 }
@@ -393,7 +399,7 @@ function cloudyDays() { try { return JSON.parse(localStorage.getItem('skyNights'
 export function streaks(sightings, now = Date.now(), cloudy = cloudyDays()) {
   // Counted by observing night (noon to noon), so a session that runs past midnight is one night, not two days that
   // can land in two streak weeks (bug hunt 2026-10-20). Cloudy nights are keyed by the evening's day, which matches.
-  const night = (t) => dayNum(t - 12 * 3600e3);
+  const night = (t) => dayNum(SKY ? t : t - 12 * 3600e3); /* Sky: calendar days (QA 2026-11-19) */
   const days = real(sightings).map((s) => night(s.time)); if (!days.length) return { current: 0, best: 0, thisWeek: false };
   const first = Math.min(...days), weekIndex = (t) => Math.floor((night(t) - first) / 7), cur = weekIndex(now);
   const seen = new Set(days.map((d) => Math.floor((d - first) / 7)));
@@ -423,9 +429,15 @@ export function progress(sightings, info, { constellations = [], albums = [], no
     firstFlags.push(first); // in list order, for the weeks loop below (Star week needs it; bug hunt 2026-10-27)
     const fam = s.stampKey && !String(s.stampKey).startsWith('MOON:') ? String(s.stampKey).split(':')[0] : null; // a fleet card (Starlink…): levelled by stamps, not nights
     if (first) {
-      seenCard.add(s.cardKey); xp += tierXp[(tierXp === LEGACY_TIER_XP && i?.tier0) || i?.tier] ?? 10; a.cards++; firsts.push(s.time);
-      if (s.time - (firsts[firsts.length - 2] ?? -Infinity) <= 60000) a.double = true;
-      if (firsts.length >= 3 && s.time - firsts[firsts.length - 3] <= 300000) a.triple = true;
+      seenCard.add(s.cardKey); xp += tierXp[(tierXp === LEGACY_TIER_XP && i?.tier0) || i?.tier] ?? 10; a.cards++;
+      /* Sky: one catch saves two cards (the flight and the plane) at the same moment, so Double Sighting and Hat Trick count
+         catches, not cards (QA 2026-11-19: the first catch earned Double, the second Hat Trick) */
+      const sameCatch = SKY && firsts.length && s.time - firsts[firsts.length - 1] < 3000;
+      if (!sameCatch) {
+        firsts.push(s.time);
+        if (s.time - (firsts[firsts.length - 2] ?? -Infinity) <= 60000) a.double = true;
+        if (firsts.length >= 3 && s.time - firsts[firsts.length - 3] <= 300000) a.triple = true;
+      }
       if (i?.tier && i.natural !== 'story') a.tierCount[i.tier] = (a.tierCount[i.tier] ?? 0) + 1; // story cards have no rarity (they're shown as "Story" everywhere; round-2 playtest 2026-10-30: Ringside earned the Epic patch)
       if (i?.type && !i.natural) a.typeCount[i.type] = (a.typeCount[i.type] ?? 0) + 1;
       if (i?.owner && !i.natural) a.ownerCount[i.owner] = (a.ownerCount[i.owner] ?? 0) + 1;
@@ -488,7 +500,7 @@ export function progress(sightings, info, { constellations = [], albums = [], no
   // starter missions on their first evening (iPhone 14 playtest 2026-10-30: a morning Sun catch used them up, and the
   // first evening got a hard random deal).
   const firstKey = nights.keys().next().value, solarHour = (s) => ((((Number(s.time) + (Number(s.lon) || 0) / 15 * 3600e3) % 86400e3) + 86400e3) % 86400e3) / 3600e3;
-  const morningOnly = firstKey != null && (nights.get(firstKey) ?? []).every((s) => { const h = solarHour(s); return h >= 5 && h < 12; });
+  const morningOnly = !SKY /* Sky's days start at midnight: a morning is that day's own */ && firstKey != null && (nights.get(firstKey) ?? []).every((s) => { const h = solarHour(s); return h >= 5 && h < 12; });
   const isMorning = (s) => { const h = solarHour(s); return h >= 5 && h < 12; };
   // ...the first night with a catch after noon, or tonight if there's none yet (round-3 review: not only the very next night).
   const firstEvening = morningOnly ? ([...nights.keys()].find((k) => (nights.get(k) ?? []).some((s) => !isMorning(s))) ?? nightKey(now, lon ?? list[list.length - 1]?.lon ?? 0)) : null;
@@ -497,7 +509,7 @@ export function progress(sightings, info, { constellations = [], albums = [], no
   const firstNights = new Set(firstKey == null ? [] : morningOnly ? [...[...nights.keys()].filter((k) => k <= firstEvening), firstEvening] : [firstKey]), firstNight = firstKey;
   for (const [night, n] of nights) {
     const done = missionsOf(night, { first: firstNights.has(night), deals }).filter((m) => m.done(n, n[0].time)).length;
-    xp += done * MISSION_XP; a.missionsDone += done; if (done === 3) a.fullHouse = true;
+    xp += done * MISSION_XP; a.missionsDone += done; if (done === 3 && !(SKY && firstNights.has(night))) a.fullHouse = true; /* Sky: the starter day's three (done in two catches) don't earn Full House (QA 2026-11-19) */
     if (!firstNights.has(night) && challengeFor(night).done(n, n[0].time)) xp += MISSION_XP;
   }
   a.reunions = [...reunionRoles.values()].filter((r) => r.size === 2).length; // launches where you own the stage and its satellite

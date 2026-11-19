@@ -34,10 +34,11 @@ function loadOne(ctx, n) {
    them, so a first touch there no longer fetches and decodes all 31 (on a cold iPhone that could read as a freeze). */
 let only = null;
 export function sfxOnly(names) { only = names ? new Set(names) : null; }
-export function loadSfx(first = []) {
-  { const h = host(); if (h) return h.loadSfx(first); }
+export function loadSfx(first = [], { rest = true } = {}) {
+  { const h = host(); if (h) return h.loadSfx(first, { rest }); }
   const ctx = audioCtx(); if (!ctx) return loading;
   for (const n of first) if (SFX.includes(n)) loadOne(ctx, n);
+  if (!rest) return null; /* only these now (a new player's pack sounds under the loader); the rest later, in idle time */
   if (only) return Promise.all([...only].filter((n) => SFX.includes(n)).map((n) => loadOne(ctx, n)));
   if (loading) return loading;
   const need = SFX.filter((n) => !bufs.has(n)); if (!need.length || performance.now() - failedAt < 10000) return null; /* only what's missing, and not again within 10 s of a failed round (a missing file refetched all 30 on every play) */

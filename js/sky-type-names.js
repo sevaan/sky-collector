@@ -22,7 +22,7 @@ export const TYPE_NAMES = {
   // Light aircraft
   C150: 'Cessna 150', C152: 'Cessna 152', C172: 'Cessna 172 Skyhawk', C182: 'Cessna 182 Skylane', C206: 'Cessna 206', C210: 'Cessna 210', P28A: 'Piper Cherokee', P28R: 'Piper Arrow', PA32: 'Piper Cherokee Six', PA34: 'Piper Seneca', PA44: 'Piper Seminole', PA46: 'Piper Malibu', P46T: 'Piper Meridian',
   SR20: 'Cirrus SR20', SR22: 'Cirrus SR22', S22T: 'Cirrus SR22T', DA40: 'Diamond DA40', DA42: 'Diamond DA42', DA62: 'Diamond DA62', DV20: 'Diamond Katana', BE35: 'Beechcraft Bonanza', BE36: 'Beechcraft Bonanza', BE58: 'Beechcraft Baron', M20P: 'Mooney M20',
-  BE20: 'Beechcraft King Air 200', B350: 'Beechcraft King Air 350', BE9L: 'Beechcraft King Air 90', PC12: 'Pilatus PC-12', TBM7: 'Socata TBM 700', TBM8: 'Socata TBM 850', TBM9: 'Daher TBM 900', TWEN: 'Technam P2012 Traveller',
+  BE20: 'Beechcraft King Air 200', B350: 'Beechcraft King Air 350', BE9L: 'Beechcraft King Air 90', PC12: 'Pilatus PC-12', TBM7: 'Socata TBM 700', TBM8: 'Socata TBM 850', TBM9: 'Daher TBM 900', TWEN: 'Tecnam P2012 Traveller',
   // Business jets
   C25A: 'Cessna Citation CJ2', C25B: 'Cessna Citation CJ3', C25C: 'Cessna Citation CJ4', C510: 'Cessna Citation Mustang', C525: 'Cessna CitationJet', C550: 'Cessna Citation II', C560: 'Cessna Citation V', C56X: 'Cessna Citation Excel', C680: 'Cessna Citation Sovereign', C68A: 'Cessna Citation Latitude', C700: 'Cessna Citation Longitude', C750: 'Cessna Citation X',
   CL30: 'Bombardier Challenger 300', CL35: 'Bombardier Challenger 350', CL60: 'Bombardier Challenger 600', GLEX: 'Bombardier Global Express', GL5T: 'Bombardier Global 5000', GL7T: 'Bombardier Global 7500',

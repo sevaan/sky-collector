@@ -53,6 +53,17 @@ function csv(path) {
     })).then((m) => m ?? new Map());
 }
 
+// The country you're in, from the nearest airport the routes know (within 400 km), for Home Skies (js/sky-sets.js). '' if none.
+export async function countryNear(lat, lon) {
+  const t = await bundledAirports(); if (!t || lat == null || lon == null) return '';
+  let best = '', d = 400;
+  for (const a of Object.values(t)) { if (a[4] == null || !a[3]) continue; const k = hav(lat, lon, a[4], a[5]); if (k < d) { d = k; best = a[3]; } }
+  return best;
+}
+// Fixes to VRS's city names (QA 2026-11-19): typos, and airports named after their small town instead of the city they serve.
+const CITY_BY_ICAO = { RJGG: 'Nagoya', RJCC: 'Sapporo', MPTO: 'Panama City', SKRG: 'Medellín' };
+const CITY_TYPO = { Belgrad: 'Belgrade', Larnarca: 'Larnaca', 'Rodes Island': 'Rhodes', Naqpur: 'Nagpur' };
+const cityFix = (icao, c) => CITY_BY_ICAO[icao] ?? CITY_TYPO[c] ?? String(c).replace(/\/+$/, '');
 // Bundled airports (one file) or null when unavailable.
 const bundledAirports = () => memo('airports', () => bundled('airports.json'));
 
@@ -61,7 +72,7 @@ export async function airport(icao) {
   const t = await bundledAirports();
   if (t) {
     const a = t[icao];
-    return a ? { icao, iata: a[0] || '', name: a[1] || '', city: a[2] || a[1] || icao, cc: a[3] || '', lat: a[4] ?? null, lon: a[5] ?? null }
+    return a ? { icao, iata: a[0] || '', name: a[1] || '', city: cityFix(icao, a[2] || a[1] || icao), cc: a[3] === 'KS' ? 'XK' : a[3] || '', lat: a[4] ?? null, lon: a[5] ?? null }
       : { icao, iata: '', name: '', city: icao, cc: '', lat: null, lon: null };
   }
   const a = (await csv(`airports/schema-01/${icao[0]}/${icao.slice(0, 2)}.csv`)).get(icao);
@@ -75,7 +86,9 @@ async function codesFor(callsign) {
   const pre = callsign.slice(0, 3);
   const shard = await memo('r:' + pre, () => bundled(`r/${pre}.json`));
   if (shard) return (shard[callsign.slice(3)] ?? '').split('-').filter(Boolean);
-  const row = (await csv(`routes/schema-01/${callsign[0]}/${pre}-all.csv`)).get(callsign);
+  let row = (await csv(`routes/schema-01/${callsign[0]}/${pre}-all.csv`)).get(callsign);
+  /* big airlines' routes come in numbered parts (RYR-1.csv, RYR-2.csv …; QA 2026-11-19) */
+  for (let n = 1; !row && n <= 12; n++) { const t = await csv(`routes/schema-01/${callsign[0]}/${pre}-${n}.csv`); if (!t.size) break; row = t.get(callsign); }
   return row?.AirportCodes?.split('-').filter(Boolean) ?? [];
 }
 
@@ -88,11 +101,15 @@ export async function lookupRoute(callsign, plane) {
   if (codes.length < 2) return null;
   const airports = await Promise.all(codes.map(airport));
   const r = { callsign, from: airports[0], to: airports[airports.length - 1], stops: codes.length, airports };
-  if (plane) return routeForPlane(r, plane);
-  if (r.from.icao === r.to.icao && airports.length > 2) { r.to = airports[1]; return r; } // A-B-A: first leg
-  return r.from.icao === r.to.icao ? null : r;
+  if (!r.from || !r.to || airports.some((x) => !x)) return null; /* a code that isn't an airport (EDDF-QKL): no route, not a TypeError (QA 2026-11-19) */
+  if (plane) return sameCity(routeForPlane(r, plane));
+  if (r.from.icao === r.to.icao && airports.length > 2) { r.to = airports[1]; return sameCity(r); } // A-B-A: first leg
+  return r.from.icao === r.to.icao ? null : sameCity(r);
 }
 
+/* Two airports of one city (Paris CDG to Orly, London Heathrow to Gatwick) make no flight card: "Paris to Paris" is a
+   repositioning hop or a wrong route (QA 2026-11-19) */
+const sameCity = (r) => (r && r.from?.city && r.from.city === r.to?.city && r.from.cc === r.to.cc ? null : r);
 const R_KM = 6371, RAD = Math.PI / 180;
 function hav(lat1, lon1, lat2, lon2) {
   const s = Math.sin((lat2 - lat1) * RAD / 2) ** 2 + Math.cos(lat1 * RAD) * Math.cos(lat2 * RAD) * Math.sin((lon2 - lon1) * RAD / 2) ** 2;

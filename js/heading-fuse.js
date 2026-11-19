@@ -1,4 +1,4 @@
-// Option (a) for Android pointing (2026-11-18, proposed, NOT used by the app yet: Sevaan sees the findings first).
+// Option (a) for Android pointing (Space Collector 2026-11-18): used by js/sensors.js androidFusion on Android (Auto / New / Old in Testing tools).
 // Today Android draws the sky straight from deviceorientationabsolute (the rotation vector, which includes the
 // magnetometer), so a disturbed or uncalibrated magnetometer swings the sky at once: a tester pointing south saw west.
 // Proposed: draw from the relative stream (game rotation vector: gyro + accelerometer, smooth, no magnetometer) and
