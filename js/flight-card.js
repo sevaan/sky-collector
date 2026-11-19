@@ -7,19 +7,19 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { regularFor, clockText } from './sky-regulars.js?v=0.1.1765';
-import { TIERS, unlisted } from './flights.js?v=0.1.1765';
-import { flightFact } from './flight-facts.js?v=0.1.1765';
-import { typePhoto } from './type-photos.js?v=0.1.1765';
-import { housePhoto } from './house-photos.js?v=0.1.1765';
-import { gapPhoto } from './gap-photos.js?v=0.1.1765'; /* the types that had no photo (2026-11-18) */
-import { airlinePhoto } from './airline-photos.js?v=0.1.1765';
-import { airlineLogo } from './airline-logos.js?v=0.1.1765';
-import { fitStyle } from './photo-fit.js?v=0.1.1765';
-import { dist, speed } from './units.js?v=0.1.1765';
-import { typeFact } from './sky-facts.js?v=0.1.1765';
-import { localText } from './localize.js?v=0.1.1765';
-import { hasAirlineCallsign, planeLine, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1765';
+import { regularFor, clockText } from './sky-regulars.js?v=0.1.1766';
+import { TIERS, unlisted } from './flights.js?v=0.1.1766';
+import { flightFact } from './flight-facts.js?v=0.1.1766';
+import { typePhoto } from './type-photos.js?v=0.1.1766';
+import { housePhoto } from './house-photos.js?v=0.1.1766';
+import { gapPhoto } from './gap-photos.js?v=0.1.1766'; /* the types that had no photo (2026-11-18) */
+import { airlinePhoto } from './airline-photos.js?v=0.1.1766';
+import { airlineLogo } from './airline-logos.js?v=0.1.1766';
+import { fitStyle } from './photo-fit.js?v=0.1.1766';
+import { dist, speed } from './units.js?v=0.1.1766';
+import { typeFact } from './sky-facts.js?v=0.1.1766';
+import { localText } from './localize.js?v=0.1.1766';
+import { hasAirlineCallsign, planeLine, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1766';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
@@ -238,35 +238,4 @@ export function miniCardHtml({ kind, card: c, type, last, n = 1, stamps = 0, sta
 // The catch screen. kind 'new' (default): the new-card screen, the flight card (or the plane card when there's no route)
 // plus the Planes strip. kind 'stamp': the "new stamp" moment for a card you own: the card with its newest stamp
 // inking in and, on a level-up, the new level. Takes sky-catch.js collect()'s result. Resolves when it's closed.
-export function showCatch(r) {
-  const { flight, plane, isNewFlight, isNewPlane, heightFt, speedKmh, awayKm, flightSeen, planeSeen, kind = 'new', stampOn = 'flight',
-    level, levelUp, stampCount, flightStampInfo: fInfo = null, planeStampInfo: pInfo = null, callsign } = r;
-  const at = new Date(), stamp = kind === 'stamp', onPlane = stamp && (stampOn === 'plane' || !flight);
-  const el = document.createElement('section');
-  el.className = `fcatch${stamp ? ' fcatch--stamp' : ''}`; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', stamp ? 'Caught again' : 'New card');
-  const asFlight = flight && !onPlane;
-  const main = asFlight ? flightCardHtml(flight, { caughtAt: at, heightFt, sightings: flightSeen, type: plane?.type, planeName: plane?.name, eager: true, stampInfo: fInfo, newStamp: stamp })
-    : planeCardHtml(plane, { caughtAt: at, heightFt, speedKmh, awayKm, sightings: planeSeen, eager: true, stampInfo: pInfo, newStamp: stamp, callsign });
-  const noun = asFlight ? 'DAY' : 'AIRCRAFT';
-  const head = stamp ? `CAUGHT AGAIN <span>· ${noun} ${stampCount}${levelUp ? ` · ${String(level).toUpperCase()}!` : ''}</span>`
-    : `${flight ? (isNewFlight ? 'NEW FLIGHT' : 'SEEN AGAIN') : (isNewPlane ? 'NEW PLANE' : 'SEEN AGAIN')} <span>· +${flight ? (isNewFlight ? 80 : 10) : (isNewPlane ? 60 : 10)} XP</span>`;
-  const ph = photoFor(plane?.type);
-  const planeNote = flight && !onPlane ? (isNewPlane ? 'NEW PLANE' : r.planeStamps?.gained ? `AIRCRAFT ${r.planeStamps.count}${r.planeStamps.levelUp ? ` · ${String(r.planeStamps.level).toUpperCase()}!` : ''}` : `SEEN ${planeSeen}×`) : '';
-  const strip = flight && !onPlane ? `<div class="fcatch-strip">
-      <span class="fcatch-strip-art${ph ? ' has-photo' : ''}">${ph ? `<img src="${esc(ph.url)}" alt="">` : glyphSvg(plane.glyph)}</span>
-      <span class="fcatch-strip-t"><span class="fcatch-strip-k">+ PLANES · ${planeNote}</span>
-      <span class="fcatch-strip-n">${esc(plane.name)}</span></span></div>` : '';
-  el.innerHTML = `<div class="fcatch-top"><span class="fcatch-k">${head}</span>
-      <button class="fcatch-x" type="button" aria-label="Close"><svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-    <div class="fcatch-card">${main}</div>${strip}
-    <button class="fcatch-done" type="button">KEEP SPOTTING</button>`;
-  document.body.appendChild(el);
-  requestAnimationFrame(() => el.classList.add('on'));
-  return new Promise((resolve) => {
-    const close = () => { el.classList.remove('on'); setTimeout(() => el.remove(), 250); resolve(); };
-    el.querySelector('.fcatch-x').addEventListener('click', close);
-    el.querySelector('.fcatch-done').addEventListener('click', close);
-  });
-}
-// The same screen by its other name, for callers that only ever show a stamp.
-export const showStamp = (r) => showCatch({ ...r, kind: 'stamp' });
+/* showCatch / showStamp (the old catch panel's own reveal) are gone (2026-11-19): Space's reveal shows every catch */
