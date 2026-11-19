@@ -1,11 +1,13 @@
 // Phone orientation -> where the back of the phone is pointing in the sky.
 // Produces a camera basis in local East-North-Up: right, up (screen edges) and back (view direction).
-import { declination } from './declination.js?v=0.1.1766';
+import { declination } from './declination.js?v=0.1.1767';
+import { freshFuse, fuseStep, FUSE } from './heading-fuse.js?v=0.1.1767';
 
 const RAD = Math.PI / 180;
 
 export const pointing = {
-  source: 'none',        // 'ios' | 'absolute' | 'relative' | 'none'
+  source: 'none',        // 'ios' | 'fused' (Android: relative view + learned north) | 'absolute' (Android, old direct compass) | 'relative' | 'none'
+  compassRefusedAt: 0,   // Android fused: when a big compass jump was last refused (main.js offers Line up the sky)
   basis: null,           // { right, up, back } unit vectors in ENU, before heading offset
   headingOffset: 0,      // degrees added to raw azimuth to get true azimuth
   compassAccuracy: null, // iOS: ± degrees, -1 = uncalibrated
@@ -99,7 +101,7 @@ const moving = () => turnRate > 6;
 const EARLY_MS = 20000, SETTLE_MS = 2500, SETTLE_MAX_MS = 6000;
 let firstHeadingAt = 0, agreeSince = 0;
 // Waking up again after the app was away: the compass is stale then too, so it settles again (unless lined up by hand).
-if (typeof document !== 'undefined') document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { firstHeadingAt = 0; pointing.settled = false; } });
+if (typeof document !== 'undefined') document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { firstHeadingAt = 0; pointing.settled = false; fuse = freshFuse(); /* Android's relative stream may restart with a new zero */ } });
 // For the turn directions: true while an iPhone's compass is still waking up (at most SETTLE_MAX_MS after its first heading).
 export const compassSettling = () => pointing.source === 'ios' && !pointing.settled && !headingLocked && firstHeadingAt > 0 && performance.now() - firstHeadingAt < SETTLE_MAX_MS;
 function updateHeadingOffset(heading, basis) {
@@ -142,8 +144,77 @@ function updateHeadingOffset(heading, basis) {
   pointing.headingOffset = blendAngle(pointing.headingOffset, measured, goodSamples < 30 ? 0.2 : 0.02);
 }
 
+// Android (2026-11-18, Sevaan: "Yes, switch it on for Android"; testers pointing south saw west). The old way drew the
+// sky straight from deviceorientationabsolute (the rotation vector, magnetometer included), so any magnetometer glitch
+// swung the sky at once. Now ('fused'): the view comes from the relative stream (gyro + accelerometer, smooth) and only
+// the heading offset is learned from the absolute one, with the iPhone's rules (js/heading-fuse.js). A phone that never
+// sends the relative stream keeps the old way ('absolute'). The way back without a release: spacecollector.app/dial/
+// compass.json { "androidFuse": false } (fetched by main.js, setFuseDial), or Testing tools (localStorage compassFuse).
+// Only tested on simulated sensors: needs the Android testers before it reaches everyone.
+let fuse = freshFuse(), relBasis = null, relSeenAt = 0, absBasis = null, absSeenAt = 0, absRun = 0, fuseDial = true;
+try { fuseDial = localStorage.getItem('compassDial') !== 'off'; } catch {}
+export function setFuseDial(on) { fuseDial = on !== false; try { localStorage.setItem('compassDial', fuseDial ? 'on' : 'off'); } catch {} }
+/** 'on' | 'off' | '' (the dial decides), from Testing tools. */
+let fuseSw = null; /* cached: fuseAllowed runs on every orientation event */
+export function fuseSwitch(v) {
+  try { if (v !== undefined) { if (v) localStorage.setItem('compassFuse', v); else localStorage.removeItem('compassFuse'); fuseSw = v || ''; } if (fuseSw == null) fuseSw = localStorage.getItem('compassFuse') || ''; } catch { fuseSw = fuseSw ?? ''; }
+  return fuseSw;
+}
+function fuseAllowed() { const sw = fuseSwitch(); return sw === 'on' ? true : sw === 'off' ? false : fuseDial; }
+/** For the compass trace and Testing tools. */
+export function fuseInfo() { return { allowed: fuseAllowed(), dial: fuseDial, switch: fuseSwitch(), offset: fuse.offset, relAgoMs: relSeenAt ? Math.round(performance.now() - relSeenAt) : null, refusedAt: pointing.compassRefusedAt }; }
+function fuseLearn(now) {
+  if (!relBasis || !absBasis || now - relSeenAt > 120) return;
+  const relAz = rawAzimuth(relBasis.back), absAz = rawAzimuth(absBasis.back);
+  const elBack = Math.asin(Math.max(-1, Math.min(1, relBasis.back[2]))) / RAD;
+  const upright = relBasis.up[2] > 0.6 && Math.abs(elBack) < 40;
+  if (fuse.offset == null && !upright) { /* first reading in an odd pose: a usable guess (not flat or overhead), replaced in the early seconds */
+    if (Math.abs(relBasis.back[2]) > 0.9) return;
+    fuse = { ...freshFuse(), offset: (absAz - relAz + 360) % 360, since: now, n: 1 };
+  } else {
+    const prev = fuse;
+    fuse = fuseStep(fuse, { t: now, relAz, absAz, upright, dps: turnRate }, headingLocked ? { ...FUSE, follow: 0 } : FUSE);
+    if (prev.jumpTo != null && fuse.jumpTo == null && fuse.offset === prev.offset && now - prev.jumpSince >= 1000) pointing.compassRefusedAt = now; /* a big jump that lasted and was not believed */
+    pointing.compassDoubt = fuse.jumpTo != null ? Math.min(1, (now - fuse.jumpSince) / FUSE.holdMs) : 0;
+    if (prev.offset != null && fuse.offset !== prev.offset && Math.abs(((fuse.offset - prev.offset + 540) % 360) - 180) > FUSE.jumpDeg) pointing.compassJumpAt = now;
+  }
+  if (fuse.offset != null) pointing.headingOffset = fuse.offset;
+}
+// true when the event was handled here; false = the old paths below
+function androidFusion(e, absolute) {
+  if (!fuseAllowed()) { if (pointing.source === 'fused') { pointing.source = 'absolute'; pointing.headingOffset = 0; } return false; }
+  const now = performance.now(), b = basisFromEuler(e.alpha, e.beta, e.gamma);
+  if (absolute) {
+    if (now - absSeenAt > 250) absRun = now; /* the absolute stream (re)started here */
+    absBasis = b; absSeenAt = now;
+    if (pointing.source === 'fused') {
+      /* the relative stream stopped while the absolute one kept coming for a second: the old way. Both pausing (Chrome
+         sends nothing while the phone is still) and the absolute one resuming first is not that (Fable 2026-11-19: it
+         fell back and relearned north from a disturbed compass). */
+      if (now - relSeenAt > 1000 && now - absRun > 1000) { pointing.source = 'absolute'; pointing.headingOffset = 0; fuse = freshFuse(); return false; }
+      fuseLearn(now);
+      if (fuse.offset == null) { pointing.basis = b; pointing.headingOffset = 0; pointing.lastEvent = now; } /* nothing learned yet: drawn from the compass, as before */
+      return true;
+    }
+    return false;
+  }
+  relBasis = b; relSeenAt = now;
+  if (pointing.source !== 'fused') {
+    if (now - absSeenAt > 500) return false; /* no absolute stream (yet): a relative-only phone */
+    pointing.source = 'fused'; fuse = freshFuse();
+  }
+  pointing.lastEvent = now; trackTurn(b, now);
+  if (fuse.offset == null) fuseLearn(now);
+  /* Until the offset is learned once (opened pointing overhead or flat), the view is drawn from the absolute stream as
+     before, not from the relative one with no north (Fable 2026-11-19: the sky sat 37° round until the phone came down). */
+  if (fuse.offset != null) { pointing.basis = b; pointing.headingOffset = fuse.offset; }
+  else if (absBasis && now - absSeenAt < 500) { pointing.basis = absBasis; pointing.headingOffset = 0; }
+  return true;
+}
+
 function onOrientation(e, absolute) {
   if (e.alpha === null || e.beta === null || e.gamma === null) return;
+  if (!(typeof e.webkitCompassHeading === 'number' && e.webkitCompassHeading >= 0) && pointing.source !== 'ios' && androidFusion(e, absolute)) return;
   // Android sends both absolute (north-referenced) and relative events; mixing them makes the sky jump.
   if (!absolute && pointing.source === 'absolute') return;
   const basis = basisFromEuler(e.alpha, e.beta, e.gamma);
@@ -234,7 +305,7 @@ export function rotateAz(v, deg) {
 export function trueBasis() {
   const b = pointing.basis;
   if (!b) return null;
-  const off = pointing.headingOffset + (pointing.source === 'ios' || pointing.source === 'absolute' ? decl : 0) + manualNudge; // Android's absolute orientation is magnetic north too (rotation vector; bug hunt 2026-10-20)
+  const off = pointing.headingOffset + (pointing.source === 'ios' || pointing.source === 'absolute' || pointing.source === 'fused' ? decl : 0) + manualNudge; // Android's absolute orientation is magnetic north too (rotation vector; bug hunt 2026-10-20)
   return { right: rotateAz(b.right, off), up: rotateAz(b.up, off), back: rotateAz(b.back, off) };
 }
 

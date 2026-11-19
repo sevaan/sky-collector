@@ -3,12 +3,13 @@
 // on the website, because adsb.lol doesn’t allow browser requests directly. The airline comes from the callsign's prefix.
 // No DOM here. Positions are extrapolated between fetches using ground speed, track and climb rate.
 
-import { tagOf } from './sky-secrets.js?v=0.1.1766';
-import { SERVER } from './server.js?v=0.1.1766';
-import { plugin } from './native.js?v=0.1.1766';
-import { lookupRoute } from './routes.js?v=0.1.1766';
-import { typeName } from './sky-type-names.js?v=0.1.1766';
-import { noteFeed } from './sky-local.js?v=0.1.1766';
+import { tagOf } from './sky-secrets.js?v=0.1.1767';
+import { SERVER } from './server.js?v=0.1.1767';
+import { plugin } from './native.js?v=0.1.1767';
+import { lookupRoute } from './routes.js?v=0.1.1767';
+import { typeName } from './sky-type-names.js?v=0.1.1767';
+import { noteFeed } from './sky-local.js?v=0.1.1767';
+import { DEFAULTS, clampDial, freshFeed, pickSource, nextGap, afterAnswer, feedDown, maxAgeS, easeLeft } from './plane-feed.js?v=0.1.1767';
 // Empty = feature off. localStorage 'planeRelay' overrides it (testing). Our server's /planes (adsb.lol only) once it's
 // deployed; until then the Val Town relay (relay/handler.ts).
 // Sky Collector (2026-11-15): Space Collector's Val Town relay is turned away by adsb.lol now, so the website needs Sky
@@ -17,9 +18,16 @@ import { noteFeed } from './sky-local.js?v=0.1.1766';
 const SKY_RELAY = 'https://sevaan--a2362084e15311f195931607ee4eb77e.web.val.run';
 // A list, tried in order each poll: the first that answers wins. Add a second relay here (another host) as a fallback.
 const RELAYS = SERVER ? [`${SERVER}/planes`] : [SKY_RELAY];
-const POLL_MS = 10000;
+const POLL_MS = 10000;   // the website: every 10 s, as before
 const RADIUS_NM = 40;    // ~75 km: an airliner at cruise height is ~8° up at that distance
-const MAX_AGE_S = 60;    // drop planes we haven’t heard about for a minute
+// The apps (2026-11-19, native/): Space Collector's phone-first feed (js/plane-feed.js). Each phone asks adsb.lol itself
+// through CapacitorHttp; Sky's own relay (server/, Cloud Run "api" in sky-collector-app, FlyItalyADSB) is the backup.
+// The website keeps the relay list above. No dial yet (Space's is spacecollector.app/dial/planes.json): DEFAULTS.
+const APP_RELAY = 'https://api-ybymfwdlgq-uc.a.run.app/planes';
+const DIAL = 'https://skycollector.app/dial/planes.json'; /* the plane feed's pacing without a release (js/plane-feed.js clampDial; scripts/build-site.mjs writes it) */
+const phoneHttp = () => { let over = null; try { over = localStorage.getItem('planeRelay'); } catch {} return over ? null : plugin('CapacitorHttp'); };
+const header = (h, name) => { if (!h) return undefined; for (const k of Object.keys(h)) if (k.toLowerCase() === name) return Number(h[k]); return undefined; };
+const jsonOf = (r) => (r?.status === 200 ? (typeof r.data === 'string' ? JSON.parse(r.data) : r.data) : null);
 
 const RAD = Math.PI / 180, A = 6378.137, E2 = 0.00669437999014; // WGS84, km
 const FT = 0.0003048, KT = 0.000514444; // feet -> km, knots -> km/s
@@ -31,7 +39,7 @@ function relayUrls() {
   let list = null; try { const j = JSON.parse(o); if (Array.isArray(j)) list = j; } catch {}
   return (list ?? o.split(/[\s,]+/)).map((u) => String(u).trim()).filter(Boolean);
 }
-export function planesAvailable() { return relayUrls().length > 0; }
+export function planesAvailable() { return !!phoneHttp() || relayUrls().length > 0; }
 const relayQuery = (url, obs) => `${url.replace(/\/$/, '')}${/\/planes$/.test(url) ? '' : '/'}?lat=${obs.lat.toFixed(2)}&lon=${obs.lon.toFixed(2)}&dist=${RADIUS_NM}`;
 
 function ecef(lat, lon, hKm) {
@@ -53,6 +61,12 @@ export function skyPosition(obs, lat, lon, hKm) {
 }
 
 // Move a plane forward `s` seconds along its track (flat-earth step, fine for a few seconds).
+/* Where a plane is drawn now: moved along its own track from its own position time, plus what's left of an eased correction (Space Collector 5585f2e5) */
+function drawnAt(p, nowMs) {
+  const q = extrapolate(p, Math.max(0, (nowMs - p.at) / 1000)), e = p.ease; if (!e) return q;
+  const k = easeLeft(e.t0, nowMs); if (!k) { p.ease = null; return q; }
+  return { ...q, lat: q.lat + e.lat * k, lon: q.lon + e.lon * k, hKm: q.hKm + e.hKm * k };
+}
 function extrapolate(p, s) {
   const d = p.gs * KT * s;
   const lat = p.lat + (d * Math.cos(p.track * RAD)) / 111.195;
@@ -125,7 +139,18 @@ function parse(json) {
 }
 
 export class PlaneTracker {
-  constructor() { this.planes = []; this.lastFetch = 0; this.busy = false; this.routes = new Map(); this.failures = 0; this.lastOk = 0; this.sources = null; this.log = (() => { try { return JSON.parse(localStorage.getItem('planeFeedLog') || '[]').slice(-40); } catch { return []; } })(); }
+  constructor() {
+    this.planes = []; this.lastFetch = 0; this.busy = false; this.routes = new Map(); this.failures = 0; this.lastOk = 0; this.sources = null; this.log = (() => { try { return JSON.parse(localStorage.getItem('planeFeedLog') || '[]').slice(-40); } catch { return []; } })();
+    /* the apps' feed state (js/plane-feed.js), kept in localStorage 'planeFeed' */
+    this.gapS = POLL_MS / 1000; this.down = false; this.src = ''; this.cfg = DEFAULTS; this.feed = freshFeed(); this.counts = { phone: 0, relay: 0 }; this.tally = null;
+    try { this.feed = { ...freshFeed(), ...JSON.parse(localStorage.getItem('planeFeed') || '{}') }; } catch {}
+    this.loadDial();
+  }
+  /* the dial: fetched once at start in the apps; the defaults stand if it can't be (as Space Collector's) */
+  loadDial() {
+    const http = phoneHttp(); if (!http) return;
+    http.request({ url: DIAL, method: 'GET', connectTimeout: 6000, readTimeout: 6000 }).then(jsonOf).then((j) => { if (j) this.cfg = clampDial(j); }).catch(() => {});
+  }
 
   // The last 40 fetches (2026-11-17, Sevaan outdoors: Space Collector showed a plane Sky didn't, and nothing said why):
   // [{ t, ok, n, ms, src | err }], newest last; kept in localStorage 'planeFeedLog' so a miss can be read afterwards
@@ -138,14 +163,17 @@ export class PlaneTracker {
   // known to be quiet when status is 'ok'. lastOk is the time of the last good fetch (0 = never); sources is the relay's
   // per-feed counts {adsblol, adsbfi, airplaneslive, merged}, or null (phone apps ask adsb.lol directly).
   get status() {
+    if (this.down) return 'failing'; /* the apps: both sources out for now */
     if (this.failures >= 2 || (this.failures >= 1 && !this.lastOk)) return 'failing';
     return this.lastOk ? 'ok' : 'loading';
   }
 
-  // Call every frame; fetches at most every POLL_MS (backs off after errors).
-  update(obs) {
+  // Call every frame; fetches at most every POLL_MS (backs off after errors). near (the apps): a plane is near the
+  // circle or something is pinned, so ask every 10 s rather than 30 (js/plane-feed.js).
+  update(obs, { near = false } = {}) {
     const urls = relayUrls();
     loadAirlines();
+    if (phoneHttp()) return this.updateApp(obs, near);
     if (!urls.length || this.busy || (typeof document !== 'undefined' && document.hidden)) return; // no polling while the app is in the background
     const wait = POLL_MS * Math.min(6, 2 ** this.failures);
     if (Date.now() - this.lastFetch < wait) return;
@@ -165,13 +193,67 @@ export class PlaneTracker {
       .finally(() => { this.busy = false; });
   }
 
+  // The apps (Space Collector 5585f2e5 + 1b496281): adsb.lol from the phone first, Sky's relay as the backup, when
+  // and from where as js/plane-feed.js says.
+  updateApp(obs, near) {
+    if (this.busy || (typeof document !== 'undefined' && document.hidden)) return; // no asking while the app is in the background
+    const http = phoneHttp(), now = Date.now(), env = { phoneOk: true, relayOk: true, now };
+    const src = pickSource(this.feed, env);
+    this.down = feedDown(this.feed, env);
+    this.gapS = nextGap(this.feed, src, { near }, this.cfg);
+    if (src === 'none' || now - this.lastFetch < this.gapS * 1000) return;
+    this.busy = true; this.lastFetch = now; this.src = src; this.counts[src]++;
+    const lat = obs.lat.toFixed(2), lon = obs.lon.toFixed(2), t0 = now;
+    const url = src === 'phone' ? `https://api.adsb.lol/v2/point/${lat}/${lon}/${RADIUS_NM}` /* adsb.lol turns cloud servers away (2026-10-26), but not phones */
+      : `${APP_RELAY}?lat=${lat}&lon=${lon}&dist=${RADIUS_NM}`;
+    http.request({ url, method: 'GET', connectTimeout: 8000, readTimeout: 8000 })
+      .then((r) => ({ status: r?.status, remaining: src === 'phone' ? header(r?.headers, 'x-ratelimit-remaining') : undefined, retryAfter: src === 'phone' ? header(r?.headers, 'retry-after') : undefined, data: jsonOf(r) }))
+      .then((r) => ({ ...r, ok: !!r.data, net: !r?.status }), () => ({ ok: false, status: 0, net: true }))
+      .then((r) => {
+        const at = `${obs.lat.toFixed(1)},${obs.lon.toFixed(1)}`;
+        if (r.ok) {
+          this.take(parse(r.data)); this.failures = 0; this.lastOk = Date.now(); this.sources = r.data.sources ?? null;
+          try { noteFeed((r.data.ac ?? r.data.aircraft ?? []).length); } catch {}
+          this.note({ t: t0, ok: 1, n: this.planes.length, ms: Date.now() - t0, src: src === 'phone' ? `phone${r.remaining != null ? ' ' + r.remaining + ' left' : ''}` : 'relay', at });
+        } else { this.failures++; this.note({ t: t0, ok: 0, ms: Date.now() - t0, err: `${src} ${r.net ? 'no answer' : r.status}`, at }); }
+        const before = this.feed;
+        this.feed = afterAnswer(this.feed, { src, ok: r.ok, status: r.status, remaining: r.remaining, retryAfter: r.retryAfter, net: r.net, online: typeof navigator === 'undefined' ? undefined : navigator.onLine }, Date.now(), this.cfg);
+        this.count(src, r, before);
+        try { localStorage.setItem('planeFeed', JSON.stringify(this.feed)); } catch {}
+      })
+      .finally(() => { this.busy = false; });
+  }
+
+  /* The session's feed numbers for the stats page (2026-11-19, the feed-cost question): asks to each source and how many
+     were answered, adsb.lol's 429s, the lowest allowance it reported, and why the phone handed over to the relay. No
+     place, no aircraft. main.js sends them as a 'feed' note when the app goes to the background (takeTally). */
+  count(src, r, before) {
+    const t = (this.tally ??= { ph: 0, phOk: 0, rl: 0, rlOk: 0, q: 0, low: -1, sw: '' });
+    if (src === 'phone') { t.ph++; if (r.ok) t.phOk++; if (r.status === 429) { t.q++; t.sw = '429'; } if (Number.isFinite(r.remaining) && (t.low < 0 || r.remaining < t.low)) t.low = r.remaining; }
+    else { t.rl++; if (r.ok) t.rlOk++; }
+    if (src === 'phone' && !t.sw && this.feed.phoneOff && this.feed.phoneOff !== before.phoneOff) t.sw = Number.isFinite(this.feed.remaining) && this.feed.remaining <= this.cfg.switchAt ? 'low' : 'fails';
+  }
+  takeTally() { const t = this.tally; this.tally = null; return t && t.ph + t.rl ? t : null; }
+
+  /* A fresh answer: a plane already drawn somewhere else slides to its new place (plane-feed.js easeLeft) instead of jumping */
+  take(fresh) {
+    const now = Date.now(), old = new Map(this.planes.map((p) => [p.hex, p]));
+    for (const p of fresh) {
+      const o = old.get(p.hex); if (!o) continue;
+      const a = drawnAt(o, now), b = extrapolate(p, Math.max(0, (now - p.at) / 1000));
+      const d = { lat: a.lat - b.lat, lon: a.lon - b.lon, hKm: a.hKm - b.hKm };
+      if (Math.abs(d.lat) + Math.abs(d.lon) < 0.2) p.ease = { ...d, t0: now }; /* a big jump (a wrong old fix) just moves */
+    }
+    this.planes = fresh;
+  }
+
   // Planes above the horizon right now: [{ plane, az, el, rangeKm, enu }]
   positions(obs, nowMs = Date.now()) {
     const out = [];
     for (const p of this.planes) {
       const s = (nowMs - p.at) / 1000;
-      if (s > MAX_AGE_S) continue;
-      const q = extrapolate(p, Math.max(0, s));
+      if (s > maxAgeS(this.gapS)) continue; /* 60 s on the website (10 s polls), longer between the apps' 30 s asks */
+      const q = drawnAt(p, nowMs);
       const pos = skyPosition(obs, q.lat, q.lon, q.hKm);
       if (pos.el > 0) out.push({ plane: p, ...pos });
     }
@@ -213,7 +295,7 @@ const AIRLINES = { ACA: 'Air Canada', ROU: 'Air Canada Rouge', JZA: 'Jazz (Air C
 // Every ICAO airline code -> name (js/airlines.js, built by scripts/build-airlines.mjs), loaded once, lazily.
 let airlineTable = null, airlineLoad = null;
 export function loadAirlines() {
-  return (airlineLoad ??= import('./airlines.js?v=0.1.1766').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
+  return (airlineLoad ??= import('./airlines.js?v=0.1.1767').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
 }
 export function airlineName(callsign) { return /^[A-Z]{3}\d/.test(callsign ?? '') ? airlineFor(callsign, null) : ''; }
 function airlineFor(callsign, a) {
