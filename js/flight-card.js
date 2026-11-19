@@ -7,19 +7,19 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { regularFor, clockText } from './sky-regulars.js?v=0.1.1772';
-import { TIERS, unlisted } from './flights.js?v=0.1.1772';
-import { flightFact } from './flight-facts.js?v=0.1.1772';
-import { typePhoto } from './type-photos.js?v=0.1.1772';
-import { housePhoto } from './house-photos.js?v=0.1.1772';
-import { gapPhoto } from './gap-photos.js?v=0.1.1772'; /* the types that had no photo (2026-11-18) */
-import { airlinePhoto } from './airline-photos.js?v=0.1.1772';
-import { airlineLogo } from './airline-logos.js?v=0.1.1772';
-import { fitStyle } from './photo-fit.js?v=0.1.1772';
-import { dist, speed } from './units.js?v=0.1.1772';
-import { typeFact } from './sky-facts.js?v=0.1.1772';
-import { localText } from './localize.js?v=0.1.1772';
-import { hasAirlineCallsign, planeLine, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1772';
+import { regularFor, clockText } from './sky-regulars.js?v=0.1.1773';
+import { TIERS, unlisted } from './flights.js?v=0.1.1773';
+import { flightFact } from './flight-facts.js?v=0.1.1773';
+import { typePhoto } from './type-photos.js?v=0.1.1773';
+import { housePhoto } from './house-photos.js?v=0.1.1773';
+import { gapPhoto } from './gap-photos.js?v=0.1.1773'; /* the types that had no photo (2026-11-18) */
+import { airlinePhoto } from './airline-photos.js?v=0.1.1773';
+import { airlineLogo } from './airline-logos.js?v=0.1.1773';
+import { fitStyle } from './photo-fit.js?v=0.1.1773';
+import { dist, speed } from './units.js?v=0.1.1773';
+import { typeFact } from './sky-facts.js?v=0.1.1773';
+import { localText } from './localize.js?v=0.1.1773';
+import { hasAirlineCallsign, planeLine, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1773';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');

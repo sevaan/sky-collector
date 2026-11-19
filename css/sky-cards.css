@@ -588,3 +588,13 @@ html.sky-night .td2-reg em { color:#7fd6a3; }
 @keyframes pf-fly-left { from { transform:translateX(0); } to { transform:translateX(calc(-1 * var(--w, 340px) - 40px)); } }
 @media (prefers-reduced-motion: reduce) { .planefield .pf { animation:none; left:calc(var(--i, 0) * 15%); } }
 body.sky-only .tc .art .ob-stars { display:none; } /* the location picture's drawn stars: Sky's tour has its flying planes instead */
+/* Shiny plane cards (2026-11-19, js/shiny.js shinyForPlane): a soft gold-and-rose sweep over the face and the moment's name
+   on a small ribbon at the top, as a satellite's shiny card shines. */
+.card--sky.shiny { position:relative; }
+.card--sky.shiny .fc-shine { position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:5; mix-blend-mode:screen;
+  background:linear-gradient(115deg, transparent 32%, rgba(255,236,170,.55) 45%, rgba(255,170,215,.35) 52%, transparent 64%) 0 0 / 260% 100% no-repeat; animation:fcShine 3.2s ease-in-out infinite; }
+@keyframes fcShine { 0% { background-position:120% 0; } 70%, 100% { background-position:-30% 0; } }
+.card--sky.shiny .fc-shiny { position:absolute; z-index:6; left:50%; top:-.55em; transform:translateX(-50%); white-space:nowrap; padding:.2em .7em; border-radius:99px; font:500 .62em/1.2 'SC Label', sans-serif; letter-spacing:.12em; text-transform:uppercase;
+  color:#5a3a00; background:linear-gradient(90deg, #ffe28a, #ffc8e6, #ffe28a); box-shadow:0 2px 6px rgba(13,34,56,.25); }
+.card--sky.shiny .fc-shiny b { font-weight:inherit; color:#b42a20; }
+@media (prefers-reduced-motion: reduce) { .card--sky.shiny .fc-shine { animation:none; background-position:50% 0; opacity:.6; } }

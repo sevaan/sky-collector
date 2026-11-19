@@ -104,3 +104,13 @@ test('a card saved as plain "Aircraft" is renamed, and a Citation is drawn as a 
   assert.equal(glyphFor('C25B'), 'jet'); assert.equal(glyphFor('C172'), 'prop'); assert.equal(glyphFor('DH8D'), 'prop'); assert.equal(glyphFor('PC24'), 'jet'); assert.equal(glyphFor('B738'), 'jet');
   assert.equal(retier2({ kind: 'plane', key: 'P:C25B', name: 'x', glyph: 'prop' }).glyph, 'jet');
 });
+
+// Shiny planes (2026-11-19, review Part 2 E): real moments only, kept rare.
+test('a plane catch is shiny by the Moon, with the sun on the horizon, or in new colours on a rare type', async () => {
+  const { shinyForPlane, SHINY } = await import('../js/shiny.js');
+  const up = [0, 0.6, 0.8], n = Math.hypot(...up), e = up.map((v) => v / n);
+  assert.equal(shinyForPlane({ planeEnu: e, moon: { enu: e } }), 'moon');
+  assert.equal(shinyForPlane({ sunEl: 1.2 }), 'golden'); assert.equal(shinyForPlane({ sunEl: 6 }), null); assert.equal(shinyForPlane({ sunEl: -3 }), null);
+  assert.equal(shinyForPlane({ newColours: true, tier: 'rare' }), 'colours'); assert.equal(shinyForPlane({ newColours: true, tier: 'common' }), null, 'not every new airline on an A320');
+  for (const k of ['golden', 'colours']) assert.ok(SHINY[k].label && SHINY[k].line);
+});
