@@ -592,8 +592,8 @@ body.sky-only #debug :is(.set-row:has(#chk-snap), .set-row:has(#chk-milky), .set
 /* Tell a friend sheet (Space Collector's, 2026-11-18): its cream and gold text was written for a dark sheet; on Sky's
    light one the paragraph and the reward line were unreadable. Navy ink and a deeper gold. */
 body.sky-only .tell-text { color:#23405c; }
-body.sky-only .tell-reward { background:#f2b6321f; box-shadow:inset 0 0 0 1px #c98f1c66; color:#5a4310; }
-body.sky-only .tell-reward i { color:#c98f1c; }
+body.sky-only { --tell-ribbon-ink:#fffdf6; } /* option B's Earn this ribbon: cream on Sky's red */
+body.sky-only .tell-card .tell-go { color:#fffdf6; } /* cream on red 4.6:1 (navy was 3.4:1) */
 /* Credits and sources (playtest 2026-11-18: three paragraphs were pale cream on white) */
 body.sky-only:not(.night) :is(.cr-row, .cr-pic) { color:#23405c; border-top-color:#dbe5ee; }
 body.sky-only:not(.night) :is(.cr-row, .cr-pic) b { color:#0d2238; }

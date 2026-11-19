@@ -3708,15 +3708,31 @@ body.night .n2-av { filter: grayscale(1) sepia(1) saturate(4) hue-rotate(320deg)
 .n2-pips { display: inline-flex; gap: 4px; vertical-align: middle; margin-left: 4px; }
 .n2-pips i { width: 16px; height: 5px; border-radius: 3px; background: #ffffff22; } .n2-pips i.on { background: #f2c14e; } .n2-pips i.now { background: transparent; box-shadow: inset 0 0 0 1.5px #f2c14e; }
 
-/* Tell a friend sheet (2026-11-18, design/share-pack.html) */
-.tell-card { padding-bottom: calc(18px + var(--safe-bottom, env(safe-area-inset-bottom, 0px))); }
-.tell-top { display: flex; gap: 14px; align-items: center; margin: 4px 0 10px; }
-.tell-patch { width: 64px; height: 64px; flex: none; display: block; }
-.tell-patch .patch { width: 64px; height: 64px; }
-.tell-eye { display: block; font: 500 12px var(--label); letter-spacing: .22em; text-transform: uppercase; color: var(--gold); }
-.tell-card h3 { margin: 4px 0 0; font: 400 22px/1.12 var(--display); letter-spacing: -.01em; color: #fff2b3; text-transform: none; }
-.tell-text { margin: 0 0 14px; color: #d6d2b8; font: 500 16px/1.35 var(--label); }
-.tell-reward { display: flex; align-items: center; gap: 8px; margin: 0 0 16px; padding: 8px 11px; border-radius: 10px; background: #f2c14e12; box-shadow: inset 0 0 0 1px #f2c14e33; font: 500 14px/1.3 var(--label); color: #f4e3a6; }
-.tell-reward i { font-style: normal; color: #f2c14e; }
-.tell-card .tell-go { display: block; width: 100%; min-height: 50px; font: 500 16px var(--label); letter-spacing: .16em; text-transform: uppercase; }
-.tell-card .tell-no { display: block; margin: 6px auto 0; }
+/* Tell a friend, option B (2026-11-18, design/tell-sheet-options.html; Sevaan picked "the design that says The
+   Ambassador Patch"). The patch leads, dimmed until earned, with an "Earn this" ribbon; the pack sits beside the words.
+   Once earned (.earned) the pack leads instead and the ribbon goes. Colours come from the shared --ui-* tokens and the
+   ribbon's own --tell-ribbon-ink, so Sky Collector restyles it in its theme file. */
+.tell-card { position: relative; overflow: visible; text-align: center; padding: 10px 22px calc(18px + var(--safe-bottom, env(safe-area-inset-bottom, 0px))); }
+.tell-medal { position: relative; width: 150px; height: 150px; margin: -92px auto 0; }
+.tell-medal::before { content: ''; position: absolute; inset: -22px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--ui-gold) 22%, transparent), transparent 68%); }
+.tell-patch { position: absolute; inset: 0; display: block; filter: saturate(.45) brightness(.82) drop-shadow(0 10px 18px #000b); }
+.tell-patch .patch { width: 150px; height: 150px; }
+.tell-ribbon { position: absolute; left: 50%; bottom: -6px; translate: -50% 0; padding: 5px 14px 4px; border-radius: 4px; background: var(--ui-gold); color: var(--tell-ribbon-ink, #0b1018); font: 500 13px var(--ui-label, 'SC Label', sans-serif); letter-spacing: .2em; text-transform: uppercase; white-space: nowrap; box-shadow: 0 3px 8px #0007; }
+.tell-bigpack { display: none; position: absolute; left: 50%; top: -6px; width: 140px; height: 200px; translate: -50% 0; scale: .78; transform-origin: 50% 0; }
+.tell-eye { display: block; margin-top: 20px; font: 500 12px/1.25 var(--label); letter-spacing: .2em; text-transform: uppercase; color: var(--ui-gold); text-wrap: balance; }
+.tell-card h3 { margin: 8px 0 0; font: 400 clamp(21px, 6.6vw, 26px)/1.05 var(--display); letter-spacing: -.005em; color: var(--ui-ink); text-transform: none; white-space: nowrap; }
+.tell-h-sent, .tell-why-sent { display: none; }
+.tell-copy { display: flex; gap: 12px; align-items: center; text-align: left; margin: 14px 0 22px; }
+.tell-mini { position: relative; flex: none; width: 46px; height: 66px; }
+.tell-mini .sv-pk { position: absolute; left: 0; top: 0; scale: .33; transform-origin: 0 0; rotate: -6deg; animation: none; }
+.tell-text { margin: 0; color: #d6d2b8; font: 500 17px/1.35 var(--label); }
+.tell-card .tell-go { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 54px; font: 500 18px var(--label); letter-spacing: .14em; text-transform: uppercase; white-space: nowrap; }
+.tell-card .tell-no { display: block; margin: 8px auto 0; padding: 10px 18px; color: var(--ui-muted); }
+/* earned: the pack leads, nothing to earn */
+.tell-card.earned .tell-medal { height: 168px; margin-top: -130px; }
+.tell-card.earned .tell-medal::before, .tell-card.earned .tell-patch, .tell-card.earned .tell-ribbon, .tell-card.earned .tell-mini, .tell-card.earned .tell-h-ask, .tell-card.earned .tell-why { display: none; }
+.tell-card.earned .tell-bigpack { display: block; }
+.tell-card.earned .tell-h-sent, .tell-card.earned .tell-why-sent { display: inline; }
+.tell-card.earned .tell-copy { justify-content: center; text-align: center; }
+@media (prefers-reduced-motion: reduce) { .tell-card .sv-pk, .tell-card .sv-pk-art, .tell-card .sv-pk-sheen { animation: none !important; } }
+body.night .tell-text { color: #e8a59a; } body.night .tell-patch { filter: none; }
