@@ -365,19 +365,19 @@ body.day #radar-why { color:#143046; }
 /* ---- All around you (the radar), Sky Collector (2026-11-18, Sevaan: "when I tap on the radar … I still get a Space
    Collector experience"): the page in daylight, the plane tiles with their photos, the four numbers on cream. At night it
    keeps Space Collector's dark page, as Explore does. ---- */
-body.sky-only:not(.night) #around { background:#eef5fb; color:var(--sc-ink); }
-body.sky-only:not(.night) #around .t-head { color:var(--sc-orange-ink); }
-body.sky-only:not(.night) #around .ar-hint { color:var(--sc-muted); }
-body.sky-only:not(.night) #around #ar-strip { border-radius:14px; box-shadow:0 6px 18px rgba(13,34,56,.14); }
-body.sky-only:not(.night) .ar-facing { background:#fffdf6e6; border-color:var(--sc-line); color:var(--sc-ink); box-shadow:0 3px 10px rgba(13,34,56,.15); }
+html:not(.sky-night) body.sky-only:not(.night) #around { background:#eef5fb; color:var(--sc-ink); }
+html:not(.sky-night) body.sky-only:not(.night) #around .t-head { color:var(--sc-orange-ink); }
+html:not(.sky-night) body.sky-only:not(.night) #around .ar-hint { color:var(--sc-muted); }
+html:not(.sky-night) body.sky-only:not(.night) #around #ar-strip { border-radius:14px; box-shadow:0 6px 18px rgba(13,34,56,.14); }
+html:not(.sky-night) body.sky-only:not(.night) .ar-facing { background:#fffdf6e6; border-color:var(--sc-line); color:var(--sc-ink); box-shadow:0 3px 10px rgba(13,34,56,.15); }
 body.sky-only #around .ar-pcard { width:132px; padding:5px 5px 8px; text-align:left; cursor:pointer; }
-body.sky-only:not(.night) #around .ar-pcard { background:#fff; border-color:var(--sc-line); color:var(--sc-ink); box-shadow:0 2px 8px rgba(13,34,56,.08); }
-body.sky-only:not(.night) #around .ar-pcard.new { border-color:#d7362b99; box-shadow:0 0 0 1px #d7362b33, 0 2px 8px rgba(13,34,56,.08); }
+html:not(.sky-night) body.sky-only:not(.night) #around .ar-pcard { background:#fff; border-color:var(--sc-line); color:var(--sc-ink); box-shadow:0 2px 8px rgba(13,34,56,.08); }
+html:not(.sky-night) body.sky-only:not(.night) #around .ar-pcard.new { border-color:#d7362b99; box-shadow:0 0 0 1px #d7362b33, 0 2px 8px rgba(13,34,56,.08); }
 body.sky-only #around .ar-pcard .ac-art { height:82px; background-color:#dfeaf5; background-size:cover; }
 body.sky-only #around .ar-pcard .ac-none { display:grid; place-items:center; color:#7aa4cc; }
 body.sky-only #around .ar-pcard .ac-none svg { width:40px; height:40px; }
 body.sky-only #around .ar-pcard b { margin-top:3px; }
-body.sky-only:not(.night) #around .ar-pcard small { color:var(--sc-muted); }
+html:not(.sky-night) body.sky-only:not(.night) #around .ar-pcard small { color:var(--sc-muted); }
 body.sky-only #around .ar-pcard em { top:9px; right:9px; background:var(--gold); color:#fff; }
 body.sky-only #around .ar-pcard.next em { background:#0d2238; }
 body.sky-only.day #around .ar-chips { background:#fffdf6; border-color:var(--sc-rule); }
@@ -385,7 +385,7 @@ body.sky-only.day #around .ap + .ap { border-left-color:#e7dcbd; }
 body.sky-only.day #around .ap b { color:var(--sc-ink); }
 body.sky-only.day #around .ap b i, body.sky-only.day #around .ap small, body.sky-only.day #around .ap-k { color:var(--sc-muted); }
 body.sky-only.day #around .ap-k .ico { color:var(--sc-orange-ink); }
-body.sky-only:not(.night) #around .hint { color:var(--sc-muted); }
+html:not(.sky-night) body.sky-only:not(.night) #around .hint { color:var(--sc-muted); }
 
 /* ================= Today, "the mix" (2026-11-18, design/today-options.html D; js/sky-today.js renderToday) ================= */
 #sky-today { --td-red:#d7362b; --td-redink:#b42a20; }

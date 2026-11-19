@@ -1,0 +1,22 @@
+/* Sky Collector at night (2026-11-18, Sevaan: "All the screens"): when Explore is dark (the sun more than 2 degrees down,
+   js/main.js sets html.sky-night; the Collection's frame follows), every screen and sheet is dark too, in Sky's night
+   navy with its red accent and light ink, matching the dark sky. Loaded after css/sky-theme.css: Sky's light look is
+   written there for the day, and this file turns it to night. Card faces are printed objects and keep their own colours.
+   Text contrast at least 4.5:1. */
+html.sky-cards.sky-night:root, html.sky-night body.sky-only {
+  color-scheme:dark;
+  --bg:#0b1626; --panel:#11223a; --text:#e6eef7; --muted:#9fb3c6; --line:#24384f; --accent:#ff6a5c;
+  --ink:#e6eef7; --gold:#ff6a5c; --cream:#e6eef7; --cyan:#8fb3cf; --edge:#2b4058; --edge-soft:#24384f; --rule:#24384f; --glass:#11223af2; --glass-strong:#11223a;
+  --ui-ink:#e6eef7; --ui-muted:#9fb3c6; --ui-link-ink:#c9d9e6; --ui-gold:#ff6a5c; --ui-edge:#2b4058; --ui-edge-soft:#24384f; --ui-glass:#11223ad9; --ui-bar:#11223a;
+  --h-text:#e6eef7; --h-muted:#9fb3c6; --h-edge:#2b4058; --h-glass:#11223ad9;
+  --sc-ink:#e6eef7; --sc-muted:#9fb3c6; --sc-rule:#2b4058; --sc-paper:#11223a; --sc-orange-ink:#ff6a5c; --td-redink:#ff6a5c;
+  --day-sky:linear-gradient(180deg,#0a1322 0%,#0f1d33 55%,#0b1626 100%);
+}
+html.sky-night.sky-cards, html.sky-night.sky-cards body, html.sky-night.sky-cards body.sky-tone { background:#0b1626 !important; color:#e6eef7; }
+html.sky-night body.sky-only { background:#0b1626 !important; color:#e6eef7; }
+
+/* Today's destination map: Sky's night navy instead of its daylight paper */
+html.sky-night .td2-map { background:radial-gradient(circle at 50% 48%, #1a2c46 0, #0f1d33 70%); border-color:#24384f; }
+html.sky-night .td2-map :is(text, .td2-cap) { fill:#e6eef7; color:#e6eef7; }
+/* Tell a friend's line (Sky's day ink was navy on the dark sheet) */
+html.sky-night body.sky-only .tell-text { color:#c9d9e6; }
