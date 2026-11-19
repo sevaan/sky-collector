@@ -16,3 +16,4 @@ scripts/qa/out/
 site/public/pack/data/
 site/public/pack/assets/logos/
 site/public/pack/assets/photos/airlines/
+# native/ is ignored on main (kept out of the public repo until checked); this branch is where it lives

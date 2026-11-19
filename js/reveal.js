@@ -5,13 +5,13 @@
 //  Everything scales with rarity (Legendary dims the sky, shockwave, held breath, slow flip, fanfare).
 // Waits use timers, not animation.finished, so a paused tab can never freeze the sequence.
 
-import { sfx, loadSfx } from './sfx.js?v=0.1.1750';
-import { audioCtx } from './audio-ctx.js?v=0.1.1750';
-import { TIER_INFO } from './rarity.js?v=0.1.1750';
-import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype } from './card.js?v=0.1.1750';
-import { applyBack } from './card-backs.js?v=0.1.1750';
-import { addStarfield } from './starfield.js?v=0.1.1750';
-import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1750';
+import { sfx, loadSfx } from './sfx.js?v=0.1.1754';
+import { audioCtx } from './audio-ctx.js?v=0.1.1754';
+import { TIER_INFO } from './rarity.js?v=0.1.1754';
+import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype } from './card.js?v=0.1.1754';
+import { applyBack } from './card-backs.js?v=0.1.1754';
+import { addStarfield } from './starfield.js?v=0.1.1754';
+import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1754';
 
 const FX = TIER_FX; /* one rarity table for every card moment (js/card-moment.js, 2026-11-11) */
 const NIGHT_MILESTONES = [3, 5, 10, 25, 50, 100, 200, 365], STAMP_MILESTONES = [5, 10, 25, 50, 100, 200, 300, 400];
@@ -111,7 +111,9 @@ function sizeCard(cardEl) {
   // dead space above and below (Sevaan 2026-10-22: "has room to be bigger"). 20px a side, 14 at most (big screens).
   cf = Math.max(5, Math.min(Math.min(innerWidth, innerHeight) >= 600 ? 18 : 14, 0.95 * (bot - top) / em, 0.95 * (root.clientWidth - 40) / 28)); /* 5% smaller for air above and below (Sevaan 2026-10-25: "just a tiny bit") */ /* same cap as the first pass (iPad playtest 2026-10-24: this clamped it back to 14) */
   root.style.setProperty('--cf', `${cf}px`);
-  if (h.offsetTop >= top && h.offsetTop + h.offsetHeight <= bot) return;
+  /* Always centred in the room there really is, between the chips row and the rank bar (2026-11-19, Space Collector
+     305780c2, Sevaan on a Galaxy Z Flip, 360x880: the CSS centre measured from the NEW CARD row, so on tall screens the
+     card sat ~40px high of the gap; Sky measured the same, 40-41px at 360-412 wide). */
   root.style.setProperty('--rv-y', `${((top + bot) / 2 - H / 2).toFixed(1)}px`);
 }
 

@@ -1049,6 +1049,104 @@ export const TYPE_PHOTOS = {
 0.9,
 0.86
 ]
+},
+"PA31": {
+"credit": "Ronnie Macdonald from Chelmsford, United Kingdom",
+"licence": "CC BY 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:Piper_PA-31_Navajo_G-SCIR_5D4_9091_(52256397743).jpg",
+"title": "File:Piper PA-31 Navajo G-SCIR 5D4 9091 (52256397743).jpg",
+"w": 1280,
+"h": 854,
+"box": [
+0.0162,
+0.3806,
+0.9025,
+0.8905
+]
+},
+"PA23": {
+"credit": "G B_NZ",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:Woodgate_Aviation_PA-23_Aztec_G-BCJS_at_BHX_(23710733399).jpg",
+"title": "File:Woodgate Aviation PA-23 Aztec G-BCJS at BHX (23710733399).jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0,
+0,
+1,
+1
+]
+},
+"GALX": {
+"credit": "Papas Dos from Moscow, Russia",
+"licence": "CC BY 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:M-ROIL_G200_Megajet_Flight_Service_Limited_VKO_UUWW_(33471023742).jpg",
+"title": "File:M-ROIL G200 Megajet Flight Service Limited VKO UUWW (33471023742).jpg",
+"w": 1280,
+"h": 800,
+"box": [
+0,
+0,
+1,
+1
+]
+},
+"T206": {
+"credit": "Olga Ernst  &amp;  Hp.Baumeler",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Cessna_206_V5-MAG.jpg",
+"title": "File:Cessna 206 V5-MAG.jpg",
+"w": 1280,
+"h": 848,
+"box": [
+0,
+0,
+1,
+1
+]
+},
+"AS55": {
+"credit": "Acabashi",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Helicopter_Aerospatiale_Eurocopter_AS355_F2_Ecureuil_2_Bankside_London_03.jpg",
+"title": "File:Helicopter Aerospatiale Eurocopter AS355 F2 Ecureuil 2 Bankside London 03.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0,
+0.0441,
+0.8962,
+0.825
+]
+},
+"A109": {
+"credit": "Petty Officer 3rd Class Malachi Lakey",
+"licence": "Public domain",
+"source": "https://commons.wikimedia.org/wiki/File:A_Nigerian_Navy_AgustaWestland_AW109_helicopter_prepares_to_land_aboard_USS_Hershel_%22Woody%22_Williams_(ESB-4)_on_10_August_2021_-_2.jpg",
+"title": "File:A Nigerian Navy AgustaWestland AW109 helicopter prepares to land aboard USS Hershel \"Woody\" Williams (ESB-4) on 10 August 2021 - 2.jpg",
+"w": 1280,
+"h": 914,
+"box": [
+0,
+0,
+1,
+1
+]
+},
+"AT8T": {
+"credit": "Hugomvlopes",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:Air_Tractor_AT-802A.jpg",
+"title": "File:Air Tractor AT-802A.jpg",
+"w": 1280,
+"h": 853,
+"box": [
+0,
+0,
+1,
+1
+]
 }
 };
 export const typePhoto = (code) => (TYPE_PHOTOS[code] ? { url: `assets/photos/types/${code}.webp`, ...TYPE_PHOTOS[code] } : null);

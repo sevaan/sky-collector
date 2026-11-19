@@ -469,7 +469,7 @@ html.embedded .send-view, .send-view:focus, .send-view:focus-visible { outline: 
    bar (safe bottom + 84), sized like js/reveal.js sizeCard's second pass (95% of the room between those rows, or of the
    width less 40px). --dch is the cards' real height in card ems, set by js/gift-pack.js once they're built. */
 #gift { --gp-st: var(--safe-top, env(safe-area-inset-top, 0px)); --gp-sb: var(--safe-bottom, env(safe-area-inset-bottom, 0px));
-  --gp-y: calc(50% + (var(--gp-st) + 52px - var(--gp-sb) - 84px) / 2);
+  --gp-y: calc(50% + (var(--gp-st) + 92px - var(--gp-sb) - 83px) / 2); /* 2026-11-19 (Space 305780c2): follows the reveal, now centred between the chips row and the rank bar */
   --dcf: max(5px, min(14px, calc(.95 * (100vw - 40px) / 28), calc(.95 * (100dvh - var(--gp-st) - var(--gp-sb) - 149px) / var(--dch, 42)))); }
 @media (min-width: 600px) and (min-height: 600px) { #gift { --dcf: max(5px, min(18px, calc(.95 * (100vw - 40px) / 28), calc(.95 * (100dvh - var(--gp-st) - var(--gp-sb) - 149px) / var(--dch, 42)))); } }
 #gift .gp-deck { top: var(--gp-y); height: calc(var(--dch, 42) * var(--dcf)); margin-top: calc(var(--dch, 42) * var(--dcf) / -2); }

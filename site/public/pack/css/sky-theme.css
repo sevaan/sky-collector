@@ -591,8 +591,12 @@ body.sky-only #debug :is(.set-row:has(#chk-snap), .set-row:has(#chk-milky), .set
   @keyframes obRing { 0%, 44% { transform:scale(1); } 50% { transform:scale(.88); } 58%, 100% { transform:scale(1); } }
   .ob-route { animation:waDash 1.6s linear infinite; }
 }
-/* the welcome card's pictures taller: the card had room to spare under its words */
-#wc-holder .wc-mission .wc-a-pic { height:14.5em; }
+/* The welcome card's pictures at Space Collector's height (2026-11-19, Sevaan: "too high/long", was 14.5em) and smooth
+   on iPhone ("animations on this card are janky"): each picture is its own layer, so its moving parts repaint just the
+   picture and not the glossy, tilting card around it, and the plane tracks stand still (a stroke-dashoffset animation
+   repaints the whole SVG every frame); the plane moving along them is the motion. The phone's red beam still runs. */
+#wc-holder .wc-mission .wc-a-pic { height:11.5em; transform:translateZ(0); contain:paint; }
+#wc-holder .wc-mission .wc-a-pic .wa-path { animation:none; }
 
 /* Tell a friend sheet (Space Collector's, 2026-11-18): its cream and gold text was written for a dark sheet; on Sky's
    light one the paragraph and the reward line were unreadable. Navy ink and a deeper gold. */
@@ -603,13 +607,14 @@ body.sky-only .tell-card .tell-go { color:#fffdf6; } /* cream on red 4.6:1 (navy
 html:not(.sky-night) body.sky-only:not(.night) :is(.cr-row, .cr-pic) { color:#23405c; border-top-color:#dbe5ee; }
 html:not(.sky-night) body.sky-only:not(.night) :is(.cr-row, .cr-pic) b { color:#0d2238; }
 html:not(.sky-night) body.sky-only:not(.night) :is(.cr-row a, .cr-pic a, .cr-pics summary) { color:#b42a20; }
-/* Airmail edges on every notification (2026-11-18, Sevaan: "make the edges of the notifications be like airmail
-   stripes"): the red, cream and blue diagonal band round an airmail envelope, in place of the coloured strip on top.
-   A ring drawn over the ticket's edge (masked to the edge only), so it sits on the light day ticket and the dark night
-   one alike; the ticket's own colour still shows in its label. The patch coin's "Patch earned" tag on Explore too. */
+/* Airmail on every notification (2026-11-18, Sevaan: "make the edges of the notifications be like airmail stripes";
+   2026-11-19: "I just want it at the top, like how Space Collector has a coloured bar... same height and everything but
+   just with the airmail stripes"): Space Collector's 3 px bar along the top, curving into the corners as its border-top
+   does, filled with the red, cream and blue airmail stripes. A layer masked to that top band, so it sits on the light day
+   ticket and the dark night one alike. The patch coin's "Patch earned" tag on Explore too. */
 body.sky-only :is(#toasts .ticket, .pc-tag) { position:relative; border-top:0 !important; }
-body.sky-only :is(#toasts .ticket, .pc-tag)::after { content:''; position:absolute; inset:0; z-index:2; border-radius:inherit; padding:4px; pointer-events:none;
-  background:repeating-linear-gradient(-45deg, #c8312a 0 8px, #fffdf6 8px 12px, #24508c 12px 20px, #fffdf6 20px 24px);
+body.sky-only :is(#toasts .ticket, .pc-tag)::after { content:''; position:absolute; inset:0; z-index:2; border-radius:inherit; padding:3px 0 0; pointer-events:none;
+  background:repeating-linear-gradient(-45deg, #c8312a 0 6px, #fffdf6 6px 9px, #24508c 9px 15px, #fffdf6 15px 18px);
   -webkit-mask:linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); mask:linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
   -webkit-mask-composite:xor; }
 /* All around you at night (2026-11-18, Sevaan: "In night time this page should be dark mode too"): when Explore is dark
@@ -624,3 +629,10 @@ body.sky-only:not(.day):not(.night) #around {
    2026-11-19: the pack's layers plus six drifting cloud layers passed Android WebView's tile memory, about 314 MB at
    2.6x, and the sealed pack drew as a strip; with the clouds still it's 232 MB and draws whole). */
 body.sky-only:has(#gift) .wx-layer { animation: none; will-change: auto; }
+/* The welcome card's footer ("↑ Swipe up to begin · Sky Collector") sits in the middle of its band (2026-11-19, Sevaan):
+   Sky's longer text pushed the card's content 4 px past the face, so the footer touched the bottom edge. A little less
+   space between the sections, and the footer's room shared above and below its words. */
+#wc-holder .wc-a { gap: 1.25em; padding-bottom: .55em; } /* Space's gap again: the shorter pictures left room */
+#wc-holder .wc-a-foot { padding: .72em 0 0; }
+@media (max-width: 340px) { #wc-holder .wc-a { gap: .75em; padding-top: 1.1em; } } /* 320 px: one more line of text */
+html:not(.sky-night) body.sky-only #toasts .ticket .tn-go { color:#b42a20; } /* "Show me ›" was pale cream on the day ticket */

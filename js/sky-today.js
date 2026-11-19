@@ -5,16 +5,16 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { isProp } from './sky-props.js?v=0.1.1750';
-import { planeKey } from './flights.js?v=0.1.1750';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1750';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1750';
-import { airlineIcon } from './airline-icons.js?v=0.1.1750';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1750';
-import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1750';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1750';
-import { planeSet } from './sky-sets.js?v=0.1.1750';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1750';
+import { isProp } from './sky-props.js?v=0.1.1754';
+import { planeKey } from './flights.js?v=0.1.1754';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1754';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1754';
+import { airlineIcon } from './airline-icons.js?v=0.1.1754';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1754';
+import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1754';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1754';
+import { planeSet } from './sky-sets.js?v=0.1.1754';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1754';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -55,7 +55,7 @@ function worth(a, route, owned) {
      stamp (a new day on a flight, a new aircraft on a plane card) sits between those and a new card (QA 2026-11-19: Today's
      top pick was a plane already caught today) */
   let gain = 'new'; try { const k = previewFor(a, route).out?.kind; gain = k === 'none' ? 'none' : k === 'stamp' ? 'stamp' : (newFlight || newPlane) ? 'new' : 'stamp'; } catch {}
-  const tag = gain === 'none' ? 'CAUGHT TODAY' : newFlight ? 'NEW FLIGHT' : newPlane ? 'NEW PLANE' : gain === 'stamp' ? 'NEW STAMP' : fkey ? 'IN YOUR COLLECTION' : 'SEEN BEFORE';
+  const tag = gain === 'none' ? 'CAUGHT TODAY' : newFlight ? 'NEW FLIGHT' : newPlane ? (isHelicopter(p) ? 'NEW HELICOPTER' : 'NEW PLANE') : gain === 'stamp' ? 'NEW STAMP' : fkey ? 'IN YOUR COLLECTION' : 'SEEN BEFORE';
   const score = gain === 'none' ? a.el / 100 - 1000 : (newFlight ? 100 : 0) + (newPlane ? 60 : 0) + (gain === 'stamp' && !newFlight && !newPlane ? 30 : 0) + (isHelicopter(p) ? 25 : 0) + (full ? 10 : 0) + a.el / 10;
   return { name, sub, tag, score, gain, isNew: newFlight || newPlane, glyph: isHelicopter(p) ? 'heli' : 'jet' };
 }
@@ -256,7 +256,7 @@ export function renderToday(el, ctx) {
       <div class="td2-bd"><span class="td2-k">Up now${up.length > 1 ? ` · best of ${up.length}` : ''}${sky.word ? ` · ${esc(sky.word)}` : ''}</span>
         <h3>${esc(best.w.name)}</h3>
         <div class="td2-sub">${esc([best.r?.airline && best.full ? best.r.airline : null, type, `${Math.round(altFt(p) / 100) * 100 ? (Math.round(altFt(p) / 100) * 100).toLocaleString('en-US') + ' ft' : ''}`, `${dirWord(best.a.az)}, ${Math.round(best.a.el)}° up`].filter(Boolean).join(' · '))}</div>
-        <div class="td2-chips">${tier ? `<span class="td2-chip" style="--c:${tier.color}">${esc(tier.gem ?? '')} ${esc(tier.label)}</span>` : ''}${best.isNew ? `<span class="td2-chip td2-chip--new">${esc(best.w.tag === 'NEW FLIGHT' ? 'New flight' : 'New plane')}</span>` : ''}${fin ? '<span class="td2-chip td2-chip--ms">◇ Finishes a mission</span>' : ''}</div>
+        <div class="td2-chips">${tier ? `<span class="td2-chip" style="--c:${tier.color}">${esc(tier.gem ?? '')} ${esc(tier.label)}</span>` : ''}${best.isNew ? `<span class="td2-chip td2-chip--new">${esc(best.w.tag === 'NEW FLIGHT' ? 'New flight' : isHelicopter(best.p) ? 'New helicopter' : 'New plane')}</span>` : ''}${fin ? '<span class="td2-chip td2-chip--ms">◇ Finishes a mission</span>' : ''}</div>
         <div class="td2-aim"><span class="td2-arrow" data-az="${best.a.az.toFixed(1)}"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 20 21 12 16 4 21z"/></svg></span><span><b data-hint>${esc(ctx.hint?.({ az: best.a.az, el: best.a.el }) || `Look ${dirWord(best.a.az)}, ${Math.round(best.a.el)}° up`)}</b><small>${esc(dirWord(best.a.az))}, ${Math.round(best.a.el)}° up</small></span></div>
         <button type="button" class="td2-btn" data-show="${esc(p.hex)}">${TARGET}<span>Show me</span></button></div></section>`;
   } else live = `<section class="tn-wx td-wx${sky.cls}">${sky.html}<span class="k">Up now${sky.word ? `<em>${esc(sky.word)}</em>` : ''}</span>${best ? allCaught(nexts) : skyState(ctx)}</section>`;
