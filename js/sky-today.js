@@ -5,16 +5,16 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { isProp } from './sky-props.js?v=0.1.1762';
-import { planeKey } from './flights.js?v=0.1.1762';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1762';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1762';
-import { airlineIcon } from './airline-icons.js?v=0.1.1762';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1762';
-import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1762';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1762';
-import { planeSet } from './sky-sets.js?v=0.1.1762';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1762';
+import { isProp } from './sky-props.js?v=0.1.1763';
+import { planeKey } from './flights.js?v=0.1.1763';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1763';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1763';
+import { airlineIcon } from './airline-icons.js?v=0.1.1763';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1763';
+import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1763';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1763';
+import { planeSet } from './sky-sets.js?v=0.1.1763';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1763';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -245,27 +245,33 @@ export function renderToday(el, ctx) {
   const best = ups[0];
   const RANK = { common: 0, uncommon: 1, rare: 2, epic: 3, legendary: 4 };
 
-  // 1 · live card
+  // Space Collector's own pieces (2026-11-19, review Part 1, Sevaan: "keep things matching"): section heads are .tn-sec,
+  // the top card is Space's Tonight hero (.now-hero) with the real mini card (js/main.js fills [data-mini] slots with
+  // miniCard), Up now is Space's tile row (.tn-up), Coming over next is Space's run (.tn-r rows).
+  const sec = (k, r = '') => `<div class="tn-sec"><span class="k">${k}</span><span>${r}</span></div>`;
+  const where = (a) => `${dirWord(a.az)}, ${Math.round(a.el)}° up`;
+  // 1 · the hero: Space's .now-hero for the best plane up now
   let live = '';
   if (best && best.w?.gain !== 'none') {
-    const p = best.p, ph = picOf(p), tier = best.tier, type = aircraftName(p);
+    const p = best.p, tier = best.tier, type = aircraftName(p);
     const fin = (ctx.missions?.() ?? []).some((m) => !m.done && finisherFor(m, [best], ctx.route));
-    live = `<section class="td2-live" data-hex="${esc(p.hex)}">
-      <div class="td2-ph" style="${bg(ph)}">${tailImg(tailOf(p), 'td2-tail td2-tail--live')}${best.left != null ? `<span class="td2-leave">LEAVES YOUR SKY IN <b data-until="${t + best.left * 1000}">${Math.floor(best.left / 60)}:${String(best.left % 60).padStart(2, '0')}</b></span>` : `<span class="td2-leave">UP FOR A WHILE</span>`}</div>
-      <div class="td2-bd"><span class="td2-k">Up now${up.length > 1 ? ` · best of ${up.length}` : ''}${sky.word ? ` · ${esc(sky.word)}` : ''}</span>
-        <h3>${esc(best.w.name)}</h3>
-        <div class="td2-sub">${esc([best.r?.airline && best.full ? best.r.airline : null, type, `${Math.round(altFt(p) / 100) * 100 ? (Math.round(altFt(p) / 100) * 100).toLocaleString('en-US') + ' ft' : ''}`, `${dirWord(best.a.az)}, ${Math.round(best.a.el)}° up`].filter(Boolean).join(' · '))}</div>
-        <div class="td2-chips">${tier ? `<span class="td2-chip" style="--c:${tier.color}">${esc(tier.gem ?? '')} ${esc(tier.label)}</span>` : ''}${best.isNew ? `<span class="td2-chip td2-chip--new">${esc(best.w.tag === 'NEW FLIGHT' ? 'New flight' : isHelicopter(best.p) ? 'New helicopter' : 'New plane')}</span>` : ''}${fin ? '<span class="td2-chip td2-chip--ms">◇ Finishes a mission</span>' : ''}</div>
-        <div class="td2-aim"><span class="td2-arrow" data-az="${best.a.az.toFixed(1)}"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 20 21 12 16 4 21z"/></svg></span><span><b data-hint>${esc(ctx.hint?.({ az: best.a.az, el: best.a.el }) || `Look ${dirWord(best.a.az)}, ${Math.round(best.a.el)}° up`)}</b><small>${esc(dirWord(best.a.az))}, ${Math.round(best.a.el)}° up</small></span></div>
-        <button type="button" class="td2-btn" data-show="${esc(p.hex)}">${TARGET}<span>Show me</span></button></div></section>`;
+    const newWord = best.isNew ? (best.w.tag === 'NEW FLIGHT' ? 'new flight' : isHelicopter(p) ? 'new helicopter' : 'new plane') : '';
+    const ft = Math.round(altFt(p) / 100) * 100;
+    live = `<div class="now-hero" style="--c:${tier?.color ?? '#9aa4b1'}" data-hex="${esc(p.hex)}"><span class="nh-k">Up now${up.length > 1 ? ` · best of ${up.length}` : ''}${sky.word ? ` · ${esc(sky.word)}` : ''}</span>
+      <div class="nh-top"><button type="button" class="nh-card" data-show="${esc(p.hex)}" data-mini="${esc(p.hex)}" aria-label="Show me ${esc(best.w.name)}"></button>
+        <div class="nh-side"><div class="nh-t">${best.left != null ? `<b data-until="${t + best.left * 1000}">${Math.floor(best.left / 60)}:${String(best.left % 60).padStart(2, '0')}</b><small class="nh-u">left in your sky</small>` : '<b>Up now</b>'}</div>
+          <span class="nh-tier">${tier ? `${esc(tier.gem ?? '')} ${esc(tier.label)}` : ''}${newWord ? ` · ${newWord}` : ''}${fin ? ' · finishes a mission' : ''}</span><span class="nh-name">${esc(best.w.name)}</span><span class="nh-what">${esc([best.r?.airline && best.full ? best.r.airline : null, type].filter(Boolean).join(' · '))}</span><span class="nh-where">${esc([ft ? `${ft.toLocaleString('en-US')} ft` : null, where(best.a)].filter(Boolean).join(' · '))}</span></div></div>
+      <span class="nh-dir"><i class="nh-arrow" data-az="${best.a.az.toFixed(1)}" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 2.5 L19 10 H14.5 V21 H9.5 V10 H5 Z" fill="currentColor"/></svg></i><span class="nh-turn" data-hint>${esc(ctx.hint?.({ az: best.a.az, el: best.a.el }) || `Look ${where(best.a)}`)}</span></span>
+      <div class="nh-acts"><button type="button" class="pill-o nh-go" data-show="${esc(p.hex)}"><span class="ico-svg">${TARGET}</span> Show me</button></div></div>`;
   } else live = `<section class="tn-wx td-wx${sky.cls}">${sky.html}<span class="k">Up now${sky.word ? `<em>${esc(sky.word)}</em>` : ''}</span>${best ? allCaught(nexts) : skyState(ctx)}</section>`;
 
   // 2 · rare alert: the rarest Epic or Legendary up (not the live card) or coming over
   const rares = [...ups.slice(1), ...nexts].filter((c) => (RANK[c.tier?.id] ?? 0) >= 3).sort((x, y) => (RANK[y.tier.id] - RANK[x.tier.id]) || ((x.n?.inS ?? 0) - (y.n?.inS ?? 0)));
   const rare = rares[0];
-  const alert = rare ? (() => { const p = rare.p, ph = picOf(p), when = rare.n ? `Over you in <em>${mins(rare.n.inS)} min</em>, ${esc(dirWord(rare.n.az))}.` : `Up now, ${esc(dirWord(rare.a.az))}, ${Math.round(rare.a.el)}° up.`;
-    return `<section class="td2-alert" style="--c:${rare.tier.color}"><span class="td2-alert-pic" style="${bg(ph)}">${tailImg(tailOf(p))}</span><span class="td2-alert-w"><i>${esc(rare.tier.gem ?? '')} ${esc(rare.tier.label.toUpperCase())} · ${rare.n ? 'ON ITS WAY' : 'UP NOW'}</i><b>${esc(aircraftName(p) || rare.w?.name || rare.name)}</b><span>${esc(rare.w?.name ?? rare.name)}. ${when}</span></span>
-      <button type="button" class="td2-alert-go" data-show="${esc(p.hex)}"${rare.n ? ` data-az="${rare.n.az.toFixed(1)}" data-el="15" data-at="${t + rare.n.inS * 1000}" data-name="${esc(rare.name)}"` : ''} aria-label="Show me">${TARGET}</button></section>`; })() : '';
+  /* the rare plane, when it isn't the hero: Space's way, a row in the run with a .tn-pill (no banner of its own) */
+  const rareRow = rare && rare.p.hex !== best?.p?.hex ? (() => { const p = rare.p; return `<div class="tn-r next" style="--c:${rare.tier.color}" role="button" tabindex="0" data-open="${esc(p.hex)}"><div class="t"><b>${rare.n ? esc(new Date(t + rare.n.inS * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })) : 'Now'}</b><small class="soon">${rare.n ? `in ${mins(rare.n.inS)} min` : 'up now'}</small></div>
+      <div class="n"><b>${esc(aircraftName(p) || rare.w?.name || rare.name)}</b><div class="w"><span class="g nw">${esc(rare.tier.gem ?? '')} ${esc(rare.tier.label)}&nbsp;·</span> <span class="nw">${esc(rare.w?.name ?? rare.name)} · ${esc(rare.n ? dirWord(rare.n.az) : where(rare.a))}</span></div><div class="tn-pills"><span class="tn-pill hd">${esc(rare.tier.gem ?? '')} ${esc(rare.tier.label)} · ${rare.n ? 'on its way' : 'up now'}</span></div></div>
+      <div class="acts"><button type="button" class="ic showme" data-show="${esc(p.hex)}"${rare.n ? ` data-az="${rare.n.az.toFixed(1)}" data-el="15" data-at="${t + rare.n.inS * 1000}" data-name="${esc(rare.name)}"` : ''} aria-label="Show me">${TARGET}</button></div></div>`; })() : '';
 
   // 3 · mission cards
   const ms = (() => { try { return ctx.missions?.() ?? []; } catch { return []; } })();
@@ -286,17 +292,17 @@ export function renderToday(el, ctx) {
   });
   for (const it of mcItems) if (!it.art) for (const ty of [FIT[it.id], ...SPARE].filter(Boolean)) { const u = take(smOf(photoFor(ty))); if (u) { it.art = u; break; } }
   const nDone = ms.filter((m) => m.done).length;
-  const missions = ms.length ? `<p class="td-h">TODAY'S MISSIONS <span>${nDone} OF ${ms.length}</span></p><div id="sky-missions"></div>` : '';
+  const missions = ms.length ? `${sec('Today’s missions', `${nDone} of ${ms.length}`)}<div id="sky-missions"></div>` : '';
 
   // 4 · coming over next
-  const tl = nexts.length ? `<p class="td-h">COMING OVER NEXT <span>NEXT 15 MIN</span></p><div class="td2-tl"><div class="td2-axis"><span>NOW</span><span>15 MIN</span></div>${nexts.slice(0, 5).map((c, i, arr) => `<button type="button" class="td2-tp${tlUp(arr, i) ? ' up' : ''}" data-show="${esc(c.p.hex)}" data-az="${c.n.az.toFixed(1)}" data-el="15" data-at="${t + c.n.inS * 1000}" data-name="${esc(c.name)}" style="left:${(4 + Math.min(1, c.n.inS / 900) * 88).toFixed(1)}%">${tailImg(tailOf(c.p)) || `<span class="td2-tdot" style="${bg(picOf(c.p))}"></span>`}<small>${esc(c.name.replace(/^To /, ''))} · ${mins(c.n.inS)}</small></button>`).join('')}</div>` : `<p class="td-h">COMING OVER NEXT <span></span></p><p class="td-empty td2-card">${ctx.planes?.status === 'failing' ? 'Waiting for the plane feed to answer.' /* not a quiet sky (QA 2026-11-19) */ : 'Nothing heading your way in the next 15 minutes that we can see yet.'}</p>`;
+  const runRow = (c) => `<div class="tn-r" style="--c:${c.tier?.color ?? '#9aa4b1'}" role="button" tabindex="0" data-open="${esc(c.p.hex)}"><div class="t"><b>${esc(new Date(t + c.n.inS * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }))}</b><small class="${c.n.inS < 300 ? 'soon' : ''}">in ${mins(c.n.inS)} min</small></div>
+      <div class="n"><b>${esc(c.name)}</b><div class="w"><span class="g nw">${esc(c.tier?.gem ?? '')} ${esc(c.tier?.label ?? '')}&nbsp;·</span> <span class="nw">${esc([aircraftName(c.p), `from the ${dirWord(c.n.az)}`].filter(Boolean).join(' · '))}</span></div>${c.isNew ? '<div class="tn-pills"><span class="tn-pill">New to you</span></div>' : ''}</div>
+      <div class="acts"><button type="button" class="ic showme" data-show="${esc(c.p.hex)}" data-az="${c.n.az.toFixed(1)}" data-el="15" data-at="${t + c.n.inS * 1000}" data-name="${esc(c.name)}" aria-label="Show me">${TARGET}</button></div></div>`;
+  const tl = nexts.length || rareRow ? `${sec('Coming over next', 'Next 15 min')}<div class="tn-run">${rareRow}${nexts.slice(0, 4).map(runRow).join('')}</div>` : `${sec('Coming over next')}<p class="td-empty td2-card">${ctx.planes?.status === 'failing' ? 'Waiting for the plane feed to answer.' /* not a quiet sky (QA 2026-11-19) */ : 'Nothing heading your way in the next 15 minutes that we can see yet.'}</p>`;
 
-  // 5 · over you now: the departures board
-  const status = (c) => (c.left != null && c.left < 240 ? ['LEAVING SOON', 'soon'] : obs && justUp(c.p, obs, t) ? ['JUST ARRIVED', 'go'] : ['OVERHEAD', '']);
-  const rows = (expanded ? ups : ups.slice(0, 6)).map((c) => { const [st, cls] = status(c), word = boardLines(c), who = [c.r?.airline ? `${c.r.airline} ${(c.p.callsign || '').replace(/^[A-Z]{3}/, '')}`.toUpperCase() : (c.p.callsign || '').toUpperCase(), (c.p.type || '').toUpperCase(), `${compass(c.a.az)} ${Math.round(c.a.el)}°`].filter(Boolean).join(' · ');
-    const tl2 = tailOf(c.p);
-    return `<div class="td2-fr" role="button" tabindex="0" data-open="${esc(c.p.hex)}">${tl2 ? tailImg(tl2) : `<span class="td2-fpic" style="${bg(picOf(c.p))}"></span>`}<div class="td2-fw"><span class="td2-flap" data-hex="${esc(c.p.hex)}">${word.map((ln) => `<span class="td2-fl">${[...ln.padEnd(FIELD)].map((ch) => `<i${ch === ' ' ? ' class="sp"' : ''}>${esc(ch)}</i>`).join('')}</span>`).join('')}</span><span class="td2-who">${c.isNew ? '<em>NEW</em>' : ''}${esc(who)}</span></div><div class="td2-st ${cls}"><b>${c.left == null ? '30+ min' : `${mins(c.left)} min`}</b>${st}</div><button type="button" class="td2-go" data-show="${esc(c.p.hex)}" aria-label="Show me">${TARGET}</button></div>`; }).join('');
-  const board = ups.length ? `<p class="td-h">OVER YOU NOW <span>${up.length}${sky.word ? ` · ${esc(sky.word.toUpperCase())}` : ''}</span></p><div class="td2-fids"><div class="td2-fcols"><span>Flight</span><span>In sky · status</span></div>${rows}${ups.length > 6 ? `<button type="button" class="td2-more" data-more>${expanded ? 'Show fewer' : `All ${ups.length} ›`}</button>` : ''}</div>` : '';
+  // 5 · over you now: Space's Up now tiles, each with its real mini card (the hero's plane is in the hero)
+  const tiles = ups.filter((c) => c !== best || best.w?.gain === 'none'), shownT = expanded ? tiles : tiles.slice(0, 10), nNewUp = ups.filter((c) => c.isNew).length;
+  const board = tiles.length ? `${sec(`Over you now${nNewUp ? ` · ${nNewUp} new` : ''}`, `${up.length} up${sky.word ? ` · ${esc(sky.word)}` : ''}`)}<div class="tn-up">${shownT.map((c) => `<button type="button" class="tn-chip tile${c.isNew ? ' new' : ' seen'}" style="--c:${c.tier?.color ?? '#9aa4b1'}" data-show="${esc(c.p.hex)}"><span class="tn-chip-mini" data-mini="${esc(c.p.hex)}" aria-hidden="true">${c.isNew ? '<em>New</em>' : ''}</span><span><b>${esc(c.w.name)}</b><small><i class="gm" aria-hidden="true">${esc(c.tier?.gem ?? '')}</i> ${esc(`${c.isNew ? '' : 'Yours · '}${where(c.a)}`)}</small></span></button>`).join('')}</div>${tiles.length > 10 ? `<button type="button" class="tn-more" data-more><span>${expanded ? 'Show fewer' : `All ${tiles.length}`}</span><b>›</b></button>` : ''}` : '';
 
   // 6 · where they're going
   const dests = new Map(); for (const c of ups) { const to = c.full?.to; if (to?.lat == null || !obs) continue; const k = to.city; if (!dests.has(k)) dests.set(k, { to, n: 0 }); dests.get(k).n++; }
@@ -305,11 +311,11 @@ export function renderToday(el, ctx) {
     const arcs = dl.map((d, i) => { const mx = (cx + d.x) / 2, my = (cy + d.y) / 2, dx = d.x - cx, dy = d.y - cy, k = .22; return `<path style="animation-delay:${(i * .15).toFixed(2)}s" d="M${cx} ${cy} Q${(mx - dy * k).toFixed(1)} ${(my + dx * k).toFixed(1)} ${d.x.toFixed(1)} ${d.y.toFixed(1)}"/>`; }).join('');
     const placed = []; const labels = dl.map((d) => { const right = d.x > cx, w = d.to.city.length * 5.6, lx = Math.max(3, Math.min(W - 3 - w, right ? d.x + 5 : d.x - 5 - w)) /* kept inside the card (visual playtest 2026-11-19: "an Francisco") */, ly = d.y - 6; if (placed.some((q) => Math.abs(q.y - ly) < 11 && lx < q.x + q.w && lx + w > q.x)) return `<circle cx="${d.x.toFixed(1)}" cy="${d.y.toFixed(1)}" r="2.6" fill="#d7362b"/>`; placed.push({ x: lx, y: ly, w }); return `<circle cx="${d.x.toFixed(1)}" cy="${d.y.toFixed(1)}" r="3" fill="#d7362b"/><text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}">${esc(d.to.city)}</text>`; }).join('');
     const nC = new Set(dl.map((d) => d.to.cc).filter(Boolean)).size;
-    return `<p class="td-h">WHERE THEY'RE GOING <span>RIGHT NOW</span></p><div class="td2-map"><svg viewBox="0 0 ${W} ${H}" aria-hidden="true"><circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="#c9d9e6" stroke-dasharray="2 4"/><circle cx="${cx}" cy="${cy}" r="${R / 2}" fill="none" stroke="#c9d9e6" stroke-dasharray="2 4"/><g class="td2-arcs" fill="none" stroke="#d7362b" stroke-width="1.6" stroke-linecap="round">${arcs}</g><circle cx="${cx}" cy="${cy}" r="16" fill="#d7362b22"/><circle cx="${cx}" cy="${cy}" r="5" fill="#0d2238"/><g font-family="SC Label, sans-serif" font-size="11" fill="#0d2238">${labels}<text x="${cx + 8}" y="${cy - 6}" font-size="10" fill="#4a6178">YOU</text></g></svg><div class="td2-cap"><b>Flights to ${dests.size} ${dests.size === 1 ? 'city' : 'cities'}</b> in ${nC} ${nC === 1 ? 'country' : 'countries'} are over you</div></div>`; })() : '';
+    return `${sec('Where they’re going', 'Right now')}<div class="td2-map"><svg viewBox="0 0 ${W} ${H}" aria-hidden="true"><circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="#c9d9e6" stroke-dasharray="2 4"/><circle cx="${cx}" cy="${cy}" r="${R / 2}" fill="none" stroke="#c9d9e6" stroke-dasharray="2 4"/><g class="td2-arcs" fill="none" stroke="#d7362b" stroke-width="1.6" stroke-linecap="round">${arcs}</g><circle cx="${cx}" cy="${cy}" r="16" fill="#d7362b22"/><circle cx="${cx}" cy="${cy}" r="5" fill="#0d2238"/><g font-family="SC Label, sans-serif" font-size="11" fill="#0d2238">${labels}<text x="${cx + 8}" y="${cy - 6}" font-size="10" fill="#4a6178">YOU</text></g></svg><div class="td2-cap"><b>Flights to ${dests.size} ${dests.size === 1 ? 'city' : 'cities'}</b> in ${nC} ${nC === 1 ? 'country' : 'countries'} are over you</div></div>`; })() : '';
 
   // 7 · today so far
   const far = T.far, farPh = far ? picOf({ type: far.type, callsign: far.callsign }) : null;
-  const story = `<p class="td-h">TODAY SO FAR <span>${seen.hexes.length.toLocaleString()} PLANE${seen.hexes.length === 1 ? '' : 'S'} SEEN</span></p><div class="td2-story">
+  const story = `${sec('Today so far', `${seen.hexes.length.toLocaleString()} plane${seen.hexes.length === 1 ? '' : 's'} seen`)}<div class="td2-story">
     <div class="td2-big"><div><b>${seen.hexes.length.toLocaleString()}</b><span>planes</span></div><div><b>${T.airlines.length}</b><span>airlines</span></div><div><b>${T.countries.length}</b><span>countries</span></div></div>
     ${far ? `<div class="td2-far"><span class="td2-farpic" style="${bg(farPh)}"></span><div><b>Farthest: to ${esc(far.city)}</b><span>${esc([far.airline, `${far.km.toLocaleString('en-US')} km from ${far.from}`].filter(Boolean).join(' · '))}, over you at ${new Date(far.t).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</span></div></div>` : ''}
     <div class="td-chart" aria-label="Planes seen by hour">${seen.hours.map((n, h) => `<i class="${h === nowH ? 'now' : ''}${seen.open[h] ? '' : ' gap'}" style="height:${seen.open[h] ? Math.max(4, Math.round(n / maxH * 54)) : 4}px" title="${h}:00 · ${seen.open[h] ? n : 'app closed'}"></i>`).join('')}</div>
@@ -318,22 +324,14 @@ export function renderToday(el, ctx) {
 
   /* Your regulars (js/sky-regulars.js): flights that pass at about the same time most days, the next three due today */
   let regs = ''; try { const now = Date.now(), rl = regulars(now).filter((r) => r.next - now < 12 * 3600e3).slice(0, 3);
-    if (rl.length) regs = `<p class="td-h">YOUR REGULARS <span>LEARNED HERE</span></p><div class="td2-card td2-regs">${rl.map((r) => { const rt = ctx.route(r.callsign), full = rt?.full, a3 = r.callsign.slice(0, 3), fkey = full ? `F:${a3}:${full.from.icao}-${full.to.icao}` : null, mine = fkey && owned.has(fkey), mins = Math.round((r.next - now) / 60000);
+    if (rl.length) regs = `${sec('Your regulars', 'Learned here')}<div class="td2-card td2-regs">${rl.map((r) => { const rt = ctx.route(r.callsign), full = rt?.full, a3 = r.callsign.slice(0, 3), fkey = full ? `F:${a3}:${full.from.icao}-${full.to.icao}` : null, mine = fkey && owned.has(fkey), mins = Math.round((r.next - now) / 60000);
       const name = full ? `${rt.airline || a3} ${r.callsign.replace(/^[A-Z]{3}/, '')} to ${full.to.city}` : `${rt?.airline || a3} ${r.callsign.replace(/^[A-Z]{3}/, '')}`;
       return `<div class="td2-reg"><b>${esc(name)}</b><span>Usually ${esc(clockText(r.minute))} · seen ${r.days} of the last ${r.of} days · ${mins <= 2 ? 'due now' : mins < 60 ? `in ${mins} min` : `at ${esc(clockText(r.minute))}`}${mine ? ' · <em>in your collection</em>' : ''}</span></div>`; }).join('')}</div>`; } catch {}
-  el.innerHTML = live + alert + missions + regs + tl + board + map + story;
+  el.innerHTML = live + missions + regs + tl + board + map + story;
+  try { ctx.fillMinis?.(el); } catch {} /* the real mini cards in the hero and the tiles (js/main.js skyFillMinis) */
   { const box = el.querySelector('#sky-missions'); if (box) try { ctx.missionCards?.(box, mcItems); } catch {} }
 
-  // the board: on the first view after Today opens every row spins in; on later refreshes only rows new to the board.
-  // Today redraws every 10 s, so until the first spin has played the watcher moves to each new board.
-  if (t - lastRender > 15000) { boardShown = new Set(); boardSpun = false; } /* Today was closed: a fresh first view */
-  lastRender = t; boardIo?.disconnect(); boardIo = null;
-  const fids = el.querySelector('.td2-fids');
-  if (fids) { const rows = [...fids.querySelectorAll('.td2-flap')];
-    if (!boardSpun) { boardIo = new IntersectionObserver((es) => { for (const e of es) if (e.isIntersecting && e.intersectionRect.height >= Math.min(140, e.boundingClientRect.height * .35)) { /* enough of it on screen; by height, so a board taller than the screen still starts */
-      boardIo?.disconnect(); boardIo = null; boardSpun = true; flapIn([...fids.querySelectorAll('.td2-flap')]); } }, { threshold: [0, .05, .1, .2, .3, .4, .5] }); boardIo.observe(fids); }
-    else { const fresh = rows.filter((x) => !boardShown.has(x.dataset.hex)); if (fresh.length) flapIn(fresh); }
-    rows.forEach((x) => boardShown.add(x.dataset.hex)); }
+  lastRender = t; /* the departures board and its split-flap spin-in were replaced by Space's Up now tiles (2026-11-19) */
   dealIo?.disconnect(); dealIo = null; /* the old tiles' deal; the mission cards are dealt by main.js now (Space's mcFlipWhenSeen) */
   // taps: Show me, a row's card, the board's All
   el.onclick = (e) => {
@@ -347,7 +345,7 @@ export function renderToday(el, ctx) {
   tick = setInterval(() => {
     if (!el.isConnected || (ctx.visible && !ctx.visible())) { clearInterval(tick); return; }
     const cd = el.querySelector('[data-until]'); if (cd) { const s = Math.max(0, Math.round((Number(cd.dataset.until) - Date.now()) / 1000)); cd.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }
-    const ar = el.querySelector('.td2-arrow'); if (ar) { const f = ctx.facing?.(); if (f != null) { ar.style.transform = `rotate(${((Number(ar.dataset.az) - f + 540) % 360) - 180}deg)`; ar.hidden = false; } const h = el.querySelector('[data-hint]'); if (h && best) { const w = ctx.hint?.({ az: best.a.az, el: best.a.el }); if (w && h.textContent !== w) h.textContent = w; } }
+    const ar = el.querySelector('.nh-arrow'); if (ar) { const f = ctx.facing?.(); if (f != null) { ar.style.transform = `rotate(${((Number(ar.dataset.az) - f + 540) % 360) - 180}deg)`; ar.hidden = false; } const h = el.querySelector('[data-hint]'); if (h && best) { const w = ctx.hint?.({ az: best.a.az, el: best.a.el }); if (w && h.textContent !== w) h.textContent = w; } }
   }, 1000);
 }
 const COMPASS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];

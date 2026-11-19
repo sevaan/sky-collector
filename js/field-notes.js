@@ -4,11 +4,11 @@
 // small batches to our server (Sky: server/index.js, POST /t); its /stats page shows the first-day catch rate and how many come
 // back. Settings → Help → "Share anonymous usage" (pref 'share', on by default) stops them. File named to stay clear of
 // content blockers' lists (see CLAUDE.md: avoid push / ads / track / analytics / beacon in js/ file names).
-import { VERSION } from './version.js?v=0.1.1762';
-import { isNative, plugin } from './native.js?v=0.1.1762';
-import { TESTER } from './build-flavor.js?v=0.1.1762';
+import { VERSION } from './version.js?v=0.1.1763';
+import { isNative, plugin } from './native.js?v=0.1.1763';
+import { TESTER } from './build-flavor.js?v=0.1.1763';
 
-import { SERVER } from './server.js?v=0.1.1762';
+import { SERVER } from './server.js?v=0.1.1763';
 /* Sky's own server (2026-11-19): the Cloud Run function "api" in Sky's project sky-collector-app (server/index.js POST /t),
    never Space Collector's. localStorage 'skyServer' (js/server.js) still overrides it for testing. */
 const SKY_API = 'https://api-ybymfwdlgq-uc.a.run.app';
