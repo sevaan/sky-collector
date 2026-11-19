@@ -1,40 +1,40 @@
-import { pullToClose } from './pull-close.js?v=0.1.1725';
-import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1725';
-import { computeStats, statsHtml } from './stats.js?v=0.1.1725';
-import { nightKey } from './observation.js?v=0.1.1725';
-import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1725';
-import { sfx } from './sfx.js?v=0.1.1725';
-import { expandFacts } from './catalog-facts.js?v=0.1.1725';
-import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned } from './patches.js?v=0.1.1725';
-import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1725';
-import { ticket } from './toast.js?v=0.1.1725';
-import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1725';
-import { satGlobe } from './sat-globe.js?v=0.1.1725';
-import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1725';
-import { cardArt } from './art.js?v=0.1.1725';
-import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1725';
-import { applyBack } from './card-backs.js?v=0.1.1725';
-import { localStats } from './sky-local.js?v=0.1.1725';
-import { retier } from './flights.js?v=0.1.1725';
-import { SETS, assignSets, albumGoals, albumList, useSets, goalsOf } from './sets.js?v=0.1.1725';
-import { SKY_ALBUM_SETS, FLIGHT_SETS } from './sky-sets.js?v=0.1.1725';
+import { pullToClose } from './pull-close.js?v=0.1.1726';
+import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1726';
+import { computeStats, statsHtml } from './stats.js?v=0.1.1726';
+import { nightKey } from './observation.js?v=0.1.1726';
+import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1726';
+import { sfx } from './sfx.js?v=0.1.1726';
+import { expandFacts } from './catalog-facts.js?v=0.1.1726';
+import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned } from './patches.js?v=0.1.1726';
+import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1726';
+import { ticket } from './toast.js?v=0.1.1726';
+import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1726';
+import { satGlobe } from './sat-globe.js?v=0.1.1726';
+import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1726';
+import { cardArt } from './art.js?v=0.1.1726';
+import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1726';
+import { applyBack } from './card-backs.js?v=0.1.1726';
+import { localStats } from './sky-local.js?v=0.1.1726';
+import { retier } from './flights.js?v=0.1.1726';
+import { SETS, assignSets, albumGoals, albumList, useSets, goalsOf } from './sets.js?v=0.1.1726';
+import { SKY_ALBUM_SETS, FLIGHT_SETS } from './sky-sets.js?v=0.1.1726';
 const FLIGHT_SET_IDS = new Set(FLIGHT_SETS.map((s) => s.id));
-import { skyCatalogue } from './sky-catalogue.js?v=0.1.1725';
-import { skyCardPhotoUrl, glyphSvg } from './flight-card.js?v=0.1.1725';
-import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1725';
-import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1725';
-import { STORIES } from './stories.js?v=0.1.1725';
-import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1725';
-import { conArt } from './con-art.js?v=0.1.1725';
-import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1725';
-import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1725';
-import { shareCardEl } from './share-card.js?v=0.1.1725';
-import { forgetSighting } from './cloud-backup.js?v=0.1.1725';
-import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1725';
-import { allSightings, deleteSighting } from './store.js?v=0.1.1725';
-import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1725';
-import { SECRET_PATCHES, NOT_SECRET, hasPatch } from './secrets.js?v=0.1.1725';
-import { localText } from './localize.js?v=0.1.1725';
+import { skyCatalogue } from './sky-catalogue.js?v=0.1.1726';
+import { skyCardPhotoUrl, glyphSvg } from './flight-card.js?v=0.1.1726';
+import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1726';
+import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1726';
+import { STORIES } from './stories.js?v=0.1.1726';
+import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1726';
+import { conArt } from './con-art.js?v=0.1.1726';
+import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1726';
+import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1726';
+import { shareCardEl } from './share-card.js?v=0.1.1726';
+import { forgetSighting } from './cloud-backup.js?v=0.1.1726';
+import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1726';
+import { allSightings, deleteSighting } from './store.js?v=0.1.1726';
+import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1726';
+import { SECRET_PATCHES, NOT_SECRET, hasPatch } from './secrets.js?v=0.1.1726';
+import { localText } from './localize.js?v=0.1.1726';
 // Sky Collector (Milestone 1.5): the same Collection, with plane cards from your catches and no satellite catalogue.
 const SKY = (() => { try { return !!window.parent?.__skyOnly; } catch { return false; } })() || /[?&]sky\b/.test(location.search);
 if (SKY) { document.documentElement.classList.add('sky-cards'); setSkyProgress(true); setEventsOff(true); useSets(SKY_ALBUM_SETS); /* Sky's albums: plane families and where flights go (js/sky-sets.js) */ try { setSkySize(localStats().sky); } catch {} }
@@ -973,12 +973,13 @@ async function openViewer(i, from = null) {
 
 // The viewer’s background, backdrop and text fade in (and out) around the spinning card, so you see
 // it leave the grid.
-function fadeViewer(opening) {
+function fadeViewer(opening, dur = 0) {
   if (reducedMotion.matches) return;
-  const v = $('viewer'), bg = getComputedStyle(v).backgroundColor, ms = opening ? 450 : 420;
+  const v = $('viewer'), bg = getComputedStyle(v).backgroundColor, ms = dur || (opening ? 450 : 420); /* dur: a flick's own length, so the fade ends as the card leaves */
   const dir = opening ? 'normal' : 'reverse';
   v.animate([{ backgroundColor: 'rgba(0, 0, 0, 0)' }, { backgroundColor: bg }], { duration: ms, direction: dir, fill: opening ? 'none' : 'forwards' });
   try { v.animate([{ opacity: 0 }, { opacity: 1 }], { duration: ms, direction: dir, fill: opening ? 'none' : 'forwards', pseudoElement: '::backdrop' }); } catch {}
+  if (getComputedStyle(v, '::before').content !== 'none') try { v.animate([{ opacity: 0 }, { opacity: 1 }], { duration: ms, direction: dir, fill: opening ? 'none' : 'forwards', pseudoElement: '::before' }); } catch {} /* a theme's own background layer (Sky's sky) fades on the GPU too */
   for (const el of [v.querySelector('.viewer-header'), $('v-status'), $('v-history'), $('v-preview'), $('v-up'), $('v-where'), $('v-share'), $('v-next')]) { // the pass panel and the orbit line wait for the spin too (polish 2026-10-20)
     el?.animate([{ opacity: 0 }, { opacity: 1 }], { duration: opening ? 350 : 200, delay: opening ? 400 : 0, direction: dir, fill: 'both' });
   }
@@ -1039,11 +1040,17 @@ async function flickClose(dx, dy, dt) {
   feel('light');
   const card = $('slot').firstElementChild; sfx('swipe');
   stopEffects();
-  fadeViewer(false); letTapsThrough(); const gen = ++viewerGen; closePending = true;
+  /* the background fades over the throw's own time (2026-11-18, Sevaan: "the swipe away animation … was janky"): it faded
+     for 420 ms while the dialog closed when the card left (160–300 ms), so the rest of the fade vanished in one frame, with
+     the close's style pass in the same frame */
+  /* no letTapsThrough() here: it closes and reopens the dialog (modal to modeless), a whole-page style pass that held the
+     card's first frame of the throw (Chromium at 6x: a 60 ms task). The viewer closes 0.2 s later anyway. */
+  const gen = ++viewerGen; closePending = true;
   if (card && !reducedMotion.matches) {
-    const ms = throwOff(card, dx, dy, dt); // flies off the top at the flick’s speed, fully visible 
-    await new Promise((r) => setTimeout(r, ms));
-  }
+    const ms = throwOff(card, dx, dy, dt); // flies off the top at the flick’s speed, fully visible
+    fadeViewer(false, ms);
+    await new Promise((r) => setTimeout(r, ms + 20));
+  } else fadeViewer(false);
   if (gen !== viewerGen) return; // a newer open took over
   closePending = false; $('viewer').close(); $('viewer').classList.remove('closing');
   const v = $('viewer');

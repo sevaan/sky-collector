@@ -7,6 +7,7 @@
 // WebKit (Safari's engine, what iOS ships) at 390x844 with 2,000 seeded cards, a fixed evening and a routed forecast, once
 // clear and once cloudy. The numbers are desktop numbers: an iPhone is roughly 2x slower, which the limits allow for.
 // Headless browsers have no GPU, so raster and compositing aren't measured; check the feel on a phone too.
+// The card viewer's swipe and flick have their own check: scripts/perf/viewer-swipe.mjs --budget (2026-11-18).
 import { open, URL0 } from './harness.mjs';
 
 const AT = '2026-11-10T19:40:00-05:00', N = 2000, CR = process.argv.includes('--cr');

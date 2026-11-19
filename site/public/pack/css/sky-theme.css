@@ -340,8 +340,13 @@ html.sky-cards .pv-card .pv-tell { color:#fffdf6; }
 html.sky-cards .pv-card .ui-chip { color:#23405c; border-color:#c9b98a; background:#f4ecd6; } html.sky-cards .pv-card .ui-chip b { color:#0d2238; }
 
 /* card viewer (#viewer) */
-html.sky-cards #viewer, html.sky-cards body.sky-tone #viewer { background:var(--day-sky); background-color:#eef5fb; color:#0d2238; }
-html.sky-cards #viewer::backdrop, html.sky-cards #stats-view::backdrop, html.sky-cards dialog::backdrop { background:rgba(13,34,56,.55); }
+html.sky-cards #viewer, html.sky-cards body.sky-tone #viewer { background:transparent; color:#0d2238; }
+html.sky-cards #stats-view::backdrop, html.sky-cards dialog::backdrop { background:rgba(13,34,56,.55); }
+/* (2026-11-18, Sevaan: the swipe-away was janky) the viewer's sky is a layer of its own, faded by opacity (js/cards-page.js
+   fadeViewer animates it with the backdrop): on the viewer itself the gradient never faded (only the colour under it did),
+   then vanished in one frame when the card flew off. A layer, not the ::backdrop, because the viewer is briefly modeless
+   while it closes, and a modeless dialog has no backdrop. */
+html.sky-cards #viewer:not(.docked)::before { content:''; position:fixed; inset:0; z-index:-1; pointer-events:none; background:var(--day-sky); background-color:#eef5fb; }
 html.sky-cards #viewer.docked, html.sky-cards #viewer.docked .viewer-scroll { background:#eef5fb !important; }
 html.sky-cards #v-position, html.sky-cards .viewer-header .ui-eyebrow { color:#23405c; }
 html.sky-cards #viewer .close, html.sky-cards .x-close, html.sky-cards #viewer .v-share { color:#0d2238; }
