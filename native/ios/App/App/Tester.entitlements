@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- The Sky Tester app (native/build-tester.sh): no capabilities, so Xcode's automatic signing needs nothing set up in the
+     developer portal beyond the app identifier. Without them the tester has no iCloud backup and skycollector.app links
+     don't open it (skytester:// does). -->
+<plist version="1.0">
+<dict/>
+</plist>
