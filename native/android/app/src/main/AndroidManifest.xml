@@ -61,5 +61,7 @@
          view is a testing-tools prototype, so neither FINE_LOCATION nor CAMERA is requested. -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-feature android:name="android.hardware.location.gps" android:required="false" />
+    <!-- Portrait-only is not a hardware requirement (Space Collector 11d80083: Play's pre-review check inferred one and blocked a build) -->
+    <uses-feature android:name="android.hardware.screen.portrait" android:required="false" />
 
 </manifest>

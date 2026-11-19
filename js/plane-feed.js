@@ -31,8 +31,9 @@ export function clampDial(j) {
   return out;
 }
 
-/** The local day, as a key ('2026-11-18'): the phone's allowance and the switch to the relay last for one day. */
-export function dayKey(ms) { const d = new Date(ms); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; }
+/** The UTC day, as a key ('2026-11-18'): adsb.lol's daily allowance resets at 00:00 UTC (its API page, 2026-11-19), so
+ *  the phone's allowance and the switch to the relay last until then, not until local midnight. */
+export function dayKey(ms) { const d = new Date(ms); return `${d.getUTCFullYear()}-${d.getUTCMonth() + 1}-${d.getUTCDate()}`; }
 
 /** A fresh state (kept in localStorage 'planeFeed' by planes.js). */
 export const freshFeed = () => ({ day: '', phoneOff: '', phoneOffUntil: 0, phoneFails: 0, netFails: 0, remaining: null, relayFails: 0, relayDownUntil: 0, failures: 0 });
@@ -58,7 +59,7 @@ export function nextGap(st, src, { near }, cfg = DEFAULTS) {
   return s * Math.min(cfg.maxBackoff, 2 ** st.failures);
 }
 
-/** The state after an answer. r: { src, ok, status, remaining, net, online } (remaining from adsb.lol's header, if any;
+/** The state after an answer. r: { src, ok, status, remaining, retryAfter (seconds, from a 429), net, online } (remaining from adsb.lol's header, if any;
  *  net: the request never got an answer (no signal, couldn't connect); online: navigator.onLine at the time). */
 export function afterAnswer(st, r, now, cfg = DEFAULTS) {
   const today = dayKey(now), s = { ...st };
@@ -76,7 +77,8 @@ export function afterAnswer(st, r, now, cfg = DEFAULTS) {
     if (r.ok) { s.phoneFails = 0; s.failures = 0; if (s.remaining != null && s.remaining <= cfg.switchAt) s.phoneOff = today; }
     else {
       s.phoneFails++;
-      if (r.status === 429 || s.phoneFails >= cfg.maxFails) { s.phoneOff = today; s.failures = 0; } /* the relay takes over at once */
+      if (r.status === 429 && Number.isFinite(r.retryAfter) && r.retryAfter > 0) { s.phoneOffUntil = now + Math.min(r.retryAfter, 86400) * 1000; s.phoneFails = 0; s.failures = 0; } /* over quota with a Retry-After: rest exactly that long, then adsb.lol again */
+      else if (r.status === 429 || s.phoneFails >= cfg.maxFails) { s.phoneOff = today; s.failures = 0; } /* the relay takes over at once, until the UTC day turns */
       else s.failures++;
     }
   } else if (r.src === 'relay') {

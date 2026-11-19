@@ -110,3 +110,14 @@ test('no signal: network errors only back off, never hand the day to the relay; 
   assert.equal(on.phoneOff, ''); assert.equal(pickSource(on, { phoneOk: true, relayOk: true, now: T0 + 10e3 }), 'relay');
   assert.equal(pickSource(on, { phoneOk: true, relayOk: true, now: T0 + 31 * 60e3 }), 'phone');
 });
+
+test('adsb.lol resets at 00:00 UTC; a 429 with Retry-After rests exactly that long', () => {
+  const t = Date.UTC(2026, 10, 19, 23, 30); /* 23:30 UTC */
+  const off = afterAnswer(freshFeed(), { src: 'phone', ok: false, status: 429 }, t);
+  assert.equal(pickSource(off, { phoneOk: true, relayOk: true, now: t + 20 * 60e3 }), 'relay');
+  assert.equal(pickSource(off, { phoneOk: true, relayOk: true, now: t + 31 * 60e3 }), 'phone'); /* 00:01 UTC: adsb.lol again */
+  const ra = afterAnswer(freshFeed(), { src: 'phone', ok: false, status: 429, retryAfter: 600 }, t);
+  assert.equal(ra.phoneOff, '');
+  assert.equal(pickSource(ra, { phoneOk: true, relayOk: true, now: t + 9 * 60e3 }), 'relay');
+  assert.equal(pickSource(ra, { phoneOk: true, relayOk: true, now: t + 11 * 60e3 }), 'phone');
+});

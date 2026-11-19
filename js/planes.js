@@ -3,13 +3,13 @@
 // on the website, because adsb.lol doesn’t allow browser requests directly. The airline comes from the callsign's prefix.
 // No DOM here. Positions are extrapolated between fetches using ground speed, track and climb rate.
 
-import { SERVER } from './server.js?v=0.1.1747';
-import { plugin } from './native.js?v=0.1.1747';
-import { lookupRoute } from './routes.js?v=0.1.1747';
-import { typeName } from './sky-type-names.js?v=0.1.1747';
-import { noteFeed } from './sky-local.js?v=0.1.1747';
-import { DEFAULTS, freshFeed, pickSource, nextGap, afterAnswer, feedDown, maxAgeS, easeLeft } from './plane-feed.js?v=0.1.1747';
-import { tagOf } from './sky-secrets.js?v=0.1.1747';
+import { SERVER } from './server.js?v=0.1.1748';
+import { plugin } from './native.js?v=0.1.1748';
+import { lookupRoute } from './routes.js?v=0.1.1748';
+import { typeName } from './sky-type-names.js?v=0.1.1748';
+import { noteFeed } from './sky-local.js?v=0.1.1748';
+import { DEFAULTS, clampDial, freshFeed, pickSource, nextGap, afterAnswer, feedDown, maxAgeS, easeLeft } from './plane-feed.js?v=0.1.1748';
+import { tagOf } from './sky-secrets.js?v=0.1.1748';
 // Empty = feature off. localStorage 'planeRelay' overrides it (testing). Our server's /planes (adsb.lol only) once it's
 // deployed; until then the Val Town relay (relay/handler.ts).
 // Sky Collector (2026-11-15): Space Collector's Val Town relay is turned away by adsb.lol now, so the website needs Sky
@@ -24,6 +24,7 @@ const RADIUS_NM = 40;    // ~75 km: an airliner at cruise height is ~8° up at t
 // through CapacitorHttp; Sky's own relay (server/, Cloud Run "api" in sky-collector-app, FlyItalyADSB) is the backup.
 // The website keeps the relay list above. No dial yet (Space's is spacecollector.app/dial/planes.json): DEFAULTS.
 const APP_RELAY = 'https://api-ybymfwdlgq-uc.a.run.app/planes';
+const DIAL = 'https://skycollector.app/dial/planes.json'; /* the plane feed's pacing without a release (js/plane-feed.js clampDial; scripts/build-site.mjs writes it) */
 const phoneHttp = () => { let over = null; try { over = localStorage.getItem('planeRelay'); } catch {} return over ? null : plugin('CapacitorHttp'); };
 const header = (h, name) => { if (!h) return undefined; for (const k of Object.keys(h)) if (k.toLowerCase() === name) return Number(h[k]); return undefined; };
 const jsonOf = (r) => (r?.status === 200 ? (typeof r.data === 'string' ? JSON.parse(r.data) : r.data) : null);
@@ -128,6 +129,12 @@ export class PlaneTracker {
     /* the apps' feed state (js/plane-feed.js), kept in localStorage 'planeFeed' */
     this.gapS = POLL_MS / 1000; this.down = false; this.src = ''; this.cfg = DEFAULTS; this.feed = freshFeed(); this.counts = { phone: 0, relay: 0 };
     try { this.feed = { ...freshFeed(), ...JSON.parse(localStorage.getItem('planeFeed') || '{}') }; } catch {}
+    this.loadDial();
+  }
+  /* the dial: fetched once at start in the apps; the defaults stand if it can't be (as Space Collector's) */
+  loadDial() {
+    const http = phoneHttp(); if (!http) return;
+    http.request({ url: DIAL, method: 'GET', connectTimeout: 6000, readTimeout: 6000 }).then(jsonOf).then((j) => { if (j) this.cfg = clampDial(j); }).catch(() => {});
   }
 
   // The last 40 fetches (2026-11-17, Sevaan outdoors: Space Collector showed a plane Sky didn't, and nothing said why):
@@ -185,7 +192,7 @@ export class PlaneTracker {
     const url = src === 'phone' ? `https://api.adsb.lol/v2/point/${lat}/${lon}/${RADIUS_NM}` /* adsb.lol turns cloud servers away (2026-10-26), but not phones */
       : `${APP_RELAY}?lat=${lat}&lon=${lon}&dist=${RADIUS_NM}`;
     http.request({ url, method: 'GET', connectTimeout: 8000, readTimeout: 8000 })
-      .then((r) => ({ status: r?.status, remaining: src === 'phone' ? header(r?.headers, 'x-ratelimit-remaining') : undefined, data: jsonOf(r) }))
+      .then((r) => ({ status: r?.status, remaining: src === 'phone' ? header(r?.headers, 'x-ratelimit-remaining') : undefined, retryAfter: src === 'phone' ? header(r?.headers, 'retry-after') : undefined, data: jsonOf(r) }))
       .then((r) => ({ ...r, ok: !!r.data, net: !r?.status }), () => ({ ok: false, status: 0, net: true }))
       .then((r) => {
         const at = `${obs.lat.toFixed(1)},${obs.lon.toFixed(1)}`;
@@ -194,7 +201,7 @@ export class PlaneTracker {
           try { noteFeed((r.data.ac ?? r.data.aircraft ?? []).length); } catch {}
           this.note({ t: t0, ok: 1, n: this.planes.length, ms: Date.now() - t0, src: src === 'phone' ? `phone${r.remaining != null ? ' ' + r.remaining + ' left' : ''}` : 'relay', at });
         } else { this.failures++; this.note({ t: t0, ok: 0, ms: Date.now() - t0, err: `${src} ${r.net ? 'no answer' : r.status}`, at }); }
-        this.feed = afterAnswer(this.feed, { src, ok: r.ok, status: r.status, remaining: r.remaining, net: r.net, online: typeof navigator === 'undefined' ? undefined : navigator.onLine }, Date.now(), this.cfg);
+        this.feed = afterAnswer(this.feed, { src, ok: r.ok, status: r.status, remaining: r.remaining, retryAfter: r.retryAfter, net: r.net, online: typeof navigator === 'undefined' ? undefined : navigator.onLine }, Date.now(), this.cfg);
         try { localStorage.setItem('planeFeed', JSON.stringify(this.feed)); } catch {}
       })
       .finally(() => { this.busy = false; });
@@ -260,7 +267,7 @@ const AIRLINES = { ACA: 'Air Canada', ROU: 'Air Canada Rouge', JZA: 'Air Canada 
 // Every ICAO airline code -> name (js/airlines.js, built by scripts/build-airlines.mjs), loaded once, lazily.
 let airlineTable = null, airlineLoad = null;
 export function loadAirlines() {
-  return (airlineLoad ??= import('./airlines.js?v=0.1.1747').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
+  return (airlineLoad ??= import('./airlines.js?v=0.1.1748').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
 }
 export function airlineName(callsign) { return /^[A-Z]{3}\d/.test(callsign ?? '') ? airlineFor(callsign, null) : ''; }
 function airlineFor(callsign, a) {
