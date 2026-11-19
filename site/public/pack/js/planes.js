@@ -172,7 +172,8 @@ const AIRLINES = { ACA: 'Air Canada', ROU: 'Air Canada Rouge', JZA: 'Air Canada 
   ENY: 'Envoy', EDV: 'Endeavor', JIA: 'PSA', PDT: 'Piedmont', GJS: 'GoJet', CPZ: 'Compass', ASH: 'Mesa', QXE: 'Horizon', FDX: 'FedEx',
   UPS: 'UPS', BAW: 'British Airways', VIR: 'Virgin Atlantic', AFR: 'Air France', DLH: 'Lufthansa', KLM: 'KLM', ICE: 'Icelandair',
   UAE: 'Emirates', QTR: 'Qatar Airways', ETD: 'Etihad', THY: 'Turkish Airlines', AMX: 'Aeroméxico', CPA: 'Cathay Pacific', JAL: 'Japan Airlines',
-  ANA: 'All Nippon', KAL: 'Korean Air', EIN: 'Aer Lingus', SAS: 'SAS', IBE: 'Iberia', SWR: 'Swiss', AUA: 'Austrian', TAP: 'TAP Air Portugal' };
+  ANA: 'All Nippon', KAL: 'Korean Air', EIN: 'Aer Lingus', SAS: 'SAS', IBE: 'Iberia', SWR: 'Swiss', AUA: 'Austrian', TAP: 'TAP Air Portugal',
+  KOW: 'Baker Aviation', TWB: 'Trinity Airways', VIV: 'Viva' }; /* names the airline facts' research found missing or changed (2026-11-18) */
 // Every ICAO airline code -> name (js/airlines.js, built by scripts/build-airlines.mjs), loaded once, lazily.
 let airlineTable = null, airlineLoad = null;
 export function loadAirlines() {
