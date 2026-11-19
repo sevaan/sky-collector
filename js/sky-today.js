@@ -5,14 +5,14 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { planeKey } from './flights.js?v=0.1.1729';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1729';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1729';
-import { airlineIcon } from './airline-icons.js?v=0.1.1729';
-import { catches } from './sky-catch.js?v=0.1.1729';
-import { noteLocal } from './sky-local.js?v=0.1.1729';
-import { planeSet } from './sky-sets.js?v=0.1.1729';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1729';
+import { planeKey } from './flights.js?v=0.1.1730';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1730';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1730';
+import { airlineIcon } from './airline-icons.js?v=0.1.1730';
+import { catches } from './sky-catch.js?v=0.1.1730';
+import { noteLocal } from './sky-local.js?v=0.1.1730';
+import { planeSet } from './sky-sets.js?v=0.1.1730';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1730';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
