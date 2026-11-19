@@ -13,7 +13,7 @@ def call(method, url, body=None, raw=None, ctype='application/json'):
     r = urllib.request.urlopen(req, timeout=120).read()
     return json.loads(r) if r and ctype == 'application/json' else None
   except urllib.error.HTTPError as e: sys.exit(f'{method} {url}: {e.code} {e.read().decode()[:400]}')
-config = {'cleanUrls': True, 'trailingSlashBehavior': 'REMOVE',
+config = {'cleanUrls': True, 'trailingSlashBehavior': 'REMOVE', 'rewrites': [{'glob': '/c/*', 'path': '/c/index.html'}], # Send cards' short links (2026-11-19)
   'headers': [{'glob': '**/*.@(png|jpg|webp|woff2|ttf)', 'headers': {'Cache-Control': 'public, max-age=604800'}}]}
 # When Sky's server exists (a Cloud Run service "api" in this project), add: 'rewrites': [{'glob': '/api/**', 'run': {'serviceId': 'api', 'region': 'us-central1'}}]
 v = call('POST', f'{API}/{SITE}/versions', {'config': config})['name']

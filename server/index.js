@@ -4,6 +4,8 @@
 //   GET /status                how many squares are in memory and the month's request count
 //   POST /t                    anonymous usage reports (js/field-notes.js) → Firestore collection sky_events (2026-11-19)
 //   GET /stats?key=…           the dashboard (stats-page.js, Space Collector's, ported); the key is the STATS_KEY secret
+//   POST /pack, GET /pack/<id> Send cards' short links (Space Collector's, 2026-11-19): a pack stored under a random 7-character id,
+//                              Firestore sky_packs, gone after 90 days (a TTL policy on 'exp')
 // Deploy (personal gcloud login, never the firebase CLI):
 //   gcloud functions deploy api --gen2 --runtime=nodejs22 --region=us-central1 --source=server --entry-point=api
 //     --trigger-http --allow-unauthenticated --memory=512Mi --cpu=1 --concurrency=40 --max-instances=2 --set-secrets=FLYITALY_KEY=FLYITALY_KEY:latest,STATS_KEY=STATS_KEY:latest
@@ -91,6 +93,16 @@ async function stats(all, before = false, rebuild = false) {
   statsMemo.set(mk, { at, html }); return html;
 }
 
+// Send cards (Space Collector functions/index.js, ported 2026-11-19): the pack lives here under a random 7-character id, so
+// every link is short (skycollector.app/c/<id>). The code is what the app would have put in the link: card keys, times and
+// the cards' own data; no places, no names, no accounts.
+const PACK_ABC = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789', PACK_DAYS = 90, PACK_MAX = 300000;
+const packId = () => { let s = ''; const b = new Uint8Array(7); crypto.getRandomValues(b); for (const x of b) s += PACK_ABC[x % PACK_ABC.length]; return s; };
+async function savePack(code) {
+  for (let i = 0; i < 4; i++) { const id = packId(); try { await db.collection('sky_packs').doc(id).create({ c: code, at: Date.now(), exp: new Date(Date.now() + PACK_DAYS * 86400e3) }); return id; } catch (e) { if (e?.code !== 6) throw e; } } // 6 = already exists
+  throw new Error('no id');
+}
+
 functions.http('api', async (req, res) => {
   const origin = req.get('Origin') ?? '', ok = ALLOWED.some((re) => re.test(origin));
   if (ok) { res.set('Access-Control-Allow-Origin', origin); res.set('Vary', 'Origin'); }
@@ -100,6 +112,15 @@ functions.http('api', async (req, res) => {
     /* the stats page is opened in a browser (no Origin); a wrong or missing key looks like any unknown path */
     if (path === '/stats' && req.method === 'GET') { if (!process.env.STATS_KEY || req.query.key !== process.env.STATS_KEY) return res.status(404).send('not found'); res.set('Content-Type', 'text/html; charset=utf-8'); res.set('Cache-Control', 'private, no-store'); return res.send(await stats(req.query.all === '1', req.query.before === '1', req.query.rebuild === '1')); }
     if (origin && !ok) return res.status(403).send('Forbidden');
+    if (path === '/pack' && req.method === 'POST') { if (!ok) return res.status(403).send('Forbidden'); if (limited(req, 20, 'pk')) return res.status(429).send('slow down');
+      const code = String(typeof req.body === 'string' ? req.body : req.rawBody?.toString() ?? '').trim();
+      if (code.length > PACK_MAX || !/^g\d[A-Za-z0-9_~-]+$/.test(code)) return res.status(400).send('bad pack');
+      res.set('Content-Type', 'application/json'); return res.send(JSON.stringify({ id: await savePack(code) })); }
+    { const m = /^\/pack\/([A-Za-z0-9]{7})$/.exec(path); if (m && req.method === 'GET') { if (limited(req, 60, 'pg')) return res.status(429).send('slow down');
+      const doc = await db.collection('sky_packs').doc(m[1]).get(), d = doc.exists ? doc.data() : null;
+      if (!d || (d.exp?.toMillis?.() ?? 0) < Date.now()) return res.status(404).send('not found');
+      res.set('Access-Control-Allow-Origin', '*'); res.set('Content-Type', 'application/json'); res.set('Cache-Control', 'public, max-age=300, s-maxage=3600');
+      return res.send(JSON.stringify({ c: d.c })); } }
     if (path === '/t' && req.method === 'POST') { if (!ok) return res.status(403).send('Forbidden'); if (limited(req, 20, 't')) return res.status(429).send('slow down'); return res.status(await report(typeof req.body === 'string' ? req.body : req.rawBody?.toString() ?? JSON.stringify(req.body))).send(''); }
     if (req.method !== 'GET') return res.status(404).send('not found');
     if (path === '/status') { const s = relayState(); res.set('Cache-Control', 'no-store'); return res.json({ squares: s.squares, used: s.budget?.used ?? null, quota: s.budget?.quota ?? null }); }
