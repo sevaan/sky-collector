@@ -16,3 +16,5 @@ scripts/qa/out/
 site/public/pack/data/
 site/public/pack/assets/logos/
 site/public/pack/assets/photos/airlines/
+# The phone-app shell (copied from Space Collector 2026-11-19; kept out of this public repo until it is checked for anything private)
+native/
