@@ -3,13 +3,13 @@
 // on the website, because adsb.lol doesn’t allow browser requests directly. The airline comes from the callsign's prefix.
 // No DOM here. Positions are extrapolated between fetches using ground speed, track and climb rate.
 
-import { tagOf } from './sky-secrets.js?v=0.1.1781';
-import { SERVER } from './server.js?v=0.1.1781';
-import { plugin } from './native.js?v=0.1.1781';
-import { lookupRoute } from './routes.js?v=0.1.1781';
-import { typeName } from './sky-type-names.js?v=0.1.1781';
-import { noteFeed } from './sky-local.js?v=0.1.1781';
-import { DEFAULTS, clampDial, freshFeed, pickSource, nextGap, afterAnswer, feedDown, maxAgeS, easeLeft } from './plane-feed.js?v=0.1.1781';
+import { tagOf } from './sky-secrets.js?v=0.1.1782';
+import { SERVER } from './server.js?v=0.1.1782';
+import { plugin } from './native.js?v=0.1.1782';
+import { lookupRoute } from './routes.js?v=0.1.1782';
+import { typeName } from './sky-type-names.js?v=0.1.1782';
+import { noteFeed } from './sky-local.js?v=0.1.1782';
+import { DEFAULTS, clampDial, freshFeed, pickSource, nextGap, afterAnswer, feedDown, maxAgeS, easeLeft } from './plane-feed.js?v=0.1.1782';
 // Empty = feature off. localStorage 'planeRelay' overrides it (testing). Our server's /planes (adsb.lol only) once it's
 // deployed; until then the Val Town relay (relay/handler.ts).
 // Sky Collector (2026-11-15): Space Collector's Val Town relay is turned away by adsb.lol now, so the website needs Sky
@@ -298,7 +298,7 @@ const AIRLINES = { ACA: 'Air Canada', ROU: 'Air Canada Rouge', JZA: 'Jazz (Air C
 // Every ICAO airline code -> name (js/airlines.js, built by scripts/build-airlines.mjs), loaded once, lazily.
 let airlineTable = null, airlineLoad = null;
 export function loadAirlines() {
-  return (airlineLoad ??= import('./airlines.js?v=0.1.1781').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
+  return (airlineLoad ??= import('./airlines.js?v=0.1.1782').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
 }
 export function airlineName(callsign) { return /^[A-Z]{3}\d/.test(callsign ?? '') ? airlineFor(callsign, null) : ''; }
 function airlineFor(callsign, a) {
