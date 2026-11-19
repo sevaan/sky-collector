@@ -129,15 +129,15 @@
   <p class="lc-fact">Every plane overhead is a <strong>real flight</strong>, and every one is a card: where it’s going, who’s flying it and what it is.</p>
   <div class="lc-soon"><span><i></i>Coming soon to iPhone and Android</span><a href="https://skycollector.app/" rel="noopener">skycollector.app</a></div>
 </div><span class="lc-foil" aria-hidden="true"></span><span class="lc-glare" aria-hidden="true"></span></div></template>
-<script type="module" src="pack.js" onerror="packFallback(true)"></script>
+<script type="module" src="pack.js"></script>
 <script>
-  /* The fallback start screen: when the pack's code fails to load (the module's error), or 3 s pass and the pack hasn't
-     appeared (pack.js unhides it itself when it cannot build the cards). */
-  function packFallback(failed) {
-    var s = document.getElementById('start'), b = document.getElementById('open');
-    if (failed) { b.textContent = 'Couldn\u2019t load the pack'; b.disabled = true; } /* no code, so the button could do nothing */
-    if (!document.getElementById('gift') && document.getElementById('end').hidden) s.hidden = false;
-  }
-  setTimeout(packFallback, 3000);
+  /* Space Collector's fallback (2026-11-19, review Part 1): not a module, so it still runs if pack.js or one of its modules
+     fails to load. After 3 s with no pack, the start screen shows, and a tap on Open the pack reloads to try again if the
+     code never arrived (pack.js sets __packReady). */
+  setTimeout(function () {
+    if (document.body.classList.contains('playing') || document.getElementById('gift') || !document.getElementById('end').hidden) return;
+    document.getElementById('start').hidden = false;
+    document.getElementById('open').addEventListener('click', function () { if (!window.__packReady) location.reload(); });
+  }, 3000);
 </script>
 </body></html>
