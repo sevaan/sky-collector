@@ -26,7 +26,7 @@ for f in sorted(glob.glob(os.path.join(WORK, 'check-*.json'))): checks.update(js
 old = {}
 if os.path.exists(JS):
     m = re.search(VAR + r' = (\{.*\});', open(JS).read(), re.S)
-    if m and m.group(1).strip() != '{}': old = json.loads(re.sub(r',(\s*[\]}])', r'\1', m.group(1)))
+    if m and m.group(1).strip() != '{}': old = json.loads(re.sub(r',(\s*[\]}])', r'\1', re.sub(r'^(\s*)([A-Z0-9]{3,4}):', r'\1"\2":', m.group(1), flags=re.M)))
 oldrows = []
 if os.path.exists(MD): oldrows = [l for l in open(MD).read().splitlines() if l.startswith('| ') and not l.startswith('| Code')]
 out, rows, problems, stats = dict(old), [], [], {'ok': 0, 'fix': 0, 'drop': 0, 'unchecked': 0}

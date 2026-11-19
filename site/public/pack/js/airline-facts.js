@@ -274,7 +274,7 @@ export const AIRLINE_FACTS = {
   JZA: [
     "Jazz flies for Air Canada under the **Air Canada Express** brand, with the subtitle \"operated by Jazz\".",
     "Jazz was born from **four regional airlines**, Air BC, Air Nova, Air Ontario and Canadian Regional, joined together in 2001 and named Air Canada Jazz in 2002.",
-    "In 2005 Jazz received the **first CRJ705**, a 75-seat version of Bombardier's regional jet.",
+    "In 2005 Jazz became the **world's first operator** of the CRJ705, a 75-seat version of Bombardier's regional jet.",
   ],
   KAL: [
     "Korean Air's **blue-top** and silver look was designed together with Boeing and first used on 1 March 1984.",
@@ -472,7 +472,7 @@ export const AIRLINE_FACTS = {
     "In October 2013 Viva Aerobus ordered 52 Airbus A320 jets, at the time the **largest order** ever placed by a Latin American airline.",
   ],
   VOI: [
-    "Volaris is named after **Polaris**, the North Star, and its logo is a colourful pixel star on black.",
+    "Volaris took to the skies on **13 March 2006**, with its first flight going from Toluca to Tijuana.",
     "In 2020 Volaris wrapped an A320neo in **Wonder Woman**, the first time it had covered a plane's body in a special design.",
     "In 2016 Volaris became the **first North American airline** to fly the Airbus A320neo jet.",
   ],
