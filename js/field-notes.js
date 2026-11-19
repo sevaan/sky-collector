@@ -1,15 +1,18 @@
 // Anonymous usage and error reports (2026-10-24, Sevaan: "how do I know if people are coming back on other nights?").
 // A few game events (the install, each open, each night with a catch, the end of a session, the tour, motion, Line up,
 // Plus) and uncaught errors, tied only to a random ID made on this phone. No location, no names, no device IDs. They go in
-// small batches to our server (functions/index.js, POST /api/t); its /stats page shows the first-night catch rate and how many come
+// small batches to our server (Sky: server/index.js, POST /t); its /stats page shows the first-day catch rate and how many come
 // back. Settings → Help → "Share anonymous usage" (pref 'share', on by default) stops them. File named to stay clear of
 // content blockers' lists (see CLAUDE.md: avoid push / ads / track / analytics / beacon in js/ file names).
-import { VERSION } from './version.js?v=0.1.1751';
-import { isNative } from './native.js?v=0.1.1751';
-import { TESTER } from './build-flavor.js?v=0.1.1751';
+import { VERSION } from './version.js?v=0.1.1752';
+import { isNative, plugin } from './native.js?v=0.1.1752';
+import { TESTER } from './build-flavor.js?v=0.1.1752';
 
-import { SERVER } from './server.js?v=0.1.1751';
-const URL_ = SERVER ? `${SERVER}/t` : ''; // our server (2026-10-25)
+import { SERVER } from './server.js?v=0.1.1752';
+/* Sky's own server (2026-11-19): the Cloud Run function "api" in Sky's project sky-collector-app (server/index.js POST /t),
+   never Space Collector's. localStorage 'skyServer' (js/server.js) still overrides it for testing. */
+const SKY_API = 'https://api-ybymfwdlgq-uc.a.run.app';
+const URL_ = `${SERVER || SKY_API}/t`;
 const ls = { get: (k) => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
 const on = () => !TESTER && ls.get('share') !== '0'; /* SC Tester never sends anything (2026-10-31, Sevaan: "Don't include SC Tester in those stats ever") */
 const platform = () => (isNative() ? (globalThis.Capacitor?.getPlatform?.() === 'android' ? 'android' : 'ios') : 'web');
@@ -18,7 +21,12 @@ const platform = () => (isNative() ? (globalThis.Capacitor?.getPlatform?.() === 
    store install as a test build and the players-only stats were empty (2026-11-06). The website is always a test build. */
 /* Android emulators count as tests too (their model is sdk_gphone…, "Android SDK built for…"); iOS simulators can't be told apart (2026-11-06). */
 const emulator = /sdk_gphone|Android SDK built for|google_sdk|Emulator|; generic/i.test(navigator.userAgent);
-const testing = () => TESTER || !isNative() || ls.get('dev') === '1' || emulator;
+/* Simulators, emulators and Google Play's pre-launch test devices ask the app itself (Space Collector 8cd90a33, 2026-11-19:
+   18 of one day's 19 "installs" were simulator playtests of store builds and Play's robots running each upload). The answer
+   is kept, and any test-marked row leaves the whole install out of the stats, so the first batch going out unmarked doesn't
+   matter. Sky: the native Review plugin's env method is on the native-shell branch. */
+if (isNative() && ls.get('virt') == null) plugin('Review')?.env?.().then((r) => ls.set('virt', r?.virtual || r?.lab ? '1' : '0')).catch(() => {});
+const testing = () => TESTER || !isNative() || ls.get('dev') === '1' || ls.get('virt') === '1' || emulator;
 let id = ls.get('tid'), fresh = false;
 if (!id) { const a = new Uint8Array(12); crypto.getRandomValues(a); id = [...a].map((b) => b.toString(16).padStart(2, '0')).join(''); ls.set('tid', id); ls.set('tidAt', String(Date.now())); fresh = true; }
 const installedAt = () => Number(ls.get('tidAt')) || Date.now();
