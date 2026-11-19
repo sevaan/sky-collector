@@ -62,9 +62,9 @@ export function planeStampInfo(list, key) {
 // "7 A321s in 4 liveries" (a type with no airline colours, like a helicopter: "3 R44s").
 export function planeLine(info, label) {
   const n = info.count, l = info.liveryCount ?? 0, name = label || 'aircraft';
-  const base = `${n} ${name}${n === 1 ? '' : name === 'aircraft' ? '' : 's'}`;
+  const base = n === 1 ? `Your first ${name}` /* "1 C525" read as a stray number (iOS simulator 2026-11-19) */ : `${n} ${name}${name === 'aircraft' ? '' : 's'}`;
   const seen = (info.days ?? 0) > n ? ` · seen on ${info.days} days` : ''; /* the local helicopter, a private plane: the days you've seen it (2026-11-19) */
-  return (l ? `${base} with ${l} ${l === 1 ? 'operator' : 'operators'}` : base) + seen; /* it counts callsign prefixes, which are operators, not paint schemes (avgeek playtest 2026-11-19) */
+  return (l && n > 1 ? `${base} with ${l} ${l === 1 ? 'operator' : 'operators'}` : base) + seen; /* it counts callsign prefixes, which are operators, not paint schemes (avgeek playtest 2026-11-19) */
 }
 export const levelWord = (l) => (l === 'none' ? '' : l.toUpperCase());
 
