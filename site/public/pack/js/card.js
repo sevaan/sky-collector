@@ -200,7 +200,7 @@ export function renderCard(o, opts = {}) {
   const fleet = !!o.launches, stamps = fleet ? stampsIn(sightings) : null;
   const level = opts.forceLevel ?? (conCard ? prog.level : fleet ? fleetLevel(o.family, stamps.size) : cardLevel(own, o));
   const tier = o.story ? { gem: '❖', label: 'Story', color: '#3fc7b5' } : TIER_INFO[o.tier] ?? TIER_INFO.common; // story cards (js/stories.js) wear their own teal label
-  const set = SET_BY_ID[o.set] ?? { name: 'Field archive', color: '#d74730' };
+  const set = SET_BY_ID[o.set] ?? (o.story ? { name: 'Stories', color: '#3fc7b5' } /* a story with no album of its own (Sky Collector's) */ : { name: 'Field archive', color: '#d74730' });
   const stats = orbitStats(o), age = yearsUp(o.launches ? { launch: o.launches[0]?.launch } : o), laps = lapsPerDay(o); // a fleet’s age is from its FIRST launch, the date shown (Starlink said 6 years for 2019)
   // A crew count changes often and is not supplied by the orbital catalogue.
   const loreStat = thirdStat(o, sizeLabel(o.rcs), opts.seenMembers ?? 0);
@@ -379,7 +379,7 @@ export function renderCardTile(o, opts = {}) {
   const caught = conCard ? prog.level === 'gold' : sightings.length > 0; // a constellation joins your collection only when complete
   const shinyOf = o.launches ? null : sightings.find((x) => x.shiny && SHINY[x.shiny])?.shiny; // a shiny sighting makes the card shiny (js/shiny.js)
   const tier = TIER_INFO[o.tier] ?? TIER_INFO.common;
-  const set = SET_BY_ID[o.set] ?? { name: 'Field archive', color: '#d74730' };
+  const set = SET_BY_ID[o.set] ?? (o.story ? { name: 'Stories', color: '#3fc7b5' } /* a story with no album of its own (Sky Collector's) */ : { name: 'Field archive', color: '#d74730' });
   const title = titleFor(o);
   const tile = document.createElement('button');
   tile.type = 'button';

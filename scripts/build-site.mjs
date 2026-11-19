@@ -115,6 +115,13 @@ writeFileSync(OUT + 'index.html', html);
 const SITE = 'https://skycollector.app', PAGES = ['/', '/pack', '/privacy'];
 writeFileSync(OUT + 'robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${SITE}/sitemap.xml\n`);
 writeFileSync(OUT + 'sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${PAGES.map((u) => `  <url><loc>${SITE}${u}</loc></url>`).join('\n')}\n</urlset>\n`);
+// The dials (2026-11-19, as Space Collector's spacecollector.app/dial/*): settings the apps read at start, changed here
+// without an app release. compass.json: androidFuse true = Android draws the sky from the gyro and learns north from the
+// compass (js/sensors.js setFuseDial), false = the old direct compass. planes.json: the plane feed's pacing
+// (js/plane-feed.js clampDial; anything missing keeps the app's default).
+mkdirSync(OUT + 'dial', { recursive: true });
+writeFileSync(OUT + 'dial/compass.json', JSON.stringify({ _about: "Sky Collector's compass dial (js/sensors.js setFuseDial). androidFuse: true = Android draws the sky from the gyro and learns north from the compass; false = the old direct compass. Testing tools can override it per phone.", androidFuse: true }, null, 2) + '\n');
+writeFileSync(OUT + 'dial/planes.json', JSON.stringify({ _about: "Sky Collector's plane feed dial (js/plane-feed.js clampDial). Seconds and request counts; anything missing keeps the app's default.", idleS: 30, nearS: 10, lowAt: 120, slowS: 60, switchAt: 25, maxFails: 2, relayDownS: 300, maxBackoff: 6 }, null, 2) + '\n');
 console.log('built site/public', card.name, card.tier, fit.mode);
 
 // The sample pack page (skycollector.app/pack) lives under site/public too, which this script wipes: rebuild it last.
