@@ -2,8 +2,8 @@
 // a gift pack and the morning pack feel the same. One rarity table, and the catch reveal's flip (it used to be copied
 // into js/gift-pack.js, and the copies drifted: the heartbeats were 100 ms apart). No DOM of its own: callers pass the
 // element that turns and a function that shows a face.
-import { sfx, heartbeat } from './sfx.js?v=0.1.1731';
-import { audioLeaving } from './audio-ctx.js?v=0.1.1731';
+import { sfx, heartbeat } from './sfx.js?v=0.1.1732';
+import { audioLeaving } from './audio-ctx.js?v=0.1.1732';
 
 // Per tier: the catch reveal's burst, how long it holds its breath before turning, the turn's length and extra spin,
 // how much the sky dims, and the stinger that plays when it lands.

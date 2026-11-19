@@ -7,18 +7,18 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { TIERS, unlisted } from './flights.js?v=0.1.1731';
-import { flightFact } from './flight-facts.js?v=0.1.1731';
-import { typePhoto } from './type-photos.js?v=0.1.1731';
-import { housePhoto } from './house-photos.js?v=0.1.1731';
-import { gapPhoto } from './gap-photos.js?v=0.1.1731'; /* the types that had no photo (2026-11-18) */
-import { airlinePhoto } from './airline-photos.js?v=0.1.1731';
-import { airlineLogo } from './airline-logos.js?v=0.1.1731';
-import { fitStyle } from './photo-fit.js?v=0.1.1731';
-import { dist, speed } from './units.js?v=0.1.1731';
-import { typeFact } from './sky-facts.js?v=0.1.1731';
-import { localText } from './localize.js?v=0.1.1731';
-import { hasAirlineCallsign, planeLine, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1731';
+import { TIERS, unlisted } from './flights.js?v=0.1.1732';
+import { flightFact } from './flight-facts.js?v=0.1.1732';
+import { typePhoto } from './type-photos.js?v=0.1.1732';
+import { housePhoto } from './house-photos.js?v=0.1.1732';
+import { gapPhoto } from './gap-photos.js?v=0.1.1732'; /* the types that had no photo (2026-11-18) */
+import { airlinePhoto } from './airline-photos.js?v=0.1.1732';
+import { airlineLogo } from './airline-logos.js?v=0.1.1732';
+import { fitStyle } from './photo-fit.js?v=0.1.1732';
+import { dist, speed } from './units.js?v=0.1.1732';
+import { typeFact } from './sky-facts.js?v=0.1.1732';
+import { localText } from './localize.js?v=0.1.1732';
+import { hasAirlineCallsign, planeLine, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1732';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');

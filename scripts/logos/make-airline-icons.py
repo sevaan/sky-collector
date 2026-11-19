@@ -155,6 +155,18 @@ def mark_colours(im):
     px = [p[:3] for p in im.getdata() if p[3] > 160]
     return px
 def dist(a, b): return sum((x - y) ** 2 for x, y in zip(a, b)) ** .5
+# Where a mark sits on the fin (2026-11-18, Sevaan: "the p isn't inside the tail"): the leading edge slopes in towards the
+# top, so a mark centred high and left poked over it (Porter's p, TAP's letters). Marks sit lower and further back, where
+# the fin is wide, and shrink until all four corners are inside the fin with a margin.
+MCX, MCY, MARGIN = 0.63, 0.57, 0.06
+def edge_x(y): return 0.06 + (0.98 - y) / 0.92 * 0.41          # the leading edge's x at height y (fractions)
+def trail_x(y): return 0.86 + (y - 0.04) / 0.94 * 0.12          # the trailing edge's
+def fits(w, h, cx=MCX, cy=MCY):                                 # w, h as fractions of the fin box
+    top, bot, l, r = cy - h / 2, cy + h / 2, cx - w / 2, cx + w / 2
+    return top > 0.08 and bot < 0.94 and l >= edge_x(top) + MARGIN and l >= edge_x(bot) + MARGIN and r <= trail_x(top) - MARGIN and r <= trail_x(bot) - MARGIN
+def fit_scale(w, h, s):                                          # largest scale <= s that fits (w, h in px at scale 1)
+    while s > 0.05 and not fits(w * s / TW, h * s / TH): s *= 0.96
+    return s
 def tail(code, kind, colour):
     fin = rgb(colour); img = Image.new('RGBA', (TW, TH), (0, 0, 0, 0))
     mask = Image.new('L', (TW, TH), 0); ImageDraw.Draw(mask).polygon([(x * TW, y * TH) for x, y in FIN], fill=255)
@@ -165,7 +177,9 @@ def tail(code, kind, colour):
     pale = light(colour)
     if kind == 'initials':
         d = ImageDraw.Draw(img); t = initials(code); f = ImageFont.truetype(FONT, {1: 92, 2: 72, 3: 54}.get(len(t), 48))
-        bb = d.textbbox((0, 0), t, font=f); cx, cy = TW * 0.58, TH * 0.56
+        bb = d.textbbox((0, 0), t, font=f)
+        while not fits((bb[2] - bb[0]) / TW, (bb[3] - bb[1]) / TH) and f.size > 20: f = ImageFont.truetype(FONT, f.size - 2); bb = d.textbbox((0, 0), t, font=f)
+        cx, cy = TW * MCX, TH * MCY
         d.text((cx - (bb[2] - bb[0]) / 2 - bb[0], cy - (bb[3] - bb[1]) / 2 - bb[1]), t, font=f, fill='#0d2238' if pale else '#ffffff')
     else:
         m = Image.open(os.path.join(OUT, code + '.webp')).convert('RGBA')
@@ -178,8 +192,8 @@ def tail(code, kind, colour):
             if cover < .5 and (close > .35 or dist(avg, fin) < 80):   # it would vanish into the fin: paint it
                 ink = (13, 34, 56) if pale else (255, 255, 255)
                 a = m.getchannel('A'); m = Image.new('RGBA', m.size, ink + (0,)); m.putalpha(a)
-        s = min(TW * 0.5 / m.width, TH * 0.42 / m.height); m = m.resize((max(1, round(m.width * s)), max(1, round(m.height * s))), Image.LANCZOS)
-        cx, cy = TW * 0.6, TH * 0.5; layer = Image.new('RGBA', (TW, TH), (0, 0, 0, 0)); layer.alpha_composite(m, (round(cx - m.width / 2), round(cy - m.height / 2)))
+        s = fit_scale(m.width, m.height, min(TW * 0.5 / m.width, TH * 0.42 / m.height)); m = m.resize((max(1, round(m.width * s)), max(1, round(m.height * s))), Image.LANCZOS)
+        cx, cy = TW * MCX, TH * MCY; layer = Image.new('RGBA', (TW, TH), (0, 0, 0, 0)); layer.alpha_composite(m, (round(cx - m.width / 2), round(cy - m.height / 2)))
         clipped = Image.new('RGBA', (TW, TH), (0, 0, 0, 0)); clipped.paste(layer, (0, 0), Image.composite(layer.getchannel('A'), Image.new('L', (TW, TH), 0), mask))
         img.alpha_composite(clipped)
     img.resize((96, 112), Image.LANCZOS).save(os.path.join(TAILS, code + '.webp'), 'WEBP', lossless=True, method=6)
