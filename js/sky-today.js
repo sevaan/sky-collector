@@ -5,15 +5,16 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { isProp } from './sky-props.js?v=0.1.1745';
-import { planeKey } from './flights.js?v=0.1.1745';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1745';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1745';
-import { airlineIcon } from './airline-icons.js?v=0.1.1745';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1745';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1745';
-import { planeSet } from './sky-sets.js?v=0.1.1745';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1745';
+import { isProp } from './sky-props.js?v=0.1.1746';
+import { planeKey } from './flights.js?v=0.1.1746';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1746';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1746';
+import { airlineIcon } from './airline-icons.js?v=0.1.1746';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1746';
+import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1746';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1746';
+import { planeSet } from './sky-sets.js?v=0.1.1746';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1746';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -33,6 +34,7 @@ let seenCache = null, seenSaved = 0;
 const localFlags = (p) => { const f = [], st = planeSet(p.type, isHelicopter(p)).id; if (st === 'helicopters') f.push('heli'); if (st === 'twinaisle' || st === 'giants') f.push('wide'); if (st === 'props' || st === 'light') f.push('prop'); if ((p.altFt ?? 0) >= 35000) f.push('high'); if (p.altFt != null && p.altFt < 5000) f.push('low'); if (/^[A-Z]{3}\d/.test(p.callsign ?? '')) f.push('airline'); return f; };
 // Called with the planes above the horizon each poll (about every 10 s while Explore or Today is open).
 export function logSeen(list) {
+  try { noteRegulars((list ?? []).map((a) => a.plane)); } catch {} /* Regulars: airline callsigns and when they pass (js/sky-regulars.js) */
   const s = seenCache && seenCache.day === dayKey() ? seenCache : (seenCache = readSeen());
   const h = new Date().getHours(), have = new Set(s.hexes), newHour = !s.open[h], fresh = [];
   s.open[h] = 1;
@@ -309,7 +311,12 @@ export function renderToday(el, ctx) {
     <div class="td-axis"><span>12 AM</span><span>6</span><span>NOON</span><span>6</span><span>11 PM</span></div></div>
     <p class="td-note">Counts only the hours Sky Collector was open. Grey bars are hours it wasn’t.</p>`;
 
-  el.innerHTML = live + alert + missions + tl + board + map + story;
+  /* Your regulars (js/sky-regulars.js): flights that pass at about the same time most days, the next three due today */
+  let regs = ''; try { const now = Date.now(), rl = regulars(now).filter((r) => r.next - now < 12 * 3600e3).slice(0, 3);
+    if (rl.length) regs = `<p class="td-h">YOUR REGULARS <span>LEARNED HERE</span></p><div class="td2-card td2-regs">${rl.map((r) => { const rt = ctx.route(r.callsign), full = rt?.full, a3 = r.callsign.slice(0, 3), fkey = full ? `F:${a3}:${full.from.icao}-${full.to.icao}` : null, mine = fkey && owned.has(fkey), mins = Math.round((r.next - now) / 60000);
+      const name = full ? `${rt.airline || a3} ${r.callsign.replace(/^[A-Z]{3}/, '')} to ${full.to.city}` : `${rt?.airline || a3} ${r.callsign.replace(/^[A-Z]{3}/, '')}`;
+      return `<div class="td2-reg"><b>${esc(name)}</b><span>Usually ${esc(clockText(r.minute))} · seen ${r.days} of the last ${r.of} days · ${mins <= 2 ? 'due now' : mins < 60 ? `in ${mins} min` : `at ${esc(clockText(r.minute))}`}${mine ? ' · <em>in your collection</em>' : ''}</span></div>`; }).join('')}</div>`; } catch {}
+  el.innerHTML = live + alert + missions + regs + tl + board + map + story;
 
   // the board: on the first view after Today opens every row spins in; on later refreshes only rows new to the board.
   // Today redraws every 10 s, so until the first spin has played the watcher moves to each new board.

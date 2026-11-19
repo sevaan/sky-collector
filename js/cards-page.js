@@ -1,43 +1,43 @@
-import { pullToClose } from './pull-close.js?v=0.1.1745';
-import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1745';
-import { computeStats, statsHtml } from './stats.js?v=0.1.1745';
-import { nightKey } from './observation.js?v=0.1.1745';
-import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1745';
-import { sfx } from './sfx.js?v=0.1.1745';
-import { expandFacts } from './catalog-facts.js?v=0.1.1745';
-import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned, addSecretArt } from './patches.js?v=0.1.1745';
-import { registerSkySecrets } from './sky-secrets.js?v=0.1.1745';
-import { SKY_PATCH_ART } from './sky-patches.js?v=0.1.1745';
-import { registerSkyStories } from './sky-stories.js?v=0.1.1745';
-import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1745';
-import { ticket } from './toast.js?v=0.1.1745';
-import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1745';
-import { satGlobe } from './sat-globe.js?v=0.1.1745';
-import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1745';
-import { cardArt } from './art.js?v=0.1.1745';
-import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1745';
-import { applyBack } from './card-backs.js?v=0.1.1745';
-import { localStats } from './sky-local.js?v=0.1.1745';
-import { retier } from './flights.js?v=0.1.1745';
-import { SETS, assignSets, albumGoals, albumList, useSets, goalsOf } from './sets.js?v=0.1.1745';
-import { SKY_ALBUM_SETS, FLIGHT_SETS } from './sky-sets.js?v=0.1.1745';
+import { pullToClose } from './pull-close.js?v=0.1.1746';
+import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1746';
+import { computeStats, statsHtml } from './stats.js?v=0.1.1746';
+import { nightKey } from './observation.js?v=0.1.1746';
+import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1746';
+import { sfx } from './sfx.js?v=0.1.1746';
+import { expandFacts } from './catalog-facts.js?v=0.1.1746';
+import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned, addSecretArt } from './patches.js?v=0.1.1746';
+import { registerSkySecrets } from './sky-secrets.js?v=0.1.1746';
+import { SKY_PATCH_ART } from './sky-patches.js?v=0.1.1746';
+import { registerSkyStories } from './sky-stories.js?v=0.1.1746';
+import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1746';
+import { ticket } from './toast.js?v=0.1.1746';
+import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1746';
+import { satGlobe } from './sat-globe.js?v=0.1.1746';
+import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1746';
+import { cardArt } from './art.js?v=0.1.1746';
+import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1746';
+import { applyBack } from './card-backs.js?v=0.1.1746';
+import { localStats } from './sky-local.js?v=0.1.1746';
+import { retier } from './flights.js?v=0.1.1746';
+import { SETS, assignSets, albumGoals, albumList, useSets, goalsOf } from './sets.js?v=0.1.1746';
+import { SKY_ALBUM_SETS, FLIGHT_SETS } from './sky-sets.js?v=0.1.1746';
 const FLIGHT_SET_IDS = new Set(FLIGHT_SETS.map((s) => s.id));
-import { skyCatalogue } from './sky-catalogue.js?v=0.1.1745';
-import { skyCardPhotoUrl, glyphSvg } from './flight-card.js?v=0.1.1745';
-import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1745';
-import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1745';
-import { STORIES } from './stories.js?v=0.1.1745';
-import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1745';
-import { conArt } from './con-art.js?v=0.1.1745';
-import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1745';
-import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1745';
-import { shareCardEl } from './share-card.js?v=0.1.1745';
-import { forgetSighting } from './cloud-backup.js?v=0.1.1745';
-import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1745';
-import { allSightings, deleteSighting } from './store.js?v=0.1.1745';
-import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1745';
-import { SECRET_PATCHES, NOT_SECRET, hasPatch } from './secrets.js?v=0.1.1745';
-import { localText } from './localize.js?v=0.1.1745';
+import { skyCatalogue } from './sky-catalogue.js?v=0.1.1746';
+import { skyCardPhotoUrl, glyphSvg } from './flight-card.js?v=0.1.1746';
+import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1746';
+import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1746';
+import { STORIES } from './stories.js?v=0.1.1746';
+import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1746';
+import { conArt } from './con-art.js?v=0.1.1746';
+import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1746';
+import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1746';
+import { shareCardEl } from './share-card.js?v=0.1.1746';
+import { forgetSighting } from './cloud-backup.js?v=0.1.1746';
+import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1746';
+import { allSightings, deleteSighting } from './store.js?v=0.1.1746';
+import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1746';
+import { SECRET_PATCHES, NOT_SECRET, hasPatch } from './secrets.js?v=0.1.1746';
+import { localText } from './localize.js?v=0.1.1746';
 // Sky Collector (Milestone 1.5): the same Collection, with plane cards from your catches and no satellite catalogue.
 const SKY = (() => { try { return !!window.parent?.__skyOnly; } catch { return false; } })() || /[?&]sky\b/.test(location.search);
 if (SKY) { /* night follows the game's own switch (html.sky-night, set where Explore decides day and night) */
@@ -631,6 +631,7 @@ const BEL = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke=
 function renderFind() {
   const grid = $('grid'); grid.replaceChildren(); grid.classList.add('find-mode');
   const q = state.query;
+  if (SKY && !q) return renderSkyFind(grid);
   let list;
   // Famous things first (2026-10-13 playtest: "ISS" opened with a debris piece): an exact name, then stations and icons,
   // then names that start with it, debris last, rarer first.
@@ -658,6 +659,23 @@ function renderFind() {
   }
   findTrim();
   if (need.length && EMBED) { const req = ++findReq; window.parent.postMessage({ sc: 'find-passes', ids: need, req }, location.origin); }
+}
+/* Sky's Find (2026-11-19, playtest idea #10): the kinds of plane that have flown over you in the last 30 days and aren't
+   in your collection yet, most often seen first (js/sky-local.js, kept on this phone). Search still finds any card. */
+function renderSkyFind(grid) {
+  let st = null; try { st = localStats(); } catch {}
+  const seen = [...(st?.byType ?? new Map())].filter(([t]) => t && t !== '?').sort((a, b) => b[1] - a[1]);
+  const list = seen.map(([t, n]) => { const c = state.byKey.get(`P:${t}`); return c && !hasSightings(c) ? { c, n } : null; }).filter(Boolean).slice(0, 12);
+  state.list = list.map((x) => x.c); $('results').hidden = true;
+  const head = document.createElement('div'); head.className = 'find-head'; head.textContent = 'Flown over you, not caught yet'; grid.append(head);
+  if (!list.length) { grid.insertAdjacentHTML('beforeend', `<p class="find-none">${st?.total ? 'You’ve caught every kind of plane that has flown over you lately. Search any plane to see its card.' : 'Keep Sky Collector open under the sky: the planes that fly over you, and aren’t in your collection yet, are listed here.'}</p>`); return; }
+  for (const { c, n } of list) {
+    const t = TIER_INFO[c.tier] ?? TIER_INFO.common, row = document.createElement('div'); row.className = 'find-row'; row.style.setProperty('--c', t.color);
+    row.innerHTML = `<span class="fd-art fd-mini"></span><span class="fd-main"><b>${esc(titleFor(c))}</b><span class="fd-pass">Seen ${n === 1 ? 'once' : `${n.toLocaleString()} times`} near you in the last 30 days</span><span class="fd-pills"><span class="fd-pill new">New card</span></span></span>`;
+    row.querySelector('.fd-mini').append(miniCard(c, { sightings: [], status: 'Not yet collected', locked: true }));
+    row.addEventListener('click', () => openViewer(state.list.indexOf(c), row.getBoundingClientRect()));
+    grid.append(row);
+  }
 }
 // Suggestions (no search): keep only those with a pass in the next 10 days, soonest first, at most 8.
 function findTrim() {

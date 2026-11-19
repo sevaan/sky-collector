@@ -7,18 +7,19 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { TIERS, unlisted } from './flights.js?v=0.1.1745';
-import { flightFact } from './flight-facts.js?v=0.1.1745';
-import { typePhoto } from './type-photos.js?v=0.1.1745';
-import { housePhoto } from './house-photos.js?v=0.1.1745';
-import { gapPhoto } from './gap-photos.js?v=0.1.1745'; /* the types that had no photo (2026-11-18) */
-import { airlinePhoto } from './airline-photos.js?v=0.1.1745';
-import { airlineLogo } from './airline-logos.js?v=0.1.1745';
-import { fitStyle } from './photo-fit.js?v=0.1.1745';
-import { dist, speed } from './units.js?v=0.1.1745';
-import { typeFact } from './sky-facts.js?v=0.1.1745';
-import { localText } from './localize.js?v=0.1.1745';
-import { hasAirlineCallsign, planeLine, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1745';
+import { regularFor, clockText } from './sky-regulars.js?v=0.1.1746';
+import { TIERS, unlisted } from './flights.js?v=0.1.1746';
+import { flightFact } from './flight-facts.js?v=0.1.1746';
+import { typePhoto } from './type-photos.js?v=0.1.1746';
+import { housePhoto } from './house-photos.js?v=0.1.1746';
+import { gapPhoto } from './gap-photos.js?v=0.1.1746'; /* the types that had no photo (2026-11-18) */
+import { airlinePhoto } from './airline-photos.js?v=0.1.1746';
+import { airlineLogo } from './airline-logos.js?v=0.1.1746';
+import { fitStyle } from './photo-fit.js?v=0.1.1746';
+import { dist, speed } from './units.js?v=0.1.1746';
+import { typeFact } from './sky-facts.js?v=0.1.1746';
+import { localText } from './localize.js?v=0.1.1746';
+import { hasAirlineCallsign, planeLine, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1746';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
@@ -171,6 +172,7 @@ export function flightCardHtml(f, opts = {}) {
     <div class="fc-id"><span class="fc-id-l">${airlineMark(f, 'fc-logo')}</span><span class="fc-id-r">FLIGHT ${esc(f.callsign || '—')}</span></div>
     <div class="fc-stats">${stat('DISTANCE', dist(f.km ?? null).v, dist(f.km ?? null).u)}${stat('IN THE AIR', air)}${stat('CAUGHT AT', feet(opts.heightFt), 'ft')}${stat('SEEN', opts.sightings ?? 1, '×')}</div>
     ${passport(opts.stampInfo, { newest: opts.newStamp })}
+    ${(() => { try { const r = regularFor(f.callsign); return r ? `<div class="fc-reg"><span>REGULAR</span> Usually over you about ${esc(clockText(r.minute))} · ${r.days} of the last ${r.of} days</div>` : ''; } catch { return ''; } })()}
     <p class="fc-fact">${rich(localText(flightFact({ ...f, fact: String(f.fact ?? '').replace(' as the crow flies: about ', ', about ').replace(/ on a (?=[AEIOU])/, ' on an ') }, opts.stampInfo?.count ?? 1)))}</p>
     ${footer(opts.caughtAt, type ? `TYPE ${type}` : 'FLIGHTS')}`;
   return shell('flight', f.tier, inner, `${f.from.city} to ${f.to.city}, ${f.airline}, ${TIERS[tierOf(f.tier)].label}${opts.stampInfo?.level && opts.stampInfo.level !== 'none' ? `, ${opts.stampInfo.level} level` : ''}`, opts.stampInfo?.level);

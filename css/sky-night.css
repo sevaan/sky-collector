@@ -38,3 +38,4 @@ html.sky-night body.sky-only #visible { background:#0b1626; }
 html.sky-night body.sky-only #sky-today :is(.td2-card, .td-chart) { background:#11223a; border-color:#24384f; color:#e6eef7; }
 html.sky-night body.sky-only #sky-today .td-chart i.gap { background:#24384f; }
 html.sky-night body.sky-only #sky-today .td2-big span { color:#9fb3c6; }
+html.sky-night body.sky-only #sky-today .td2-reg span { color:#9fb3c6; }
