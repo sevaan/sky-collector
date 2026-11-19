@@ -5,16 +5,16 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { isProp } from './sky-props.js?v=0.1.1769';
-import { planeKey } from './flights.js?v=0.1.1769';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1769';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1769';
-import { airlineIcon } from './airline-icons.js?v=0.1.1769';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1769';
-import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1769';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1769';
-import { planeSet } from './sky-sets.js?v=0.1.1769';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1769';
+import { isProp } from './sky-props.js?v=0.1.1770';
+import { planeKey } from './flights.js?v=0.1.1770';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1770';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1770';
+import { airlineIcon } from './airline-icons.js?v=0.1.1770';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1770';
+import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1770';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1770';
+import { planeSet } from './sky-sets.js?v=0.1.1770';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1770';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
