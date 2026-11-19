@@ -5,16 +5,16 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { isProp } from './sky-props.js?v=0.1.1763';
-import { planeKey } from './flights.js?v=0.1.1763';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1763';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1763';
-import { airlineIcon } from './airline-icons.js?v=0.1.1763';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1763';
-import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1763';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1763';
-import { planeSet } from './sky-sets.js?v=0.1.1763';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1763';
+import { isProp } from './sky-props.js?v=0.1.1764';
+import { planeKey } from './flights.js?v=0.1.1764';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1764';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1764';
+import { airlineIcon } from './airline-icons.js?v=0.1.1764';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1764';
+import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1764';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1764';
+import { planeSet } from './sky-sets.js?v=0.1.1764';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1764';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -229,6 +229,17 @@ function flapTick(t) {
 }
 let boardShown = new Set(), boardIo = null, lastRender = 0, boardSpun = false;
 
+// The top card: Space Collector's Tonight hero (.now-hero) for a plane, its .nh-card slot filled with the real mini card
+// by js/main.js (skyFillMinis). One renderer for Today and How to play's last slide (main.js htUpNow).
+export function heroHtml({ hex, color, kick, left = null, until = null, tierLine = '', name, what = '', where = '', az = 0, hint = '' }) {
+  return `<div class="now-hero" style="--c:${color ?? '#9aa4b1'}" data-hex="${esc(hex)}"><span class="nh-k">${esc(kick)}</span>
+      <div class="nh-top"><button type="button" class="nh-card" data-show="${esc(hex)}" data-mini="${esc(hex)}" aria-label="Show me ${esc(name)}"></button>
+        <div class="nh-side"><div class="nh-t">${left != null ? `<b${until ? ` data-until="${until}"` : ''}>${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}</b><small class="nh-u">left in your sky</small>` : '<b>Up now</b>'}</div>
+          <span class="nh-tier">${esc(tierLine)}</span><span class="nh-name">${esc(name)}</span><span class="nh-what">${esc(what)}</span><span class="nh-where">${esc(where)}</span></div></div>
+      <span class="nh-dir"><i class="nh-arrow" data-az="${Number(az).toFixed(1)}" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 2.5 L19 10 H14.5 V21 H9.5 V10 H5 Z" fill="currentColor"/></svg></i><span class="nh-turn" data-hint>${esc(hint)}</span></span>
+      <div class="nh-acts"><button type="button" class="pill-o nh-go" data-show="${esc(hex)}"><span class="ico-svg">${TARGET}</span> Show me</button></div></div>`;
+}
+
 // ---------- the page ----------
 let tick = 0, expanded = false, dealIo = null;
 export function renderToday(el, ctx) {
@@ -257,12 +268,10 @@ export function renderToday(el, ctx) {
     const fin = (ctx.missions?.() ?? []).some((m) => !m.done && finisherFor(m, [best], ctx.route));
     const newWord = best.isNew ? (best.w.tag === 'NEW FLIGHT' ? 'new flight' : isHelicopter(p) ? 'new helicopter' : 'new plane') : '';
     const ft = Math.round(altFt(p) / 100) * 100;
-    live = `<div class="now-hero" style="--c:${tier?.color ?? '#9aa4b1'}" data-hex="${esc(p.hex)}"><span class="nh-k">Up now${up.length > 1 ? ` · best of ${up.length}` : ''}${sky.word ? ` · ${esc(sky.word)}` : ''}</span>
-      <div class="nh-top"><button type="button" class="nh-card" data-show="${esc(p.hex)}" data-mini="${esc(p.hex)}" aria-label="Show me ${esc(best.w.name)}"></button>
-        <div class="nh-side"><div class="nh-t">${best.left != null ? `<b data-until="${t + best.left * 1000}">${Math.floor(best.left / 60)}:${String(best.left % 60).padStart(2, '0')}</b><small class="nh-u">left in your sky</small>` : '<b>Up now</b>'}</div>
-          <span class="nh-tier">${tier ? `${esc(tier.gem ?? '')} ${esc(tier.label)}` : ''}${newWord ? ` · ${newWord}` : ''}${fin ? ' · finishes a mission' : ''}</span><span class="nh-name">${esc(best.w.name)}</span><span class="nh-what">${esc([best.r?.airline && best.full ? best.r.airline : null, type].filter(Boolean).join(' · '))}</span><span class="nh-where">${esc([ft ? `${ft.toLocaleString('en-US')} ft` : null, where(best.a)].filter(Boolean).join(' · '))}</span></div></div>
-      <span class="nh-dir"><i class="nh-arrow" data-az="${best.a.az.toFixed(1)}" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 2.5 L19 10 H14.5 V21 H9.5 V10 H5 Z" fill="currentColor"/></svg></i><span class="nh-turn" data-hint>${esc(ctx.hint?.({ az: best.a.az, el: best.a.el }) || `Look ${where(best.a)}`)}</span></span>
-      <div class="nh-acts"><button type="button" class="pill-o nh-go" data-show="${esc(p.hex)}"><span class="ico-svg">${TARGET}</span> Show me</button></div></div>`;
+    live = heroHtml({ hex: p.hex, color: tier?.color, kick: `Up now${up.length > 1 ? ` · best of ${up.length}` : ''}${sky.word ? ` · ${sky.word}` : ''}`, left: best.left, until: best.left != null ? t + best.left * 1000 : null,
+      tierLine: `${tier ? `${tier.gem ?? ''} ${tier.label}` : ''}${newWord ? ` · ${newWord}` : ''}${fin ? ' · finishes a mission' : ''}`, name: best.w.name,
+      what: [best.r?.airline && best.full ? best.r.airline : null, type].filter(Boolean).join(' · '), where: [ft ? `${ft.toLocaleString('en-US')} ft` : null, where(best.a)].filter(Boolean).join(' · '),
+      az: best.a.az, hint: ctx.hint?.({ az: best.a.az, el: best.a.el }) || `Look ${where(best.a)}` });
   } else live = `<section class="tn-wx td-wx${sky.cls}">${sky.html}<span class="k">Up now${sky.word ? `<em>${esc(sky.word)}</em>` : ''}</span>${best ? allCaught(nexts) : skyState(ctx)}</section>`;
 
   // 2 · rare alert: the rarest Epic or Legendary up (not the live card) or coming over

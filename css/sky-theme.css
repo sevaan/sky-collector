@@ -700,9 +700,8 @@ body.sky-only .ht-pic .ht-lv { gap:10px; }
 body.sky-only .ht-patches { gap:10px; } body.sky-only .ht-patch { width:76px; display:block; filter:drop-shadow(0 6px 10px rgba(13,34,56,.28)); }
 body.sky-only .ht-patch .patch, body.sky-only .ht-patch svg { display:block; width:100%; height:auto; }
 body.sky-only .ht-patch .patch-svg > circle:first-of-type { display:none; }
-body.sky-only .ht-upnow { display:block; width:300px; transform:scale(.6); transform-origin:50% 50%; margin:-74px 0; pointer-events:none; text-align:left; }
-body.sky-only .ht-upnow .td2-ph { height:120px; } body.sky-only .ht-upnow h3 { color:#fff !important; }
-body.sky-only .ht-upnow .td2-btn { margin-top:10px; }
+body.sky-only .ht-upnow { display:block; width:330px; transform:scale(.56); transform-origin:50% 50%; margin:-90px 0; pointer-events:none; text-align:left; } /* Today's own hero (heroHtml), shrunk into the frame */
+body.sky-only .ht-upnow .now-hero { margin:0; }
 /* the How to play button's label white (2026-11-19, Sevaan) */
 body.sky-only #ht-next, body.sky-only #ht-next * { color:#fff !important; }
 /* Today's mission cards (Space Collector's .mc deck, js/main.js skyMissionCards) dressed as Sky's cards (2026-11-19, Sevaan:
@@ -751,11 +750,11 @@ html:not(.sky-night) body.sky-only:not(.night) .d-cta.o, html:not(.sky-night) bo
 
 /* Today on Space's Tonight pieces (2026-11-19, review Part 1): the hero (.now-hero), the Up now tiles (.tn-chip.tile), the
    run (.tn-r) and the section heads (.tn-sec), in Sky's light colours by day. Space's own dark look at night. */
-html:not(.sky-night) body.sky-only #sky-today .now-hero { background:linear-gradient(160deg, #fffdf6, #f6efdd); border:1px solid color-mix(in srgb, var(--c) 55%, #d9b65a); box-shadow:0 8px 20px rgba(13,34,56,.12); --text:#0d2238; --ink:#0d2238; --muted:#4a6178; --gold:#d7362b; color:#0d2238; }
-html:not(.sky-night) body.sky-only #sky-today .now-hero .nh-k { color:#b42a20; }
-html:not(.sky-night) body.sky-only #sky-today .now-hero .nh-tier { color:color-mix(in srgb, var(--c) 60%, #0d2238); }
-html:not(.sky-night) body.sky-only #sky-today .now-hero .pill-o { background:linear-gradient(#e8493c, #c42d22); border:0; color:#fff; box-shadow:0 3px 0 #8c1c14; }
-html:not(.sky-night) body.sky-only #sky-today .now-hero .nh-card { box-shadow:0 10px 18px rgba(13,34,56,.25); }
+html:not(.sky-night) body.sky-only :is(#sky-today, .ht-upnow) .now-hero { background:linear-gradient(160deg, #fffdf6, #f6efdd); border:1px solid color-mix(in srgb, var(--c) 55%, #d9b65a); box-shadow:0 8px 20px rgba(13,34,56,.12); --text:#0d2238; --ink:#0d2238; --muted:#4a6178; --gold:#d7362b; color:#0d2238; }
+html:not(.sky-night) body.sky-only :is(#sky-today, .ht-upnow) .now-hero .nh-k { color:#b42a20; }
+html:not(.sky-night) body.sky-only :is(#sky-today, .ht-upnow) .now-hero .nh-tier { color:color-mix(in srgb, var(--c) 60%, #0d2238); }
+html:not(.sky-night) body.sky-only :is(#sky-today, .ht-upnow) .now-hero .pill-o { background:linear-gradient(#e8493c, #c42d22); border:0; color:#fff; box-shadow:0 3px 0 #8c1c14; }
+html:not(.sky-night) body.sky-only :is(#sky-today, .ht-upnow) .now-hero .nh-card { box-shadow:0 10px 18px rgba(13,34,56,.25); }
 html:not(.sky-night) body.sky-only #sky-today .tn-chip.tile { background:#fffdf6; border-color:#d6e0ea; box-shadow:0 4px 12px rgba(13,34,56,.08); --text:#0d2238; --muted:#4a6178; color:#0d2238; }
 html:not(.sky-night) body.sky-only #sky-today .tn-chip.tile.seen { border-color:#c9d6e3; opacity:.85; }
 html:not(.sky-night) body.sky-only #sky-today .tn-chip.tile .gm { background:none; color:color-mix(in srgb, var(--c) 60%, #0d2238); }
