@@ -4,8 +4,8 @@
 // facts only state what the catalogue says today (orbit, launch date and site) or simple date
 // comparisons. No extrapolating today’s orbit back over decades (lifetime laps or distance).
 
-import { orbitStats, titleCase, siteName, ownerName } from './facts.js?v=0.1.1757';
-import { localText } from './localize.js?v=0.1.1757';
+import { orbitStats, titleCase, siteName, ownerName } from './facts.js?v=0.1.1758';
+import { localText } from './localize.js?v=0.1.1758';
 
 const FAMILY = [
   [/^IRIDIUM 33 DEB/, 'A piece of the **first accidental collision between two intact satellites**: Iridium 33 hit the dead Kosmos 2251 in 2009.'],

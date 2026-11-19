@@ -7,19 +7,19 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { regularFor, clockText } from './sky-regulars.js?v=0.1.1757';
-import { TIERS, unlisted } from './flights.js?v=0.1.1757';
-import { flightFact } from './flight-facts.js?v=0.1.1757';
-import { typePhoto } from './type-photos.js?v=0.1.1757';
-import { housePhoto } from './house-photos.js?v=0.1.1757';
-import { gapPhoto } from './gap-photos.js?v=0.1.1757'; /* the types that had no photo (2026-11-18) */
-import { airlinePhoto } from './airline-photos.js?v=0.1.1757';
-import { airlineLogo } from './airline-logos.js?v=0.1.1757';
-import { fitStyle } from './photo-fit.js?v=0.1.1757';
-import { dist, speed } from './units.js?v=0.1.1757';
-import { typeFact } from './sky-facts.js?v=0.1.1757';
-import { localText } from './localize.js?v=0.1.1757';
-import { hasAirlineCallsign, planeLine, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1757';
+import { regularFor, clockText } from './sky-regulars.js?v=0.1.1758';
+import { TIERS, unlisted } from './flights.js?v=0.1.1758';
+import { flightFact } from './flight-facts.js?v=0.1.1758';
+import { typePhoto } from './type-photos.js?v=0.1.1758';
+import { housePhoto } from './house-photos.js?v=0.1.1758';
+import { gapPhoto } from './gap-photos.js?v=0.1.1758'; /* the types that had no photo (2026-11-18) */
+import { airlinePhoto } from './airline-photos.js?v=0.1.1758';
+import { airlineLogo } from './airline-logos.js?v=0.1.1758';
+import { fitStyle } from './photo-fit.js?v=0.1.1758';
+import { dist, speed } from './units.js?v=0.1.1758';
+import { typeFact } from './sky-facts.js?v=0.1.1758';
+import { localText } from './localize.js?v=0.1.1758';
+import { hasAirlineCallsign, planeLine, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1758';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
@@ -61,8 +61,8 @@ export function photoFor(type) {
 const airlineIcao = (f) => f?.airlineIcao || (/^F:([A-Z]{3}):/.exec(f?.key || '') || [])[1] || (f?.callsign || '').slice(0, 3);
 // The airline's logo beside its name (2026-11-15, Sevaan: "the cards need the airline logos too"). Logos only identify the
 // airline: they sit next to its name and nowhere else, come from Wikimedia Commons in the public domain (js/airline-logos.js,
-// scripts/logos/), and Settings → Airline logos hides them all (localStorage 'skyLogos' = 'off').
-const logosOn = () => { try { return localStorage.getItem('skyLogos') !== 'off'; } catch { return true; } };
+// scripts/logos/).
+const logosOn = () => true; /* always on: the Settings switch was removed (2026-11-19) */
 // The airline as its logo when we have one (the logo is the name: a wordmark next to the same name read twice), else its name.
 function airlineMark(f, cls) {
   const lg = logosOn() ? airlineLogo(airlineIcao(f)) : null;

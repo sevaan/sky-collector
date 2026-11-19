@@ -5,16 +5,16 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { isProp } from './sky-props.js?v=0.1.1757';
-import { planeKey } from './flights.js?v=0.1.1757';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1757';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1757';
-import { airlineIcon } from './airline-icons.js?v=0.1.1757';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1757';
-import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1757';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1757';
-import { planeSet } from './sky-sets.js?v=0.1.1757';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1757';
+import { isProp } from './sky-props.js?v=0.1.1758';
+import { planeKey } from './flights.js?v=0.1.1758';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1758';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1758';
+import { airlineIcon } from './airline-icons.js?v=0.1.1758';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1758';
+import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1758';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1758';
+import { planeSet } from './sky-sets.js?v=0.1.1758';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1758';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -137,7 +137,7 @@ const mins = (s) => Math.max(1, Math.round(s / 60));
 const kmOf = (full) => { try { return full?.from?.lat != null && full?.to?.lat != null ? hav(full.from.lat, full.from.lon, full.to.lat, full.to.lon) : null; } catch { return null; } };
 function hav(a1, o1, a2, o2) { const R = Math.PI / 180, s = Math.sin((a2 - a1) * R / 2) ** 2 + Math.cos(a1 * R) * Math.cos(a2 * R) * Math.sin((o2 - o1) * R / 2) ** 2; return 2 * 6371 * Math.asin(Math.min(1, Math.sqrt(s))); }
 function brg(a1, o1, a2, o2) { const R = Math.PI / 180, y = Math.sin((o2 - o1) * R) * Math.cos(a2 * R), x = Math.cos(a1 * R) * Math.sin(a2 * R) - Math.sin(a1 * R) * Math.cos(a2 * R) * Math.cos((o2 - o1) * R); return (Math.atan2(y, x) / R + 360) % 360; }
-const tailOf = (p) => { const a3 = (p?.callsign || '').slice(0, 3); if (!/^[A-Z]{3}$/.test(a3)) return null; try { if (localStorage.getItem('skyLogos') === 'off') return null; } catch {} const ic = airlineIcon(a3) || (FAMILY[a3] && airlineIcon(FAMILY[a3])); return ic?.tail ?? null; };
+const tailOf = (p) => { const a3 = (p?.callsign || '').slice(0, 3); if (!/^[A-Z]{3}$/.test(a3)) return null; try { } catch {} const ic = airlineIcon(a3) || (FAMILY[a3] && airlineIcon(FAMILY[a3])); return ic?.tail ?? null; };
 const tailImg = (url, cls = 'td2-tail') => (url ? `<img class="${cls}" src="${esc(url)}" alt="" decoding="async">` : '');
 /* A picture for any plane: its photo, else its type's maker photo, else a photo of the nearest kind (no drawn glyphs) */
 const FALLBACK_TYPE = { heli: 'EC35', prop: 'AT76', wide: 'B789', jet: 'A320' };
