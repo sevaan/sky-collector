@@ -7,7 +7,7 @@ import { cloudsHtml, rainHtml, warmClouds } from './weather-art.js?v=0.1.1752';
 import * as Ufo from './ufo.js?v=0.1.1752';
 import * as Fossil from './fossil.js?v=0.1.1752';
 import { patchHtml, patchSvg, addSecretArt } from './patches.js?v=0.1.1752';
-import { registerSkySecrets, secretsForCatch, sixContinents } from './sky-secrets.js?v=0.1.1752';
+import { registerSkySecrets, secretsForCatch, sixContinents, lighterThanAir, isGlider } from './sky-secrets.js?v=0.1.1752';
 import { SKY_PATCH_ART } from './sky-patches.js?v=0.1.1752';
 import { registerSkyStories } from './sky-stories.js?v=0.1.1752';
 import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1752';
@@ -1720,6 +1720,9 @@ async function capturePlane(el) {
     for (const x of [...rest, lead]) { const key = await withTimeout(addSighting(x), 8000); const sv = { ...x, key }; saved.push(sv); state.sightings.unshift(sv); if (!state.cardModels.has(x.cardKey)) state.cardModels.set(x.cardKey, x.cardSnapshot); }
   } catch { state.captureBusy = false; cancelRush(); closePanel('reveal'); buzz('warning'); ticket({ kind: 'error', sticky: true, id: 'save-fail', eyebrow: 'COULDN’T SAVE', line: 'That card didn’t save', sub: 'Close private browsing or free up space, then try again.' }); return; }
   state.captureBusy = false; session.catches++; collectionStale(); backupSoon(); prMemo = null;
+  /* usage (2026-11-19, Sky's stats page): what kind of thing was caught and whether it was new. No callsign, registration
+     or hex: the kind, the lead card's tier, and new-flight / new-plane flags only. */
+  try { const pl = el._hit?.plane ?? {}; note('catch', { k: planeKind(pl), t: state.cardModels.get(lead.cardKey)?.tier ?? '', n: prep.out.flightStamps?.isNew || prep.out.planeStamps?.isNew ? 1 : 0, nf: prep.out.flightStamps?.isNew ? 1 : 0, np: prep.out.planeStamps?.isNew ? 1 : 0 }); } catch {}
   skyCompanions = saved.filter((x) => x.cardKey !== lead.cardKey); skyNewLivery = !!prep.out.planeStamps?.newLivery;
   /* plane secrets (js/sky-secrets.js): found by catching; earned once the reveal has had its moment, one after another */
   try {
@@ -1730,6 +1733,15 @@ async function capturePlane(el) {
   } catch {}
   try { showCaptureCard({ ...state.cardModels.get(lead.cardKey), hex: prep.c.hex }); } finally { skyCompanions = []; }
   planeShown = null;
+}
+// What a caught aircraft was, for the stats page: airliner, private (a registration as its callsign), anon (no callsign
+// shown, js/planes.js isAnonymous), heli, balloon, airship or glider (js/sky-secrets.js's own tests).
+function planeKind(p) {
+  const lta = lighterThanAir(p); if (lta) return lta;
+  if (isGlider(p)) return 'glider';
+  if (p.heli) return 'heli';
+  if (p.anon) return 'anon';
+  return /^[A-Z]{3}\d/.test(String(p.callsign ?? '')) ? 'airliner' : 'private';
 }
 function showCaptureCard(obj) {
   const model = cardModel(obj), key = cardKeyFor(obj), stampKey = stampKeyFor(obj, now().getTime());
