@@ -4,7 +4,8 @@
 // or removes sightings; nothing on the other phone is overwritten and every card fact stays true.
 // This module is the rules and the link format (no DOM); the screens are js/send-cards.js (sending, in the Collection)
 // and js/gift-pack.js (receiving, the booster pack). Tests: tests/gift.test.mjs.
-import { nightKey } from './observation.js?v=0.1.1790';
+import { nightKey } from './observation.js?v=0.1.1791';
+import { scrubSightings } from './plane-privacy.js?v=0.1.1791';
 
 export const GIFT_HOST = 'https://skycollector.app/c/';
 
@@ -35,7 +36,7 @@ const un1 = (x) => (x == null ? undefined : x / 10);
 // Rows are arrays, the card keys and objects listed once, times as gaps from the one before: about a third of the
 // size of plain JSON before compression.
 export function packGift(sightings, { from = '', bid = null, deals = {}, themes = {}, kind = '' } = {}) {
-  const rows = sightings.filter((s) => s && !s.sim).slice().sort((a, b) => a.time - b.time);
+  const rows = scrubSightings(sightings.filter((s) => s && !s.sim)).list.sort((a, b) => a.time - b.time); /* never a private, business, military or government aircraft's callsign, registration, real id or operator (QA 2026-11-19: catches saved before the privacy rules) */
   const keys = [], kIx = new Map(), objs = [], oIx = new Map(), strs = [], sIx = new Map();
   const K = (k) => { k = String(k); if (!kIx.has(k)) { kIx.set(k, keys.length); keys.push(k); } return kIx.get(k); };
   const S = (v) => { if (v == null || v === '') return -1; v = String(v); if (!sIx.has(v)) { sIx.set(v, strs.length); strs.push(v); } return sIx.get(v); };
@@ -81,7 +82,8 @@ export function unpackGift(g) {
       let j; try { j = JSON.stringify(v); } catch { continue; } if (j.length > 8000) continue;
       const snap = JSON.parse(j); if (snap.key !== k || !['flight', 'plane'].includes(snap.sky)) continue;
       for (const x of list) if (x.cardKey === k) x.cardSnapshot = snap; } }
-  return { from, bid: typeof g.b === 'string' ? g.b.slice(0, 80) : null, at: num(g.at) ?? null, sightings: list, deals: g.d && typeof g.d === 'object' ? g.d : {}, themes: g.w && typeof g.w === 'object' ? g.w : {}, kind: typeof g.n === 'string' ? g.n.slice(0, 12) : '' };
+  const safe = scrubSightings(list).list; /* a pack from an older app can't bring a private aircraft's details in (QA 2026-11-19) */
+  return { from, bid: typeof g.b === 'string' ? g.b.slice(0, 80) : null, at: num(g.at) ?? null, sightings: safe, deals: g.d && typeof g.d === 'object' ? g.d : {}, themes: g.w && typeof g.w === 'object' ? g.w : {}, kind: typeof g.n === 'string' ? g.n.slice(0, 12) : '' };
 }
 // base64url of the deflated JSON. CompressionStream is in every browser the app runs in (iOS 16.4+, Android WebView 80+).
 const b64u = (bytes) => { let s = ''; for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000)); return btoa(s).replace(/\+/g, '-').replace(/\//g, '~').replace(/=+$/, ''); }; /* '~', not base64url's '_': chats and markdown read _x_ as italics and drop the underscores (2026-11-07, a test link arrived cut short) */

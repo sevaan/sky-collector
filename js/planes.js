@@ -3,18 +3,18 @@
 // on the website, because adsb.lol doesn’t allow browser requests directly. The airline comes from the callsign's prefix.
 // No DOM here. Positions are extrapolated between fetches using ground speed, track and climb rate.
 
-import { tagOf } from './sky-secrets.js?v=0.1.1790';
-import { GOV_OPS, isGovOrMil, opOf } from './plane-privacy.js?v=0.1.1790';
-export { GOV_OPS, isGovOrMil };
-import { SERVER } from './server.js?v=0.1.1790';
-import { plugin } from './native.js?v=0.1.1790';
-import { lookupRoute } from './routes.js?v=0.1.1790';
-import { typeName } from './sky-type-names.js?v=0.1.1790';
-import { noteFeed } from './sky-local.js?v=0.1.1790';
-import { planeSet } from './sky-sets.js?v=0.1.1790';
-import { isProp } from './sky-props.js?v=0.1.1790';
-import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1790';
-import { DEFAULTS, clampDial, freshFeed, pickSource, nextGap, afterAnswer, feedDown, maxAgeS, easeLeft } from './plane-feed.js?v=0.1.1790';
+import { tagOf } from './sky-secrets.js?v=0.1.1791';
+import { GOV_OPS, BIZ_OPS, AIRLINE_CS, isGovOrMil, opOf, anonId } from './plane-privacy.js?v=0.1.1791';
+export { GOV_OPS, isGovOrMil, anonId };
+import { SERVER } from './server.js?v=0.1.1791';
+import { plugin } from './native.js?v=0.1.1791';
+import { lookupRoute } from './routes.js?v=0.1.1791';
+import { typeName } from './sky-type-names.js?v=0.1.1791';
+import { noteFeed } from './sky-local.js?v=0.1.1791';
+import { planeSet } from './sky-sets.js?v=0.1.1791';
+import { isProp } from './sky-props.js?v=0.1.1791';
+import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1791';
+import { DEFAULTS, clampDial, freshFeed, pickSource, nextGap, afterAnswer, feedDown, maxAgeS, easeLeft } from './plane-feed.js?v=0.1.1791';
 // Empty = feature off. localStorage 'planeRelay' overrides it (testing). Our server's /planes (adsb.lol only) once it's
 // deployed; until then the Val Town relay (relay/handler.ts).
 // Sky Collector (2026-11-15): Space Collector's Val Town relay is turned away by adsb.lol now, so the website needs Sky
@@ -96,26 +96,17 @@ export function planePath(p, obs, nowMs = Date.now(), from = -60, to = 120, step
 // tracked (dbFlags 8 LADD, 4 PIA) and military aircraft (dbFlags 1) keep only their type: no callsign, no registration,
 // and their transponder code is replaced by a salted hash that never leaves the phone (different on every phone), so a
 // card can count different aircraft without anyone being able to look one up or follow it.
-const AIRLINE_CS = /^[A-Z]{3}\d/;
 /* Not airlines though their callsigns look like one (aviation-enthusiast playtest 2026-11-19): military, police, coast
    guard and government operators (the airline table's own names: air force, navy, army, police, government, ministry…,
    plus Air Mobility Command RCH, Canadian Forces CFC, the RAF's RRR, the USAF's SAM, the US Army's PAT, France's CTM, the
    UK Home Office UKP) are anonymous and have no type either (no military or police content; js/planes.js parse); and
    fractional / charter business-jet operators (NetJets, Flexjet, XO, flyExclusive, AirSprint, VistaJet, Executive Jet
    Management) are anonymous like any private plane: type only, no registration or callsign. */
-const BIZ_OPS = new Set(['EJA', 'NJE', 'EJM', 'LXJ', 'XOJ', 'JRE', 'ASP', 'VJT']);
 /* military types (whatever the operator says) are shown by their size class only; not the P-3, which NOAA's civil
    hurricane hunters fly */
 /* any gov or military aircraft is anonymous, whatever its callsign looks like (QA 2026-11-19: 'AFR123' on a C130 and 'XYZ123'
    on a KC10 kept their callsign and real hex): isGovOrMil covers the flags, the operators and the military types */
 export const isAnonymous = (a) => isGovOrMil(a) || (Number(a?.dbFlags) & 13) !== 0 || !AIRLINE_CS.test(String(a?.flight ?? a?.callsign ?? '').trim().toUpperCase()) || GOV_OPS.has(opOf(a)) || BIZ_OPS.has(opOf(a));
-let anonSalt = null;
-export function anonId(hex) {
-  if (anonSalt == null) { try { anonSalt = localStorage.getItem('anonSalt'); if (!anonSalt) { anonSalt = Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem('anonSalt', anonSalt); } } catch { anonSalt = 'x'; } }
-  let h1 = 0x811c9dc5, h2 = 0x01000193; const s = anonSalt + '|' + String(hex ?? '').toLowerCase();
-  for (let i = 0; i < s.length; i++) { const c = s.charCodeAt(i); h1 = Math.imul(h1 ^ c, 16777619) >>> 0; h2 = Math.imul(h2 ^ c, 2246822519) >>> 0; }
-  return `~${h1.toString(36)}${h2.toString(36)}`; /* "~" marks it: never a real ICAO hex */
-}
 /* What kind of thing it was, per CATCH (2026-11-19, card spike, design/card-spike/team-c-information.html §2): one B763 card
    can be caught as a UPS freighter one day and a charter the next, so the class belongs to the catch, not the type. Decided
    here while the raw callsign is in hand; only the class word is kept (plus the airline's name for an airline callsign,
@@ -334,7 +325,7 @@ const AIRLINES = { ACA: 'Air Canada', ROU: 'Air Canada Rouge', JZA: 'Jazz (Air C
 // Every ICAO airline code -> name (js/airlines.js, built by scripts/build-airlines.mjs), loaded once, lazily.
 let airlineTable = null, airlineLoad = null;
 export function loadAirlines() {
-  return (airlineLoad ??= import('./airlines.js?v=0.1.1790').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
+  return (airlineLoad ??= import('./airlines.js?v=0.1.1791').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
 }
 export function airlineName(callsign) { return /^[A-Z]{3}\d/.test(callsign ?? '') ? airlineFor(callsign, null) : ''; }
 function airlineFor(callsign, a) {
