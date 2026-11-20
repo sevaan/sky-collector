@@ -3757,3 +3757,13 @@ body.night .tell-text { color: #e8a59a; } body.night .tell-patch { filter: none;
 /* App icon picker (2026-11-19, Plus; Space Collector's): the card-back picker's tiles, square with the home screen's rounded corners. */
 .icon-grid .back-art { aspect-ratio: 1; border-radius: 22.37%; }
 .set-icon-thumb { width: 34px; height: 34px; border-radius: 22.37%; background: center / cover no-repeat; flex: none; margin-right: 6px; box-shadow: 0 0 0 1px #45576a; }
+
+/* The target card's top line never cuts its words (2026-11-19, Space Collector a9bb3aa1; js/main.js fitDRow): the
+   distance steps aside first, then the label wraps to a second line. */
+#discover .d-ticket .d-row.tight #d-dist { display: none; }
+#discover .d-ticket .d-row.wrap #d-tier { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; text-wrap: balance; }
+
+/* App icons in the crew kit (2026-11-19, Space Collector bf99a810): three of the icons, slightly overlapped. */
+.kt-icons { position: relative; width: 132px; height: 58px; }
+.kt-icons img { position: absolute; top: 2px; left: calc(var(--i) * 38px); width: 54px; height: 54px; border-radius: 22.37%; box-shadow: 0 0 0 1px #45576a, 0 4px 10px #000a; }
+body.night .kt-icons img { filter: grayscale(1) sepia(1) hue-rotate(-50deg) saturate(3) brightness(.7); }

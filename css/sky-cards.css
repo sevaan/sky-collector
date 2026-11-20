@@ -308,11 +308,13 @@ body.sky-only #sky-plus-line { display:none !important; } /* Observer stats is b
 @media (max-height:720px) { #discover.sky-plane .d-mini > .sct-face { transform:scale(calc(56 / 112)); } }
 body.night #discover.sky-plane .d-mini { filter:drop-shadow(0 6px 12px #000c); } /* not brightened: it's a daylight card, not a night picture */
 
-/* Airline logos beside the airline's name (2026-11-15): sized to the name's cap height, never bigger than the name. */
+/* Airline logos beside the airline's name (2026-11-15). Bigger (2026-11-19, Sevaan: "logos need to be bigger in general on
+   cards. It's like the coolest thing to see and it's so micro"): 2.6x the line, pulled into the rules above and below so
+   the card's layout doesn't grow. */
 .fc-id-l { display:inline-flex; align-items:center; gap:.45em; min-width:0; }
-.fc-logo { height:1.5em; width:auto; max-width:6.5em; object-fit:contain; flex:none; }
+.fc-logo { height:2.6em; width:auto; max-width:11em; object-fit:contain; flex:none; margin:-.55em 0 -.5em; }
 .sct-sub { display:flex; align-items:center; gap:4px; min-width:0; } .sct-sub > span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.sct-logo { height:13px; width:auto; max-width:72px; object-fit:contain; flex:none; }
+.sct-logo { height:20px; width:auto; max-width:100px; object-fit:contain; flex:none; margin:-3px 0; } /* was 13 px (2026-11-19, Sevaan: bigger logos) */
 /* The card back sits over the card it belongs to when the viewer's card turns (js/card.js attachFlip) */
 
 

@@ -253,25 +253,25 @@ html.sky-cards:not(.sky-night) .lb-to b, html.sky-cards:not(.sky-night) .lbd-to 
 html.sky-cards:not(.sky-night) .lb-prog .lb-sub b { color:#b42a20; }
 html.sky-cards:not(.sky-night) .lbd-ring circle[stroke="#24344a"] { stroke:#dce8f2; }
 html.sky-cards:not(.sky-night) .lbd-ring g[stroke] { stroke:#0d223855; }
-html.sky-cards:not(.sky-night) .lbd-ring b { color:#0d2238; } html.sky-cards .lbd-ring b small { color:#4a6178; }
-html.sky-cards:not(.sky-night) .lb-head, html.sky-cards:not(.sky-night) .logbook .lb-head { color:#b42a20; } html.sky-cards .lb-head span { color:#4a6178; }
+html.sky-cards:not(.sky-night) .lbd-ring b { color:#0d2238; } html.sky-cards:not(.sky-night) .lbd-ring b small { color:#4a6178; }
+html.sky-cards:not(.sky-night) .lb-head, html.sky-cards:not(.sky-night) .logbook .lb-head { color:#b42a20; } html.sky-cards:not(.sky-night) .lb-head span { color:#4a6178; }
 html.sky-cards:not(.sky-night) .lb-mission { border-bottom-color:#e7dcbd; color:#0d2238; }
 html.sky-cards:not(.sky-night) .lb-mission i { border-color:#8a7a4a; }
 html.sky-cards:not(.sky-night) .lb-mission.done { color:#4a6178; text-decoration-color:var(--gold); }
 html.sky-cards:not(.sky-night) .lb-mission.done i { background:var(--gold); border-color:var(--gold); }
 html.sky-cards:not(.sky-night) .lb-mission small { color:#4a6178; }
-html.sky-cards:not(.sky-night) .lb-badge span { border-color:#c9b98a; color:#4a6178; } html.sky-cards .lb-badge small { color:#4a6178; }
+html.sky-cards:not(.sky-night) .lb-badge span { border-color:#c9b98a; color:#4a6178; } html.sky-cards:not(.sky-night) .lb-badge small { color:#4a6178; }
 html.sky-cards:not(.sky-night) .lb-badge.done span { color:#0d2238; }
 html.sky-cards:not(.sky-night) .lb-remind { color:#b42a20; border-color:#b42a20; }
 html.sky-cards:not(.sky-night) .lb-since { background:var(--gold)1f; color:#b42a20; }
 html.sky-cards:not(.sky-night) .lb-glare { mix-blend-mode:soft-light; }
 html.sky-cards:not(.sky-night) .ui-chip { background:#fffdf6 !important; border-color:#c9b98a !important; color:#0d2238; }
-html.sky-cards:not(.sky-night) .ui-chip b { color:#b42a20; } html.sky-cards .ui-chip--earned b { color:#b42a20; } html.sky-cards .ui-chip__k { color:#4a6178; }
+html.sky-cards:not(.sky-night) .ui-chip b { color:#b42a20; } html.sky-cards .ui-chip--earned b { color:#b42a20; } html.sky-cards:not(.sky-night) .ui-chip__k { color:#4a6178; }
 html.sky-cards:not(.sky-night) .ui-eyebrow { color:#23405c; }
 
 /* slim rank bar (folds in on scroll) and the live "objects" card */
 html.sky-cards:not(.sky-night) .lb-slim { background:#eef5fb; border-bottom-color:#c9d9e6; }
-html.sky-cards:not(.sky-night) .lbs-name { color:#0d2238; } html.sky-cards .lbs-main small { color:#4a6178; }
+html.sky-cards:not(.sky-night) .lbs-name { color:#0d2238; } html.sky-cards:not(.sky-night) .lbs-main small { color:#4a6178; }
 html.sky-cards:not(.sky-night) .lbs-bar { background:#dce8f2; } html.sky-cards .lbs-m { color:#b42a20; }
 html.sky-cards:not(.sky-night) .sg-pic { background:linear-gradient(180deg,#8cc2ec,#e4f1fa); border-bottom-color:#c9b98a; }
 html.sky-cards:not(.sky-night) .sg-live, html.sky-cards:not(.sky-night) .sg-live i { color:#1d7a46; } html.sky-cards .sg-live i { background:#1d7a46; box-shadow:none; }
@@ -298,12 +298,12 @@ html.sky-cards:not(.sky-night) #reset-filters { color:#b42a20; }
 html.sky-cards:not(.sky-night) .collection-notice { background:#fffdf6; border-color:#c9b98a; color:#23405c; }
 html.sky-cards:not(.sky-night) .grid .tile-slot:empty { background:#dbe9f5; background-clip:content-box; } html.sky-cards .tile-slot:not(:empty) { background:transparent; }
 html.sky-cards:not(.sky-night) .grid-head.up-next-head { border-top-color:#c9d9e6; }
-html.sky-cards:not(.sky-night) .up-next-head b { color:#b42a20; } html.sky-cards .up-next-head span { color:#4a6178; }
+html.sky-cards:not(.sky-night) .up-next-head b { color:#b42a20; } html.sky-cards:not(.sky-night) .up-next-head span { color:#4a6178; }
 html.sky-cards:not(.sky-night) .loading { color:#4a6178; }
 
 /* empty states */
 html.sky-cards:not(.sky-night) .empty:not(.album) { border-color:#9bb8d0; background:#ffffff66; }
-html.sky-cards:not(.sky-night) .empty h2 { color:#0d2238; } html.sky-cards .empty p { color:#4a6178; }
+html.sky-cards:not(.sky-night) .empty h2 { color:#0d2238; } html.sky-cards:not(.sky-night) .empty p { color:#4a6178; }
 html.sky-cards:not(.sky-night) .empty__orbit { color:#b42a20; }
 html.sky-cards:not(.sky-night) .empty a, html.sky-cards:not(.sky-night) .empty button { background:var(--gold); color:#0d2238; }
 html.sky-cards:not(.sky-night) .empty .secondary { background:none; color:#b42a20; }
@@ -313,20 +313,20 @@ html.sky-cards:not(.sky-night) .storage-note { color:#4a6178; }
 /* albums header strip (if reachable) */
 html.sky-cards:not(.sky-night) .album-head { background:#fffdf6; border-color:#c9b98a; border-left-color:var(--set); color:#0d2238; }
 html.sky-cards:not(.sky-night) .album { background:#fffdf6; border-color:#c9b98a; box-shadow:inset 0 0 0 1px #e7dcbd; color:#0d2238; }
-html.sky-cards:not(.sky-night) .album__count, html.sky-cards:not(.sky-night) .album__sub { color:#4a6178; } html.sky-cards .album__count b { color:#0d2238; }
+html.sky-cards:not(.sky-night) .album__count, html.sky-cards:not(.sky-night) .album__sub { color:#4a6178; } html.sky-cards:not(.sky-night) .album__count b { color:#0d2238; }
 html.sky-cards:not(.sky-night) .album__next { color:#b42a20; } html.sky-cards .album-bar { background:#dce8f2; } html.sky-cards .album-bar b { background:#9bb8d0; }
 
 /* Patches wall and patch detail */
 html.sky-cards:not(.sky-night) .pw-chip.on { border-color:#b42a20; background:var(--gold)1f; }
 html.sky-cards:not(.sky-night) .pw-chip:not(.on) b { color:#0d2238; }
 html.sky-cards:not(.sky-night) .pw-item span { color:#23405c; } html.sky-cards .pw-item.locked span { color:#6a8196; }
-html.sky-cards:not(.sky-night) .pw-start > span { color:#b42a20; } html.sky-cards .pw-start .pw-grid .pw-item span { color:#0d2238; }
+html.sky-cards:not(.sky-night) .pw-start > span { color:#b42a20; } html.sky-cards:not(.sky-night) .pw-start .pw-grid .pw-item span { color:#0d2238; }
 html.sky-cards:not(.sky-night) .pw-start .pw-item small { color:#4a6178; }
 html.sky-cards:not(.sky-night) .pw-item.new::after { background:var(--gold); color:#0d2238; }
 html.sky-cards:not(.sky-night) #patch-view { background:var(--day-sky); background-color:#eef5fb; color:#0d2238; }
 html.sky-cards:not(.sky-night) #patch-view::backdrop { background:rgba(13,34,56,.55); }
 html.sky-cards:not(.sky-night) .pv-patch { filter:drop-shadow(0 14px 22px rgba(13,34,56,.3)); }
-html.sky-cards:not(.sky-night) .pv-body h2 { color:#0d2238; } html.sky-cards .pv-body p { color:#23405c; }
+html.sky-cards:not(.sky-night) .pv-body h2 { color:#0d2238; } html.sky-cards:not(.sky-night) .pv-body p { color:#23405c; }
 /* the patch on its card (playtest 2026-11-18: navy words on Space's dark card, 1.1:1): Sky's cream card paper, like the plane cards */
 html.sky-cards:not(.sky-night) .pv-card { background:#fffdf6; border-color:#c9b98a; box-shadow:inset 0 0 0 1px #e8dfc4, 0 24px 50px rgba(13,34,56,.35); }
 html.sky-cards .pv-card > .starfield { display:none; }
@@ -337,7 +337,7 @@ html.sky-cards:not(.sky-night) .pv-card.locked .pv-foot span { color:#4a6178; }
 html.sky-cards:not(.sky-night) .pv-hint { color:#4a6178; }
 html.sky-cards:not(.sky-night) .pv-prog { color:#23405c; } html.sky-cards .pv-prog b { color:#b42a20; } html.sky-cards .pv-prog__bar { background:#dbe5ee; }
 html.sky-cards:not(.sky-night) .pv-card .pv-tell { color:#fffdf6; }
-html.sky-cards:not(.sky-night) .pv-card .ui-chip { color:#23405c; border-color:#c9b98a; background:#f4ecd6; } html.sky-cards .pv-card .ui-chip b { color:#0d2238; }
+html.sky-cards:not(.sky-night) .pv-card .ui-chip { color:#23405c; border-color:#c9b98a; background:#f4ecd6; } html.sky-cards:not(.sky-night) .pv-card .ui-chip b { color:#0d2238; }
 
 /* card viewer (#viewer) */
 html.sky-cards:not(.sky-night) #viewer, html.sky-cards:not(.sky-night) body.sky-tone #viewer { background:transparent; color:#0d2238; }
@@ -357,7 +357,7 @@ html.sky-cards:not(.sky-night) .viewer-status, html.sky-cards:not(.sky-night) .v
 html.sky-cards:not(.sky-night) .v-where { color:#0d2238; } html.sky-cards .v-where::before { color:#b42a20; }
 html.sky-cards:not(.sky-night) .viewer-history { border-top-color:#9bb8d0; }
 html.sky-cards:not(.sky-night) .viewer-history h2 { color:#b42a20; }
-html.sky-cards:not(.sky-night) .viewer-history p { color:#23405c; } html.sky-cards .viewer-history p span:first-child, html.sky-cards .viewer-history p.with-launch .h-main span:first-child { color:#0d2238; }
+html.sky-cards:not(.sky-night) .viewer-history p { color:#23405c; } html.sky-cards:not(.sky-night) .viewer-history p span:first-child, html.sky-cards:not(.sky-night) .viewer-history p.with-launch .h-main span:first-child { color:#0d2238; }
 html.sky-cards:not(.sky-night) .viewer-history p.with-launch .h-launch { color:#b42a20; }
 html.sky-cards:not(.sky-night) #viewer .history-delete { color:#4a6178; }
 html.sky-cards:not(.sky-night) .v-up { background:#fffdf6; border-color:#c9b98a; }
@@ -366,8 +366,8 @@ html.sky-cards:not(.sky-night) #viewer .v-up .v-up__remind { background:var(--go
 html.sky-cards:not(.sky-night) #viewer .v-up .v-up__remind.on { background:#fffdf6; color:#0d2238; box-shadow:inset 0 0 0 1.5px #b42a20; }
 html.sky-cards:not(.sky-night) #viewer .v-up .v-up__show { background:#eaf3fa; color:#0d2238; }
 html.sky-cards:not(.sky-night) .v-next { background:#fffdf6; border-color:#c9b98a; }
-html.sky-cards:not(.sky-night) .fd-pass, html.sky-cards:not(.sky-night) .fd-pass .fd-when { color:#4a6178; } html.sky-cards .fd-pass .fd-when b { color:#0d2238; } html.sky-cards .fd-pass .fd-when .soon, html.sky-cards .fd-pill.new { color:#b42a20; }
-html.sky-cards:not(.sky-night) .fd-pill { background:#0d223812; color:#0d2238; } html.sky-cards .fd-pill.own { color:#4a6178; }
+html.sky-cards:not(.sky-night) .fd-pass, html.sky-cards:not(.sky-night) .fd-pass .fd-when { color:#4a6178; } html.sky-cards:not(.sky-night) .fd-pass .fd-when b { color:#0d2238; } html.sky-cards .fd-pass .fd-when .soon, html.sky-cards .fd-pill.new { color:#b42a20; }
+html.sky-cards:not(.sky-night) .fd-pill { background:#0d223812; color:#0d2238; } html.sky-cards:not(.sky-night) .fd-pill.own { color:#4a6178; }
 html.sky-cards:not(.sky-night) .ui-btn { background:#fffdf6; border-color:#0d2238; color:#0d2238; }
 html.sky-cards:not(.sky-night) .ui-btn--primary { background:var(--gold); border-color:var(--gold); color:#0d2238; box-shadow:0 3px 0 #b42a20; }
 html.sky-cards:not(.sky-night) .ui-btn--accent { border-color:#b42a20; color:#b42a20; }
@@ -393,14 +393,14 @@ html.sky-cards:not(.sky-night) .ticket--xp .ticket__eyebrow, html.sky-cards:not(
 html.sky-cards:not(.sky-night) #stats-view, html.sky-cards:not(.sky-night) #send-view { background:#eef5fb; color:#0d2238; }
 html.sky-cards:not(.sky-night) #stats-view .st-rank { background:#fffdf6; border-color:#c9b98a; box-shadow:inset 0 0 0 1px #e7dcbd; }
 html.sky-cards:not(.sky-night) #stats-view .st-sec { background:#fffdf6; border-color:#c9b98a; }
-html.sky-cards:not(.sky-night) #stats-view .st-head { color:#b42a20; } html.sky-cards #stats-view .st-head .st-since, html.sky-cards #stats-view .st-head .st-big { color:#4a6178; }
+html.sky-cards:not(.sky-night) #stats-view .st-head { color:#b42a20; } html.sky-cards:not(.sky-night) #stats-view .st-head .st-since, html.sky-cards:not(.sky-night) #stats-view .st-head .st-big { color:#4a6178; }
 html.sky-cards:not(.sky-night) #stats-view :is(.st-goal, .st-tile) { background:#f6f1e2; border-color:#e7dcbd; }
 html.sky-cards:not(.sky-night) #stats-view .st-tb { background:#dce8f2; } html.sky-cards #stats-view .st-bar span { background:#bcd2e4; }
 html.sky-cards:not(.sky-night) #stats-view .st-hls > * + *, html.sky-cards:not(.sky-night) #stats-view .st-rare > * + * { border-top-color:#e7dcbd; }
 html.sky-cards:not(.sky-night) #stats-view .st-rank small, html.sky-cards:not(.sky-night) #stats-view .st-rank .lb-xp, html.sky-cards:not(.sky-night) #stats-view .st-rank .lbd-ring b small { color:#4a6178; }
 html.sky-cards:not(.sky-night) #stats-view .st-rank b, html.sky-cards:not(.sky-night) #stats-view .st-rank .lbd-to b, html.sky-cards:not(.sky-night) #stats-view .st-rank .lbd-ring b { color:#0d2238; }
 html.sky-cards:not(.sky-night) #stats-view .st-rank .lb-xp b { color:#b42a20; }
-html.sky-cards:not(.sky-night) .week-lock b { color:#0d2238; } html.sky-cards .week-lock p { color:#4a6178; }
+html.sky-cards:not(.sky-night) .week-lock b { color:#0d2238; } html.sky-cards:not(.sky-night) .week-lock p { color:#4a6178; }
 
 /* bottom switcher (Explore | Collection) */
 html.sky-cards:not(.sky-night) .sc-switch { background-color:#fffdf6 !important; box-shadow:0 0 0 1px #c9b98a, 0 10px 24px rgba(13,34,56,.2) !important; }
@@ -541,7 +541,7 @@ html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.ni
 /* Rank card leftovers from the screen check (2026-11-17): the "Last week" link and the XP line were pale yellow or grey
    on the light panel; on a 320 px phone "5,530 XP to Air Traffic Controller" ran off the card. */
 html.sky-cards:not(.sky-night) .logbook .lb-pic .lb-week { color:#0d2238; }
-html.sky-cards .lb-to { color:#4a6178; flex-wrap:wrap; row-gap:2px; }
+html.sky-cards:not(.sky-night) .lb-to { color:#4a6178; flex-wrap:wrap; row-gap:2px; }
 html.sky-cards .lb-to > :first-child { min-width:0; flex:1 1 auto; overflow-wrap:anywhere; }
 html.sky-cards:not(.sky-night) .lb-to b { color:#0d2238; }
 html.sky-cards:not(.sky-night) .lb-bar { background:#dfe8f0; }
