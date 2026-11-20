@@ -5,7 +5,7 @@
 // and reads the photo there, so the band’s shape, the Great Rift, the star clouds and the Magellanic Clouds land
 // exactly where they are in your sky. js/sky.js draws the result into the 2D sky with a screen blend.
 // No DOM beyond an offscreen canvas.
-import { pmTime } from './perf-meter.js?v=0.1.1802';
+import { pmTime } from './perf-meter.js?v=0.1.1803';
 
 const VS = `attribute vec2 p; void main() { gl_Position = vec4(p, 0.0, 1.0); }`;
 // FS: at the photo's l = ±180° seam the texture x jumps 1 → 0 and the GPU picks a tiny, dark mipmap there (a blocky

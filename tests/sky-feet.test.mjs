@@ -15,7 +15,7 @@ test('only planes above the horizon go on the map, capped, highlighted and new f
 });
 
 test('a busy sky names only a few planes', () => {
-  const list = Array.from({ length: 30 }, (_, i) => A(`p${i}`, 5 + i * 2));
+  const list = Array.from({ length: 30 }, (_, i) => A(`p${i}`, 6 + i * 2));
   const out = feetPlanes(list);
   assert.equal(out.length, 30);
   assert.equal(out.filter((g) => g.label).length, FEET_LABELS);

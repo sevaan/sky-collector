@@ -5,16 +5,17 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { isProp } from './sky-props.js?v=0.1.1802';
-import { planeKey } from './flights.js?v=0.1.1802';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1802';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1802';
-import { airlineIcon } from './airline-icons.js?v=0.1.1802';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1802';
-import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1802';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1802';
-import { planeSet } from './sky-sets.js?v=0.1.1802';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1802';
+import { isProp } from './sky-props.js?v=0.1.1803';
+import { planesUp } from './sky-up.js?v=0.1.1803';
+import { planeKey } from './flights.js?v=0.1.1803';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1803';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1803';
+import { airlineIcon } from './airline-icons.js?v=0.1.1803';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1803';
+import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1803';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1803';
+import { planeSet } from './sky-sets.js?v=0.1.1803';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1803';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -116,7 +117,7 @@ export function planePhoto(p) {
 // All around you in Sky Collector (2026-11-18): everything up now, worth first, and what's coming over next, named.
 export function aroundPlanes(positions, planes, obs, route) {
   const owned = ownedKeys();
-  const up = (positions ?? []).filter((a) => a.el > 0).map((a) => ({ a, w: worth(a, route(a.plane.callsign), owned) })).sort((x, y) => y.w.score - x.w.score);
+  const up = planesUp(positions).map((a) => ({ a, w: worth(a, route(a.plane.callsign), owned) })).sort((x, y) => y.w.score - x.w.score);
   const next = obs ? forecast(planes ?? [], obs, Date.now(), new Set(up.map((u) => u.a.plane.hex))) : [];
   return { up, next: next.map((n) => { const r = route(n.p.callsign), full = r?.full; return { ...n, name: full ? `To ${full.to.city}` : r?.airline || aircraftName(n.p) || 'Aircraft' }; }) };
 }
@@ -245,7 +246,7 @@ export function heroHtml({ hex, color, kick, left = null, until = null, tierLine
 let tick = 0, expanded = false, dealIo = null;
 export function renderToday(el, ctx) {
   const owned = ownedKeys(), t = Date.now(), obs = ctx.obs;
-  const up = (ctx.positions ?? []).filter((a) => a.el > 5).map((a) => ({ a, w: worth(a, ctx.route(a.plane.callsign), owned) })).sort((x, y) => y.w.score - x.w.score);
+  const up = planesUp(ctx.positions).map((a) => ({ a, w: worth(a, ctx.route(a.plane.callsign), owned) })).sort((x, y) => y.w.score - x.w.score);
   const next = obs ? forecast(ctx.planes.planes ?? [], obs, t, new Set(up.map((u) => u.a.plane.hex))) : [];
   const seen = readSeen(), maxH = Math.max(1, ...seen.hours), nowH = new Date().getHours(), sky = heroSky(ctx.wx);
   const T = noteTally(up, ctx.route);

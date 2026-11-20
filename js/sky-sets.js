@@ -5,7 +5,7 @@
 // Not built: "Freighters" as a plane set (a type code doesn't say cargo: a B77L is both the 777 freighter and the
 // 777-200LR), so cargo is a flight set only; and "Next door" has no border data, so it is any international flight
 // under 1,500 km.
-import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1802';
+import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1803';
 
 // Order matters: the first match is the card's set.
 export const PLANE_SETS = [

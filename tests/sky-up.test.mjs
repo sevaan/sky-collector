@@ -1,0 +1,37 @@
+// One rule for what's up (2026-11-20: the radar said "1 overhead" while Today said "Quiet sky"). The radar's count, the
+// map at your feet and Today's Up now / Quiet sky all read js/sky-up.js; and Sky's Android build makes only its own
+// notification channels, dropping Space Collector's "Sky events" left by earlier builds.
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { UP_MIN_EL, isUp, planesUp } from '../js/sky-up.js';
+import { feetPlanes } from '../js/sky-feet.js';
+import { channelList, staleChannels } from '../js/native.js';
+
+const A = (hex, el) => ({ plane: { hex, track: 0 }, az: 90, el, rangeKm: 20 });
+
+test('a plane just over the horizon is not "up": the radar count, the feet map and Today agree', () => {
+  const positions = [A('low', 1), A('edge', UP_MIN_EL), A('high', UP_MIN_EL + 0.5), A('top', 80)];
+  assert.deepEqual(planesUp(positions).map((a) => a.plane.hex), ['high', 'top']);
+  assert.deepEqual(feetPlanes(positions).map((g) => g.id).sort(), ['high', 'top']);
+  assert.equal(isUp(A('low', 1)), false); assert.equal(isUp(null), false); assert.equal(isUp({ az: 0, el: 40 }), false);
+  assert.deepEqual(planesUp(null), []);
+});
+
+test('Today, the radar and the morning note all count with planesUp, not their own thresholds', () => {
+  const main = readFileSync(new URL('../js/main.js', import.meta.url), 'utf8');
+  const today = readFileSync(new URL('../js/sky-today.js', import.meta.url), 'utf8');
+  assert.match(main, /const visible = SKY_ONLY \? planesUp\(state\.planeItems\)\.length/);
+  assert.match(today, /const up = planesUp\(ctx\.positions\)/);
+  assert.doesNotMatch(today, /\.filter\(\(a\) => a\.el > \d/);
+});
+
+test('Sky makes only its own notification channels and drops Space Collector\'s', () => {
+  const sky = channelList(true).map((c) => c[0]);
+  assert.deepEqual(sky, ['asked', 'tonight', 'alerts']);
+  assert.ok(!channelList(true).some((c) => /sky events/i.test(c[1])));
+  assert.equal(channelList(true).find((c) => c[0] === 'alerts')[1], 'Plane alerts');
+  const have = [{ id: 'default' }, { id: 'asked' }, { id: 'tonight' }, { id: 'events' }, { id: 'alerts' }, { id: 'sound_ping' }];
+  assert.deepEqual(staleChannels(have, true), ['events']);
+  assert.deepEqual(staleChannels(have, false), [], 'Space Collector keeps all four');
+});
