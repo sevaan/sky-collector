@@ -31,6 +31,7 @@ import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.
 import { conArt } from './con-art.js?v=0.1.1798';
 import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1798';
 import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1798';
+import { climbSvg, climbGeom, xpLevel } from './rank-climb.js?v=0.1.1798';
 import { shareCardEl } from './share-card.js?v=0.1.1798';
 import { forgetSighting } from './cloud-backup.js?v=0.1.1798';
 import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1798';
@@ -463,12 +464,25 @@ function peelSticker(c) {
   try { localStorage.setItem('colPeeled', JSON.stringify([...peeled].slice(-400))); } catch {}
   for (const t of document.querySelectorAll(`.tile-slot[data-key="${CSS.escape(c.key)}"] .tile-new`)) { t.classList.add('peel'); setTimeout(() => t.remove(), 700); }
 }
+// Sky's climb profile (js/rank-climb.js): put the plane, and its red trail, at a level; with ms, fly it there from where
+// it was, so XP earned since last time (or a rank-up) is seen as the plane climbing.
+function climbPlane(lv, ms = 0) {
+  const svg = document.querySelector('#logbook svg.lbc'); if (!svg) return;
+  const G = climbGeom(+svg.dataset.n, +svg.dataset.w, +svg.dataset.h), pl = svg.querySelector('.lbc-plane'), tr = svg.querySelector('.lbc-trail'), ah = svg.querySelector('.lbc-ahead');
+  const put = (v) => { const q = G.plane(v); pl?.setAttribute('transform', q.transform); tr?.setAttribute('d', G.poly(0, q.t)); ah?.setAttribute('d', G.poly(q.t, 1)); };
+  const from = svg.__lv ?? +svg.dataset.lv; svg.__lv = lv;
+  if (!ms) { put(lv); return; }
+  const t0 = performance.now(), step = (t) => { const k = Math.min(1, (t - t0) / ms), e = 1 - (1 - k) ** 3; put(from + (lv - from) * e); if (k < 1 && svg.__lv === lv) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+const climbFrom = (xp) => Math.min(+(document.querySelector('#logbook svg.lbc')?.dataset.lv ?? 0), xpLevel(xp, RANKS.map((r) => r[0])));
 function primeSince() { // as the Collection is shown: the old XP and bar are in place before it slides up (no flash of the final number)
   let v = null; try { v = JSON.parse(localStorage.getItem('colVisit') ?? 'null'); } catch {}
   if (!lbLast || !v?.xp || lbLast.xp <= v.xp || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const xpEl = document.querySelector('#logbook .lb-xp b'), bar = document.querySelector('#logbook .lb-bar i'), span = lbLast.next ? lbLast.next - lbLast.at : 1;
   if (xpEl) xpEl.textContent = v.xp.toLocaleString();
   if (bar) { bar.style.transition = 'none'; bar.style.width = `${(Math.max(0, Math.min(1, (v.xp - lbLast.at) / span)) * 100).toFixed(1)}%`; }
+  climbPlane(climbFrom(v.xp));
 }
 function replaySince() {
   const prev = since; since = (() => { try { return JSON.parse(localStorage.getItem('colVisit') ?? 'null'); } catch { return null; } })() ?? prev;
@@ -480,6 +494,7 @@ function replaySince() {
   const gain = lbLast.xp - since.xp, xpEl = document.querySelector('#logbook .lb-xp b'), bar = document.querySelector('#logbook .lb-bar i');
   const span = lbLast.next ? lbLast.next - lbLast.at : 1, from = Math.max(0, Math.min(1, (since.xp - lbLast.at) / span));
   if (bar) { bar.style.transition = 'none'; bar.style.width = `${(from * 100).toFixed(1)}%`; void bar.offsetWidth; bar.style.transition = 'width 1.1s cubic-bezier(.3,.7,.3,1)'; bar.style.width = `${(lbLast.into * 100).toFixed(1)}%`; }
+  { const svg = document.querySelector('#logbook svg.lbc'); if (svg) { climbPlane(climbFrom(since.xp)); climbPlane(+svg.dataset.lv, 1400); } } // Sky: the plane climbs from where it was
   if (xpEl) { const t0 = performance.now(), a = since.xp, b = lbLast.xp; const step = (t) => { const k = Math.min(1, (t - t0) / 1100), e = 1 - (1 - k) ** 3; xpEl.textContent = Math.round(a + (b - a) * e).toLocaleString(); if (k < 1) requestAnimationFrame(step); }; requestAnimationFrame(step); }
   const top = document.querySelector('#logbook .lb-pic'); if (top && !top.querySelector('.lb-since')) { const t = document.createElement('span'); t.className = 'lb-since'; t.textContent = `+${gain.toLocaleString()} XP since last time`; top.append(t); setTimeout(() => t.classList.add('out'), 4200); setTimeout(() => t.remove(), 4800); }
   feel('light');
@@ -514,6 +529,7 @@ function renderLogbook() {
     // No tilt, glare or flip any more (2026-10-13, Sevaan): it’s a plain panel you read.
   }
   const el = card.querySelector('.lb-face');
+  card.classList.toggle('lb-climb', SKY); // Sky's paper rank card, ranks as flight levels (css/sky-theme.css #logbook.lb-climb)
   const span = p.rank.next ? p.rank.next - p.rank.at : 1, into = p.rank.next ? (p.xp < p.rank.at ? Math.max(0, Math.min(1, p.xp / p.rank.next)) : Math.max(0, Math.min(1, (p.xp - p.rank.at) / span))) : 1; /* a rank kept from the old curve can sit above your XP: then count from 0 toward the next rank, not a stuck 0% (2026-10-28, Sevaan) */
   const done = p.achievements.filter((a) => a.done).length;
   // Tapping the card opens Observer stats (2026-10-17, Sevaan); its own buttons (Missions ›, Remind me), the mission
@@ -526,7 +542,7 @@ function renderLogbook() {
   const H = 160, pts = rungs.map((_, i) => [37.5 + i * 75, H / 2 + 34 - i * 18]); // centred: 37.5 in from each side (2026-10-14, Sevaan)
   let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
   const stars = Array.from({ length: 30 }, (_, i) => `<circle class="lb-tw" style="--d:${(rnd() * 5).toFixed(2)}s;--t:${(2.5 + rnd() * 3).toFixed(2)}s" cx="${(rnd() * 300).toFixed(0)}" cy="${(rnd() * H).toFixed(0)}" r="${(0.5 + rnd() * 0.8).toFixed(1)}" fill="#fff2b3"/>`).join('');
-  const cur = ri - lo, ladder = `<svg class="lb-ladder" viewBox="0 0 300 ${H}" preserveAspectRatio="${innerWidth < 360 ? 'xMidYMid meet' : 'xMidYMid slice'}" aria-hidden="true">${stars}
+  const cur = ri - lo, ladder = SKY ? climbSvg({ ranks: RANKS, index: ri, into, xp: p.xp, W: Math.max(300, Math.min(440, Math.round(card.clientWidth) || 358)) }) /* Sky: the climb profile (design/rank-card B, 2026-11-20, Sevaan) */ : `<svg class="lb-ladder" viewBox="0 0 300 ${H}" preserveAspectRatio="${innerWidth < 360 ? 'xMidYMid meet' : 'xMidYMid slice'}" aria-hidden="true">${stars}
     <path d="M${pts.map((q) => q.join(' ')).join(' L')}" fill="none" stroke="#344654" stroke-dasharray="3 5"/>
     ${cur > 0 ? `<path d="M${pts.slice(0, cur + 1).map((q) => q.join(' ')).join(' L')}" fill="none" stroke="var(--gold)" stroke-width="2"/>` : ''}<!-- ranks you have passed: solid (2026-10-14) -->
     ${pts[cur + 1] ? `<path d="M${pts[cur].join(' ')} L${pts[cur][0] + (pts[cur + 1][0] - pts[cur][0]) * into} ${pts[cur][1] + (pts[cur + 1][1] - pts[cur][1]) * into}" stroke="var(--gold)" stroke-width="2"/>` : ''}
