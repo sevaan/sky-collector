@@ -112,22 +112,42 @@ export async function notifyAt(at, title, body, { id, link, actions, night, chan
     if (link || night || channel) n.extra = { link, night, ch: channel }; /* ch: which kind of reminder, for the stats page */ // night: which night a "Not tonight" tap is about
     if (actions) { await noteActions(); n.actionTypeId = actions; }
     if (night) { n.threadIdentifier = night; n.group = night; }
-    if (channel && globalThis.Capacitor?.getPlatform?.() === 'android') { await noteChannels(); n.channelId = channel; }
+    if (channel && globalThis.Capacitor?.getPlatform?.() === 'android') { await noteChannels(); n.channelId = channelList().some((c) => c[0] === channel) ? channel : 'tonight'; } /* Sky has no 'events' channel: anything still filed there goes to its own 'tonight' (Today) */
     await ln.schedule({ notifications: [n] });
     return 'on';
   } catch { return 'unsupported'; }
 }
 // Android notification categories (notifications plan 2026-10-29). Made once per launch; making one again changes nothing.
 let channelsReady = null;
+// Sky Collector makes only its own three channels; Space Collector's 'events' ("Sky events": meteor showers,
+// constellations) is Space's alone (2026-11-20: Sky's Android build still listed it).
+export const channelList = (sky = !!globalThis.__skyOnly) => sky ? [
+  ['asked', 'Reminders you set', 'The passes and moments you asked to be told about', 4],
+  ['tonight', 'Today', 'Your streak, and planes worth looking up for', 3], /* Sky Collector's words (QA 2026-11-19) */
+  ['alerts', 'Plane alerts', 'A new card or a rare plane about to fly over you', 3],
+] : [
+  ['asked', 'Reminders you set', 'The passes and moments you asked to be told about', 4],
+  ['tonight', 'Tonight', 'Tonight’s headliner, and when a clear night is worth it', 3],
+  ['events', 'Sky events', 'Meteor showers, Halloween and constellations coming back', 3],
+  ['alerts', 'Pass alerts', 'Rare passes and Starlink trains (Plus)', 3],
+];
+// Channels an earlier build made that this app no longer uses ('default' and 'sound_*' belong to the plugin itself).
+export const staleChannels = (have, sky = !!globalThis.__skyOnly) => {
+  const ours = new Set(channelList(sky).map((c) => c[0]));
+  return (have ?? []).map((c) => c?.id).filter((id) => id && !ours.has(id) && id !== 'default' && !id.startsWith('sound_'));
+};
 function noteChannels() {
   const ln = plugin('LocalNotifications');
-  channelsReady ??= Promise.all([
-    ['asked', 'Reminders you set', 'The passes and moments you asked to be told about', 4],
-    globalThis.__skyOnly ? ['tonight', 'Today', 'Your streak, and planes worth looking up for', 3] /* Sky Collector's words (QA 2026-11-19) */ : ['tonight', 'Tonight', 'Tonight’s headliner, and when a clear night is worth it', 3],
-    ['events', 'Sky events', 'Meteor showers, Halloween and constellations coming back', 3],
-    globalThis.__skyOnly ? ['alerts', 'Plane alerts', 'A new card or a rare plane about to fly over you', 3] : ['alerts', 'Pass alerts', 'Rare passes and Starlink trains (Plus)', 3],
-  ].map(([id, name, description, importance]) => ln.createChannel({ id, name, description, importance, visibility: 1 }).catch(() => {})));
+  channelsReady ??= Promise.all(channelList().map(([id, name, description, importance]) => ln.createChannel({ id, name, description, importance, visibility: 1 }).catch(() => {})));
   return channelsReady;
+}
+// At launch on Android: drop channels an earlier build left (Sky's first builds made Space's "Sky events"), and make
+// ours, so the phone's notification settings list only this app's own kinds.
+export async function tidyChannels() {
+  if (!isNative() || capOf()?.getPlatform?.() !== 'android') return;
+  const ln = plugin('LocalNotifications');
+  try { const { channels } = await ln.listChannels(); for (const id of staleChannels(channels)) await ln.deleteChannel({ id }).catch(() => {}); } catch {}
+  await noteChannels();
 }
 // The buttons under a notification (long-press on iPhone, expand on Android). Registered once per launch.
 let actionsReady = null;

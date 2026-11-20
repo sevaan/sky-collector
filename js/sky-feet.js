@@ -5,11 +5,12 @@
 //
 // list: state.planeItems ([{ plane, az, el, rangeKm }]); fresh(plane): catching it gives a new card or stamp;
 // highlight(plane): Settings → Circle highlights would let the circle lock on; nameOf(plane): its name on the map.
-// Every plane over 2° up is drawn (at most `max`); only `labels` of them get a spoke and a name, as Space keeps to the
+// Every plane up (js/sky-up.js isUp, the same rule as the radar's count and Today) is drawn (at most `max`); only `labels` of them get a spoke and a name, as Space keeps to the
 // Moon, planets and 4 new satellites: highlighted ones first, new ones first among those, then the highest.
+import { isUp } from './sky-up.js?v=0.1.1803';
 export const FEET_MAX = 40, FEET_LABELS = 4;
 export function feetPlanes(list, { fresh = () => false, highlight = () => true, nameOf = () => 'Plane', max = FEET_MAX, labels = FEET_LABELS } = {}) {
-  const up = (list ?? []).filter((a) => a?.plane && a.az != null && a.el > 2).map((a) => {
+  const up = (list ?? []).filter(isUp).map((a) => {
     const isNew = !!fresh(a.plane), hl = !!highlight(a.plane);
     return { a, isNew, hl };
   });

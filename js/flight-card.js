@@ -9,21 +9,21 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { regularFor, clockText } from './sky-regulars.js?v=0.1.1802';
-import { TIERS, unlisted } from './flights.js?v=0.1.1802';
-import { flightFact } from './flight-facts.js?v=0.1.1802';
-import { typePhoto } from './type-photos.js?v=0.1.1802';
-import { housePhoto } from './house-photos.js?v=0.1.1802';
-import { gapPhoto } from './gap-photos.js?v=0.1.1802'; /* the types that had no photo (2026-11-18) */
-import { airlinePhoto } from './airline-photos.js?v=0.1.1802';
-import { airlineLogo } from './airline-logos.js?v=0.1.1802';
-import { fitStyle } from './photo-fit.js?v=0.1.1802';
-import { dist, speed, useMiles } from './units.js?v=0.1.1802';
-import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1802';
-import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1802';
-import { typeFact } from './sky-facts.js?v=0.1.1802';
-import { localText } from './localize.js?v=0.1.1802';
-import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1802';
+import { regularFor, clockText } from './sky-regulars.js?v=0.1.1803';
+import { TIERS, unlisted } from './flights.js?v=0.1.1803';
+import { flightFact } from './flight-facts.js?v=0.1.1803';
+import { typePhoto } from './type-photos.js?v=0.1.1803';
+import { housePhoto } from './house-photos.js?v=0.1.1803';
+import { gapPhoto } from './gap-photos.js?v=0.1.1803'; /* the types that had no photo (2026-11-18) */
+import { airlinePhoto } from './airline-photos.js?v=0.1.1803';
+import { airlineLogo } from './airline-logos.js?v=0.1.1803';
+import { fitStyle } from './photo-fit.js?v=0.1.1803';
+import { dist, speed, useMiles } from './units.js?v=0.1.1803';
+import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1803';
+import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1803';
+import { typeFact } from './sky-facts.js?v=0.1.1803';
+import { localText } from './localize.js?v=0.1.1803';
+import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1803';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // A type name escaped, with its hyphenated model codes kept on one line ('Boeing KC-135R Stratotanker' broke after 'KC-').
@@ -267,7 +267,7 @@ export function planeCardHtml(p, opts = {}) {
   }
   const art = ph ? `${photoImg(ph, 'fc-photo', opts.eager, !!opts.shrunk)}${credit(ph)}` : skyPanel(un ? un.glyph : p.glyph, 'fc-sky fc-sky--big', un ? un.mark : type);
   const band = classBand(k), specs = typeSpecs(type);
-  const mk = specs ? makerLine(specs) : un ? 'Not in the public registers yet' : '';
+  const mk = specs ? makerLine(specs) : un ? 'Exact type not known' : ''  /* true of a plane with no type and of a code Sky can't name (2026-11-20) */;
   const who = k?.airline && k.routed && (k.op || k.reg) ? `<div class="ss-who"><b>${k.cls === 'cargo' ? 'CARGO AIRLINE' : 'AIRLINE'}</b><span>${esc([k.op, k.reg].filter(Boolean).join(' · '))}</span></div>` : '';
   const when = last?.time ? new Date(last.time) : opts.caughtAt;
   const kmh = last?.gsKt > 30 ? Math.round(last.gsKt * 1.852) : last?.gsKt != null ? null : opts.speedKmh ?? null;

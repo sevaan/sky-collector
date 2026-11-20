@@ -24,7 +24,10 @@ export const CARGO = CARGO_AIRLINES;
    registers. Most still broadcast their ADS-B size category (87% of them), so each category is its own card, named for what
    that says; the airline comes from the callsign and is shown on the card's identity line. Weights are the category's own
    limits (15,500 / 75,000 / 300,000 lb). */
-const UNLISTED = 'This aircraft isn’t in the public registers yet, often because it’s brand new.';
+/* 2026-11-20 (Sevaan): a type code Sky has no name for (no entry in its own lists, and no description from the feed) used to
+   be a Rare card called "Aircraft". It now lands on these same Common cards, by its size category, so the words say only
+   what is true of both kinds of catch: Sky doesn't know the exact type. */
+const UNLISTED = 'Sky doesn’t know this aircraft’s exact type: it may be brand new and not in the public registers yet.';
 export const SIZE_CLASSES = {
   A1: { name: 'Light Aircraft', mark: 'LIGHT', glyph: 'prop', fact: `${UNLISTED} Its transponder says it weighs **under 7 tonnes**: a light aircraft, like a Cessna or a Piper.` },
   A2: { name: 'Small Aircraft', mark: 'SMALL', glyph: 'jet', fact: `${UNLISTED} Its transponder says it weighs **7 to 34 tonnes**: the size of a business jet or a regional turboprop.` },
@@ -37,11 +40,15 @@ export const SIZE_CLASSES = {
   B4: { name: 'Ultralight', mark: 'ULTRA', glyph: 'prop', fact: 'An **ultralight**: one or two seats, a small engine, and often an open cockpit.' },
   B6: { name: 'Drone', mark: 'DRONE', glyph: 'prop', fact: 'An aircraft with **nobody on board**, flown from the ground.' },
 };
-const NO_CLASS = { name: 'Unidentified Aircraft', mark: '', glyph: 'jet', fact: 'This aircraft isn’t in the public registers, and its transponder doesn’t say what kind it is.' };
+const NO_CLASS = { name: 'Unidentified Aircraft', mark: '', glyph: 'jet', fact: 'Sky doesn’t know this aircraft’s exact type, and its transponder doesn’t say what kind it is.' };
 // The class of a plane card that has no type (key P:UNKNOWN or P:UNKNOWN-A3), else null.
 export const unlisted = (key) => { const m = /^P:UNKNOWN(?:-(\w+))?$/.exec(String(key ?? '')); return m ? (SIZE_CLASSES[m[1]] ?? NO_CLASS) : null; };
-// A plane card's key: its type; with no type, a helicopter, else its size category, else plain UNKNOWN.
-export const planeKey = (p) => `P:${p.type || (isHelicopter(p) ? 'HELI' : SIZE_CLASSES[p.category] ? `UNKNOWN-${p.category}` : 'UNKNOWN')}`;
+// Sky knows this type: a name for it (its own lists or the feed's description), or it's a helicopter (always its own card).
+export const knownType = (p) => !!p?.type && (!!aircraftName(p) || isHelicopter(p));
+/* A plane card's key: its type when Sky knows it; else a helicopter, else its size category, else plain UNKNOWN. A type code
+   Sky has no name for (2026-11-20, Sevaan: was a Rare "Aircraft") shares the size category's card with planes that have no
+   type at all: one "Large Aircraft" card, not a separate same-named card for every code Sky can't name. */
+export const planeKey = (p) => `P:${knownType(p) ? p.type : isHelicopter(p) ? 'HELI' : SIZE_CLASSES[p.category] ? `UNKNOWN-${p.category}` : 'UNKNOWN'}`;
 /* The drawn plane when there is no photo. Straight wings for light and propeller types only (it read C2 as propeller, so a
    Citation CJ3, C25B, was drawn as one, 2026-11-18). */
 export const glyphFor = (type, heli = false, cat = '') => { const t = String(type ?? '').toUpperCase(), c = String(cat ?? '').toUpperCase(); return t === 'BALL' || (c === 'B2' && t !== 'SHIP') ? 'balloon' : t === 'SHIP' ? 'airship' : t === 'GLID' || c === 'B1' ? 'glider' : heli ? 'heli' : isProp(t) ? 'prop' : 'jet'; }; /* js/sky-props.js since 2026-11-19 (QA: the DC-3, C-130J, A400M, C295 and An-12 were drawn as jets, the Beechjet as a prop) */
@@ -66,6 +73,32 @@ export function retier(card) {
   return card;
 }
 
+/* Catches saved as the old Rare "Aircraft" (a type code Sky has no name for; 2026-11-20, Sevaan) move to the Common size
+   card new catches of them land on (planeKey): each plane catch by its own saved size category, else the one most of that
+   card's catches had (one type code is one size), else P:UNKNOWN. Catches are kept, never dropped; a flight catch's link to
+   its plane card follows. Pure: returns the new list and the sightings that changed (the same objects when nothing did). */
+export function rekeyUnlisted(list) {
+  const codeOf = (k) => (/^P:(.+)$/.exec(String(k ?? '')) || [])[1] || '';
+  const old = (k, name) => { const c = codeOf(k); return !!c && c !== 'HELI' && !/^UNKNOWN/.test(c) && name === 'Aircraft' && !knownType({ type: c }); };
+  const plane = (s) => s && (s.type === 'plane' || /^P:/.test(String(s.cardKey ?? ''))) && old(s.cardKey, s.cardSnapshot?.name ?? s.name);
+  const cats = new Map(); /* old key -> { category: count } */
+  for (const s of list ?? []) if (plane(s) && SIZE_CLASSES[s.cat]) { const m = cats.get(s.cardKey) ?? {}; m[s.cat] = (m[s.cat] ?? 0) + 1; cats.set(s.cardKey, m); }
+  const cardCat = (k) => Object.entries(cats.get(k) ?? {}).sort((a, b) => b[1] - a[1])[0]?.[0] ?? '';
+  const keyFor = (k, cat) => { const c = SIZE_CLASSES[cat] ? cat : cardCat(k); return `P:${c ? `UNKNOWN-${c}` : 'UNKNOWN'}`; };
+  const byCatch = new Map(), changed = [];
+  const out = (list ?? []).map((s) => {
+    if (!plane(s)) return s;
+    const nk = keyFor(s.cardKey, s.cat), snap = retier({ ...(s.cardSnapshot ?? { sky: 'plane' }), key: nk, id: nk, type: '' });
+    byCatch.set(`${s.time}|${s.hex}`, snap);
+    const t = { ...s, cardKey: nk, objectId: nk, name: snap.name, cardSnapshot: snap, plane: { key: nk, name: snap.name } }; changed.push(t); return t;
+  }).map((s) => {
+    if (!s?.plane?.key || s.type === 'plane' || !old(s.plane.key, s.plane.name)) return s;
+    const snap = byCatch.get(`${s.time}|${s.hex}`), nk = snap?.key ?? keyFor(s.plane.key, ''), name = snap?.name ?? unlisted(nk).name;
+    const t = { ...s, plane: { key: nk, name } }; changed.push(t); return t;
+  });
+  return { list: out, changed };
+}
+
 const fmtKm = (km) => (km == null ? '—' : km.toLocaleString('en-US'));
 // Rough time in the air: 800 km/h cruise plus half an hour for climbing and landing.
 const airTime = (km) => { if (km == null) return null; const m = Math.round((km / 800 + 0.5) * 60 / 5) * 5; return { h: Math.floor(m / 60), m: m % 60 }; };
@@ -75,9 +108,9 @@ export function cardsFor(p, route, airline) {
   const heli = isHelicopter(p), key = planeKey(p), un = unlisted(key), code = key.slice(2);
   const typeName = aircraftName(p) || (heli ? 'Helicopter' : un ? un.name : 'Aircraft');
   const plane = {
-    kind: 'plane', key, name: typeName, type: p.type || '',
+    kind: 'plane', key, name: typeName, type: un ? '' : (p.type || ''), /* a code Sky can't name isn't printed on the card (js/flight-card.js) */
     glyph: un ? un.glyph : glyphFor(p.type, heli, p.category),
-    tier: typeTier(p.type, heli), set: planeSet(un ? code : p.type, heli).name, setId: planeSet(un ? code : p.type, heli).id,
+    tier: typeTier(un ? '' : p.type, heli), set: planeSet(un ? code : p.type, heli).name, setId: planeSet(un ? code : p.type, heli).id,
     stamp: airline || '', reg: hasAirlineCallsign(p.callsign) ? (p.reg || '') : '', // no airline callsign: the callsign is the registration, so it isn't kept
   };
   /* this catch's own facts for the card (2026-11-19, card spike): what kind of thing it was (js/planes.js catchClass), the
