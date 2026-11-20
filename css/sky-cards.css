@@ -4,6 +4,9 @@
 
 /* Space Collector's night-sky helpers have nothing to say about planes. */
 #nextpass, #event-banner, #tk, #ud-now, #until-dark, #gh-remind, #plane, #skybar, #catchbar { display:none !important; } /* #discover is back: planes use it (2026-11-15) */
+/* ...but the circle's ticket comes back for the UFO and the secrets (Santa, the aviation anniversaries): it holds their name
+   and their Tap to collect / Tap to wave / Tap to remember button, so without it none of them could be caught (QA 2026-11-19) */
+#tk:is([data-ink="secret"], [data-ink="ufo"]):not([hidden]) { display: flex !important; }
 
 
 /* ---- The card (2026-11-15 fidelity pass, js/flight-card.js) ----

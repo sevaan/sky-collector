@@ -1166,6 +1166,12 @@ export class SkyView {
       } else if (s.kind === 'wow') { // a faint radio pulse
         ctx.strokeStyle = '#ff6b6b'; ctx.lineWidth = 0.9; ctx.globalAlpha = 0.85;
         for (const r of [1.4, 3, 4.6]) { ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha *= 0.6; }
+      } else { // Sky Collector's aviation anniversaries (js/sky-secrets.js SKY_DATED; QA 2026-11-19: they had no drawing, so nothing crossed): a little plane in the secret's glow, two wings for the Wright Flyer and the 1914 flying boat, one for Blériot's
+        ctx.shadowColor = s.color ?? '#fff2b3'; ctx.shadowBlur = 5; ctx.fillStyle = ctx.strokeStyle = '#fff2b3'; ctx.lineWidth = 0.9; ctx.lineCap = 'round';
+        if (s.kind === 'wright' || s.kind === 'airline' || s.kind === 'bleriot') {
+          ctx.beginPath(); ctx.moveTo(-6, -1.5); ctx.lineTo(6, -1.5); if (s.kind !== 'bleriot') { ctx.moveTo(-6, 1.5); ctx.lineTo(6, 1.5); for (const x of [-4, 0, 4]) { ctx.moveTo(x, -1.5); ctx.lineTo(x, 1.5); } }
+          ctx.moveTo(0, -4); ctx.lineTo(0, 4.5); ctx.moveTo(-2, 4.5); ctx.lineTo(2, 4.5); ctx.stroke();
+        } else { ctx.beginPath(); [[0, -6], [0.9, -4.5], [0.9, -1], [6, 2], [6, 3], [0.9, 1.5], [0.9, 4.5], [2.4, 5.8], [2.4, 6.4], [0, 5.8], [-2.4, 6.4], [-2.4, 5.8], [-0.9, 4.5], [-0.9, 1.5], [-6, 3], [-6, 2], [-0.9, -1], [-0.9, -4.5]].forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.closePath(); ctx.fill(); }
       }
       ctx.restore();
       if (s.inCircle && !s.done) {
@@ -1779,14 +1785,16 @@ export class SkyView {
       ctx.globalAlpha = big || hit ? 1 : 0.85; /* was .55: too dim (2026-10-30, Sevaan) */
       const kind = a.plane.heli ? 'heli' : 'plane', size = big ? (hit ? 27 : a.plane.heli ? 17 : 15) : hit ? 20 : 10;
       /* Airline colours (2026-11-19, Sevaan picked option E with B's outline, design/sky-icon-colours.html): a plane that
-         would give you something new is drawn in its airline's colour with a white keyline; one that wouldn't (caught
-         before) is a quiet outline in the sky's ink. this.planeLook comes from main.js; the red night mode stays all red. */
+         would give you something new is drawn in its airline's colour; one that wouldn't (caught before) is fainter. this.planeLook comes from main.js; the red night mode stays all red. */
       const look = this.theme !== THEMES.night ? this.planeLook?.(a.plane) : null;
       if (!look) this.drawIcon(kind, 0, 0, size, big || hit ? t.plane : t.planeDim); // same scale as satellites (9–12, ×1.3 when targeted)
       else {
         const day = (this.dayF ?? 0) > 0.3;
-        if (look.caught) { ctx.lineWidth = hit ? 1.8 : 1.4; ctx.lineJoin = 'round'; this.drawIcon(kind, 0, 0, size, day ? 'rgba(20,40,62,.85)' : 'rgba(214,226,238,.85)', 'outline'); }
-        else { ctx.lineWidth = 2.4; ctx.lineJoin = 'round'; this.drawIcon(kind, 0, 0, size, '#ffffff', 'outline'); this.drawIcon(kind, 0, 0, size, day ? look.colour : look.light); }
+        /* E without the keyline (2026-11-19, Sevaan: "the planes have a thick outline around them" at night): every plane is
+           a plain shape in its airline's colour (lifted at night); one already caught is the same shape, fainter. The white
+           keyline and the caught outline are gone. Option D (ink and moon) is kept in the back pocket: design/sky-icon-colours.html */
+        if (look.caught && !hit) ctx.globalAlpha *= 0.55;
+        this.drawIcon(kind, 0, 0, size, day ? look.colour : look.light);
       }
       ctx.restore();
       if (hit) hitAt = { x: p.x, y: p.y };
