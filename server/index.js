@@ -1,6 +1,7 @@
 // Sky Collector's server (2026-11-18): a Cloud Run function ("api", Node 22) in Sevaan's personal project
 // sky-collector-app. Its own small folder, so functions/ stays Space Collector's server, untouched, for syncs.
 //   GET /planes?lat&lon&dist   live aircraft near a player (server/planes-relay.js: FlyItalyADSB, shared 1-degree squares)
+//   GET /wx?lat&lon            weather from MET Norway (2026-11-20; not used by the app until deployed)
 //   GET /status                how many squares are in memory and the month's request count
 //   POST /t                    anonymous usage reports (js/field-notes.js) → Firestore collection sky_events (2026-11-19)
 //   GET /stats?key=…           the dashboard (stats-page.js, Space Collector's, ported); the key is the STATS_KEY secret
@@ -40,6 +41,9 @@ function watchBudget() {
 // ---- Usage reports and the stats page: Space Collector's (functions/index.js report, statRows, stats), ported 2026-11-19
 // for Sky's own project. Same rows, same snapshot cache, so fixes port both ways. Collections: sky_events, sky_statcache.
 const EVENTS = 'sky_events', CACHE = 'sky_statcache', CHUNK = 900000, SLOT = 10 * 60e3;
+/* Each usage note carries 'exp', so a Firestore TTL policy on sky_events.exp deletes it after EVENT_DAYS (privacy page
+   2026-11-20: notes had no end date). The stats page reads 120 days. The policy itself is a console/gcloud step (Sevaan). */
+const EVENT_DAYS = 365; // one year (Sevaan, 2026-11-20); daily totals are to be kept forever (planned with Space), and no TTL is switched on yet
 // Sky adds 'feed' (where each session's planes came from) and 'rare' (a rare type alert) to Space's names.
 const NAMES = new Set(['install', 'open', 'night', 'end', 'tour', 'motion', 'calib', 'plus', 'err', 'sky', 'help', 'remind', 'catch', 'share', 'boot', 'perm', 'secret', 'gift', 'review', 'feed', 'rare']);
 async function report(body) {
@@ -47,7 +51,7 @@ async function report(body) {
   const iid = String(b?.i ?? ''); if (!/^[a-f0-9]{16,40}$/.test(iid)) return 400;
   const v = String(b?.v ?? '').slice(0, 20), p = ['ios', 'android', 'web'].includes(b?.p) ? b.p : 'web', x = b?.x ? 1 : 0, now = Date.now();
   const rows = (Array.isArray(b?.e) ? b.e : []).slice(0, 60).filter((e) => Array.isArray(e) && NAMES.has(e[0]));
-  if (rows.length) { const batch = db.batch(); for (const e of rows) batch.set(db.collection(EVENTS).doc(), { ts: Math.min(now, Math.max(now - 30 * 86400000, Number(e[1]) || now)), rt: now, iid, v, p, x, name: String(e[0]), d: JSON.stringify(e[2] ?? {}).slice(0, 600) }); await batch.commit(); }
+  if (rows.length) { const batch = db.batch(); for (const e of rows) batch.set(db.collection(EVENTS).doc(), { ts: Math.min(now, Math.max(now - 30 * 86400000, Number(e[1]) || now)), rt: now, iid, v, p, x, name: String(e[0]), d: JSON.stringify(e[2] ?? {}).slice(0, 600), exp: new Date(now + EVENT_DAYS * 86400e3) }); await batch.commit(); }
   return 204;
 }
 /* The page reads a gzipped snapshot of the rows plus only the rows received since (Space's 2026-11-17 cost fix), and every
@@ -103,6 +107,32 @@ async function savePack(code) {
   throw new Error('no id');
 }
 
+// Weather (2026-11-20, privacy page ②): MET Norway, free for commercial use under CC BY 4.0, which Open-Meteo's free plan
+// isn't for an app that sells a subscription. Space Collector's /wx (functions/index.js weather), ported: cached 30 min per
+// 0.1° square, reshaped to js/weather.js's { now, hours } with WMO-like codes. MET Norway asks for an identifying User-Agent.
+// Not used by the app until it's deployed and js/weather.js asks SKY_API/wx.
+const UA = 'SkyCollector/1.0 (https://skycollector.app; hello@skycollector.app)';
+const wxMem = new Map();
+const wxCoord = (q) => { const lat = Number(q.lat), lon = Number(q.lon); return Number.isFinite(lat) && Number.isFinite(lon) && Math.abs(lat) <= 90 && Math.abs(lon) <= 180 ? { lat: Math.round(lat * 10) / 10, lon: Math.round(lon * 10) / 10 } : null; };
+function wmo(sym = '') {
+  const s = String(sym).replace(/_(day|night|polartwilight)$/, '');
+  if (/thunder/.test(s)) return 95; if (/snow|sleet/.test(s)) return /heavy/.test(s) ? 75 : 71;
+  if (/rain/.test(s)) return /heavy/.test(s) ? 65 : /light/.test(s) ? 61 : 63;
+  if (s === 'fog') return 45; if (s === 'cloudy') return 3; if (s === 'partlycloudy') return 2; if (s === 'fair') return 1; return 0;
+}
+async function weather(p) {
+  const k = `${p.lat},${p.lon}`, hit = wxMem.get(k); if (hit && Date.now() - hit.at < 30 * 60e3) return hit.body;
+  const r = await fetch(`https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${p.lat}&lon=${p.lon}`, { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(6000) });
+  if (!r.ok) return null;
+  const ts = (await r.json())?.properties?.timeseries ?? [];
+  const rows = ts.map((x) => { const d = x.data ?? {}, n = d.next_1_hours ?? d.next_6_hours ?? d.next_12_hours, det = d.instant?.details ?? {};
+    return { t: Date.parse(x.time), step: d.next_1_hours ? 1 : d.next_6_hours ? 6 : 12, cloud: Math.round(det.cloud_area_fraction ?? 0), code: wmo(n?.summary?.symbol_code), temp: det.air_temperature ?? null, wind: det.wind_speed != null ? Math.round(det.wind_speed * 3.6) : null }; });
+  const hours = []; for (const r2 of rows) for (let h = 0; h < r2.step && hours.length < 24 * 9; h++) hours.push({ t: r2.t + h * 3600e3, cloud: r2.cloud, code: r2.code, temp: r2.temp, wind: r2.wind });
+  const body = JSON.stringify({ now: rows[0] ? { cloud: rows[0].cloud, code: rows[0].code } : { cloud: 0, code: 0 }, hours, source: 'MET Norway' });
+  wxMem.set(k, { at: Date.now(), body }); if (wxMem.size > 2000) wxMem.clear();
+  return body;
+}
+
 functions.http('api', async (req, res) => {
   const origin = req.get('Origin') ?? '', ok = ALLOWED.some((re) => re.test(origin));
   if (ok) { res.set('Access-Control-Allow-Origin', origin); res.set('Vary', 'Origin'); }
@@ -124,6 +154,9 @@ functions.http('api', async (req, res) => {
     if (path === '/t' && req.method === 'POST') { if (!ok) return res.status(403).send('Forbidden'); if (limited(req, 20, 't')) return res.status(429).send('slow down'); return res.status(await report(typeof req.body === 'string' ? req.body : req.rawBody?.toString() ?? JSON.stringify(req.body))).send(''); }
     if (req.method !== 'GET') return res.status(404).send('not found');
     if (path === '/status') { const s = relayState(); res.set('Cache-Control', 'no-store'); return res.json({ squares: s.squares, used: s.budget?.used ?? null, quota: s.budget?.quota ?? null }); }
+    if (path === '/wx') { if (limited(req, 30, 'wx')) return res.status(429).send('slow down'); const p = wxCoord(req.query); if (!p) return res.status(400).send('bad lat/lon');
+      const body = await weather(p); if (!body) return res.status(502).send('weather unavailable');
+      res.set('Content-Type', 'application/json'); res.set('Cache-Control', 'public, max-age=1800'); return res.send(body); }
     if (path !== '/planes') return res.status(404).send('not found');
     if (limited(req, 30)) return res.status(429).send('slow down');
     const lat = Number(req.query.lat), lon = Number(req.query.lon);

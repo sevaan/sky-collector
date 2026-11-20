@@ -22,7 +22,10 @@ for (const [f, to] of [['favicon.ico'], ['favicon-32.png'], ['icon-180.png', 'ap
 cp('css/fonts.css'); cp('css/sky-cards.css'); cp('js/weather-art.js'); cpSync(ROOT + 'fonts', OUT + 'fonts', { recursive: true });
 /* Send cards' landing page (2026-11-19): skycollector.app/c/#<code> and /c/<id> (scripts/deploy-site.py rewrites /c/* to it) */
 mkdirSync(OUT + 'c', { recursive: true }); cp('site/c.html', 'c/index.html');
-writeFileSync(OUT + 'privacy.html', readFileSync(ROOT + 'privacy.html', 'utf8').replaceAll("url('fonts/", "url('/fonts/").replaceAll('href="icons/favicon', 'href="/favicon').replace('href="icons/icon-180.png"', 'href="/apple-touch-icon.png"'));
+/* privacy.html and help.html (skycollector.app/help, 2026-11-20) are kept at the repo root for the test build; here their
+   fonts, icons and the help page's privacy link point at the site's own paths */
+const sitePage = (f) => writeFileSync(OUT + f, readFileSync(ROOT + f, 'utf8').replaceAll("url('fonts/", "url('/fonts/").replaceAll('href="icons/favicon', 'href="/favicon').replace('href="icons/icon-180.png"', 'href="/apple-touch-icon.png"').replaceAll('href="privacy.html"', 'href="/privacy"'));
+sitePage('privacy.html'); sitePage('help.html');
 const html = `<!doctype html>
 <html lang="en">
 <head>
@@ -114,8 +117,8 @@ const html = `<!doctype html>
 </html>
 `;
 writeFileSync(OUT + 'index.html', html);
-// robots.txt and sitemap.xml (2026-11-18): every page may be indexed; the sitemap lists the three pages people land on.
-const SITE = 'https://skycollector.app', PAGES = ['/', '/pack', '/privacy'];
+// robots.txt and sitemap.xml (2026-11-18): every page may be indexed; the sitemap lists the pages people land on.
+const SITE = 'https://skycollector.app', PAGES = ['/', '/pack', '/privacy', '/help'];
 writeFileSync(OUT + 'robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${SITE}/sitemap.xml\n`);
 writeFileSync(OUT + 'sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${PAGES.map((u) => `  <url><loc>${SITE}${u}</loc></url>`).join('\n')}\n</urlset>\n`);
 // The dials (2026-11-19, as Space Collector's spacecollector.app/dial/*): settings the apps read at start, changed here

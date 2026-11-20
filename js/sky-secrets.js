@@ -6,7 +6,7 @@
 // military or police aircraft; no emergencies. Every fact in the texts is checked (sources in the doc).
 
 // The patches. The text is what the patch's card says once found.
-import { speed } from './units.js?v=0.1.1816'; /* Jet Stream's speed in the player's units (QA round 5) */
+import { speed } from './units.js?v=0.1.1817'; /* Jet Stream's speed in the player's units (QA round 5) */
 export const SKY_SECRET_PATCHES = {
   overhead: { id: 'overhead', name: 'Straight Up', /* was 'Zenith' (wording pass 2026-11-20); the id stays 'overhead' (not 'zenith': that's a Space Collector patch id) */ text: 'You caught a plane flying almost straight over your head.' },
   balloon: { id: 'balloon', name: 'Up, Up and Away', text: 'You caught a hot-air balloon.' },
