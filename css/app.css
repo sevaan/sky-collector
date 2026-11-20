@@ -2148,6 +2148,7 @@ a.set-row { color: inherit; text-decoration: none; }
 #test-tools .set-test { padding: 0 12px 4px; }
 #test-tools .set-test > .set-row { padding-inline: 2px !important; }
 #debug .set-row--seg { justify-content: center; padding-block: 8px !important; }
+#debug #pack-seg-row { justify-content: space-between; } #debug #pack-seg-row[hidden] { display: none; } /* the pack timing, under its switch */
 #debug .set-seg--wide { width: 100%; } #debug .set-seg--wide button { flex: 1; padding: 0 4px; }
 #debug .set-select { appearance: none; -webkit-appearance: none; flex: none; max-width: 52%; height: 30px; padding: 0 22px 0 10px; border: 0; border-radius: 6px; background: transparent; box-shadow: inset 0 0 0 1px #45576a; color: var(--gold); font: 600 12px/1 var(--label); letter-spacing: .08em; text-transform: uppercase; text-overflow: ellipsis;
   background-image: linear-gradient(45deg, transparent 50%, var(--gold) 50%), linear-gradient(135deg, var(--gold) 50%, transparent 50%); background-size: 5px 5px; background-position: right 11px center, right 6px center; background-repeat: no-repeat; }
