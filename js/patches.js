@@ -3,7 +3,8 @@
 // group (or the date earned) along the bottom, one icon in the middle. Milestones get gold foil, the rarest holo
 // (css/ui.css .patch--gold / .patch--holo). Shared by Explore (the earning moment, its toast) and Collection (the wall).
 
-import { CON_BY_ID } from './constellations.js?v=0.1.1808';
+import { CON_BY_ID } from './constellations.js?v=0.1.1809';
+import { skyGround, skyArt, SKY_THREAD, SKY_LABEL, SKY_MERROW } from './sky-patch-colours.js?v=0.1.1809';
 
 export const GROUPS = {
   collect: { c: '#14284a', t: 'Collection' }, rarity: { c: '#3a2259', t: 'Rarity' }, rocket: { c: '#5a2a1a', t: 'Rockets' },
@@ -202,6 +203,9 @@ export function patchSvg(a, opts = {}) {
   const g0 = GROUPS[groupOf(a)], g = a.id === 'plus' && SKY_PATCH() ? { ...g0, c: '#24508c' } /* Sky: airmail blue (2026-11-19) */ : con ? { ...g0, c: CON_TWILL[[...CON_BY_ID.keys()].indexOf(a.con) % CON_TWILL.length] } : a.id === 'ufo' ? { ...g0, c: '#123a2a' } : SECRET_TWILL[a.id] ? { ...g0, c: SECRET_TWILL[a.id] } : g0, id = `pt${uid++}`, R = 60, fossil = a.id === 'fossil' || a.id === 'ufo' || !!SECRET_ART[a.id];
   // Fossil Hunter (design/fossil-patch.html A): the T. rex skeleton art, centred on its bones, no inner ring.
   const ic = patchIcon(a, id);
+  /* Sky (2026-11-20, design/patch-colours option B): pale uniform twill in the group's pastel, navy thread (js/sky-patch-colours.js) */
+  const sky = SKY_PATCH(), skyNight = sky && (document.documentElement.classList.contains('sky-night') || !!document.body?.classList.contains('night'));
+  const skyG = sky ? skyGround(a.id, groupOf(a), groupOf(a) === 'secret' ? SECRET_TWILL[a.id] : null) : null;
   if (locked) {
     const ghost = ic.replace(/fill="(?!none)[^"]*"/g, 'fill="none"').replace(/<(polygon|rect|circle|path|ellipse|polyline|text)/g, '<$1 stroke="#627a8b" stroke-width="1.5"');
     // Not earned yet (playtest 2026-10-09, Sevaan: the empty ones should look better): the patch before it’s
@@ -220,15 +224,17 @@ export function patchSvg(a, opts = {}) {
       ${pr > 0 ? `<text font-family="SC Label, Arial Narrow, sans-serif" font-size="9" letter-spacing="2" fill="#b42a20" text-anchor="middle" dy="7"><textPath href="#${id}b" startOffset="50%">${opts.prog[0]} / ${opts.prog[1]}</textPath></text>` : ''}
       <g opacity=".75" transform="scale(.82)">${ghostL}</g></svg>`;
     }
+    /* Sky at night (2026-11-20): the same pastel as the earned patch, faint on the navy page */
+    const lc = sky ? skyG : g.c, lt = sky ? skyG : '#bcb585';
     return `<svg class="patch-svg" viewBox="-64 -64 128 128" aria-hidden="true"><defs><path id="${id}t" d="M-42 0 A42 42 0 0 1 42 0"/><path id="${id}b" d="M-41 0 A41 41 0 0 0 41 0"/>
-      <pattern id="${id}w" width="3" height="3" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="3" height="3" fill="${g.c}"/><rect width="1.4" height="3" fill="#ffffff0c"/></pattern></defs>
-      <circle r="${R - 3}" fill="url(#${id}w)" fill-opacity=".55"/><circle r="${R - 3}" fill="#080f1b" fill-opacity=".35"/>
-      <circle r="${R - 3}" fill="none" stroke="#bcb585" stroke-opacity=".5" stroke-width="1.2" stroke-dasharray="3 3"/>
+      <pattern id="${id}w" width="3" height="3" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="3" height="3" fill="${lc}"/><rect width="1.4" height="3" fill="#ffffff0c"/></pattern></defs>
+      <circle r="${R - 3}" fill="url(#${id}w)" fill-opacity="${sky ? .22 : .55}"/>${sky ? '' : `<circle r="${R - 3}" fill="#080f1b" fill-opacity=".35"/>`}
+      <circle r="${R - 3}" fill="none" stroke="${lt}" stroke-opacity=".5" stroke-width="1.2" stroke-dasharray="3 3"/>
       ${pr > 0 ? `<circle r="${R - 3}" fill="none" stroke="#efe4bb" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="${(pr * C).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90)"/>` : ''}
-      <circle r="${R - 22}" fill="none" stroke="#bcb585" stroke-opacity=".25" stroke-width=".9" stroke-dasharray="1.6 1.6"/>
-      <text font-family="SC Label, Arial Narrow, sans-serif" font-size="${nameSize}" letter-spacing="2" fill="#bcb585" fill-opacity=".7" text-anchor="middle"><textPath href="#${id}t" startOffset="50%">${esc(name)}</textPath></text>
+      <circle r="${R - 22}" fill="none" stroke="${lt}" stroke-opacity=".25" stroke-width=".9" stroke-dasharray="1.6 1.6"/>
+      <text font-family="SC Label, Arial Narrow, sans-serif" font-size="${nameSize}" letter-spacing="2" fill="${lt}" fill-opacity=".7" text-anchor="middle"><textPath href="#${id}t" startOffset="50%">${esc(name)}</textPath></text>
       ${pr > 0 ? `<text font-family="SC Label, Arial Narrow, sans-serif" font-size="9" letter-spacing="2" fill="${OR}" text-anchor="middle" dy="7"><textPath href="#${id}b" startOffset="50%">${opts.prog[0]} / ${opts.prog[1]}</textPath></text>` : ''}
-      <g opacity=".6" transform="scale(.82)">${ghost.replace(/#627a8b/g, '#bcb585')}</g></svg>`;
+      <g opacity=".6" transform="scale(.82)">${ghost.replace(/#627a8b/g, lt)}</g></svg>`;
   }
   // Real patches (2026-10-20, Sevaan: like the Mission Patch card back): the merrowed edge is the card back's own
   // stitched rim, unrolled and wrapped round (assets/art/patch/merrow.webp); the base is a woven twill tile over the
@@ -236,9 +242,14 @@ export function patchSvg(a, opts = {}) {
   const rIn = 51;
   const name = a.name.toUpperCase(), nameSize = name.length > 16 ? 8.5 : name.length > 12 ? 9.5 : 11;
   const lift = `filter="url(#${id}e)"`;
+  /* Sky (design/patch-colours B): pastel twill, navy thread, navy edge (light sky blue at night, gold for gold finish),
+     softer shading and shadows for a light page; the art's cream ink re-pointed to navy (js/sky-patch-colours.js) */
+  const K = sky ? { ground: skyG, thread: SKY_THREAD, label: SKY_LABEL, shade: .14, flood: .28, drop: skyNight ? '#00000080' : 'rgba(13,34,56,.28)',
+    edge: finishOf(a) === 'gold' ? SKY_MERROW.gold : skyNight ? SKY_MERROW.night : SKY_MERROW.day, art: skyArt(ic) }
+    : { ground: g.c, thread: INK, label: OR, shade: .45, flood: .6, drop: '#00000070', edge: 'merrow.webp', art: ic };
   return `<svg class="patch-svg" viewBox="-64 -64 128 128" aria-hidden="true"><defs><path id="${id}t" d="M-40 0 A40 40 0 0 1 40 0"/><path id="${id}b" d="M-41 0 A41 41 0 0 0 41 0"/>
     <pattern id="${id}w" width="30" height="30" patternUnits="userSpaceOnUse" patternTransform="rotate(-6)"><image href="assets/art/patch/twill.webp" width="30" height="30"/></pattern>
-    <radialGradient id="${id}s" r="1"><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".45"/></radialGradient>
+    <radialGradient id="${id}s" r="1"><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity="${K.shade}"/></radialGradient>
     <radialGradient id="${id}h" cx=".35" cy=".25" r=".9"><stop offset="0" stop-color="#fff" stop-opacity=".12"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></radialGradient>
     <filter id="${id}e" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
       <feGaussianBlur in="SourceAlpha" stdDeviation=".8" result="h"/>
@@ -250,16 +261,16 @@ export function patchSvg(a, opts = {}) {
       <feColorMatrix in="thr" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.1 .62" result="thrA"/>
       <feComposite in="thrA" in2="SourceAlpha" operator="in" result="thrIn"/>
       <feGaussianBlur in="SourceAlpha" stdDeviation=".9" result="b"/><feOffset in="b" dx=".6" dy="1.1" result="o"/>
-      <feFlood flood-color="#000" flood-opacity=".6"/><feComposite in2="o" operator="in" result="sh"/>
+      <feFlood flood-color="#000" flood-opacity="${K.flood}"/><feComposite in2="o" operator="in" result="sh"/>
       <feMerge><feMergeNode in="sh"/><feMergeNode in="lit"/><feMergeNode in="thrIn"/><feMergeNode in="spIn"/></feMerge></filter>
     ${stitch ? `<mask id="${id}m"><circle class="patch-thread" r="${R - 3}" fill="none" stroke="#fff" stroke-width="12" pathLength="100" transform="rotate(-90)"/></mask>` : ''}</defs>
-    <circle r="${R + 0.5}" fill="#00000070" transform="translate(.6 2.6)"/>
-    <circle r="${rIn + 1}" fill="${g.c}"/><circle r="${rIn + 1}" fill="url(#${id}w)"/><circle r="${rIn + 1}" fill="url(#${id}s)"/>
-    <image href="assets/art/patch/merrow.webp" x="${-R}" y="${-R}" width="${2 * R}" height="${2 * R}"${stitch ? ` mask="url(#${id}m)"` : ''}/>
-    ${fossil ? '' : `<circle r="${R - 22}" fill="none" stroke="${INK}" stroke-opacity=".35" stroke-width=".9" stroke-dasharray="1.6 1.6"/>`}
-    <g ${lift}><text font-family="SC Label, Arial Narrow, sans-serif" font-size="${nameSize}" font-weight="600" letter-spacing="2" fill="${INK}" text-anchor="middle"><textPath href="#${id}t" startOffset="50%">${esc(name)}</textPath></text>
-    <text font-family="SC Label, Arial Narrow, sans-serif" font-size="8.5" font-weight="600" letter-spacing="2" fill="${OR}" text-anchor="middle" dy="7"><textPath href="#${id}b" startOffset="50%">${esc(date || (a.sub ?? g.t).toUpperCase())}</textPath></text>
-    ${fossil ? ic : `<g transform="scale(.82)">${ic}</g>`}</g>
+    <circle r="${R + 0.5}" fill="${K.drop}" transform="translate(.6 2.6)"/>
+    <circle r="${rIn + 1}" fill="${K.ground}"/><circle r="${rIn + 1}" fill="url(#${id}w)"/><circle r="${rIn + 1}" fill="url(#${id}s)"/>
+    <image href="assets/art/patch/${K.edge}" x="${-R}" y="${-R}" width="${2 * R}" height="${2 * R}"${stitch ? ` mask="url(#${id}m)"` : ''}/>
+    ${fossil ? '' : `<circle r="${R - 22}" fill="none" stroke="${K.thread}" stroke-opacity=".35" stroke-width=".9" stroke-dasharray="1.6 1.6"/>`}
+    <g ${lift}><text font-family="SC Label, Arial Narrow, sans-serif" font-size="${nameSize}" font-weight="600" letter-spacing="2" fill="${K.thread}" text-anchor="middle"><textPath href="#${id}t" startOffset="50%">${esc(name)}</textPath></text>
+    <text font-family="SC Label, Arial Narrow, sans-serif" font-size="8.5" font-weight="600" letter-spacing="2" fill="${K.label}" text-anchor="middle" dy="7"><textPath href="#${id}b" startOffset="50%">${esc(date || (a.sub ?? g.t).toUpperCase())}</textPath></text>
+    ${fossil ? K.art : `<g transform="scale(.82)">${K.art}</g>`}</g>
     <circle r="${R}" fill="url(#${id}h)" pointer-events="none"/></svg>`;
 }
 // The patch wrapped with its finish layer (gold / holo sheen), as used on the wall, the detail view and the moment.
