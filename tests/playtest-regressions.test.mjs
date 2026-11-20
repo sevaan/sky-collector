@@ -12,7 +12,7 @@ test('earned-card deep links always open Mine after any prior collection tab', (
     const card = {key:'moon'}, other={key:'other'};
     const state = {ready:true,view,byKey:new Map([['moon',card]]),sightingsByKey:new Map([['moon',[{}]]]),list:view==='owned'?[card]:[other,card], query:'',set:'all',rarity:'all'};
     let opened;
-    const ctx = {state,returnView:null,setView:v=>{state.view=v;state.list=v==='owned'?[card]:[other,card];},resetFilters:()=>{},openViewer:i=>{opened=i;}};
+    const ctx = {SKY:false,state,returnView:null,setView:v=>{state.view=v;state.list=v==='owned'?[card]:[other,card];},resetFilters:()=>{},openViewer:i=>{opened=i;}};
     vm.runInNewContext(between(cards,'function openKey(key) {','// ---------- mission patches'),ctx);
     ctx.openKey('moon'); assert.equal(state.view,'owned',view); assert.equal(opened,0,view);
   }
