@@ -9,7 +9,7 @@
 // scripts/facts/apply-type-facts.py; edit there or in the source table, not by hand. No imports, no DOM.
 export const TYPE_FACTS = {
   A10: [
-    "The A-10's whole airframe was designed around its huge **30 mm** rotary cannon, the GAU-8 Avenger.",
+    "In 2010 an A-10 made the first flight of an aircraft with every engine running on a **biofuel** blend, half of it made from the camelina plant.",
     "Look under an A-10's long, straight wings: even with the gear up, its main wheels **still poke out** of their pods.",
     "The A-10 is officially named after the P-47 Thunderbolt, but almost everyone calls it the **Warthog**.",
   ],
@@ -499,9 +499,9 @@ export const TYPE_FACTS = {
     "The **Skylane RG**, built from 1978 to 1986, is a 182 whose wheels fold away in flight for 10 to 15 percent more speed.",
   ],
   C2: [
-    "The Kawasaki C-2 was designed alongside the P-1 patrol plane, and the two share **cockpit windows**, outer wings and tailplanes to save money.",
-    "The Kawasaki C-2 is a twin-jet transport with a **high wing** and a T-tail, and its wings span 44.4 m, a little more than its 43.9 m length.",
-    "The Kawasaki C-2 cruises at about **Mach 0.8**, as fast as airliners, so it can fly their high routes instead of being sent down lower like slower cargo planes.",
+    "The C-2 Greyhound has **four tail fins**, because one fin big enough to steer it would have made it too tall for an aircraft carrier's hangar deck.",
+    "The Greyhound is a wider cousin of the E-2 Hawkeye radar plane: it shares its **folding wings** and engines, and adds a loading ramp at the back.",
+    "One of the Greyhound's four tail fins has no rudder, so it was nicknamed the **executive tail**: it has nothing to do.",
   ],
   C206: [
     "The Cessna 206 is a high-wing six-seater on fixed wheels with a big **clamshell door** at the back of the cabin for loading bulky cargo.",
@@ -833,10 +833,10 @@ export const TYPE_FACTS = {
     "The F-16 has a single engine fed by one big **air intake** slung under its body, and a frameless bubble canopy on top.",
     "The F-16 was the first production fighter built to be slightly **unstable** on purpose, with computers checking it thousands of times a second to keep it steady.",
   ],
-  F18: [
-    "The F/A-18's name tells its job: **F/A** means it is both a fighter and a ground-attack aircraft.",
-    "The Hornet has two engines side by side and **twin tail fins** that lean outwards, one of its most recognisable features.",
-    "The Hornet was built to fly from aircraft carriers, so it has **folding wings**, extra-strong landing gear and a strengthened tailhook.",
+  F18S: [
+    "The Super Hornet grew out of the F/A-18 Hornet but is about **20% larger**, so it is largely a new aircraft.",
+    "The Super Hornet's air intakes are **rectangular** and bigger than the older Hornet's, to feed its more powerful engines.",
+    "In the US Navy the Super Hornet's nickname is the **Rhino**, which tells it apart from older Hornets.",
   ],
   F2TH: [
     "The Falcon 2000 is a Falcon 900 with its third engine dropped and its body shortened by **2.1 m**.",
@@ -924,9 +924,9 @@ export const TYPE_FACTS = {
     "The Chinook is named after the **Chinook people**, who are indigenous to the Pacific Northwest of the United States.",
   ],
   H53: [
-    "The CH-53E and its sister ship were the **largest helicopters** in the Western world until the newer CH-53K arrived.",
+    "The CH-53 Sea Stallion is Sikorsky's model **S-65**, in essence a scaled-up S-61R helicopter with two turboshaft engines.",
     "Count the blades: the CH-53 Sea Stallion has two engines and **six** rotor blades, while the bigger CH-53E Super Stallion has three engines and seven.",
-    "The CH-53E's tail rotor is tilted **20 degrees**, so as well as stopping the body from spinning it helps lift the helicopter in a hover.",
+    "To save room on ships, the CH-53's **tail boom** and rotors fold away, using an automatic folding system Sikorsky developed.",
   ],
   H60: [
     "The Black Hawk is named after **Black Hawk**, a leader of the Sauk people, and it entered US Army service in 1979 to replace the Huey as its transport helicopter.",
@@ -1039,7 +1039,7 @@ export const TYPE_FACTS = {
     "The Mustang's radiator was shaped to use the **Meredith effect**: hot air leaving it gives the plane a little push, like a small jet.",
   ],
   P8: [
-    "The P-8 Poseidon submarine hunter is built from a Boeing **737-800** airliner, with weapons and sonar gear added.",
+    "The P-8 Poseidon maritime patrol plane is based on a Boeing **737-800** airliner, and it carries a crew of nine: two to fly it and seven for the mission.",
     "The P-8 has **raked wingtips**, swept back like a Boeing 767-400ER's, instead of the upturned winglets of a 737 airliner.",
     "The P-8 drops **sonobuoys**, small floating sonar buoys that listen underwater, and it first dropped them on 15 October 2010.",
   ],

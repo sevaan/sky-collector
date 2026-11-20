@@ -5,7 +5,7 @@
 // Not built: "Freighters" as a plane set (a type code doesn't say cargo: a B77L is both the 777 freighter and the
 // 777-200LR), so cargo is a flight set only; and "Next door" has no border data, so it is any international flight
 // under 1,500 km.
-import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1793';
+import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1795';
 
 // Order matters: the first match is the card's set.
 export const PLANE_SETS = [
@@ -14,7 +14,7 @@ export const PLANE_SETS = [
   { id: 'rarebirds', name: 'Rare Birds', color: '#9a6a00', goals: [1, 2, 4], test: (t) => /^(DC3|B17|B29|LANC|SPIT|P51|JU52|SHIP|BALL|A124|A3ST|A337|BLCF)$/ /* no retired types (A225, Concorde, Constellation: 2026-11-19) */.test(t) },
   /* the Military set is back (Sevaan 2026-11-19: "I should be able to catch a stealth bomber if I see it and it's in the api
      data"): by type only, never by callsign, registration, unit or route (js/plane-privacy.js) */
-  { id: 'military', name: 'Military', color: '#55633a', goals: [1, 3, 6], test: (t) => /^(C17|C130|C30J|C5M|A400|K35[ER]|KC10|E3[TC]F|E6|B52|B1|B2|P8|C2|C295|V22|U2|F16|F18|F15|F35|EUFI|A10|H47|H53|H60|AN12|IL76)$/.test(t) },
+  { id: 'military', name: 'Military', color: '#55633a', goals: [1, 3, 6], test: (t) => /^(C17|C130|C30J|C5M|A400|K35[ER]|E3[TC]F|E6|B52|B1|B2|P8|C2|C295|V22|U2|F16|F18S|F15|F35|EUFI|A10|H47|H53|H60|AN12|IL76)$/.test(t) },
   { id: 'giants', name: 'Giants', color: '#7a3fc4', goals: [1, 2, 4], test: (t) => /^(B74.|A38.|A34.|MD11|DC10)$/.test(t) },
   { id: 'helicopters', name: 'Helicopters', color: '#c0562e', goals: [1, 3, 6], test: (t, heli) => heli },
   { id: 'b737', name: 'The 737 Family', color: '#1f5fbf', goals: [2, 3, 5], test: (t) => /^(B73[0-9]|B3[789X]M|B37M)/.test(t) },

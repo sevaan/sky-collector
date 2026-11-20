@@ -31,11 +31,11 @@ export const TYPE_NAMES = {
   H25B: 'Hawker 800', LJ35: 'Learjet 35', LJ45: 'Learjet 45', LJ60: 'Learjet 60', LJ75: 'Learjet 75', PC24: 'Pilatus PC-24', HDJT: 'HondaJet', SF50: 'Cirrus Vision Jet',
   // Helicopters
   R22: 'Robinson R22', R44: 'Robinson R44', R66: 'Robinson R66', B06: 'Bell 206 JetRanger', B407: 'Bell 407', B412: 'Bell 412', B429: 'Bell 429', EC30: 'Airbus H130', EC35: 'Airbus H135', EC45: 'Airbus H145', AS50: 'Airbus H125', A139: 'Leonardo AW139', A169: 'Leonardo AW169', S76: 'Sikorsky S-76', S92: 'Sikorsky S-92',
-  H47: 'Boeing CH-47 Chinook', H53: 'Sikorsky CH-53', H60: 'Sikorsky Black Hawk', V22: 'Bell Boeing V-22 Osprey',
+  H47: 'Boeing CH-47 Chinook', H53: 'Sikorsky CH-53 Sea Stallion', H60: 'Sikorsky UH-60 Black Hawk', V22: 'Bell Boeing V-22 Osprey',
   // Military and special
-  C17: 'Boeing C-17 Globemaster III', C130: 'Lockheed C-130 Hercules', C30J: 'Lockheed C-130J Super Hercules', C5M: 'Lockheed C-5M Super Galaxy', C2: 'Kawasaki C-2', C295: 'Airbus C295',
-  K35R: 'Boeing KC-135 Stratotanker', K35E: 'Boeing KC-135 Stratotanker', KC10: 'McDonnell Douglas KC-10', E3TF: 'Boeing E-3 Sentry', E3CF: 'Boeing E-3 Sentry', E6: 'Boeing E-6 Mercury', P8: 'Boeing P-8 Poseidon',
-  B52: 'Boeing B-52 Stratofortress', B1: 'Rockwell B-1 Lancer', B2: 'Northrop B-2 Spirit', U2: 'Lockheed U-2', F16: 'F-16 Fighting Falcon', F18: 'F/A-18 Hornet', F15: 'F-15 Eagle', F35: 'F-35 Lightning II', EUFI: 'Eurofighter Typhoon', A10: 'A-10 Thunderbolt II',
+  C17: 'Boeing C-17 Globemaster III', C130: 'Lockheed C-130 Hercules', C30J: 'Lockheed C-130J Super Hercules', C5M: 'Lockheed C-5M Super Galaxy', C2: 'Grumman C-2 Greyhound', C295: 'Airbus C295',
+  K35R: 'Boeing KC-135R Stratotanker', K35E: 'Boeing KC-135E Stratotanker', KC10: 'McDonnell Douglas KC-10', E3TF: 'Boeing E-3 Sentry', E3CF: 'Boeing E-3 Sentry (CFM56)', E6: 'Boeing E-6 Mercury', P8: 'Boeing P-8 Poseidon',
+  B52: 'Boeing B-52 Stratofortress', B1: 'Rockwell B-1 Lancer', B2: 'Northrop B-2 Spirit', U2: 'Lockheed U-2', F16: 'F-16 Fighting Falcon', F18S: 'F/A-18 Super Hornet', F18H: 'F/A-18 Hornet', F15: 'F-15 Eagle', F35: 'F-35 Lightning II', EUFI: 'Eurofighter Typhoon', A10: 'A-10 Thunderbolt II',
   A124: 'Antonov An-124 Ruslan', A225: 'Antonov An-225 Mriya', AN12: 'Antonov An-12', IL76: 'Ilyushin Il-76', IL96: 'Ilyushin Il-96',
   // Classics and lighter than air
   DC3: 'Douglas DC-3', CONI: 'Lockheed Constellation', B17: 'Boeing B-17 Flying Fortress', B29: 'Boeing B-29 Superfortress', LANC: 'Avro Lancaster', SPIT: 'Supermarine Spitfire', P51: 'North American P-51 Mustang', JU52: 'Junkers Ju 52', CONC: 'Concorde',
