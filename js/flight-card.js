@@ -9,21 +9,21 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { regularFor, clockText } from './sky-regulars.js?v=0.1.1787';
-import { TIERS, unlisted } from './flights.js?v=0.1.1787';
-import { flightFact } from './flight-facts.js?v=0.1.1787';
-import { typePhoto } from './type-photos.js?v=0.1.1787';
-import { housePhoto } from './house-photos.js?v=0.1.1787';
-import { gapPhoto } from './gap-photos.js?v=0.1.1787'; /* the types that had no photo (2026-11-18) */
-import { airlinePhoto } from './airline-photos.js?v=0.1.1787';
-import { airlineLogo } from './airline-logos.js?v=0.1.1787';
-import { fitStyle } from './photo-fit.js?v=0.1.1787';
-import { dist, speed, useMiles } from './units.js?v=0.1.1787';
-import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1787';
-import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1787';
-import { typeFact } from './sky-facts.js?v=0.1.1787';
-import { localText } from './localize.js?v=0.1.1787';
-import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1787';
+import { regularFor, clockText } from './sky-regulars.js?v=0.1.1788';
+import { TIERS, unlisted } from './flights.js?v=0.1.1788';
+import { flightFact } from './flight-facts.js?v=0.1.1788';
+import { typePhoto } from './type-photos.js?v=0.1.1788';
+import { housePhoto } from './house-photos.js?v=0.1.1788';
+import { gapPhoto } from './gap-photos.js?v=0.1.1788'; /* the types that had no photo (2026-11-18) */
+import { airlinePhoto } from './airline-photos.js?v=0.1.1788';
+import { airlineLogo } from './airline-logos.js?v=0.1.1788';
+import { fitStyle } from './photo-fit.js?v=0.1.1788';
+import { dist, speed, useMiles } from './units.js?v=0.1.1788';
+import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1788';
+import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1788';
+import { typeFact } from './sky-facts.js?v=0.1.1788';
+import { localText } from './localize.js?v=0.1.1788';
+import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1788';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
