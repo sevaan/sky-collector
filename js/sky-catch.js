@@ -2,15 +2,15 @@
 // Collect does. Catches are kept in localStorage ('skyCatches') for now, apart from Space Collector's sightings, so the
 // old collection code never meets a flight. The Collection screen reads them in a later step.
 
-import { aircraftName, isHelicopter } from './planes.js?v=0.1.1784';
-import { lookupRoute } from './routes.js?v=0.1.1784';
-import { distText } from './units.js?v=0.1.1784';
-import { cardsFor, planeKey, unlisted, TIERS } from './flights.js?v=0.1.1784';
-import { glyphSvg, miniCardHtml } from './flight-card.js?v=0.1.1784';
-import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1784';
+import { aircraftName, isHelicopter } from './planes.js?v=0.1.1785';
+import { lookupRoute } from './routes.js?v=0.1.1785';
+import { distText } from './units.js?v=0.1.1785';
+import { cardsFor, planeKey, unlisted, TIERS } from './flights.js?v=0.1.1785';
+import { glyphSvg, miniCardHtml } from './flight-card.js?v=0.1.1785';
+import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1785';
 
-import { TIER_INFO } from './rarity.js?v=0.1.1784';
-import { allCatches, addCatch } from './catch-store.js?v=0.1.1784';
+import { TIER_INFO } from './rarity.js?v=0.1.1785';
+import { allCatches, addCatch } from './catch-store.js?v=0.1.1785';
 // Catches live in js/catch-store.js (IndexedDB, with a localStorage mirror the Collection page reads).
 // Where catches are read from: Space Collector's sightings once main.js says so (Milestone 1.5), the old store until then.
 let source = allCatches;
@@ -58,6 +58,7 @@ function discoverPanel(el, hit, route, opts = {}) {
   if (dt) { dt.style.setProperty('--find-tier', again ? 'var(--cyan)' : ti.color); dt.dataset.gem = again ? '✦' : ti.gem; }
   txt('d-name', full ? `To ${full.to.city}` : route?.airline ? `${route.airline} ${(p.callsign || '').replace(/^[A-Z]{3}/, '')}` : type);
   txt('d-dist', hit.rangeKm != null ? distText(hit.rangeKm) : `${ft(p)} ft`);
+  try { globalThis.__fitDRow?.(); } catch {} /* the tier line never cuts its words (js/main.js fitDRow, Space Collector a9bb3aa1) */
   const mk = `${card?.key}|${out.kind}|${catches().length}`, mini = $('d-mini');
   /* Space Collector's ticket card (2026-11-19, review Part 1): main.js's miniCard via opts.mini, the same card as the Collection's, with its level medal */
   if (mini && mini.dataset.k !== mk && opts.mini && card) { try { const m = opts.mini(card, flight ? 'flight' : 'plane'); if (m) { mini.dataset.k = mk; mini.replaceChildren(m); } } catch {} }
