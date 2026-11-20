@@ -74,10 +74,10 @@ enum Moment {
 }
 func moment(_ plan: Plan?, at d: Date) -> Moment {
     guard let p = plan, d < p.dawnDate, d.timeIntervalSince1970 * 1000 - p.at < 20 * 3600_000 else { return .noPlan }
-    if let w = p.wx, !w.ok { return .cloudy(w) }
+    if p.sky == nil, let w = p.wx, !w.ok { return .cloudy(w) } // Sky: planes fly in cloud too, so no cloudy state
     let step = p.chain.last { Date(timeIntervalSince1970: $0.from / 1000) <= d && $0.pass.endDate > d }
         ?? p.chain.first { $0.pass.endDate > d }
-    if let dusk = p.duskDate, d < dusk.addingTimeInterval(-45 * 60), (step == nil || step!.pass.startDate > dusk.addingTimeInterval(-45 * 60)) {
+    if p.sky == nil, let dusk = p.duskDate, d < dusk.addingTimeInterval(-45 * 60), (step == nil || step!.pass.startDate > dusk.addingTimeInterval(-45 * 60)) {
         return .day(dusk: dusk, head: p.chain.first { $0.pass.kick == "headliner" }?.pass ?? step?.pass)
     }
     if let s = step { return d >= s.pass.startDate ? .upNow(s.pass) : .next(s.pass) }
@@ -338,7 +338,7 @@ struct Large: View {
                 Text(w.line).font(.display(19)).foregroundStyle(Color.ink).lineLimit(2).padding(.top, 8)
                 Text(w.next.isEmpty ? "Watch for a break in the cloud" : "Next clear night: \(w.next)").font(.label(13)).foregroundStyle(Color.muted)
             } else {
-                (Text(plan.haul.n == 0 ? "\(plan.list.count) regular\(plan.list.count == 1 ? "" : "s") due" : "\(plan.haul.n) new card\(plan.haul.n == 1 ? "" : "s") due") + (plan.haul.top.map { Text(", ") + Text("\(plan.haul.topN) \(Tier.label($0))").foregroundStyle(Tier.color($0)) } ?? Text("")))
+                (Text(plan.sky != nil && plan.list.isEmpty ? "No regulars yet" /* Sky: not "0 regulars due" */ : plan.haul.n == 0 ? "\(plan.list.count) regular\(plan.list.count == 1 ? "" : "s") due" : "\(plan.haul.n) new card\(plan.haul.n == 1 ? "" : "s") due") + (plan.haul.top.map { Text(", ") + Text("\(plan.haul.topN) \(Tier.label($0))").foregroundStyle(Tier.color($0)) } ?? Text("")))
                     .font(.display(21)).foregroundStyle(Color.ink).lineLimit(1).minimumScaleFactor(0.7).padding(.top, 8)
                 if let d = plan.duskDate { (Text("Dark ") + timeText(d) + Text(" · until ") + timeText(plan.dawnDate)).font(.label(13)).foregroundStyle(Color.muted) }
                 else { Text("Planes over you today, by hour").font(.label(13)).foregroundStyle(Color.muted) }
@@ -349,7 +349,7 @@ struct Large: View {
             VStack(spacing: 0) {
                 ForEach(Array(stops.prefix(4).enumerated()), id: \.element) { i, p in PassRow(p: p, art: true, lead: i == 0) }
             }.padding(.top, 8)
-            if stops.isEmpty { Text("No regulars due today").font(.label(13)).foregroundStyle(Color.muted).padding(.top, 10) }
+            if stops.isEmpty { Text(plan.sky != nil && plan.list.isEmpty ? "Flights that pass over you most days show up here after a few days of looking up" : "No regulars due today").font(.label(13)).foregroundStyle(Color.muted).padding(.top, 10) }
             Spacer(minLength: 0)
             HStack {
                 Lab(text: plan.missions > 0 ? "\(plan.missions) mission\(plan.missions == 1 ? "" : "s") left" : "Missions done", color: .muted, size: 10)
@@ -378,7 +378,7 @@ struct PlusOnly: View {
         VStack(spacing: 6) {
             RingArt(pass: nil, size: 40, full: true)
             Text(compact ? "Plus" : "Sky Collector Plus").font(.display(15)).foregroundStyle(Color.ink)
-            Text("Widgets come with Plus. Tap to see what's in it.").font(.label(13)).foregroundStyle(Color.muted).multilineTextAlignment(.center)
+            Text(Store.plan()?.sky != nil ? "This size comes with Plus. The small one is free." : "Widgets come with Plus. Tap to see what's in it.").font(.label(13)).foregroundStyle(Color.muted).multilineTextAlignment(.center)
         }.frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
@@ -481,7 +481,7 @@ struct SCWidgetView: View {
         Group {
             switch family {
             case .systemSmall:
-                if let p = entry.plan, !p.plus { PlusOnly(compact: true) } else { NextCatch(m: m, now: entry.date) }
+                if let p = entry.plan, !p.plus, p.sky == nil { PlusOnly(compact: true) } else { NextCatch(m: m, now: entry.date) } // Sky: the small widget is free (the approved spec)
             case .systemMedium:
                 if let p = entry.plan, p.plus { Medium(plan: p, m: m, now: entry.date) } else if entry.plan == nil { NextCatch(m: m, now: entry.date) } else { PlusOnly() }
             case .systemLarge:
@@ -490,7 +490,7 @@ struct SCWidgetView: View {
             }
         }
         .padding(home ? 14 : 0)
-        .widgetURL(entry.plan?.plus == false ? URL(string: "skycollector://plus")! : link)
+        .widgetURL(entry.plan?.plus == false && !(family == .systemSmall && entry.plan?.sky != nil) ? URL(string: "skycollector://plus")! : link)
         .containerBackground(for: .widget) {
             if home { ZStack { dark ? Color(hex: 0x0b1626) : Color(hex: 0xfffdf6); if dark { Stars() } } } else { Color.clear } // fixed colours: the background is drawn outside the colour scheme set below (simulator 2026-11-19: paper behind night text)
         }

@@ -13,7 +13,11 @@ DEV=${1:-$(xcrun devicectl list devices 2>/dev/null | awk '!/simulated/ && (/con
 [ -n "$DEV" ] || { echo "No iPhone connected"; exit 1; }
 OUT=${TMPDIR:-/tmp}/sky-tester-build
 # Whatever happens, put the normal web copy back so a regular build never ships the tester flag.
-trap 'node copy-web.mjs >/dev/null && npx cap sync ios >/dev/null 2>&1' EXIT
+# The store app has no camera (js/main.js hides Camera view in Sky's native store builds, 2026-11-20), so the shared
+# App/Info.plist has no NSCameraUsageDescription; the tester keeps Camera view, so the key goes in for this build only.
+PL=ios/App/App/Info.plist; CAM="Camera view shows the real sky behind the plane labels."
+trap 'node copy-web.mjs >/dev/null && npx cap sync ios >/dev/null 2>&1; /usr/libexec/PlistBuddy -c "Delete :NSCameraUsageDescription" "$PL" >/dev/null 2>&1 || true' EXIT
+/usr/libexec/PlistBuddy -c "Add :NSCameraUsageDescription string $CAM" "$PL"
 SC_TESTER=1 node copy-web.mjs && npx cap sync ios >/dev/null
 xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -destination "id=$DEV" -derivedDataPath "$OUT" \
   -packageAuthorizationProvider netrc SC_APP_ID=app.skycollector.tester SC_DISPLAY_NAME="Sky Tester" SC_URL_SCHEME=skytester \

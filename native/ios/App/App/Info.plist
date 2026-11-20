@@ -38,8 +38,6 @@
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSCameraUsageDescription</key>
-	<string>Camera view shows the real sky behind the plane labels.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Sky Collector uses your location only while you use the app, so planes are drawn where they really are. Your exact position stays on your phone.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
