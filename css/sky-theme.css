@@ -94,7 +94,7 @@ html body .tn-pack::after { content:''; position:absolute; inset:0; background:#
 html body #toasts .ticket .tn-pack::after { -webkit-mask-size:170% auto; mask-size:170% auto; }
 html body .tn-pack::before { border-top-color:#ffffffbb; z-index:1; }
 html body #toasts .tn-ic.art:has(.tn-pack) { background:#1f5a99; }
-html:not(.sky-night) body.sky-only #toasts .tn-ic.art:has(.patch) { background:#dce8f2; } /* by day a patch sits on pale sky, not night navy, so its navy edge shows (QA round 4) */
+html:not(.sky-night) body.sky-only #toasts .tn-ic.art:has(.patch), html.sky-cards:not(.sky-night) #toasts .tn-ic.art:has(.patch) { background:#dce8f2; } /* by day a patch sits on pale sky, not night navy, so its navy edge shows (QA round 4); the second selector is the Collection frame (cards.html has no body.sky-only), where the Member and Ambassador toasts show (QA round 5) */
 html body #toasts .ticket .tn-ic.art:has(.tn-pack) { background:none; }
 html body #toasts .ticket .tn-pack { box-shadow:inset 0 0 0 1px #ffffff55, 0 4px 10px #0d223855; }
 html body #gift .gp-lines { background:repeating-linear-gradient(0deg,#0d223806 0 1px,transparent 1px 3px); }
@@ -376,7 +376,7 @@ html.sky-cards:not(.sky-night) .v-next { background:#fffdf6; border-color:#c9b98
 html.sky-cards:not(.sky-night) .fd-pass, html.sky-cards:not(.sky-night) .fd-pass .fd-when { color:#4a6178; } html.sky-cards:not(.sky-night) .fd-pass .fd-when b { color:#0d2238; } html.sky-cards .fd-pass .fd-when .soon, html.sky-cards .fd-pill.new { color:#b42a20; }
 html.sky-cards:not(.sky-night) .fd-pill { background:#0d223812; color:#0d2238; } html.sky-cards:not(.sky-night) .fd-pill.own { color:#4a6178; }
 /* Find's names, times and empty line were Space's cream #fff2b3 and #bdbea9, about 1:1 on the day page (Sky Build playtest
-   v0.1.1809: "Flown over you, not caught yet" names near unreadable); Sky's ink and muted here (tests/find-contrast.test.mjs) */
+   v0.1.1809: "Flown over you, not caught yet" names near unreadable); Sky's ink and muted here (tests/playtest-1809.test.mjs, "Find by day") */
 html.sky-cards:not(.sky-night) .fd-main b, html.sky-cards:not(.sky-night) .fd-pass b { color:#0d2238; }
 html.sky-cards:not(.sky-night) :is(.find-none, .fd-main small, .fd-wait) { color:#4a6178; }
 html.sky-cards:not(.sky-night) :is(.fd-pass .fd-w em, .fd-main small em) { color:color-mix(in srgb, var(--c) 45%, #0d2238); } /* tier word ("★ Legendary" was #ffc545, 1.6:1): every tier 4.7:1 or better */
@@ -539,21 +539,22 @@ html:not(.sky-night) body.sky-only:not(.night) .kt-fan img { border-color:#fffff
 html:not(.sky-night) body.sky-only:not(.night) #set-plus-sheet :is(.starfield, .crew-meteor) { display:none; } /* stars and a shooting star belong to the night page */
 html:not(.sky-night) body.sky-only:not(.night) #recap .starfield { display:none; } /* night stars on the daylight recap page */
 /* Notification tickets follow the header (2026-11-16): light wherever the header is light, Space Collector's dark ticket
-   only over Explore at night. Its background is set with heavy specificity in css/ui.css, hence the repeated id. */
-html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts {
+   only over Explore at night. Its background is set with heavy specificity in css/ui.css, hence the repeated id.
+   The Collection frame (html.sky-cards, no body.sky-only) too: its Member and Ambassador toasts were Space's navy by day (QA round 5). */
+:is(html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night), html.sky-cards:not(.sky-night)) #toasts {
   --text:#0d2238; --muted:#4a6178; --ink:#0d2238; --ui-ink:#0d2238; --ui-muted:#4a6178; --edge:#9fb3c6; --k:#9fb3c6; }
-html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts#toasts#toasts#toasts .ticket:not(.tone-shiny) {
+:is(html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night), html.sky-cards:not(.sky-night)) #toasts#toasts#toasts#toasts .ticket:not(.tone-shiny) {
   background-color:#fffffff5 !important; background-image:repeating-linear-gradient(0deg, #0d223805 0 1px, transparent 1px 3px) !important; color:#0d2238;
   box-shadow:0 10px 28px rgba(13,34,56,.22), 0 0 0 1px #c9d9e6 !important; }
-html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts .ticket :is(.ticket__line, b) { color:#0d2238 !important; }
+:is(html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night), html.sky-cards:not(.sky-night)) #toasts .ticket :is(.ticket__line, b) { color:#0d2238 !important; }
 /* The icon tiles in the colours of a light ticket (2026-11-19, Sevaan: the info icon was pale cream on white): each tone
    deepened so its icon reads, info in the airmail stripe's blue. */
-html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts .ticket.tone-info { --k:#24508c; }
-html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts .ticket.tone-orange { --k:#b42a20; }
-html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts .ticket.tone-gold { --k:#a8780f; }
-html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts .ticket.tone-steel { --k:#2f5f8a; }
-html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts .ticket.tone-red { --k:#b42a20; }
-html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts .ticket :is(.ticket__sub, .ticket__x, .ticket__xp small) { color:#4a6178 !important; }
+:is(html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night), html.sky-cards:not(.sky-night)) #toasts .ticket.tone-info { --k:#24508c; }
+:is(html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night), html.sky-cards:not(.sky-night)) #toasts .ticket.tone-orange { --k:#b42a20; }
+:is(html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night), html.sky-cards:not(.sky-night)) #toasts .ticket.tone-gold { --k:#a8780f; }
+:is(html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night), html.sky-cards:not(.sky-night)) #toasts .ticket.tone-steel { --k:#2f5f8a; }
+:is(html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night), html.sky-cards:not(.sky-night)) #toasts .ticket.tone-red { --k:#b42a20; }
+:is(html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night), html.sky-cards:not(.sky-night)) #toasts .ticket :is(.ticket__sub, .ticket__x, .ticket__xp small) { color:#4a6178 !important; }
 /* Rank card leftovers from the screen check (2026-11-17): the "Last week" link and the XP line were pale yellow or grey
    on the light panel; on a 320 px phone "5,530 XP to Air Traffic Controller" ran off the card. */
 html.sky-cards:not(.sky-night) .logbook .lb-pic .lb-week { color:#0d2238; }
@@ -577,8 +578,8 @@ body.sky-only.day:not(.night) :is(#discover, #guidance) { --tk-bg:#fffdf6f2; }
 body.sky-only.day:not(.night) :is(.tk-card, #guidance:not(.first)) { background-image:repeating-linear-gradient(0deg, #0d223805 0 1px, transparent 1px 3px) !important; box-shadow:0 10px 26px rgba(13,34,56,.22), 0 0 0 1px #c9d9e6 !important; }
 body.sky-only.day:not(.night) #discover .d-ticket #d-name, body.sky-only.day:not(.night) #guidance:not(.first), body.sky-only.day:not(.night) #guidance:not(.first) :is(b, strong) { color:#0d2238 !important; text-shadow:none !important; }
 body.sky-only.day:not(.night) #discover .d-ticket :is(#d-sub, #d-switch, #d-dist), body.sky-only.day:not(.night) #guidance:not(.first) small { color:#4a6178 !important; }
-html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts .ticket { --tkc:#b42a20; } /* the ticket's small label was pale yellow on white */
-html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night) #toasts .ticket .ticket__eyebrow { color:#b42a20 !important; }
+:is(html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night), html.sky-cards:not(.sky-night)) #toasts .ticket { --tkc:#b42a20; } /* the ticket's small label was pale yellow on white */
+:is(html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night), html.sky-cards:not(.sky-night)) #toasts .ticket .ticket__eyebrow { color:#b42a20 !important; }
 
 /* The small pack on the share sheet in daylight (2026-11-18): soft navy shadows, a cream count, the gold glow as a pale one */
 html body .sv-bag { filter:drop-shadow(0 10px 18px rgba(13,34,56,.28)); }
@@ -638,8 +639,8 @@ html:not(.sky-night) body.sky-only:not(.night) :is(.cr-row a, .cr-pic a, .cr-pic
    just with the airmail stripes"): Space Collector's 3 px bar along the top, curving into the corners as its border-top
    does, filled with the red, cream and blue airmail stripes. A layer masked to that top band, so it sits on the light day
    ticket and the dark night one alike. The patch coin's "Patch earned" tag on Explore too. */
-body.sky-only :is(#toasts .ticket, .pc-tag) { position:relative; border-top:0 !important; }
-body.sky-only :is(#toasts .ticket, .pc-tag)::after { content:''; position:absolute; inset:0; z-index:2; border-radius:inherit; padding:3px 0 0; pointer-events:none;
+:is(body.sky-only, html.sky-cards body) :is(#toasts .ticket, .pc-tag) { position:relative; border-top:0 !important; }
+:is(body.sky-only, html.sky-cards body) :is(#toasts .ticket, .pc-tag)::after { content:''; position:absolute; inset:0; z-index:2; border-radius:inherit; padding:3px 0 0; pointer-events:none;
   background:repeating-linear-gradient(-45deg, #c8312a 0 6px, #fffdf6 6px 9px, #24508c 9px 15px, #fffdf6 15px 18px);
   -webkit-mask:linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); mask:linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
   -webkit-mask-composite:xor; }
@@ -661,7 +662,7 @@ body.sky-only:has(#gift) .wx-layer { animation: none; will-change: auto; }
 #wc-holder .wc-a { gap: 1.25em; padding-bottom: .55em; } /* Space's gap again: the shorter pictures left room */
 #wc-holder .wc-a-foot { padding: .72em 0 0; }
 @media (max-width: 340px) { #wc-holder .wc-a { gap: .75em; padding-top: 1.1em; } } /* 320 px: one more line of text */
-html:not(.sky-night) body.sky-only #toasts .ticket .tn-go { color:#b42a20; } /* "Show me ›" was pale cream on the day ticket */
+:is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) #toasts .ticket .tn-go { color:#b42a20; } /* "Show me ›" was pale cream on the day ticket */
 
 /* The Plus page's plane fly-by (2026-11-19, Sevaan: "Make a plane fly by instead of a shooting star"): a small jet crosses
    behind the member patch from the left, climbing a little, its contrail fading behind it; once every 7 s, day and night.

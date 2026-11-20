@@ -68,6 +68,7 @@ const html = `<!doctype html>
   .hint { margin:0; font-weight:600; font-size:12.5px; letter-spacing:.24em; text-transform:uppercase; color:var(--muted); }
   .fc .ph-blur { display:none; }
   footer { position:relative; z-index:1; padding:0 20px 26px; text-align:center; font-size:12.5px; letter-spacing:.14em; text-transform:uppercase; color:#23405c; }
+  footer a { color:inherit; text-transform:none; letter-spacing:.02em; } /* the support address, readable as typed (2026-11-20) */
   @media (max-width:380px) { .soon { font-size:11.5px; letter-spacing:.14em; padding-inline:14px; white-space:nowrap; } }
   @media (max-width:820px) { main { grid-template-columns:1fr; justify-items:center; text-align:center; gap:34px; } .hero { display:grid; justify-items:center; } .pitch { max-width:26em; } .links { justify-content:center; } }
   @media (prefers-reduced-motion:reduce) { .flip, .wx-layer, .soon i { animation:none; } .flip { transition:none; } }
@@ -80,9 +81,9 @@ const html = `<!doctype html>
     <img class="icon" src="/apple-touch-icon.png" width="76" height="76" alt="">
     <h1>Sky Collector</h1>
     <p class="tag">Collect what flies over you</p>
-    <p class="pitch">Find out what’s really up there. Point your phone at the sky, line up a plane in the circle, and collect it: where it’s going, who’s flying it, and what it is.</p>
+    <p class="pitch">Find out what’s really up there. Point your phone at the sky, line up a plane in the circle and collect it. Most airline flights also show the airline and the route.</p>
     <p class="soon"><i></i>Coming soon to iPhone and Android</p>
-    <nav class="links"><a href="/privacy">Privacy</a></nav>
+    <nav class="links"><a href="mailto:hello@skycollector.app">Support</a><a href="/privacy">Privacy</a></nav>
   </section>
   <section class="stage">
     <div class="flip" id="flip" role="button" tabindex="0" aria-label="A Sky Collector card, face down. Tap to turn it over." aria-pressed="false">
@@ -92,7 +93,7 @@ const html = `<!doctype html>
     <p class="hint" id="hint">Tap the card</p>
   </section>
 </main>
-<footer>© 2026 Sky Collector</footer>
+<footer id="support">© 2026 Sky Collector · Questions? <a href="mailto:hello@skycollector.app">hello@skycollector.app</a></footer>
 <script type="module">
   import { cloudsHtml } from '/js/weather-art.js';
   const put = (id, amount, tint) => { document.getElementById(id).innerHTML = cloudsHtml(amount, { tint }); };

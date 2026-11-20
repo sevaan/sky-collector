@@ -1,15 +1,15 @@
 // Player progress from the sighting log: XP and observer rank, tonight’s three missions, a weekly streak and
 // achievements. Everything is derived from the saved sightings (nothing extra is stored), so it can’t drift.
 // info(cardKey) -> { tier, type, owner, launch, natural, con } | null. No DOM.
-import { isProp } from './sky-props.js?v=0.1.1814';
-import { SKY_PATCHES_MORE, freshSky2, noteSky2 } from './sky-patches.js?v=0.1.1814';
-import { nightKey, useCalendarDays } from './observation.js?v=0.1.1814';
-import { fleetThresholds } from './card-model.js?v=0.1.1814';
-import { distRound as distText } from './units.js?v=0.1.1814';
-import { firstFlew, isNewType, isOldType, engines, makerOf, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1814';
-import { planeSet } from './sky-sets.js?v=0.1.1814';
-import { privateCatch, MIL_TYPES } from './plane-privacy.js?v=0.1.1814';
-import { localDay, THRESHOLDS } from './sky-stamps.js?v=0.1.1814';
+import { isProp } from './sky-props.js?v=0.1.1815';
+import { SKY_PATCHES_MORE, freshSky2, noteSky2 } from './sky-patches.js?v=0.1.1815';
+import { nightKey, useCalendarDays } from './observation.js?v=0.1.1815';
+import { fleetThresholds } from './card-model.js?v=0.1.1815';
+import { distRound as distText } from './units.js?v=0.1.1815';
+import { firstFlew, isNewType, isOldType, engines, makerOf, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1815';
+import { planeSet } from './sky-sets.js?v=0.1.1815';
+import { privateCatch, MIL_TYPES } from './plane-privacy.js?v=0.1.1815';
+import { localDay, THRESHOLDS } from './sky-stamps.js?v=0.1.1815';
 
 // A longer climb (2026-10-12, playtest room: three ranks on night 1, Mission Control in about two weeks), with two
 // prestige ranks past Mission Control. Nobody drops a rank they had on the old curve (rankFloor below).
@@ -214,8 +214,8 @@ export const SKY_MISSIONS = [
   /* nearTo: the flight's airport was within 30 km of where you stood (saved on the catch from 2026-11-20; never your position) */
   { id: 'landing', text: 'Catch a flight landing near you', done: (n) => n.some((s) => !!route(s) && s.nearTo === true) },
   /* the year that exact model first flew, as printed on its card; a type with no year never counts (js/sky-kinds.js) */
-  { id: 'oldtype', text: 'Catch a plane type from before 1980' /* first flew before 1980 */, done: (n) => n.some((s) => isOldType(s.typeCode)) },
-  { id: 'newtype', get text() { return `Catch a plane type from ${new Date().getFullYear() - 10} or later`; } /* the last 10 years, rolling each January */, done: (n, t) => n.some((s) => isNewType(s.typeCode, s.time ?? t)) },
+  { id: 'oldtype', text: 'Catch a kind of plane that first flew before 1980' /* first flew before 1980 */, done: (n) => n.some((s) => isOldType(s.typeCode)) },
+  { id: 'newtype', get text() { return `Catch a kind of plane that first flew in ${new Date().getFullYear() - 10} or later`; } /* the last 10 years, rolling each January */, done: (n, t) => n.some((s) => isNewType(s.typeCode, s.time ?? t)) },
   /* el, climb and upFor are saved on catches from 2026-11-20; a catch without them never counts */
   { id: 'overhead', text: 'Catch a plane right over your head', done: (n) => n.some((s) => Number.isFinite(s.el) && s.el > 70) },
   { id: 'up', text: 'Catch a plane on its way up', done: (n) => n.some((s) => climbing(s, 1)) },
@@ -400,7 +400,7 @@ export const SKY_CHALLENGES = [
   { id: 'revisit3', text: 'Catch three planes you’ve caught before', done: (n) => nCatches(n, (s) => !s.first) >= 3 },
   { id: 'pair10', text: 'Catch two planes in 10 minutes', done: (n) => inTen(n, 2) },
   { id: 'levelup', text: 'Turn a card silver or gold', done: (n) => n.some((s) => s.lv) },
-  { id: 'moreaircraft', text: 'Add a new aircraft to a plane card you own', done: (n) => n.some((s) => s.moreAircraft) },
+  { id: 'moreaircraft', text: 'Add a new plane to a card you already own', done: (n) => n.some((s) => s.moreAircraft) },
   /* newColours: saved on the catch from 2026-11-20 (js/sky-stamps.js newLivery); before that, the same rule from your history */
   { id: 'livery2', text: 'Catch a kind you own in new colours', done: (n) => n.some((s) => s.newColours ?? s.ownLivery) },
   { id: 'sameairline', text: 'Catch two planes from the same airline', done: (n) => { const by = new Map(); for (const c of catchesOf(n)) { const s = c.list.find((x) => /^[A-Z]{3}\d/.test(x.callsign ?? '')); if (!s) continue; const a = s.callsign.slice(0, 3), h = by.get(a) ?? by.set(a, new Set()).get(a); h.add(String(s.hex ?? c.time)); if (h.size >= 2) return true; } return false; } },
@@ -413,7 +413,7 @@ const SKY_PATCHES = new Set(['first', 'ten', 'twentyfive', 'fifty', 'hundred', '
   'twilight', 'owl', 'dawn', 'marathon', 'double', 'hattrick', 'months3', 'months12', 'streak4', 'streak12', 'anniversary', 'roadtrip', 'missions10', 'fullhouse', 'missions50',
   'silver', 'gold', 'gold3', 'shiny', 'shiny5', 'oldtimer', 'decades', 'compass']); /* the last eight from 2026-11-20, in Sky's words (SKY_OVER) */
 let SKY = false;
-const RANK_NAMES = RANKS.map((r) => r[1]), SKY_RANK_NAMES = ['Spotter', 'Plane Spotter', 'Tracker', 'Navigator', 'Air Traffic Controller', 'Chief Pilot', 'Ace', 'Sky Legend'];
+const RANK_NAMES = RANKS.map((r) => r[1]), SKY_RANK_NAMES = ['Skywatcher', 'Spotter', 'Type Spotter', 'Plane Expert', 'Sky Scholar', 'Sky Master', 'Sky Legend', 'Hall of Fame']; /* Sevaan's ladder, 2026-11-20 (content/sky-ranks-2026-11-20.md, ladder A): a hobby, not a job; same thresholds. A rank is its index from XP, never stored by name, so a saved player keeps their place */
 // Sky Collector's weekly themes (2026-11-17; Space Collector's are rocket stages, the Moon, debris…). Same machinery:
 // one a week by the calendar, `have` counts this week's sightings toward `need`.
 const SKY_WEEK_THEMES = [
@@ -456,7 +456,7 @@ export function chooseSkyWeek(ws, chosen, st, ctx = {}) {
 const SPACE_WEEK_THEMES = WEEK_THEMES.slice();
 const RANK_AT = RANKS.map((r) => r[0]), SKY_RANK_AT = { 1: 480, 2: 2000 }; /* 480 (was 700) with the starter missions worth 20 XP each (2026-11-19, scripts/sim/week.mjs: the first rank-up now lands on day 2 for light, normal and heavy players) */ /* a plane catch makes two cards, so the first two ranks sit further out and the first rank-up still lands on day 2 (docs/DESIGN-LOOP.md §4) */
 /* Space words on a shared patch, renamed for planes (playtest 2026-11-18: "First Light" is a telescope's first look) */
-const SKY_PATCH_NAMES = { first: 'Wheels Up', streak4: 'Frequent Flyer' }, SPACE_PATCH_NAMES = {};
+const SKY_PATCH_NAMES = { first: 'Wheels Up', streak4: 'Frequent Flyer', sightings100: 'Hundred Catches', double: 'Double Catch' /* Sevaan 2026-11-20: no "sighting" in a name; ids unchanged */ }, SPACE_PATCH_NAMES = {};
 export function setSkyProgress(on) { SKY = !!on; useCalendarDays(SKY); for (const x of ACHIEVEMENTS) if (x.id in SKY_PATCH_NAMES) { SPACE_PATCH_NAMES[x.id] ??= x.name; x.name = SKY ? SKY_PATCH_NAMES[x.id] : SPACE_PATCH_NAMES[x.id]; } RANKS.forEach((r, i) => { r[1] = (SKY ? SKY_RANK_NAMES : RANK_NAMES)[i] ?? r[1]; r[0] = SKY ? SKY_RANK_AT[i] ?? RANK_AT[i] : RANK_AT[i]; }); WEEK_THEMES.splice(0, WEEK_THEMES.length, ...(SKY ? SKY_WEEK_THEMES : SPACE_WEEK_THEMES)); }
 const SKY_REPEAT_XP = 3, RARE_HERE_XP = 10, SKY_STARTER_XP = 20; /* the first day's three missions: their own badge (Cleared for Takeoff), less XP than a day's missions (QA 2026-11-19: the first session gave 460 XP and 8 patches) */ /* a stamp on a card you own; a plane that is unusual where you stand */
 export const isSkyProgress = () => SKY;
@@ -527,7 +527,7 @@ const SKY_ACHIEVEMENTS = [
   { id: 'sky-rotor', name: 'Rotor Head', text: 'Catch a helicopter', icon: '✢', done: (a) => skyK(a).heli >= 1 },
   { id: 'sky-propday', name: 'Prop Day', text: 'Catch three propeller planes in one day', icon: '✣3', done: (a) => maxSize(skyK(a).propDays) >= 3 },
   { id: 'sky-freightnight', name: 'Freight Night', text: 'Catch a cargo flight after dark', icon: '▣', done: (a) => skyK(a).freightNight >= 1 },
-  { id: 'sky-hopper', name: 'Hopper', text: 'Catch a flight shorter than 300 km', icon: '⤻', done: (a) => skyK(a).hop >= 1 },
+  { id: 'sky-hopper', name: 'Hopper', get text() { return `Catch a flight shorter than ${distText(300)}`; }, icon: '⤻', done: (a) => skyK(a).hop >= 1 },
   { id: 'sky-globetrotter', name: 'Globetrotter', text: 'Catch a flight longer than 10,000 km', icon: '10K', done: (a) => skyK(a).far >= 1 },
   { id: 'sky-airlines5', name: 'Five Airlines', text: 'Catch five different airlines', icon: '5', done: (a) => skyK(a).airlines.size >= 5 },
   { id: 'sky-airlines25', name: 'Twenty-five Airlines', text: 'Catch 25 different airlines', icon: '25', done: (a) => skyK(a).airlines.size >= 25 },
@@ -555,7 +555,7 @@ const SKY_ACHIEVEMENTS = [
     ['sky-albums10', 'Album Starter', 'Have a card in 10 albums', 'AB10', 10, (a) => K3(a).albums.size],
     ['sky-missions100', 'Old Hand', 'Complete 100 missions', 'M100', 100, (a) => a.missionsDone],
     ['sky-weeks4', 'Four Weeks', 'Finish 4 week themes', 'W4', 4, (a) => a.weeksDone ?? 0],
-    ['sky-weeks12', 'Every Week', 'Earn all 12 week badges', 'W12', 12, (a) => a.weekThemes?.size ?? 0],
+    ['sky-weeks12', 'Every Week', 'Earn all 12 week patches', 'W12', 12, (a) => a.weekThemes?.size ?? 0],
   ].map(([id, name, text, icon, need, have]) => ({ id, name, text, icon, done: (a) => have(a) >= need, prog: (a) => [Math.min(need, have(a)), need] })),
 ];
 const K3 = (a) => a.sky3 ?? { types: new Set(), shinies: new Set(), continents: new Set(), quarters: new Set(), albums: new Set(), night: 0, up: 0 };
@@ -571,7 +571,8 @@ const SKY_OVER = {
   sightings100: { text: 'Catch 100 planes', skyProg: (a) => [Math.min(100, a.sightings), 100] },
   marathon: { text: 'Catch 10 planes in one day' },
   /* QA round 3 (2026-11-20): Space's words (log, observe, night) left on Sky's patches */
-  owl: { text: 'Catch a plane between 1 and 4 AM' }, streak4: { text: 'Catch a plane 4 weeks in a row' }, streak12: { text: 'Catch a plane 12 weeks in a row' },
+  owl: { text: 'Catch a plane between 1 and 4 AM' }, twilight: { text: 'Catch a plane between 5 and 9 PM' }, dawn: { text: 'Catch a plane between 4 and 7 AM' }, /* wording pass 2026-11-20 (content/sky-patches-missions-wording-2026-11-20.md 2a) */
+  months3: { text: 'Catch a plane in 3 different months' }, months12: { text: 'Catch a plane in 12 different months' }, roadtrip: { text: 'Catch planes from two places more than 100 km apart' }, streak4: { text: 'Catch a plane 4 weeks in a row' }, streak12: { text: 'Catch a plane 12 weeks in a row' },
   anniversary: { text: 'Still spotting a year after your first catch' }, fullhouse: { text: 'Complete all three missions in one day' },
 };
 export const ACHIEVEMENTS = [
@@ -878,7 +879,7 @@ export function progress(sightings, info, { constellations = [], albums = [], no
   const ch = challengeOf(tonightKey, deals), challenge = list.length && !firstNights.has(tonightKey) ? { id: ch.id, text: ch.text, done: ch.done(tonight, now) } : null; // not on a first night: the starter set is enough
   // A filled album earns its own gold-foil patch (2026-10-10, playtest #17).
   for (const al of albums) { const have = al.keys.filter((k) => seenCard.has(k)).length; achievements.push({ id: `album-${al.id}`, album: al.id, name: al.name, sub: 'Gold album', icon: '', text: `Fill the ${al.name.replace(/^The /, "")} album to gold: ${al.goal.toLocaleString("en-US")} cards`, done: have >= al.goal, prog: [Math.min(have, al.goal), al.goal] }); }
-  for (const th of WEEK_THEMES) achievements.push({ id: `week-${th.id}`, week: th.id, name: th.short, sub: 'Week badge', icon: th.icon, text: `${th.text.replace(/\.$/, '')} in one week`, done: a.weekThemes.has(th.id), prog: [a.weekThemes.has(th.id) ? 1 : 0, 1] });
+  for (const th of WEEK_THEMES) achievements.push({ id: `week-${th.id}`, week: th.id, name: th.short, sub: 'Week patch', icon: th.icon, text: `${th.text.replace(/\.$/, '')} in one week`, done: a.weekThemes.has(th.id), prog: [a.weekThemes.has(th.id) ? 1 : 0, 1] });
   if (keep) { const kept = new Set(giftCarry().patches); if (kept.size) for (const x of achievements) if (kept.has(x.id)) x.done = true; } /* patches past gifts gave (giftCarry) */
   /* Sky: a patch once earned stays earned when a rule is put right (2026-11-20: Hundred Sightings now counts catches, levels
      are per card): every patch Explore or the wall recorded (localStorage patchDates) */

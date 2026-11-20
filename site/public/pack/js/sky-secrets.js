@@ -7,13 +7,13 @@
 
 // The patches. The text is what the patch's card says once found.
 export const SKY_SECRET_PATCHES = {
-  overhead: { id: 'overhead', name: 'Zenith', /* not 'zenith': that's a Space Collector patch id */ text: 'You caught a plane flying almost straight over your head.' },
+  overhead: { id: 'overhead', name: 'Straight Up', /* was 'Zenith' (wording pass 2026-11-20); the id stays 'overhead' (not 'zenith': that's a Space Collector patch id) */ text: 'You caught a plane flying almost straight over your head.' },
   balloon: { id: 'balloon', name: 'Up, Up and Away', text: 'You caught a hot-air balloon.' },
   glider: { id: 'glider', name: 'Silent Wings', text: 'You caught a glider, flying with no engine at all.' },
   airship: { id: 'airship', name: 'Lighter Than Air', text: 'You caught an airship.' },
   whale: { id: 'whale', name: 'The Whale', text: 'You caught an Airbus Beluga, the whale-shaped freighter that carries parts of Airbus planes between its factories.' },
   heavylift: { id: 'heavylift', name: 'Heavy Lifter', text: 'You caught one of the giant freighters: an Antonov An-124 or a Boeing Dreamlifter.' },
-  firebird: { id: 'firebird', name: 'Firebird', text: 'You caught a water bomber, a plane that skims a lake to fill up with water for fighting fires.' },
+  firebird: { id: 'firebird', name: 'Firebird', text: 'You caught a water bomber, a plane built to scoop up water from a lake.' } /* names the aircraft, no fire in progress (Sevaan, 2026-11-20) */,
   hurricane: { id: 'hurricane', name: 'Into the Eye', text: 'You caught a NOAA hurricane hunter, a plane that flies into storms to measure them.' },
   vintage: { id: 'vintage', name: 'Vintage', text: 'You caught a plane of a type built more than 50 years ago.' },
   jetstream: { id: 'jetstream', name: 'Jet Stream', text: 'You caught an airliner going faster than 1,000 km/h over the ground, pushed along by the jet stream.' },

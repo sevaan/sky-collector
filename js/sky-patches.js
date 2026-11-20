@@ -2,8 +2,8 @@
 // earned in plain sight, read off the sightings like every patch (js/progress.js), nothing stored. Each catch's own
 // context (the sun's height, the weather, where you stood) is kept on its sighting when it is caught (main.js
 // capturePlane: sunEl, wx), so older catches count only for what they already carry. No DOM here.
-import { greatCircle } from './flight-facts.js?v=0.1.1814';
-import { isProp } from './sky-props.js?v=0.1.1814';
+import { greatCircle } from './flight-facts.js?v=0.1.1815';
+import { isProp } from './sky-props.js?v=0.1.1815';
 
 const R = 6371, RAD = Math.PI / 180;
 const km = (a, b) => { const s = Math.sin((b.lat - a.lat) * RAD / 2) ** 2 + Math.cos(a.lat * RAD) * Math.cos(b.lat * RAD) * Math.sin((b.lon - a.lon) * RAD / 2) ** 2; return 2 * R * Math.asin(Math.min(1, Math.sqrt(s))); };
@@ -79,8 +79,8 @@ export const SKY_PATCHES_MORE = [
   P('sky-snow', 'Snow Day', 'Catch a plane while it snows', 1, (a) => K(a).snow),
   P('sky-coast', 'Coast to Coast', 'Catch a flight of 3,500 km or more within one country', 1, (a) => K(a).coast),
   P('sky-equator', 'Equator Crosser', 'Catch a flight between the northern and southern halves of the world', 1, (a) => K(a).equator),
-  P('sky-dateline', 'Date Line', 'Catch a flight whose shortest path crosses the International Date Line', 1, (a) => K(a).dateline),
-  P('sky-pole', 'Pole Hopper', 'Catch a flight whose shortest path passes north of the Arctic Circle', 1, (a) => K(a).pole),
+  P('sky-dateline', 'Date Line', 'Catch a flight that crosses the International Date Line, where one day becomes the next', 1, (a) => K(a).dateline),
+  P('sky-pole', 'Pole Hopper', 'Catch a flight that goes over the far north, past the Arctic Circle', 1, (a) => K(a).pole),
   P('sky-passport10', 'Passport', 'Catch flights to 10 countries', 10, (a) => K(a).countries.size),
   P('sky-passport25', 'Well Travelled', 'Catch flights to 25 countries', 25, (a) => K(a).countries.size),
   P('sky-passport50', 'Globetrotter’s Passport', 'Catch flights to 50 countries', 50, (a) => K(a).countries.size),

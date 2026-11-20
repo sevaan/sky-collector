@@ -10,6 +10,10 @@ Sky Collector's own records in both stores, separate from Space Collector's. No 
 | Language | English (Canada) | English (United Kingdom), the form's default; can be changed |
 | Type and price | iOS; price not set yet | Game, Free |
 | State | 1.0, Prepare for Submission | Draft; dashboard tasks not started |
+| Support | Support URL https://skycollector.app (Support link and the address in its footer) · email hello@skycollector.app | Contact email hello@skycollector.app · website https://skycollector.app |
+| Privacy policy | https://skycollector.app/privacy | https://skycollector.app/privacy |
+
+Support email chosen by Sevaan 2026-11-20. The privacy page's Contact section offers it first, then GitHub issues (the repo is public).
 
 The tester app on Sevaan's iPhone is `app.skycollector.tester` ("Sky Tester", native/build-tester.sh). The phone-app
 shell (`native/`) is not in this repo yet; it has no Android project.
