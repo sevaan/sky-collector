@@ -6078,6 +6078,12 @@ let revealIntoBinder = false, revealFaced = false;
 addEventListener('sc:payoff', () => { revealFaced = true; });
 function binderReady() { return revealIntoBinder && revealFaced && !collectionOpen && !revealBack && $('ob-done').hidden && !document.body.classList.contains('ob-tour') && state.tourCatchId == null && !matchMedia('(prefers-reduced-motion: reduce)').matches; }
 onRevealSwipeIntoBinder(binderReady); // swiping a new card away sends it into the Collection tab too (2026-10-21, Sevaan)
+/* Where the card lands on the Collection tab: its icon, else (the icon is hidden since the switcher went words-only) its
+   word, else the tab itself. Measuring the hidden icon gave 0,0 and the card flew to the top-left corner (2026-11-20). */
+function binderTarget(tab, tr = tab.getBoundingClientRect()) {
+  const ic = tab.querySelector('.ico')?.getBoundingClientRect(); if (ic?.width) return ic;
+  try { const r = document.createRange(); r.selectNodeContents(tab); const w = r.getBoundingClientRect(); if (w.width) return w; } catch {}
+  return tr; }
 function intoBinder() {
   const go = binderReady(); revealIntoBinder = false;
   if (!go) return;
@@ -6089,7 +6095,7 @@ function intoBinder() {
   const face = revealDeckClone() ?? front.cloneNode(true); /* a flight's two cards fly in together (2026-11-20) */ face.removeAttribute('id'); face.style.transform = 'none'; fly.append(face); document.body.append(fly);
   $('rv-holder').style.visibility = 'hidden'; setTimeout(() => { $('rv-holder').style.visibility = ''; $('rv-holder').style.display = ''; }, 600); // only the flying copy is seen
   if (face.classList.contains('bf-stack')) $('rv-holder').style.display = 'none'; /* a pair's hidden cards still cost every frame of the reveal's fade (4x CPU: 35 ms frames, 18 ms with them out) */
-  const ic = tab.querySelector('.ico')?.getBoundingClientRect() ?? tr, dx = ic.left + ic.width / 2 - (hr.left + hr.width / 2), dy = ic.top + ic.height / 2 - (hr.top + hr.height / 2), sc = Math.max(.06, (tr.height * .5) / hr.height);
+  const ic = binderTarget(tab, tr), dx = ic.left + ic.width / 2 - (hr.left + hr.width / 2), dy = ic.top + ic.height / 2 - (hr.top + hr.height / 2), sc = Math.max(.06, (tr.height * .5) / hr.height);
   fly.animate([{ transform: 'none', opacity: 1 }, { transform: `translate(${dx * .35}px, ${dy * .2 - 30}px) scale(.62) rotate(-4deg)`, opacity: 1, offset: .35 }, { transform: `translate(${dx}px, ${dy}px) scale(${sc}) rotate(-8deg)`, opacity: 0 }], { duration: 560, easing: 'cubic-bezier(.45,0,.55,1)', fill: 'forwards' })
     .finished.then(() => {
       fly.remove(); buzz('light'); sfx('stamp', { gain: .7 });
