@@ -433,14 +433,16 @@ export function attachTilt(el, { scroll = false } = {}) { // scroll: let a finge
   };
   const kick = () => { if (!raf) raf = requestAnimationFrame(step); };
   const set = (px, py) => {
+    if (el.dataset.swiping) return; // a card being swiped holds still: every tilt write restyles and repaints the whole face, each frame of the drag (2026-11-20 swipe jank)
     if (reducedMotion()) { px = .5; py = .5; }
     want.x = px; want.y = py; want.o = 1; spring = FOLLOW;
     el.classList.add('active');
     kick();
   };
-  const reset = () => {
+  const reset = (now = false) => { // now: snap to rest with no settling wobble (a swipe takes the card)
     want.x = .5; want.y = .5; want.o = 0; spring = SETTLE;
     el.classList.remove('active');
+    if (now) { cancelAnimationFrame(raf); raf = 0; Object.assign(cur, want); vel.x = vel.y = vel.o = 0; write(); return; }
     kick();
   };
   const onMove = (e) => {

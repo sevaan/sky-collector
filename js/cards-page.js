@@ -1172,7 +1172,7 @@ slot.addEventListener('pointermove', (e) => {
     slot.setPointerCapture(e.pointerId);
     const card = slot.firstElementChild;
     if (card) card.dataset.swiping = '1';
-    tilt?.reset();
+    tilt?.reset(true); /* at rest at once: a settling tilt restyled and repainted the card face every frame of the drag (2026-11-20) */
   }
   if (swipe.active) { swipe.dx = dx; slideTo(dx, 0); }
 });
@@ -1181,18 +1181,19 @@ function endSwipe(e) {
   const { active, dx, t } = swipe;
   swipe = null;
   const card = slot.firstElementChild;
-  if (card) delete card.dataset.swiping;
-  if (!active) return;
+  if (!active) { if (card) delete card.dataset.swiping; return; }
   const fast = Math.abs(dx) / Math.max(1, performance.now() - t) > 0.5; // px per ms
   if (Math.abs(dx) > window.innerWidth * 0.22 || (fast && Math.abs(dx) > 40)) {
     const dir = dx < 0 ? 1 : -1;
-    slideTo(-dir * window.innerWidth, 180); sfx('page', { gap: 120 });
+    slideTo(-dir * window.innerWidth, 180); sfx('page', { gap: 120 }); // the leaving card stays still (data-swiping) as it flies off
     setTimeout(() => {
       step(dir);
+      const next = slot.firstElementChild; if (next) next.dataset.swiping = '1'; // …and so does the new one as it slides in: phone tilt (attachGyro) would otherwise lift it, repainting it every frame
       slideTo(dir * window.innerWidth * 0.6, 0); // new card comes in from the other side
       requestAnimationFrame(() => requestAnimationFrame(() => slideTo(0, 220)));
+      setTimeout(() => { if (next && !swipe?.active) delete next.dataset.swiping; }, 260); /* not if a new swipe has it already */
     }, 180);
-  } else slideTo(0, 200);
+  } else { if (card) delete card.dataset.swiping; slideTo(0, 200); }
 }
 slot.addEventListener('pointerup', endSwipe);
 slot.addEventListener('pointercancel', endSwipe);

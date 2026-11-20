@@ -597,7 +597,7 @@ function syncPager() { $('rv-news').querySelectorAll('.rv-pager button').forEach
   d.addEventListener('pointermove', (e) => { if (!on) return; dx = e.clientX - x0; const dy = e.clientY - y0;
     if (!dragging) { if (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy)) { if (Math.abs(dy) > 12) on = false; return; } // vertical: the card's tilt and the flick up keep it
       dragging = true; deckTook = true; slot.classList.add('dk-drag'); try { d.setPointerCapture(e.pointerId); } catch {}
-      deck.items[k].card.dataset.swiping = '1'; deck.items[k].tilt?.reset(); } // while the deck has the finger the card stops tilting and can't count a tap (js/card.js reads data-swiping)
+      deck.items[k].card.dataset.swiping = '1'; deck.items[k].tilt?.reset(true); } /* at rest at once (2026-11-20): a settling tilt repainted the card face every frame of the drag */ // while the deck has the finger the card stops tilting and can't count a tap (js/card.js reads data-swiping)
     slot.style.transform = `translateX(${dx}px) rotate(${dx / 40}deg)`;
     const back = slots()[1 - k], p = Math.min(1, Math.abs(dx) / 140); if (back) back.style.filter = `brightness(${(back.classList.contains('sealed') ? .8 : .55) + p * .3})`; }); // the card behind brightens as you pull
   const end = () => { if (!on) return; on = false; if (!dragging) return; slot.classList.remove('dk-drag'); const back = slots()[1 - k]; if (back) back.style.filter = '';
