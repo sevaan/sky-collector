@@ -104,6 +104,10 @@ const TOWER = `<g fill="${I}"><path d="M-3 24 L-2 -2 H2 L3 24Z"/><path d="M-8 -1
 const RING = (n) => `<text y="7" text-anchor="middle" font-family="SC Display, Impact, sans-serif" font-size="${String(n).length > 2 ? 18 : 22}" fill="${I}">${n}</text>`;
 const GLOBE = `<circle r="18" fill="none" stroke="${I}" stroke-width="2"/><path d="M-18 0 H18 M0 -18 Q-10 0 0 18 M0 -18 Q10 0 0 18" fill="none" stroke="${I}" stroke-width="1.2" stroke-opacity=".6"/>`;
 export const SKY_PATCH_ART = {
+  /* Ambassador (2026-11-20, Sevaan: "The ambassador patch has a star on the back of the card... it should have a plane"):
+     Space Collector's two cards, a plane on the front one in place of the star */
+  ambassador: () => '<g transform="scale(1.05)"><g stroke="#fff2b3" stroke-width="2" stroke-linejoin="round"><rect x="-16" y="-20" width="24" height="34" rx="3" fill="#0c1c33" transform="rotate(-12 -4 -3)"/><rect x="-6" y="-22" width="24" height="34" rx="3" fill="#14284a" transform="rotate(9 6 -5)"/></g>'
+    + JET(6, -5, .62, 45).replace(/fill="[^"]*"/, 'fill="#ff6b5e"') + '<circle cx="-24" cy="-22" r="1.1" fill="#fff2b3" opacity=".7"/><circle cx="25" cy="16" r=".9" fill="#fff2b3" opacity=".6"/></g>',
   'sky-redeye': () => `<path d="M14 -20 A16 16 0 1 0 22 6 A12 12 0 1 1 14 -20Z" fill="${I}"/>${JET(-6, 8, .8, 60)}`,
   'sky-homerun': () => `${TOWER}${JET(-16, -14, .7, 135)}`,
   'sky-outbound': () => `${TOWER}${JET(18, -16, .7, 45)}`,
