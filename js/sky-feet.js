@@ -7,7 +7,7 @@
 // highlight(plane): Settings → Circle highlights would let the circle lock on; nameOf(plane): its name on the map.
 // Every plane up (js/sky-up.js isUp, the same rule as the radar's count and Today) is drawn (at most `max`); only `labels` of them get a spoke and a name, as Space keeps to the
 // Moon, planets and 4 new satellites: highlighted ones first, new ones first among those, then the highest.
-import { isUp } from './sky-up.js?v=0.1.1803';
+import { isUp } from './sky-up.js?v=0.1.1804';
 export const FEET_MAX = 40, FEET_LABELS = 4;
 export function feetPlanes(list, { fresh = () => false, highlight = () => true, nameOf = () => 'Plane', max = FEET_MAX, labels = FEET_LABELS } = {}) {
   const up = (list ?? []).filter(isUp).map((a) => {
@@ -28,4 +28,16 @@ export function feetName(p, route, typeName) {
   const number = route?.flight?.replace(/^([A-Z]{3}|[A-Z0-9]{2})(?=\d)/, '');
   const airline = route?.airline?.replace(/\s*\(.*?\)\s*/g, ' ').trim(); /* 'Jazz (Air Canada Express)' ran off the screen */
   return airline && number ? `${airline} ${number}` : p.callsign || type;
+}
+/* Where a picture (an airline's tail fin or a plane's photo, w x h, centred on x) goes on All around you's strip, W wide
+   (QA 2026-11-20: at 360-430 px a plane near the right edge drew as a clipped photo with half a blue tail fin beside it).
+   Pictures never hang off either edge; one that would cover another picture (taken: [[x, y, w, h], ...], left/top
+   corners) steps aside to whichever side has room, nearest first, else stays where it is. Returns the new centre x. */
+export function stripSpot(x, y, w, h, W, taken = []) {
+  const lo = w / 2 + 2, hi = W - w / 2 - 2, fit = (v) => (hi < lo ? W / 2 : Math.max(lo, Math.min(hi, v)));
+  const hits = (cx) => taken.some(([ix, iy, iw, ih]) => Math.abs(ix + iw / 2 - cx) < (w + iw) / 2 + 2 && Math.abs(iy + ih / 2 - y) < (h + ih) / 2);
+  const x0 = fit(x); if (!hits(x0)) return x0;
+  const step = w * 0.65;
+  for (let k = 1; k <= 4; k++) for (const s of [1, -1]) { const cx = x0 + s * k * step; if (cx < lo || cx > hi) continue; if (!hits(cx)) return cx; }
+  return x0;
 }

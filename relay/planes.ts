@@ -52,6 +52,7 @@ function send(body: string, src: string, cors: Record<string, string>) {
 // newest wins, ties keep the earlier feed (adsb.lol). Returns null when no feed answered.
 // Keep identical to mergeFeeds in relay/worker-planes.js (tests/relay-merge.test.mjs covers that copy).
 // deno-lint-ignore no-explicit-any
+const DB_KEYS = ['t', 'desc', 'r', 'ownOp', 'year', 'category'];
 export function mergeFeeds(got: { id: string; j: any }[]) {
   // deno-lint-ignore no-explicit-any
   const ok = got.filter((g) => g.j && Array.isArray(g.j.ac ?? g.j.aircraft)) as { id: string; j: any }[];
@@ -60,6 +61,8 @@ export function mergeFeeds(got: { id: string; j: any }[]) {
   const now = Math.max(...ok.map((g) => ms(Number(g.j.now) || Date.now())));
   // deno-lint-ignore no-explicit-any
   const best = new Map<string, { a: any; t: number }>();
+  // deno-lint-ignore no-explicit-any
+  const db = new Map<string, any>();
   const sources: Record<string, number> = { adsblol: 0, adsbfi: 0, airplaneslive: 0 };
   for (const g of ok) {
     const fnow = ms(Number(g.j.now) || Date.now()), list = g.j.ac ?? g.j.aircraft;
@@ -68,8 +71,14 @@ export function mergeFeeds(got: { id: string; j: any }[]) {
       if (!a?.hex) continue;
       const t = a.lat == null || a.lon == null ? -Infinity : fnow - (a.seen_pos ?? a.seen ?? 0) * 1000, cur = best.get(a.hex);
       if (!cur || t > cur.t) best.set(a.hex, { a, t });
+      const d = db.get(a.hex) ?? db.set(a.hex, {}).get(a.hex);
+      for (const k of DB_KEYS) if (d[k] == null && a[k] != null && a[k] !== '') d[k] = a[k];
+      if (a.dbFlags != null) d.dbFlags = (Number(d.dbFlags) || 0) | (Number(a.dbFlags) || 0);
     }
   }
-  const ac = [...best.values()].map(({ a, t }) => (Number.isFinite(t) ? { ...a, seen_pos: Math.max(0, Math.round(now - t) / 1000) } : a));
+  /* the aircraft's database fields from whichever feed had them (QA 2026-11-20: a private Cessna 172 came out with no type
+     when the freshest record, often a TIS-B one, carried none), and its privacy flags from every feed */
+  const fill = (a: any) => { const d = db.get(a.hex); if (!d) return a; const o = { ...a }; for (const k of DB_KEYS) if ((o[k] == null || o[k] === '') && d[k] != null) o[k] = d[k]; if (d.dbFlags != null) o.dbFlags = d.dbFlags; return o; };
+  const ac = [...best.values()].map(({ a, t }) => (Number.isFinite(t) ? { ...fill(a), seen_pos: Math.max(0, Math.round(now - t) / 1000) } : fill(a)));
   return { now, ac, total: ac.length, sources: { ...sources, merged: ac.length } };
 }
