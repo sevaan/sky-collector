@@ -13,7 +13,7 @@ test('an airline catch is left alone', () => {
   const l = [flight('ACA856', 'A333'), plane('ACA856', 'A333')];
   const r = scrubSightings(l); assert.equal(r.changed, 0); assert.deepEqual(r.dropped, []); assert.equal(r.list[1].callsign, 'ACA856');
 });
-for (const [cs, type, why] of [['ASP473', 'C25B', 'business-jet operator'], ['AFR123', 'C130', 'military type'], ['XYZ123', 'KC10', 'military type'], ['N123AB', 'C172', 'registration as callsign']]) {
+for (const [cs, type, why] of [['ASP473', 'C25B', 'business-jet operator'], ['AFR123', 'C130', 'military type'], ['XYZ123', 'KC10', 'military type'], ['ACA856', 'C17', 'military type'], ['N123AB', 'C172', 'registration as callsign']]) {
   test(`${cs} on a ${type} (${why}): flight card dropped, plane catch keeps the type only`, () => {
     assert.equal(privateCatch(plane(cs, type)), true);
     const { list, dropped } = scrubSightings([flight(cs, type), plane(cs, type)]);
@@ -21,7 +21,7 @@ for (const [cs, type, why] of [['ASP473', 'C25B', 'business-jet operator'], ['AF
     const p = list.find((s) => s.type === 'plane');
     assert.equal(p.callsign, ''); assert.equal(p.reg, ''); assert.equal(p.op, undefined); assert.equal(p.cls, undefined);
     assert.match(p.hex, /^~/); assert.match(p.stampKey, /^HEX:~/); assert.equal(p.cardSnapshot.reg, undefined); assert.equal(p.cardSnapshot.stamp, '');
-    assert.equal(p.cardKey, `P:${type}`);
+    assert.equal(p.cardKey, `P:${type}`); assert.equal(p.typeCode, type); assert.equal(p.cardSnapshot.type, type); assert.equal(p.name, type); /* the type stays (military too: Sevaan 2026-11-19) */
   });
 }
 test('a scrub is stable: the same aircraft keeps one hashed id, and a second pass changes nothing', () => {

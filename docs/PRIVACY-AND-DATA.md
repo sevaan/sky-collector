@@ -30,10 +30,16 @@ Sevaan has a domain and address for Sky.
    anonymizeStored). The sample pack's live flight skips flagged aircraft. Still to add: a removal request route.
 5. **Military and government aircraft. Done 2026-11-19, tightened the same day** (aviation-enthusiast playtest: a
    Military set with Epic fighters, and RCH/RRR/Home Office callsigns passing as airlines): military, police, coast guard
-   and government aircraft (dbFlags 1, the operators in js/planes.js GOV_OPS, or a military type code) are anonymous and
-   have no type, so they are only a size-class card ("Large Aircraft"); no Military set, no military types in any tier
-   list; no secret or patch names one. Fractional and charter business-jet operators (NetJets, Flexjet, XO, flyExclusive,
-   AirSprint, VistaJet, EJM: BIZ_OPS) are anonymous like private planes.
+   and government aircraft (dbFlags 1, the operators in js/plane-privacy.js GOV_OPS, or a military type code) are
+   anonymous. Fractional and charter business-jet operators (NetJets, Flexjet, XO, flyExclusive, AirSprint, VistaJet,
+   EJM: BIZ_OPS) are anonymous like private planes.
+   **Shown by type again, Sevaan 2026-11-19** ("I should be able to catch a stealth bomber if I see it and it's in the
+   api data because it's allowing itself to be tracked"; he chose "Type card + Military set"): a military or government
+   aircraft is a real type card (C-17, B-2, KC-135: photo, facts, specs), the Military set and the military Epic tiers
+   are back, and the card's band says "Not an airline · Military" or "· Government" (js/planes.js catchClass). Never
+   its callsign, registration, real hex (salted anonId), unit, operator or route; never a flight card (js/flights.js
+   cardsFor), no regulars, no alert or secret that names a unit or callsign; no Police set. The launch and sent-pack
+   scrub (js/plane-privacy.js scrubSighting) keeps the type. Catches made under the size-only rule stay size cards.
 6. **Rewrite privacy.html for the store build** once the backend exists: the server, purchases (RevenueCat), backups
    (iCloud key 'sky-backup'), notifications, any usage reports, a real contact address.
 7. **Airline logos and names**: identification only, with the hide-all switch that exists; keep the per-airline
