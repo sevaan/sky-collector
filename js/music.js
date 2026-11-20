@@ -3,8 +3,8 @@
 // play sound before one), loops, dips under card reveals, and pauses when the app is hidden.
 // iPhone Safari ignores an audio element’s volume, so the level goes through Web Audio (a gain node). The page’s
 // audio session is "ambient", so the ring/silent switch mutes it and it never stops the player’s own music.
-import { audioCtx, audioOut, audioAway } from './audio-ctx.js?v=0.1.1811';
-const SRC = 'assets/audio/permafrost.m4a', LEVEL = 0.15; // halved 2026-10-11 (Sevaan)
+import { audioCtx, audioOut, audioAway } from './audio-ctx.js?v=0.1.1812';
+const SRC = 'assets/audio/hymn-to-the-dawn.m4a', LEVEL = 0.15; // halved 2026-10-11 (Sevaan). Sky Collector's music is "Hymn To The Dawn" by Scott Buckley, CC BY 4.0 (2026-11-20, Sevaan: "something you almost forget"); same -20 LUFS as Permafrost, 96k AAC, its own fade at the end
 let ctx = null, el = null, gain = null, node = null, playing = false, ducked = false, gen = 0;
 
 export const musicVolume = () => { try { const v = parseFloat(localStorage.getItem('musicVol')); return Number.isFinite(v) ? Math.max(0, Math.min(1, v)) : 0.25; } catch { return 0.25; } } /* 25% by default (2026-10-28, Sevaan) */; // default 50% (2026-10-19, Sevaan; was 75%)
