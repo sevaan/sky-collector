@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<!-- The Sky Tester app (native/build-tester.sh): no capabilities, so Xcode's automatic signing needs nothing set up in the
-     developer portal beyond the app identifier. Without them the tester has no iCloud backup and skycollector.app links
-     don't open it (skytester:// does). -->
 <plist version="1.0">
-<dict/>
+<!-- The Sky Tester app (native/build-tester.sh): only the App Group its widgets read from (group.app.skycollector.tester,
+     registered 2026-11-19 with app.skycollector.tester.widgets). No iCloud backup, and skycollector.app links don't
+     open it (skytester:// does). -->
+<dict>
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.$(SC_APP_ID)</string>
+	</array>
+</dict>
 </plist>
