@@ -3,7 +3,7 @@
 // group (or the date earned) along the bottom, one icon in the middle. Milestones get gold foil, the rarest holo
 // (css/ui.css .patch--gold / .patch--holo). Shared by Explore (the earning moment, its toast) and Collection (the wall).
 
-import { CON_BY_ID } from './constellations.js?v=0.1.1805';
+import { CON_BY_ID } from './constellations.js?v=0.1.1806';
 
 export const GROUPS = {
   collect: { c: '#14284a', t: 'Collection' }, rarity: { c: '#3a2259', t: 'Rarity' }, rocket: { c: '#5a2a1a', t: 'Rockets' },
@@ -191,12 +191,17 @@ const SECRET_ART = {
 let uid = 0;
 // The patch as an SVG string. locked: a faint stitch outline (not earned yet). date: replaces the group along the
 // bottom ("EARNED 07 OCT 2026"). stitch: adds the thread that draws the border on (the earning moment).
+/* The picture in the middle of a patch (tests/patch-art.test.mjs: no patch is ever drawn blank) */
+export function patchIcon(a, id = 'pt') {
+  const con = a.con && a.con !== 'solar' ? CON_BY_ID.get(a.con) : null, fossil = a.id === 'fossil' || a.id === 'ufo' || !!SECRET_ART[a.id];
+  return SECRET_ART[a.id] ? SECRET_ART[a.id](id) : a.id === 'ufo' ? UFO_ART(id) : fossil ? '<image href="assets/art/fossils/patch.svg" x="-46" y="-17.5" width="92" height="43"/>' : con ? conGlyph(con.data) : a.con === 'solar' ? SOLAR_GLYPH : a.album ? (ALBUM_ICON[a.album] ? glyph(ALBUM_ICON[a.album], a.icon) : ALBUM_GLYPH) : glyph(GLYPH[a.id], a.icon);
+}
 export function patchSvg(a, opts = {}) {
   const { locked = false, date = '', stitch = false } = opts;
   const con = a.con && a.con !== 'solar' ? CON_BY_ID.get(a.con) : null;
   const g0 = GROUPS[groupOf(a)], g = a.id === 'plus' && SKY_PATCH() ? { ...g0, c: '#24508c' } /* Sky: airmail blue (2026-11-19) */ : con ? { ...g0, c: CON_TWILL[[...CON_BY_ID.keys()].indexOf(a.con) % CON_TWILL.length] } : a.id === 'ufo' ? { ...g0, c: '#123a2a' } : SECRET_TWILL[a.id] ? { ...g0, c: SECRET_TWILL[a.id] } : g0, id = `pt${uid++}`, R = 60, fossil = a.id === 'fossil' || a.id === 'ufo' || !!SECRET_ART[a.id];
   // Fossil Hunter (design/fossil-patch.html A): the T. rex skeleton art, centred on its bones, no inner ring.
-  const ic = SECRET_ART[a.id] ? SECRET_ART[a.id](id) : a.id === 'ufo' ? UFO_ART(id) : fossil ? '<image href="assets/art/fossils/patch.svg" x="-46" y="-17.5" width="92" height="43"/>' : con ? conGlyph(con.data) : a.con === 'solar' ? SOLAR_GLYPH : a.album ? (ALBUM_ICON[a.album] ? glyph(ALBUM_ICON[a.album], a.icon) : ALBUM_GLYPH) : glyph(GLYPH[a.id], a.icon);
+  const ic = patchIcon(a, id);
   if (locked) {
     const ghost = ic.replace(/fill="(?!none)[^"]*"/g, 'fill="none"').replace(/<(polygon|rect|circle|path|ellipse|polyline|text)/g, '<$1 stroke="#627a8b" stroke-width="1.5"');
     // Not earned yet (playtest 2026-10-09, Sevaan: the empty ones should look better): the patch before it’s

@@ -26,7 +26,7 @@ Tags:
 
 My brief said 11 / 3 / 6. The code today has more:
 - Sky: 16 daily missions, 3 bonus challenges, 8 week themes.
-- Sky: about 73 patches (29 shared with Space, 14 plane ones, 30 more in sky-patches.js), plus 22 secrets.
+- Sky: about 73 patches (29 shared with Space, 14 plane ones, 30 more in sky-patches.js), plus 22 secrets. (After this round: the Patches wall shows 130, from the wall's own list in cards-page.js patchWall: 112 patches and week badges, 17 album patches and the Ambassador, plus each secret once found. Every count in the app reads that list; none is written in.)
 - Space: 30 daily missions, 5 bonus challenges, 12 week themes, 83 patches.
 
 So for milestones I list what's missing, not what Sky already has.

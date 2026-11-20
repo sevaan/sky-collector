@@ -5,19 +5,19 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { isProp } from './sky-props.js?v=0.1.1805';
-import { planesUp } from './sky-up.js?v=0.1.1805';
-import { planeKey } from './flights.js?v=0.1.1805';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1805';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1805';
-import { airlineIcon } from './airline-icons.js?v=0.1.1805';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1805';
-import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1805';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1805';
-import { planeSet } from './sky-sets.js?v=0.1.1805';
-import { MIL_TYPES } from './plane-privacy.js?v=0.1.1805';
-import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1805';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1805';
+import { isProp } from './sky-props.js?v=0.1.1806';
+import { planesUp } from './sky-up.js?v=0.1.1806';
+import { planeKey } from './flights.js?v=0.1.1806';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1806';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1806';
+import { airlineIcon } from './airline-icons.js?v=0.1.1806';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1806';
+import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1806';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1806';
+import { planeSet } from './sky-sets.js?v=0.1.1806';
+import { MIL_TYPES } from './plane-privacy.js?v=0.1.1806';
+import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1806';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1806';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -34,7 +34,7 @@ function readSeen() {
 }
 let seenCache = null, seenSaved = 0;
 // What a seen plane could count for in a mission (js/progress.js SKY_MISSIONS reads the same words).
-const localFlags = (p) => { const f = [], st = planeSet(p.type, isHelicopter(p)).id; if (st === 'helicopters') f.push('heli'); if (st === 'twinaisle' || st === 'giants') f.push('wide'); if (st === 'props' || st === 'light') f.push('prop'); if ((p.altFt ?? 0) >= 35000) f.push('high'); if (p.altFt != null && p.altFt < 5000) f.push('low'); if (/^[A-Z]{3}\d/.test(p.callsign ?? '')) f.push('airline'); return f; };
+const localFlags = (p) => { const f = [], st = planeSet(p.type, isHelicopter(p)).id; if (st === 'helicopters') f.push('heli'); if (st === 'twinaisle' || st === 'giants') f.push('wide'); if (st === 'props' || st === 'light') f.push('prop'); if ((p.altFt ?? 0) >= 35000) f.push('high'); if (p.altFt != null && p.altFt < 5000) f.push('low'); if (/^[A-Z]{3}\d/.test(p.callsign ?? '')) f.push('airline', `al:${p.callsign.slice(0, 3)}`) /* which airline: week themes count different airlines (js/progress.js skyWeekPossible) */; return f; };
 /* More of what a plane could do for a mission (2026-11-20, design/missions-draft.md): its kind, whether it's climbing or coming
    down, right overhead, rising into your sky; and once its route is known (only an airline's), where it's going. By type
    only for military planes. a: { plane, el }; ctx.route(callsign): a route already looked up (never asks for one). */
@@ -51,6 +51,7 @@ function moreFlags(a, ctx, now) {
     f.push('routed'); const km = kmOf(full), fc = full.from.cc, tc = full.to.cc, c1 = continentOfAirport(full.from), c2 = continentOfAirport(full.to);
     if (fc && tc && fc !== tc) f.push('abroad'); if (c1 && c2 && c1 !== c2) f.push('cont');
     if (km != null) { if (km > 3000) f.push('far'); if (km > 5000) f.push('ocean'); if (km < 500) f.push('short'); }
+    if (tc) f.push(`to:${tc}`); /* the country it's going to: Passport week counts different ones */
     if (ctx?.obs && full.to.lat != null && hav(ctx.obs.lat, ctx.obs.lon, full.to.lat, full.to.lon) <= 30) f.push('landing');
   }
   return f;

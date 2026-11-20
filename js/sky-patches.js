@@ -2,8 +2,8 @@
 // earned in plain sight, read off the sightings like every patch (js/progress.js), nothing stored. Each catch's own
 // context (the sun's height, the weather, where you stood) is kept on its sighting when it is caught (main.js
 // capturePlane: sunEl, wx), so older catches count only for what they already carry. No DOM here.
-import { greatCircle } from './flight-facts.js?v=0.1.1805';
-import { isProp } from './sky-props.js?v=0.1.1805';
+import { greatCircle } from './flight-facts.js?v=0.1.1806';
+import { isProp } from './sky-props.js?v=0.1.1806';
 
 const R = 6371, RAD = Math.PI / 180;
 const km = (a, b) => { const s = Math.sin((b.lat - a.lat) * RAD / 2) ** 2 + Math.cos(a.lat * RAD) * Math.cos(b.lat * RAD) * Math.sin((b.lon - a.lon) * RAD / 2) ** 2; return 2 * R * Math.asin(Math.min(1, Math.sqrt(s))); };
@@ -108,6 +108,9 @@ export const SKY_PATCH_ART = {
      Space Collector's two cards, a plane on the front one in place of the star */
   ambassador: () => '<g transform="scale(1.05)"><g stroke="#fff2b3" stroke-width="2" stroke-linejoin="round"><rect x="-16" y="-20" width="24" height="34" rx="3" fill="#0c1c33" transform="rotate(-12 -4 -3)"/><rect x="-6" y="-22" width="24" height="34" rx="3" fill="#14284a" transform="rotate(9 6 -5)"/></g>'
     + JET(6, -5, .62, 45).replace(/fill="[^"]*"/, 'fill="#ff6b5e"') + '<circle cx="-24" cy="-22" r="1.1" fill="#fff2b3" opacity=".7"/><circle cx="25" cy="16" r=".9" fill="#fff2b3" opacity=".6"/></g>',
+  /* Cleared for Takeoff (QA round 3, 2026-11-20: it was drawn blank): a runway, a plane lifting off, the three first-day
+     missions ticked */
+  'sky-starter': () => `<path d="M-24 26 L-7 2 H7 L24 26Z" fill="#14284a" stroke="${I}" stroke-width="2" stroke-linejoin="round"/><path d="M0 6 V10 M0 14 V18 M0 22 V26" stroke="${I}" stroke-width="2" stroke-linecap="round"/>${JET(12, -10, .62, 45)}${[-22, -13, -4].map((x) => `<path d="M${x - 3.5} -18 l3 3 l5 -6" fill="none" stroke="${RD}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>`).join('')}`,
   'sky-redeye': () => `<path d="M14 -20 A16 16 0 1 0 22 6 A12 12 0 1 1 14 -20Z" fill="${I}"/>${JET(-6, 8, .8, 60)}`,
   'sky-homerun': () => `${TOWER}${JET(-16, -14, .7, 135)}`,
   'sky-outbound': () => `${TOWER}${JET(18, -16, .7, 45)}`,
