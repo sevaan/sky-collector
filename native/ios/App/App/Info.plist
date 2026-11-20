@@ -41,9 +41,9 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Camera view shows the real sky behind the plane labels.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Sky Collector uses your location only while you use the app, to find the planes flying over you.</string>
+	<string>Sky Collector uses your location only while you use the app, so planes are drawn where they really are. Your exact position stays on your phone.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Sky Collector uses your location to find the planes flying over you.</string>
+	<string>Sky Collector uses your location so planes are drawn where they really are in your sky. Your exact position stays on your phone.</string>
 	<key>NSMotionUsageDescription</key>
 	<string>Sky Collector uses motion to follow where you point your phone at the sky.</string>
 	<key>UIApplicationSceneManifest</key>
