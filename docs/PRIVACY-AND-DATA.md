@@ -4,7 +4,7 @@ Built on docs/DATA-TERMS.md (the research) and scripts/perf/net-audit.mjs (what 
 
 ## Today (the test site)
 
-privacy.html now describes this build as it is: rounded position to the Val Town relay (→ adsb.lol, adsb.fi) and to
+privacy.html now describes this build as it is: rounded position to Sky's relay (→ Fly Italy ADSB; the apps ask adsb.lol directly first) and to
 Open-Meteo; routes bundled; everything else on the device; no accounts, purchases, analytics or reports.
 It was Space Collector's policy with the name changed, describing a server, RevenueCat, usage reports and Cloudflare
 analytics that Sky doesn't have, and an email address that may not exist. Contact is the public repo's issues until
@@ -18,9 +18,9 @@ Sevaan has a domain and address for Sky.
    often it asks adapts to what's near (js/plane-feed.js); when adsb.lol answers 429, its count runs low
    (`switchAt`, 25 left) or it fails, the phone hands over to Sky's own relay for the rest of the day
    (server/planes-relay.js on Sky's Cloud Run, which asks Fly Italy ADSB under its commercial-use terms and caches
-   briefly). The website, which can't reach adsb.lol from a browser, uses the relay only (the test relay on Val Town
-   still reads adsb.lol and adsb.fi; adsb.fi's terms are personal, non-commercial, so the website should move to Sky's
-   relay before any paid tier). A paid fallback (AeroDataBox or FlightAware) remains an option for the relay.
+   briefly). The website, which can't reach adsb.lol from a browser, uses Sky's relay only (since 2026-11-19; the
+   Val Town test relay, which read adsb.lol and adsb.fi under non-commercial terms, is retired: relay/planes.ts stays
+   in the repo for reference only). Watch the monthly Fly Italy budget on the relay's /status. A paid fallback (AeroDataBox or FlightAware) remains an option for the relay.
 2. *(Removed 2026-11-19: "Phones must not ask adsb.lol directly." The apps do, within adsb.lol's per-address limit,
    and hand over to the relay before it runs out.)*
 3. **Attribution screen** (Settings → Credits): "Aircraft positions: adsb.lol contributors (ODbL 1.0). Routes: Virtual

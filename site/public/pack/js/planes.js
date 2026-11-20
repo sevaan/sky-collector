@@ -20,7 +20,10 @@ import { DEFAULTS, clampDial, freshFeed, pickSource, nextGap, afterAnswer, feedD
 // Sky Collector (2026-11-15): Space Collector's Val Town relay is turned away by adsb.lol now, so the website needs Sky
 // Collector's own relay: relay/planes.ts on Val Town (val sevaan/sky-collector-planes, 2026-11-15). Only the website
 // needs it; the phone apps will ask the plane feed directly, like Space Collector's apps.
-const SKY_RELAY = 'https://sevaan--a2362084e15311f195931607ee4eb77e.web.val.run';
+/* Since 2026-11-19 the website asks Sky's own relay too (server/planes-relay.js on Cloud Run, FlyItalyADSB under its
+   commercial terms, one cached answer per 1-degree square); the Val Town relay (relay/planes.ts, adsb.lol + adsb.fi, whose
+   terms are non-commercial) is retired. */
+const SKY_RELAY = 'https://api-ybymfwdlgq-uc.a.run.app/planes';
 // A list, tried in order each poll: the first that answers wins. Add a second relay here (another host) as a fallback.
 const RELAYS = SERVER ? [`${SERVER}/planes`] : [SKY_RELAY];
 const POLL_MS = 10000;   // the website: every 10 s, as before
