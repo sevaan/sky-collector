@@ -1,6 +1,8 @@
 package app.skycollector;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
@@ -54,5 +56,36 @@ public class ReviewPlugin extends Plugin {
         boolean emu = f.contains("generic") || f.contains("sdk_gphone") || f.contains("emulator") || f.contains("Emulator") || f.contains("goldfish") || f.contains("ranchu") || f.contains("Android SDK built for");
         JSObject r = new JSObject(); r.put("virtual", emu); r.put("lab", lab);
         call.resolve(r);
+    }
+
+    // App icons (2026-11-19, Plus; Space Collector's, 32524915): each icon is a launcher activity-alias
+    // (AndroidManifest.xml). Enable the chosen one, disable the rest. "MainActivity" is the Original (the old launcher
+    // name). Launchers can take a moment, and some close the app, to redraw the home screen.
+    private static final String[] ICON_ALIASES = { "MainActivity", "IconFlightPlan", "IconNightFlight", "IconCheatline", "IconBlueprint", "IconGoldenAge", "IconAirmail", "IconCockpit" };
+    private ComponentName alias(String n) { return new ComponentName(getContext().getPackageName(), "app.skycollector." + n); }
+
+    @PluginMethod
+    public void getIcon(PluginCall call) {
+        PackageManager pm = getContext().getPackageManager();
+        String on = "MainActivity";
+        for (String n : ICON_ALIASES) {
+            if (n.equals("MainActivity")) continue;
+            if (pm.getComponentEnabledSetting(alias(n)) == PackageManager.COMPONENT_ENABLED_STATE_ENABLED) { on = n; break; }
+        }
+        JSObject r = new JSObject(); r.put("name", on.equals("MainActivity") ? null : on); call.resolve(r);
+    }
+
+    @PluginMethod
+    public void setIcon(PluginCall call) {
+        String want = call.getString("name"); if (want == null || want.isEmpty()) want = "MainActivity";
+        boolean known = false; for (String n : ICON_ALIASES) if (n.equals(want)) known = true;
+        if (!known) { call.reject("Unknown icon"); return; }
+        PackageManager pm = getContext().getPackageManager();
+        try {
+            /* the new one first, so there is never a moment with no launcher entry */
+            pm.setComponentEnabledSetting(alias(want), PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+            for (String n : ICON_ALIASES) if (!n.equals(want)) pm.setComponentEnabledSetting(alias(n), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+            call.resolve();
+        } catch (Exception e) { call.reject("Couldn't change the icon"); }
     }
 }

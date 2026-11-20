@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.webkit.WebSettings;
 import com.getcapacitor.BridgeActivity;
 
-public class MainActivity extends BridgeActivity {
+public class AppActivity extends BridgeActivity {
     // Android's text size setting scales the web view's text without limit, which broke the cards at 1.6x (QA
     // 2026-10-11). Follow the setting, but no further than 115%, so bigger text never wrecks the layout.
     private void applyTextZoom() {

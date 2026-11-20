@@ -68,7 +68,23 @@ public class ReviewPlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "request", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "openSettings", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "env", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "getIcon", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "setIcon", returnType: CAPPluginReturnPromise),
     ]
+    // App icons (2026-11-19, Plus; Space Collector's, 32524915): the alternate icons are app icon sets in
+    // Assets.xcassets, listed in the App target's ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES
+    // (scripts/app-icons-native.py). nil = the main icon. iOS shows its own "You have changed the icon" alert.
+    @objc func getIcon(_ call: CAPPluginCall) {
+        DispatchQueue.main.async { call.resolve(["name": UIApplication.shared.alternateIconName as Any]) }
+    }
+    @objc func setIcon(_ call: CAPPluginCall) {
+        let name = call.getString("name").flatMap { $0.isEmpty ? nil : $0 }
+        DispatchQueue.main.async {
+            guard UIApplication.shared.supportsAlternateIcons else { call.reject("Alternate icons aren't supported"); return }
+            if UIApplication.shared.alternateIconName == name { call.resolve(); return }
+            UIApplication.shared.setAlternateIconName(name) { err in err == nil ? call.resolve() : call.reject(err!.localizedDescription) }
+        }
+    }
     // Is this the Simulator? (Space Collector 8cd90a33, 2026-11-19: simulator playtests of store builds were counted as
     // players in the usage stats; js/field-notes.js marks them as tests.)
     @objc func env(_ call: CAPPluginCall) {
