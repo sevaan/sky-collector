@@ -1,4 +1,4 @@
-import { SERVER } from './server.js?v=0.1.1816';
+import { SERVER, SKY_API } from './server.js?v=0.1.1817';
 // Local weather from Open-Meteo (free, no key, CORS-open): what the sky is doing now, and whether tonight is
 // worth it. No DOM. Cached half an hour per place. Everything here is best-effort: no weather, no change.
 //
@@ -31,22 +31,14 @@ const WORD = { clear: 'Clear', cloudy: 'Overcast', fog: 'Fog', rain: 'Rain', sno
 export async function fetchWeather(lat, lon) {
   const key = `${lat.toFixed(2)},${lon.toFixed(2)}`;
   if (cache && cache.key === key && Date.now() - cache.at < CACHE_MS) return cache.data;
-  // Our server's /wx (MET Norway, free for commercial use, 2026-10-25) once it's deployed; Open-Meteo until then.
-  if (SERVER) {
-    const r = await fetch(`${SERVER}/wx?lat=${lat.toFixed(1)}&lon=${lon.toFixed(1)}`, { signal: AbortSignal.timeout?.(8000) });
-    if (!r.ok) throw new Error(String(r.status));
-    const j = await r.json();
-    const data = { now: { cloud: j.now?.cloud ?? 0, code: j.now?.code ?? 0, kind: kindOf(j.now?.code ?? 0) }, hours: (j.hours ?? []).map((h) => ({ ...h, kind: kindOf(h.code) })), at: Date.now() };
-    cache = { key, at: Date.now(), data }; keep(cache);
-    return data;
-  }
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(1)}&longitude=${lon.toFixed(1)}&current=cloud_cover,weather_code&hourly=cloud_cover,weather_code,temperature_2m,wind_speed_10m&forecast_days=7&timeformat=unixtime&timezone=auto`;
-  /* a 0.1° square (~11 km), as the server's /wx: the phone's fix never leaves it (precise-location privacy, 2026-11-20) */
-  const res = await fetch(url, { signal: AbortSignal.timeout?.(8000) }); // never hangs (bug hunt 2026-10-20)
-  if (!res.ok) throw new Error(String(res.status));
-  const j = await res.json();
-  const hours = (j.hourly?.time ?? []).map((t, i) => ({ t: t * 1000, cloud: j.hourly.cloud_cover[i], code: j.hourly.weather_code[i], kind: kindOf(j.hourly.weather_code[i]), temp: j.hourly.temperature_2m?.[i] ?? null, wind: j.hourly.wind_speed_10m?.[i] ?? null }));
-  const data = { now: { cloud: j.current?.cloud_cover ?? 0, code: j.current?.weather_code ?? 0, kind: kindOf(j.current?.weather_code ?? 0) }, hours, at: Date.now() };
+  /* Sky's server's /wx (MET Norway, free for commercial use, CC BY 4.0; 2026-11-20, Sevaan: "Do it then"). Open-Meteo's free
+     plan isn't allowed for an app that sells a subscription, so there's no fallback to it. A 0.1° square (~11 km) is all
+     that leaves the phone (precise-location privacy). */
+  const base = SERVER || SKY_API;
+  const r = await fetch(`${base}/wx?lat=${lat.toFixed(1)}&lon=${lon.toFixed(1)}`, { signal: AbortSignal.timeout?.(8000) }); // never hangs
+  if (!r.ok) throw new Error(String(r.status));
+  const j = await r.json();
+  const data = { now: { cloud: j.now?.cloud ?? 0, code: j.now?.code ?? 0, kind: kindOf(j.now?.code ?? 0) }, hours: (j.hours ?? []).map((h) => ({ ...h, kind: kindOf(h.code) })), at: Date.now() };
   cache = { key, at: Date.now(), data }; keep(cache);
   return data;
 }
