@@ -40,6 +40,7 @@ import { codeFrom, packIdFrom, readGiftCode, planImport, summarizeImport, giftTa
 import { playPack, packMessage } from './gift-pack.js?v=0.1.1794';
 import { addSighting, addSightings, allSightings, deleteSighting, deleteSightings, putSighting, warmStore } from './store.js?v=0.1.1794';
 import { scrubSightings, privateCatch } from './plane-privacy.js?v=0.1.1794';
+import { tourOnLaunch } from './tour-rule.js?v=0.1.1794';
 import { cardArt } from './art.js?v=0.1.1794';
 import { renderCard, miniCard, cardLevel, artImage, lockedArt, attachTilt, attachGyro, throwOff, attachFlip, turnCard, phasePath } from './card.js?v=0.1.1794';
 import { applyBack, CARD_BACKS, backUnlocked, chosenBack, chooseBack, backEarned, showBackNext } from './card-backs.js?v=0.1.1794';
@@ -70,7 +71,7 @@ import { airlineIcon } from './airline-icons.js?v=0.1.1794'; /* the radar strip 
 import { catchSightings, isSkyCard, skyStampInfo, skyModel, skyTypeCode } from './sky-cards.js?v=0.1.1794';
 import { THRESHOLDS as SKY_THRESHOLDS, levelFor as skyLevelFor, hasAirlineCallsign } from './sky-stamps.js?v=0.1.1794';
 import { renderToday, heroHtml as todayHero, logSeen, dirWord as todayDir, aroundPlanes, planePhoto, upcoming } from './sky-today.js?v=0.1.1794';
-import { catchPanel, catches as skyCatches, previewFor as skyPreview, preparePlaneCatch, setCatchSource } from './sky-catch.js?v=0.1.1794';
+import { catchPanel, catches as skyCatches, previewFor as skyPreview, highlightFor as skyHighlightFor, preparePlaneCatch, setCatchSource } from './sky-catch.js?v=0.1.1794';
 import { addStarfield } from './starfield.js?v=0.1.1794';
 import { pickAlert, pickRegular } from './sky-alerts.js?v=0.1.1794';
 import { regulars, clockText } from './sky-regulars.js?v=0.1.1794';
@@ -149,6 +150,7 @@ const state = {
   planes: new PlaneTracker(), // live aircraft (js/planes.js), for "Just a plane"
   planeItems: null,
   planeHit: null,  // { hex, at }: the plane in the circle, kept briefly so it doesn’t flicker
+  planeLock: null, // hex of the plane in the circle when Settings → Circle highlights let it lock the ring
 };
 
 const sky = new SkyView($('sky'));
@@ -178,8 +180,8 @@ const isQuiet = (o) => !!o && !hlOn(hlKind(o));
 const skyHlMode = () => readText('skyHl', 'stamps');
 function skyHighlights(p) {
   const mode = skyHlMode(); if (mode === 'all') return true;
-  let k = 'new'; try { const r = p.callsign ? state.planes.route(p.callsign) : null; k = skyPreview({ plane: p }, r, skyCatches()).out.kind; } catch {}
-  return k === 'new' || (mode === 'stamps' && k === 'stamp');
+  /* the ticket's own answer (js/sky-catch.js gainOf), so the ring and the ticket never disagree (QA 2026-11-19) */
+  try { return skyHighlightFor({ plane: p }, p.callsign ? state.planes.route(p.callsign) : null, mode, skyCatches()); } catch { return true; }
 }
 function readText(k, d) { try { return localStorage.getItem(k) ?? d; } catch { return d; } }
 function writeText(k, v) { try { localStorage.setItem(k, v); } catch {} }
@@ -805,6 +807,7 @@ function tick0(ts) {
   lastLockId = state.lockedOn ? target.obj.id : null;
   autoLog(target, d, t);
   const plane = findPlane(basis, t);
+  state.planeLock = plane && skyHighlights(plane.plane) ? plane.plane.hex : null; /* Sky's Circle highlights (skyHl): the plane in the circle that locks the ring */
   if (plane && state.lockedOn) state.lockedOn = false; // a plane nearer the centre than the star: it’s the plane you’re looking at
 
   // The first catch after the tour is quiet (2026-10-17, Sevaan): no notifications while its target is still pinned,
@@ -845,7 +848,7 @@ function tick0(ts) {
     secrets: secretsState(t, basis, target), /* Sky Collector: Santa and Dizzy (its plane secrets are found by catching, js/sky-secrets.js) */
     _ud: SKY_ONLY ? null : untilDark(target), _wk: syncWake(),
     planes: state.planeItems,
-    planeHit: plane && skyHighlights(plane.plane) ? plane.plane.hex : null, /* Sky's Circle highlights (skyHl): the ring locks only for what you asked to see */
+    planeHit: state.planeLock, /* Sky's Circle highlights (skyHl): the ring locks only for what you asked to see */
     planeTrail: plane ? planePath(plane.plane, state.observer) : null, // where the lined-up plane has been and is going
     newFind: !!state.newFind,
     ownedTarget: !!state.activeTarget && !state.newFind && !isNewFind(state.activeTarget.obj) && state.activeTarget.obj.id !== state.tourCatchId,
@@ -1143,7 +1146,8 @@ function renderSkyPlane(hit, t) {
   if (planeShown === hit.plane.hex && t - planeText < 500) return;
   /* A plane in the circle is a lock-on, as a satellite is in Space Collector (2026-11-17, parity audit 21): the lock sound, the
      firmer tap and the ring pulse, once per plane. There, 'plane' is the soft "not a space object" sound; here planes are the game. */
-  if (planeShown !== hit.plane.hex) { const now2 = performance.now(); sky.lockPulseAt = now2; sfx('lock', { gap: 260 }); if (lockBuzz.id !== hit.plane.hex || now2 - lockBuzz.at > 1500) { buzz(12); lockBuzz = { id: hit.plane.hex, at: now2 }; } }
+  /* only for a plane the Circle highlights let lock (QA 2026-11-19: a card caught minutes ago still played the lock in "New cards only"); the ticket still shows */
+  if (planeShown !== hit.plane.hex && state.planeLock === hit.plane.hex) { const now2 = performance.now(); sky.lockPulseAt = now2; sfx('lock', { gap: 260 }); if (lockBuzz.id !== hit.plane.hex || now2 - lockBuzz.at > 1500) { buzz(12); lockBuzz = { id: hit.plane.hex, at: now2 }; } }
   planeShown = hit.plane.hex; planeText = t;
   el.hidden = false;
   catchPanel(el, hit, state.planes.route(hit.plane.callsign), { mini: (card, kind) => { const model = state.cardModels.get(card.key) ?? skyModel(card, kind), sightings = state.sightings.filter((x) => !x.sim && x.cardKey === card.key); return miniCard(model, { sightings, status: sightings.length ? 'In your collection' : 'Not yet collected', locked: !sightings.length }); } }); /* Space's stripCard way (review Part 1) */
@@ -7102,8 +7106,8 @@ async function runOnboarding(force = false) {
     cdT = setInterval(() => { const sub = document.querySelector('#ob-deck .tc:not(.gone):not(.under):not(.under2) .sub'); if (!sub) return; const up = now().getTime() >= rare.start; /* at 0:00 it says it's rising (first-run playtest 2026-10-25) */
       sub.firstElementChild.textContent = up ? `Rising now in the ${dirWord(rare.riseAz)}` : `Rises in the ${dirWord(rare.riseAz)} in`; sub.lastElementChild.textContent = up ? '' : cd(); }, 500);
   }
+  if (!force) writePref('tourDone', true); /* the last card is shown (QA 2026-11-19: quitting with it on screen showed the tour again; Space Collector's port): from here a relaunch shows the sky, not the tour again, caught or not (2026-11-19, Sevaan: "players don't need to keep seeing the tour"; Space Collector bf99a810) */
   const chose = await obCard(steps, A); clearInterval(cdT); if (skipped) return obFinish(false);
-  if (!force) writePref('tourDone', true); /* the cards are done: from here a relaunch shows the sky, not the tour again, caught or not (2026-11-19, Sevaan: "players don't need to keep seeing the tour"; Space Collector bf99a810) */
   const waiting = !!(rare && !chose && fb);
   if (rare) note('tour', { s: 'rare', pick: waiting ? 'wait' : 'show', id: rare.obj.id === 25544 ? 'iss' : cardModel(rare.obj).tier }); // usage: how the big first target went
   $('ob-deck').replaceChildren(); $('ob-pips').hidden = true; $('ob-skip').hidden = true; document.body.classList.remove('ob-tour'); // the cards are done: hunting the target is just the app
@@ -8582,8 +8586,8 @@ async function boot() {
     quickStart();
     // Quit during the tour, before the first catch (iOS playtest 2026-10-20: the relaunch dropped you in the sky with no
     // first-catch guidance): run it again. Permissions already given go by quickly.
-    /* Resumed once at most (2026-11-19, Space Collector bf99a810): a second quit mid-cards counts as done. */
-    if (readPref('started', false) && !readPref('tourDone', false) && !state.sightings.some((x) => !x.sim)) { if (readPref('tourResumed', false)) writePref('tourDone', true); else { writePref('tourResumed', true); setTimeout(() => runOnboarding(), 600); } }
+    /* Resumed once at most (2026-11-19): js/tour-rule.js tourOnLaunch */
+    { const t = tourOnLaunch({ started: readPref('started', false), tourDone: readPref('tourDone', false), tourResumed: readPref('tourResumed', false), hasCatch: state.sightings.some((x) => !x.sim) }); if (t === 'done') writePref('tourDone', true); else if (t === 'resume') { writePref('tourResumed', true); setTimeout(() => runOnboarding(), 600); } }
   } // anyone who has used the app before, or whose cards came back from a backup (bug hunt 2026-10-17)
   try { sessionStorage.setItem('scBooted', '1'); } catch {}
   // The loader always gets a proper moment (2026-10-08, Sevaan: after a reset it flashed straight to the welcome card):

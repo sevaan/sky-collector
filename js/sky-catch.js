@@ -32,6 +32,16 @@ export function previewFor(hit, route, list = catches(), now = Date.now()) {
   const fkey = full ? `F:${a3}:${full.from.icao}-${full.to.icao}` : null;
   return { fkey, out: assess(list, { time: now, hex: p.hex, callsign: p.callsign, flight: fkey ? { key: fkey } : null, plane: { key: planeKeyOf(p), daily: !!(p.anon || isHelicopter(p)) } }) };
 }
+/* What a catch would give: the one answer the ticket and Settings → Circle highlights share (QA 2026-11-19: an owned flight
+   flown by a type you don't have read 'New day' and never locked in "New cards only"). 'new' when it makes a card you don't
+   have (the flight or the plane type), 'stamp' when it only adds a stamp, 'none' when you caught it today. */
+export const gainOf = (out) => (out?.flightStamps?.isNew || out?.planeStamps?.isNew ? 'new' : !out || out.kind === 'none' ? 'none' : 'stamp');
+// Does the circle lock on a plane with this gain, for a Circle highlights mode ('new' | 'stamps' | 'all')?
+export const locksFor = (gain, mode) => mode === 'all' || gain === 'new' || (mode === 'stamps' && gain === 'stamp');
+export function highlightFor(hit, route, mode, list = catches(), now = Date.now()) {
+  if (mode === 'all') return true;
+  return locksFor(gainOf(previewFor(hit, route, list, now).out), mode);
+}
 
 // Fill the panel for the plane in the circle. `route` is planes.js's route object (airline now, cities once loaded).
 // A plane you already stamped today (same aircraft, same local day) reads "STAMPED TODAY" with Collect switched off.
@@ -49,10 +59,10 @@ function discoverPanel(el, hit, route, opts = {}) {
   const $ = (id) => document.getElementById(id), txt = (id, v) => { const e = $(id); if (e && e.textContent !== v) e.textContent = v; };
   const p = hit.plane, type = aircraftName(p) || (isHelicopter(p) ? 'Helicopter' : unlisted(planeKey(p))?.name ?? 'Aircraft'), full = route?.full;
   const { fkey, out } = previewFor(hit, route);
-  const stamped = out.kind === 'none', again = out.kind === 'stamp';
+  const gain = gainOf(out), stamped = gain === 'none', again = gain === 'stamp';
   const { flight, plane } = cardsFor(p, full ?? null, route?.airline || '');
   const card = flight ?? plane, tier = TIERS[card?.tier] ?? TIERS.common;
-  const what = stamped ? 'Caught today' : again ? (out.stampOn === 'flight' || out.planeStamps?.day ? 'New day' : 'New aircraft') : fkey ? 'New flight' : route && !route.none && route.airline && !full ? 'Flight' : `New ${kindWord(p)}`;
+  const what = stamped ? 'Caught today' : again ? (out.stampOn === 'flight' || out.planeStamps?.day ? 'New day' : 'New aircraft') : fkey && out.flightStamps?.isNew ? 'New flight' : fkey ? `New ${kindWord(p)}` :route && !route.none && route.airline && !full ? 'Flight' : `New ${kindWord(p)}`;
   txt('d-tier', stamped ? tier.label : `${tier.label} · ${what}`); /* seen before: just the tier, as Space Collector */
   const ti = TIER_INFO[card?.tier] ?? TIER_INFO.common, dt = $('d-tier'); /* the tier's own mark and colour, as a satellite's (▲ green for Uncommon) */
   if (dt) { dt.style.setProperty('--find-tier', again ? 'var(--cyan)' : ti.color); dt.dataset.gem = again ? '✦' : ti.gem; }
