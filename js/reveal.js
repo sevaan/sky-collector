@@ -5,15 +5,15 @@
 //  Everything scales with rarity (Legendary dims the sky, shockwave, held breath, slow flip, fanfare).
 // Waits use timers, not animation.finished, so a paused tab can never freeze the sequence.
 
-import { sfx, loadSfx } from './sfx.js?v=0.1.1810';
-import { audioCtx } from './audio-ctx.js?v=0.1.1810';
-import { TIER_INFO } from './rarity.js?v=0.1.1810';
-import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1810';
-import { applyBack } from './card-backs.js?v=0.1.1810';
-import { addStarfield } from './starfield.js?v=0.1.1810';
-import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1810';
-import { packPlan, packFoil, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1810'; /* the two-card pack opening (prototype, 2026-11-20) */
-import { tearJag } from './gift-pack.js?v=0.1.1810';
+import { sfx, loadSfx } from './sfx.js?v=0.1.1811';
+import { audioCtx } from './audio-ctx.js?v=0.1.1811';
+import { TIER_INFO } from './rarity.js?v=0.1.1811';
+import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1811';
+import { applyBack } from './card-backs.js?v=0.1.1811';
+import { addStarfield } from './starfield.js?v=0.1.1811';
+import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1811';
+import { packPlan, packFoil, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1811'; /* the two-card pack opening (prototype, 2026-11-20) */
+import { tearJag } from './gift-pack.js?v=0.1.1811';
 
 const FX = TIER_FX; /* one rarity table for every card moment (js/card-moment.js, 2026-11-11) */
 const NIGHT_MILESTONES = [3, 5, 10, 25, 50, 100, 200, 365], STAMP_MILESTONES = [5, 10, 25, 50, 100, 200, 300, 400];
@@ -265,10 +265,13 @@ export async function playReveal({ card, o, seen, origin, fleet = null, progress
   if (plan) {
     await decoded; if (!alive()) return;
     packSeen(1);
-    if (reduced()) { $('rv-flipper').style.transform = 'rotateY(180deg)'; showFace('front'); }
+    if (reduced()) { $('rv-flipper').style.transform = 'perspective(1600px) rotateY(180deg)'; showFace('front'); }
     if (!packRun) return; const how = await packRun.start(); packRun = null; if (!alive()) return;
-    if (how === 'flip') await flipCard($('rv-flipper'), { tier: tierKey, faces: [$('rv-back'), $('reveal-card')], showFace: (f) => showFace(f ? 'front' : 'back'), alive });
-    else $('rv-flipper').style.transform = 'rotateY(180deg)'; /* a tap skipped straight to the face */
+    /* the turn carries its own perspective(1600px), as every other card turn does (card.js turnCard, the double tap and the
+       deck's second card; the gift and morning packs' flipCard): in WebKit the holder's perspective is flattened away, so
+       the plain flip read as a 2D squeeze (Sevaan 2026-11-20: "looks like the card is being squeezed and flipped") */
+    if (how === 'flip') await flipCard($('rv-flipper'), { tier: tierKey, faces: [$('rv-back'), $('reveal-card')], showFace: (f) => showFace(f ? 'front' : 'back'), alive, perspective: '1600px' });
+    else $('rv-flipper').style.transform = 'perspective(1600px) rotateY(180deg)'; /* a tap skipped straight to the face */
     if (!alive()) return;
     showFace('front');
     retype(card);
@@ -317,7 +320,7 @@ export async function playReveal({ card, o, seen, origin, fleet = null, progress
 
   // 3. Legendary holds its breath; then the flip (Epic spins on the way). The shared flip (js/card-moment.js), also
   // used by every pack: faces are chosen each frame from the actual angle (Safari ignores backface-visibility here).
-  await flipCard($('rv-flipper'), { tier: tierKey, faces: [$('rv-back'), $('reveal-card')], showFace: (f) => showFace(f ? 'front' : 'back'), alive });
+  await flipCard($('rv-flipper'), { tier: tierKey, faces: [$('rv-back'), $('reveal-card')], showFace: (f) => showFace(f ? 'front' : 'back'), alive, perspective: '1600px' }); /* its own perspective, like every card turn (card.js turnCard): WebKit flattens #rv-holder's, so the turn read as a 2D squeeze (2026-11-20) */
   if (!alive()) return;
   showFace('front');
   retype(card);

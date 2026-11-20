@@ -9,7 +9,7 @@
      the top one flips"). The real catch reveal (js/reveal.js playReveal) with the prototype pack (js/pack-reveal.js,
      css/pack-reveal.css): the same code the app runs with Settings → Testing tools → Switches → Pack opening set to A, B
      or C. Three timings to compare; strips and recordings of each sit next to this page.
-     URL: ?v=A|B|C|off  &short=1 (the cut after five packs)  &tier=common|rare|epic|legendary  &shiny=1  &auto=1 (plays on load)  &bare=1 (no controls) -->
+     URL: ?v=A|B|C|off  &short=1 (the cut after five packs)  &tier=common|rare|epic|legendary  &shiny=1  &auto=1 (plays on load)  &single=1 (one card: today's single-card reveal)  &bare=1 (no controls) -->
 <link rel="stylesheet" href="css/fonts.css">
 <link rel="stylesheet" href="css/cards.css">
 <link rel="stylesheet" href="css/app.css">
@@ -95,7 +95,7 @@
     rushReveal({ origin, tier: cards[1].o.tier }); /* the tap: the dot swells at once, as in the app */
     await new Promise((res) => setTimeout(res, 60)); /* the catch's own work before playReveal, about this long on a phone */
     const lead = cards[0];
-    playReveal({ card: lead.card, o: lead.o, seen: 1, origin, collected: 12, xp: 70, rank: null, earned: [{ kind: 'mission', text: 'Mission complete', xp: 50 }], cards, pack: st.v === 'off' ? '' : st.v, packShort: st.short });
+    playReveal({ card: lead.card, o: lead.o, seen: 1, origin, collected: 12, xp: 70, rank: null, earned: [{ kind: 'mission', text: 'Mission complete', xp: 50 }], cards: q.get('single') === '1' ? null : cards, pack: st.v === 'off' ? '' : st.v, packShort: st.short });
   }
   window.__play = play;
   onRevealDismiss(() => { $('reveal').hidden = true; });
