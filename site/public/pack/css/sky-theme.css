@@ -678,7 +678,7 @@ html:not(.sky-night) body.sky-only:has(.overlay.panel:not([hidden]))::before { b
    screen (js/sky.js tone), so the header and the status bar are the sky, with a short blend into it, by day and at night.
    Light lettering on it. Only on Explore itself, not under a page that has its own header colour. */
 body.sky-only[data-page="explore"]:not(.col-open):not(.set-open):not(.sky-open):not(.plus-open):not(.credits-open):not(.around-open):not(:has(.overlay.panel:not([hidden]))) #sky-header::before {
-  background:linear-gradient(var(--sky-top, #3f7fbf) calc(100% - 26px), color-mix(in srgb, var(--sky-top, #3f7fbf) 0%, transparent)); height:calc(var(--safe-top) + 106px); }
+  background:linear-gradient(var(--sky-top, #3f7fbf) calc(100% - 24px), color-mix(in srgb, var(--sky-top, #3f7fbf) 0%, transparent)); height:calc(var(--safe-top) + 90px); } /* fade moved up 16px so it ends above the radar (2026-11-20, Sevaan) */
 body.sky-only.day[data-page="explore"]:not(.col-open):not(.set-open):not(.sky-open):not(.plus-open):not(.credits-open):not(.around-open):not(:has(.overlay.panel:not([hidden]))) #sky-header {
   --text:#fff; --ink:#fff; --muted:#e6f0fa; --edge:#ffffff80; color:#fff; text-shadow:0 1px 2px rgba(13,34,56,.25); }
 body.sky-only.day[data-page="explore"]:not(.col-open):not(.set-open):not(.sky-open):not(.plus-open):not(.credits-open):not(.around-open):not(:has(.overlay.panel:not([hidden]))) #sky-header :is(.wordmark, .wordmark span, button, .icon-button) { color:#fff !important; -webkit-text-fill-color:currentColor; }
@@ -867,3 +867,23 @@ html.sky-cards #logbook.lb-climb .lbd-ring circle[stroke="#24344a"] { stroke:var
 html.sky-cards #logbook.lb-climb .lbd-ring circle[stroke="var(--gold)"] { stroke:var(--rc-red); }
 html.sky-cards #logbook.lb-climb .lbd-ring g[stroke] { stroke:var(--rc-rule); }
 html.sky-cards #logbook.lb-climb .lbd-ring b { color:var(--rc-ink); } html.sky-cards #logbook.lb-climb .lbd-ring b small { color:var(--rc-muted); }
+
+/* Today's note by day (2026-11-20, Sevaan picked option C, design/bubbles/): white bubbles with Sky's blue hairline and
+   navy ink, the welcome line in soft sky blue, the link in Sky's text red. Lighter than the cream hero so the hero stays
+   the star. The tail (css/app.css) takes the bubble's fill on ::before and its hairline on ::after. Night: css/sky-night.css */
+body.sky-only .n2-chat { margin-bottom:14px; }
+body.sky-only .n2-b { background:#ffffff; color:#0d2238; box-shadow:inset 0 0 0 1px #c9d9e6, 0 1px 3px rgba(13,34,56,.06); }
+body.sky-only .n2-b.big { background:#d9eaf8; box-shadow:inset 0 0 0 1px #b9d3ea; font:400 17px/1.2 'SC Display', sans-serif; color:#0d2238; padding:9px 14px 10px; }
+body.sky-only .n2-b em { color:#b42a20; }
+body.sky-only .n2-b.dim { color:#4a6178; }
+body.sky-only .n2-stack > .n2-b:last-child::before { background:#ffffff; }
+body.sky-only .n2-stack > .n2-b:last-child::after { background:#c9d9e6; }
+body.sky-only .n2-stack > .n2-b.big:last-child::before { background:#d9eaf8; }
+body.sky-only .n2-stack > .n2-b.big:last-child::after { background:#b9d3ea; }
+/* The note's attached card (a rare plane, a regular, a card one step from Silver or Gold) in the same white: Sky's
+   hairline, navy name, slate line, red time, a darker green for XP. Its photo stays as it is. */
+body.sky-only .n2-att { background:#ffffff; box-shadow:inset 0 0 0 1px #c9d9e6, 0 1px 3px rgba(13,34,56,.06); color:#0d2238; }
+body.sky-only .n2-att .tx small { color:#4a6178; }
+body.sky-only .n2-att .tm { color:#b42a20; }
+body.sky-only .n2-att .tm small { color:#1f7a45; }
+body.sky-only .n2-pips i:not(.on, .now) { background:#c9d9e6; }

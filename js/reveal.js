@@ -5,13 +5,13 @@
 //  Everything scales with rarity (Legendary dims the sky, shockwave, held breath, slow flip, fanfare).
 // Waits use timers, not animation.finished, so a paused tab can never freeze the sequence.
 
-import { sfx, loadSfx } from './sfx.js?v=0.1.1807';
-import { audioCtx } from './audio-ctx.js?v=0.1.1807';
-import { TIER_INFO } from './rarity.js?v=0.1.1807';
-import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1807';
-import { applyBack } from './card-backs.js?v=0.1.1807';
-import { addStarfield } from './starfield.js?v=0.1.1807';
-import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1807';
+import { sfx, loadSfx } from './sfx.js?v=0.1.1808';
+import { audioCtx } from './audio-ctx.js?v=0.1.1808';
+import { TIER_INFO } from './rarity.js?v=0.1.1808';
+import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1808';
+import { applyBack } from './card-backs.js?v=0.1.1808';
+import { addStarfield } from './starfield.js?v=0.1.1808';
+import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1808';
 
 const FX = TIER_FX; /* one rarity table for every card moment (js/card-moment.js, 2026-11-11) */
 const NIGHT_MILESTONES = [3, 5, 10, 25, 50, 100, 200, 365], STAMP_MILESTONES = [5, 10, 25, 50, 100, 200, 300, 400];
@@ -510,6 +510,24 @@ let deck = null, deckTook = false, onFront = null;
 export function onRevealFront(fn) { onFront = fn; } // main.js: Share and View in collection follow the front card
 export const revealFrontCard = () => (deck?.items.length ? deck.items[deck.front].card : null);
 const slots = () => [...$('reveal-card').children].filter((c) => c.classList.contains('dk-slot'));
+// Both cards of a two-card deck, as they sit, for main.js's flight into the binder (Space's one-card path: a flick or
+// close on a new catch flies a copy of the card into the Collection tab). It copied only the front card and hid the
+// rest, so the card behind just vanished (2026-11-20, Sevaan). Each card goes in a layer with its slot's transform and
+// dimming, the one behind peeking out above as it does here; null for a single card (main.js copies that one as before).
+export function revealDeckClone() {
+  if (!deck || deck.items.length < 2) return null;
+  const st = document.createElement('div'); st.className = 'bf-stack';
+  const ss = slots().sort((a, b) => a.classList.contains('dk-front') - b.classList.contains('dk-front')); // the back one first, underneath
+  for (const s of ss) {
+    const cs = getComputedStyle(s), w = document.createElement('div');
+    Object.assign(w.style, { transform: cs.transform === 'none' ? '' : cs.transform, transformOrigin: cs.transformOrigin, filter: cs.filter === 'none' ? '' : cs.filter });
+    if (!s.classList.contains('dk-front')) w.style.clipPath = 'inset(-40px -40px 85% -40px)'; // only its top peeks out from behind the front card: drawing all of it doubled the flight's cost a frame (4x CPU: 34 ms frames, 18 ms clipped, the same as one card)
+    const c = s.firstElementChild?.cloneNode(true); if (!c) continue; c.removeAttribute('id');
+    w.append(c); st.append(w); // the card keeps its own transform: a sealed one, or one double-tapped to its back, flies turned over
+  }
+  st.style.setProperty('--fc-u', getComputedStyle($('reveal')).getPropertyValue('--cf') || '12px'); // a flight or plane card sizes off the reveal's --cf in #reveal-card
+  return st;
+}
 // What one card's reveal is: new, a level up, a stamp, or just seen again, and what its tab and its ink stamp say.
 function cardNews(e) {
   const seen = e.seen ?? 1, fleet = e.fleet ?? null, progress = e.progress ?? null, o = e.o ?? {};

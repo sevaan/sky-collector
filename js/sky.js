@@ -1,18 +1,18 @@
 // Canvas renderer for the sky view. Gnomonic (pinhole camera) projection around where the phone points.
-import { extinction } from './sky-limit.js?v=0.1.1807';
+import { extinction } from './sky-limit.js?v=0.1.1808';
 // Two themes: 'glass' (ink, cream and orange celestial chart) and 'night' (all red, keeps dark adaptation).
-import { pmTime } from './perf-meter.js?v=0.1.1807';
-import { createMilkyGL } from './milkyway-gl.js?v=0.1.1807';
+import { pmTime } from './perf-meter.js?v=0.1.1808';
+import { createMilkyGL } from './milkyway-gl.js?v=0.1.1808';
 
-import { enuFromAzEl, compassPoint } from './orbit.js?v=0.1.1807';
-import { createCloudGL } from './clouds-gl.js?v=0.1.1807';
+import { enuFromAzEl, compassPoint } from './orbit.js?v=0.1.1808';
+import { createCloudGL } from './clouds-gl.js?v=0.1.1808';
 // Cloud colours by light: sunlit tops, shadowed bellies, and the horizon haze they melt into (0–1 RGB).
 const CLOUD_LIGHT = {
   day: { lit: [1, 1, 1], shade: [0.62, 0.68, 0.77], haze: [0.82, 0.87, 0.93] },
   dusk: { lit: [1, 0.8, 0.68], shade: [0.36, 0.33, 0.42], haze: [0.62, 0.5, 0.52] },
   night: { lit: [0.22, 0.25, 0.31], shade: [0.1, 0.12, 0.16], haze: [0.14, 0.15, 0.2] },
 };
-import { TIER_INFO } from './rarity.js?v=0.1.1807';
+import { TIER_INFO } from './rarity.js?v=0.1.1808';
 // The accent for canvas drawing: the page's --gold (orange in Space Collector, red in Sky Collector), read once (2026-11-17).
 const ACCENT = (() => { try { return getComputedStyle(document.documentElement).getPropertyValue('--gold').trim() || '#fa8127'; } catch { return '#fa8127'; } })();
 
@@ -359,6 +359,7 @@ export class SkyView {
     const occupied = [{ x: ring.x - r, y: ring.y - r, w: 2 * r, h: 2 * r }];
     for (const b of this.uiBoxes ?? []) occupied.push(b); // the HUD's own boxes (main.js uiBoxes)
     if (this.shadowBox) occupied.push(this.shadowBox);
+    for (const b of this.letterBoxes ?? []) occupied.push(b); // the ground's N/E/S/W (drawGroundCompass)
     if (this.clearZone) {
       const z = this.clearZone;
       occupied.push({ x:z.left, y:z.top, w:z.right - z.left, h:z.bottom - z.top });
@@ -1031,6 +1032,7 @@ export class SkyView {
         if (!this.onScreen(p) || p.y > this.h - 110) continue; // not under the switcher at the bottom edge
         ctx.fillStyle = az === 0 ? t.groundNorth : t.groundText;
         ctx.fillText(letter, p.x, p.y);
+        if (fade > 0.3) this.letterBoxes.push({ x: p.x - 13, y: p.y - 15, w: 26, h: 30 }); /* sky names step aside from the big letters (2026-11-20, Sevaan: "To Deer Lake" sat on the E) */
       }
     }
     ctx.restore();
@@ -1635,6 +1637,7 @@ export class SkyView {
     this.drawBackground();
     if (this.lightF < 0.2 && !this.camera) this.drawMilkyWay(milky); // no Milky Way in camera view
     if (sky && this.lightF < 0.6) this.drawStars(sky, { lines: lines && this.dayF < 0.2, time: this.reducedMotion ? 0 : time, starLimit });
+    this.letterBoxes = [];
     this.shadowBox = null; if (this.showShadow !== false) this.drawEarthShadow();
     if (deep?.length && (this.dayF ?? 0) < 0.2) this.drawDeep(deep);
     if (weather && !this.camera) this.drawWeather(weather, this.reducedMotion || this.saver ? 0 : time); // the camera shows the real clouds
