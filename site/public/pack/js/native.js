@@ -24,18 +24,43 @@ export function plugin(name) {
 // One location fix. In the app this uses the native plugin, so the player sees only the iPhone’s own prompt (the
 // web view’s getCurrentPosition stacked a second "localhost would like to use your location" on top, 2026-10-11).
 // Resolves a GeolocationPosition-like { coords }, rejects with { code } (1 = denied) like the browser API.
-export async function getPosition(opts) {
+/* Sky Collector asks for PRECISE location (2026-11-20, Sevaan: "Yes, precise"); Space Collector stays approximate, so its
+   copy of this file keeps PRECISE = false. A ~3 km approximate fix draws a plane 10 km away 12-17° off
+   (design/privacy-store-checklist.md). The precise fix stays on the phone: plane requests are rounded (js/planes.js feedPoint).
+   - The first ask (nothing granted yet) asks for precise: Android 12+ shows Precise / Approximate, iOS has Precise on.
+   - Once the player has chosen Approximate, only an explicit ask (askPrecise: Settings → Use precise location) asks again;
+     asking on every fix made Android show "change to precise?" each launch (QA 2026-10-11).
+   - enableHighAccuracy only with precise allowed: on Android the plugin re-asks for the fine permission when it's set
+     without it (the same loop); on iOS it's what asks for a real fix (without it the plugin sets desiredAccuracy to 3 km,
+     ion-ios-geolocation IONGLOCManagerWrapper). */
+const PRECISE = true;
+let precision = null; // 'precise' | 'approximate' | null (not known yet), from the last fix
+export const locationPrecision = () => precision;
+export const preciseLocationOn = () => PRECISE;
+const platformOf = () => capOf()?.getPlatform?.() ?? 'web';
+export async function getPosition(opts, { askPrecise = false } = {}) {
   const geo = plugin('Geolocation');
   if (geo) {
     try {
-      // Approximate is plenty for the sky (QA 2026-10-11: asking for precise made Android loop "change to precise?").
+      const android = platformOf() === 'android', has = (p) => p?.location === 'granted' || p?.coarseLocation === 'granted';
       let perm = await geo.checkPermissions().catch(() => null);
-      if (perm?.location !== 'granted' && perm?.coarseLocation !== 'granted') perm = await geo.requestPermissions({ permissions: ['coarseLocation'] });
-      if (perm?.location !== 'granted' && perm?.coarseLocation !== 'granted') throw { code: 1 };
-      // Low accuracy can time out where only GPS has a fix; retry with GPS only if precise access is already granted
-      // (asking for it is what made Android show "change to precise?" again, QA 2026-10-11).
-      try { return await geo.getCurrentPosition(opts); }
-      catch (e) { if (perm?.location === 'granted') return await geo.getCurrentPosition({ ...opts, enableHighAccuracy: true, timeout: 20000 }); throw e; }
+      if (!has(perm)) perm = await (PRECISE ? geo.requestPermissions({ permissions: ['location'] }).catch(() => geo.requestPermissions({ permissions: ['coarseLocation'] })) /* a build whose manifest lacks FINE */ : geo.requestPermissions({ permissions: ['coarseLocation'] }));
+      else if (PRECISE && askPrecise && android && perm?.location !== 'granted') perm = await geo.requestPermissions({ permissions: ['location'] }).catch(() => perm); /* Android's "change to precise?" dialog; a refusal keeps Approximate */
+      if (!has(perm)) throw { code: 1 };
+      const fine = PRECISE && (android ? perm?.location === 'granted' : true); /* iOS reports one state for both; its Precise switch shows only in the fix's accuracy */
+      let p;
+      try { p = await geo.getCurrentPosition({ ...opts, enableHighAccuracy: fine }); }
+      catch (e) {
+        // A precise fix can time out where only GPS could answer indoors; then a quick lower-accuracy one. Without precise,
+        // the old order: low accuracy first, then GPS only if precise access happens to be granted.
+        if (fine) p = await geo.getCurrentPosition({ ...opts, enableHighAccuracy: false, timeout: 10000 });
+        else if (perm?.location === 'granted') p = await geo.getCurrentPosition({ ...opts, enableHighAccuracy: true, timeout: 20000 });
+        else throw e;
+      }
+      /* Approximate: Android says so in the permission (a poor fix with precise allowed is still 'precise': asking again
+         would change nothing); iOS's Precise Location: Off shows only as a fix of 1 km or worse */
+      precision = (android ? perm?.location !== 'granted' : Number(p?.coords?.accuracy) > 1000) ? 'approximate' : 'precise';
+      return p;
     } catch (e) { const m = `${e?.code ?? ''} ${e?.message ?? ''}`; throw { code: e?.code === 1 || /denied/i.test(m) ? 1 : /GLOC-0007|not enabled|services are (off|disabled)/i.test(m) ? 3 : 2 }; } // 3 = the phone's location is switched off (Android playtest 2026-10-20)
   }
   if (!navigator.geolocation) throw { code: 2 };

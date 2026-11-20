@@ -48,3 +48,27 @@ Sevaan has a domain and address for Sky.
    (iCloud key 'sky-backup'), notifications, any usage reports, a real contact address.
 7. **Airline logos and names**: identification only, with the hide-all switch that exists; keep the per-airline
    removal route.
+
+## Location: precise on the phone, rounded off it (2026-11-20)
+
+Sevaan decided Sky asks for **precise** location (Space Collector stays approximate): a ~3 km approximate fix draws a
+plane 10 km away several degrees off (design/privacy-store-checklist.md has the numbers).
+
+- **On the phone only.** The fix is used to work out where each plane is in your sky (js/planes.js skyPosition) and is
+  kept on the device (localStorage 'observer', and each catch's own place, which is part of the card; both are in the
+  player's own iCloud/Android backup, never on our server).
+- **What leaves the phone is rounded.** Plane requests (adsb.lol from the phone, Sky's relay as the backup, the
+  website's relay) carry the position snapped to a **0.05° grid** (js/planes.js feedPoint: about 5.5 km north-south,
+  less east-west). The snapped point is at most √2 × 0.025° = 2.1 NM from the real one, so the radius grows from 40 to
+  **43 NM** and every plane within 40 NM of the real spot is still in the answer (tests/location-privacy.test.mjs checks
+  20,000 random places). 43 NM = 79.6 km, inside the relay's 80 km cap. Weather asks Open-Meteo / our /wx for a 0.1°
+  square. The raw fix is never sent.
+- **The relay** (server/planes-relay.js, server/index.js) keeps answers per 1° square in memory (tileOf: only the
+  square's centre goes to Fly Italy ADSB) and its own logs never print a coordinate. **But** Cloud Run's request log
+  records each request's URL, which carries the rounded 0.05° point, for the log's retention (30 days by default). To
+  keep even that off the server: move lat/lon from the query string to a header or POST body (a server deploy, then an
+  app change), or lower the request log's retention / exclude /planes from it in Cloud Logging.
+- **Never in reports.** Usage notes (js/field-notes.js → POST /t → sky_events) carry no location: checked every note()
+  call (the tour's 'loc' note says only own / tz / skip / none). Sent packs (js/gift.js asGift) drop lat/lon/az/el/
+  rangeKm. Widgets get names and times, not places. The on-phone testing readouts (Settings → Plane positions, the
+  feed log) show coordinates on the phone only.

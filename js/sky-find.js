@@ -3,7 +3,7 @@
 // gone out of range"). Coming back to the app (from a notification, or to a rare-visitor ticket left on screen) the planes
 // are the ones from before you left, too old to place, so every plane looked gone until the feed answered. Now: wait for
 // a fresh answer first ('find'), and only then say it's gone, honestly and with what's up instead. Pure, no DOM.
-import { isUp } from './sky-up.js?v=0.1.1809';
+import { isUp } from './sky-up.js?v=0.1.1810';
 
 // a: the plane's place now ({ plane, az, el, rangeKm } from PlaneTracker.positions) or null; wait: Show me's wait for a
 // plane still coming over ({ az, el, at }) or null; obs: the observer (null before the place is known); lastOk: the last

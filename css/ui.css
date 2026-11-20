@@ -422,6 +422,7 @@ body:has(#gh-remind:not([hidden])) #toasts { opacity: 0; pointer-events: none; t
 #toasts .tn-ic svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 #toasts .tn-ic.art { background: #0b1626; border: 1px solid color-mix(in srgb, var(--k) 35%, transparent); }
 #toasts .tn-ic.art svg, #toasts .tn-ic.art img { width: 100%; height: 100%; object-fit: cover; stroke: none; }
+.patch-rim { display: none; } :is(#toasts, #toast-tray) .tn-ic.art .patch-rim { display: inline; } /* a patch at toast size keeps its stitched edge visible (QA round 4; js/patches.js) */
 #toasts .ticket__body { display: block !important; min-width: 0; }
 #toasts .ticket__eyebrow { display: block; font: 500 10.5px/1.25 var(--label, 'SC Label', 'Arial Narrow', sans-serif) !important; letter-spacing: .18em !important; text-transform: uppercase; color: var(--k) !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-top: 1px; }
 #toasts .ticket__line { display: -webkit-box !important; -webkit-line-clamp: 2 !important; -webkit-box-orient: vertical; overflow: hidden; white-space: normal !important; margin-top: 2px; font: 500 16.5px/1.12 var(--label, 'SC Label', 'Arial Narrow', sans-serif) !important; letter-spacing: .02em !important; color: #fff2b3 !important; }

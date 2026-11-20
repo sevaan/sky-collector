@@ -73,6 +73,10 @@ a { color:var(--cyan); }
 #plane .p-info b { color:var(--text);font-weight:600; }
 body.night #plane { --plane:#ff3b2b; }
 .tc.waiting .acts { opacity:.55; pointer-events:none; transition:opacity .2s; } /* risen early, not handed over yet (Space Collector 7eaf6967) */
+/* ...and it says it's working, not stuck (Android playtest 2026-11-20: "Allow motion" sat dimmed for seconds while the
+   location fix came in, and after "Turn on" the next card sat dimmed until the notification prompt): a spinner on the
+   waiting card's main button, and on a tapped one at once */
+.tc.waiting .acts:not(.pick) .yes::after, .tc .acts .yes.working::after { content:''; display:inline-block; width:.85em; height:.85em; margin-left:.65em; vertical-align:-.1em; box-sizing:border-box; border:2px solid currentColor; border-right-color:transparent; border-radius:50%; animation:banner-spin .8s linear infinite; }@media (prefers-reduced-motion: reduce) { .tc.waiting .acts:not(.pick) .yes::after, .tc .acts .yes.working::after { animation-duration:2.4s; } }
 #d-hit { position:absolute;left:calc(var(--cx) - var(--r) - 16px);top:calc(var(--cy) - var(--r) - 16px);width:calc(var(--r) * 2 + 32px);height:calc(var(--r) * 2 + 32px);border-radius:50%;background:transparent;border:0;pointer-events:auto;cursor:pointer; }
 #d-hit:active { background:color-mix(in srgb,var(--gold) 12%,transparent); }
 #discover .d-actions { position:absolute;left:50%;top:calc(var(--cy) + var(--r) + 20px);transform:translateX(-50%);display:flex;align-items:center;gap:8px;max-width:calc(var(--vws) - 32px); }
@@ -1478,6 +1482,14 @@ body:has(.set-sheet.in:not([hidden]):not(.x)) #toasts { top: calc(var(--safe-top
 body:has(.set-sheet.in) #toasts .ticket--sticky { display: none; } /* "Example location" and the like wait until the sheet closes */
 /* Settings and the Now list scrolled under the clock and battery: a backdrop behind the status bar while one is open. */
 body:has(.overlay.panel:not([hidden]))::before { content: ''; position: fixed; left: 0; right: 0; top: 0; height: var(--safe-top, 0px); z-index: 21; pointer-events: none; background: linear-gradient(var(--bg) 70%, color-mix(in srgb, var(--bg) 0%, transparent)); }
+/* ...and behind Android's 3-button navigation bar (Android playtest 2026-11-20: Settings' headings and rows scrolled under
+   back/home/recents). The panel's own background, only when the bar is the tall 3-button one (48px; the gesture bar's
+   ~24px handle keeps the content under it, as on iPhone): the clamp is 0 below 32px of inset and the full inset above. */
+html.android { --nav3: clamp(0px, calc((env(safe-area-inset-bottom, 0px) - 32px) * 100), env(safe-area-inset-bottom, 0px)); }
+html.android .overlay.panel::after { content: ''; position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; pointer-events: none; background: inherit; height: var(--nav3); }
+/* The tour's cards run off the bottom of the screen; with 3-button navigation they stop at the bar instead of running
+   under back/home/recents (same playtest). The gesture bar keeps the run-off. */
+html.android .ob-deck { clip-path: inset(-100vh -100vw calc(var(--nav3) - env(safe-area-inset-bottom, 0px)) -100vw); }
 
 /* ---------- Target ticket (2026-10-17, Sevaan picked design/target-states B with A's sight) ----------
    Every state of the circle says the same thing in the same place: one dark ticket under the circle with what it is
@@ -2388,7 +2400,7 @@ body.night #calib .cb-b.p { background: #ff6a55; border-color: #ff6a55; }
 .crew-kit b { display: block; margin: 6px 0 2px; font: 500 16px/1.15 var(--label); letter-spacing: .03em; color: var(--ink, #fff2b3); }
 .crew-kit small { display: block; color: #bdbea9; font-size: 13px; line-height: 1.35; }
 .kt-fan { position: relative; width: 146px; height: 70px; }
-.kt-fan img { position: absolute; bottom: 2px; width: 40px; height: 60px; object-fit: cover; border-radius: 4px; border: 1.5px solid #e9dcb3; box-shadow: 0 4px 10px #000a; transform: rotate(var(--r)); transform-origin: 50% 100%; }
+.kt-fan img { position: absolute; bottom: 2px; width: 40px; height: 60px; object-fit: cover; border-radius: 4px; border: 1.5px solid #e9dcb3; box-shadow: 0 4px 10px #000a; transform: rotate(var(--r)); transform-origin: 50% 100%; will-change: transform; } /* each tilted back on its own layer (Android playtest 2026-11-20: Android's WebView painting five full-size 900x1359 backs at a tilt left the whole 'Every card back' tile and the 'App icons' tile under it blank, box and words; upright or layered they paint) */
 .kt-patch { width: 62px; display: block; filter: drop-shadow(0 4px 8px #000a); }
 .kt-patch .patch, .kt-patch svg { display: block; width: 100%; height: auto; }
 #set-plus-sheet #plus-buy:not([hidden]) { display: grid; gap: 10px; width: auto; --pf: 11px; }

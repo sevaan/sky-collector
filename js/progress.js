@@ -1,15 +1,15 @@
 // Player progress from the sighting log: XP and observer rank, tonight’s three missions, a weekly streak and
 // achievements. Everything is derived from the saved sightings (nothing extra is stored), so it can’t drift.
 // info(cardKey) -> { tier, type, owner, launch, natural, con } | null. No DOM.
-import { isProp } from './sky-props.js?v=0.1.1809';
-import { SKY_PATCHES_MORE, freshSky2, noteSky2 } from './sky-patches.js?v=0.1.1809';
-import { nightKey, useCalendarDays } from './observation.js?v=0.1.1809';
-import { fleetThresholds } from './card-model.js?v=0.1.1809';
-import { distRound as distText } from './units.js?v=0.1.1809';
-import { firstFlew, isNewType, isOldType, engines, makerOf, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1809';
-import { planeSet } from './sky-sets.js?v=0.1.1809';
-import { privateCatch, MIL_TYPES } from './plane-privacy.js?v=0.1.1809';
-import { localDay, THRESHOLDS } from './sky-stamps.js?v=0.1.1809';
+import { isProp } from './sky-props.js?v=0.1.1810';
+import { SKY_PATCHES_MORE, freshSky2, noteSky2 } from './sky-patches.js?v=0.1.1810';
+import { nightKey, useCalendarDays } from './observation.js?v=0.1.1810';
+import { fleetThresholds } from './card-model.js?v=0.1.1810';
+import { distRound as distText } from './units.js?v=0.1.1810';
+import { firstFlew, isNewType, isOldType, engines, makerOf, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1810';
+import { planeSet } from './sky-sets.js?v=0.1.1810';
+import { privateCatch, MIL_TYPES } from './plane-privacy.js?v=0.1.1810';
+import { localDay, THRESHOLDS } from './sky-stamps.js?v=0.1.1810';
 
 // A longer climb (2026-10-12, playtest room: three ranks on night 1, Mission Control in about two weeks), with two
 // prestige ranks past Mission Control. Nobody drops a rank they had on the old curve (rankFloor below).
@@ -239,7 +239,7 @@ const ALWAYS = new Set(['newflights2', 'airlines3', 'again', 'high']);
    (st.flagsSoon) once the app has been open at those hours; before that, a plain hour rule: in the evening and at night
    (6 PM to 6 AM, QA round 3) no helicopters, propellers or low planes unless one was seen at these hours already. Space Collector's rule is the same idea from its
    side: only missions tonight's passes can give (main.js dealMissions). */
-export const NIGHT_ONLY_NOT = ['heli', 'prop', 'low', 'bands']; const NIGHT_FLAG = { heli: 'heli', prop: 'prop', low: 'low', bands: 'low' };
+export const NIGHT_ONLY_NOT = ['heli', 'prop', 'low', 'bands', 'oldtype']; const NIGHT_FLAG = { heli: 'heli', prop: 'prop', low: 'low', bands: 'low', oldtype: 'oldtype' }; /* oldtype: here mostly light planes from before 1980, a daytime thing too (QA round 4) */
 export function skyPossible(st, { owned = false, hour = new Date().getHours(), dark = false, golden = false, nearLevel = false, newAirline = false } = {}) {
   const can = new Set(['newflights2', 'families2']);
   if (owned) can.add('again');
@@ -264,7 +264,8 @@ export function skyPossible(st, { owned = false, hour = new Date().getHours(), d
   if (st.total >= 200) { can.add('rarehere'); can.add('rarenew'); } else if (f.heli || f.giant) can.add('rarenew'); /* every helicopter is Rare, and so is every Giant */
   /* before the log knows these hours: no helicopters, propellers or low planes in the evening or at night (6 PM to 6 AM;
      QA round 3: a propeller mission dealt at 8 PM on day 2), unless one has already been seen here at these hours */
-  if (!known && (night || hour >= 18)) for (const id of NIGHT_ONLY_NOT) if (!(st.flagsSoon?.[NIGHT_FLAG[id]] > 0)) can.delete(id);
+  /* from 5 PM (QA round 4: 8 of 252 deals at 5 to 6 PM had props, low planes, old types or helicopters these hours hadn't seen) */
+  if (!known && (night || hour >= 17)) for (const id of NIGHT_ONLY_NOT) if (!(st.flagsSoon?.[NIGHT_FLAG[id]] > 0)) can.delete(id);
   return can;
 }
 /* ---- The day's deal (design/missions-draft.md, pacing rules; Sevaan 2026-11-20) ----

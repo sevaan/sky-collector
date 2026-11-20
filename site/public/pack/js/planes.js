@@ -48,7 +48,18 @@ function relayUrls() {
   return (list ?? o.split(/[\s,]+/)).map((u) => String(u).trim()).filter(Boolean);
 }
 export function planesAvailable() { return !!phoneHttp() || relayUrls().length > 0; }
-const relayQuery = (url, obs) => `${url.replace(/\/$/, '')}${/\/planes$/.test(url) ? '' : '/'}?lat=${obs.lat.toFixed(2)}&lon=${obs.lon.toFixed(2)}&dist=${RADIUS_NM}`;
+/* What leaves the phone (2026-11-20, privacy with precise location): only a position rounded to a 0.05° grid (~5.5 km
+   north-south, less east-west), never the fix itself. The rounded point can be up to half a cell off in each direction,
+   at most sqrt(2) x 0.025° x 60 = 2.1 NM, so the radius grows by 3 NM and every plane within RADIUS_NM of the real spot is
+   still in the answer. The phone measures distance and height in the sky from its own fix. */
+export const FEED_GRID = 0.05, FEED_PAD_NM = 3;
+export function feedPoint(obs) {
+  const snap = (v, lim) => Math.max(-lim, Math.min(lim, Math.round(v / FEED_GRID) * FEED_GRID)).toFixed(2).replace(/^-(0\.00)$/, '$1');
+  const lon = ((((obs.lon + 180) % 360) + 360) % 360) - 180; // -180..180
+  return { lat: snap(obs.lat, 90), lon: snap(lon, 180), dist: RADIUS_NM + FEED_PAD_NM };
+}
+export const adsbUrl = (obs) => { const f = feedPoint(obs); return `https://api.adsb.lol/v2/point/${f.lat}/${f.lon}/${f.dist}`; };
+export const relayQuery = (url, obs) => { const f = feedPoint(obs); return `${url.replace(/\/$/, '')}${/\/planes$/.test(url) ? '' : '/'}?lat=${f.lat}&lon=${f.lon}&dist=${f.dist}`; };
 
 function ecef(lat, lon, hKm) {
   const sl = Math.sin(lat * RAD), cl = Math.cos(lat * RAD);
@@ -224,7 +235,7 @@ export class PlaneTracker {
     let over = null; try { over = localStorage.getItem('planeRelay'); } catch {}
     const http = !over && plugin('CapacitorHttp');
     const get = http
-      ? http.request({ url: `https://api.adsb.lol/v2/point/${obs.lat.toFixed(2)}/${obs.lon.toFixed(2)}/${RADIUS_NM}`, method: 'GET', connectTimeout: 8000, readTimeout: 8000 })
+      ? http.request({ url: adsbUrl(obs), method: 'GET', connectTimeout: 8000, readTimeout: 8000 })
         .then((r) => (r?.status === 200 ? (typeof r.data === 'string' ? JSON.parse(r.data) : r.data) : Promise.reject(new Error(r?.status))))
       : urls.reduce((chain, url) => chain.catch(() => fetch(relayQuery(url, obs), { signal: AbortSignal.timeout?.(8000) }).then((r) => (r.ok ? r.json() : Promise.reject(new Error(r.status))))), Promise.reject(new Error('start')));
     const t0 = Date.now();
@@ -244,9 +255,9 @@ export class PlaneTracker {
     this.gapS = nextGap(this.feed, src, { near }, this.cfg);
     if (src === 'none' || now - this.lastFetch < this.gapS * 1000) return;
     this.busy = true; this.lastFetch = now; this.src = src; this.counts[src]++;
-    const lat = obs.lat.toFixed(2), lon = obs.lon.toFixed(2), t0 = now;
-    const url = src === 'phone' ? `https://api.adsb.lol/v2/point/${lat}/${lon}/${RADIUS_NM}` /* adsb.lol turns cloud servers away (2026-10-26), but not phones */
-      : `${APP_RELAY}?lat=${lat}&lon=${lon}&dist=${RADIUS_NM}`;
+    const t0 = now;
+    const url = src === 'phone' ? adsbUrl(obs) /* adsb.lol turns cloud servers away (2026-10-26), but not phones */
+      : relayQuery(APP_RELAY, obs); /* both carry only the rounded point (feedPoint) */
     http.request({ url, method: 'GET', connectTimeout: 8000, readTimeout: 8000 })
       .then((r) => ({ status: r?.status, remaining: src === 'phone' ? header(r?.headers, 'x-ratelimit-remaining') : undefined, retryAfter: src === 'phone' ? header(r?.headers, 'retry-after') : undefined, data: jsonOf(r) }))
       .then((r) => ({ ...r, ok: !!r.data, net: !r?.status }), () => ({ ok: false, status: 0, net: true }))

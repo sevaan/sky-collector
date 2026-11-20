@@ -5,13 +5,15 @@
 //  Everything scales with rarity (Legendary dims the sky, shockwave, held breath, slow flip, fanfare).
 // Waits use timers, not animation.finished, so a paused tab can never freeze the sequence.
 
-import { sfx, loadSfx } from './sfx.js?v=0.1.1809';
-import { audioCtx } from './audio-ctx.js?v=0.1.1809';
-import { TIER_INFO } from './rarity.js?v=0.1.1809';
-import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1809';
-import { applyBack } from './card-backs.js?v=0.1.1809';
-import { addStarfield } from './starfield.js?v=0.1.1809';
-import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1809';
+import { sfx, loadSfx } from './sfx.js?v=0.1.1810';
+import { audioCtx } from './audio-ctx.js?v=0.1.1810';
+import { TIER_INFO } from './rarity.js?v=0.1.1810';
+import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1810';
+import { applyBack } from './card-backs.js?v=0.1.1810';
+import { addStarfield } from './starfield.js?v=0.1.1810';
+import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1810';
+import { packPlan, packFoil, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1810'; /* the two-card pack opening (prototype, 2026-11-20) */
+import { tearJag } from './gift-pack.js?v=0.1.1810';
 
 const FX = TIER_FX; /* one rarity table for every card moment (js/card-moment.js, 2026-11-11) */
 const NIGHT_MILESTONES = [3, 5, 10, 25, 50, 100, 200, 365], STAMP_MILESTONES = [5, 10, 25, 50, 100, 200, 300, 400];
@@ -62,6 +64,7 @@ function burst(x, y, n, color) {
 // ---------- the sequence ----------
 let run = 0, tilt = null, stopGyro = null, onFlipTap = null;
 let backTilt = null, backGyro = null; // the sealed card tilts too, until it flips
+let packRun = null; // a two-card pack opening under way (js/pack-reveal.js)
 function stopBack() { backGyro?.(); backTilt?.destroy(); backGyro = backTilt = null; }
 function showFace(which) {
   $('rv-back').style.visibility = which === 'back' ? 'visible' : 'hidden';
@@ -76,6 +79,7 @@ export function stopReveal() {
   stopBack();
   parts = [];
   if (onFlipTap) { $('rv-holder').removeEventListener('click', onFlipTap); onFlipTap = null; }
+  packRun?.stop(); packRun = null; $('reveal').querySelectorAll('.pk-under, .pk').forEach((e) => e.remove());
 }
 
 // A page left zoomed in (a pinch, or iOS's double-tap zoom) makes every overlay bigger than the screen, with the
@@ -178,11 +182,14 @@ export function cancelRush() { rush = null; for (const id of ['rv-dot', 'rv-dim'
 // a flight card and a plane card, each { card, o, seen, fleet, progress, shiny, livery }. Both show, as a two-card deck:
 // the front one plays the reveal, the other peeks out above it; swipe sideways (or tap it, or its tab) to swap. Without
 // cards, the single card in card/o/seen/fleet/progress/shiny plays as it always has.
-export async function playReveal({ card, o, seen, origin, fleet = null, progress = null, collected = 0, con = null, shiny = null, xp = 0, rank = null, earned = [], cards = null }) {
+// pack (Testing tools, js/pack-reveal.js): 'A' | 'B' | 'C' opens a two-card catch from a pack; '' (the default) as today.
+// packShort: true/false forces the short or full cut (the spike page); otherwise it follows how many packs were opened.
+export async function playReveal({ card, o, seen, origin, fleet = null, progress = null, collected = 0, con = null, shiny = null, xp = 0, rank = null, earned = [], cards = null, pack = '', packShort = null }) {
   const rushed = rush && performance.now() - rush.t0 < 3000 ? rush : null; rush = null; /* already rushing since the tap */
   stopReveal();
   const my = run;
   const items = orderDeck((cards?.length ? cards : [{ card, o, seen, fleet, progress, shiny }]).map(cardNews)), lead = items[0];
+  const plan = items.length > 1 ? packPlan(pack, packShort == null ? packSeen() : packShort ? 99 : 0) : null; /* only a catch that gives two cards */
   ({ card, o, seen, fleet, progress, shiny } = lead);
   const { fresh, tierKey, level, levelUp, nights, newStamp } = lead; // progress (other cards): { level, before, nights }. Levels count observing nights.
   const fx = FX[tierKey], color = (TIER_INFO[tierKey] ?? TIER_INFO.common).color;
@@ -197,8 +204,8 @@ export async function playReveal({ card, o, seen, origin, fleet = null, progress
   setRank(xp > 0 ? rank : null);
   $('rv-news').replaceChildren(); earnedNow = earned;
   setDeck(items);
-  if (items[1]?.fresh) seal(items[1]); /* a new card behind waits face down, glowing in its rarity */
-  $('reveal-card').classList.toggle('dk-wait', fresh && items.length > 1); /* and shows once the front one has turned over */
+  if (items[1]?.fresh || plan) seal(items[1]); /* a new card behind waits face down, glowing in its rarity (out of a pack, any card) */
+  $('reveal-card').classList.toggle('dk-wait', (fresh || plan) && items.length > 1); /* and shows once the front one has turned over */
   for (const id of ['rv-holder', 'rv-flipper', ...(rushed ? [] : ['rv-dot', 'rv-dim']), 'rv-flash', 'rv-shock']) $(id).getAnimations().forEach((a) => a.cancel());
   $('rv-holder').style.opacity = 0; $('rv-holder').classList.remove('live');
   $('rv-flipper').style.transform = '';
@@ -206,9 +213,30 @@ export async function playReveal({ card, o, seen, origin, fleet = null, progress
   if (!rushed) $('rv-dim').style.opacity = 0;
   // Safari doesn’t reliably hide the reverse face of a 3D card, so show one face at a time ourselves.
   { const rb = $('rv-back'); rb.className = rb.className.replace(/\btier-\w+|\bshiny\b|\bgold-foil\b/g, '').replace(/\s+/g, ' ').trim(); rb.classList.add(`tier-${tierKey}`); if (shiny) rb.classList.add('shiny'); if (card.classList.contains('gold-foil')) rb.classList.add('gold-foil'); }
-  if (fresh) applyBack($('rv-back'), o);
-  showFace(fresh ? 'back' : 'front');
+  if (fresh || plan) applyBack($('rv-back'), o);
+  showFace(fresh || plan ? 'back' : 'front');
   sizeCard(card);
+  /* Out of a pack: the card behind rises under the top one as a copy of its sealed slot, and both cards' pictures and the
+     pack's art are decoded before the pack shows (at most 150 ms, so a slow picture never holds up the catch). Tilt stays
+     off for the whole sequence (data-swiping, js/card.js). */
+  let under = null, decoded = null;
+  if (plan) {
+    deck.pack = true; primePack();
+    under = document.createElement('div'); under.className = 'pk-under'; under.setAttribute('aria-hidden', 'true');
+    /* only its back, not the whole card: a full card copy (face, photo) under a scaling rise cost ~170 frames over 20 ms in
+       ten catches at 4x CPU in Chromium (its raster went from 163 to 644 ms a catch) */
+    { const sl = slots()[1], w = document.createElement('div'), bk = sl.querySelector('.card__back')?.cloneNode(true); w.className = 'dk-slot sealed'; w.style.cssText = sl.style.cssText;
+      if (bk) { bk.removeAttribute('id'); bk.style.transform = 'none'; w.append(bk); } under.append(w); } $('rv-holder').before(under);
+    for (const it of items) it.card.dataset.swiping = '1';
+    const srcs = new Set();
+    for (const el of [$('rv-back'), under, ...items.map((it) => it.card)]) for (const e of [el, ...el.querySelectorAll('img, [style*="url("]')]) {
+      if (e.tagName === 'IMG' && (e.currentSrc || e.src)) srcs.add(e.currentSrc || e.src);
+      const m = /url\(["']?([^"')]+)/.exec(e.style?.backgroundImage || ''); if (m) srcs.add(m[1]); }
+    /* built and drawn under the rush, in a task of its own: inside the catch's own long task it made that frame ~110 ms
+       longer at 4x CPU (Chromium, 2026-11-20) */
+    const built = new Promise((res) => setTimeout(() => { if (alive()) { const foil = packFoil(items); packRun = packIntro({ root, holder: $('rv-holder'), under, plan, tier: foil.tier, shiny: foil.shiny, jag: tearJag(), sfx, flash: $('rv-flash'), reduced: reduced() }); } res(); }, 0));
+    decoded = Promise.race([Promise.all([...[...srcs].map((src) => { const im = new Image(); im.src = src; return im.decode().catch(() => {}); }), primePack()]), sleep(150)]).then(() => built);
+  }
   const x = rushed?.x ?? origin?.x ?? innerWidth / 2, y = rushed?.y ?? origin?.y ?? innerHeight * .4;
   if (!rushed) { $('rv-dot').style.left = `${x}px`; $('rv-dot').style.top = `${y}px`; }
   $('rv-shock').style.left = `${x}px`; $('rv-shock').style.top = `${y}px`;
@@ -232,6 +260,22 @@ export async function playReveal({ card, o, seen, origin, fleet = null, progress
   burst(x, y + 20, Math.round(fx.particles / 2), color);
   // A crisp ring that grows (size, not scale, so its line stays thin and sharp: 2026-10-08, the scaled one smeared into a muddy disc).
   if (fx.shock && !reduced()) $('rv-shock').animate([{ width: '20px', height: '20px', opacity: 1, borderWidth: '3px' }, { width: '140vmax', height: '140vmax', opacity: 0, borderWidth: '1.5px' }], { duration: 760, easing: 'cubic-bezier(.15,.7,.3,1)' });
+
+  // Two cards out of a pack (prototype): it pops in, tears, the pair rises and settles, the top one turns over (js/pack-reveal.js).
+  if (plan) {
+    await decoded; if (!alive()) return;
+    packSeen(1);
+    if (reduced()) { $('rv-flipper').style.transform = 'rotateY(180deg)'; showFace('front'); }
+    if (!packRun) return; const how = await packRun.start(); packRun = null; if (!alive()) return;
+    if (how === 'flip') await flipCard($('rv-flipper'), { tier: tierKey, faces: [$('rv-back'), $('reveal-card')], showFace: (f) => showFace(f ? 'front' : 'back'), alive });
+    else $('rv-flipper').style.transform = 'rotateY(180deg)'; /* a tap skipped straight to the face */
+    if (!alive()) return;
+    showFace('front');
+    retype(card);
+    for (const it of items) delete it.card.dataset.swiping;
+    setTimeout(() => { if (alive()) under.remove(); }, 720); /* once the deck's own slot (armDeck, 250 ms on, .34 s fade) is up over the copy */
+    return finish({ fx, color, fresh, seen, level, levelUp, card, alive, fleet, newStamp, nights, collected, con, shiny });
+  }
 
   if (!fresh) {
     // Seen before: straight to the card.
@@ -379,13 +423,13 @@ let earnedNow = []; // playReveal’s earned list, for the finish step
 const NEWS_ICON = { ghost: '◎', mission: '◆', patch: '◎', rank: '▲', event: '✦', reunion: '⇄', back: '▭', backs: '✦', peak: '⌃', train: '⋯', birthday: '✦' };
 // A chip with an action (`act`) is a button: tap, Enter or Space fire sc:news-act for main.js.
 function wireAct(c, n) {
-  if (!n.act) return; c.setAttribute('role', 'button'); c.tabIndex = 0; c.style.pointerEvents = 'auto'; c.style.cursor = 'pointer';
+  if (!n.act) return; c.classList.add('rv-chip--act'); /* a › says it opens something (QA round 4) */ c.setAttribute('role', 'button'); c.tabIndex = 0; c.style.pointerEvents = 'auto'; c.style.cursor = 'pointer';
   const go = (e) => { e.stopPropagation(); dispatchEvent(new CustomEvent('sc:news-act', { detail: n.act })); };
   c.addEventListener('click', go); c.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(e); } });
 }
 function showNews(news, alive) {
   const box = $('rv-news'); box.style.flexWrap = '';
-  const pager = buildPager(); if (pager) box.append(pager); /* two cards: their tabs come first (which one is in front) */
+  const pager = buildPager(); if (pager) { if (deck.pack) { const of = document.createElement('span'); of.className = 'rv-of'; of.textContent = `${deck.front + 1} of 2`; box.append(of); } box.append(pager); } /* two cards: their tabs come first (which one is in front); out of a pack, "1 of 2" before them */
   if (!news?.length) return;
   // One row: the two biggest pieces of news, then "+N" (a second row covered the card on small phones).
   const ORDER = { ghost: -1, rank: 0, back: 1, backs: 1.5, reunion: 2, peak: 2.5, train: 2.6, birthday: 0.5, event: 3, patch: 4, mission: 5 }; // a new card back is rare news: up front (2026-10-24)
@@ -597,7 +641,7 @@ async function forward(i, initial = false) {
     await sleep(reduced() ? 0 : 180); if (my !== run || deck !== d) return;
     sfx('flip', { gain: 0.8 });
     await turnCard(it.card, { from: 180, to: 360, ms: 560, lift: 1.05 }).finished; if (my !== run || deck !== d) return;
-    retype(it.card); payoffSound(it.tierKey, { fresh: true, shiny: it.shiny });
+    retype(it.card); payoffSound(it.tierKey, { fresh: it.fresh, shiny: it.shiny }); /* out of a pack a card you have also comes sealed */
     const r = it.card.getBoundingClientRect(), color = (TIER_INFO[it.tierKey] ?? TIER_INFO.common).color;
     burst(r.left + r.width / 2, r.top + r.height / 2, Math.round(FX[it.tierKey].particles * .6), color);
     dispatchEvent(new CustomEvent('sc:feel', { detail: 'success' }));
@@ -618,7 +662,7 @@ function buildPager() {
   queueMicrotask(syncPager);
   return pg;
 }
-function syncPager() { $('rv-news').querySelectorAll('.rv-pager button').forEach((b, i) => { const on = i === deck?.front; b.classList.toggle('on', on); b.setAttribute('aria-selected', String(on)); }); }
+function syncPager() { const of = $('rv-news').querySelector('.rv-of'); if (of && deck) of.textContent = `${deck.front + 1} of 2`; $('rv-news').querySelectorAll('.rv-pager button').forEach((b, i) => { const on = i === deck?.front; b.classList.toggle('on', on); b.setAttribute('aria-selected', String(on)); }); }
 {
   const d = $('reveal-card'); let x0 = 0, y0 = 0, dx = 0, on = false, dragging = false, t0 = 0, slot = null, k = -1;
   const live = () => deck && deck.ready && !deck.busy && deck.items.length > 1 && $('reveal').classList.contains('rv-done');

@@ -1,46 +1,46 @@
-import { pullToClose } from './pull-close.js?v=0.1.1809';
-import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1809';
-import { computeStats, statsHtml } from './stats.js?v=0.1.1809';
-import { nightKey } from './observation.js?v=0.1.1809';
-import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1809';
-import { sfx } from './sfx.js?v=0.1.1809';
-import { expandFacts } from './catalog-facts.js?v=0.1.1809';
-import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned, addSecretArt } from './patches.js?v=0.1.1809';
-import { registerSkySecrets } from './sky-secrets.js?v=0.1.1809';
-import { SKY_PATCH_ART } from './sky-patches.js?v=0.1.1809';
-import { registerSkyStories } from './sky-stories.js?v=0.1.1809';
-import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1809';
-import { ticket } from './toast.js?v=0.1.1809';
-import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1809';
-import { satGlobe } from './sat-globe.js?v=0.1.1809';
-import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1809';
-import { cardArt } from './art.js?v=0.1.1809';
-import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1809';
-import { applyBack } from './card-backs.js?v=0.1.1809';
-import { localStats } from './sky-local.js?v=0.1.1809';
-import { retier, rekeyUnlisted } from './flights.js?v=0.1.1809';
-import { SETS, assignSets, albumGoals, albumList, useSets, goalsOf } from './sets.js?v=0.1.1809';
-import { SKY_ALBUM_SETS, FLIGHT_SETS, PLANE_SETS } from './sky-sets.js?v=0.1.1809';
+import { pullToClose } from './pull-close.js?v=0.1.1810';
+import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1810';
+import { computeStats, statsHtml } from './stats.js?v=0.1.1810';
+import { nightKey } from './observation.js?v=0.1.1810';
+import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1810';
+import { sfx } from './sfx.js?v=0.1.1810';
+import { expandFacts } from './catalog-facts.js?v=0.1.1810';
+import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned, addSecretArt } from './patches.js?v=0.1.1810';
+import { registerSkySecrets } from './sky-secrets.js?v=0.1.1810';
+import { SKY_PATCH_ART } from './sky-patches.js?v=0.1.1810';
+import { registerSkyStories } from './sky-stories.js?v=0.1.1810';
+import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1810';
+import { ticket } from './toast.js?v=0.1.1810';
+import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1810';
+import { satGlobe } from './sat-globe.js?v=0.1.1810';
+import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1810';
+import { cardArt } from './art.js?v=0.1.1810';
+import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1810';
+import { applyBack } from './card-backs.js?v=0.1.1810';
+import { localStats } from './sky-local.js?v=0.1.1810';
+import { retier, rekeyUnlisted } from './flights.js?v=0.1.1810';
+import { SETS, assignSets, albumGoals, albumList, useSets, goalsOf } from './sets.js?v=0.1.1810';
+import { SKY_ALBUM_SETS, FLIGHT_SETS, PLANE_SETS } from './sky-sets.js?v=0.1.1810';
 const FLIGHT_SET_IDS = new Set(FLIGHT_SETS.map((s) => s.id));
 /* plane albums too (playtest 2026-11-20 #13: Helicopters read "0 / 1", only the listed types counted): any helicopter is a card */
 const OPEN_SET_IDS = new Set([...FLIGHT_SET_IDS, ...PLANE_SETS.map((s) => s.id)]);
-import { skyCatalogue } from './sky-catalogue.js?v=0.1.1809';
-import { skyCardPhotoUrl, glyphSvg } from './flight-card.js?v=0.1.1809';
-import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1809';
-import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1809';
-import { STORIES } from './stories.js?v=0.1.1809';
-import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1809';
-import { conArt } from './con-art.js?v=0.1.1809';
-import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1809';
-import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1809';
-import { climbSvg, climbGeom, xpLevel } from './rank-climb.js?v=0.1.1809';
-import { shareCardEl } from './share-card.js?v=0.1.1809';
-import { forgetSighting } from './cloud-backup.js?v=0.1.1809';
-import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1809';
-import { allSightings, deleteSighting } from './store.js?v=0.1.1809';
-import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1809';
-import { SECRET_PATCHES, NOT_SECRET, hasPatch } from './secrets.js?v=0.1.1809';
-import { localText } from './localize.js?v=0.1.1809';
+import { skyCatalogue } from './sky-catalogue.js?v=0.1.1810';
+import { skyCardPhotoUrl, glyphSvg } from './flight-card.js?v=0.1.1810';
+import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1810';
+import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1810';
+import { STORIES } from './stories.js?v=0.1.1810';
+import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1810';
+import { conArt } from './con-art.js?v=0.1.1810';
+import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1810';
+import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1810';
+import { climbSvg, climbGeom, xpLevel } from './rank-climb.js?v=0.1.1810';
+import { shareCardEl } from './share-card.js?v=0.1.1810';
+import { forgetSighting } from './cloud-backup.js?v=0.1.1810';
+import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1810';
+import { allSightings, deleteSighting } from './store.js?v=0.1.1810';
+import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1810';
+import { SECRET_PATCHES, NOT_SECRET, hasPatch } from './secrets.js?v=0.1.1810';
+import { localText } from './localize.js?v=0.1.1810';
 // Sky Collector (Milestone 1.5): the same Collection, with plane cards from your catches and no satellite catalogue.
 const SKY = (() => { try { return !!window.parent?.__skyOnly; } catch { return false; } })() || /[?&]sky\b/.test(location.search);
 if (SKY) { /* night follows the game's own switch (html.sky-night, set where Explore decides day and night) */
@@ -156,6 +156,7 @@ async function boot() {
   let key = '';
   try { key = decodeURIComponent(location.hash.slice(1)); } catch {}
   if (key === 'patches') { setView('patches'); return; }
+  if (key.startsWith('patch:')) { openKey(key); return; }
   if (key === 'send') { openSend(); return; }
   if (!state.byKey.has(key) && /^[A-Z]+:/.test(key)) key = key.split(':')[0]; // old launch-card link
   if (key && !state.byKey.has(key)) key = state.keyOfId.get(key) ?? key; // a satellite that’s now part of a fleet
@@ -553,7 +554,7 @@ function renderLogbook() {
     ${pts[cur + 1] ? `<path d="M${pts[cur].join(' ')} L${pts[cur][0] + (pts[cur + 1][0] - pts[cur][0]) * into} ${pts[cur][1] + (pts[cur + 1][1] - pts[cur][1]) * into}" stroke="var(--gold)" stroke-width="2"/>` : ''}
     ${rungs.map(([, n], i) => { const [x, y] = pts[i]; return `<circle cx="${x}" cy="${y}" r="${i === cur ? 6 : 4}" fill="${i <= cur ? 'var(--gold)' : '#0b1626'}" ${i > cur ? 'stroke="#fff2b3" stroke-dasharray="2 2"' : ''}/>${i === cur ? `<circle cx="${x}" cy="${y}" r="12" fill="none" stroke="var(--gold)" opacity=".5"/>` : ''}<text x="${x}" y="${y + 20}" text-anchor="middle" font-family="SC Label, Arial Narrow" font-size="9.5" letter-spacing="1.5" fill="${i >= cur ? '#fff2b3' : '#bdbea9'}">${n.length > 12 && n.includes(' ') ? n.toUpperCase().split(' ').map((w, k) => `<tspan x="${x}" dy="${k ? 11 : 0}">${esc(w)}</tspan>`).join('') /* two lines: FLIGHT CONTROLLER ran off the card (web playtest 2026-10-22) */ : esc(n.toUpperCase())}</text>${i === cur + 1 ? `<text x="${x}" y="${y - 14}" text-anchor="middle" font-family="SC Label, Arial Narrow" font-size="9" letter-spacing="1.5" fill="var(--gold)">NEXT</text>` : ''}`; }).join('')}</svg>`;
   const streak = p.streak.current >= 2 ? `${p.streak.current}-week streak` : p.streak.current ? 'Week 1 streak' : 'Start a streak this week'; // the flame is earned at week 2 (playtest 2026-10-09); short, so OBSERVER RANK stays on one line beside Remind me Sat (2026-11-07)
-  const ev = eventBadges(state.raw), nx = nextEvent();
+  const ev = SKY ? [] : eventBadges(state.raw), nx = SKY ? null : nextEvent();
   // At risk (a streak going, nothing logged yet this week): a Remind me for Saturday evening (QA 2026-10-09: the button
   // was lost in the card redesign, so remindStreak was unreachable).
   const atRisk = p.streak.current && !p.streak.thisWeek;
@@ -564,8 +565,8 @@ function renderLogbook() {
     ${p.rank.next ? `<div class="lb-bar"><i style="width:${(into * 100).toFixed(1)}%"></i></div><div class="lb-to"><span>${(p.rank.next - p.xp).toLocaleString()} XP to <b>${esc(RANKS[ri + 1]?.[1] ?? 'the next rank')}</b></span><span>${Math.floor(into * 100)}%</span></div>` : '<div class="lb-to"><span>Top rank. Every catch still counts.</span></div>'}
     ${p.missions.map((m) => `<div class="lb-mission${m.done ? ' done' : ''}"><i></i>${esc(m.text)}</div>`).join('')}
     ${p.challenge ? `<div class="lb-mission lb-challenge${p.challenge.done ? ' done' : ''}"><i></i>${esc(p.challenge.text)}<small>Sky challenge · +50</small></div>` : ''}
-    <div class="lb-foot"><div class="lb-head">EVENTS ${ev.length ? `<span>${ev.length} badge${ev.length === 1 ? '' : 's'}</span>` : ''}</div>
-    <div class="lb-events">${ev.map((e) => `<span class="ui-chip ui-chip--earned">✦ <b>${esc(e.name.replace(/\s*\d{4}$/, ''))}</b></span>`).join('')}${nx ? `<span class="ui-chip"><span class="ui-chip__k">Next:</span><b>${esc(nx.name.replace(/\s*\d{4}$/, ''))}</b><span class="ui-chip__k">· ${new Date(nx.day ?? nx.start + 30 * 3600e3).toLocaleDateString([], { month: 'short', day: 'numeric' })}</span></span>` : ''}</div></div>`;
+    ${SKY ? '' /* Sky: no EVENTS foot (Sky Build playtest v0.1.1809): sky events are off, so it had nothing to show and led nowhere */ : `<div class="lb-foot"><div class="lb-head">EVENTS ${ev.length ? `<span>${ev.length} badge${ev.length === 1 ? '' : 's'}</span>` : ''}</div>
+    <div class="lb-events">${ev.map((e) => `<span class="ui-chip ui-chip--earned">✦ <b>${esc(e.name.replace(/\s*\d{4}$/, ''))}</b></span>`).join('')}${nx ? `<span class="ui-chip"><span class="ui-chip__k">Next:</span><b>${esc(nx.name.replace(/\s*\d{4}$/, ''))}</b><span class="ui-chip__k">· ${new Date(nx.day ?? nx.start + 30 * 3600e3).toLocaleDateString([], { month: 'short', day: 'numeric' })}</span></span>` : ''}</div></div>`}`;
   state.achievements = p.achievements;
   lbLast = { xp: p.xp, into, at: p.rank.at, next: p.rank.next };
   if (document.documentElement.classList.contains('away')) requestAnimationFrame(() => setTimeout(renderSatCard, 0)); else renderSatCard(); /* hidden: the globe's orbits are their own task (perf budget 2026-11-10) */
@@ -1354,6 +1355,9 @@ $('viewer').addEventListener('close', () => { if (!redocking) setTimeout(backFro
 function openKey(key) {
   const go = () => {
     if (key === 'patches') { setView('patches'); return; }
+    /* 'patch:ID' (Sky Build playtest v0.1.1809: the reveal's patch chip, "Wheels Up", was a dead tap): the wall, then that
+       patch's card; the catch that earned it may still be on its way in (Explore's refresh), so wait a moment for it */
+    if (String(key).startsWith('patch:')) { const id = key.slice(6); setView('patches'); let n = 0; const t = setInterval(() => { const a = state.achievements?.find((x) => x.id === id); if ((a?.done || ++n > 15) && $('patch-view')) { clearInterval(t); markSeen(id); openPatch(id, document.querySelector(`.pw-item[data-id="${CSS.escape(id)}"] .patch`)?.getBoundingClientRect() ?? null); } }, 200); return; }
     if (!state.byKey.has(key) && /^[A-Z]+:/.test(key)) key = key.split(':')[0];
     if (!state.byKey.has(key)) key = state.keyOfId?.get(String(key)) ?? key; // a satellite that’s now part of a fleet (QA 2026-10-08)
     if (!state.byKey.has(key)) return;

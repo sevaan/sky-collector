@@ -16,6 +16,8 @@ export const SKY_THREAD = '#0d2238'; // name lettering, icon, inner ring
 export const SKY_LABEL = '#9a2318'; // the group (or date) along the bottom: a deeper red than the app's #b42a20, so it passes on every pastel
 export const SKY_ACCENT = '#c42f22'; // the icons' accent (Space's orange, var(--gold))
 // Edges: assets/art/patch/merrow.webp recoloured (navy by day, light sky blue at night on the navy page, gold for gold finish)
+// Locked patches' captions on the wall (css/sky-theme.css .pw-item.locked span), on the day page and the night page
+export const SKY_LOCKED_CAPTION = { day: '#566c81', night: '#8aa0b4' }, SKY_PAGE = { day: '#eef5fb', night: '#0b1626' };
 export const SKY_MERROW = { day: 'merrow-navy.webp', night: 'merrow-sky.webp', gold: 'merrow-gold.webp' };
 // The art's own colours, re-pointed for a light ground (cream ink and night-sky fills read on dark twill only)
 export const SKY_ART_MAP = {
