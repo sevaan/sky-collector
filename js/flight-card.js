@@ -226,7 +226,7 @@ function classBand(k, mini = false) {
   if (k.cls === 'cargo') return { cls: 'cargo', icon: ICONS.box, head: mini ? 'Cargo' : 'Cargo airline', tail: mini ? k.op : [k.op, 'route not known'].filter(Boolean).join(' · '), logo: k.icao };
   if (k.cls === 'airline') return { cls: 'airline', icon: ICONS.jet, head: 'Airline', tail: mini ? k.op : [k.op, 'route not known'].filter(Boolean).join(' · '), logo: k.icao };
   if (k.cls === 'airliner') return { cls: 'noair', icon: ICONS.lock, head: mini ? 'No flight number' : 'No airline flight number', tail: mini ? '' : 'Airliner' };
-  return { cls: 'noair', icon: ICONS.lock, head: 'Not an airline', tail: mini ? '' : k.word };
+  return { cls: 'noair', icon: ICONS.lock, head: k.word || 'Aircraft', tail: '' }; /* just what it is (2026-11-20, Sevaan: "Doesn't need to say not an airline") */
 }
 function bandHtml(b, cls = 'ss-band') {
   if (!b) return '';
