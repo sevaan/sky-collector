@@ -6,8 +6,8 @@
 // bundled route data (js/routes.js). When that can't be done in time, the card is a flight recorded over the nearest hub
 // (js/pack-flights.js, scripts/build-pack-flights.mjs), labelled with when it was seen, never "right now".
 // No DOM here: the pure parts are tested in tests/pack-flight.test.mjs.
-import { TZ_PLACES } from './tz-places.js?v=0.1.1793';
-import { isGovOrMil } from './plane-privacy.js?v=0.1.1793';
+import { TZ_PLACES } from './tz-places.js?v=0.1.1794';
+import { isGovOrMil } from './plane-privacy.js?v=0.1.1794';
 
 // The relay (server/, Cloud Run "api" in sky-collector-app): one upstream request per 1-degree square every 15 s, shared
 // by everyone asking about the same square. Allows skycollector.app, sevaan.github.io and localhost.

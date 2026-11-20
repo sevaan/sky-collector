@@ -88,6 +88,92 @@ const S = {
   /* https://en.wikipedia.org/wiki/Eurocopter_EC135: first flight 15 February 1994; up to seven passengers; 2 × Arrius 2B2 or
      PW206B turboshaft; main rotor 10.2 m. Country "Multinational" (left out) */
   EC35: { maker: 'Airbus Helicopters', desc: 'twin-engine light helicopter', cells: [['First flew', '1994'], ['Passengers', '≤ 7'], E(2, 'turbines'), ['Rotor', '10.2', 'm']] },
+  /* Military set (2026-11-19). "First flew" is the type's own first flight from the article's infobox (the family's first, as
+     for the C-130, where the ICAO code covers every model); a cell is left out when the specifications are for one
+     variant only and the ICAO code covers others with different figures. */
+  /* https://en.wikipedia.org/wiki/Boeing_C-17_Globemaster_III (Specifications C-17A): first flight 15 September 1991; crew 3; 4 × PW2000 turbofans;
+     span 169 ft 9.6 in */
+  C17: { maker: 'Boeing', country: 'USA', desc: 'four-engine military transport', cells: [['First flew', '1991'], ['Crew', '3'], E(4, 'jets'), ['Span', '51.8', 'm']] },
+  /* https://en.wikipedia.org/wiki/Lockheed_C-130_Hercules (Specifications C-130H): first flight 23 August 1954; 4 × Allison T56 turboprops; span
+     132 ft 7 in. Crew and range left out (C-130H figures; the code covers every model before the C-130J) */
+  C130: { maker: 'Lockheed', country: 'USA', desc: 'four-turboprop military transport', cells: [['First flew', '1954'], E(4, 'props'), ['Span', '40.4', 'm']] },
+  /* https://en.wikipedia.org/wiki/Lockheed_Martin_C-130J_Super_Hercules: first flight 5 April 1996; crew 3 ("two pilots, and one loadmaster are
+     minimum crew"); 4 × Rolls-Royce AE 2100D3 turboprops; span 132 ft 7 in */
+  C30J: { maker: 'Lockheed Martin', country: 'USA', desc: 'four-turboprop military transport', cells: [['First flew', '1996'], ['Crew', '3'], E(4, 'props'), ['Span', '40.4', 'm']] },
+  /* https://en.wikipedia.org/wiki/Lockheed_C-5_Galaxy (Specifications C-5M): 4 × GE F138-100 turbofans; span 222 ft 9 in; length 247 ft 1 in; range
+     4,800 nmi with a 120,000 lb payload. First flight left out (1968 is the C-5A; C-5M test flights began June 2006) */
+  C5M: { maker: 'Lockheed', country: 'USA', desc: 'heavy military transport', cells: [E(4, 'jets'), ['Span', '67.9', 'm'], ['Length', '75.3', 'm'], ['Range', '8,890', 'km']] },
+  /* https://en.wikipedia.org/wiki/Airbus_A400M_Atlas: first flight 11 December 2009; crew "3 or 4"; 4 × Europrop TP400-D6 turboprops; span 42.4 m.
+     Country "Multi-national" (left out) */
+  A400: { maker: 'Airbus', desc: 'four-turboprop military transport', cells: [['First flew', '2009'], ['Crew', '3–4'], E(4, 'props'), ['Span', '42.4', 'm']] },
+  /* https://en.wikipedia.org/wiki/Boeing_KC-135_Stratotanker (Specifications KC-135R): first flight 31 August 1956; crew 3 (pilot, co-pilot, boom
+     operator); 4 × CFM F108 turbofans; span 130 ft 10 in */
+  K35R: { maker: 'Boeing', country: 'USA', desc: 'aerial refuelling tanker', cells: [['First flew', '1956'], ['Crew', '3'], E(4, 'jets'), ['Span', '39.9', 'm']] },
+  /* Same article: the KC-135 first flew 31 August 1956; four engines. Crew and span left out (given for the KC-135R only) */
+  K35E: { maker: 'Boeing', country: 'USA', desc: 'aerial refuelling tanker', cells: [['First flew', '1956'], E(4, 'jets')] },
+  /* https://en.wikipedia.org/wiki/McDonnell_Douglas_KC-10_Extender (KC-10A): first flight 12 July 1980; crew 4; 3 × GE F103 turbofans; span
+     165 ft 4.5 in */
+  KC10: { maker: 'McDonnell Douglas', country: 'USA', desc: 'aerial refuelling tanker', cells: [['First flew', '1980'], ['Crew', '4'], E(3, 'jets'), ['Span', '50.4', 'm']] },
+  /* https://en.wikipedia.org/wiki/Boeing_E-3_Sentry (Specifications USAF/NATO, TF33 engines = E3TF): E-3 first flight 25 May 1976; 4 × TF33
+     turbofans; span 145 ft 9 in; range 4,000 nmi. Crew left out (4 flight crew plus 13–19 mission crew) */
+  E3TF: { maker: 'Boeing', country: 'USA', desc: 'airborne early warning aircraft', cells: [['First flew', '1976'], E(4, 'jets'), ['Span', '44.4', 'm'], ['Range', '7,408', 'km']] },
+  /* Same article (E3CF = the CFM56-engined E-3s): four engines; endurance "about 11 hours with CFM56 engine". The other cells
+     are given for the TF33 aircraft only (left out) */
+  E3CF: { maker: 'Boeing', country: 'USA', desc: 'airborne early warning aircraft', cells: [E(4, 'jets'), ['Endurance', '≈ 11', 'h']] },
+  /* https://en.wikipedia.org/wiki/Boeing_E-6_Mercury (E-6B): first flight 19 February 1987; crew 22; 4 × CFM56-2A-2 turbofans; span 148 ft 4 in */
+  E6: { maker: 'Boeing', country: 'USA', desc: 'airborne command post', cells: [['First flew', '1987'], ['Crew', '22'], E(4, 'jets'), ['Span', '45.2', 'm']] },
+  /* https://en.wikipedia.org/wiki/Boeing_B-52_Stratofortress (B-52H): first flight 15 April 1952; crew 5; 8 × TF33 turbofans; span 56.4 m */
+  B52: { maker: 'Boeing', country: 'USA', desc: 'eight-engine strategic bomber', cells: [['First flew', '1952'], ['Crew', '5'], E(8, 'jets'), ['Span', '56.4', 'm']] },
+  /* https://en.wikipedia.org/wiki/Rockwell_B-1_Lancer (B-1B): first flight 23 December 1974; crew 4; 4 × F101 afterburning turbofans. Span left
+     out (swing wing) and range (B-1B only) */
+  B1: { maker: 'Rockwell', country: 'USA', desc: 'swing-wing strategic bomber', cells: [['First flew', '1974'], ['Crew', '4'], E(4, 'jets')] },
+  /* https://en.wikipedia.org/wiki/Northrop_B-2_Spirit: first flight 17 July 1989; crew 2; 4 × F118 turbofans; span 52.4 m */
+  B2: { maker: 'Northrop', country: 'USA', desc: 'flying-wing stealth bomber', cells: [['First flew', '1989'], ['Crew', '2'], E(4, 'jets'), ['Span', '52.4', 'm']] },
+  /* https://en.wikipedia.org/wiki/Boeing_P-8_Poseidon (P-8A): first flight 25 April 2009; flight crew 2, mission crew 7; 2 × CFM56-7B27A turbofans;
+     span 37.64 m */
+  P8: { maker: 'Boeing', country: 'USA', desc: 'maritime patrol aircraft', cells: [['First flew', '2009'], ['Crew', '9'], E(2, 'jets'), ['Span', '37.6', 'm']] },
+  /* https://en.wikipedia.org/wiki/Grumman_C-2_Greyhound (Reprocured C-2A; ICAO C2 is the Greyhound, the Kawasaki C-2 is KC2): first flight
+     18 November 1964; crew "2 flight crew and 2 loadmasters"; 2 × Allison T56 turboprops; span 80 ft 7 in */
+  C2: { maker: 'Grumman', country: 'USA', desc: 'carrier transport aircraft', cells: [['First flew', '1964'], ['Crew', '4'], E(2, 'props'), ['Span', '24.6', 'm']] },
+  /* https://en.wikipedia.org/wiki/Airbus_C295 (Specifications C-295W): first flight 28 November 1997; 2 × PW127G turboprops; length 24.50 m.
+     Span left out (C-295W, which has winglets); country "European" (left out) */
+  C295: { maker: 'Airbus', desc: 'twin-turboprop military transport', cells: [['First flew', '1997'], E(2, 'props'), ['Length', '24.5', 'm']] },
+  /* https://en.wikipedia.org/wiki/Bell_Boeing_V-22_Osprey (MV-22B): first flight 19 March 1989; crew 3–4; 2 × Rolls-Royce T406 turboshafts;
+     two rotors, each 38 ft 1 in across */
+  V22: { maker: 'Bell Boeing', country: 'USA', desc: 'tiltrotor transport', cells: [['First flew', '1989'], ['Crew', '3–4'], E(2, 'turbines'), ['Rotor', '11.6', 'm']] },
+  /* https://en.wikipedia.org/wiki/Lockheed_U-2: first flight 1 August 1955; crew 1; 1 × GE F118 turbofan. Span and range left out (U-2S only) */
+  U2: { maker: 'Lockheed', country: 'USA', desc: 'high-altitude reconnaissance aircraft', cells: [['First flew', '1955'], ['Crew', '1'], E(1, 'jets')] },
+  /* https://en.wikipedia.org/wiki/General_Dynamics_F-16_Fighting_Falcon: official first flight 2 February 1974 (an unplanned hop on 20 January);
+     single-seat F-16A and two-seat F-16B; one F110 or F100 turbofan. Span left out (Block 50/52 figures) */
+  F16: { maker: 'General Dynamics', country: 'USA', desc: 'multirole fighter', cells: [['First flew', '1974'], ['Crew', '1–2'], E(1, 'jets')] },
+  /* https://en.wikipedia.org/wiki/McDonnell_Douglas_F/A-18_Hornet: first flight 18 November 1978; crew "1 (C)/2 (D)"; 2 × F404 turbofans. Span
+     left out (measured with wingtip missiles) */
+  F18: { maker: 'McDonnell Douglas', country: 'USA', desc: 'carrier-based multirole fighter', cells: [['First flew', '1978'], ['Crew', '1–2'], E(2, 'jets')] },
+  /* https://en.wikipedia.org/wiki/McDonnell_Douglas_F-15_Eagle: first F-15A flight 27 July 1972; single-seat F-15A/C, two-seat F-15B/D; 2 × F100
+     afterburning turbofans. Span left out (F-15C figures) */
+  F15: { maker: 'McDonnell Douglas', country: 'USA', desc: 'twin-engine fighter', cells: [['First flew', '1972'], ['Crew', '1–2'], E(2, 'jets')] },
+  /* https://en.wikipedia.org/wiki/Lockheed_Martin_F-35_Lightning_II: first flight 15 December 2006 (F-35A); crew 1; 1 × F135 afterburning
+     turbofan. Span left out (the three versions differ) */
+  F35: { maker: 'Lockheed Martin', country: 'USA', desc: 'stealth multirole fighter', cells: [['First flew', '2006'], ['Crew', '1'], E(1, 'jets')] },
+  /* https://en.wikipedia.org/wiki/Eurofighter_Typhoon: first flight 27 March 1994; crew "1 or 2"; 2 × Eurojet EJ200 turbofans; span 10.95 m.
+     Country: four nations (left out) */
+  EUFI: { maker: 'Eurofighter', desc: 'multirole combat aircraft', cells: [['First flew', '1994'], ['Crew', '1–2'], E(2, 'jets'), ['Span', '11.0', 'm']] },
+  /* https://en.wikipedia.org/wiki/Fairchild_Republic_A-10_Thunderbolt_II (A-10C): first flight 10 May 1972; crew 1; 2 × TF34 turbofans; span
+     17.53 m */
+  A10: { maker: 'Fairchild Republic', country: 'USA', desc: 'close air support aircraft', cells: [['First flew', '1972'], ['Crew', '1'], E(2, 'jets'), ['Span', '17.5', 'm']] },
+  /* https://en.wikipedia.org/wiki/Boeing_CH-47_Chinook: first flight 21 September 1961; 2 × T55 turboshafts; 2 rotors. Crew and rotor size left
+     out (CH-47F figures) */
+  H47: { maker: 'Boeing', country: 'USA', desc: 'tandem-rotor transport helicopter', cells: [['First flew', '1961'], E(2, 'turbines'), ['Rotors', '2']] },
+  /* https://en.wikipedia.org/wiki/Sikorsky_CH-53_Sea_Stallion (CH-53D; ICAO H53 is the twin-engine CH-53, the CH-53E is H53S): YCH-53A first
+     flight 14 October 1964; 2 × T64 turboshafts; main rotor 72 ft 2.8 in */
+  H53: { maker: 'Sikorsky', country: 'USA', desc: 'heavy-lift helicopter', cells: [['First flew', '1964'], E(2, 'turbines'), ['Rotor', '22.0', 'm']] },
+  /* https://en.wikipedia.org/wiki/Sikorsky_UH-60_Black_Hawk (UH-60M): first flight 17 October 1974; 2 × T700 turboshafts; main rotor 53 ft 8 in */
+  H60: { maker: 'Sikorsky', country: 'USA', desc: 'utility helicopter', cells: [['First flew', '1974'], E(2, 'turbines'), ['Rotor', '16.4', 'm']] },
+  /* https://en.wikipedia.org/wiki/Antonov_An-12: first flight 16 December 1957; crew five; 4 × Ivchenko AI-20 turboprops; span 38 m */
+  AN12: { maker: 'Antonov', country: 'USSR', desc: 'four-turboprop transport', cells: [['First flew', '1957'], ['Crew', '5'], E(4, 'props'), ['Span', '38.0', 'm']] },
+  /* https://en.wikipedia.org/wiki/Ilyushin_Il-76 (Il-76MD-90AE): first flight 25 March 1971; 4 turbofans; span 50.5 m. Crew and range left out
+     (given for the Il-76MD-90A only) */
+  IL76: { maker: 'Ilyushin', country: 'USSR', desc: 'four-jet military transport', cells: [['First flew', '1971'], E(4, 'jets'), ['Span', '50.5', 'm']] },
 };
 /* Codes that are the same aircraft as one above (ICAO designators): the E175 with either wing, every ATR 72 variant */
 const SAME = { E75S: 'E75L', AT75: 'AT72', AT76: 'AT72' };
