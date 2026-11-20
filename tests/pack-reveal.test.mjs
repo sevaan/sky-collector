@@ -8,6 +8,7 @@ test('the switch is off unless a variant is picked', () => {
   for (const v of ['A', 'B', 'C']) assert.equal(packChoice(v), v);
   assert.equal(packPlan(''), null); assert.equal(packPlan('off'), null); assert.equal(packPlan(null), null);
   assert.equal(packSetting(), ''); // no localStorage here: off
+  for (const on of ['on', '1', true]) assert.equal(packChoice(on), 'B'); // turned on without a variant: B
 });
 
 test('each variant reaches the first face when planned: A 1.8 s, B 2.1 s, C 2.6 s (within 0.1 s)', () => {
