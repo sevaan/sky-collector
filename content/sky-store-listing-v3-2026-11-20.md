@@ -8,7 +8,7 @@ The outside review asked for about 75% of B's substance in A's tighter style, th
 
 ---
 
-## 1. App Store description (3,034 of 4,000) — FINAL
+## 1. App Store description (3,040 of 4,000) — FINAL
 
 ```
 Look up. That plane has a name and a story, and it could be your next card.
@@ -25,20 +25,20 @@ WHAT YOU'LL FIND UP THERE
 Every catch gives you a card for that kind of plane: when it first flew, how far it can go and one true fact. Most airline flights add a second card, with the airline and where the flight is going.
 
 SHINY CARDS
-Catch a plane at the right moment and its card comes out shiny: passing right beside the Moon, in the low sun at sunrise or sunset, or a rare plane in colours you've never collected.
+Now and then a card comes out shiny: a plane crossing in front of the Moon, one caught in the few minutes the sun sits on the horizon, or a rare plane in colours you've never collected.
 
 KNOW WHEN TO LOOK UP
 Today shows the best plane in your sky right now and what's coming over in the next 15 minutes. Tap Show me and the app points the way.
 
 YOUR REGULARS
-Some flights pass over you at about the same time every day. After a few days Sky Collector spots them, so you know when yours is due.
+Some flights pass over you at about the same time most days. After a few days Sky Collector spots them, so you know when yours is due.
 
 ALWAYS SOMETHING TO CHASE
 • New missions every day, and a new themed week every Monday
 • Nineteen sets to fill, from The 737 Family and Giants to Short Hops and The Long Way
 • More than 100 patches to earn
 • Catch a card again on other days and it goes from bronze to silver to gold
-• The next morning, your day waits as a pack of cards to tear open
+• The next morning, your catches wait as a pack of cards to tear open
 
 SEND CARDS TO A FRIEND
 Send your best catches as a link. Your friend tears them open as a pack, and you keep your own.
@@ -64,7 +64,7 @@ Privacy Policy: https://skycollector.app/privacy
 
 **Short description (75 of 80), final:** `Every plane over you is a card. Point your phone at the sky and collect it.`
 
-**Full description, true for Android today (2,490 of 4,000).** Sky Plus is not sold on Google Play yet and Android has no widgets, so this has no Plus section at all.
+**Full description, true for Android today (2,496 of 4,000).** Sky Plus is not sold on Google Play yet and Android has no widgets, so this has no Plus section at all.
 
 ```
 Look up. That plane has a name and a story, and it could be your next card.
@@ -81,20 +81,20 @@ WHAT YOU'LL FIND UP THERE
 Every catch gives you a card for that kind of plane: when it first flew, how far it can go and one true fact. Most airline flights add a second card, with the airline and where the flight is going.
 
 SHINY CARDS
-Catch a plane at the right moment and its card comes out shiny: passing right beside the Moon, in the low sun at sunrise or sunset, or a rare plane in colours you've never collected.
+Now and then a card comes out shiny: a plane crossing in front of the Moon, one caught in the few minutes the sun sits on the horizon, or a rare plane in colours you've never collected.
 
 KNOW WHEN TO LOOK UP
 Today shows the best plane in your sky right now and what's coming over in the next 15 minutes. Tap Show me and the app points the way.
 
 YOUR REGULARS
-Some flights pass over you at about the same time every day. After a few days Sky Collector spots them, so you know when yours is due.
+Some flights pass over you at about the same time most days. After a few days Sky Collector spots them, so you know when yours is due.
 
 ALWAYS SOMETHING TO CHASE
 • New missions every day, and a new themed week every Monday
 • Nineteen sets to fill, from The 737 Family and Giants to Short Hops and The Long Way
 • More than 100 patches to earn
 • Catch a card again on other days and it goes from bronze to silver to gold
-• The next morning, your day waits as a pack of cards to tear open
+• The next morning, your catches wait as a pack of cards to tear open
 
 SEND CARDS TO A FRIEND
 Send your best catches as a link. Your friend tears them open as a pack, and you keep your own.
@@ -176,12 +176,14 @@ Because those two words will bring people expecting a flight tracker, GOOD TO KN
 - **Alerts:** off until turned on, set when you leave the app, 3 a day, never in quiet hours (`js/sky-alerts.js`; Sky Dev's read).
 - **Card fields:** "First flew" and "Range" are labels in `js/flight-card.js`.
 
-**NOT VERIFIED**
-1. **The morning pack in Sky.** The code is Space's and names the day ("your day, in a pack"); I have not seen it play in Sky.
-2. **Widgets.** Sky Build says the extension ships; Sky Dev says its code still carries Space ideas. I wrote "Home Screen and Lock Screen widgets" and nothing about what they show.
-3. **7 days free, Family Sharing:** from `js/plus.js` and `docs/STORES.md`, not seen in App Store Connect.
-4. **"One true fact" on every plane card:** from Sky Build's playtest of real cards and `docs/FACT-STYLE.md`; I did not check that every type has a fact.
-5. I did not run the app.
+**Checked by Sky Dev on the iPhone simulator, 2026-11-20** (real widgets, live catches; Android from code only). Three sentences changed as a result (shiny, regulars, the morning pack):
+1. **Shiny is real but narrow:** a plane in front of the Moon; the sun within a couple of degrees of the horizon (about 10 minutes a day); new colours on a Rare-or-better kind. The listing now says "Now and then" and "the few minutes the sun sits on the horizon".
+2. **Regulars:** seen on 3 of 7 days within 45 minutes of the same time. The listing says "most days", not "every day".
+3. **The morning pack works.** The app says "your night" after evening catches and "your day" after daytime ones, so the listing says "your catches".
+4. **Widgets:** the small "Next regular" widget is free; medium, large and Lock Screen are Plus, and so is a Lock Screen streak widget. The listing's "Home Screen and Lock Screen widgets" under Plus is true (the medium and large are Home Screen widgets) and I left the streak widget under "Lock Screen widgets" rather than name it.
+5. **Android:** Plus buttons are disabled with "Coming soon to Google Play"; the Play text has no Plus section, which matches.
+
+**Still NOT VERIFIED:** 7 days free and Family Sharing on the products in App Store Connect; that every kind of plane has a fact.
 
 ## 7. Decisions (all answered by Sevaan, 2026-11-20, via Boss)
 

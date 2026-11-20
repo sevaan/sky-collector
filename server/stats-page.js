@@ -44,7 +44,9 @@ const MINE = new Set([]); /* Sky: empty on purpose. Simulators, emulators and Pl
    (b2eef62c), and Google Play's pre-launch robots that ran each Android upload (Android installs with no tour, no boot, no
    motion and a few minutes long, right after an upload). From the next app build these mark themselves (js/field-notes.js 'virt'). */
 export const FRESH = Date.parse('2026-11-19T05:00:00Z'); /* Sky: the first day Sky's apps could send (midnight Nov 19, Toronto) */
-export function statsHtml(rows, { all = false, before = false, now = Date.now(), keyQs = '', newCards = null, catalogAt = 0, relay = null } = {}) {
+/* Who counts and what each install did, shared by the page and the daily totals (server/daily.js, 2026-11-20, Space's
+   5f591d4b). from: a day number; rows before it are left to the saved daily totals (past). */
+export function prep(rows, { all = false, before = false, now = Date.now(), from = null } = {}) {
   /* Whose numbers count (2026-11-14, Sevaan: "leave out my devices and my Claude tests"). An install that EVER sent a
      row marked as a test (Testing tools unlocked by 7 taps on the version line, an Android emulator, a test build) is a
      test install for all of its rows, before and after: that catches Sevaan's own phone and most of Claude's runs. Tap the
@@ -55,7 +57,7 @@ export function statsHtml(rows, { all = false, before = false, now = Date.now(),
   const testIid = new Set(rows.filter((e) => e.p !== 'web' && isTest(e)).map((e) => e.iid));
   /* No separate "test purchase" rule (removed 2026-11-17): the Nov 7 Android yearly buy it hid was real (Play order GPA.3314-3804-9893-53697: free trial Nov 7, charged US$16.23 on Nov 14). A purchase from a test install is already left out with that install. */
   const mine = (e) => MINE.has(String(e.iid).slice(0, 8));
-  const ev = rows.filter((e) => (before || e.ts >= FRESH) && (all || (!isTest(e) && !testIid.has(e.iid) && !mine(e)))).map((e) => { let d = {}; try { d = JSON.parse(e.d || '{}'); } catch {} return { ...e, d }; }).sort((a, b) => a.ts - b.ts);
+  const ev = rows.filter((e) => (before || e.ts >= FRESH) && (from == null || dayNum(dayOf(e.ts)) >= from) && (all || (!isTest(e) && !testIid.has(e.iid) && !mine(e)))).map((e) => { let d = {}; try { d = JSON.parse(e.d || '{}'); } catch {} return { ...e, d }; }).sort((a, b) => a.ts - b.ts);
   const today = dayNum(dayOf(now));
 
   // One record per install.
@@ -73,6 +75,17 @@ export function statsHtml(rows, { all = false, before = false, now = Date.now(),
      emulator run usually opens the app for a minute and leaves, so this is the honest count (2026-11-06, Sevaan). */
   const span = new Map(); for (const e of ev) { const s2 = span.get(e.iid); if (!s2) span.set(e.iid, [e.ts, e.ts]); else s2[1] = e.ts; }
   for (const p of installs) { const s2 = span.get(p.iid) ?? [0, 0]; p.played = s2[1] - s2[0] > 5 * 60e3 || p.nights.size > 0; }
+  for (const e of ev) e.day = dayNum(dayOf(e.ts));
+  return { ev, P, players, installs, today };
+}
+export { dayOf, dayNum, numOf, nightOf };
+export function statsHtml(rows, { all = false, before = false, now = Date.now(), keyQs = '', newCards = null, catalogAt = 0, relay = null, past = [], from = null } = {}) {
+  const { ev, P, players, installs, today } = prep(rows, { all, before, now, from });
+  /* Days before the raw window come from the saved daily totals (sky_daily, 2026-11-20): one doc per Toronto day, no ids. */
+  const PD = new Map(from == null ? [] : past.map((d) => [dayNum(d.day), d]).filter(([d]) => d < from));
+  const inPast = (d) => PD.size > 0 && d < from, old = (d, k) => PD.get(d)?.[k] ?? 0;
+  const S = (f) => { let n = 0; for (const d of PD.values()) n += f(d) || 0; return n; };
+  const C = (k, pl) => S((d) => (pl ? d.byPlatform?.[pl]?.[k] : d.cohort?.[k]));
   const playedIn = (from, to) => installs.filter((p) => p.played && p.iday >= from && p.iday <= to).length;
 
   const activeIn = (from, to) => players.filter((p) => p.played !== false && [...p.days].some((d) => d >= from && d <= to)).length; /* throwaway installs (see played) aren't players */
@@ -91,7 +104,6 @@ export function statsHtml(rows, { all = false, before = false, now = Date.now(),
   const dateLab = (d) => (d === today ? 'today' : d === yd ? 'yesterday' : new Date(numOf(d) + 'T12:00:00Z').toLocaleDateString('en-CA', { month: 'short', day: 'numeric', timeZone: 'UTC' }));
   const fmt = (n) => Number(n).toLocaleString('en-CA');
   const dur = (ms) => { const m = Math.round(ms / 60000); return m < 1 ? 'under a minute' : m < 60 ? `${m} min` : `${Math.floor(m / 60)} h${m % 60 ? ` ${m % 60} min` : ''}`; };
-  for (const e of ev) e.day = dayNum(dayOf(e.ts));
   const todayEv = ev.filter((e) => e.day === today), ydEv = ev.filter((e) => e.day === yd), ydBy = ydEv.filter((e) => tod(e.ts) <= nowTod);
   const isNew = (e) => e.name === 'catch' && e.d.n === 1, isBuy = (e) => e.name === 'plus' && e.d.s === 'buy';
   const devs = (list, f = () => true) => new Set(list.filter(f).map((e) => e.iid));
@@ -116,16 +128,16 @@ export function statsHtml(rows, { all = false, before = false, now = Date.now(),
   const find = (e) => `${gem(e.d.t)} ${esc(tierWord(e.d.t))} ${esc(KIND1[e.d.k] ?? e.d.k ?? 'card')}`;
 
   // Days since launch (or since the first row when the testing weeks are shown), for sparklines and records.
-  const firstDay = ev.length ? ev[0].day : today, span0 = Math.max(firstDay, today - 13);
+  const firstDay = Math.min(ev.length ? ev[0].day : today, ...PD.keys()), span0 = Math.max(firstDay, today - 13);
   const dayList = (from) => Array.from({ length: today - from + 1 }, (_, i) => from + i);
   const perDay = (f) => { const m = new Map(); for (const e of ev) if (f(e)) { const s = m.get(e.day) ?? new Set(); s.add(f(e) === true ? `${e.ts}${e.iid}` : e.iid); m.set(e.day, s); } return (d) => m.get(d)?.size ?? 0; };
   const cardsOn = perDay(isNew), catchersOn = perDay((e) => e.name === 'catch' && 'dev'), buysOn = perDay((e) => isBuy(e) && 'dev');
   const K = {
-    players: { now: activeIn(today, today), by: realDev(devs(ydBy)), all: activeIn(yd, yd), f: (d) => activeIn(d, d) },
-    installs: { now: installsIn(today, today), by: installs.filter((p) => p.iday === yd && tod(p.install) <= nowTod).length, all: installsIn(yd, yd), f: (d) => installsIn(d, d) },
-    caught: { now: catchersOn(today), by: devs(ydBy, (e) => e.name === 'catch').size, all: catchersOn(yd), f: catchersOn },
-    cards: { now: cardsOn(today), by: ydBy.filter(isNew).length, all: cardsOn(yd), f: cardsOn },
-    plus: { now: buysOn(today), by: devs(ydBy, isBuy).size, all: buysOn(yd), f: buysOn },
+    players: { now: activeIn(today, today), by: realDev(devs(ydBy)), all: activeIn(yd, yd), f: (d) => (inPast(d) ? old(d, 'players') : activeIn(d, d)) },
+    installs: { now: installsIn(today, today), by: installs.filter((p) => p.iday === yd && tod(p.install) <= nowTod).length, all: installsIn(yd, yd), f: (d) => (inPast(d) ? old(d, 'installs') : installsIn(d, d)) },
+    caught: { now: catchersOn(today), by: devs(ydBy, (e) => e.name === 'catch').size, all: catchersOn(yd), f: (d) => (inPast(d) ? old(d, 'caught') : catchersOn(d)) },
+    cards: { now: cardsOn(today), by: ydBy.filter(isNew).length, all: cardsOn(yd), f: (d) => (inPast(d) ? old(d, 'newCards') : cardsOn(d)) },
+    plus: { now: buysOn(today), by: devs(ydBy, isBuy).size, all: buysOn(yd), f: (d) => (inPast(d) ? old(d, 'plusBuys') : buysOn(d)) },
   };
 
   // Hour by hour, today against yesterday (devices with anything at all that hour).
@@ -222,7 +234,7 @@ ${ev.some(isBuy) ? kpi('Bought Plus', K.plus) : ''}
     if (N) {
       const steps = [['Installed', N], ['Finished or skipped the tour', nw.filter((p) => has(p, (e) => e.name === 'tour' && (e.d.s === 'done' || e.d.s === 'skip'))).length], ['Caught a card', nw.filter((p) => has(p, (e) => e.name === 'catch')).length], ['Stayed 5+ minutes', nw.filter((p) => p.played).length]];
       const first = nw.map((p) => (fc.get(p.iid) >= p.install ? fc.get(p.iid) - p.install : null)).filter((x) => x != null).sort((a, b) => a - b);
-      const allFirst = installs.map((p) => (fc.get(p.iid) >= p.install ? fc.get(p.iid) - p.install : null)).filter((x) => x != null).sort((a, b) => a - b);
+      const allFirst = [...installs.map((p) => (fc.get(p.iid) >= p.install ? fc.get(p.iid) - p.install : null)).filter((x) => x != null), ...[...PD.values()].flatMap((d) => d.cohort?.firstMs ?? [])].sort((a, b) => a - b);
       const med = (l) => (l.length ? dur(l[Math.floor(l.length / 2)]) : '–');
       html += `<h2>New players today</h2><div class="funnel">${steps.map(([l, n]) => `<div class="fr" tabindex="0" data-tip="${l}: ${n} of ${N}"><span class="fl">${l}</span><span class="fb"><i style="width:${Math.max(2, (100 * n) / N).toFixed(1)}%"></i></span><span class="fv">${n}<small>${pct(n, N)}</small></span></div>`).join('')}</div>
 <p class="m">First card, typically: <b class="ink">${med(first)}</b> after install today · <b class="ink">${med(allFirst)}</b> since launch (${allFirst.length} players)</p>`;
@@ -236,11 +248,11 @@ ${ev.some(isBuy) ? kpi('Bought Plus', K.plus) : ''}
     const mile = (label, n) => { const nxt = STEPS.find((s) => s > n) ?? n * 2, prev = [...STEPS].reverse().find((s) => s <= n) ?? 0; const share = (n - prev) / (nxt - prev);
       return `<div class="mile"><div class="kl">${label}</div><div class="rv">${fmt(n)}</div><div class="meter" role="img" aria-label="${fmt(n)} of ${fmt(nxt)}"><i style="width:${(100 * share).toFixed(1)}%"></i></div><div class="m">${fmt(nxt - n)} to ${fmt(nxt)}</div></div>`; };
     html += `<h2>Records and milestones</h2><section class="recs">
-${rec('Most installs in a day', (d) => installsIn(d, d), 'installs')}
-${rec('Most players in a day', (d) => activeIn(d, d), 'players')}
-${rec('Most new cards in a day', cardsOn, 'cards')}
-${mile('Collectors so far', installs.length)}
-${mile('Cards collected so far', ev.filter(isNew).length)}
+${rec('Most installs in a day', K.installs.f, 'installs')}
+${rec('Most players in a day', K.players.f, 'players')}
+${rec('Most new cards in a day', K.cards.f, 'cards')}
+${mile('Collectors so far', installs.length + S((d) => d.installs))}
+${mile('Cards collected so far', ev.filter(isNew).length + S((d) => d.newCards))}
 </section>`; }
 
   // ----- health -----
@@ -280,19 +292,22 @@ ${mile('Cards collected so far', ev.filter(isNew).length)}
   const r1 = ret(1), r7 = ret(7), r28 = ret(28);
   const two = installs.filter((p) => p.nights.size >= 1), twoN = two.filter((p) => p.nights.size >= 2).length;
   const fn = firstOk.filter((p) => p.firstNight).length;
+  /* plus the saved days (all far older than 29 days, so every gate is passed) */
+  const pFn = C('firstDay'), pPl = C('played'), pTwo = C('days1'), pTwoN = C('days2');
+  for (const [r, k] of [[r1, 'back1'], [r7, 'back7'], [r28, 'back28']]) { r[0] += C(k); r[1] += pPl; }
   const big = (label, a, b, note) => `<tr><th>${label}</th><td class="big">${pct(a, b)}</td><td class="m">${b ? `${a} of ${b}` : 'not enough installs yet'}${note ? ` · ${note}` : ''}</td></tr>`;
   html += `<h2>Do new players get it?</h2><table>
-${big('Caught a card on their first day', fn, firstOk.length, 'players at least a day old (installs that played)')}
+${big('Caught a card on their first day', fn + pFn, firstOk.length + pPl, 'players at least a day old (installs that played)')}
 ${big('Came back the next day or later', r1[0], r1[1], 'installs at least 2 days old')}
 ${big('Came back a week or more later', r7[0], r7[1], 'installs at least 8 days old')}
 ${big('Came back a month or more later', r28[0], r28[1], 'installs at least 29 days old')}
-${big('Caught on a second day', twoN, two.length, 'of those who caught anything')}
+${big('Caught on a second day', twoN + pTwoN, two.length + pTwo, 'of those who caught anything')}
 </table>`;
 
   // By install week.
   const monday = (d) => { const wd = (new Date(numOf(d) + 'T12:00:00Z').getUTCDay() + 6) % 7; return d - wd; };
   const weeks = new Map(); for (const p of installs) { const w = monday(p.iday); if (!weeks.has(w)) weeks.set(w, []); weeks.get(w).push(p); }
-  const cell = (list, f, need) => { const ok = list.filter((p) => p.played && p.age >= need); return ok.length ? `${pct(ok.filter(f).length, ok.length)}<span class="m"> ${ok.filter(f).length}/${ok.length}</span>` : '<span class="m">too soon</span>'; };
+  const cell = (list, f, need, add = [0, 0]) => { const ok = list.filter((p) => p.played && p.age >= need), a = ok.filter(f).length + add[0], b = ok.length + add[1]; return b ? `${pct(a, b)}<span class="m"> ${a}/${b}</span>` : '<span class="m">too soon</span>'; };
   const wk = [...weeks.keys()].sort((a, b) => b - a).slice(0, 8);
   html += `<h2>By the week they installed</h2><p class="m">Is each week's group doing better than the last? Newer weeks fill in as they get older.</p><div class="scroll"><table class="grid"><tr><th>Week of</th><th>Installs</th><th>Played</th><th>First-day catch</th><th>Back next day+</th><th>Back a week+ later</th><th>Caught on 2+ days</th></tr>
 ${wk.map((w) => { const l = weeks.get(w); return `<tr><th>${new Date(numOf(w) + 'T12:00:00Z').toLocaleDateString('en-CA', { month: 'short', day: 'numeric', timeZone: 'UTC' })}</th><td>${l.length}</td><td>${l.filter((p) => p.played).length}</td><td>${cell(l, (p) => p.firstNight, 1)}</td><td>${cell(l, (p) => p.back(1), 2)}</td><td>${cell(l, (p) => p.back(7), 8)}</td><td>${cell(l, (p) => p.nights.size >= 2, 2)}</td></tr>`; }).join('') || '<tr><td colspan="7" class="m">No installs yet</td></tr>'}</table></div>`;
@@ -300,7 +315,7 @@ ${wk.map((w) => { const l = weeks.get(w); return `<tr><th>${new Date(numOf(w) + 
   // By platform.
   const plats = ['ios', 'android', 'web'].filter((k) => players.some((p) => p.p === k));
   html += `<h2>By platform</h2><div class="scroll"><table class="grid"><tr><th></th><th>Installs</th><th>Players this week</th><th>First-day catch</th><th>Back next day+</th></tr>
-${plats.map((k) => { const l = installs.filter((p) => p.p === k); return `<tr><th>${PLAT[k]}</th><td>${l.length}</td><td>${players.filter((p) => p.p === k && [...p.days].some((d) => d >= w0)).length}</td><td>${cell(l, (p) => p.firstNight, 1)}</td><td>${cell(l, (p) => p.back(1), 2)}</td></tr>`; }).join('') || '<tr><td colspan="5" class="m">No players yet</td></tr>'}</table></div>`;
+${plats.map((k) => { const l = installs.filter((p) => p.p === k), pp = C('played', k); return `<tr><th>${PLAT[k]}</th><td>${l.length + C('installs', k)}</td><td>${players.filter((p) => p.p === k && [...p.days].some((d) => d >= w0)).length}</td><td>${cell(l, (p) => p.firstNight, 1, [C('firstDay', k), pp])}</td><td>${cell(l, (p) => p.back(1), 2, [C('back1', k), pp])}</td></tr>`; }).join('') || '<tr><td colspan="5" class="m">No players yet</td></tr>'}</table></div>`;
 
   // Reminders.
   const by = (name, f) => new Set(ev.filter((e) => e.name === name && f(e)).map((e) => e.iid)).size;
