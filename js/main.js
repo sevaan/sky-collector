@@ -61,6 +61,7 @@ import { dist } from './units.js?v=0.1.1792';
 const shareCardEl = (...a) => import('./share-card.js?v=0.1.1792').then((m) => m.shareCardEl(...a)); /* loaded when first shared (perf audit 2026-10-29) */
 import { loadLore, titleFor, factFor, richText } from './lore.js?v=0.1.1792';
 import { PlaneTracker, planesAvailable, aircraftName, isHelicopter, planePath, anonId } from './planes.js?v=0.1.1792';
+import { dayKey } from './plane-feed.js?v=0.1.1792';
 import { initCatches, clearCatches } from './catch-store.js?v=0.1.1792';
 import { cardsFor, retier, planeKey } from './flights.js?v=0.1.1792';
 import { rareHere, localStats, noCoverage } from './sky-local.js?v=0.1.1792';
@@ -6843,11 +6844,32 @@ function renderDebug() {
     `heading offset ${pointing.headingOffset.toFixed(1)}°`,
     `sun elevation  ${f ? f.sunEl.toFixed(1) : '?'}°`,
     `declination  ${getDeclination().toFixed(1)}° (applied to iOS compass)`,
+    ...(SKY_ONLY ? planeFeedLines() : [
     `catalogue      ${cat?.objects.length ?? 0} objects, data ${ageH} h old`,
     `above horizon  ${state.model?.above.size ?? 0} (${state.items.filter((i) => i.look.visible).length} visible)`,
     `binoculars     ${state.binoculars ? 'on' : 'off'}`,
-    `sky            ${skyNameFor(state.skySb)} (${state.skySb.toFixed(2)} mag/arcsec²): stars ${state.limit?.stars.toFixed(1)}, satellites ${state.limit?.satellites.toFixed(1)} (bino ${state.limit?.binoculars.toFixed(1)}), ${state.limit?.sb.toFixed(1)} mag/arcsec²`,
+    `sky            ${skyNameFor(state.skySb)} (${state.skySb.toFixed(2)} mag/arcsec²): stars ${state.limit?.stars.toFixed(1)}, satellites ${state.limit?.satellites.toFixed(1)} (bino ${state.limit?.binoculars.toFixed(1)}), ${state.limit?.sb.toFixed(1)} mag/arcsec²`]),
   ].join('\n');
+}
+/* Sky's Technical lines (2026-11-19, Sevaan): the plane feed in place of Space Collector's catalogue and sky limits.
+   Which feed, planes in range, adsb.lol's requests left today (the last x-ratelimit-remaining the phone saw) and how old
+   the data is. No URLs or keys. The website can only use the relay (adsb.lol doesn't allow browser requests). */
+function planeFeedLines() {
+  const t = state.planes; if (!t) return ['plane feed     -'];
+  let over = null; try { over = localStorage.getItem('planeRelay'); } catch {}
+  const app = isNative() && !over && !!plugin('CapacitorHttp'), f = t.feed ?? {};
+  const today = dayKey(Date.now()), off = f.phoneOff === today || Date.now() < (f.phoneOffUntil || 0);
+  const feed = !app ? 'Sky relay (website: relay only)'
+    : t.src === 'phone' ? 'phone direct to adsb.lol' : t.src === 'relay' ? `Sky relay${off ? ' (adsb.lol handed over for now)' : ''}` : 'not asked yet';
+  const left = !app ? 'n/a on the website' : f.remaining == null || f.day !== today ? 'not reported yet today' : `${f.remaining}${off ? ' (phone off adsb.lol for now)' : ''}`;
+  const age = t.lastOk ? ((s) => s < 90 ? `${s} s` : s < 5400 ? `${Math.round(s / 60)} min` : `${(s / 3600).toFixed(1)} h`)(Math.round((Date.now() - t.lastOk) / 1000)) : 'no answer yet';
+  return [
+    `plane feed     ${feed}`,
+    `feed status    ${t.status}${app ? ` · asks every ${Math.round(t.gapS)} s · so far ${t.counts.phone} phone, ${t.counts.relay} relay` : ''}`,
+    `planes         ${t.planes.length} in range (${state.planeItems?.length ?? 0} up)`,
+    `adsb.lol left  ${left}`,
+    `data age       ${age}`,
+  ];
 }
 
 // ---------- start and return from the collection ----------
