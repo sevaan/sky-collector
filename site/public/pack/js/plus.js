@@ -34,7 +34,7 @@ export const rcTestStore = (on) => (on === undefined ? ls.get('rcTestStore') ===
 export function storeOpen() {
   if (!isNative()) return false;
   const ios = /iP(hone|ad|od)|Mac/.test(navigator.userAgent), key = ls.get('rcTestStore') === '1' ? TEST_KEY : ios ? RC_KEYS.ios : RC_KEYS.android;
-  return !(key.startsWith('test_') && ls.get('rcTestStore') !== '1');
+  return !!key && !(key.startsWith('test_') && ls.get('rcTestStore') !== '1'); /* no key: not open (Sky on Android) */
 }
 let watching = false;
 export function initStore() {
@@ -43,6 +43,7 @@ export function initStore() {
   // RevenueCat closes a release build (TestFlight, the App Store) that uses a Test Store key (2026-10-18, Sevaan: "the app
   // will close now"). So the Test Store key is only used when Settings → Testing tools → "RevenueCat Test Store" is on
   // (simulator and Xcode debug builds); otherwise there’s no store until the real appl_/goog_ keys are in RC_KEYS.
+  if (!key) return null; /* no key for this platform yet (Sky on Android until its Play app exists): RevenueCat's configure throws and the Android app closed at launch (emulator, 2026-11-19) */
   if (key.startsWith('test_') && ls.get('rcTestStore') !== '1') return null;
   // A release build closes itself a few seconds after setup with the Test Store key, and did so on every launch after,
   // so the switch could never be turned off again (iPhone playtest 2026-10-26, build 33). A launch that dies within 20 s
@@ -113,11 +114,11 @@ export async function restorePlus() {
 // What Plus adds, in the order the Plus card lists them (2026-10-16, design/plus-sheet-card.html). `why` = the openPlus
 // reason that leads with it (its label turns orange on the card).
 export const PLUS_PERKS = [
-  { why: 'reminders', name: 'Pass reminders', text: 'Alerts for any pass you choose.' },
-  { why: 'rare', name: 'Rare alerts', text: 'A ping when a new Rare or better card passes.' },
-  { why: 'widgets', name: 'Widgets', text: 'Tonight on your home and lock screen.' }, // every widget is Plus (2026-10-22, Sevaan)
-  { why: 'shiny', name: 'Shiny forecast', text: 'When and where a shiny can happen.' },
-  { why: 'backs', name: 'Card backs', text: '6 designs, or a random one each flip.' },
+  /* Sky Collector (2026-11-19): only what Sky's Plus gives. Space Collector's reminders, rare alerts and shiny forecast
+     aren't Sky's (plane alerts are free here). */
+  { why: 'widgets', name: 'Widgets', text: 'Medium, large and Lock Screen widgets. iPhone only.' },
+  { why: 'backs', name: 'Card backs', text: 'Every design, or a random one each flip.' },
+  { why: 'icons', name: 'App icons', text: 'Seven more looks for your home screen.' },
   { why: 'patch', name: 'Member patch', text: 'Only Plus members wear this one.' },
 ];
 // Prices (2026-10-16, Sevaan). The yearly plan has the 7-day free trial; all three are shared with Family Sharing.

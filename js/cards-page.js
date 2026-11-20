@@ -1,43 +1,43 @@
-import { pullToClose } from './pull-close.js?v=0.1.1788';
-import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1788';
-import { computeStats, statsHtml } from './stats.js?v=0.1.1788';
-import { nightKey } from './observation.js?v=0.1.1788';
-import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1788';
-import { sfx } from './sfx.js?v=0.1.1788';
-import { expandFacts } from './catalog-facts.js?v=0.1.1788';
-import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned, addSecretArt } from './patches.js?v=0.1.1788';
-import { registerSkySecrets } from './sky-secrets.js?v=0.1.1788';
-import { SKY_PATCH_ART } from './sky-patches.js?v=0.1.1788';
-import { registerSkyStories } from './sky-stories.js?v=0.1.1788';
-import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1788';
-import { ticket } from './toast.js?v=0.1.1788';
-import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1788';
-import { satGlobe } from './sat-globe.js?v=0.1.1788';
-import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1788';
-import { cardArt } from './art.js?v=0.1.1788';
-import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1788';
-import { applyBack } from './card-backs.js?v=0.1.1788';
-import { localStats } from './sky-local.js?v=0.1.1788';
-import { retier } from './flights.js?v=0.1.1788';
-import { SETS, assignSets, albumGoals, albumList, useSets, goalsOf } from './sets.js?v=0.1.1788';
-import { SKY_ALBUM_SETS, FLIGHT_SETS } from './sky-sets.js?v=0.1.1788';
+import { pullToClose } from './pull-close.js?v=0.1.1790';
+import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1790';
+import { computeStats, statsHtml } from './stats.js?v=0.1.1790';
+import { nightKey } from './observation.js?v=0.1.1790';
+import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1790';
+import { sfx } from './sfx.js?v=0.1.1790';
+import { expandFacts } from './catalog-facts.js?v=0.1.1790';
+import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned, addSecretArt } from './patches.js?v=0.1.1790';
+import { registerSkySecrets } from './sky-secrets.js?v=0.1.1790';
+import { SKY_PATCH_ART } from './sky-patches.js?v=0.1.1790';
+import { registerSkyStories } from './sky-stories.js?v=0.1.1790';
+import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1790';
+import { ticket } from './toast.js?v=0.1.1790';
+import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1790';
+import { satGlobe } from './sat-globe.js?v=0.1.1790';
+import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1790';
+import { cardArt } from './art.js?v=0.1.1790';
+import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1790';
+import { applyBack } from './card-backs.js?v=0.1.1790';
+import { localStats } from './sky-local.js?v=0.1.1790';
+import { retier } from './flights.js?v=0.1.1790';
+import { SETS, assignSets, albumGoals, albumList, useSets, goalsOf } from './sets.js?v=0.1.1790';
+import { SKY_ALBUM_SETS, FLIGHT_SETS } from './sky-sets.js?v=0.1.1790';
 const FLIGHT_SET_IDS = new Set(FLIGHT_SETS.map((s) => s.id));
-import { skyCatalogue } from './sky-catalogue.js?v=0.1.1788';
-import { skyCardPhotoUrl, glyphSvg } from './flight-card.js?v=0.1.1788';
-import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1788';
-import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1788';
-import { STORIES } from './stories.js?v=0.1.1788';
-import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1788';
-import { conArt } from './con-art.js?v=0.1.1788';
-import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1788';
-import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1788';
-import { shareCardEl } from './share-card.js?v=0.1.1788';
-import { forgetSighting } from './cloud-backup.js?v=0.1.1788';
-import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1788';
-import { allSightings, deleteSighting } from './store.js?v=0.1.1788';
-import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1788';
-import { SECRET_PATCHES, NOT_SECRET, hasPatch } from './secrets.js?v=0.1.1788';
-import { localText } from './localize.js?v=0.1.1788';
+import { skyCatalogue } from './sky-catalogue.js?v=0.1.1790';
+import { skyCardPhotoUrl, glyphSvg } from './flight-card.js?v=0.1.1790';
+import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1790';
+import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1790';
+import { STORIES } from './stories.js?v=0.1.1790';
+import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1790';
+import { conArt } from './con-art.js?v=0.1.1790';
+import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1790';
+import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1790';
+import { shareCardEl } from './share-card.js?v=0.1.1790';
+import { forgetSighting } from './cloud-backup.js?v=0.1.1790';
+import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1790';
+import { allSightings, deleteSighting } from './store.js?v=0.1.1790';
+import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1790';
+import { SECRET_PATCHES, NOT_SECRET, hasPatch } from './secrets.js?v=0.1.1790';
+import { localText } from './localize.js?v=0.1.1790';
 // Sky Collector (Milestone 1.5): the same Collection, with plane cards from your catches and no satellite catalogue.
 const SKY = (() => { try { return !!window.parent?.__skyOnly; } catch { return false; } })() || /[?&]sky\b/.test(location.search);
 if (SKY) { /* night follows the game's own switch (html.sky-night, set where Explore decides day and night) */
@@ -536,9 +536,9 @@ function renderLogbook() {
   const atRisk = p.streak.current && !p.streak.thisWeek;
   el.innerHTML = `<div class="lb-top"><span>${SKY ? 'Spotter rank' : 'Observer rank'}</span><span class="lb-streak">${streak}${atRisk ? '<button type="button" class="lb-remind" id="streak-remind">Remind me Sat</button>' : ''}</span></div>
     <div class="lb-pic">${ladder}<button type="button" class="lb-more" id="lb-more" aria-expanded="${!$('logbook').classList.contains('compact')}">${$('logbook').classList.contains('compact') ? 'Missions ›' : 'Less'}</button>${EMBED && lastWeekWorth() ? '<button type="button" class="lb-week" id="lb-week">Last week ›</button>' : ''}</div>
-    <div class="lb-dial" aria-hidden="true"><span class="lbd-ring"><svg viewBox="0 0 74 74"><circle cx="37" cy="37" r="32" fill="none" stroke="#24344a" stroke-width="5"/><circle cx="37" cy="37" r="32" fill="none" stroke="var(--gold)" stroke-width="5" stroke-linecap="round" stroke-dasharray="${(into * 201.06).toFixed(1)} 202" transform="rotate(-90 37 37)"/><g stroke="#fff2b355" stroke-width="1.5"><line x1="37" y1="0" x2="37" y2="5"/><line x1="74" y1="37" x2="69" y2="37"/><line x1="37" y1="74" x2="37" y2="69"/><line x1="0" y1="37" x2="5" y2="37"/></g></svg><b>${p.rank.next ? `${Math.round(into * 100)}%<small>to next</small>` : 'Top<small>rank</small>'}</b></span><span class="lbd-m"><span class="lbd-l"><span class="lbd-name">${esc(p.rank.name)}</span><span class="lb-xp"><b>${p.xp.toLocaleString()}</b> XP</span></span><span class="lbd-l"><span class="lbd-to">${p.rank.next ? `${(p.rank.next - p.xp).toLocaleString()} XP to <b>${esc(RANKS[ri + 1]?.[1] ?? 'the next rank')}</b>` : 'The top rank'}</span><button type="button" class="lbd-more">${$('logbook').classList.contains('compact') ? 'Missions ›' : 'Less'}</button></span></span></div><!-- design/rank-compact.html A: the slim card when there's no ladder picture (2026-10-28, Sevaan) -->
+    <div class="lb-dial" aria-hidden="true"><span class="lbd-ring"><svg viewBox="0 0 74 74"><circle cx="37" cy="37" r="32" fill="none" stroke="#24344a" stroke-width="5"/><circle cx="37" cy="37" r="32" fill="none" stroke="var(--gold)" stroke-width="5" stroke-linecap="round" stroke-dasharray="${(into * 201.06).toFixed(1)} 202" transform="rotate(-90 37 37)"/><g stroke="#fff2b355" stroke-width="1.5"><line x1="37" y1="0" x2="37" y2="5"/><line x1="74" y1="37" x2="69" y2="37"/><line x1="37" y1="74" x2="37" y2="69"/><line x1="0" y1="37" x2="5" y2="37"/></g></svg><b>${p.rank.next ? `${Math.floor(into * 100)}%<small>to next</small>` : 'Top<small>rank</small>'}</b></span><span class="lbd-m"><span class="lbd-l"><span class="lbd-name">${esc(p.rank.name)}</span><span class="lb-xp"><b>${p.xp.toLocaleString()}</b> XP</span></span><span class="lbd-l"><span class="lbd-to">${p.rank.next ? `${(p.rank.next - p.xp).toLocaleString()} XP to <b>${esc(RANKS[ri + 1]?.[1] ?? 'the next rank')}</b>` : 'The top rank'}</span><button type="button" class="lbd-more">${$('logbook').classList.contains('compact') ? 'Missions ›' : 'Less'}</button></span></span></div><!-- design/rank-compact.html A: the slim card when there's no ladder picture (2026-10-28, Sevaan) -->
     <div class="lb-rankrow"><span class="lb-name">${esc(p.rank.name)}</span><span class="lb-xp"><b>${p.xp.toLocaleString()}</b> XP</span></div>
-    ${p.rank.next ? `<div class="lb-bar"><i style="width:${(into * 100).toFixed(1)}%"></i></div><div class="lb-to"><span>${(p.rank.next - p.xp).toLocaleString()} XP to <b>${esc(RANKS[ri + 1]?.[1] ?? 'the next rank')}</b></span><span>${Math.round(into * 100)}%</span></div>` : '<div class="lb-to"><span>Top rank. Every catch still counts.</span></div>'}
+    ${p.rank.next ? `<div class="lb-bar"><i style="width:${(into * 100).toFixed(1)}%"></i></div><div class="lb-to"><span>${(p.rank.next - p.xp).toLocaleString()} XP to <b>${esc(RANKS[ri + 1]?.[1] ?? 'the next rank')}</b></span><span>${Math.floor(into * 100)}%</span></div>` : '<div class="lb-to"><span>Top rank. Every catch still counts.</span></div>'}
     ${p.missions.map((m) => `<div class="lb-mission${m.done ? ' done' : ''}"><i></i>${esc(m.text)}</div>`).join('')}
     ${p.challenge ? `<div class="lb-mission lb-challenge${p.challenge.done ? ' done' : ''}"><i></i>${esc(p.challenge.text)}<small>Sky challenge · +50</small></div>` : ''}
     <div class="lb-foot"><div class="lb-head">EVENTS ${ev.length ? `<span>${ev.length} badge${ev.length === 1 ? '' : 's'}</span>` : ''}</div>

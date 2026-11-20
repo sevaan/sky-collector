@@ -3,7 +3,7 @@
 // route (helicopters, light planes, balloons, private jets) is a Planes card only. No DOM here.
 
 import { isProp } from './sky-props.js';
-import { aircraftName, isHelicopter } from './planes.js';
+import { aircraftName, isHelicopter, catchClass } from './planes.js';
 import { routeKm } from './routes.js';
 import { hasAirlineCallsign } from './sky-stamps.js';
 import { typeTier } from './sky-tiers.js';
@@ -80,6 +80,13 @@ export function cardsFor(p, route, airline) {
     tier: typeTier(p.type, heli), set: planeSet(un ? code : p.type, heli).name, setId: planeSet(un ? code : p.type, heli).id,
     stamp: airline || '', reg: hasAirlineCallsign(p.callsign) ? (p.reg || '') : '', // no airline callsign: the callsign is the registration, so it isn't kept
   };
+  /* this catch's own facts for the card (2026-11-19, card spike): what kind of thing it was (js/planes.js catchClass), the
+     airline's name for an airline callsign, its heading and size category. js/sky-cards.js catchSightings moves them onto
+     the sighting and keeps them off the card snapshot. Whether it had a route is known here too. */
+  Object.defineProperty(plane, 'caught', { enumerable: false, configurable: true, writable: true, value: {
+    cls: p.cls ?? catchClass({ callsign: p.callsign, category: p.category, type: p.type, heli, anon: p.anon }),
+    ...((p.clsOp || (hasAirlineCallsign(p.callsign) && airline)) ? { op: p.clsOp || airline } : {}),
+    ...(Number.isFinite(p.track) ? { track: Math.round(p.track) } : {}), ...(p.category ? { cat: p.category } : {}), routed: !!(route?.from && route?.to) } });
   if (!route?.from || !route?.to) return { flight: null, plane };
   const a3 = (route.callsign ?? p.callsign ?? '').slice(0, 3), km = routeKm(route), st = flightSet(km, route.from, route.to, a3), set = st.name, homeCc = homeCountry() || undefined;
   const t = airTime(km);

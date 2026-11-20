@@ -7,6 +7,7 @@
 // (js/pack-flights.js, scripts/build-pack-flights.mjs), labelled with when it was seen, never "right now".
 // No DOM here: the pure parts are tested in tests/pack-flight.test.mjs.
 import { TZ_PLACES } from './tz-places.js';
+import { isGovOrMil } from './plane-privacy.js';
 
 // The relay (server/, Cloud Run "api" in sky-collector-app): one upstream request per 1-degree square every 15 s, shared
 // by everyone asking about the same square. Allows skycollector.app, sevaan.github.io and localhost.
@@ -45,7 +46,7 @@ export function normalize(json) {
 // look like a flight (8,000 ft and up) ahead of ones just off the runway.
 export function rankFlights(planes, center, hasArt) {
   return (planes ?? [])
-    .filter((p) => !p.flags && /^[A-Z]{3}\d/.test(p.callsign ?? '') && p.category !== 'A7' && p.type && p.altFt >= 2500 && p.gs >= 120 && hasArt(p.callsign.slice(0, 3), p.type))
+    .filter((p) => !p.flags && !isGovOrMil({ flight: p.callsign, t: p.type }) /* never a military or government aircraft, whatever its callsign (QA 2026-11-19) */ && /^[A-Z]{3}\d/.test(p.callsign ?? '') && p.category !== 'A7' && p.type && p.altFt >= 2500 && p.gs >= 120 && hasArt(p.callsign.slice(0, 3), p.type))
     .map((p) => ({ p, score: km(center.lat, center.lon, p.lat, p.lon) + (p.altFt < 8000 ? 40 : 0) }))
     .sort((a, b) => a.score - b.score).map((x) => x.p);
 }

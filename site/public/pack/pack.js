@@ -57,9 +57,9 @@ const LAST = 'your-turn';
 const model = (type) => ({ ...retier(skyModel(cardsFor({ type, callsign: '', reg: '' }, null, '').plane, 'plane')), type });
 let models = null;
 /* One made-up catch per card, so its numbers read like a card you own (how high, how fast, how far) and not a row of dashes */
-const SEEN = { A388: { altFt: 36000, gsKt: 490, rangeKm: 14 }, DC3: { altFt: 4500, gsKt: 150, rangeKm: 6 } };
+const SEEN = { A388: { altFt: 36000, gsKt: 490, rangeKm: 14, track: 250 }, DC3: { altFt: 4500, gsKt: 150, rangeKm: 6, track: 95 } };
 const SIGHT = new Map(); /* a flight card's own sighting: its real height, speed and distance */
-const seen = (c) => SIGHT.get(c.key) ?? catchSightings({ time: Date.now() - 36e5, hex: `sample-${c.type}`, callsign: '', reg: '', type: c.type, ...SEEN[c.type], lat: 0, lon: 0, plane: c }).filter((x) => x.cardKey === c.key);
+const seen = (c) => SIGHT.get(c.key) ?? catchSightings({ time: Date.now() - 36e5, hex: `sample-${c.type}`, callsign: '', reg: '', type: c.type, ...SEEN[c.type], lat: 0, lon: 0, plane: c }).filter((x) => x.cardKey === c.key).map((x) => ({ ...x, cls: '', track: SEEN[c.type].track })); /* a sample, not a catch: no 'what kind of flight' band (it read 'No airline flight number' on the A380, 2026-11-19), and a heading for the YOUR CATCH box */
 
 // ---- the flight card (2026-11-18, Sevaan: "users should see one that goes over their area") ----
 // The pack opens straight away with a flight Sky's relay saw over the nearest big city (js/pack-flights.js, labelled with
