@@ -1,15 +1,15 @@
 // Player progress from the sighting log: XP and observer rank, tonight’s three missions, a weekly streak and
 // achievements. Everything is derived from the saved sightings (nothing extra is stored), so it can’t drift.
 // info(cardKey) -> { tier, type, owner, launch, natural, con } | null. No DOM.
-import { isProp } from './sky-props.js?v=0.1.1806';
-import { SKY_PATCHES_MORE, freshSky2, noteSky2 } from './sky-patches.js?v=0.1.1806';
-import { nightKey, useCalendarDays } from './observation.js?v=0.1.1806';
-import { fleetThresholds } from './card-model.js?v=0.1.1806';
-import { distRound as distText } from './units.js?v=0.1.1806';
-import { firstFlew, isNewType, isOldType, engines, makerOf, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1806';
-import { planeSet } from './sky-sets.js?v=0.1.1806';
-import { privateCatch, MIL_TYPES } from './plane-privacy.js?v=0.1.1806';
-import { localDay, THRESHOLDS } from './sky-stamps.js?v=0.1.1806';
+import { isProp } from './sky-props.js?v=0.1.1807';
+import { SKY_PATCHES_MORE, freshSky2, noteSky2 } from './sky-patches.js?v=0.1.1807';
+import { nightKey, useCalendarDays } from './observation.js?v=0.1.1807';
+import { fleetThresholds } from './card-model.js?v=0.1.1807';
+import { distRound as distText } from './units.js?v=0.1.1807';
+import { firstFlew, isNewType, isOldType, engines, makerOf, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1807';
+import { planeSet } from './sky-sets.js?v=0.1.1807';
+import { privateCatch, MIL_TYPES } from './plane-privacy.js?v=0.1.1807';
+import { localDay, THRESHOLDS } from './sky-stamps.js?v=0.1.1807';
 
 // A longer climb (2026-10-12, playtest room: three ranks on night 1, Mission Control in about two weeks), with two
 // prestige ranks past Mission Control. Nobody drops a rank they had on the old curve (rankFloor below).
@@ -455,7 +455,7 @@ export function chooseSkyWeek(ws, chosen, st, ctx = {}) {
 const SPACE_WEEK_THEMES = WEEK_THEMES.slice();
 const RANK_AT = RANKS.map((r) => r[0]), SKY_RANK_AT = { 1: 480, 2: 2000 }; /* 480 (was 700) with the starter missions worth 20 XP each (2026-11-19, scripts/sim/week.mjs: the first rank-up now lands on day 2 for light, normal and heavy players) */ /* a plane catch makes two cards, so the first two ranks sit further out and the first rank-up still lands on day 2 (docs/DESIGN-LOOP.md §4) */
 /* Space words on a shared patch, renamed for planes (playtest 2026-11-18: "First Light" is a telescope's first look) */
-const SKY_PATCH_NAMES = { first: 'Wheels Up' }, SPACE_PATCH_NAMES = {};
+const SKY_PATCH_NAMES = { first: 'Wheels Up', streak4: 'Frequent Flyer' }, SPACE_PATCH_NAMES = {};
 export function setSkyProgress(on) { SKY = !!on; useCalendarDays(SKY); for (const x of ACHIEVEMENTS) if (x.id in SKY_PATCH_NAMES) { SPACE_PATCH_NAMES[x.id] ??= x.name; x.name = SKY ? SKY_PATCH_NAMES[x.id] : SPACE_PATCH_NAMES[x.id]; } RANKS.forEach((r, i) => { r[1] = (SKY ? SKY_RANK_NAMES : RANK_NAMES)[i] ?? r[1]; r[0] = SKY ? SKY_RANK_AT[i] ?? RANK_AT[i] : RANK_AT[i]; }); WEEK_THEMES.splice(0, WEEK_THEMES.length, ...(SKY ? SKY_WEEK_THEMES : SPACE_WEEK_THEMES)); }
 const SKY_REPEAT_XP = 3, RARE_HERE_XP = 10, SKY_STARTER_XP = 20; /* the first day's three missions: their own badge (Cleared for Takeoff), less XP than a day's missions (QA 2026-11-19: the first session gave 460 XP and 8 patches) */ /* a stamp on a card you own; a plane that is unusual where you stand */
 export const isSkyProgress = () => SKY;
