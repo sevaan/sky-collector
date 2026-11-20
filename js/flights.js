@@ -2,14 +2,14 @@
 // e.g. Icelandair Toronto → Reykjavík), and every catch also counts toward PLANES (the aircraft type). Anything with no
 // route (helicopters, light planes, balloons, private jets) is a Planes card only. No DOM here.
 
-import { isProp } from './sky-props.js?v=0.1.1791';
-import { aircraftName, isHelicopter, catchClass } from './planes.js?v=0.1.1791';
-import { routeKm } from './routes.js?v=0.1.1791';
-import { hasAirlineCallsign } from './sky-stamps.js?v=0.1.1791';
-import { typeTier } from './sky-tiers.js?v=0.1.1791';
-import { planeSet, flightSet, homeCountry } from './sky-sets.js?v=0.1.1791';
-import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1791';
-import { typeName } from './sky-type-names.js?v=0.1.1791';
+import { isProp } from './sky-props.js?v=0.1.1793';
+import { aircraftName, isHelicopter, catchClass, isGovOrMil } from './planes.js?v=0.1.1793';
+import { routeKm } from './routes.js?v=0.1.1793';
+import { hasAirlineCallsign } from './sky-stamps.js?v=0.1.1793';
+import { typeTier } from './sky-tiers.js?v=0.1.1793';
+import { planeSet, flightSet, homeCountry } from './sky-sets.js?v=0.1.1793';
+import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1793';
+import { typeName } from './sky-type-names.js?v=0.1.1793';
 
 export const TIERS = {
   common: { label: 'Common', mark: '●', color: '#4a6178' },
@@ -87,6 +87,8 @@ export function cardsFor(p, route, airline) {
     cls: p.cls ?? catchClass({ callsign: p.callsign, category: p.category, type: p.type, heli, anon: p.anon }),
     ...((p.clsOp || (hasAirlineCallsign(p.callsign) && airline)) ? { op: p.clsOp || airline } : {}),
     ...(Number.isFinite(p.track) ? { track: Math.round(p.track) } : {}), ...(p.category ? { cat: p.category } : {}), routed: !!(route?.from && route?.to) } });
+  /* a military or government aircraft is a plane card only, even if a route turned up (Sevaan 2026-11-19: type, never unit or route) */
+  if (p.gov || p.cls === 'mil' || p.cls === 'gov' || isGovOrMil(p)) { plane.stamp = ''; plane.reg = ''; delete plane.caught.op; return { flight: null, plane }; }
   if (!route?.from || !route?.to) return { flight: null, plane };
   const a3 = (route.callsign ?? p.callsign ?? '').slice(0, 3), km = routeKm(route), st = flightSet(km, route.from, route.to, a3), set = st.name, homeCc = homeCountry() || undefined;
   const t = airTime(km);

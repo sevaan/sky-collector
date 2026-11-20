@@ -28,16 +28,19 @@ test('each catch is classed from what the feed says, first match wins', () => {
   assert.equal(one({ cs: 'N1', t: 'BALL', cat: 'B2', gs: 10 }).cls, 'balloon');
   assert.equal(one({ cs: 'DGLID', t: 'GLID', cat: 'B1', gs: 50, alt: 4000 }).cls, 'glider');
   assert.equal(one({ cs: 'N999', t: '', cat: 'A2' }).cls, 'small');
-  /* gov / military: no class word at all */
-  assert.equal(one({ cs: 'RCH123', t: 'C17', cat: 'A5' }).cls, '');
-  assert.equal(one({ cs: 'N1', t: 'B738', cat: 'A3', db: 1 }).cls, '');
+  /* gov / military: what it is, never whose (Sevaan 2026-11-19) */
+  assert.equal(one({ cs: 'RCH123', t: 'C17', cat: 'A5' }).cls, 'mil');
+  assert.equal(one({ cs: 'N1', t: 'B738', cat: 'A3', db: 1 }).cls, 'mil');
+  assert.equal(one({ cs: 'UKP12', t: 'EC35', cat: 'A7' }).cls, 'gov');
+  assert.equal(one({ cs: 'RCH123', t: 'C17', cat: 'A5' }).type, 'C17');
+  assert.equal(one({ cs: 'RCH123', t: 'C17', cat: 'A5' }).clsOp, undefined);
   /* the same type caught two ways: the class is the catch's, not the type's */
   assert.notEqual(one({ cs: 'UPS1', t: 'B763' }).cls, one({ cs: 'N767AA', t: 'B763', cat: 'A5' }).cls);
   /* privacy: a plane-only private catch keeps no callsign or registration, only the class word */
   const p = one({ cs: 'N12345', r: 'N12345', t: 'C172', cat: 'A1', gs: 97 });
   assert.equal(p.callsign, ''); assert.equal(p.reg, ''); assert.equal(p.clsOp, undefined);
   assert.equal(one({ cs: 'UPS2311', t: 'B763' }).clsOp, 'UPS');
-  for (const k of ['cargo', 'airline', 'biz', 'light', 'turboprop', 'heli', 'glider', 'balloon', 'airliner']) assert.ok(CLASS_WORDS[k]);
+  for (const k of ['cargo', 'airline', 'biz', 'light', 'turboprop', 'heli', 'glider', 'balloon', 'airliner', 'mil', 'gov']) assert.ok(CLASS_WORDS[k]);
   assert.equal(catchClass({ callsign: 'N1', type: 'PC12', category: 'A2' }), 'turboprop');
 });
 

@@ -4,13 +4,13 @@ how much of the world's traffic they are (unique aircraft per place), so the gam
 Usage: python3 -I scripts/research/build-tiers.py"""
 import collections, glob, gzip, json, os
 ROOT = os.path.join(os.path.dirname(__file__), '..', '..')
-EPIC = ['B741', 'B742', 'B743', 'B744', 'B748', 'B74S', 'B74R', 'B74D', 'BLCF', 'A388', 'A342', 'A343', 'A345', 'A346', 'MD11', 'DC10',
-        'IL96']
+EPIC = ['B741', 'B742', 'B743', 'B744', 'B748', 'B74S', 'B74R', 'B74D', 'BLCF', 'A388', 'A342', 'A343', 'A345', 'A346', 'MD11', 'DC10', 'C17', 'C130', 'C30J', 'C5M', 'A400',
+        'K35R', 'K35E', 'KC10', 'E3TF', 'E3CF', 'E6', 'B52', 'B1', 'B2', 'P8', 'C2', 'AN12', 'IL76', 'IL96', 'C295', 'V22', 'U2', 'F16', 'F18', 'F35', 'F15', 'EUFI', 'A10', 'H47', 'H53']
 LEGENDARY = ['A124', 'A3ST', 'A337', 'SHIP', 'BALL', 'DC3', 'B17', 'B29', 'LANC', 'SPIT', 'JU52', 'P51']
 # Common light, business and regional types the sample under-counts (they fly low, out of a receiver's range): Uncommon,
 # not Rare (aviation-enthusiast playtest 2026-11-19: "Rare Cessna 182"). E75S is the E175's other wing: Common, like E75L.
 LIFT_UNCOMMON = ['E75S', 'C182', 'C206', 'C210', 'BE36', 'BE35', 'BE58', 'DA40', 'DA42', 'DA62', 'SR20', 'P28R', 'PA32', 'PA34', 'PA46', 'M20P', 'C150', 'CRJ2', 'AT72', 'AT75', 'AT45', 'B736', 'B712', 'B753', 'B762', 'B764', 'A318', 'E135', 'DH8C', 'DH8B', 'BE9L']
-# No military types (no military content) and no retired types that can't be caught (A225 destroyed 2022, Concorde 2003, no airworthy Constellation).
+# Military types are Epic again (Sevaan 2026-11-19: caught by type, never by callsign, registration, unit or route). No retired types that can't be caught (A225 destroyed 2022, Concorde 2003, no airworthy Constellation).
 lifted = set(EPIC) | set(LEGENDARY)
 C = collections.Counter(); seen = set()
 for f in sorted(glob.glob(os.path.join(ROOT, 'data', 'research', 'samples-*.jsonl.gz'))):

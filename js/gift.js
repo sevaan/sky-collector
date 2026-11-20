@@ -4,8 +4,8 @@
 // or removes sightings; nothing on the other phone is overwritten and every card fact stays true.
 // This module is the rules and the link format (no DOM); the screens are js/send-cards.js (sending, in the Collection)
 // and js/gift-pack.js (receiving, the booster pack). Tests: tests/gift.test.mjs.
-import { nightKey } from './observation.js?v=0.1.1791';
-import { scrubSightings } from './plane-privacy.js?v=0.1.1791';
+import { nightKey } from './observation.js?v=0.1.1793';
+import { scrubSightings } from './plane-privacy.js?v=0.1.1793';
 
 export const GIFT_HOST = 'https://skycollector.app/c/';
 

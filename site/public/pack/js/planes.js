@@ -4,7 +4,7 @@
 // No DOM here. Positions are extrapolated between fetches using ground speed, track and climb rate.
 
 import { tagOf } from './sky-secrets.js';
-import { GOV_OPS, BIZ_OPS, AIRLINE_CS, isGovOrMil, opOf, anonId } from './plane-privacy.js';
+import { GOV_OPS, BIZ_OPS, AIRLINE_CS, MIL_TYPES, isGovOrMil, opOf, anonId } from './plane-privacy.js';
 export { GOV_OPS, isGovOrMil, anonId };
 import { SERVER } from './server.js';
 import { plugin } from './native.js';
@@ -99,27 +99,27 @@ export function planePath(p, obs, nowMs = Date.now(), from = -60, to = 120, step
 /* Not airlines though their callsigns look like one (aviation-enthusiast playtest 2026-11-19): military, police, coast
    guard and government operators (the airline table's own names: air force, navy, army, police, government, ministry…,
    plus Air Mobility Command RCH, Canadian Forces CFC, the RAF's RRR, the USAF's SAM, the US Army's PAT, France's CTM, the
-   UK Home Office UKP) are anonymous and have no type either (no military or police content; js/planes.js parse); and
+   UK Home Office UKP) are anonymous (type only since Sevaan's decision 2026-11-19, below; js/planes.js parse); and
    fractional / charter business-jet operators (NetJets, Flexjet, XO, flyExclusive, AirSprint, VistaJet, Executive Jet
    Management) are anonymous like any private plane: type only, no registration or callsign. */
-/* military types (whatever the operator says) are shown by their size class only; not the P-3, which NOAA's civil
-   hurricane hunters fly */
+/* military types (whatever the operator says) are anonymous; not the P-3, which NOAA's civil hurricane hunters fly */
 /* any gov or military aircraft is anonymous, whatever its callsign looks like (QA 2026-11-19: 'AFR123' on a C130 and 'XYZ123'
    on a KC10 kept their callsign and real hex): isGovOrMil covers the flags, the operators and the military types */
 export const isAnonymous = (a) => isGovOrMil(a) || (Number(a?.dbFlags) & 13) !== 0 || !AIRLINE_CS.test(String(a?.flight ?? a?.callsign ?? '').trim().toUpperCase()) || GOV_OPS.has(opOf(a)) || BIZ_OPS.has(opOf(a));
 /* What kind of thing it was, per CATCH (2026-11-19, card spike, design/card-spike/team-c-information.html §2): one B763 card
    can be caught as a UPS freighter one day and a charter the next, so the class belongs to the catch, not the type. Decided
    here while the raw callsign is in hand; only the class word is kept (plus the airline's name for an airline callsign,
-   which is public). First match wins. Gov / military: no class word at all (no military content), the card shows its size.
-   a: { callsign (raw), category, type, heli, anon, gov, biz }. Returns '' or one of CLASS_WORDS' keys. */
+   which is public). First match wins. Gov / military first: 'mil' or 'gov', never the unit or operator (Sevaan 2026-11-19).
+   a: { callsign (raw), category, type, heli, anon, gov, mil, biz }. Returns '' or one of CLASS_WORDS' keys. */
 export const CLASS_WORDS = {
   balloon: 'Balloon', airship: 'Airship', glider: 'Glider', ultralight: 'Ultralight', drone: 'Drone', heli: 'Helicopter',
   cargo: 'Cargo airline', airline: 'Airline', biz: 'Business jet', light: 'Light aircraft', turboprop: 'Turboprop',
   airliner: 'Airliner', small: 'Small aircraft', large: 'Large aircraft', heavy: 'Heavy aircraft',
+  mil: 'Military', gov: 'Government', /* the band says "Not an airline · Military": what it is, never whose */
 };
 const AIRLINER_SETS = new Set(['giants', 'b737', 'a320', 'twinaisle', 'regional']);
 export function catchClass(a) {
-  if (a?.gov) return '';
+  if (a?.gov) return a?.mil ? 'mil' : 'gov';
   const t = String(a?.type ?? '').toUpperCase(), cat = String(a?.category ?? '').toUpperCase(), cs = String(a?.callsign ?? '').trim().toUpperCase();
   if (t === 'SHIP') return 'airship';
   if (t === 'BALL' || cat === 'B2') return 'balloon';
@@ -146,6 +146,8 @@ function parse(json) {
     const ft = typeof a.alt_geom === 'number' ? a.alt_geom : a.alt_baro;
     if (typeof ft !== 'number') continue;
     const anon = isAnonymous(a), gov = isGovOrMil(a);
+    /* Military and government aircraft keep their TYPE (Sevaan 2026-11-19: "I should be able to catch a stealth bomber if I
+       see it and it's in the api data"): a C-17 or B-2 plane card, never a callsign, registration, real hex, unit or route */
     /* a type that the aircraft can't be (2026-11-19, real records: "BALL" on an H125 helicopter at 63 kt, "GLID" on an
        Air Canada jet at 35,000 ft) is dropped, so it's known by its size category instead */
     const t0 = String(a.t ?? '').toUpperCase(), gs0 = Number(a.gs) || 0, cs0 = String(a.flight ?? '').trim();
@@ -153,13 +155,13 @@ function parse(json) {
     const SLOW_T = /^(C15[02]|C17[0-7]|C172|C182|P28A|DA40|DV20|SR20|DHC[26]|PC6T?|AN2|PA18|C140|J3)$/;
     const badType = (SLOW_T.test(t0) && gs0 > 300) || (t0 === 'BALL' && gs0 >= 40) || (t0 === 'SHIP' && gs0 >= 75) || (t0 === 'GLID' && (gs0 >= 130 || ft >= 25000 || /^[A-Z]{3}\d/.test(cs0)));
     out.push({
-      hex: anon ? anonId(a.hex) : a.hex, callsign: anon ? '' : (a.flight ?? '').trim(), reg: anon ? '' : a.r ?? '', anon, tag: tagOf(a), year: Number(a.year) || undefined, type: badType || gov ? '' : a.t ?? '', desc: gov || badType ? '' : a.desc ?? '', /* a dropped type takes its description with it */ category: a.category ?? '',
+      hex: anon ? anonId(a.hex) : a.hex, callsign: anon ? '' : (a.flight ?? '').trim(), reg: anon ? '' : a.r ?? '', anon, tag: tagOf(a), year: Number(a.year) || undefined, type: badType ? '' : a.t ?? '', desc: badType ? '' : a.desc ?? '', /* a dropped type takes its description with it */ category: a.category ?? '',
       lat: a.lat, lon: a.lon, hKm: ft * FT, altFt: ft, altBaro: typeof a.alt_baro === 'number' ? a.alt_baro : undefined /* what Flightradar24 and pilots read (alt_geom is GPS height, used for where it is in the sky) */, gs: a.gs ?? 0, track: a.track ?? a.true_heading ?? 0,
       climb: a.geom_rate ?? a.baro_rate ?? 0, at: at - (a.seen_pos ?? 0) * 1000,
     });
-    const q = out[out.length - 1]; q.heli = isHelicopter(q);
+    const q = out[out.length - 1]; q.heli = isHelicopter(q); if (gov) q.gov = true; /* never a flight card (js/flights.js cardsFor) */
     /* the class of this catch, from the raw callsign; the airline's name only for an airline callsign (public) */
-    q.cls = catchClass({ callsign: cs0, category: a.category, type: q.type, heli: q.heli, anon, gov, biz: BIZ_OPS.has(opOf(a)) });
+    q.cls = catchClass({ callsign: cs0, category: a.category, type: q.type, heli: q.heli, anon, gov, mil: gov && ((Number(a.dbFlags) & 1) !== 0 || MIL_TYPES.test(t0)), biz: BIZ_OPS.has(opOf(a)) });
     if (q.cls === 'cargo' || q.cls === 'airline') { const n = airlineName(cs0.toUpperCase()); if (n) q.clsOp = n; }
   }
   return out;

@@ -6,9 +6,9 @@
 //         renderCard, attachTilt, artImage, applyBack, sfx, feel, tierColor }
 const wait = (ms, reduced) => new Promise((r) => setTimeout(r, reduced ? Math.min(ms, 120) : ms));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-import { TIERS, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1791';
-import { attachGyro } from './card.js?v=0.1.1791';
-import { cloudsHtml } from './weather-art.js?v=0.1.1791';
+import { TIERS, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1793';
+import { attachGyro } from './card.js?v=0.1.1793';
+import { cloudsHtml } from './weather-art.js?v=0.1.1793';
 // Cards turn with the catch reveal's own flip and rarity table (js/card-moment.js, 2026-11-11): one turn for a catch, a
 // gift and the morning pack.
 // A tap that answers on the finger lifting, like main.js tapOn: the pack animates every frame, and WebKit drops a click
@@ -158,8 +158,14 @@ export function playPack(o) {
          as it leant under the finger (2026-11-18, Sevaan on his iPhone: "I can see the bottom of the card at the bottom of
          the pack for a split second"). Hide anything lower than the pack's printed area until the pack falls away. */
       { const pr = (q('.gp-tilt') ?? pk).getBoundingClientRect(), dr = deck.getBoundingClientRect(), k = deck.offsetHeight ? dr.height / deck.offsetHeight : 1;
-        const cut = Math.max(0, dr.bottom - (pr.bottom - pr.height * 0.14)) / (k || 1);
-        if (cut > 0) deck.style.clipPath = `inset(-60% -60% ${cut.toFixed(1)}px -60%)`; }
+        const line = pr.bottom - pr.height * 0.14, cut = Math.max(0, dr.bottom - line) / (k || 1);
+        if (cut > 0) { deck.style.clipPath = `inset(-60% -60% ${cut.toFixed(1)}px -60%)`;
+          /* The clip lives in the deck's own box, so as the deck rises its cut edge rose with it and ended up above the pack,
+             slicing the card off in mid-air (2026-11-19, Sevaan on the sample pack page: a bare band between the card and the
+             pack; Space Collector cad50cc0). Keep the edge on the same line on the screen, frame by frame, until the pack falls away. */
+          const keep = () => { if (!deck.style.clipPath) return; const r = deck.getBoundingClientRect(), kk = deck.offsetHeight ? r.height / deck.offsetHeight : 1;
+            deck.style.clipPath = `inset(-60% -60% ${(Math.max(0, r.bottom - line) / (kk || 1)).toFixed(1)}px -60%)`; requestAnimationFrame(keep); };
+          requestAnimationFrame(keep); } }
       deck.style.opacity = '1';
       await W(220); sfx('arrive', 0.9);
       if (reduced) { pk.classList.add('drop'); deck.style.clipPath = ''; deck.style.zIndex = '7'; deck.style.transition = 'none'; deck.style.transform = 'none'; /* full size, in place (it started small and low for the slide) */ await W(200); } /* reduced motion: no deck slide (review 2026-11-07) */
