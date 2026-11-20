@@ -719,3 +719,6 @@ html.sky-cards .collection-tabs { gap:16px; }
 .fc:not(.fc--mini) .fc-in--bp .bp-ph { flex:0 1 auto; aspect-ratio:1.3; min-height:8em; }
 .fc:not(.fc--mini) .fc-in--bp .fc-fact { flex:none; }
 .fc:not(.fc--mini) .fc-in--bp .bp-perf { margin-top:auto; } /* spare height sits above the tear line, like a ticket */
+
+/* The level medal on the new mini cards' picture (2026-11-19): the old .sct-lvl disc, with the level's metal */
+.fc--mini .sct-lvl { --lvl:#b8793e; } .fc--mini .sct-lvl--silver { --lvl:#aab4c0; } .fc--mini .sct-lvl--gold { --lvl:#e2b53c; }
