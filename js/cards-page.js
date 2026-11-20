@@ -169,16 +169,17 @@ if (SKY) { state.kind = 'plane'; $('tab-owned-word').textContent = 'Planes'; $('
   /* the empty Collection's welcome is Sky's own, not Space Collector's field guide (2026-11-19) */
   { const i = document.querySelector('.collection-intro'); if (i) { i.querySelector('.eyebrow').textContent = 'YOUR SPOTTER\'S LOGBOOK'; i.querySelector('h1').innerHTML = 'Everything that<br>flew over you.'; } } }
 const wordHit = (h, w) => !w || new RegExp(`(^|[^a-z0-9])${w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`).test(h);
-function matches(c) {
-  if (state.query && c.story && !hasSightings(c)) return false; // searching can’t find a story you haven’t found
-  if (state.view === 'owned' && !hasSightings(c)) return false;
-  if (SKY && state.view === 'owned' && cardKind(c) !== state.kind) return false; /* Planes or Flights */
-  if (state.view === 'find') { if (!state.query) return true; const h = `${titleFor(c)} ${c.name} ${c.id} ${c.cospar ?? ''} ${c.type ?? ''} ${SETS.find((s) => s.id === c.set)?.name ?? ''}`.toLowerCase(); return state.query.split(/\s+/).every((w) => wordHit(h, w)); }
-  if (state.set === 'tonight') { if (!state.planKeys?.has(c.key)) return false; } else if (state.set !== 'all' && c.set !== state.set) return false;
-  if (state.rarity !== 'all' && c.tier !== state.rarity) return false;
-  if (state.query) {
+/* s: the filters to match (the Collection's own state, or the Send cards picker's; 2026-11-20) */
+function matches(c, s = state) {
+  if (s.query && c.story && !hasSightings(c)) return false; // searching can’t find a story you haven’t found
+  if (s.view === 'owned' && !hasSightings(c)) return false;
+  if (SKY && s.view === 'owned' && cardKind(c) !== s.kind) return false; /* Planes or Flights */
+  if (s.view === 'find') { if (!s.query) return true; const h = `${titleFor(c)} ${c.name} ${c.id} ${c.cospar ?? ''} ${c.type ?? ''} ${SETS.find((s) => s.id === c.set)?.name ?? ''}`.toLowerCase(); return s.query.split(/\s+/).every((w) => wordHit(h, w)); }
+  if (s.set === 'tonight') { if (!s.planKeys?.has(c.key)) return false; } else if (s.set !== 'all' && c.set !== s.set) return false;
+  if (s.rarity !== 'all' && c.tier !== s.rarity) return false;
+  if (s.query) {
     const haystack = `${titleFor(c)} ${c.name} ${c.id} ${c.cospar ?? ''} ${factFor(c)} ${SETS.find((s) => s.id === c.set)?.name ?? ''}`.toLowerCase();
-    if (!state.query.split(/\s+/).every((w) => wordHit(haystack, w))) return false;
+    if (!s.query.split(/\s+/).every((w) => wordHit(haystack, w))) return false;
   }
   return true;
 }
@@ -242,14 +243,19 @@ function revealTile(smooth = true) {
 $('viewer').addEventListener('close', () => { if (!redocking) document.querySelectorAll('.tile-slot.shown').forEach((t) => t.classList.remove('shown')); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && isDocked() && !$('stats-view').open && !$('patch-view').open) closeViewer(); }); // a docked viewer isn’t modal, so Escape is ours
 const faceCache = new Map();
+// The mini card, built once per card and look and then copied (also the Send cards picker's tiles, 2026-11-20).
+function cachedMini(c, sg, status = '', locked = false) {
+  const live = c.natural === 'constellation' || c.partners || c.type === 'debris' || c.frag;
+  const fk = live ? null : `${c.key}|${sg.length}|${sg[0]?.time ?? 0}|${locked ? 1 : 0}|${status}`;
+  let face = fk && faceCache.get(fk)?.cloneNode(true);
+  if (!face) { face = miniCard(c, { sightings: sg, ownedKeys: c.natural === 'constellation' || c.partners ? ownedKeys() : undefined, status, locked }); if (fk && !face.querySelector('.frag-orbit-box, canvas')) { faceCache.set(fk, face.cloneNode(true)); if (faceCache.size > 600) faceCache.delete(faceCache.keys().next().value); } }
+  return face;
+}
 function miniFace(tile, c) {
   const status = (tile.querySelector('.card-tile__status')?.textContent ?? '').replace(/^✓\s*Collected\s*/, '✓ '), badge = tile.querySelector('.tile-lvl');
   /* Built once per card and look, then copied (perf budget 2026-11-10: a full card render per tile, again on every scroll-back
      and after every catch). Cards whose face is live or async (constellations, partners, fragments' globes) are always built. */
-  const sg = state.sightingsByKey.get(c.key) ?? [], locked = !tile.classList.contains('is-owned'), live = c.natural === 'constellation' || c.partners || c.type === 'debris' || c.frag;
-  const fk = live ? null : `${c.key}|${sg.length}|${sg[0]?.time ?? 0}|${locked ? 1 : 0}|${status}`;
-  let face = fk && faceCache.get(fk)?.cloneNode(true);
-  if (!face) { face = miniCard(c, { sightings: sg, ownedKeys: c.natural === 'constellation' || c.partners ? ownedKeys() : undefined, status, locked }); if (fk && !face.querySelector('.frag-orbit-box, canvas')) { faceCache.set(fk, face.cloneNode(true)); if (faceCache.size > 600) faceCache.delete(faceCache.keys().next().value); } }
+  const face = cachedMini(c, state.sightingsByKey.get(c.key) ?? [], status, !tile.classList.contains('is-owned'));
   tile.classList.add('card-tile--mini');
   tile.replaceChildren(...(badge ? [badge] : []), face);
   stickerOn(tile, c);
@@ -735,6 +741,22 @@ window.addEventListener('message', (e) => {
 });
 let upHold = false; // true while the viewer shows Up tonight’s list; 'again' if a redraw waited (openUpNext)
 // A card open beside the grid stays the one shown when the list is redrawn (its place in the list may move).
+// The Collection's order (and the Send cards picker's, 2026-11-20): s is the filter state, ps tonight's plan.
+const sortFor = (s, ps) => (a, b) => {
+    // Sort menu (2026-10-06): default = newest first for your collection, featured order for the field guide.
+    const newest = (c) => state.sightingsByKey.get(c.key)?.[0]?.time ?? 0;
+    if (s.sort === 'newest') return newest(b) - newest(a) || titleFor(a).localeCompare(titleFor(b));
+    if (s.sort === 'rarest') return TIERS.indexOf(b.tier) - TIERS.indexOf(a.tier) || titleFor(a).localeCompare(titleFor(b));
+    if (s.sort === 'az') return titleFor(a).localeCompare(titleFor(b));
+    if (s.view === 'owned') return newest(b) - newest(a);
+    if (s.set !== 'all' && s.set !== 'tonight') { const o = Number(hasSightings(b)) - Number(hasSightings(a)); if (o) return o; } // inside an album, the ones you have come first (round-2 playtest 2026-10-30: 6 stars lost among 709)
+    // Lead discovery with what you could catch tonight from here, soonest first (playtest 2026-10-09: it opened on a
+    // wall of blurred Legendaries), then the familiar ISS and distinctive rarities, then catalogue order.
+    if (ps.has(a.key) || ps.has(b.key)) return (ps.get(a.key) ?? Infinity) - (ps.get(b.key) ?? Infinity);
+    if (String(a.id) === '25544') return -1;
+    if (String(b.id) === '25544') return 1;
+    return TIERS.indexOf(b.tier) - TIERS.indexOf(a.tier) || (a.set ?? '').localeCompare(b.set ?? '') || (a.setNumber ?? 0) - (b.setNumber ?? 0);
+  };
 function render() {
   const k = isDocked() ? state.list[state.index]?.key : null;
   renderView();
@@ -758,21 +780,7 @@ function renderView() {
   document.body.classList.toggle('has-cards', caught > 0); document.body.classList.toggle('few-cards', caught > 0 && caught < 5); /* day one: the cards get the room, search and filters wait (UX 2026-10-28) */ // the intro banner is for an empty collection only (UX room 2026-10-12)
   $('count').textContent = caught ? `${caught.toLocaleString()} ${caught === 1 ? 'card' : 'cards'} collected. ${SKY ? 'Every one, something that flew over you.' : 'Every one, a moment under the sky.'}` : (SKY ? 'Point at a plane and tap to collect your first card.' : 'Real objects. Remarkable stories. Yours to discover.');
   const ps = planStart(); state.planKeys = new Set(ps.keys());
-  state.list = state.cards.filter(matches).sort((a, b) => {
-    // Sort menu (2026-10-06): default = newest first for your collection, featured order for the field guide.
-    const newest = (c) => state.sightingsByKey.get(c.key)?.[0]?.time ?? 0;
-    if (state.sort === 'newest') return newest(b) - newest(a) || titleFor(a).localeCompare(titleFor(b));
-    if (state.sort === 'rarest') return TIERS.indexOf(b.tier) - TIERS.indexOf(a.tier) || titleFor(a).localeCompare(titleFor(b));
-    if (state.sort === 'az') return titleFor(a).localeCompare(titleFor(b));
-    if (state.view === 'owned') return newest(b) - newest(a);
-    if (state.set !== 'all' && state.set !== 'tonight') { const o = Number(hasSightings(b)) - Number(hasSightings(a)); if (o) return o; } // inside an album, the ones you have come first (round-2 playtest 2026-10-30: 6 stars lost among 709)
-    // Lead discovery with what you could catch tonight from here, soonest first (playtest 2026-10-09: it opened on a
-    // wall of blurred Legendaries), then the familiar ISS and distinctive rarities, then catalogue order.
-    if (ps.has(a.key) || ps.has(b.key)) return (ps.get(a.key) ?? Infinity) - (ps.get(b.key) ?? Infinity);
-    if (String(a.id) === '25544') return -1;
-    if (String(b.id) === '25544') return 1;
-    return TIERS.indexOf(b.tier) - TIERS.indexOf(a.tier) || (a.set ?? '').localeCompare(b.set ?? '') || (a.setNumber ?? 0) - (b.setNumber ?? 0);
-  });
+  state.list = state.cards.filter((c) => matches(c)).sort(sortFor(state, ps));
   state.titleCount = new Map(); for (const c of state.list) state.titleCount.set(titleFor(c), (state.titleCount.get(titleFor(c)) ?? 0) + 1);
   const total = state.list.length;
   $('results').hidden = false;
@@ -1219,8 +1227,13 @@ $('v-preview').addEventListener('click', () => { state.preview = !state.preview;
 initSend({
   PH: (/iPad/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1) || (/Android/.test(navigator.userAgent) && !/Mobile/.test(navigator.userAgent))) ? 'tablet' : 'phone',
   sightings: () => state.raw, cardOf: (k) => state.byKey.get(k) ?? null,
-  mini: (c, list) => miniCard(c, { sightings: state.sightingsByKey.get(c.key) ?? list, ownedKeys: c.natural === 'constellation' || c.partners ? ownedKeys() : undefined, status: '' }), title: (c) => (c ? titleFor(c) : 'A card'), art: (c) => (c ? artImage(c, 'small') : null),
+  mini: (c, list) => cachedMini(c, state.sightingsByKey.get(c.key) ?? list), /* the Collection's own copies of its minis */ title: (c) => (c ? titleFor(c) : 'A card'), art: (c) => (c ? artImage(c, 'small') : null),
   changed: async () => { ingest(await allSightings()); linkConstellations(); render(); if (EMBED) window.parent.postMessage({ sc: 'sightings-changed' }, location.origin); },
+  /* the picker's list is the Collection's own filter and order (2026-11-20, Sevaan: "planes and flights tabs and search
+     stuff"); kinds are Sky's Planes / Flights tabs, the only Sky-only part (Space: no kinds, one list) */
+  list: (cards, f) => { const s = { view: 'owned', query: f.query ?? '', set: f.set ?? 'all', rarity: f.rarity ?? 'all', sort: f.sort ?? 'auto', kind: f.kind, planKeys: state.planKeys }; return cards.filter((c) => matches(c, s)).sort(sortFor(s, planStart())); },
+  ...(SKY ? { kinds: [{ id: 'plane', label: 'Planes', unit: ['plane', 'planes'] }, { id: 'flight', label: 'Flights', unit: ['flight', 'flights'] }], kindOf: cardKind } : {}),
+  ink: (bar) => moveInk(bar),
   ticket, feel, note: (name, n) => { if (EMBED) window.parent.postMessage({ sc: 'note', name: 'gift', how: name, n }, location.origin); },
   header: (on, title, sub) => { if (EMBED) window.parent.postMessage({ sc: 'stats', on, title, sub }, location.origin); },
   onClose: () => { if (sendFromSettings) { sendFromSettings = false; if (EMBED) window.parent.postMessage({ sc: 'explore', more: true }, location.origin); } },
@@ -1508,13 +1521,13 @@ addEventListener('hashchange', () => { let k = ''; try { k = decodeURIComponent(
 
 // ---------- polish (2026-10-08) ----------
 // The tabs' orange underline slides to the current tab.
-function moveInk() {
-  const bar = document.querySelector('.collection-tabs'); if (!bar) return;
+function moveInk(bar = document.querySelector('.collection-tabs')) { /* bar: the Send cards picker's Planes / Flights row too */
+  if (!bar) return;
   let ink = bar.querySelector('.tab-ink'); if (!ink) { ink = document.createElement('i'); ink.className = 'tab-ink'; bar.append(ink); }
   const on = bar.querySelector('button[aria-pressed="true"]'); if (!on) return;
   ink.style.width = `${on.offsetWidth}px`; ink.style.transform = `translateX(${on.offsetLeft}px)`;
 }
-addEventListener('resize', moveInk); setTimeout(moveInk, 300);
+addEventListener('resize', () => moveInk()); setTimeout(() => moveInk(), 300);
 // Filters, sort and search: cards that stay glide to their new place (FLIP), new ones rise in.
 {
   const flip = (fn) => {
