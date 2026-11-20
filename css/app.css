@@ -3753,3 +3753,7 @@ body.night .tell-text { color: #e8a59a; } body.night .tell-patch { filter: none;
   .tc .acts:not(.pick) .no { margin-top: 2px; min-height: 40px; }
 }
 @media (max-height: 600px) { .ob-deck { height: min(72%, 470px); } }
+
+/* App icon picker (2026-11-19, Plus; Space Collector's): the card-back picker's tiles, square with the home screen's rounded corners. */
+.icon-grid .back-art { aspect-ratio: 1; border-radius: 22.37%; }
+.set-icon-thumb { width: 34px; height: 34px; border-radius: 22.37%; background: center / cover no-repeat; flex: none; margin-right: 6px; box-shadow: 0 0 0 1px #45576a; }

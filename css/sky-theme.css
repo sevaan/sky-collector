@@ -770,3 +770,6 @@ html.sky-cards:not(.sky-night) .sv-manifest .lbl { color:#0d2238; }
 html.sky-cards:not(.sky-night) .sv-plain { color:#4a6178; }
 html.sky-cards:not(.sky-night) .sv-night .sv-box { border-color:#9fb3c6; }
 html.sky-cards:not(.sky-night) .sv-btn.o { background:linear-gradient(#e8493c, #c42d22); color:#fff; } /* Share N cards: white on red */
+
+/* App icon row (2026-11-19): the thumbnail's outline in Sky's paper tones by day (the design's #c9b98a), Space's at night */
+html:not(.sky-night) body.sky-only .set-icon-thumb { box-shadow: 0 0 0 1px #c9b98a; }
