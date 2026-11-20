@@ -9,21 +9,21 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { regularFor, clockText } from './sky-regulars.js?v=0.1.1798';
-import { TIERS, unlisted } from './flights.js?v=0.1.1798';
-import { flightFact } from './flight-facts.js?v=0.1.1798';
-import { typePhoto } from './type-photos.js?v=0.1.1798';
-import { housePhoto } from './house-photos.js?v=0.1.1798';
-import { gapPhoto } from './gap-photos.js?v=0.1.1798'; /* the types that had no photo (2026-11-18) */
-import { airlinePhoto } from './airline-photos.js?v=0.1.1798';
-import { airlineLogo } from './airline-logos.js?v=0.1.1798';
-import { fitStyle } from './photo-fit.js?v=0.1.1798';
-import { dist, speed, useMiles } from './units.js?v=0.1.1798';
-import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1798';
-import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1798';
-import { typeFact } from './sky-facts.js?v=0.1.1798';
-import { localText } from './localize.js?v=0.1.1798';
-import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1798';
+import { regularFor, clockText } from './sky-regulars.js?v=0.1.1800';
+import { TIERS, unlisted } from './flights.js?v=0.1.1800';
+import { flightFact } from './flight-facts.js?v=0.1.1800';
+import { typePhoto } from './type-photos.js?v=0.1.1800';
+import { housePhoto } from './house-photos.js?v=0.1.1800';
+import { gapPhoto } from './gap-photos.js?v=0.1.1800'; /* the types that had no photo (2026-11-18) */
+import { airlinePhoto } from './airline-photos.js?v=0.1.1800';
+import { airlineLogo } from './airline-logos.js?v=0.1.1800';
+import { fitStyle } from './photo-fit.js?v=0.1.1800';
+import { dist, speed, useMiles } from './units.js?v=0.1.1800';
+import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1800';
+import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1800';
+import { typeFact } from './sky-facts.js?v=0.1.1800';
+import { localText } from './localize.js?v=0.1.1800';
+import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1800';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // A type name escaped, with its hyphenated model codes kept on one line ('Boeing KC-135R Stratotanker' broke after 'KC-').
@@ -183,13 +183,13 @@ export function flightCardHtml(f, opts = {}) {
       <div class="m-st"><span>${opts.caughtAt ? `✓ ${dateShort(opts.caughtAt)}` : 'NOT YET'}</span>${barcode(f.callsign || f.key, 12)}</div>`;
     return shell('flight', f.tier, inner, label, si?.level, 'bp', true);
   }
-  const art = ph ? `${photoImg(ph, 'fc-photo', opts.eager)}${credit(ph)}` : skyPanel('jet', 'fc-sky', type);
+  const art = ph ? `${photoImg(ph, 'fc-photo', opts.eager, !!opts.shrunk)}${credit(ph)}` : skyPanel('jet', 'fc-sky', type);
   const reg = (() => { try { const r = regularFor(f.callsign); return r ? `<span class="bp-reg">REGULAR · ABOUT ${esc(clockText(r.minute))}</span>` : ''; } catch { return ''; } })();
   const d = dist(f.km ?? null), T = THRESHOLDS.flight, n = si?.count ?? 0, next = T.find((x) => n < x);
   const prog = n ? `<span class="bp-prog${opts.newStamp ? ' fc-prog--new' : ''}">${n} DAY${n === 1 ? '' : 'S'}${si.nights ? ` · ${si.nights === n ? (n === 1 ? 'AT NIGHT' : 'ALL AT NIGHT') : `${si.nights} AT NIGHT`}` : ''} · ${next ? `${next - n} MORE TO ${next === T[1] ? 'SILVER' : 'GOLD'}` : 'TOP LEVEL'}</span>` : '';
   const inner = `
     <div class="bp-hd">${passMark(f, 'bp-logo', 'bp-wm')}<div class="bp-k">BOARDING PASS<b>${esc(f.callsign || '—')}</b></div></div>
-    <div class="fc-pic bp-ph${ph ? '' : ' fc-pic--sky'}">${art}<span class="fc-holo" aria-hidden="true"></span>${tierPill(f.tier)}<span class="fc-set">${esc(String(f.setName ?? f.set ?? '').toUpperCase())}</span>${reg}</div>
+    <div class="fc-pic bp-ph${ph ? '' : ' fc-pic--sky'}">${art}<span class="fc-holo" aria-hidden="true"></span>${tierPill(f.tier)}${opts.shrunk ? miniMedal(lvl, si?.count ?? 0) : ''}<span class="fc-set">${esc(String(f.setName ?? f.set ?? '').toUpperCase())}</span>${reg}</div>
     <div class="bp-codes"><div><b>${esc(code(f.from))}</b><small>${esc(f.from.city)}</small></div><div class="bp-mid">${jet('fc-rot90')}</div><div class="bp-to"><b>${esc(code(f.to))}</b><small>${esc(f.to.city)}</small></div></div>
     <div class="bp-fields">${field('DISTANCE', d.v, d.u)}${field('IN THE AIR', airLine(f.air))}${field('CAUGHT AT', feet(opts.heightFt), 'ft')}${field('AIRCRAFT', type || '—')}</div>
     <p class="fc-fact">${rich(localText(flightFact({ ...f, fact: String(f.fact ?? '').replace(' as the crow flies: about ', ', about ').replace(/ on a (?=[AEIOU])/, ' on an ') }, si?.count ?? 1)))}</p>
@@ -226,7 +226,7 @@ function classBand(k, mini = false) {
   if (k.cls === 'cargo') return { cls: 'cargo', icon: ICONS.box, head: mini ? 'Cargo' : 'Cargo airline', tail: mini ? k.op : [k.op, 'route not known'].filter(Boolean).join(' · '), logo: k.icao };
   if (k.cls === 'airline') return { cls: 'airline', icon: ICONS.jet, head: 'Airline', tail: mini ? k.op : [k.op, 'route not known'].filter(Boolean).join(' · '), logo: k.icao };
   if (k.cls === 'airliner') return { cls: 'noair', icon: ICONS.lock, head: mini ? 'No flight number' : 'No airline flight number', tail: mini ? '' : 'Airliner' };
-  return { cls: 'noair', icon: ICONS.lock, head: 'Not an airline', tail: mini ? '' : k.word };
+  return { cls: 'noair', icon: ICONS.lock, head: k.word || 'Aircraft', tail: '' }; /* just what it is (2026-11-20, Sevaan: "Doesn't need to say not an airline") */
 }
 function bandHtml(b, cls = 'ss-band') {
   if (!b) return '';
@@ -265,7 +265,7 @@ export function planeCardHtml(p, opts = {}) {
       <div class="m-sp">${left && left[0] !== 'Aircraft' ? `<span>${esc(left[0])} <b>${esc(left[1])}</b></span>` : `<span>${esc(set)}</span>`}<span><b>${si?.count ?? 0}</b> aircraft</span></div>`;
     return shell('plane', p.tier, inner, label, si?.level, 'ss', true);
   }
-  const art = ph ? `${photoImg(ph, 'fc-photo', opts.eager)}${credit(ph)}` : skyPanel(un ? un.glyph : p.glyph, 'fc-sky fc-sky--big', un ? un.mark : type);
+  const art = ph ? `${photoImg(ph, 'fc-photo', opts.eager, !!opts.shrunk)}${credit(ph)}` : skyPanel(un ? un.glyph : p.glyph, 'fc-sky fc-sky--big', un ? un.mark : type);
   const band = classBand(k), specs = typeSpecs(type);
   const mk = specs ? makerLine(specs) : un ? 'Not in the public registers yet' : '';
   const who = k?.airline && k.routed && (k.op || k.reg) ? `<div class="ss-who"><b>${k.cls === 'cargo' ? 'CARGO AIRLINE' : 'AIRLINE'}</b><span>${esc([k.op, k.reg].filter(Boolean).join(' · '))}</span></div>` : '';
@@ -274,7 +274,7 @@ export function planeCardHtml(p, opts = {}) {
   const sp = speed(kmh), aw = dist(last?.rangeKm != null ? Math.round(last.rangeKm) : opts.awayKm ?? null);
   const inner = `
     <div class="ss-hd"><span class="ss-kind">${jet('fc-rot90')}AIRCRAFT</span><span class="ss-set">${esc(set.toUpperCase())}</span><span class="ss-plate"><span>TYPE</span><b>${esc(plate)}</b></span></div>
-    <div class="fc-pic ss-ph${band ? ' ss-ph--band' : ''}${ph ? '' : ' fc-pic--sky'}">${art}<span class="fc-holo" aria-hidden="true"></span><span class="ss-tick" aria-hidden="true"></span>${tierPill(p.tier)}${opts.rareHere ? '<span class="fc-here" title="Unusual where you caught it">RARE HERE</span>' : ''}${bandHtml(band)}</div>
+    <div class="fc-pic ss-ph${band ? ' ss-ph--band' : ''}${ph ? '' : ' fc-pic--sky'}">${art}<span class="fc-holo" aria-hidden="true"></span><span class="ss-tick" aria-hidden="true"></span>${tierPill(p.tier)}${opts.shrunk ? miniMedal(lvl, si?.count ?? 0) : ''}${opts.rareHere ? '<span class="fc-here" title="Unusual where you caught it">RARE HERE</span>' : ''}${bandHtml(band)}</div>
     <h2 class="fc-name ss-name${(name || '').length > 24 ? ' fc-name--xl' : (name || '').length > 16 ? ' fc-name--long' : ''}"><span>${escName(name)}</span></h2>${mk ? `<div class="ss-mk">${esc(mk)}</div>` : ''}
     ${cells.length ? `<div class="ss-spec" style="--n:${cells.length}">${cells.map(([l, v, u]) => `<div><span>${esc(l)}</span><b>${esc(v)}${u ? `<small>${esc(u)}</small>` : ''}</b></div>`).join('')}</div>` : ''}
     ${who}

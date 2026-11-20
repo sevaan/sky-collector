@@ -75,12 +75,12 @@ test('a catch carries its class, heading and route flag on the plane sighting, n
   assert.doesNotMatch(html, /N312UP/); /* no route: the band, not the operator line */
 });
 
-test('plane-only private catch: NOT AN AIRLINE band, type only', () => {
+test('plane-only private catch: a band saying what it is (Light aircraft), type only', () => {
   const p = one({ cs: 'N12345', r: 'N12345', t: 'C172', cat: 'A1', gs: 97, alt: 2400, track: 270 });
   const { plane } = cardsFor(p, null, '');
   const ss = catchSightings({ time: T0, hex: p.hex, callsign: p.callsign, reg: p.reg, type: p.type, altFt: 2400, gsKt: 97, rangeKm: 3, flight: null, plane });
   const html = planeCardHtml(ss[0].cardSnapshot, { stampInfo: skyStampInfo(ss[0].cardSnapshot, ss) });
-  assert.match(html, /Not an airline <small>· Light aircraft<\/small>/);
+  assert.match(html, /Light aircraft/); assert.doesNotMatch(html, /Not an airline/i);
   assert.doesNotMatch(html, /N12345/); assert.doesNotMatch(html, /rivate/);
   assert.match(html, /Cessna · USA · four-seat light aircraft/);
 });

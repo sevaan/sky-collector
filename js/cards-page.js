@@ -1,43 +1,44 @@
-import { pullToClose } from './pull-close.js?v=0.1.1798';
-import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1798';
-import { computeStats, statsHtml } from './stats.js?v=0.1.1798';
-import { nightKey } from './observation.js?v=0.1.1798';
-import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1798';
-import { sfx } from './sfx.js?v=0.1.1798';
-import { expandFacts } from './catalog-facts.js?v=0.1.1798';
-import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned, addSecretArt } from './patches.js?v=0.1.1798';
-import { registerSkySecrets } from './sky-secrets.js?v=0.1.1798';
-import { SKY_PATCH_ART } from './sky-patches.js?v=0.1.1798';
-import { registerSkyStories } from './sky-stories.js?v=0.1.1798';
-import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1798';
-import { ticket } from './toast.js?v=0.1.1798';
-import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1798';
-import { satGlobe } from './sat-globe.js?v=0.1.1798';
-import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1798';
-import { cardArt } from './art.js?v=0.1.1798';
-import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1798';
-import { applyBack } from './card-backs.js?v=0.1.1798';
-import { localStats } from './sky-local.js?v=0.1.1798';
-import { retier } from './flights.js?v=0.1.1798';
-import { SETS, assignSets, albumGoals, albumList, useSets, goalsOf } from './sets.js?v=0.1.1798';
-import { SKY_ALBUM_SETS, FLIGHT_SETS } from './sky-sets.js?v=0.1.1798';
+import { pullToClose } from './pull-close.js?v=0.1.1800';
+import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1800';
+import { computeStats, statsHtml } from './stats.js?v=0.1.1800';
+import { nightKey } from './observation.js?v=0.1.1800';
+import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1800';
+import { sfx } from './sfx.js?v=0.1.1800';
+import { expandFacts } from './catalog-facts.js?v=0.1.1800';
+import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned, addSecretArt } from './patches.js?v=0.1.1800';
+import { registerSkySecrets } from './sky-secrets.js?v=0.1.1800';
+import { SKY_PATCH_ART } from './sky-patches.js?v=0.1.1800';
+import { registerSkyStories } from './sky-stories.js?v=0.1.1800';
+import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1800';
+import { ticket } from './toast.js?v=0.1.1800';
+import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1800';
+import { satGlobe } from './sat-globe.js?v=0.1.1800';
+import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1800';
+import { cardArt } from './art.js?v=0.1.1800';
+import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1800';
+import { applyBack } from './card-backs.js?v=0.1.1800';
+import { localStats } from './sky-local.js?v=0.1.1800';
+import { retier } from './flights.js?v=0.1.1800';
+import { SETS, assignSets, albumGoals, albumList, useSets, goalsOf } from './sets.js?v=0.1.1800';
+import { SKY_ALBUM_SETS, FLIGHT_SETS } from './sky-sets.js?v=0.1.1800';
 const FLIGHT_SET_IDS = new Set(FLIGHT_SETS.map((s) => s.id));
-import { skyCatalogue } from './sky-catalogue.js?v=0.1.1798';
-import { skyCardPhotoUrl, glyphSvg } from './flight-card.js?v=0.1.1798';
-import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1798';
-import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1798';
-import { STORIES } from './stories.js?v=0.1.1798';
-import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1798';
-import { conArt } from './con-art.js?v=0.1.1798';
-import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1798';
-import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1798';
-import { shareCardEl } from './share-card.js?v=0.1.1798';
-import { forgetSighting } from './cloud-backup.js?v=0.1.1798';
-import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1798';
-import { allSightings, deleteSighting } from './store.js?v=0.1.1798';
-import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1798';
-import { SECRET_PATCHES, NOT_SECRET, hasPatch } from './secrets.js?v=0.1.1798';
-import { localText } from './localize.js?v=0.1.1798';
+import { skyCatalogue } from './sky-catalogue.js?v=0.1.1800';
+import { skyCardPhotoUrl, glyphSvg } from './flight-card.js?v=0.1.1800';
+import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1800';
+import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1800';
+import { STORIES } from './stories.js?v=0.1.1800';
+import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1800';
+import { conArt } from './con-art.js?v=0.1.1800';
+import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1800';
+import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1800';
+import { climbSvg, climbGeom, xpLevel } from './rank-climb.js?v=0.1.1800';
+import { shareCardEl } from './share-card.js?v=0.1.1800';
+import { forgetSighting } from './cloud-backup.js?v=0.1.1800';
+import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1800';
+import { allSightings, deleteSighting } from './store.js?v=0.1.1800';
+import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1800';
+import { SECRET_PATCHES, NOT_SECRET, hasPatch } from './secrets.js?v=0.1.1800';
+import { localText } from './localize.js?v=0.1.1800';
 // Sky Collector (Milestone 1.5): the same Collection, with plane cards from your catches and no satellite catalogue.
 const SKY = (() => { try { return !!window.parent?.__skyOnly; } catch { return false; } })() || /[?&]sky\b/.test(location.search);
 if (SKY) { /* night follows the game's own switch (html.sky-night, set where Explore decides day and night) */
@@ -168,16 +169,17 @@ if (SKY) { state.kind = 'plane'; $('tab-owned-word').textContent = 'Planes'; $('
   /* the empty Collection's welcome is Sky's own, not Space Collector's field guide (2026-11-19) */
   { const i = document.querySelector('.collection-intro'); if (i) { i.querySelector('.eyebrow').textContent = 'YOUR SPOTTER\'S LOGBOOK'; i.querySelector('h1').innerHTML = 'Everything that<br>flew over you.'; } } }
 const wordHit = (h, w) => !w || new RegExp(`(^|[^a-z0-9])${w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`).test(h);
-function matches(c) {
-  if (state.query && c.story && !hasSightings(c)) return false; // searching can’t find a story you haven’t found
-  if (state.view === 'owned' && !hasSightings(c)) return false;
-  if (SKY && state.view === 'owned' && cardKind(c) !== state.kind) return false; /* Planes or Flights */
-  if (state.view === 'find') { if (!state.query) return true; const h = `${titleFor(c)} ${c.name} ${c.id} ${c.cospar ?? ''} ${c.type ?? ''} ${SETS.find((s) => s.id === c.set)?.name ?? ''}`.toLowerCase(); return state.query.split(/\s+/).every((w) => wordHit(h, w)); }
-  if (state.set === 'tonight') { if (!state.planKeys?.has(c.key)) return false; } else if (state.set !== 'all' && c.set !== state.set) return false;
-  if (state.rarity !== 'all' && c.tier !== state.rarity) return false;
-  if (state.query) {
+/* s: the filters to match (the Collection's own state, or the Send cards picker's; 2026-11-20) */
+function matches(c, s = state) {
+  if (s.query && c.story && !hasSightings(c)) return false; // searching can’t find a story you haven’t found
+  if (s.view === 'owned' && !hasSightings(c)) return false;
+  if (SKY && s.view === 'owned' && cardKind(c) !== s.kind) return false; /* Planes or Flights */
+  if (s.view === 'find') { if (!s.query) return true; const h = `${titleFor(c)} ${c.name} ${c.id} ${c.cospar ?? ''} ${c.type ?? ''} ${SETS.find((s) => s.id === c.set)?.name ?? ''}`.toLowerCase(); return s.query.split(/\s+/).every((w) => wordHit(h, w)); }
+  if (s.set === 'tonight') { if (!s.planKeys?.has(c.key)) return false; } else if (s.set !== 'all' && c.set !== s.set) return false;
+  if (s.rarity !== 'all' && c.tier !== s.rarity) return false;
+  if (s.query) {
     const haystack = `${titleFor(c)} ${c.name} ${c.id} ${c.cospar ?? ''} ${factFor(c)} ${SETS.find((s) => s.id === c.set)?.name ?? ''}`.toLowerCase();
-    if (!state.query.split(/\s+/).every((w) => wordHit(haystack, w))) return false;
+    if (!s.query.split(/\s+/).every((w) => wordHit(haystack, w))) return false;
   }
   return true;
 }
@@ -241,14 +243,19 @@ function revealTile(smooth = true) {
 $('viewer').addEventListener('close', () => { if (!redocking) document.querySelectorAll('.tile-slot.shown').forEach((t) => t.classList.remove('shown')); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && isDocked() && !$('stats-view').open && !$('patch-view').open) closeViewer(); }); // a docked viewer isn’t modal, so Escape is ours
 const faceCache = new Map();
+// The mini card, built once per card and look and then copied (also the Send cards picker's tiles, 2026-11-20).
+function cachedMini(c, sg, status = '', locked = false) {
+  const live = c.natural === 'constellation' || c.partners || c.type === 'debris' || c.frag;
+  const fk = live ? null : `${c.key}|${sg.length}|${sg[0]?.time ?? 0}|${locked ? 1 : 0}|${status}`;
+  let face = fk && faceCache.get(fk)?.cloneNode(true);
+  if (!face) { face = miniCard(c, { sightings: sg, ownedKeys: c.natural === 'constellation' || c.partners ? ownedKeys() : undefined, status, locked }); if (fk && !face.querySelector('.frag-orbit-box, canvas')) { faceCache.set(fk, face.cloneNode(true)); if (faceCache.size > 600) faceCache.delete(faceCache.keys().next().value); } }
+  return face;
+}
 function miniFace(tile, c) {
   const status = (tile.querySelector('.card-tile__status')?.textContent ?? '').replace(/^✓\s*Collected\s*/, '✓ '), badge = tile.querySelector('.tile-lvl');
   /* Built once per card and look, then copied (perf budget 2026-11-10: a full card render per tile, again on every scroll-back
      and after every catch). Cards whose face is live or async (constellations, partners, fragments' globes) are always built. */
-  const sg = state.sightingsByKey.get(c.key) ?? [], locked = !tile.classList.contains('is-owned'), live = c.natural === 'constellation' || c.partners || c.type === 'debris' || c.frag;
-  const fk = live ? null : `${c.key}|${sg.length}|${sg[0]?.time ?? 0}|${locked ? 1 : 0}|${status}`;
-  let face = fk && faceCache.get(fk)?.cloneNode(true);
-  if (!face) { face = miniCard(c, { sightings: sg, ownedKeys: c.natural === 'constellation' || c.partners ? ownedKeys() : undefined, status, locked }); if (fk && !face.querySelector('.frag-orbit-box, canvas')) { faceCache.set(fk, face.cloneNode(true)); if (faceCache.size > 600) faceCache.delete(faceCache.keys().next().value); } }
+  const face = cachedMini(c, state.sightingsByKey.get(c.key) ?? [], status, !tile.classList.contains('is-owned'));
   tile.classList.add('card-tile--mini');
   tile.replaceChildren(...(badge ? [badge] : []), face);
   stickerOn(tile, c);
@@ -463,12 +470,25 @@ function peelSticker(c) {
   try { localStorage.setItem('colPeeled', JSON.stringify([...peeled].slice(-400))); } catch {}
   for (const t of document.querySelectorAll(`.tile-slot[data-key="${CSS.escape(c.key)}"] .tile-new`)) { t.classList.add('peel'); setTimeout(() => t.remove(), 700); }
 }
+// Sky's climb profile (js/rank-climb.js): put the plane, and its red trail, at a level; with ms, fly it there from where
+// it was, so XP earned since last time (or a rank-up) is seen as the plane climbing.
+function climbPlane(lv, ms = 0) {
+  const svg = document.querySelector('#logbook svg.lbc'); if (!svg) return;
+  const G = climbGeom(+svg.dataset.n, +svg.dataset.w, +svg.dataset.h), pl = svg.querySelector('.lbc-plane'), tr = svg.querySelector('.lbc-trail'), ah = svg.querySelector('.lbc-ahead');
+  const put = (v) => { const q = G.plane(v); pl?.setAttribute('transform', q.transform); tr?.setAttribute('d', G.poly(0, q.t)); ah?.setAttribute('d', G.poly(q.t, 1)); };
+  const from = svg.__lv ?? +svg.dataset.lv; svg.__lv = lv;
+  if (!ms) { put(lv); return; }
+  const t0 = performance.now(), step = (t) => { const k = Math.min(1, (t - t0) / ms), e = 1 - (1 - k) ** 3; put(from + (lv - from) * e); if (k < 1 && svg.__lv === lv) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+const climbFrom = (xp) => Math.min(+(document.querySelector('#logbook svg.lbc')?.dataset.lv ?? 0), xpLevel(xp, RANKS.map((r) => r[0])));
 function primeSince() { // as the Collection is shown: the old XP and bar are in place before it slides up (no flash of the final number)
   let v = null; try { v = JSON.parse(localStorage.getItem('colVisit') ?? 'null'); } catch {}
   if (!lbLast || !v?.xp || lbLast.xp <= v.xp || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const xpEl = document.querySelector('#logbook .lb-xp b'), bar = document.querySelector('#logbook .lb-bar i'), span = lbLast.next ? lbLast.next - lbLast.at : 1;
   if (xpEl) xpEl.textContent = v.xp.toLocaleString();
   if (bar) { bar.style.transition = 'none'; bar.style.width = `${(Math.max(0, Math.min(1, (v.xp - lbLast.at) / span)) * 100).toFixed(1)}%`; }
+  climbPlane(climbFrom(v.xp));
 }
 function replaySince() {
   const prev = since; since = (() => { try { return JSON.parse(localStorage.getItem('colVisit') ?? 'null'); } catch { return null; } })() ?? prev;
@@ -480,6 +500,7 @@ function replaySince() {
   const gain = lbLast.xp - since.xp, xpEl = document.querySelector('#logbook .lb-xp b'), bar = document.querySelector('#logbook .lb-bar i');
   const span = lbLast.next ? lbLast.next - lbLast.at : 1, from = Math.max(0, Math.min(1, (since.xp - lbLast.at) / span));
   if (bar) { bar.style.transition = 'none'; bar.style.width = `${(from * 100).toFixed(1)}%`; void bar.offsetWidth; bar.style.transition = 'width 1.1s cubic-bezier(.3,.7,.3,1)'; bar.style.width = `${(lbLast.into * 100).toFixed(1)}%`; }
+  { const svg = document.querySelector('#logbook svg.lbc'); if (svg) { climbPlane(climbFrom(since.xp)); climbPlane(+svg.dataset.lv, 1400); } } // Sky: the plane climbs from where it was
   if (xpEl) { const t0 = performance.now(), a = since.xp, b = lbLast.xp; const step = (t) => { const k = Math.min(1, (t - t0) / 1100), e = 1 - (1 - k) ** 3; xpEl.textContent = Math.round(a + (b - a) * e).toLocaleString(); if (k < 1) requestAnimationFrame(step); }; requestAnimationFrame(step); }
   const top = document.querySelector('#logbook .lb-pic'); if (top && !top.querySelector('.lb-since')) { const t = document.createElement('span'); t.className = 'lb-since'; t.textContent = `+${gain.toLocaleString()} XP since last time`; top.append(t); setTimeout(() => t.classList.add('out'), 4200); setTimeout(() => t.remove(), 4800); }
   feel('light');
@@ -514,6 +535,7 @@ function renderLogbook() {
     // No tilt, glare or flip any more (2026-10-13, Sevaan): it’s a plain panel you read.
   }
   const el = card.querySelector('.lb-face');
+  card.classList.toggle('lb-climb', SKY); // Sky's paper rank card, ranks as flight levels (css/sky-theme.css #logbook.lb-climb)
   const span = p.rank.next ? p.rank.next - p.rank.at : 1, into = p.rank.next ? (p.xp < p.rank.at ? Math.max(0, Math.min(1, p.xp / p.rank.next)) : Math.max(0, Math.min(1, (p.xp - p.rank.at) / span))) : 1; /* a rank kept from the old curve can sit above your XP: then count from 0 toward the next rank, not a stuck 0% (2026-10-28, Sevaan) */
   const done = p.achievements.filter((a) => a.done).length;
   // Tapping the card opens Observer stats (2026-10-17, Sevaan); its own buttons (Missions ›, Remind me), the mission
@@ -526,7 +548,7 @@ function renderLogbook() {
   const H = 160, pts = rungs.map((_, i) => [37.5 + i * 75, H / 2 + 34 - i * 18]); // centred: 37.5 in from each side (2026-10-14, Sevaan)
   let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
   const stars = Array.from({ length: 30 }, (_, i) => `<circle class="lb-tw" style="--d:${(rnd() * 5).toFixed(2)}s;--t:${(2.5 + rnd() * 3).toFixed(2)}s" cx="${(rnd() * 300).toFixed(0)}" cy="${(rnd() * H).toFixed(0)}" r="${(0.5 + rnd() * 0.8).toFixed(1)}" fill="#fff2b3"/>`).join('');
-  const cur = ri - lo, ladder = `<svg class="lb-ladder" viewBox="0 0 300 ${H}" preserveAspectRatio="${innerWidth < 360 ? 'xMidYMid meet' : 'xMidYMid slice'}" aria-hidden="true">${stars}
+  const cur = ri - lo, ladder = SKY ? climbSvg({ ranks: RANKS, index: ri, into, xp: p.xp, W: Math.max(300, Math.min(440, Math.round(card.clientWidth) || 358)) }) /* Sky: the climb profile (design/rank-card B, 2026-11-20, Sevaan) */ : `<svg class="lb-ladder" viewBox="0 0 300 ${H}" preserveAspectRatio="${innerWidth < 360 ? 'xMidYMid meet' : 'xMidYMid slice'}" aria-hidden="true">${stars}
     <path d="M${pts.map((q) => q.join(' ')).join(' L')}" fill="none" stroke="#344654" stroke-dasharray="3 5"/>
     ${cur > 0 ? `<path d="M${pts.slice(0, cur + 1).map((q) => q.join(' ')).join(' L')}" fill="none" stroke="var(--gold)" stroke-width="2"/>` : ''}<!-- ranks you have passed: solid (2026-10-14) -->
     ${pts[cur + 1] ? `<path d="M${pts[cur].join(' ')} L${pts[cur][0] + (pts[cur + 1][0] - pts[cur][0]) * into} ${pts[cur][1] + (pts[cur + 1][1] - pts[cur][1]) * into}" stroke="var(--gold)" stroke-width="2"/>` : ''}
@@ -719,6 +741,22 @@ window.addEventListener('message', (e) => {
 });
 let upHold = false; // true while the viewer shows Up tonight’s list; 'again' if a redraw waited (openUpNext)
 // A card open beside the grid stays the one shown when the list is redrawn (its place in the list may move).
+// The Collection's order (and the Send cards picker's, 2026-11-20): s is the filter state, ps tonight's plan.
+const sortFor = (s, ps) => (a, b) => {
+    // Sort menu (2026-10-06): default = newest first for your collection, featured order for the field guide.
+    const newest = (c) => state.sightingsByKey.get(c.key)?.[0]?.time ?? 0;
+    if (s.sort === 'newest') return newest(b) - newest(a) || titleFor(a).localeCompare(titleFor(b));
+    if (s.sort === 'rarest') return TIERS.indexOf(b.tier) - TIERS.indexOf(a.tier) || titleFor(a).localeCompare(titleFor(b));
+    if (s.sort === 'az') return titleFor(a).localeCompare(titleFor(b));
+    if (s.view === 'owned') return newest(b) - newest(a);
+    if (s.set !== 'all' && s.set !== 'tonight') { const o = Number(hasSightings(b)) - Number(hasSightings(a)); if (o) return o; } // inside an album, the ones you have come first (round-2 playtest 2026-10-30: 6 stars lost among 709)
+    // Lead discovery with what you could catch tonight from here, soonest first (playtest 2026-10-09: it opened on a
+    // wall of blurred Legendaries), then the familiar ISS and distinctive rarities, then catalogue order.
+    if (ps.has(a.key) || ps.has(b.key)) return (ps.get(a.key) ?? Infinity) - (ps.get(b.key) ?? Infinity);
+    if (String(a.id) === '25544') return -1;
+    if (String(b.id) === '25544') return 1;
+    return TIERS.indexOf(b.tier) - TIERS.indexOf(a.tier) || (a.set ?? '').localeCompare(b.set ?? '') || (a.setNumber ?? 0) - (b.setNumber ?? 0);
+  };
 function render() {
   const k = isDocked() ? state.list[state.index]?.key : null;
   renderView();
@@ -742,21 +780,7 @@ function renderView() {
   document.body.classList.toggle('has-cards', caught > 0); document.body.classList.toggle('few-cards', caught > 0 && caught < 5); /* day one: the cards get the room, search and filters wait (UX 2026-10-28) */ // the intro banner is for an empty collection only (UX room 2026-10-12)
   $('count').textContent = caught ? `${caught.toLocaleString()} ${caught === 1 ? 'card' : 'cards'} collected. ${SKY ? 'Every one, something that flew over you.' : 'Every one, a moment under the sky.'}` : (SKY ? 'Point at a plane and tap to collect your first card.' : 'Real objects. Remarkable stories. Yours to discover.');
   const ps = planStart(); state.planKeys = new Set(ps.keys());
-  state.list = state.cards.filter(matches).sort((a, b) => {
-    // Sort menu (2026-10-06): default = newest first for your collection, featured order for the field guide.
-    const newest = (c) => state.sightingsByKey.get(c.key)?.[0]?.time ?? 0;
-    if (state.sort === 'newest') return newest(b) - newest(a) || titleFor(a).localeCompare(titleFor(b));
-    if (state.sort === 'rarest') return TIERS.indexOf(b.tier) - TIERS.indexOf(a.tier) || titleFor(a).localeCompare(titleFor(b));
-    if (state.sort === 'az') return titleFor(a).localeCompare(titleFor(b));
-    if (state.view === 'owned') return newest(b) - newest(a);
-    if (state.set !== 'all' && state.set !== 'tonight') { const o = Number(hasSightings(b)) - Number(hasSightings(a)); if (o) return o; } // inside an album, the ones you have come first (round-2 playtest 2026-10-30: 6 stars lost among 709)
-    // Lead discovery with what you could catch tonight from here, soonest first (playtest 2026-10-09: it opened on a
-    // wall of blurred Legendaries), then the familiar ISS and distinctive rarities, then catalogue order.
-    if (ps.has(a.key) || ps.has(b.key)) return (ps.get(a.key) ?? Infinity) - (ps.get(b.key) ?? Infinity);
-    if (String(a.id) === '25544') return -1;
-    if (String(b.id) === '25544') return 1;
-    return TIERS.indexOf(b.tier) - TIERS.indexOf(a.tier) || (a.set ?? '').localeCompare(b.set ?? '') || (a.setNumber ?? 0) - (b.setNumber ?? 0);
-  });
+  state.list = state.cards.filter((c) => matches(c)).sort(sortFor(state, ps));
   state.titleCount = new Map(); for (const c of state.list) state.titleCount.set(titleFor(c), (state.titleCount.get(titleFor(c)) ?? 0) + 1);
   const total = state.list.length;
   $('results').hidden = false;
@@ -1156,7 +1180,7 @@ slot.addEventListener('pointermove', (e) => {
     slot.setPointerCapture(e.pointerId);
     const card = slot.firstElementChild;
     if (card) card.dataset.swiping = '1';
-    tilt?.reset();
+    tilt?.reset(true); /* at rest at once: a settling tilt restyled and repainted the card face every frame of the drag (2026-11-20) */
   }
   if (swipe.active) { swipe.dx = dx; slideTo(dx, 0); }
 });
@@ -1165,18 +1189,19 @@ function endSwipe(e) {
   const { active, dx, t } = swipe;
   swipe = null;
   const card = slot.firstElementChild;
-  if (card) delete card.dataset.swiping;
-  if (!active) return;
+  if (!active) { if (card) delete card.dataset.swiping; return; }
   const fast = Math.abs(dx) / Math.max(1, performance.now() - t) > 0.5; // px per ms
   if (Math.abs(dx) > window.innerWidth * 0.22 || (fast && Math.abs(dx) > 40)) {
     const dir = dx < 0 ? 1 : -1;
-    slideTo(-dir * window.innerWidth, 180); sfx('page', { gap: 120 });
+    slideTo(-dir * window.innerWidth, 180); sfx('page', { gap: 120 }); // the leaving card stays still (data-swiping) as it flies off
     setTimeout(() => {
       step(dir);
+      const next = slot.firstElementChild; if (next) next.dataset.swiping = '1'; // …and so does the new one as it slides in: phone tilt (attachGyro) would otherwise lift it, repainting it every frame
       slideTo(dir * window.innerWidth * 0.6, 0); // new card comes in from the other side
       requestAnimationFrame(() => requestAnimationFrame(() => slideTo(0, 220)));
+      setTimeout(() => { if (next && !swipe?.active) delete next.dataset.swiping; }, 260); /* not if a new swipe has it already */
     }, 180);
-  } else slideTo(0, 200);
+  } else { if (card) delete card.dataset.swiping; slideTo(0, 200); }
 }
 slot.addEventListener('pointerup', endSwipe);
 slot.addEventListener('pointercancel', endSwipe);
@@ -1202,8 +1227,13 @@ $('v-preview').addEventListener('click', () => { state.preview = !state.preview;
 initSend({
   PH: (/iPad/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1) || (/Android/.test(navigator.userAgent) && !/Mobile/.test(navigator.userAgent))) ? 'tablet' : 'phone',
   sightings: () => state.raw, cardOf: (k) => state.byKey.get(k) ?? null,
-  mini: (c, list) => miniCard(c, { sightings: state.sightingsByKey.get(c.key) ?? list, ownedKeys: c.natural === 'constellation' || c.partners ? ownedKeys() : undefined, status: '' }), title: (c) => (c ? titleFor(c) : 'A card'), art: (c) => (c ? artImage(c, 'small') : null),
+  mini: (c, list) => cachedMini(c, state.sightingsByKey.get(c.key) ?? list), /* the Collection's own copies of its minis */ title: (c) => (c ? titleFor(c) : 'A card'), art: (c) => (c ? artImage(c, 'small') : null),
   changed: async () => { ingest(await allSightings()); linkConstellations(); render(); if (EMBED) window.parent.postMessage({ sc: 'sightings-changed' }, location.origin); },
+  /* the picker's list is the Collection's own filter and order (2026-11-20, Sevaan: "planes and flights tabs and search
+     stuff"); kinds are Sky's Planes / Flights tabs, the only Sky-only part (Space: no kinds, one list) */
+  list: (cards, f) => { const s = { view: 'owned', query: f.query ?? '', set: f.set ?? 'all', rarity: f.rarity ?? 'all', sort: f.sort ?? 'auto', kind: f.kind, planKeys: state.planKeys }; return cards.filter((c) => matches(c, s)).sort(sortFor(s, planStart())); },
+  ...(SKY ? { kinds: [{ id: 'plane', label: 'Planes', unit: ['plane', 'planes'] }, { id: 'flight', label: 'Flights', unit: ['flight', 'flights'] }], kindOf: cardKind } : {}),
+  ink: (bar) => moveInk(bar),
   ticket, feel, note: (name, n) => { if (EMBED) window.parent.postMessage({ sc: 'note', name: 'gift', how: name, n }, location.origin); },
   header: (on, title, sub) => { if (EMBED) window.parent.postMessage({ sc: 'stats', on, title, sub }, location.origin); },
   onClose: () => { if (sendFromSettings) { sendFromSettings = false; if (EMBED) window.parent.postMessage({ sc: 'explore', more: true }, location.origin); } },
@@ -1491,13 +1521,13 @@ addEventListener('hashchange', () => { let k = ''; try { k = decodeURIComponent(
 
 // ---------- polish (2026-10-08) ----------
 // The tabs' orange underline slides to the current tab.
-function moveInk() {
-  const bar = document.querySelector('.collection-tabs'); if (!bar) return;
+function moveInk(bar = document.querySelector('.collection-tabs')) { /* bar: the Send cards picker's Planes / Flights row too */
+  if (!bar) return;
   let ink = bar.querySelector('.tab-ink'); if (!ink) { ink = document.createElement('i'); ink.className = 'tab-ink'; bar.append(ink); }
   const on = bar.querySelector('button[aria-pressed="true"]'); if (!on) return;
   ink.style.width = `${on.offsetWidth}px`; ink.style.transform = `translateX(${on.offsetLeft}px)`;
 }
-addEventListener('resize', moveInk); setTimeout(moveInk, 300);
+addEventListener('resize', () => moveInk()); setTimeout(() => moveInk(), 300);
 // Filters, sort and search: cards that stay glide to their new place (FLIP), new ones rise in.
 {
   const flip = (fn) => {

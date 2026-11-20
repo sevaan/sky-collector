@@ -484,3 +484,27 @@ html.embedded .send-view, .send-view:focus, .send-view:focus-visible { outline: 
 @keyframes gp-cuepulse { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
 /* 320 px phones: "Something legendary · tap to turn" stays on one line (QA 2026-11-19) */
 @media (max-width: 340px) { #gift .gp-tags .tease { white-space: nowrap; letter-spacing: .04em; font-size: 12px; } }
+
+/* Send cards, By card (2026-11-20, Sevaan: "this list of cards can get really long too. Probably needs planes and flights tabs
+   and search stuff under it"): the Collection's own tab strip, search line, filter menus and count line (css/collection.css),
+   pinned to the top of the page while the cards scroll, as in the Collection. */
+.send-view .sv-page { --main-pad: 18px; } /* the pinned rows' backdrops reach the page's edges, no further */
+#send-view .collection-tabs { top: 0; justify-content: flex-start; gap: 16px; } /* two tabs side by side, not spread out like the Collection's five */
+#send-view .collection-tools { display: grid !important; top: var(--sv-tabs-h, 0px); }
+#send-view :is(.collection-tabs, .collection-tools)[hidden] { display: none !important; }
+.send-view .result-row .sv-sa { padding: 0 2px; min-height: 44px; }
+.send-view .empty { margin-top: 4px; }
+/* Every tile is a card's shape from the start, so a card filling in (or emptied far off screen) never moves the grid. */
+.sv-grid .sv-tile { aspect-ratio: 2 / 3; border: 0; background: none; overflow: visible; border-radius: calc(14px * var(--mini-s, .4)); }
+/* The pick marker sits in the picture's lower left corner, over no words (it covered airport codes and the ends of long
+   names), drawn at the same size on every card; a picked card also gets a thick ring. */
+.sv-tile .mini-face .sv-tick { position: absolute; z-index: 4; top: auto; right: auto; left: calc(6px / var(--mini-s, .4)); bottom: calc(6px / var(--mini-s, .4)); width: calc(26px / var(--mini-s, .4)); height: calc(26px / var(--mini-s, .4)); border: calc(2px / var(--mini-s, .4)) solid #fff; background: #0d223866; box-shadow: 0 0 calc(4px / var(--mini-s, .4)) #0008; box-sizing: border-box; }
+.sv-tile.on .mini-face .sv-tick { background: var(--gold); border-color: #fff; }
+.sv-tile.on .mini-face .sv-tick::after { font: 800 calc(15px / var(--mini-s, .4)) / 1 system-ui, sans-serif; color: var(--sv-tick-ink, #080f1b); }
+.sv-grid .sv-tile.on { outline: 3px solid var(--gold); outline-offset: 2px; }
+.sv-grid .sv-tile:focus-visible { outline: 2px dashed var(--gold); outline-offset: 2px; }
+/* A long list scrolls like the Collection's grid (css/collection.css .tile-slot): cards off screen skip layout and paint, and an
+   empty slot is a plain card-shaped placeholder until its card fills in. */
+.sv-grid .sv-tile { contain: strict; } /* each tile is its own box (sized by the grid and its 2:3), so a card filling in never relays the page */
+.sv-grid .sv-tile .sv-art { content-visibility: auto; } /* and a card off screen skips its paint (with the line above: 58 ms to 32 ms a frame, 600 cards at 4x CPU throttle) */
+.sv-grid .sv-tile .sv-art:empty { background: var(--panel, #0f1b2a); border-radius: inherit; }

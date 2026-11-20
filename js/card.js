@@ -1,28 +1,28 @@
 // Retro space-age cards. Text remains live; the foil follows pointer or optional phone tilt.
-import { fallWords } from './last-chance.js?v=0.1.1798';
-import { useMiles } from './units.js?v=0.1.1798';
-import { feel } from './native.js?v=0.1.1798';
-import { sfx } from './sfx.js?v=0.1.1798';
-import { cardArt } from './art.js?v=0.1.1798';
-import { TIER_INFO } from './rarity.js?v=0.1.1798';
-import { SET_BY_ID } from './sets.js?v=0.1.1798';
-import { TYPE_LABEL, orbitStats, sizeLabel, formatDate, titleCase } from './facts.js?v=0.1.1798';
-import { FLEET_ABOUT, fleetAbout, factSourceUrl, debrisOf, roleOf, ownerWord, titleFor, factFor, yearsUp, lapsPerDay, thirdStat, richText, seriesKeyOf } from './lore.js?v=0.1.1798';
-import { artFileFor } from './art-keys.js?v=0.1.1798';
-import { ART_FILES, ART_STARS } from './art-files.js?v=0.1.1798';
+import { fallWords } from './last-chance.js?v=0.1.1800';
+import { useMiles } from './units.js?v=0.1.1800';
+import { feel } from './native.js?v=0.1.1800';
+import { sfx } from './sfx.js?v=0.1.1800';
+import { cardArt } from './art.js?v=0.1.1800';
+import { TIER_INFO } from './rarity.js?v=0.1.1800';
+import { SET_BY_ID } from './sets.js?v=0.1.1800';
+import { TYPE_LABEL, orbitStats, sizeLabel, formatDate, titleCase } from './facts.js?v=0.1.1800';
+import { FLEET_ABOUT, fleetAbout, factSourceUrl, debrisOf, roleOf, ownerWord, titleFor, factFor, yearsUp, lapsPerDay, thirdStat, richText, seriesKeyOf } from './lore.js?v=0.1.1800';
+import { artFileFor } from './art-keys.js?v=0.1.1800';
+import { ART_FILES, ART_STARS } from './art-files.js?v=0.1.1800';
 /* the orbit view (and its 66 KB coastline) loads when a card first needs it (perf audit 2026-10-29) */
-let orbitP = null; const orbitMod = () => (orbitP ??= import('./orbit-view.js?v=0.1.1798'));
-import { ART_SHARED } from './art-shared.js?v=0.1.1798';
-import { ART_CREDITS } from './art-credits.js?v=0.1.1798';
-import { stampsIn, fleetLevel, fleetThresholds, sightingKeys, MOON_PHASES, moonPhaseOf } from './card-model.js?v=0.1.1798';
-import { nightsIn } from './observation.js?v=0.1.1798';
-import { CON_BY_ID, conProgress } from './constellations.js?v=0.1.1798';
-import { SHINY } from './shiny.js?v=0.1.1798';
-import { conArt, cometArt } from './con-art.js?v=0.1.1798';
-import { CON_FIGURES } from './con-figures.js?v=0.1.1798';
-import { localText } from './localize.js?v=0.1.1798';
-import { isSkyCard, skyStampInfo, skyTypeCode } from './sky-cards.js?v=0.1.1798';
-import { flightCardHtml, planeCardHtml } from './flight-card.js?v=0.1.1798';
+let orbitP = null; const orbitMod = () => (orbitP ??= import('./orbit-view.js?v=0.1.1800'));
+import { ART_SHARED } from './art-shared.js?v=0.1.1800';
+import { ART_CREDITS } from './art-credits.js?v=0.1.1800';
+import { stampsIn, fleetLevel, fleetThresholds, sightingKeys, MOON_PHASES, moonPhaseOf } from './card-model.js?v=0.1.1800';
+import { nightsIn } from './observation.js?v=0.1.1800';
+import { CON_BY_ID, conProgress } from './constellations.js?v=0.1.1800';
+import { SHINY } from './shiny.js?v=0.1.1800';
+import { conArt, cometArt } from './con-art.js?v=0.1.1800';
+import { CON_FIGURES } from './con-figures.js?v=0.1.1800';
+import { localText } from './localize.js?v=0.1.1800';
+import { isSkyCard, skyStampInfo, skyTypeCode } from './sky-cards.js?v=0.1.1800';
+import { flightCardHtml, planeCardHtml } from './flight-card.js?v=0.1.1800';
 // The animal/symbol figure belongs to the completed (gold) constellation card only (2026-10-05): a single
 // star’s card draws just the star pattern with its star marked, so the figure is a reward for finishing the set.
 // A star card’s constellation figure comes into focus as you collect the constellation’s stars (design/con-focus.html B).
@@ -176,8 +176,8 @@ function renderSkyCard(o0, opts) {
   const by = (f) => (own.length ? own.reduce((a, b) => (f(a.time, b.time) ? a : b)) : null), first = by((x, y) => x < y), last = by((x, y) => x > y);
   const stampInfo = skyStampInfo(o, sightings), caughtAt = first ? new Date(first.time) : null;
   const html = o.sky === 'flight'
-    ? flightCardHtml(o, { caughtAt, heightFt: last?.altFt, sightings: own.length, type: last?.typeCode, planeName: last?.plane?.name, eager: !opts.mini, small: !!opts.mini, stampInfo, newStamp: !!opts.newStamp })
-    : planeCardHtml(o, { caughtAt, heightFt: last?.altFt, speedKmh: last?.gsKt > 30 ? Math.round(last.gsKt * 1.852) : null, awayKm: Math.round(last?.rangeKm ?? 0), sightings: own.length, stampInfo, newStamp: !!opts.newStamp, callsign: last?.callsign, small: !!opts.mini, eager: !opts.mini, rareHere: sightings.some((x) => x.rareHere) });
+    ? flightCardHtml(o, { caughtAt, heightFt: last?.altFt, sightings: own.length, type: last?.typeCode, planeName: last?.plane?.name, eager: !opts.mini, shrunk: !!opts.mini /* the mini is the full card shrunk (2026-11-20, Sevaan: 'All mini cards need to look exactly like the big cards just shrunk down') */, stampInfo, newStamp: !!opts.newStamp })
+    : planeCardHtml(o, { caughtAt, heightFt: last?.altFt, speedKmh: last?.gsKt > 30 ? Math.round(last.gsKt * 1.852) : null, awayKm: Math.round(last?.rangeKm ?? 0), sightings: own.length, stampInfo, newStamp: !!opts.newStamp, callsign: last?.callsign, shrunk: !!opts.mini /* the mini is the full card shrunk (2026-11-20, Sevaan: 'All mini cards need to look exactly like the big cards just shrunk down') */, eager: !opts.mini, rareHere: sightings.some((x) => x.rareHere) });
   const el = document.createElement('article');
   const shinyOf = own.find((x) => x.shiny && SHINY[x.shiny])?.shiny; /* a shiny moment (js/shiny.js shinyForPlane) makes the card shiny, as a satellite's */
   el.className = `card card--sky card--${o.sky} tier-${o.tier ?? 'common'} level-${opts.forceLevel ?? stampInfo.level}${own.length || opts.preview ? '' : ' card--unseen'}${shinyOf ? ' shiny' : ''}`;
@@ -433,14 +433,16 @@ export function attachTilt(el, { scroll = false } = {}) { // scroll: let a finge
   };
   const kick = () => { if (!raf) raf = requestAnimationFrame(step); };
   const set = (px, py) => {
+    if (el.dataset.swiping) return; // a card being swiped holds still: every tilt write restyles and repaints the whole face, each frame of the drag (2026-11-20 swipe jank)
     if (reducedMotion()) { px = .5; py = .5; }
     want.x = px; want.y = py; want.o = 1; spring = FOLLOW;
     el.classList.add('active');
     kick();
   };
-  const reset = () => {
+  const reset = (now = false) => { // now: snap to rest with no settling wobble (a swipe takes the card)
     want.x = .5; want.y = .5; want.o = 0; spring = SETTLE;
     el.classList.remove('active');
+    if (now) { cancelAnimationFrame(raf); raf = 0; Object.assign(cur, want); vel.x = vel.y = vel.o = 0; write(); return; }
     kick();
   };
   const onMove = (e) => {

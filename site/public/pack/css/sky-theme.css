@@ -282,7 +282,7 @@ html.sky-cards:not(.sky-night) .collection-tabs { box-shadow:0 0 0 100vmax #eef5
 html.sky-cards:not(.sky-night) .collection-tabs button { color:#4a6178; }
 html.sky-cards:not(.sky-night) .collection-tabs button[aria-pressed="true"] { color:#0d2238; }
 html.sky-cards:not(.sky-night) .collection-tabs .tab-ink { background:var(--gold); }
-html.sky-cards:not(.sky-night) #owned-count { background:#fffdf6; color:#b42a20; box-shadow:inset 0 0 0 1px #e7dcbd; }
+html.sky-cards:not(.sky-night) #owned-count, html.sky-cards:not(.sky-night) .send-view .tab-count { background:#fffdf6; color:#b42a20; box-shadow:inset 0 0 0 1px #e7dcbd; }
 html.sky-cards:not(.sky-night) .collection-tools, html.sky-cards:not(.sky-night) .collection-tools::before { background:#eef5fb; }
 html.sky-cards:not(.sky-night) .collection-tools { box-shadow:0 10px 14px -10px rgba(13,34,56,.18); }
 html.sky-cards:not(.sky-night) .search, html.sky-cards:not(.sky-night) .collection-tools .search { background:#fffdf6; border-color:#c9b98a; color:#4a6178; }
@@ -293,7 +293,7 @@ html.sky-cards:not(.sky-night) .filters-btn[aria-expanded="true"] { border-color
 html.sky-cards:not(.sky-night) .filters-btn.active::after { background:var(--gold); }
 html.sky-cards:not(.sky-night) .filter select { background:#fffdf6; border-color:#c9b98a; color:#0d2238; }
 html.sky-cards:not(.sky-night) .filter select option { background:#fffdf6; color:#0d2238; }
-html.sky-cards:not(.sky-night) .result-row, html.sky-cards:not(.sky-night) #results { color:#23405c; }
+html.sky-cards:not(.sky-night) .result-row, html.sky-cards:not(.sky-night) #results, html.sky-cards:not(.sky-night) .sv-results { color:#23405c; }
 html.sky-cards:not(.sky-night) #reset-filters { color:#b42a20; }
 html.sky-cards:not(.sky-night) .collection-notice { background:#fffdf6; border-color:#c9b98a; color:#23405c; }
 html.sky-cards:not(.sky-night) .grid .tile-slot:empty { background:#dbe9f5; background-clip:content-box; } html.sky-cards .tile-slot:not(:empty) { background:transparent; }
@@ -733,6 +733,7 @@ body.sky-only #discover:not(.owned) .d-ticket #d-cta { color:#fff !important; }
 :is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-bar .sv-n { background:#fffdf6; border-color:#d9b65a; color:#0d2238; box-shadow:0 6px 16px rgba(13,34,56,.12); }
 :is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-bar .sv-n small { color:#4a6178; }
 :is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-bar .sv-btn { background:linear-gradient(#e8493c, #c42d22); color:#fff; } :is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-bar .sv-btn:disabled { background:#d9a19b; color:#fffdf6; }
+html.sky-cards .send-view, body.sky-only .send-view { --sv-tick-ink:#fff; } /* the picked card's tick: white on Sky's red (2026-11-20) */
 /* The tour before a place is chosen: the page's light colour behind it, not Space's night navy; Skip as a light pill */
 html:not(.sky-night) body.sky-only.day { background-color:#eef5fb; }
 html:not(.sky-night) body.sky-only.day #ob-skip.ob-exit { background:#fffdf6e6 !important; color:#0d2238 !important; border-color:#c9d6e3 !important; }
@@ -791,3 +792,77 @@ body.sky-only.day:not(.night) #tk[data-ink="ufo"] { --tk:#1f8a3a; }
 html:not(.sky-night) body.sky-only .pc-tag { background:#fffdf6 !important; box-shadow:0 8px 18px rgba(13,34,56,.2) !important; }
 html:not(.sky-night) body.sky-only .pc-tag small { color:#b42a20 !important; }
 html:not(.sky-night) body.sky-only .pc-tag b { color:#0d2238 !important; }
+
+/* Sky's rank card, the climb profile (design/rank-card/rank-options.html B, 2026-11-20, Sevaan): a cream paper card like
+   the boarding pass and spec sheet, day and night (at night the paper is dimmed and warmed so it doesn't glare). The
+   picture is js/rank-climb.js: every rank a flight level, your plane climbing. Scoped to #logbook.lb-climb, which only
+   Sky's Collection sets, so Space Collector's navy card is untouched. */
+html.sky-cards #logbook.lb-climb { --rc-paper:#fffdf6; --rc-paper2:#f6f0e0; --rc-rule:#e2d8bd; --rc-ink:#0d2238; --rc-muted:#55697d; --rc-red:#d7362b; --rc-redink:#b42a20;
+  --rc-sky:linear-gradient(180deg,#dcecf8,#f4f8f6 75%,var(--rc-paper)); --rc-cloud:#ffffffd9; --rc-shadow:0 1px 0 rgba(255,255,255,.7) inset,0 8px 22px rgba(13,34,56,.18),0 0 0 1px rgba(13,34,56,.08); }
+html.sky-cards.sky-night #logbook.lb-climb { --rc-paper:#ece2cb; --rc-paper2:#e1d5b8; --rc-rule:#cdbf9d; --rc-ink:#13263a; --rc-muted:#5b6672; --rc-red:#c8392d; --rc-redink:#a8291f;
+  --rc-sky:linear-gradient(180deg,#cfd8da,#e2dcc8 75%,var(--rc-paper)); --rc-cloud:#ffffff59; --rc-shadow:0 10px 26px rgba(0,0,0,.5),0 0 0 1px rgba(255,240,210,.12); }
+html.sky-cards #logbook.lb-climb .lb-rot { position:relative; border:0; border-radius:16px; background:var(--rc-paper); color:var(--rc-ink); box-shadow:var(--rc-shadow); }
+html.sky-cards #logbook.lb-climb .lb-rot::after { content:""; position:absolute; inset:0; z-index:4; pointer-events:none; opacity:.5; mix-blend-mode:multiply; border-radius:inherit;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 .05 0 0 0 0 .13 0 0 0 0 .22 0 0 0 .22 -.1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); } /* paper grain */
+html.sky-cards #logbook.lb-climb .lb-top { padding:12px 16px 10px; border-bottom:1px solid var(--rc-rule); color:var(--rc-ink); font:500 13px/1 'SC Label','Barlow Condensed','Arial Narrow',sans-serif; letter-spacing:.22em; align-items:center; }
+html.sky-cards #logbook.lb-climb .lb-streak { color:var(--rc-redink); }
+html.sky-cards #logbook.lb-climb .lb-remind { color:var(--rc-redink); border-color:var(--rc-redink); }
+/* the climb picture */
+html.sky-cards #logbook.lb-climb .lb-pic { position:relative; height:auto; min-height:0; background:var(--rc-sky); border-bottom:1px solid var(--rc-rule); overflow:hidden; }
+html.sky-cards #logbook.lb-climb .lbc { display:block; width:100%; filter:none; font-family:'SC Label','Barlow Condensed','Arial Narrow',sans-serif; }
+#logbook.lb-climb .lbc-clouds { fill:var(--rc-cloud); }
+#logbook.lb-climb .lbc-line { stroke:var(--rc-ink); stroke-opacity:.1; stroke-width:1; }
+#logbook.lb-climb .lbc-next .lbc-line { stroke-opacity:.35; stroke-dasharray:4 3; }
+#logbook.lb-climb .lbc-fl { font:500 8px 'IBM Plex Mono',ui-monospace,monospace; fill:var(--rc-ink); }
+#logbook.lb-climb .lbc-nm { font-size:9.5px; letter-spacing:1.2px; fill:var(--rc-ink); }
+#logbook.lb-climb .lbc-past :is(.lbc-fl, .lbc-nm) { opacity:.6; }
+#logbook.lb-climb .lbc-fut :is(.lbc-fl, .lbc-nm) { opacity:.45; }
+#logbook.lb-climb .lbc-cur :is(.lbc-fl, .lbc-nm) { fill:var(--rc-red); }
+#logbook.lb-climb .lbc-cur .lbc-nm { font-size:11px; }
+#logbook.lb-climb .lbc-dot { fill:var(--rc-red); stroke:var(--rc-red); stroke-width:1.3; } /* passed and current: filled */
+#logbook.lb-climb :is(.lbc-next, .lbc-fut) .lbc-dot { fill:var(--rc-paper); stroke:var(--rc-ink); stroke-opacity:.5; }
+#logbook.lb-climb .lbc-fut .lbc-dot { stroke-opacity:.4; } /* ranks still to come: hollow, on the dashed climb ahead */
+#logbook.lb-climb .lbc-rwy { fill:var(--rc-ink); opacity:.8; }
+#logbook.lb-climb .lbc-rwy-c { stroke:var(--rc-paper); stroke-dasharray:4 4; fill:none; }
+#logbook.lb-climb .lbc-ahead { fill:none; stroke:var(--rc-ink); stroke-width:1.5; stroke-dasharray:4 4; opacity:.4; }
+#logbook.lb-climb .lbc-trail { fill:none; stroke:var(--rc-red); stroke-width:2.6; stroke-linecap:round; }
+#logbook.lb-climb .lbc-plane path { fill:var(--rc-red); stroke:var(--rc-paper); stroke-width:1.2; paint-order:stroke; }
+#logbook.lb-climb .lbc-tag { font-size:9.5px; letter-spacing:1.3px; fill:var(--rc-red); }
+html.sky-cards #logbook.lb-climb .lb-pic .lb-more { position:absolute; right:12px; bottom:2px; top:auto !important; color:var(--rc-redink); }
+html.sky-cards #logbook.lb-climb .lb-pic .lb-week { top:0; bottom:auto; color:var(--rc-ink); }
+html.sky-cards #logbook.lb-climb .lb-since { top:34px; background:var(--rc-paper); color:var(--rc-redink); box-shadow:0 0 0 1px var(--rc-rule); }
+/* rank, XP and the bar */
+html.sky-cards #logbook.lb-climb .lb-rankrow { margin:0; padding:12px 16px 0; gap:8px; }
+html.sky-cards #logbook.lb-climb .lb-rankrow .lb-name { margin:0; font:400 25px/1 'SC Display','Russo One',Impact,sans-serif; letter-spacing:.01em; text-transform:none; background:none; color:var(--rc-ink); -webkit-text-fill-color:var(--rc-ink); animation:none; }
+html.sky-cards #logbook.lb-climb .lb-xp { color:var(--rc-muted); font:500 14px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; white-space:nowrap; }
+html.sky-cards #logbook.lb-climb .lb-rankrow .lb-xp b { font:400 25px/1 'SC Display','Russo One',Impact,sans-serif; color:var(--rc-redink); margin-right:3px; letter-spacing:0; }
+html.sky-cards #logbook.lb-climb .lb-bar { height:6px; margin:10px 16px 6px; border-radius:3px; background:var(--rc-paper2); box-shadow:inset 0 0 0 1px var(--rc-rule); }
+html.sky-cards #logbook.lb-climb .lb-bar i { min-width:6px; border-radius:3px; background:var(--rc-red); }
+html.sky-cards #logbook.lb-climb .lb-to { margin:0 16px 8px; font:500 15px/1.2 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.03em; color:var(--rc-muted); }
+html.sky-cards #logbook.lb-climb .lb-to b { color:var(--rc-ink); font-weight:500; }
+/* missions, the Sky challenge */
+html.sky-cards #logbook.lb-climb .lb-face > .lb-mission { margin:0 16px; }
+html.sky-cards #logbook.lb-climb .lb-mission { gap:10px; padding:9px 0; border-bottom:1px solid var(--rc-rule); color:var(--rc-ink); font:500 16px/1.15 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.02em; }
+html.sky-cards #logbook.lb-climb .lb-mission i { width:12px; height:12px; border:1.6px solid var(--rc-ink); opacity:.75; background:none; }
+html.sky-cards #logbook.lb-climb .lb-mission.done { color:var(--rc-muted); text-decoration-color:var(--rc-red); }
+html.sky-cards #logbook.lb-climb .lb-mission.done i { background:var(--rc-red); border-color:var(--rc-red); opacity:1; }
+html.sky-cards #logbook.lb-climb .lb-challenge i { border-radius:50%; transform:none; border-color:var(--rc-red); opacity:1; }
+html.sky-cards #logbook.lb-climb .lb-challenge small { color:var(--rc-redink); font:500 12px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.14em; }
+/* Events at the foot, on one line: EVENTS (badges) at the left, what's next at the right */
+html.sky-cards #logbook.lb-climb .lb-face > .lb-foot { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:6px 12px; margin-top:auto; padding:11px 16px 13px; border:0; }
+html.sky-cards #logbook.lb-climb.compact .lb-foot { display:none; } /* folded: Missions › opens missions and events */
+html.sky-cards #logbook.lb-climb .lb-foot .lb-head { margin:0 !important; color:var(--rc-redink); font:500 14px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.22em; text-transform:uppercase; }
+html.sky-cards #logbook.lb-climb .lb-foot .lb-head span { color:var(--rc-muted); letter-spacing:.12em; font-size:13px; }
+html.sky-cards #logbook.lb-climb .lb-foot .lb-events { gap:4px 10px; justify-content:flex-end; padding:0; }
+html.sky-cards #logbook.lb-climb .lb-foot .ui-chip { padding:0; border:0; background:none; box-shadow:none; color:var(--rc-muted); font:500 13px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; text-transform:uppercase; }
+html.sky-cards #logbook.lb-climb .lb-foot .ui-chip :is(b, .ui-chip__k) { color:inherit; font:inherit; letter-spacing:inherit; }
+html.sky-cards #logbook.lb-climb .lb-foot .ui-chip--earned { color:var(--rc-redink); }
+/* the slim day-one card (few cards, short phones): the dial on paper */
+html.sky-cards #logbook.lb-climb .lbd-name { font:400 23px/1 'SC Display','Russo One',Impact,sans-serif; text-transform:none; background:none; color:var(--rc-ink); -webkit-text-fill-color:var(--rc-ink); animation:none; }
+html.sky-cards #logbook.lb-climb .lb-dial .lb-xp b { color:var(--rc-redink); }
+html.sky-cards #logbook.lb-climb .lbd-to { color:var(--rc-muted); } html.sky-cards #logbook.lb-climb .lbd-to b { color:var(--rc-ink); }
+html.sky-cards #logbook.lb-climb .lbd-more, html.sky-cards #logbook.lb-climb .lb-more { color:var(--rc-redink); }
+html.sky-cards #logbook.lb-climb .lbd-ring circle[stroke="#24344a"] { stroke:var(--rc-paper2); }
+html.sky-cards #logbook.lb-climb .lbd-ring circle[stroke="var(--gold)"] { stroke:var(--rc-red); }
+html.sky-cards #logbook.lb-climb .lbd-ring g[stroke] { stroke:var(--rc-rule); }
+html.sky-cards #logbook.lb-climb .lbd-ring b { color:var(--rc-ink); } html.sky-cards #logbook.lb-climb .lbd-ring b small { color:var(--rc-muted); }

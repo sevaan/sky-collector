@@ -1,18 +1,18 @@
 // Canvas renderer for the sky view. Gnomonic (pinhole camera) projection around where the phone points.
-import { extinction } from './sky-limit.js?v=0.1.1798';
+import { extinction } from './sky-limit.js?v=0.1.1800';
 // Two themes: 'glass' (ink, cream and orange celestial chart) and 'night' (all red, keeps dark adaptation).
-import { pmTime } from './perf-meter.js?v=0.1.1798';
-import { createMilkyGL } from './milkyway-gl.js?v=0.1.1798';
+import { pmTime } from './perf-meter.js?v=0.1.1800';
+import { createMilkyGL } from './milkyway-gl.js?v=0.1.1800';
 
-import { enuFromAzEl, compassPoint } from './orbit.js?v=0.1.1798';
-import { createCloudGL } from './clouds-gl.js?v=0.1.1798';
+import { enuFromAzEl, compassPoint } from './orbit.js?v=0.1.1800';
+import { createCloudGL } from './clouds-gl.js?v=0.1.1800';
 // Cloud colours by light: sunlit tops, shadowed bellies, and the horizon haze they melt into (0–1 RGB).
 const CLOUD_LIGHT = {
   day: { lit: [1, 1, 1], shade: [0.62, 0.68, 0.77], haze: [0.82, 0.87, 0.93] },
   dusk: { lit: [1, 0.8, 0.68], shade: [0.36, 0.33, 0.42], haze: [0.62, 0.5, 0.52] },
   night: { lit: [0.22, 0.25, 0.31], shade: [0.1, 0.12, 0.16], haze: [0.14, 0.15, 0.2] },
 };
-import { TIER_INFO } from './rarity.js?v=0.1.1798';
+import { TIER_INFO } from './rarity.js?v=0.1.1800';
 // The accent for canvas drawing: the page's --gold (orange in Space Collector, red in Sky Collector), read once (2026-11-17).
 const ACCENT = (() => { try { return getComputedStyle(document.documentElement).getPropertyValue('--gold').trim() || '#fa8127'; } catch { return '#fa8127'; } })();
 
@@ -1194,7 +1194,7 @@ export class SkyView {
   // so labels never sit on the map. Things within 15° of each other share one spoke with a count. Stars are dots only.
   // A wedge shows the way the top of the phone points. Fades in as you look down.
   drawFeet(items) {
-    const a = this.feetA ?? 0; if (a < 0.02) return;
+    const a = this.feetA ?? 0; this.feetHits = []; if (a < 0.02) return;
     const ctx = this.ctx, t = this.theme, night = t === THEMES.night;
     const EL = -77, R = 13, n = this.project([0, 0, -1]); if (!n) return;
     const at = (az, el = EL) => this.project(enuFromAzEl(az, el));
@@ -1239,13 +1239,24 @@ export class SkyView {
     // Dots on the map.
     for (const g of list) {
       const q = sky(g.az, g.el); if (!q) continue; const col = colOf(g);
-      if (g.kind === 'sat') { this.drawIcon(g.icon ?? 'sat', q.x, q.y, 10, col); if (g.isNew) { ctx.strokeStyle = orange; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(q.x, q.y, 9, 0, Math.PI * 2); ctx.stroke(); } }
+      if (g.kind === 'plane') {
+        /* Sky Collector's planes (2026-11-20, main.js skyFeetItems): "E without the keyline" as in the sky (drawPlanes), in
+           its airline colour lifted for the dark map, nose along its track; caught or not highlighted, fainter; new and named, ringed. */
+        const look = night ? null : this.planeLook?.(g.plane), u = g.track != null ? dir(g.track) : null;
+        ctx.save(); ctx.translate(q.x, q.y); if (u) ctx.rotate(Math.atan2(u[1], u[0]));
+        ctx.globalAlpha = a * ((look?.caught && !g.isNew) || g.quiet ? 0.55 : 1);
+        this.drawIcon(g.icon ?? 'plane', 0, 0, g.icon === 'heli' ? 13 : 12, look ? look.light : g.isNew ? orange : col);
+        ctx.restore();
+        if (g.isNew && g.label) { ctx.strokeStyle = orange; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(q.x, q.y, 11, 0, Math.PI * 2); ctx.stroke(); } /* ringed like a new satellite, but only the few with a name: a new player's sky is all new, and 24 rings were a tangle */
+        (this.feetHits ??= []).push({ x: q.x, y: q.y, id: g.id });
+      }
+      else if (g.kind === 'sat') { this.drawIcon(g.icon ?? 'sat', q.x, q.y, 10, col); if (g.isNew) { ctx.strokeStyle = orange; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(q.x, q.y, 9, 0, Math.PI * 2); ctx.stroke(); } }
       else if (g.kind === 'moon') { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(q.x, q.y, 5, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#0a1424'; ctx.beginPath(); ctx.arc(q.x + 2.2, q.y - 1.3, 4.4, 0, Math.PI * 2); ctx.fill(); }
       else { const big = g.kind !== 'star'; if (big) this.glow(q.x, q.y, g.kind === 'sun' ? 12 : 8, g.kind === 'sun' ? [255, 180, 107] : [255, 242, 179], 0.3); ctx.fillStyle = col; ctx.globalAlpha = a * (big ? 1 : 0.7); ctx.beginPath(); ctx.arc(q.x, q.y, g.kind === 'sun' ? 4.5 : big ? 3 : 1.8, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = a; }
     }
     // Spokes and names: everything but stars, neighbours within 15° sharing one spoke.
     const rank = (g) => (g.isNew ? 0 : g.kind === 'moon' || g.kind === 'planet' ? 1 : g.kind === 'sun' ? 2 : 3);
-    const named = list.filter((g) => g.kind !== 'star').sort((x, y) => x.az - y.az), groups = [];
+    const named = list.filter((g) => g.kind !== 'star' && g.label !== false) /* planes: only a few get a name (main.js skyFeetItems) */.sort((x, y) => x.az - y.az), groups = [];
     for (const g of named) { const last = groups[groups.length - 1]; if (last && g.az - last.az1 <= 15) { last.m.push(g); last.az1 = g.az; } else groups.push({ m: [g], az1: g.az }); }
     if (groups.length > 1) { const f = groups[0], l = groups[groups.length - 1]; if (f.m[0].az + 360 - l.az1 <= 15) { l.m.push(...f.m); groups.shift(); } }
     const mem = (this.feetMem ??= new Map()), boxes = [];
@@ -1255,7 +1266,7 @@ export class SkyView {
       const m = gr.m.sort((x, y) => rank(x) - rank(y) || y.el - x.el), top = m[0];
       const az = Math.atan2(m.reduce((s2, g) => s2 + Math.sin(g.az * Math.PI / 180), 0), m.reduce((s2, g) => s2 + Math.cos(g.az * Math.PI / 180), 0)) * 180 / Math.PI;
       const allNew = m.length > 1 && m.every((g) => g.isNew);
-      const name = m.length === 1 ? top.name.replace(/^The /, '').toUpperCase() : allNew ? `${m.length} NEW SATELLITES` : `${top.name.replace(/^The /, '').toUpperCase()} +${m.length - 1}`;
+      const name = m.length === 1 ? top.name.replace(/^The /, '').toUpperCase() : allNew ? `${m.length} NEW ${top.kind === 'plane' ? 'PLANES' : 'SATELLITES'}` : `${top.name.replace(/^The /, '').toUpperCase()} +${m.length - 1}`;
       const sub = allNew ? `around ${Math.round(top.el)}° up` : `${Math.round(top.el)}° up`;
       const col = colOf(top), u = dir(az); if (!u) continue;
       const lm = mem.get(name) ?? {};

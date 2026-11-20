@@ -1,7 +1,7 @@
 // Phone orientation -> where the back of the phone is pointing in the sky.
 // Produces a camera basis in local East-North-Up: right, up (screen edges) and back (view direction).
-import { declination } from './declination.js?v=0.1.1798';
-import { freshFuse, fuseStep, FUSE } from './heading-fuse.js?v=0.1.1798';
+import { declination } from './declination.js?v=0.1.1800';
+import { freshFuse, fuseStep, FUSE } from './heading-fuse.js?v=0.1.1800';
 
 const RAD = Math.PI / 180;
 

@@ -5,13 +5,13 @@
 //  Everything scales with rarity (Legendary dims the sky, shockwave, held breath, slow flip, fanfare).
 // Waits use timers, not animation.finished, so a paused tab can never freeze the sequence.
 
-import { sfx, loadSfx } from './sfx.js?v=0.1.1798';
-import { audioCtx } from './audio-ctx.js?v=0.1.1798';
-import { TIER_INFO } from './rarity.js?v=0.1.1798';
-import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1798';
-import { applyBack } from './card-backs.js?v=0.1.1798';
-import { addStarfield } from './starfield.js?v=0.1.1798';
-import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1798';
+import { sfx, loadSfx } from './sfx.js?v=0.1.1800';
+import { audioCtx } from './audio-ctx.js?v=0.1.1800';
+import { TIER_INFO } from './rarity.js?v=0.1.1800';
+import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1800';
+import { applyBack } from './card-backs.js?v=0.1.1800';
+import { addStarfield } from './starfield.js?v=0.1.1800';
+import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1800';
 
 const FX = TIER_FX; /* one rarity table for every card moment (js/card-moment.js, 2026-11-11) */
 const NIGHT_MILESTONES = [3, 5, 10, 25, 50, 100, 200, 365], STAMP_MILESTONES = [5, 10, 25, 50, 100, 200, 300, 400];
@@ -597,7 +597,7 @@ function syncPager() { $('rv-news').querySelectorAll('.rv-pager button').forEach
   d.addEventListener('pointermove', (e) => { if (!on) return; dx = e.clientX - x0; const dy = e.clientY - y0;
     if (!dragging) { if (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy)) { if (Math.abs(dy) > 12) on = false; return; } // vertical: the card's tilt and the flick up keep it
       dragging = true; deckTook = true; slot.classList.add('dk-drag'); try { d.setPointerCapture(e.pointerId); } catch {}
-      deck.items[k].card.dataset.swiping = '1'; deck.items[k].tilt?.reset(); } // while the deck has the finger the card stops tilting and can't count a tap (js/card.js reads data-swiping)
+      deck.items[k].card.dataset.swiping = '1'; deck.items[k].tilt?.reset(true); } /* at rest at once (2026-11-20): a settling tilt repainted the card face every frame of the drag */ // while the deck has the finger the card stops tilting and can't count a tap (js/card.js reads data-swiping)
     slot.style.transform = `translateX(${dx}px) rotate(${dx / 40}deg)`;
     const back = slots()[1 - k], p = Math.min(1, Math.abs(dx) / 140); if (back) back.style.filter = `brightness(${(back.classList.contains('sealed') ? .8 : .55) + p * .3})`; }); // the card behind brightens as you pull
   const end = () => { if (!on) return; on = false; if (!dragging) return; slot.classList.remove('dk-drag'); const back = slots()[1 - k]; if (back) back.style.filter = '';
