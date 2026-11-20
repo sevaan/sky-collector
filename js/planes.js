@@ -3,24 +3,27 @@
 // on the website, because adsb.lol doesn’t allow browser requests directly. The airline comes from the callsign's prefix.
 // No DOM here. Positions are extrapolated between fetches using ground speed, track and climb rate.
 
-import { tagOf } from './sky-secrets.js?v=0.1.1795';
-import { GOV_OPS, BIZ_OPS, AIRLINE_CS, MIL_TYPES, isGovOrMil, opOf, anonId } from './plane-privacy.js?v=0.1.1795';
+import { tagOf } from './sky-secrets.js?v=0.1.1798';
+import { GOV_OPS, BIZ_OPS, AIRLINE_CS, MIL_TYPES, isGovOrMil, opOf, anonId } from './plane-privacy.js?v=0.1.1798';
 export { GOV_OPS, isGovOrMil, anonId };
-import { SERVER } from './server.js?v=0.1.1795';
-import { plugin } from './native.js?v=0.1.1795';
-import { lookupRoute } from './routes.js?v=0.1.1795';
-import { typeName } from './sky-type-names.js?v=0.1.1795';
-import { noteFeed } from './sky-local.js?v=0.1.1795';
-import { planeSet } from './sky-sets.js?v=0.1.1795';
-import { isProp } from './sky-props.js?v=0.1.1795';
-import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1795';
-import { DEFAULTS, clampDial, freshFeed, pickSource, nextGap, afterAnswer, feedDown, maxAgeS, easeLeft } from './plane-feed.js?v=0.1.1795';
+import { SERVER } from './server.js?v=0.1.1798';
+import { plugin } from './native.js?v=0.1.1798';
+import { lookupRoute } from './routes.js?v=0.1.1798';
+import { typeName } from './sky-type-names.js?v=0.1.1798';
+import { noteFeed } from './sky-local.js?v=0.1.1798';
+import { planeSet } from './sky-sets.js?v=0.1.1798';
+import { isProp } from './sky-props.js?v=0.1.1798';
+import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1798';
+import { DEFAULTS, clampDial, freshFeed, pickSource, nextGap, afterAnswer, feedDown, maxAgeS, easeLeft } from './plane-feed.js?v=0.1.1798';
 // Empty = feature off. localStorage 'planeRelay' overrides it (testing). Our server's /planes (adsb.lol only) once it's
 // deployed; until then the Val Town relay (relay/handler.ts).
 // Sky Collector (2026-11-15): Space Collector's Val Town relay is turned away by adsb.lol now, so the website needs Sky
 // Collector's own relay: relay/planes.ts on Val Town (val sevaan/sky-collector-planes, 2026-11-15). Only the website
 // needs it; the phone apps will ask the plane feed directly, like Space Collector's apps.
-const SKY_RELAY = 'https://sevaan--a2362084e15311f195931607ee4eb77e.web.val.run';
+/* Since 2026-11-19 the website asks Sky's own relay too (server/planes-relay.js on Cloud Run, FlyItalyADSB under its
+   commercial terms, one cached answer per 1-degree square); the Val Town relay (relay/planes.ts, adsb.lol + adsb.fi, whose
+   terms are non-commercial) is retired. */
+const SKY_RELAY = 'https://api-ybymfwdlgq-uc.a.run.app/planes';
 // A list, tried in order each poll: the first that answers wins. Add a second relay here (another host) as a fallback.
 const RELAYS = SERVER ? [`${SERVER}/planes`] : [SKY_RELAY];
 const POLL_MS = 10000;   // the website: every 10 s, as before
@@ -327,7 +330,7 @@ const AIRLINES = { ACA: 'Air Canada', ROU: 'Air Canada Rouge', JZA: 'Jazz (Air C
 // Every ICAO airline code -> name (js/airlines.js, built by scripts/build-airlines.mjs), loaded once, lazily.
 let airlineTable = null, airlineLoad = null;
 export function loadAirlines() {
-  return (airlineLoad ??= import('./airlines.js?v=0.1.1795').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
+  return (airlineLoad ??= import('./airlines.js?v=0.1.1798').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
 }
 export function airlineName(callsign) { return /^[A-Z]{3}\d/.test(callsign ?? '') ? airlineFor(callsign, null) : ''; }
 function airlineFor(callsign, a) {

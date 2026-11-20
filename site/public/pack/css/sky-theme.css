@@ -781,3 +781,13 @@ html:not(.sky-night) body.sky-only #plus-kit .kt .kt-widget { background:#fffdf6
 html:not(.sky-night) body.sky-only #plus-kit .kt .kt-widget b { color:#0d2238; }
 html:not(.sky-night) body.sky-only #plus-kit .kt .kt-widget i { color:#b42a20; }
 html:not(.sky-night) body.sky-only #plus-kit .kt .kt-widget small { color:#4a6178; }
+
+/* By day the secret's and the UFO's ticket (#tk) and the patch coin's tag are paper like Explore's other tickets
+   (2026-11-19, Sevaan: "These dark ui pieces should be light here"); night keeps them dark */
+body.sky-only.day:not(.night) #tk { --tk-bg:#fffdf6f2; box-shadow:0 8px 24px rgba(13,34,56,.22); }
+body.sky-only.day:not(.night) #tk #tk-n { color:#0d2238 !important; text-shadow:none !important; }
+body.sky-only.day:not(.night) #tk[data-ink="secret"] { --tk:#b07a12; } /* the gold label, dark enough to read on paper */
+body.sky-only.day:not(.night) #tk[data-ink="ufo"] { --tk:#1f8a3a; }
+html:not(.sky-night) body.sky-only .pc-tag { background:#fffdf6 !important; box-shadow:0 8px 18px rgba(13,34,56,.2) !important; }
+html:not(.sky-night) body.sky-only .pc-tag small { color:#b42a20 !important; }
+html:not(.sky-night) body.sky-only .pc-tag b { color:#0d2238 !important; }
