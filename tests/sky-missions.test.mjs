@@ -35,6 +35,7 @@ const BUSY = { sky: 'busy', soonSky: 'busy', total: 900, hours: 40, days: 6, per
   flagsSoon: { airline: 120, high: 30, low: 50, wide: 4, prop: 14, heli: 2, giant: 0, regional: 40, biz: 5, mil: 1, boeing: 40, airbus: 50, oldtype: 5, newtype: 30, up: 30, down: 30, overhead: 4, rise: 20, routed: 90, abroad: 15, cont: 3, far: 12, ocean: 2, short: 40, landing: 30 },
   byHour: { 12: 20, 13: 20, 14: 20, 15: 20 } };
 const QUIET = { sky: 'quiet', soonSky: 'quiet', total: 60, hours: 30, days: 6, perHour: 2.5, soonOpen: 6, soonN: 15, soonRate: 2.5,
+  types7: new Map([['B738', 15], ['A320', 15], ['B789', 4], ['B77W', 3], ['A333', 3], ['B38M', 10], ['A21N', 10]]),
   flags7: { airline: 50, high: 45, wide: 10, boeing: 20, airbus: 20, routed: 30, abroad: 10, far: 25, ocean: 6, newtype: 8 }, flagsSoon: { airline: 12, high: 11, wide: 3, boeing: 5, airbus: 5, routed: 10, abroad: 3, far: 7, ocean: 2, newtype: 2 } };
 const dealFor = (night, st, opts = {}) => { const can = P.skyPossible(st, { owned: true, hour: 12, dark: true, golden: true, nearLevel: true, newAirline: true, ...opts }); return { can, deal: P.skyDeal(night, { possible: can, st, hz: st.soonSky, owned: true, nearLevel: true, dark: true, ...opts }) }; };
 
@@ -81,7 +82,7 @@ test('dealt missions fit the hour and the last 7 days', () => {
   assert.equal(P.skyPossible({ ...BUSY, soonOpen: 0 }, { hour: 13 }).has('military'), false);
   assert.ok(P.skyPossible(BUSY, { hour: 13 }).has('military'));
   // days 2 and 3 (no local log yet): only what any sky gives
-  assert.deepEqual([...P.skyPossible({ sky: 'new' }, { owned: true })].sort(), ['again', 'airlines3', 'boeingairbus', 'families2', 'high', 'newflights2', 'three10']);
+  assert.deepEqual([...P.skyPossible({ sky: 'new', perHour: 5 }, { owned: true })].sort(), ['again', 'airlines3', 'boeingairbus', 'families2', 'high', 'newflights2', 'three10']);
 });
 
 test('after day one: one easy, one medium, one stretch', () => {
@@ -91,7 +92,7 @@ test('after day one: one easy, one medium, one stretch', () => {
     const [e, m, s] = deal.ids.map((k) => P.tierOf(k.split(':')[0], BUSY));
     assert.equal(e, 'easy', deal.ids); assert.equal(m, 'medium', deal.ids); assert.equal(s, 'stretch', deal.ids);
   }
-  const { deal } = dealFor('24500', { sky: 'new', soonSky: 'new' }); // day 2 at a new place
+  const { deal } = dealFor('24500', { sky: 'new', soonSky: 'new', perHour: 5 }); // day 2 at a new place
   assert.deepEqual(deal.ids.map((k) => P.tierOf(k.split(':')[0])), ['easy', 'medium', 'stretch']);
 });
 
@@ -113,7 +114,7 @@ test('no repeats: not yesterday’s missions, unless the pool is too small', () 
 test('the week’s theme: one this sky can’t give is swapped, from the same 7-day flags', () => {
   const L = P.WEEK_THEMES.map((t) => t.id);
   let ws = new Date(2026, 10, 23).getTime(); while (P.weekThemeFor(ws, {}).id !== 'sky-heavy') ws += 7 * 864e5;
-  const noWide = { ...QUIET, flags7: { ...QUIET.flags7, wide: 0 } };
+  const noWide = { ...QUIET, flags7: { ...QUIET.flags7, wide: 0 }, types7: new Map([...QUIET.types7].filter(([t]) => !/^(B78|B77|A33)/.test(t))) };
   const id = P.chooseSkyWeek(ws, {}, noWide, { owned: true, dark: true, makers: 5 });
   assert.equal(id, 'sky-longhaul'); /* Propeller week, next in the rotation, can't be given here either (no propellers) */
   assert.equal(P.chooseSkyWeek(ws, {}, QUIET, { owned: true, dark: true, makers: 5 }), 'sky-heavy');
