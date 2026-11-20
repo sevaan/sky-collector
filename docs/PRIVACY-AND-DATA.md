@@ -12,13 +12,17 @@ Sevaan has a domain and address for Sky.
 
 ## Before a store release, in order
 
-1. **The plane feed is not cleared for a store app.** adsb.fi's terms are personal, non-commercial; the test relay
-   leans on it because adsb.lol refuses the relay's host (500 requests a day per address without a key). A store build
-   must use adsb.lol with a key (feeder or sponsor) through Sky's own relay, with a paid fallback (AeroDataBox or
-   FlightAware Standard), and must not use adsb.fi or airplanes.live. Sevaan: email info@adsb.lol to confirm a store
-   app with a paid tier is fine on a keyed plan. Needs the backend decision (sprint Z).
-2. **Phones must not ask adsb.lol directly.** At one request every 10 seconds a phone uses its 500 a day in under
-   90 minutes. This applies to Space Collector's app today as well.
+1. **Where the planes come from (as built, 2026-11-19).** In the apps each phone asks adsb.lol itself
+   (api.adsb.lol/v2/point, around the phone's rounded position), under adsb.lol's ODbL 1.0 terms and its limit of
+   about 500 requests a day for each address (no key; adsb.lol allows phones, and permission isn't required). How
+   often it asks adapts to what's near (js/plane-feed.js); when adsb.lol answers 429, its count runs low
+   (`switchAt`, 25 left) or it fails, the phone hands over to Sky's own relay for the rest of the day
+   (server/planes-relay.js on Sky's Cloud Run, which asks Fly Italy ADSB under its commercial-use terms and caches
+   briefly). The website, which can't reach adsb.lol from a browser, uses the relay only (the test relay on Val Town
+   still reads adsb.lol and adsb.fi; adsb.fi's terms are personal, non-commercial, so the website should move to Sky's
+   relay before any paid tier). A paid fallback (AeroDataBox or FlightAware) remains an option for the relay.
+2. *(Removed 2026-11-19: "Phones must not ask adsb.lol directly." The apps do, within adsb.lol's per-address limit,
+   and hand over to the relay before it runs out.)*
 3. **Attribution screen** (Settings → Credits): "Aircraft positions: adsb.lol contributors (ODbL 1.0). Routes: Virtual
    Radar Server standing-data (CC0). Photos and logos: Wikimedia Commons, credited on each card. Weather: Open-Meteo
    (or MET Norway through our server)."

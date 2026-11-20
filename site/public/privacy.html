@@ -35,6 +35,7 @@
   <p>Sky Collector needs to know roughly where you are to show the planes in your sky. Your position is rounded before it leaves your device and is used for two things only:</p>
   <ul>
     <li><b>Planes near you.</b> The page asks Sky Collector's plane relay (a small program on <a href="https://www.val.town/">Val Town</a>) for aircraft within about 75 km of a position rounded to about 1 km. The relay rounds it again, to about 10 km, and asks the community flight-tracking networks <a href="https://adsb.lol/">adsb.lol</a> and <a href="https://adsb.fi/">adsb.fi</a>. The relay keeps nothing but a few seconds of the answer.</li>
+    <li><b>Planes near you, in the apps.</b> The iPhone and Android apps ask <a href="https://adsb.lol/">adsb.lol</a> directly from your phone for aircraft around a position rounded to about 1 km, and switch to Sky Collector's own relay (which asks <a href="https://flyitalyadsb.com/">Fly Italy ADSB</a>) if adsb.lol is busy or your phone has used its daily allowance. Aircraft data: adsb.lol contributors, under the <a href="https://opendatacommons.org/licenses/odbl/1-0/">Open Database License (ODbL) 1.0</a>.</li>
     <li><b>The weather.</b> The forecast for your area comes from <a href="https://open-meteo.com/">Open-Meteo</a>, asked with a position rounded to about 1 km.</li>
   </ul>
   <p>Like any website, each of those services sees your internet address when it is asked. You can choose a place by hand in Settings, and the game works without your location (it shows an example sky).</p>
