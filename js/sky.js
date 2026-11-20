@@ -1,18 +1,18 @@
 // Canvas renderer for the sky view. Gnomonic (pinhole camera) projection around where the phone points.
-import { extinction } from './sky-limit.js?v=0.1.1801';
+import { extinction } from './sky-limit.js?v=0.1.1802';
 // Two themes: 'glass' (ink, cream and orange celestial chart) and 'night' (all red, keeps dark adaptation).
-import { pmTime } from './perf-meter.js?v=0.1.1801';
-import { createMilkyGL } from './milkyway-gl.js?v=0.1.1801';
+import { pmTime } from './perf-meter.js?v=0.1.1802';
+import { createMilkyGL } from './milkyway-gl.js?v=0.1.1802';
 
-import { enuFromAzEl, compassPoint } from './orbit.js?v=0.1.1801';
-import { createCloudGL } from './clouds-gl.js?v=0.1.1801';
+import { enuFromAzEl, compassPoint } from './orbit.js?v=0.1.1802';
+import { createCloudGL } from './clouds-gl.js?v=0.1.1802';
 // Cloud colours by light: sunlit tops, shadowed bellies, and the horizon haze they melt into (0–1 RGB).
 const CLOUD_LIGHT = {
   day: { lit: [1, 1, 1], shade: [0.62, 0.68, 0.77], haze: [0.82, 0.87, 0.93] },
   dusk: { lit: [1, 0.8, 0.68], shade: [0.36, 0.33, 0.42], haze: [0.62, 0.5, 0.52] },
   night: { lit: [0.22, 0.25, 0.31], shade: [0.1, 0.12, 0.16], haze: [0.14, 0.15, 0.2] },
 };
-import { TIER_INFO } from './rarity.js?v=0.1.1801';
+import { TIER_INFO } from './rarity.js?v=0.1.1802';
 // The accent for canvas drawing: the page's --gold (orange in Space Collector, red in Sky Collector), read once (2026-11-17).
 const ACCENT = (() => { try { return getComputedStyle(document.documentElement).getPropertyValue('--gold').trim() || '#fa8127'; } catch { return '#fa8127'; } })();
 
@@ -580,7 +580,8 @@ export class SkyView {
       ctx.fillStyle = t.star(a); ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI * 2); ctx.fill();
     }
     // Constellation lines under the ground too, always on (2026-10-13, Sevaan): the far side of the sky as a star chart.
-    if (sky?.lines) {
+    // Not in Sky Collector (planesFirst; playtest 2026-11-20 #6: "VELA" on the ground read as leftover art): stars only there.
+    if (sky?.lines && !this.planesFirst) {
       ctx.globalAlpha = 0.7 * k; ctx.strokeStyle = t.constLine; ctx.lineWidth = 0.75;
       for (const seg of sky.lines) { let run = []; for (const e of seg) { if (e[2] < 0.01) run.push(e); else { if (run.length > 1) this.path(run); run = []; } } if (run.length > 1) this.path(run); }
       for (const c of sky.constellations ?? []) {

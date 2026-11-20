@@ -4,7 +4,8 @@
 //                the card's tier never changes.
 //   How busy your sky is: aircraft per open hour → 'quiet' (under 4), 'steady', 'busy' (over 20), which sizes missions;
 //                and which missions a plane seen here in the last 7 days could complete.
-// localStorage 'skyLocal' = { d: { 'yyyy-m-d': { h: openHours, t: { TYPE: n }, f: { flag: n } } } }. No DOM.
+// localStorage 'skyLocal' = { d: { 'yyyy-m-d': { h: openHours, t: { TYPE: n }, f: { flag: n }, oh: [clock hours open],
+// fh: { hour: { flag: n } } } } }: oh and fh (2026-11-20) say WHEN things fly here, so missions fit the hour. No DOM.
 const KEY = 'skyLocal', DAYS = 30, MIN_SEEN = 200, RARE_SHARE = 0.01;
 const dayKey = (t = Date.now()) => { const d = new Date(t); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
 const dayTime = (k) => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d).getTime(); };
@@ -23,23 +24,31 @@ function load(fresh = false) {
 const save = (now = false) => { dirty = true; if (!now && Date.now() - saved < 15000) return; saved = Date.now(); dirty = false; try { localStorage.setItem(KEY, JSON.stringify(cache)); } catch {} };
 // Newly seen aircraft (each once a day): [{ type, flags: ['heli', 'wide', 'prop', 'low', 'high', ...] }]; newHour: this
 // clock hour hadn't been counted as open yet today.
-export function noteLocal(planes, newHour) {
+export function noteLocal(planes, newHour, hour = new Date().getHours()) {
   if (!planes?.length && !newHour) return;
   const c = load(), day = (c.d[dayKey()] ??= { h: 0, t: {}, f: {} });
-  if (newHour) day.h++;
-  for (const p of planes ?? []) { const t = String(p.type || '?').toUpperCase(); day.t[t] = (day.t[t] ?? 0) + 1; for (const f of p.flags ?? []) day.f[f] = (day.f[f] ?? 0) + 1; }
+  if (newHour) { day.h++; (day.oh ??= []).includes(hour) || day.oh.push(hour); }
+  for (const p of planes ?? []) { const t = String(p.type || '?').toUpperCase(); day.t[t] = (day.t[t] ?? 0) + 1; for (const f of p.flags ?? []) { day.f[f] = (day.f[f] ?? 0) + 1; const fh = ((day.fh ??= {})[hour] ??= {}); fh[f] = (fh[f] ?? 0) + 1; } }
   save();
 }
-// { total, hours, byType: Map, flags7: { flag: n } (last 7 days), perHour, sky: 'new' | 'quiet' | 'steady' | 'busy' }
+// The next few clock hours (from now, not past midnight: the day's missions end then) are what missions are dealt for.
+export const SOON_HOURS = 4;
+const soonHours = (now) => { const h = new Date(now).getHours(); return Array.from({ length: Math.min(SOON_HOURS, 24 - h) }, (_, i) => h + i); };
+// { total, hours, byType: Map, flags7: { flag: n } (last 7 days), perHour, sky: 'new' | 'quiet' | 'steady' | 'busy',
+//   flagsSoon: { flag: n } seen in the coming hours of the clock on the last 7 days, soonOpen: how many of those hours the
+//   app was open (0: nothing known about this time of day yet) }
 export function localStats(now = Date.now()) {
-  const c = load(true), byType = new Map(), flags7 = {}; let total = 0, hours = 0; const week = now - 7 * 86400e3;
+  const c = load(true), byType = new Map(), flags7 = {}, flagsSoon = {}, soon = soonHours(now); let total = 0, hours = 0, soonOpen = 0; const week = now - 7 * 86400e3;
   for (const [k, d] of Object.entries(c.d)) {
     hours += d.h ?? 0;
     for (const [t, n] of Object.entries(d.t ?? {})) { byType.set(t, (byType.get(t) ?? 0) + n); total += n; }
-    if (dayTime(k) >= week - 86400e3) for (const [f, n] of Object.entries(d.f ?? {})) flags7[f] = (flags7[f] ?? 0) + n;
+    if (dayTime(k) >= week - 86400e3) {
+      for (const [f, n] of Object.entries(d.f ?? {})) flags7[f] = (flags7[f] ?? 0) + n;
+      for (const h of soon) { if (d.oh?.includes(h)) soonOpen++; for (const [f, n] of Object.entries(d.fh?.[h] ?? {})) flagsSoon[f] = (flagsSoon[f] ?? 0) + n; }
+    }
   }
   const perHour = hours ? total / hours : 0;
-  return { total, hours, byType, flags7, perHour, sky: hours < 3 ? 'new' : perHour < 4 ? 'quiet' : perHour > 20 ? 'busy' : 'steady' };
+  return { total, hours, byType, flags7, flagsSoon, soonOpen, perHour, sky: hours < 3 ? 'new' : perHour < 4 ? 'quiet' : perHour > 20 ? 'busy' : 'steady' };
 }
 // Is this type unusual where you are? Never before enough has been seen, and never for a plane with no type code.
 export function rareHere(type, stats = localStats()) {

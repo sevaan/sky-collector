@@ -1,11 +1,11 @@
 // Player progress from the sighting log: XP and observer rank, tonight’s three missions, a weekly streak and
 // achievements. Everything is derived from the saved sightings (nothing extra is stored), so it can’t drift.
 // info(cardKey) -> { tier, type, owner, launch, natural, con } | null. No DOM.
-import { isProp } from './sky-props.js?v=0.1.1801';
-import { SKY_PATCHES_MORE, freshSky2, noteSky2 } from './sky-patches.js?v=0.1.1801';
-import { nightKey, useCalendarDays } from './observation.js?v=0.1.1801';
-import { fleetThresholds } from './card-model.js?v=0.1.1801';
-import { distRound as distText } from './units.js?v=0.1.1801';
+import { isProp } from './sky-props.js?v=0.1.1802';
+import { SKY_PATCHES_MORE, freshSky2, noteSky2 } from './sky-patches.js?v=0.1.1802';
+import { nightKey, useCalendarDays } from './observation.js?v=0.1.1802';
+import { fleetThresholds } from './card-model.js?v=0.1.1802';
+import { distRound as distText } from './units.js?v=0.1.1802';
 
 // A longer climb (2026-10-12, playtest room: three ranks on night 1, Mission Control in about two weeks), with two
 // prestige ranks past Mission Control. Nobody drops a rank they had on the old curve (rankFloor below).
@@ -173,6 +173,25 @@ export const SKY_MISSIONS = [
   { id: 'again', text: 'Catch a plane you’ve caught before', done: (n) => n.some((s) => !s.first) },
 ];
 const ALWAYS = new Set(['newflights2', 'airlines3', 'again', 'high']);
+/* Which Sky missions can be dealt now (main.js skyDealMissions; docs/DESIGN-LOOP.md §3). st: js/sky-local.js localStats().
+   A mission is dealt only if a plane that would do it has flown here lately AT THIS TIME OF DAY (playtest 2026-11-20 #11:
+   "Catch a helicopter" and low-plane goals dealt at 1 AM with two airliners up): the coming hours on the last 7 days
+   (st.flagsSoon) once the app has been open at those hours; before that, a plain hour rule: at night (10 PM to 6 AM)
+   no helicopters, propellers or low planes, which hardly fly then. Space Collector's rule is the same idea from its
+   side: only missions tonight's passes can give (main.js dealMissions). */
+export const NIGHT_ONLY_NOT = ['heli', 'prop', 'low', 'bands'];
+export function skyPossible(st, { owned = false, hour = new Date().getHours() } = {}) {
+  const can = new Set(['newflights2', 'families2']);
+  if (owned) can.add('again');
+  if (!st || st.sky === 'new') return can;
+  const known = (st.soonOpen ?? 0) >= 2, f = known ? st.flagsSoon ?? {} : st.flags7 ?? {}, night = hour >= 22 || hour < 6;
+  if (f.wide) can.add('wide'); if (f.heli) can.add('heli'); if (f.prop) can.add('prop'); if (f.high) can.add('high'); if (f.low) can.add('low');
+  if (f.high && f.low) can.add('bands');
+  if (f.airline) { can.add('airlines3'); can.add('short'); can.add('far'); can.add('abroad'); if (f.wide) can.add('ocean'); }
+  if (st.total >= 200) { can.add('rarehere'); can.add('rarenew'); }
+  if (!known && night) for (const id of NIGHT_ONLY_NOT) can.delete(id);
+  return can;
+}
 export const SKY_STARTER = [
   { id: 'firstcard', text: 'Collect your first card', done: (n) => n.some((s) => s.first) },
   { id: 'firstflight', text: 'Catch a plane on its way somewhere', done: (n) => n.some(firstFlight) },
