@@ -65,7 +65,7 @@ export async function open(eng = 'webkit', o = {}) {
   p.on('pageerror', (e) => { if (!/setPointerCapture|NotFoundError|InvalidPointerId|object can not be found here/.test(e.message)) errs.push('PAGEERROR ' + e.message.slice(0, 200)); });
   if (o.wx) await routeWx(p, o.wx, o.at);
   await p.route(/adsb|api\.adsb|val\.run\/.*plane|adsbdb/, (r) => r.abort());
-  if (SKY) { const shift = (o.at ? new Date(o.at).getTime() : Date.now()) - Date.now(); await p.route(/web\.val\.run/, (r) => r.fulfill({ status: 200, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify({ ...FEED, now: Date.now() + shift }) })); }
+  if (SKY) { const shift = (o.at ? new Date(o.at).getTime() : Date.now()) - Date.now(); await p.route(/web\.val\.run|a\.run\.app\/planes/, (r) => r.fulfill({ status: 200, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: JSON.stringify({ ...FEED, now: Date.now() + shift }) })); }
   let cdp = null; if (eng === 'chromium') { cdp = await ctx.newCDPSession(p); await cdp.send('Performance.enable'); }
   const W = (ms) => p.waitForTimeout(ms);
   const hud = () => p.waitForFunction(() => document.body.classList.contains('hud-ready'), null, { timeout: 90000 });

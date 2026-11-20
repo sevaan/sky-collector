@@ -8,15 +8,19 @@
 const KEY = 'skyLocal', DAYS = 30, MIN_SEEN = 200, RARE_SHARE = 0.01;
 const dayKey = (t = Date.now()) => { const d = new Date(t); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
 const dayTime = (k) => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d).getTime(); };
-let cache = null, saved = 0;
-function load() {
-  if (cache) return cache;
+let cache = null, saved = 0, dirty = false, readAt = 0;
+/* fresh: a reader (localStats) takes what another page saved since (playtest 2026-11-20: the Collection's frame loaded
+   its copy once, before the first tally was saved, and its Find said "Keep Sky Collector open" all session). Never over
+   this page's own tallies that aren't saved yet, and at most every few seconds. */
+function load(fresh = false) {
+  if (cache && !(fresh && !dirty && Date.now() - readAt > 3000)) return cache;
+  readAt = Date.now();
   try { cache = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch { cache = null; }
   if (!cache || typeof cache.d !== 'object') cache = { d: {} };
   const cut = Date.now() - DAYS * 86400e3; for (const k of Object.keys(cache.d)) if (!(dayTime(k) >= cut)) delete cache.d[k];
   return cache;
 }
-const save = (now = false) => { if (!now && Date.now() - saved < 15000) return; saved = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(cache)); } catch {} };
+const save = (now = false) => { dirty = true; if (!now && Date.now() - saved < 15000) return; saved = Date.now(); dirty = false; try { localStorage.setItem(KEY, JSON.stringify(cache)); } catch {} };
 // Newly seen aircraft (each once a day): [{ type, flags: ['heli', 'wide', 'prop', 'low', 'high', ...] }]; newHour: this
 // clock hour hadn't been counted as open yet today.
 export function noteLocal(planes, newHour) {
@@ -28,7 +32,7 @@ export function noteLocal(planes, newHour) {
 }
 // { total, hours, byType: Map, flags7: { flag: n } (last 7 days), perHour, sky: 'new' | 'quiet' | 'steady' | 'busy' }
 export function localStats(now = Date.now()) {
-  const c = load(), byType = new Map(), flags7 = {}; let total = 0, hours = 0; const week = now - 7 * 86400e3;
+  const c = load(true), byType = new Map(), flags7 = {}; let total = 0, hours = 0; const week = now - 7 * 86400e3;
   for (const [k, d] of Object.entries(c.d)) {
     hours += d.h ?? 0;
     for (const [t, n] of Object.entries(d.t ?? {})) { byType.set(t, (byType.get(t) ?? 0) + n); total += n; }
