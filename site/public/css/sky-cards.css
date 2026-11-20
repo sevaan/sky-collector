@@ -727,3 +727,10 @@ html.sky-cards .collection-tabs { gap:16px; }
 .sct-lvl i { font:400 11px/1 'SC Display','Russo One',sans-serif; font-style:normal; }
 .sct-lvl em { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); } /* the word is for screen readers; the metal says it */
 .fc--mini .sct-lvl { --lvl:#b8793e; } .fc--mini .sct-lvl--silver { --lvl:#aab4c0; } .fc--mini .sct-lvl--gold { --lvl:#e2b53c; }
+
+/* Mini cards are the full card shrunk (2026-11-20, Sevaan: "All mini cards need to look exactly like the big cards just
+   shrunk down"): Space's .mini-face draws the card at 280 x 420 px (10 px to the em) and scales it to the tile. The level
+   medal is sized in the card's own units there, so it stays readable after the scale. */
+.mini-face .fc { --fc-u:10px; }
+.mini-face .fc .sct-lvl { min-width:4.4em; height:4.4em; border-radius:2.2em; top:.9em; right:.9em; padding:0 .7em; border-width:.25em; }
+.mini-face .fc .sct-lvl i { font-size:2.7em; }

@@ -176,8 +176,8 @@ function renderSkyCard(o0, opts) {
   const by = (f) => (own.length ? own.reduce((a, b) => (f(a.time, b.time) ? a : b)) : null), first = by((x, y) => x < y), last = by((x, y) => x > y);
   const stampInfo = skyStampInfo(o, sightings), caughtAt = first ? new Date(first.time) : null;
   const html = o.sky === 'flight'
-    ? flightCardHtml(o, { caughtAt, heightFt: last?.altFt, sightings: own.length, type: last?.typeCode, planeName: last?.plane?.name, eager: !opts.mini, small: !!opts.mini, stampInfo, newStamp: !!opts.newStamp })
-    : planeCardHtml(o, { caughtAt, heightFt: last?.altFt, speedKmh: last?.gsKt > 30 ? Math.round(last.gsKt * 1.852) : null, awayKm: Math.round(last?.rangeKm ?? 0), sightings: own.length, stampInfo, newStamp: !!opts.newStamp, callsign: last?.callsign, small: !!opts.mini, eager: !opts.mini, rareHere: sightings.some((x) => x.rareHere) });
+    ? flightCardHtml(o, { caughtAt, heightFt: last?.altFt, sightings: own.length, type: last?.typeCode, planeName: last?.plane?.name, eager: !opts.mini, shrunk: !!opts.mini /* the mini is the full card shrunk (2026-11-20, Sevaan: 'All mini cards need to look exactly like the big cards just shrunk down') */, stampInfo, newStamp: !!opts.newStamp })
+    : planeCardHtml(o, { caughtAt, heightFt: last?.altFt, speedKmh: last?.gsKt > 30 ? Math.round(last.gsKt * 1.852) : null, awayKm: Math.round(last?.rangeKm ?? 0), sightings: own.length, stampInfo, newStamp: !!opts.newStamp, callsign: last?.callsign, shrunk: !!opts.mini /* the mini is the full card shrunk (2026-11-20, Sevaan: 'All mini cards need to look exactly like the big cards just shrunk down') */, eager: !opts.mini, rareHere: sightings.some((x) => x.rareHere) });
   const el = document.createElement('article');
   const shinyOf = own.find((x) => x.shiny && SHINY[x.shiny])?.shiny; /* a shiny moment (js/shiny.js shinyForPlane) makes the card shiny, as a satellite's */
   el.className = `card card--sky card--${o.sky} tier-${o.tier ?? 'common'} level-${opts.forceLevel ?? stampInfo.level}${own.length || opts.preview ? '' : ' card--unseen'}${shinyOf ? ' shiny' : ''}`;
@@ -433,14 +433,16 @@ export function attachTilt(el, { scroll = false } = {}) { // scroll: let a finge
   };
   const kick = () => { if (!raf) raf = requestAnimationFrame(step); };
   const set = (px, py) => {
+    if (el.dataset.swiping) return; // a card being swiped holds still: every tilt write restyles and repaints the whole face, each frame of the drag (2026-11-20 swipe jank)
     if (reducedMotion()) { px = .5; py = .5; }
     want.x = px; want.y = py; want.o = 1; spring = FOLLOW;
     el.classList.add('active');
     kick();
   };
-  const reset = () => {
+  const reset = (now = false) => { // now: snap to rest with no settling wobble (a swipe takes the card)
     want.x = .5; want.y = .5; want.o = 0; spring = SETTLE;
     el.classList.remove('active');
+    if (now) { cancelAnimationFrame(raf); raf = 0; Object.assign(cur, want); vel.x = vel.y = vel.o = 0; write(); return; }
     kick();
   };
   const onMove = (e) => {
