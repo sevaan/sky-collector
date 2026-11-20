@@ -1,43 +1,43 @@
-import { pullToClose } from './pull-close.js?v=0.1.1786';
-import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1786';
-import { computeStats, statsHtml } from './stats.js?v=0.1.1786';
-import { nightKey } from './observation.js?v=0.1.1786';
-import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1786';
-import { sfx } from './sfx.js?v=0.1.1786';
-import { expandFacts } from './catalog-facts.js?v=0.1.1786';
-import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned, addSecretArt } from './patches.js?v=0.1.1786';
-import { registerSkySecrets } from './sky-secrets.js?v=0.1.1786';
-import { SKY_PATCH_ART } from './sky-patches.js?v=0.1.1786';
-import { registerSkyStories } from './sky-stories.js?v=0.1.1786';
-import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1786';
-import { ticket } from './toast.js?v=0.1.1786';
-import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1786';
-import { satGlobe } from './sat-globe.js?v=0.1.1786';
-import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1786';
-import { cardArt } from './art.js?v=0.1.1786';
-import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1786';
-import { applyBack } from './card-backs.js?v=0.1.1786';
-import { localStats } from './sky-local.js?v=0.1.1786';
-import { retier } from './flights.js?v=0.1.1786';
-import { SETS, assignSets, albumGoals, albumList, useSets, goalsOf } from './sets.js?v=0.1.1786';
-import { SKY_ALBUM_SETS, FLIGHT_SETS } from './sky-sets.js?v=0.1.1786';
+import { pullToClose } from './pull-close.js?v=0.1.1787';
+import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1787';
+import { computeStats, statsHtml } from './stats.js?v=0.1.1787';
+import { nightKey } from './observation.js?v=0.1.1787';
+import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1787';
+import { sfx } from './sfx.js?v=0.1.1787';
+import { expandFacts } from './catalog-facts.js?v=0.1.1787';
+import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned, addSecretArt } from './patches.js?v=0.1.1787';
+import { registerSkySecrets } from './sky-secrets.js?v=0.1.1787';
+import { SKY_PATCH_ART } from './sky-patches.js?v=0.1.1787';
+import { registerSkyStories } from './sky-stories.js?v=0.1.1787';
+import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1787';
+import { ticket } from './toast.js?v=0.1.1787';
+import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1787';
+import { satGlobe } from './sat-globe.js?v=0.1.1787';
+import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1787';
+import { cardArt } from './art.js?v=0.1.1787';
+import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1787';
+import { applyBack } from './card-backs.js?v=0.1.1787';
+import { localStats } from './sky-local.js?v=0.1.1787';
+import { retier } from './flights.js?v=0.1.1787';
+import { SETS, assignSets, albumGoals, albumList, useSets, goalsOf } from './sets.js?v=0.1.1787';
+import { SKY_ALBUM_SETS, FLIGHT_SETS } from './sky-sets.js?v=0.1.1787';
 const FLIGHT_SET_IDS = new Set(FLIGHT_SETS.map((s) => s.id));
-import { skyCatalogue } from './sky-catalogue.js?v=0.1.1786';
-import { skyCardPhotoUrl, glyphSvg } from './flight-card.js?v=0.1.1786';
-import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1786';
-import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1786';
-import { STORIES } from './stories.js?v=0.1.1786';
-import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1786';
-import { conArt } from './con-art.js?v=0.1.1786';
-import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1786';
-import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1786';
-import { shareCardEl } from './share-card.js?v=0.1.1786';
-import { forgetSighting } from './cloud-backup.js?v=0.1.1786';
-import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1786';
-import { allSightings, deleteSighting } from './store.js?v=0.1.1786';
-import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1786';
-import { SECRET_PATCHES, NOT_SECRET, hasPatch } from './secrets.js?v=0.1.1786';
-import { localText } from './localize.js?v=0.1.1786';
+import { skyCatalogue } from './sky-catalogue.js?v=0.1.1787';
+import { skyCardPhotoUrl, glyphSvg } from './flight-card.js?v=0.1.1787';
+import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1787';
+import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1787';
+import { STORIES } from './stories.js?v=0.1.1787';
+import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1787';
+import { conArt } from './con-art.js?v=0.1.1787';
+import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1787';
+import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1787';
+import { shareCardEl } from './share-card.js?v=0.1.1787';
+import { forgetSighting } from './cloud-backup.js?v=0.1.1787';
+import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1787';
+import { allSightings, deleteSighting } from './store.js?v=0.1.1787';
+import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1787';
+import { SECRET_PATCHES, NOT_SECRET, hasPatch } from './secrets.js?v=0.1.1787';
+import { localText } from './localize.js?v=0.1.1787';
 // Sky Collector (Milestone 1.5): the same Collection, with plane cards from your catches and no satellite catalogue.
 const SKY = (() => { try { return !!window.parent?.__skyOnly; } catch { return false; } })() || /[?&]sky\b/.test(location.search);
 if (SKY) { /* night follows the game's own switch (html.sky-night, set where Explore decides day and night) */
@@ -160,10 +160,16 @@ async function boot() {
 }
 
 // A search word matches the start of a word, so "iss" finds the ISS and not every "missile" in a fact (playtest 2026-11-10).
+/* Sky Collector (2026-11-19, Sevaan: "the mine tab should be split into Planes and Flights"): Mine is two tabs, Planes
+   (the aircraft types you've caught) and Flights (the boarding passes). Both are view 'owned'; state.kind picks which. */
+const cardKind = (c) => (String(c?.key ?? '').startsWith('F:') ? 'flight' : 'plane');
+const ownedOf = (kind) => state.cards.filter((c) => hasSightings(c) && (!SKY || cardKind(c) === kind));
+if (SKY) { state.kind = 'plane'; $('tab-owned-word').textContent = 'Planes'; $('tab-flights').hidden = false; }
 const wordHit = (h, w) => !w || new RegExp(`(^|[^a-z0-9])${w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`).test(h);
 function matches(c) {
   if (state.query && c.story && !hasSightings(c)) return false; // searching can’t find a story you haven’t found
   if (state.view === 'owned' && !hasSightings(c)) return false;
+  if (SKY && state.view === 'owned' && cardKind(c) !== state.kind) return false; /* Planes or Flights */
   if (state.view === 'find') { if (!state.query) return true; const h = `${titleFor(c)} ${c.name} ${c.id} ${c.cospar ?? ''} ${c.type ?? ''} ${SETS.find((s) => s.id === c.set)?.name ?? ''}`.toLowerCase(); return state.query.split(/\s+/).every((w) => wordHit(h, w)); }
   if (state.set === 'tonight') { if (!state.planKeys?.has(c.key)) return false; } else if (state.set !== 'all' && c.set !== state.set) return false;
   if (state.rarity !== 'all' && c.tier !== state.rarity) return false;
@@ -721,7 +727,7 @@ let skipLbOnce = false; /* the background rebuild draws the rank card as its own
 function renderView() {
   if (upHold) { upHold = 'again'; return; } // the viewer is showing Up tonight’s own list: redraw once it closes (QA 2026-10-16)
   if (skipLbOnce) skipLbOnce = false; else renderLogbook(); markFilters(); // every tab, Find too (iPhone 14 playtest 2026-10-30: the dot stayed on after an album)
-  { const n = state.cards.filter(hasSightings).length.toLocaleString(); if ($('owned-count').textContent !== n) $('owned-count').textContent = n; } // on every tab (round-2 playtest 2026-10-30: Mine said 20 under a 21-card header on Patches)
+  { const n = (SKY ? ownedOf('plane') : state.cards.filter(hasSightings)).length.toLocaleString(); if ($('owned-count').textContent !== n) $('owned-count').textContent = n; if (SKY) $('flights-count').textContent = ownedOf('flight').length.toLocaleString(); } // on every tab (round-2 playtest 2026-10-30: Mine said 20 under a 21-card header on Patches)
   $('grid').classList.toggle('find-mode', state.view === 'find');
   if (state.view === 'find') { renderAlbumHead(); /* clears an album's header (iPhone 14 playtest 2026-10-30: The Wanderers sat over Find results) */ $('patch-wall').hidden = true; $('grid').hidden = false; document.body.classList.remove('patches-view', 'albums-view'); renderFind(); return; }
   renderAlbumHead();
@@ -729,9 +735,8 @@ function renderView() {
   $('patch-wall').hidden = state.view !== 'patches'; $('grid').hidden = state.view === 'patches';
   if (state.view === 'patches') { $('reset-filters').hidden = true; renderPatches(); return; } // Mine’s filters don’t apply here (playtest room 2026-10-11)
   document.body.classList.toggle('albums-view', state.view === 'albums');
-  if (state.view === 'albums') { const caught = state.cards.filter(hasSightings).length; $('owned-count').textContent = caught.toLocaleString(); renderAlbums(); return; }
+  if (state.view === 'albums') { renderAlbums(); return; } /* the tab counts are set above, on every tab */
   const caught = state.cards.filter(hasSightings).length;
-  $('owned-count').textContent = caught.toLocaleString();
   document.body.classList.toggle('has-cards', caught > 0); document.body.classList.toggle('few-cards', caught > 0 && caught < 5); /* day one: the cards get the room, search and filters wait (UX 2026-10-28) */ // the intro banner is for an empty collection only (UX room 2026-10-12)
   $('count').textContent = caught ? `${caught.toLocaleString()} ${caught === 1 ? 'card' : 'cards'} collected. ${SKY ? 'Every one, something that flew over you.' : 'Every one, a moment under the sky.'}` : 'Real objects. Remarkable stories. Yours to discover.';
   const ps = planStart(); state.planKeys = new Set(ps.keys());
@@ -753,7 +758,7 @@ function renderView() {
   state.titleCount = new Map(); for (const c of state.list) state.titleCount.set(titleFor(c), (state.titleCount.get(titleFor(c)) ?? 0) + 1);
   const total = state.list.length;
   $('results').hidden = false;
-  $('results').textContent = `${total.toLocaleString()} ${total === 1 ? 'card' : 'cards'}${state.view === 'owned' ? ' in your collection' : SKY ? ' to collect' : ' in the field guide'}`;
+  $('results').textContent = `${total.toLocaleString()} ${SKY && state.view === 'owned' ? (state.kind === 'flight' ? (total === 1 ? 'flight' : 'flights') : (total === 1 ? 'plane' : 'planes')) : total === 1 ? 'card' : 'cards'}${state.view === 'owned' ? ' in your collection' : SKY ? ' to collect' : ' in the field guide'}`;
   markFilters();
   $('reset-filters').hidden = state.view === 'patches' || !state.query && state.set === 'all' && state.rarity === 'all' && (state.sort ?? 'auto') === 'auto';
   observer.disconnect(); recycler.disconnect(); buildQ.clear();
@@ -849,7 +854,8 @@ function setView(view) {
   state.view = view; document.body.dataset.view = view; // CSS: the rank ladder shows on Mine only
   if (changed && state.query && view !== 'albums') { state.query = ''; $('search').value = ''; } // a Find search doesn’t follow you to Mine (Android playtest 2026-10-20)
   if (changed) { for (const el of [$('grid'), $('patch-wall')]) { el.classList.remove('swap'); void el.offsetWidth; el.classList.add('swap'); } cascadeLeft = 16; }
-  $('tab-owned').setAttribute('aria-pressed', String(view === 'owned'));
+  $('tab-owned').setAttribute('aria-pressed', String(view === 'owned' && (!SKY || state.kind === 'plane')));
+  $('tab-flights').setAttribute('aria-pressed', String(view === 'owned' && SKY && state.kind === 'flight'));
   $('tab-discover').setAttribute('aria-pressed', String(view === 'find'));
   $('tab-albums').setAttribute('aria-pressed', String(view === 'albums' || view === 'discover')); // Discover has no tab now (2026-10-11, Sevaan): it opens from Albums, so Albums stays lit
   $('tab-patches').setAttribute('aria-pressed', String(view === 'patches'));
@@ -867,7 +873,15 @@ function resetFilters() {
 }
 $('filters-btn').addEventListener('click', () => { const b = $('filters-btn'), open = b.getAttribute('aria-expanded') !== 'true'; b.setAttribute('aria-expanded', String(open)); $('filter-row').classList.toggle('open', open); });
 function markFilters() { return $('filters-btn').classList.toggle('active', state.set !== 'all' || state.rarity !== 'all' || (state.sort ?? 'auto') !== 'auto'); } // a dot when a filter is on
-$('tab-owned').addEventListener('click', () => { feel('select'); setView('owned'); });
+$('tab-owned').addEventListener('click', () => { feel('select'); setKind('plane'); });
+$('tab-flights').addEventListener('click', () => { feel('select'); setKind('flight'); });
+/* Planes / Flights (Sky): the same Mine view with the other kind; switching between them is a tab change */
+function setKind(kind) {
+  if (!SKY) return setView('owned');
+  const same = state.view === 'owned' && state.kind === kind; state.kind = kind;
+  if (same) { scrollTo({ top: 0, behavior: 'smooth' }); return; }
+  if (state.view === 'owned') { state.view = ''; } setView('owned');
+}
 $('tab-discover').addEventListener('click', () => { feel('select'); setView('find'); });
 $('tab-albums').addEventListener('click', () => { feel('select'); resetFilters(); setView('albums'); });
 $('reset-filters').addEventListener('click', resetFilters);
@@ -1319,6 +1333,7 @@ function openKey(key) {
     // Collection) lands on Mine (2026-10-17, Sevaan). Opened from Albums yourself, you go back to Albums as before.
     if (want === 'discover' && state.view !== 'discover') returnView = 'owned';
     // Deep links to an earned card belong in Mine, even after browsing an album.
+    if (SKY && want === 'owned') { const k = String(key).startsWith('F:') ? 'flight' : 'plane'; if (state.kind !== k) { state.kind = k; if (state.view === 'owned') state.view = ''; } } /* the card's own tab, Planes or Flights */
     if (state.view !== want) setView(want);
     if (state.query || state.set !== 'all' || state.rarity !== 'all') resetFilters(); // a search left in Find doesn't shrink the list to 1 / 1 (iOS playtest 2026-10-20)
     let i = state.list.findIndex((c) => c.key === key);

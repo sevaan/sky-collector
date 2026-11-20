@@ -80,19 +80,6 @@
 .fc-sky--big .fc-glyph { width:58%; }
 .fc-sky-mark { position:absolute; left:.25em; bottom:-.12em; font:400 5.2em/1 'SC Display','Russo One',sans-serif; letter-spacing:-.02em; color:transparent; -webkit-text-stroke:.022em rgba(255,255,255,.75); }
 .fc-sky-ring { position:absolute; left:50%; top:50%; width:72%; aspect-ratio:1; transform:translate(-50%,-50%); border-radius:50%; border:.1em dashed rgba(255,255,255,.6); box-shadow:0 0 0 2.4em rgba(255,255,255,.07), inset 0 0 0 2.4em rgba(255,255,255,.07); }
-/* The route: a boarding-pass strip under the photo, perforated along its top */
-.fc-route { position:relative; display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:.6em; padding:.55em .8em .5em; background:linear-gradient(180deg,#132d49,#0d2238); color:#fffdf6; }
-.fc-route::before { content:''; position:absolute; left:0; right:0; top:-.22em; height:.44em; background:radial-gradient(circle at 50% 50%, #0d2238 .14em, transparent .16em) 0 0 / .62em .44em repeat-x; }
-.fc-route-end { display:flex; flex-direction:column; gap:.12em; min-width:0; }
-.fc-route-end--b { align-items:flex-end; text-align:right; }
-.fc-route-end b { font:400 1.55em/1 'SC Display','Russo One',sans-serif; letter-spacing:.02em; }
-.fc-route-end small { font:500 .74em/1.1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.1em; text-transform:uppercase; color:#c3d3e2; max-width:8em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.fc-route-mid { position:relative; height:2.6em; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; }
-.fc-route-mid > svg:first-child { position:absolute; left:0; right:0; top:.1em; width:100%; height:1.7em; overflow:visible; }
-.fc-route-arc { fill:none; stroke:var(--orange); stroke-width:1.6; stroke-dasharray:4 4; vector-effect:non-scaling-stroke; }
-.fc-route-a { fill:#fffdf6; } .fc-route-b { fill:var(--orange); }
-.fc-route-plane { position:absolute; left:50%; top:-.05em; width:1.15em; height:1.15em; transform:translateX(-50%) rotate(90deg); fill:#fffdf6; }
-.fc-route-mid small { font:500 .7em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; text-transform:uppercase; color:#c3d3e2; white-space:nowrap; }
 
 /* Title, identity, stats, fact, footer: Space Collector's hierarchy in navy ink */
 .fc-name { margin:.62em 0 0; display:flex; flex-direction:column; font:400 2.5em/.98 'SC Display','Russo One',sans-serif; letter-spacing:-.02em; text-transform:uppercase; color:var(--ink); overflow-wrap:anywhere; }
@@ -102,24 +89,8 @@
   -webkit-background-clip:text; background-clip:text; color:transparent; -webkit-text-fill-color:transparent; }
 .fc--gilt .fc-name i, .fc--epic .fc-name i { -webkit-text-fill-color:var(--orange-ink); }
 .fc--legendary .fc-name > span { background-image:linear-gradient(105deg, #2a1d00 0 44%, #7a5200 47.5%, #b88a2a 50%, #7a5200 52.5%, #2a1d00 56% 100%); }
-.fc-id { display:flex; justify-content:space-between; align-items:center; gap:.7em; margin-top:.45em; padding-top:.42em; border-top:.08em solid var(--rule);
-  font:500 1.02em/1.2 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.06em; color:var(--ink2); }
-.fc-id-l { min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.fc-id-r { flex:none; border-left:.12em solid var(--ink); padding-left:.7em; letter-spacing:.12em; white-space:nowrap; color:var(--ink); }
-.fc-stats { display:grid; grid-template-columns:1.2fr 1.05fr 1.05fr .7fr; margin-top:.5em; padding:.5em 0 .55em; border-top:.08em solid var(--rule); border-bottom:.08em solid var(--rule); }
-.fc-stat { display:flex; flex-direction:column; gap:.35em; padding:0 .55em; border-right:.08em solid var(--rule); min-width:0; }
-.fc-stat:first-child { padding-left:0; } .fc-stat:last-child { border-right:0; padding-right:0; }
-.fc-stat-l { font:600 .74em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; color:var(--muted); padding-bottom:.35em; border-bottom:.1em solid var(--rule); white-space:nowrap; }
-.fc-stat-v { font:400 1.42em/1.05 'SC Display','Russo One',sans-serif; letter-spacing:-.03em; white-space:nowrap; color:var(--ink); }
-.fc-stat-v small { font:500 .56em 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.02em; margin-left:.15em; color:var(--ink2); }
 .fc-fact { margin:.62em 0 .2em; border-left:.22em solid var(--orange); padding:.05em 0 .05em .85em; font:400 .9em/1.45 Georgia,'Times New Roman',serif; letter-spacing:.02em; color:var(--ink2); }
 .fc-fact b { color:var(--ink); }
-.fc-foot { display:flex; align-items:center; gap:.6em; margin-top:auto; padding-top:.5em; border-top:.08em solid var(--rule); font:500 .8em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.11em; color:var(--ink); }
-.fc-check { width:1.9em; height:1.9em; flex:none; border-radius:50%; border:.1em solid var(--ink); display:grid; place-items:center; font:600 1.05em/1 Arial,sans-serif; }
-.fc-foot-t { white-space:nowrap; }
-.fc-foot-n { border-left:.1em solid var(--rule); padding-left:.6em; white-space:nowrap; flex:1; }
-.fc-brand { display:flex; flex-direction:column; gap:.25em; border-left:.1em solid var(--rule); padding:.15em 0 .15em .75em; font:400 1.05em/1 'SC Display','Russo One',sans-serif; letter-spacing:-.03em; white-space:nowrap; }
-.fc-brand small { font:500 .74em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; color:var(--muted); }
 
 /* Over the print: foil by rarity, a gloss coat that slides against the tilt, a soft glare under the finger */
 .fc-foil, .fc-coat, .fc-glare { position:absolute; inset:0; border-radius:1.45em; pointer-events:none; }
@@ -149,6 +120,139 @@
   .fc-rot { transform:none; }
   .fc--legendary .fc-face, .fc--legendary .fc-foil { animation:none; }
 }
+
+
+/* ===== Boarding pass × spec sheet (2026-11-19, card spike, design/card-spike/combo-pass-spec.html, Sevaan's pick) =====
+   Same frame, size, corners and tier metal as before; only the print inside changes. FLIGHT = a boarding pass in solid
+   navy ink (.fc-in--bp): the logo header, a smaller photo, giant airport codes, four fields, a fact, a tear line and the
+   stub. PLANE = a spec sheet on cream drafting paper with a blue grid and blue drafting ink (.fc-in--ss). Both use the
+   card unit (em = 1/28 of the card's width). The printed double rule shows only when a level gives it its metal. */
+.fc { --blue:#1f4f8f; --grid:rgba(31,95,191,.13); --redrule:#d7362b; }
+.fc-in--bp, .fc-in--ss { padding:0; }
+.fc-in--bp::before, .fc-in--ss::before { display:none; }
+.fc--lvl .fc-in--bp::before, .fc--lvl .fc-in--ss::before { display:block; z-index:4; }
+.fc-rot90 { transform:rotate(90deg); }
+.fc-in--bp .fc-fact, .fc-in--ss .fc-fact { border-left-color:var(--redrule); font-size:.86em; line-height:1.38; letter-spacing:0; padding:.05em 0 .05em .7em; overflow:hidden; flex:none; }
+.fc-in--bp .fc-pic::after, .fc-in--ss .fc-pic::after { box-shadow:inset 0 .3em .6em rgba(13,34,56,.22); }
+
+/* -- the pass -- */
+.bp-hd { display:flex; align-items:center; justify-content:space-between; gap:.8em; padding:.8em 1em .65em; border-bottom:.12em solid var(--ink); flex:none; }
+.bp-logo { height:3em; width:auto; max-width:16em; min-width:0; object-fit:contain; object-position:left center; }
+.bp-wm { font:400 2.4em/1 'SC Display','Russo One',sans-serif; letter-spacing:-.01em; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
+.bp-k { flex:none; text-align:right; font:500 .8em/1.15 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.16em; color:var(--muted); white-space:nowrap; }
+.bp-k b { display:block; font:400 1.35em/1.1 'SC Display','Russo One',sans-serif; letter-spacing:.02em; color:var(--ink); }
+.bp-ph { flex:1 1 0; min-height:8em; margin:.65em .8em 0; border-radius:.4em; }
+.bp-reg { position:absolute; z-index:3; left:.55em; bottom:.45em; padding:.32em .55em .28em; border-radius:.35em; background:#1f7a50; color:#fffdf6; font:600 .7em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.14em; }
+.bp-codes { display:grid; grid-template-columns:1fr auto 1fr; align-items:end; padding:.45em 1em 0; flex:none; }
+.bp-codes > div { min-width:0; }
+.bp-codes b { display:block; font:400 3.9em/.95 'SC Display','Russo One',sans-serif; letter-spacing:-.02em; color:var(--ink); }
+.bp-codes small { display:block; font:500 .92em/1.1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin-top:.12em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.bp-to { text-align:right; }
+.bp-mid { padding:0 .4em 1.7em; color:var(--redrule); }
+.bp-mid svg { display:block; width:2.3em; height:2.3em; fill:currentColor; }
+.bp-fields { display:grid; grid-template-columns:repeat(4,auto); gap:.1em .9em; justify-content:space-between; padding:.35em 1em .45em; flex:none; }
+.bp-fields span, .ss-catch-g span { display:block; font:500 .76em/1.1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.16em; color:var(--muted); white-space:nowrap; }
+.bp-fields b { display:block; font:400 1.3em/1.15 'SC Display','Russo One',sans-serif; color:var(--ink); white-space:nowrap; }
+.bp-fields b small, .ss-catch-g b small { font:500 .62em 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.06em; color:var(--muted); margin-left:.1em; }
+.fc-in--bp .fc-fact { margin:.1em 1em .5em; }
+.bp-perf { position:relative; height:0; border-top:.14em dashed #b9ad8a; margin:0 1.1em; flex:none; }
+.bp-perf::before, .bp-perf::after { content:''; position:absolute; top:-.85em; width:1.6em; height:1.6em; border-radius:50%; background:color-mix(in srgb, var(--edge) 35%, #e9e4d6); box-shadow:inset 0 .1em .2em rgba(0,0,0,.25); }
+.bp-perf::before { left:-2em; } .bp-perf::after { right:-2em; }
+.bp-stub { display:flex; align-items:center; gap:.8em; padding:.55em 1em .65em; flex:none; margin-top:auto; }
+.bp-when { font:500 .88em/1.2 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.14em; color:var(--ink2); white-space:nowrap; min-width:0; }
+.bp-when b { font-weight:500; color:var(--orange-ink); }
+.bp-lvl { font-style:normal; color:#8a5a2b; } .bp-lvl--silver { color:#5d6874; } .bp-lvl--gold { color:#8a6200; }
+.bp-prog { display:inline-block; font-size:.86em; color:var(--muted); }
+.fc-bars { display:flex; align-items:stretch; margin-left:auto; height:2.3em; flex:none; }
+.fc-bars i { display:block; background:var(--ink); }
+
+/* -- the spec sheet -- */
+.fc-in--ss { padding:.7em .8em .55em; background:linear-gradient(var(--grid) .06em, transparent .06em) 0 0 / 1.6em 1.6em, linear-gradient(90deg, var(--grid) .06em, transparent .06em) 0 0 / 1.6em 1.6em,
+  radial-gradient(ellipse 90% 60% at 15% 0%, rgba(255,255,255,.85), transparent 70%), var(--grain), #fbfaf2; }
+.ss-hd { display:flex; align-items:stretch; gap:.5em; margin-bottom:.5em; flex:none; }
+.ss-kind { display:flex; align-items:center; gap:.35em; padding:.36em .6em .3em; border-radius:.3em; background:var(--blue); color:#fff; font:500 .88em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.18em; flex:none; }
+.ss-kind svg { width:1.1em; height:1.1em; fill:currentColor; }
+.ss-set { align-self:center; flex:1; min-width:0; font:500 .82em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.16em; color:var(--blue); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ss-plate { display:flex; flex-direction:column; align-items:flex-end; justify-content:center; flex:none; padding:.18em .5em; border:.1em solid var(--ink); border-radius:.2em; background:#fffdf6; box-shadow:inset 0 0 0 .14em #fbfaf2, inset 0 0 0 .22em var(--ink); }
+.ss-plate span { font:500 .62em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.2em; color:var(--muted); }
+.ss-plate b { font:400 1.25em/1 'SC Display','Russo One',sans-serif; letter-spacing:.02em; color:var(--ink); }
+.ss-ph { flex:1 1 0; min-height:8.5em; border-radius:.2em; box-shadow:0 0 0 .1em var(--blue); }
+.ss-tick { position:absolute; inset:.45em; z-index:2; pointer-events:none; opacity:.85;
+  background:linear-gradient(#fff,#fff) top left/1.2em .1em no-repeat, linear-gradient(#fff,#fff) top left/.1em 1.2em no-repeat, linear-gradient(#fff,#fff) top right/1.2em .1em no-repeat, linear-gradient(#fff,#fff) top right/.1em 1.2em no-repeat,
+  linear-gradient(#fff,#fff) bottom left/1.2em .1em no-repeat, linear-gradient(#fff,#fff) bottom left/.1em 1.2em no-repeat, linear-gradient(#fff,#fff) bottom right/1.2em .1em no-repeat, linear-gradient(#fff,#fff) bottom right/.1em 1.2em no-repeat; }
+.ss-ph--band .ss-tick { bottom:2.6em; }
+.ss-band, .m-band { position:absolute; z-index:3; left:0; right:0; bottom:0; display:flex; align-items:center; gap:.45em; padding:.45em .6em .4em; font:500 .9em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.14em; text-transform:uppercase; white-space:nowrap; overflow:hidden; }
+.ss-band > span, .m-band > span { overflow:hidden; text-overflow:ellipsis; min-width:0; }
+.ss-band svg, .m-band svg { width:1.1em; height:1.1em; fill:currentColor; flex:none; }
+.ss-band small { font-size:.92em; letter-spacing:.1em; opacity:.9; }
+.ss-band img { height:1.5em; width:auto; max-width:5em; object-fit:contain; margin-left:auto; flex:none; background:#fff; border-radius:.2em; padding:.08em .2em; }
+.ss-band--noair, .m-band--noair { background:#fffdf6; color:var(--orange-ink); box-shadow:0 -.14em 0 var(--redrule); }
+.ss-band--cargo, .m-band--cargo { background:#c9a35a; color:#1d1405; }
+.ss-band--airline, .m-band--airline { background:var(--ink); color:#fffdf6; }
+.ss-ph--band .fc-credit { bottom:2.6em; }
+.ss-ph .fc-here { bottom:auto; top:.6em; }
+.fc-name.ss-name { margin:.45em 0 0; font-size:2.05em; line-height:1; flex:none; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.fc-name.ss-name.fc-name--long { font-size:1.72em; }
+.ss-mk { margin-top:.25em; font:500 .98em/1.15 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.06em; color:var(--ink2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:none; }
+.ss-spec { display:grid; grid-template-columns:repeat(4, 1fr); margin-top:.45em; padding:.4em 0 .45em; border-top:.1em solid var(--blue); border-bottom:.1em solid var(--blue); flex:none; }
+.ss-spec > div { display:flex; flex-direction:column; gap:.28em; padding:0 .5em; border-left:.08em dashed rgba(31,79,143,.45); min-width:0; }
+.ss-spec > div:first-child { border-left:0; padding-left:0; }
+.ss-spec span { font:500 .72em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.14em; color:var(--blue); text-transform:uppercase; white-space:nowrap; }
+.ss-spec b { font:400 1.22em/1.05 'SC Display','Russo One',sans-serif; letter-spacing:-.02em; white-space:nowrap; color:var(--ink); overflow:hidden; text-overflow:ellipsis; }
+.ss-spec b small { font:500 .6em 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.02em; margin-left:.15em; color:var(--ink2); }
+.ss-who { display:flex; align-items:center; gap:.5em; margin-top:.45em; font:500 .9em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; text-transform:uppercase; color:var(--ink2); white-space:nowrap; overflow:hidden; flex:none; }
+.ss-who b { padding:.3em .5em .26em; border-radius:.3em; font-weight:500; background:var(--ink); color:#fff; flex:none; }
+.ss-who span { overflow:hidden; text-overflow:ellipsis; }
+.ss-catch { margin-top:.45em; padding:.45em .55em .5em; border-radius:.4em; border:.09em dashed rgba(31,79,143,.6); background:rgba(255,253,246,.85); flex:none; }
+.ss-catch-h { display:flex; justify-content:space-between; gap:.6em; margin-bottom:.35em; font:500 .76em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.14em; color:var(--blue); white-space:nowrap; }
+.ss-catch-h em { font-style:normal; color:var(--ink); }
+.ss-catch-g { display:grid; grid-template-columns:1.2fr 1.15fr .9fr .9fr; }
+.ss-catch-g > div { display:flex; flex-direction:column; gap:.25em; padding:0 .45em; border-left:.08em solid #d9cfae; min-width:0; }
+.ss-catch-g > div:first-child { border-left:0; padding-left:0; }
+.ss-catch-g span { font-size:.7em; letter-spacing:.12em; }
+.ss-catch-g b { font:400 1.12em/1 'SC Display','Russo One',sans-serif; white-space:nowrap; color:var(--ink); }
+.fc-in--ss .fc-pass { margin-top:.45em; padding:0; flex:none; }
+.fc-in--ss .fc-pass-k { color:var(--ink); font-weight:500; }
+.fc-in--ss .fc-prog { margin-top:.3em; gap:.6em; }
+.fc-in--ss .fc-fact { margin:.45em 0 0; }
+.ss-foot { display:flex; justify-content:space-between; align-items:center; margin-top:auto; padding-top:.4em; border-top:.08em solid var(--blue); font:500 .76em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.14em; color:var(--blue); flex:none; }
+.ss-foot b { font:400 1.2em/1 'SC Display','Russo One',sans-serif; letter-spacing:-.02em; color:var(--ink); }
+.fc-in--ss .fc-fact + .ss-foot { margin-top:auto; }
+.fc-in--ss > .fc-fact { margin-bottom:.4em; }
+
+/* -- the minis: the same card drawn small (js/card.js miniCard scales the 28em card into a ~118 px tile). Sizes below
+      were drawn in px at 118 px wide and are written in card units (1 px there = 28/118 em). -- */
+.fc--mini .fc-face { padding:0.7119em; }
+.fc--mini .fc-in { border-radius:1.78em; }
+.fc--mini .fc-in--ss { padding:0.9492em; }
+.fc--mini .m-lg { height:5.22em; display:flex; align-items:center; padding:0.7119em 1.186em; border-bottom:0.2373em solid var(--ink); flex:none; overflow:hidden; }
+.fc--mini .m-logo { height:68%; width:auto; max-width:100%; object-fit:contain; object-position:left center; }
+.fc--mini .m-wm { font:400 3.085em/1 'SC Display','Russo One',sans-serif; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.fc--mini .m-ph { flex:1 1 0; min-height:7.119em; margin:0.7119em 0.9492em 0; border-radius:0.7119em; }
+.fc--mini .fc-in--ss .m-ph { margin:0; border-radius:0.4746em; box-shadow:0 0 0 0.2373em var(--blue); }
+.fc--mini .m-tier { left:0.4em; top:0.4em; gap:0.2667em; padding:0.2667em 0.5333em; border-radius:0.4em; border-width:0.1333em; font-size:1.78em; letter-spacing:.1em; box-shadow:none; }
+.fc--mini .m-cd { display:flex; justify-content:space-between; align-items:center; padding:0.1176em 0.2941em 0.05882em; font:400 4.034em/1 'SC Display','Russo One',sans-serif; color:var(--ink); flex:none; }
+.fc--mini .m-cd svg { width:.647em; height:.647em; fill:var(--redrule); flex:none; } /* 11 px in the 17 px codes */
+.fc--mini .bp-perf { margin:0.7119em 1.186em 0; border-top-width:0.2373em; }
+.fc--mini .bp-perf::before, .fc--mini .bp-perf::after { width:1.898em; height:1.898em; top:-4.5px; }
+.fc--mini .bp-perf::before { left:-9.5px; }
+.fc--mini .bp-perf::after { right:-9.5px; }
+.fc--mini .m-st { display:flex; justify-content:space-between; align-items:center; gap:0.5em; padding:0.375em 0.625em 0.5em; font:500 1.898em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.1em; color:var(--ink2); white-space:nowrap; flex:none; }
+.fc--mini .m-st .fc-bars { font-size:1.875em; height:.6em; } /* bars drawn at 15 px type, 9 px tall, in the 8 px stub */
+.fc--mini .m-hd { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.7119em; flex:none; }
+.fc--mini .m-kind { background:var(--blue); color:#fff; font:500 1.898em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.14em; padding:0.25em 0.5em; border-radius:0.25em; }
+.fc--mini .m-plate { padding:0.2373em 0.9492em; border-width:0.2373em; box-shadow:inset 0 0 0 0.2373em #fbfaf2, inset 0 0 0 0.4746em var(--ink); }
+.fc--mini .m-plate b { font-size:2.373em; }
+.fc--mini .m-band { font-size:1.78em; padding:0.2667em 0.5333em; gap:0.4em; letter-spacing:.08em; }
+.fc--mini .m-n { font:400 2.61em/1.05 'SC Display','Russo One',sans-serif; text-transform:uppercase; color:var(--ink); margin:0.2727em 0 0.09091em; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; flex:none; }
+.fc--mini .m-sp { display:flex; justify-content:space-between; gap:0.375em; border-top:0.125em solid var(--blue); padding-top:0.25em; font:500 1.898em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.08em; color:var(--blue); text-transform:uppercase; white-space:nowrap; overflow:hidden; flex:none; }
+.fc--mini .m-sp b { color:var(--ink); font-weight:500; }
+.fc--mini .fc-in--ss { background:linear-gradient(var(--grid) .24em, transparent .24em) 0 0 / 2.14em 2.14em, linear-gradient(90deg, var(--grid) .24em, transparent .24em) 0 0 / 2.14em 2.14em, #fbfaf2; }
+.fc--mini .fc-sky-mark { display:none; }
+/* the catch panel's fallback mini (miniCardHtml): the same card, drawn into its 112 × 157 slot */
+.sct-face.sct-mini { padding:0; background:none; box-shadow:none; border-radius:0; overflow:visible; width:auto; height:auto; }
+.sct-face.sct-mini > .fc { --fc-u:calc(157px / 42); }
+
 
 
 /* Mini cards (js/flight-card.js miniCardHtml): the full card's frame, photo, rarity, title and footer at grid size, 5:7 */
@@ -311,7 +415,6 @@ body.night #discover.sky-plane .d-mini { filter:drop-shadow(0 6px 12px #000c); }
 /* Airline logos beside the airline's name (2026-11-15). Bigger (2026-11-19, Sevaan: "logos need to be bigger in general on
    cards. It's like the coolest thing to see and it's so micro"): 2.6x the line, pulled into the rules above and below so
    the card's layout doesn't grow. */
-.fc-id-l { display:inline-flex; align-items:center; gap:.45em; min-width:0; }
 .fc-logo { height:2.6em; width:auto; max-width:11em; object-fit:contain; flex:none; margin:-.55em 0 -.5em; }
 .sct-sub { display:flex; align-items:center; gap:4px; min-width:0; } .sct-sub > span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .sct-logo { height:20px; width:auto; max-width:100px; object-fit:contain; flex:none; margin:-3px 0; } /* was 13 px (2026-11-19, Sevaan: bigger logos) */
@@ -603,3 +706,10 @@ body.sky-only .tc .art .ob-stars { display:none; } /* the location picture's dra
 
 /* Circle highlights: Space's satellite chips are hidden in Sky, the plane choices shown (2026-11-19) */
 body:not(.sky-only) #set-hl-sheet .sky-hl { display:none; }
+
+/* Planes and Flights tabs (2026-11-19): five tabs in Sky's Collection, so they sit a little closer, and the Flights
+   count wears the same pill as the Planes count */
+html.sky-cards #flights-count { display:inline-block; background:var(--panel); color:var(--accent); margin-left:5px; border-radius:20px; font:500 12px/1 'SC Label', sans-serif; letter-spacing:.06em; vertical-align:1px; padding:2px 7px; }
+html.sky-cards:not(.sky-night) #flights-count { background:#fffdf6; color:#b42a20; box-shadow:inset 0 0 0 1px #e7dcbd; }
+html.sky-cards .collection-tabs { gap:16px; }
+@media (max-width: 400px) { html.sky-cards .collection-tabs { gap:6px; justify-content:space-between; } /* 264 px of tabs fit a 320 px phone's 292 px bar */ html.sky-cards .collection-tabs button { letter-spacing:.06em; font-size:13.5px; } html.sky-cards #owned-count, html.sky-cards #flights-count { margin-left:3px; padding:2px 5px; } }

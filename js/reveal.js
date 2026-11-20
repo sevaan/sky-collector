@@ -5,13 +5,13 @@
 //  Everything scales with rarity (Legendary dims the sky, shockwave, held breath, slow flip, fanfare).
 // Waits use timers, not animation.finished, so a paused tab can never freeze the sequence.
 
-import { sfx, loadSfx } from './sfx.js?v=0.1.1786';
-import { audioCtx } from './audio-ctx.js?v=0.1.1786';
-import { TIER_INFO } from './rarity.js?v=0.1.1786';
-import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype } from './card.js?v=0.1.1786';
-import { applyBack } from './card-backs.js?v=0.1.1786';
-import { addStarfield } from './starfield.js?v=0.1.1786';
-import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1786';
+import { sfx, loadSfx } from './sfx.js?v=0.1.1787';
+import { audioCtx } from './audio-ctx.js?v=0.1.1787';
+import { TIER_INFO } from './rarity.js?v=0.1.1787';
+import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1787';
+import { applyBack } from './card-backs.js?v=0.1.1787';
+import { addStarfield } from './starfield.js?v=0.1.1787';
+import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1787';
 
 const FX = TIER_FX; /* one rarity table for every card moment (js/card-moment.js, 2026-11-11) */
 const NIGHT_MILESTONES = [3, 5, 10, 25, 50, 100, 200, 365], STAMP_MILESTONES = [5, 10, 25, 50, 100, 200, 300, 400];
@@ -71,6 +71,8 @@ export function stopReveal() {
   run++;
   flick = null; holderTo(0, 0, 0); $('rv-holder').style.opacity = '';
   stopGyro?.(); tilt?.destroy(); stopGyro = tilt = null;
+  for (const it of deck?.items ?? []) { it.tilt?.destroy(); it.flip?.destroy(); it.tilt = it.flip = null; }
+  if (deck) deck.ready = false;
   stopBack();
   parts = [];
   if (onFlipTap) { $('rv-holder').removeEventListener('click', onFlipTap); onFlipTap = null; }
@@ -93,7 +95,9 @@ function sizeCard(cardEl) {
   unzoom();
   const root = $('reveal');
   root.style.setProperty('--cf', '12px');
-  const em = Math.max(39.2, cardEl.getBoundingClientRect().height / 12);
+  const cards = [...$('reveal-card').querySelectorAll(':scope > .dk-slot > .card')], peek = root.classList.contains('two') ? DECK_PEEK + 2 : 0;
+  /* the tallest card in the deck, measured untransformed (the one behind is scaled down, a sealed one turned over) */
+  const em = Math.max(39.2, ...(cards.length ? cards : [cardEl]).map((c) => (c.offsetHeight || c.getBoundingClientRect().height) / 12));
   // Room for the header and chips above, the rank bar and link below (2026-10-12: the card sat high over dead space).
   let cf = Math.max(7, Math.min(Math.min(innerWidth, innerHeight) >= 600 ? 18 : 14, (innerWidth - 58) / 28, (innerHeight - 270) / em)); /* big screens (iPad, unfolded Duo) may go to 18, like the docked card (iPad/Duo playtest 2026-10-24: 100pt empty bands) */ // 270: both zones plus the notch and home bar
   root.style.removeProperty('--rv-y');
@@ -109,12 +113,17 @@ function sizeCard(cardEl) {
   const under = teach ?? (root.classList.contains('has-rank') ? $('rv-rank') : $('reveal-view')), bot = (under.offsetHeight ? under.offsetTop : H) - 8;
   // Grow (or shrink) it to the room there really is: the 270 above is a guess, and on phones it left the card small with
   // dead space above and below (Sevaan 2026-10-22: "has room to be bigger"). 20px a side, 14 at most (big screens).
-  cf = Math.max(5, Math.min(Math.min(innerWidth, innerHeight) >= 600 ? 18 : 14, 0.95 * (bot - top) / em, 0.95 * (root.clientWidth - 40) / 28)); /* 5% smaller for air above and below (Sevaan 2026-10-25: "just a tiny bit") */ /* same cap as the first pass (iPad playtest 2026-10-24: this clamped it back to 14) */
+  /* two cards (a flight and its plane): the card behind peeks out above the front one, so the peek's room comes off the
+     height, which only shrinks a card that was height-limited; a width-limited card keeps today's size (Sevaan 2026-11-19:
+     keep the card form, size and shape) */
+  cf = Math.max(5, Math.min(Math.min(innerWidth, innerHeight) >= 600 ? 18 : 14, 0.95 * (bot - top - peek) / em, 0.95 * (root.clientWidth - 40) / 28)); /* 5% smaller for air above and below (Sevaan 2026-10-25: "just a tiny bit") */ /* same cap as the first pass (iPad playtest 2026-10-24: this clamped it back to 14) */
   root.style.setProperty('--cf', `${cf}px`);
   /* Always centred in the room there really is, between the chips row and the rank bar (2026-11-19, Space Collector
      305780c2, Sevaan on a Galaxy Z Flip, 360x880: the CSS centre measured from the NEW CARD row, so on tall screens the
      card sat ~40px high of the gap; Sky measured the same, 40-41px at 360-412 wide). */
-  root.style.setProperty('--rv-y', `${((top + bot) / 2 - H / 2).toFixed(1)}px`);
+  let mid = (top + bot) / 2; const half = em * cf / 2;
+  if (peek && mid - half - peek < top) mid = Math.min(mid + (top - (mid - half - peek)), bot - half); /* the peek clears the chips row */
+  root.style.setProperty('--rv-y', `${(mid - H / 2).toFixed(1)}px`);
 }
 
 // A lesson panel under the card (2026-10-25, Sevaan; design/first-night.html 04): the card shrinks to make room above
@@ -150,7 +159,7 @@ let rush = null;
 export function rushReveal({ origin, tier }) {
   const tk = FX[tier] ? tier : 'common', fx = FX[tk], root = $('reveal');
   root.style.setProperty('--fx', (TIER_INFO[tk] ?? TIER_INFO.common).color); root.classList.remove('rv-done');
-  $('reveal-eyebrow').textContent = ''; $('rv-news').replaceChildren(); setRank(null); $('reveal-card').replaceChildren(); $('rv-holder').style.opacity = 0;
+  $('reveal-eyebrow').textContent = ''; $('rv-news').replaceChildren(); setRank(null); setDeck([]); $('rv-holder').style.opacity = 0;
   for (const id of ['rv-dot', 'rv-dim']) $(id).getAnimations().forEach((a) => a.cancel());
   $('rv-dim').style.opacity = 0;
   const x = origin?.x ?? innerWidth / 2, y = origin?.y ?? innerHeight * .4, ms = reduced() ? 1 : 400;
@@ -165,29 +174,31 @@ export function rushReveal({ origin, tier }) {
   rush = { t0: performance.now(), x, y, ms };
 }
 export function cancelRush() { rush = null; for (const id of ['rv-dot', 'rv-dim']) $(id).getAnimations().forEach((a) => a.cancel()); $('rv-dim').style.opacity = 0; }
-export async function playReveal({ card, o, seen, origin, fleet = null, progress = null, collected = 0, con = null, shiny = null, xp = 0, rank = null, earned = [] }) {
+// cards (Sky Collector, 2026-11-19, Sevaan approved design/card-spike/team-d-reveal.html): one catch can give two cards,
+// a flight card and a plane card, each { card, o, seen, fleet, progress, shiny, livery }. Both show, as a two-card deck:
+// the front one plays the reveal, the other peeks out above it; swipe sideways (or tap it, or its tab) to swap. Without
+// cards, the single card in card/o/seen/fleet/progress/shiny plays as it always has.
+export async function playReveal({ card, o, seen, origin, fleet = null, progress = null, collected = 0, con = null, shiny = null, xp = 0, rank = null, earned = [], cards = null }) {
   const rushed = rush && performance.now() - rush.t0 < 3000 ? rush : null; rush = null; /* already rushing since the tap */
   stopReveal();
   const my = run;
-  const fresh = seen <= 1;
-  const tierKey = FX[o.tier] ? o.tier : 'common';
+  const items = orderDeck((cards?.length ? cards : [{ card, o, seen, fleet, progress, shiny }]).map(cardNews)), lead = items[0];
+  ({ card, o, seen, fleet, progress, shiny } = lead);
+  const { fresh, tierKey, level, levelUp, nights, newStamp } = lead; // progress (other cards): { level, before, nights }. Levels count observing nights.
   const fx = FX[tierKey], color = (TIER_INFO[tierKey] ?? TIER_INFO.common).color;
-  // progress (other cards): { level, before, nights }. Levels count observing nights.
-  const level = fleet ? fleet.level : progress?.level ?? levelFor(seen);
-  const levelUp = !fresh && (fleet ? fleet.level !== fleet.before : progress ? progress.level !== progress.before : level !== levelFor(seen - 1));
-  const nights = progress?.nights ?? 0;
-  const newStamp = !fresh && !!fleet?.newStamp;
   const root = $('reveal');
   root.style.setProperty('--fx', color);
   root.classList.remove('rv-done');
   /* a plane or flight card (Sky Collector, playtest 2026-11-18: a repeat plane read "NEW PHASE STAMP"): a stamp is another aircraft of the type, or the flight on another day */
-  $('reveal-eyebrow').textContent = fresh ? 'NEW CARD' : newStamp ? (o.sky === 'plane' ? 'NEW AIRCRAFT STAMP' : o.sky === 'flight' ? 'NEW FLIGHT STAMP' : fleet?.line ? 'NEW PHASE STAMP' : 'NEW LAUNCH STAMP') : NIGHT_MILESTONES.includes(nights) ? `SEEN ON ${nights} ${o.sky ? 'DAYS' : 'NIGHTS'}` : 'SEEN AGAIN';
+  $('reveal-eyebrow').textContent = fresh && items.length > 1 && items.every((it) => it.fresh) ? '2 NEW CARDS' : fresh ? 'NEW CARD' : newStamp ? (o.sky === 'plane' ? 'NEW AIRCRAFT STAMP' : o.sky === 'flight' ? 'NEW FLIGHT STAMP' : fleet?.line ? 'NEW PHASE STAMP' : 'NEW LAUNCH STAMP') : NIGHT_MILESTONES.includes(nights) ? `SEEN ON ${nights} ${o.sky ? 'DAYS' : 'NIGHTS'}` : 'SEEN AGAIN';
   /* what a screen reader says as the reveal opens: the news, the card and its rarity (accessibility pass 2026-11-09) */
   { const nm = card?.querySelector?.('.card__name')?.textContent?.trim() || o?.name || ''; const rv = $('reveal'); rv.removeAttribute('aria-labelledby'); rv.setAttribute('aria-label', `${$('reveal-eyebrow').textContent.trim().toLowerCase().replace(/^./, (c) => c.toUpperCase())}${nm ? `: ${nm}` : ''}, ${(TIER_INFO[tierKey] ?? TIER_INFO.common).label}${xp > 0 ? `, plus ${xp} XP` : ''}`); }
   if (xp > 0) $('reveal-eyebrow').insertAdjacentHTML('beforeend', `<span class="rv-xp"><span class="rv-roll"><span><i class="rv-dot">·</i>+${xp} XP</span></span></span>`); // rolls in when the card lands
   setRank(xp > 0 ? rank : null);
   $('rv-news').replaceChildren(); earnedNow = earned;
-  $('reveal-card').replaceChildren(card);
+  setDeck(items);
+  if (items[1]?.fresh) seal(items[1]); /* a new card behind waits face down, glowing in its rarity */
+  $('reveal-card').classList.toggle('dk-wait', fresh && items.length > 1); /* and shows once the front one has turned over */
   for (const id of ['rv-holder', 'rv-flipper', ...(rushed ? [] : ['rv-dot', 'rv-dim']), 'rv-flash', 'rv-shock']) $(id).getAnimations().forEach((a) => a.cancel());
   $('rv-holder').style.opacity = 0; $('rv-holder').classList.remove('live');
   $('rv-flipper').style.transform = '';
@@ -283,7 +294,7 @@ export async function playView({ card, o, from, sighting = null, eyebrow = null 
   root.classList.remove('rv-done');
   setRank(null);
   $('reveal-eyebrow').textContent = eyebrow ?? (!sighting ? 'IN YOUR COLLECTION' : NIGHT_MILESTONES.includes(sighting.nights) ? `SEEN ON ${sighting.nights} NIGHTS` : 'SEEN AGAIN');
-  $('reveal-card').replaceChildren(card);
+  setDeck([cardNews({ card, o, seen: 2 })]);
   for (const id of ['rv-holder', 'rv-flipper', 'rv-dot', 'rv-dim', 'rv-flash', 'rv-shock']) $(id).getAnimations().forEach((a) => a.cancel());
   $('rv-holder').classList.remove('live');
   $('rv-back').classList.remove('glow');
@@ -316,9 +327,7 @@ export async function playView({ card, o, from, sighting = null, eyebrow = null 
   if (!alive()) return;
   if (sighting) return finish({ fx, color, fresh: false, seen: sighting.seen, level: sighting.level, levelUp: sighting.levelUp, card, alive, nights: sighting.nights });
   $('rv-sweep').classList.remove('go'); void $('rv-sweep').offsetWidth; $('rv-sweep').classList.add('go');
-  tilt = attachTilt(card);
-  stopGyro = attachGyro(card, tilt);
-  attachFlip(card, { onBack: applyBack });
+  armDeck(alive);
   root.classList.add('rv-done');
 }
 
@@ -357,9 +366,7 @@ async function finish({ fx, color, fresh, seen, level, levelUp, card, alive, fle
   // it counted different launches as the same card’s nights.)
   if (!reduced()) $('reveal').animate([{ transform: 'translate(0,0)' }, { transform: 'translate(-3px,2px)' }, { transform: 'translate(3px,-2px)' }, { transform: 'translate(0,0)' }], { duration: 180 });
   if (levelUp) card.querySelector('.card__face')?.animate([{ boxShadow: '0 0 0 transparent' }, { boxShadow: `0 0 34px ${LEVEL_COLOR[level]}` }, { boxShadow: '0 0 0 transparent' }], { duration: 1300 });
-  tilt = attachTilt(card);
-  stopGyro = attachGyro(card, tilt);
-  attachFlip(card, { onBack: applyBack });
+  armDeck(alive);
   $('reveal').classList.add('rv-done');
   fillRank(alive);
   showNews(earnedNow, alive);
@@ -377,12 +384,15 @@ function wireAct(c, n) {
   c.addEventListener('click', go); c.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(e); } });
 }
 function showNews(news, alive) {
-  const box = $('rv-news'); box.style.flexWrap = ''; if (!news?.length) return;
+  const box = $('rv-news'); box.style.flexWrap = '';
+  const pager = buildPager(); if (pager) box.append(pager); /* two cards: their tabs come first (which one is in front) */
+  if (!news?.length) return;
   // One row: the two biggest pieces of news, then "+N" (a second row covered the card on small phones).
   const ORDER = { ghost: -1, rank: 0, back: 1, backs: 1.5, reunion: 2, peak: 2.5, train: 2.6, birthday: 0.5, event: 3, patch: 4, mission: 5 }; // a new card back is rare news: up front (2026-10-24)
   const sorted = news.slice().sort((a, b) => (ORDER[a.kind] ?? 9) - (ORDER[b.kind] ?? 9));
-  const rest = sorted.length > (innerWidth < 430 ? 2 : 3) ? sorted.slice(2) : []; // three long chips don't fit a phone (iPhone 14 playtest 2026-10-30: the third was cut mid-word)
-  news = rest.length ? [...sorted.slice(0, 2), { kind: 'more', text: `+${rest.length} more` }] : sorted;
+  const max = (innerWidth < 430 ? 2 : 3) - (pager ? 1 : 0); /* the pager takes a chip's room */
+  const rest = sorted.length > max ? sorted.slice(max) : []; // three long chips don't fit a phone (iPhone 14 playtest 2026-10-30: the third was cut mid-word)
+  news = rest.length ? [...sorted.slice(0, max), { kind: 'more', text: `+${rest.length} more` }] : sorted;
   news.forEach((n, i) => setTimeout(() => {
     if (!alive()) return;
     const c = document.createElement('span'); c.className = `rv-chip rv-chip--${n.kind}`;
@@ -457,6 +467,7 @@ function holderTo(x, y, ms) {
   const end = (e) => {
     if (!flick || e.pointerId !== flick.id) return;
     const pts = flick.pts; flick = null;
+    if (deckTook || deck?.busy) return; // a sideways swipe the deck took is never a flick
     const last = pts[pts.length - 1], now = performance.now();
     const from = pts.find((p) => now - p.t < 140) ?? pts[0];   // the last ~0.15 s of the gesture
     const dx = last.x - from.x, dy = last.y - from.y, dt = Math.max(16, now - from.t);
@@ -476,4 +487,125 @@ function holderTo(x, y, ms) {
   };
   area.addEventListener('pointerup', end);
   area.addEventListener('pointercancel', () => { flick = null; });
+}
+
+// ---------- two cards from one catch (Sky Collector, 2026-11-19) ----------
+// Space Collector's Collection deck (js/cards-page.js deckFront / deckSwap / deckWire, css/collection.css .lb-deck), on the
+// reveal: #reveal-card is the track, each card sits in a slot. One card in front, the other peeking out above it, a little
+// smaller and dimmer. Swipe the front card either way, tap the one behind, or tap its tab in the chips row: the front card
+// flies off and settles behind while the other comes forward. Flick up throws both away; double tap flips the front one.
+const DECK_PEEK = 14, LEVEL_WORD = { bronze: 'Bronze', silver: 'Silver', gold: 'Gold' };
+let deck = null, deckTook = false, onFront = null;
+export function onRevealFront(fn) { onFront = fn; } // main.js: Share and View in collection follow the front card
+export const revealFrontCard = () => (deck?.items.length ? deck.items[deck.front].card : null);
+const slots = () => [...$('reveal-card').children].filter((c) => c.classList.contains('dk-slot'));
+// What one card's reveal is: new, a level up, a stamp, or just seen again, and what its tab and its ink stamp say.
+function cardNews(e) {
+  const seen = e.seen ?? 1, fleet = e.fleet ?? null, progress = e.progress ?? null, o = e.o ?? {};
+  const fresh = e.fresh ?? seen <= 1, tierKey = FX[o.tier] ? o.tier : 'common';
+  const level = fleet ? fleet.level : progress?.level ?? levelFor(seen);
+  const levelUp = e.levelUp ?? (!fresh && (fleet ? fleet.level !== fleet.before : progress ? progress.level !== progress.before : level !== levelFor(seen - 1)));
+  const newStamp = !fresh && !!fleet?.newStamp, n = fleet?.stamps ?? seen, flight = o.sky === 'flight';
+  let tab = 'New', stamp = null;
+  if (!fresh) {
+    const next = level === 'bronze' ? 'silver' : level === 'silver' ? 'gold' : null;
+    if (levelUp && LEVEL_WORD[level]) { tab = `${LEVEL_WORD[level]} ▲`; stamp = [`${LEVEL_WORD[level]} ▲`, flight ? `seen on ${n} days` : `${n} aircraft`]; }
+    else if (newStamp) { tab = flight ? `Day ${n}` : e.livery ? 'Livery' : '+1';
+      stamp = flight ? [`Day ${n}`, new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })] : [e.livery ? 'New livery' : '+1 aircraft', next && fleet?.total ? `${n} of ${fleet.total} for ${next}` : `${n} aircraft`]; }
+    else tab = 'Again';
+  }
+  return { ...e, o, seen, fleet, progress, shiny: e.shiny ?? null, fresh, tierKey, level, levelUp, newStamp, nights: progress?.nights ?? 0, tab, stamp, kind: flight ? 'Flight' : o.sky === 'plane' ? 'Plane' : 'Card' };
+}
+// The order (Sevaan's OK on the prototype): new cards in front (the flight first when both are), then a level-up, then the flight.
+function orderDeck(items) {
+  if (items.length < 2) return items;
+  const rank = (it) => (it.fresh ? 0 : 4) + (it.levelUp ? 0 : 2) + (it.o?.sky === 'flight' ? 0 : 1);
+  return items.slice(0, 2).sort((a, b) => rank(a) - rank(b));
+}
+function setDeck(items) {
+  const tr = $('reveal-card'); tr.classList.add('dk-track'); tr.classList.remove('dk-wait', 'instant');
+  tr.replaceChildren(...items.map((it, i) => { const s = document.createElement('div'); s.className = `dk-slot ${i ? 'dk-back' : 'dk-front'}`; if (i) s.setAttribute('aria-hidden', 'true'); s.append(it.card); return s; }));
+  $('reveal').classList.toggle('two', items.length > 1);
+  deck = items.length ? { items, front: 0, busy: false, ready: false } : null;
+}
+function seal(it) { // face down behind: its real card back, turned over when it first comes forward
+  const back = it.card.querySelector('.card__back'); if (!back) return;
+  applyBack(back, it.o); back.style.opacity = '1'; it.card.style.transform = 'perspective(1600px) rotateY(180deg)'; it.sealed = true;
+  const s = it.card.parentElement; s.classList.add('sealed'); s.style.setProperty('--glow', (TIER_INFO[it.tierKey] ?? TIER_INFO.common).color);
+}
+// Once the front card has landed: tilt and double-tap flip on both, the phone's tilt on the front one, the swipe is live.
+function armDeck(alive) {
+  const d = deck; if (!d) return;
+  d.items.forEach((it) => { it.tilt = attachTilt(it.card); it.flip = attachFlip(it.card, { onBack: applyBack }); });
+  tilt = d.items[d.front].tilt; stopGyro = attachGyro(d.items[d.front].card, tilt);
+  d.ready = true;
+  if (d.items.length < 2) return;
+  $('reveal-card').classList.remove('dk-wait');
+  forward(d.front, true);
+  // A nudge that says "there's another one" (the first three two-card catches)
+  let n = 0; try { n = +localStorage.getItem('deckNudges') || 0; localStorage.setItem('deckNudges', String(n + 1)); } catch {}
+  if (n < 3 && !reduced()) setTimeout(() => { if (!alive() || deck !== d || d.busy || d.front !== 0) return; slots().forEach((s) => { s.classList.remove('nudge'); void s.offsetWidth; s.classList.add('nudge'); });
+    setTimeout(() => slots().forEach((s) => s.classList.remove('nudge')), 950); }, 1100);
+}
+function deckFront(i) {
+  const d = deck; d.front = i;
+  slots().forEach((c, k) => { c.classList.toggle('dk-front', k === i); c.classList.toggle('dk-back', k !== i); c.setAttribute('aria-hidden', String(k !== i)); c.style.transform = ''; c.style.filter = ''; });
+  syncPager();
+}
+function deckSwap(dir) { // the front card flies off to that side and settles behind; the back one comes forward
+  const d = deck; if (!d || d.busy || !d.ready || d.items.length < 2) return;
+  d.busy = true; const k = d.front, f = slots()[k]; f.classList.add('dk-leaving'); f.style.transform = `translateX(${dir * 115}%) rotate(${dir * 8}deg)`;
+  d.items[k].tilt?.reset(); sfx('swipe', { gain: 0.5 });
+  setTimeout(() => { if (deck !== d) return; f.classList.remove('dk-leaving'); deckFront(1 - k); onFront?.(d.items[1 - k]); forward(1 - k); setTimeout(() => { d.busy = false; }, 320); }, 200);
+}
+// A card coming forward: the phone's tilt follows it; a sealed one turns over (a quick second reveal); an owned one gets
+// its stamp inked on the first time it comes forward.
+async function forward(i, initial = false) {
+  const d = deck, it = d.items[i], my = run, slot = it.card.parentElement;
+  stopGyro?.(); tilt = it.tilt; stopGyro = tilt ? attachGyro(it.card, tilt) : null;
+  if (it.sealed) {
+    it.sealed = false; slot.classList.remove('sealed');
+    await sleep(reduced() ? 0 : 180); if (my !== run || deck !== d) return;
+    sfx('flip', { gain: 0.8 });
+    await turnCard(it.card, { from: 180, to: 360, ms: 560, lift: 1.05 }).finished; if (my !== run || deck !== d) return;
+    retype(it.card); payoffSound(it.tierKey, { fresh: true, shiny: it.shiny });
+    const r = it.card.getBoundingClientRect(), color = (TIER_INFO[it.tierKey] ?? TIER_INFO.common).color;
+    burst(r.left + r.width / 2, r.top + r.height / 2, Math.round(FX[it.tierKey].particles * .6), color);
+    dispatchEvent(new CustomEvent('sc:feel', { detail: 'success' }));
+  }
+  if (it.seenFront) return; it.seenFront = true;
+  if (it.stamp && !it.fresh) { it.card.insertAdjacentHTML('beforeend', `<span class="dk-stamp" aria-hidden="true">${esc(it.stamp[0])}<small>${esc(it.stamp[1])}</small></span>`); requestAnimationFrame(() => it.card.querySelector('.dk-stamp')?.classList.add('in'));
+    if (!initial) setTimeout(() => { if (my === run) sfx('stamp', { gain: 0.6 }); }, reduced() ? 0 : 300); } // the front card's payoff already sounded its stamp
+  if (it.levelUp && !initial) (it.card.querySelector('.card__face, .fc') ?? it.card).animate([{ boxShadow: '0 0 0 transparent' }, { boxShadow: `0 0 34px ${LEVEL_COLOR[it.level]}` }, { boxShadow: '0 0 0 transparent' }], { duration: 1300 });
+}
+// The two cards as tabs in the chips row: which one is in front; tap the other to bring it forward.
+function buildPager() {
+  if (!deck || deck.items.length < 2) return null;
+  const pg = document.createElement('span'); pg.className = 'rv-pager'; pg.setAttribute('role', 'tablist'); pg.setAttribute('aria-label', 'Cards from this catch');
+  deck.items.forEach((it, i) => { const b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'tab'); if (it.levelUp) b.className = 'lvl';
+    b.innerHTML = `<span class="dot" aria-hidden="true"></span>${it.kind} · <em>${esc(it.tab)}</em>`;
+    b.addEventListener('click', (e) => { e.stopPropagation(); if (deck?.front !== i) deckSwap(-1); }); pg.append(b); });
+  requestAnimationFrame(() => pg.classList.add('in'));
+  queueMicrotask(syncPager);
+  return pg;
+}
+function syncPager() { $('rv-news').querySelectorAll('.rv-pager button').forEach((b, i) => { const on = i === deck?.front; b.classList.toggle('on', on); b.setAttribute('aria-selected', String(on)); }); }
+{
+  const d = $('reveal-card'); let x0 = 0, y0 = 0, dx = 0, on = false, dragging = false, t0 = 0, slot = null, k = -1;
+  const live = () => deck && deck.ready && !deck.busy && deck.items.length > 1 && $('reveal').classList.contains('rv-done');
+  d.addEventListener('pointerdown', (e) => { if (!live()) return; slot = e.target.closest('.dk-front'); if (!slot) return; k = slots().indexOf(slot); on = true; dragging = false; x0 = e.clientX; y0 = e.clientY; dx = 0; t0 = performance.now(); });
+  d.addEventListener('pointermove', (e) => { if (!on) return; dx = e.clientX - x0; const dy = e.clientY - y0;
+    if (!dragging) { if (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy)) { if (Math.abs(dy) > 12) on = false; return; } // vertical: the card's tilt and the flick up keep it
+      dragging = true; deckTook = true; slot.classList.add('dk-drag'); try { d.setPointerCapture(e.pointerId); } catch {}
+      deck.items[k].card.dataset.swiping = '1'; deck.items[k].tilt?.reset(); } // while the deck has the finger the card stops tilting and can't count a tap (js/card.js reads data-swiping)
+    slot.style.transform = `translateX(${dx}px) rotate(${dx / 40}deg)`;
+    const back = slots()[1 - k], p = Math.min(1, Math.abs(dx) / 140); if (back) back.style.filter = `brightness(${(back.classList.contains('sealed') ? .8 : .55) + p * .3})`; }); // the card behind brightens as you pull
+  const end = () => { if (!on) return; on = false; if (!dragging) return; slot.classList.remove('dk-drag'); const back = slots()[1 - k]; if (back) back.style.filter = '';
+    const el = deck?.items[k]?.card; setTimeout(() => { if (el) delete el.dataset.swiping; deckTook = false; }, 0);
+    const fast = Math.abs(dx) / Math.max(1, performance.now() - t0) > 0.5;
+    if (Math.abs(dx) > 70 || (fast && Math.abs(dx) > 24)) deckSwap(Math.sign(dx)); else slot.style.transform = '';
+    d.dataset.dragged = '1'; setTimeout(() => delete d.dataset.dragged, 0); };
+  d.addEventListener('pointerup', end); d.addEventListener('pointercancel', end);
+  d.addEventListener('click', (e) => { if (d.dataset.dragged) { e.stopPropagation(); e.preventDefault(); } }, true); // a swipe isn't a tap
+  d.addEventListener('click', (e) => { const b = e.target.closest('.dk-back'); if (b && live()) { e.stopPropagation(); e.preventDefault(); deckSwap(-1); } }, true); // tapping the card peeking behind brings it forward
 }

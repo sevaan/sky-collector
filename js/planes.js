@@ -3,13 +3,16 @@
 // on the website, because adsb.lol doesn’t allow browser requests directly. The airline comes from the callsign's prefix.
 // No DOM here. Positions are extrapolated between fetches using ground speed, track and climb rate.
 
-import { tagOf } from './sky-secrets.js?v=0.1.1786';
-import { SERVER } from './server.js?v=0.1.1786';
-import { plugin } from './native.js?v=0.1.1786';
-import { lookupRoute } from './routes.js?v=0.1.1786';
-import { typeName } from './sky-type-names.js?v=0.1.1786';
-import { noteFeed } from './sky-local.js?v=0.1.1786';
-import { DEFAULTS, clampDial, freshFeed, pickSource, nextGap, afterAnswer, feedDown, maxAgeS, easeLeft } from './plane-feed.js?v=0.1.1786';
+import { tagOf } from './sky-secrets.js?v=0.1.1787';
+import { SERVER } from './server.js?v=0.1.1787';
+import { plugin } from './native.js?v=0.1.1787';
+import { lookupRoute } from './routes.js?v=0.1.1787';
+import { typeName } from './sky-type-names.js?v=0.1.1787';
+import { noteFeed } from './sky-local.js?v=0.1.1787';
+import { planeSet } from './sky-sets.js?v=0.1.1787';
+import { isProp } from './sky-props.js?v=0.1.1787';
+import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1787';
+import { DEFAULTS, clampDial, freshFeed, pickSource, nextGap, afterAnswer, feedDown, maxAgeS, easeLeft } from './plane-feed.js?v=0.1.1787';
 // Empty = feature off. localStorage 'planeRelay' overrides it (testing). Our server's /planes (adsb.lol only) once it's
 // deployed; until then the Val Town relay (relay/handler.ts).
 // Sky Collector (2026-11-15): Space Collector's Val Town relay is turned away by adsb.lol now, so the website needs Sky
@@ -113,6 +116,36 @@ export function anonId(hex) {
   for (let i = 0; i < s.length; i++) { const c = s.charCodeAt(i); h1 = Math.imul(h1 ^ c, 16777619) >>> 0; h2 = Math.imul(h2 ^ c, 2246822519) >>> 0; }
   return `~${h1.toString(36)}${h2.toString(36)}`; /* "~" marks it: never a real ICAO hex */
 }
+/* What kind of thing it was, per CATCH (2026-11-19, card spike, design/card-spike/team-c-information.html §2): one B763 card
+   can be caught as a UPS freighter one day and a charter the next, so the class belongs to the catch, not the type. Decided
+   here while the raw callsign is in hand; only the class word is kept (plus the airline's name for an airline callsign,
+   which is public). First match wins. Gov / military: no class word at all (no military content), the card shows its size.
+   a: { callsign (raw), category, type, heli, anon, gov, biz }. Returns '' or one of CLASS_WORDS' keys. */
+export const CLASS_WORDS = {
+  balloon: 'Balloon', airship: 'Airship', glider: 'Glider', ultralight: 'Ultralight', drone: 'Drone', heli: 'Helicopter',
+  cargo: 'Cargo airline', airline: 'Airline', biz: 'Business jet', light: 'Light aircraft', turboprop: 'Turboprop',
+  airliner: 'Airliner', small: 'Small aircraft', large: 'Large aircraft', heavy: 'Heavy aircraft',
+};
+const AIRLINER_SETS = new Set(['giants', 'b737', 'a320', 'twinaisle', 'regional']);
+export function catchClass(a) {
+  if (a?.gov) return '';
+  const t = String(a?.type ?? '').toUpperCase(), cat = String(a?.category ?? '').toUpperCase(), cs = String(a?.callsign ?? '').trim().toUpperCase();
+  if (t === 'SHIP') return 'airship';
+  if (t === 'BALL' || cat === 'B2') return 'balloon';
+  if (t === 'GLID' || cat === 'B1') return 'glider';
+  if (cat === 'B4') return 'ultralight';
+  if (cat === 'B6') return 'drone';
+  if (a?.heli) return 'heli';
+  const airline = !a?.anon && !a?.biz && AIRLINE_CS.test(cs);
+  if (airline) return CARGO_AIRLINES.has(cs.slice(0, 3)) ? 'cargo' : 'airline';
+  if (a?.biz) return 'biz';
+  const set = t ? planeSet(t, false)?.id : '';
+  if (set === 'bizjets') return 'biz';
+  if (set === 'light' || cat === 'A1') return set === 'light' && cat === 'A2' && isProp(t) ? 'turboprop' : 'light'; /* a King Air or PC-12 that says it's over 7 t */
+  if (set === 'props') return 'turboprop';
+  if (AIRLINER_SETS.has(set) || /^A[345]$/.test(cat)) return 'airliner';
+  return cat === 'A2' ? 'small' : '';
+}
 export const parsePlanes = (json) => parse(json); // tests
 function parse(json) {
   const at = json.now < 1e12 ? json.now * 1000 : json.now;
@@ -133,7 +166,10 @@ function parse(json) {
       lat: a.lat, lon: a.lon, hKm: ft * FT, altFt: ft, altBaro: typeof a.alt_baro === 'number' ? a.alt_baro : undefined /* what Flightradar24 and pilots read (alt_geom is GPS height, used for where it is in the sky) */, gs: a.gs ?? 0, track: a.track ?? a.true_heading ?? 0,
       climb: a.geom_rate ?? a.baro_rate ?? 0, at: at - (a.seen_pos ?? 0) * 1000,
     });
-    out[out.length - 1].heli = isHelicopter(out[out.length - 1]);
+    const q = out[out.length - 1]; q.heli = isHelicopter(q);
+    /* the class of this catch, from the raw callsign; the airline's name only for an airline callsign (public) */
+    q.cls = catchClass({ callsign: cs0, category: a.category, type: q.type, heli: q.heli, anon, gov, biz: BIZ_OPS.has(opOf(a)) });
+    if (q.cls === 'cargo' || q.cls === 'airline') { const n = airlineName(cs0.toUpperCase()); if (n) q.clsOp = n; }
   }
   return out;
 }
@@ -298,7 +334,7 @@ const AIRLINES = { ACA: 'Air Canada', ROU: 'Air Canada Rouge', JZA: 'Jazz (Air C
 // Every ICAO airline code -> name (js/airlines.js, built by scripts/build-airlines.mjs), loaded once, lazily.
 let airlineTable = null, airlineLoad = null;
 export function loadAirlines() {
-  return (airlineLoad ??= import('./airlines.js?v=0.1.1786').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
+  return (airlineLoad ??= import('./airlines.js?v=0.1.1787').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
 }
 export function airlineName(callsign) { return /^[A-Z]{3}\d/.test(callsign ?? '') ? airlineFor(callsign, null) : ''; }
 function airlineFor(callsign, a) {

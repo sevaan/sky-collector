@@ -1,4 +1,6 @@
-// Sky Collector's flight and plane cards. Design 2026-11-15 ("D · Light Touch, daylight", fidelity pass): Space Collector's
+// Sky Collector's flight and plane cards. 2026-11-19 (card spike, design/card-spike/combo-pass-spec.html, Sevaan's pick): a
+// FLIGHT card is a boarding pass and a PLANE card a spec sheet on drafting paper, inside the same frame and tier metal.
+// Earlier design notes, still true of the frame, photo and foil: Design 2026-11-15 ("D · Light Touch, daylight", fidelity pass): Space Collector's
 // card anatomy at full richness, printed light. A metal frame by rarity (steel, sage steel, gold, iridescent, animated
 // gold foil) around cream card stock with a fine grain and a double inner rule; a recessed photo window with the real
 // aircraft (flights: js/airline-photos.js in the airline's livery, else js/type-photos.js; credited on the card); the
@@ -7,19 +9,21 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { regularFor, clockText } from './sky-regulars.js?v=0.1.1786';
-import { TIERS, unlisted } from './flights.js?v=0.1.1786';
-import { flightFact } from './flight-facts.js?v=0.1.1786';
-import { typePhoto } from './type-photos.js?v=0.1.1786';
-import { housePhoto } from './house-photos.js?v=0.1.1786';
-import { gapPhoto } from './gap-photos.js?v=0.1.1786'; /* the types that had no photo (2026-11-18) */
-import { airlinePhoto } from './airline-photos.js?v=0.1.1786';
-import { airlineLogo } from './airline-logos.js?v=0.1.1786';
-import { fitStyle } from './photo-fit.js?v=0.1.1786';
-import { dist, speed } from './units.js?v=0.1.1786';
-import { typeFact } from './sky-facts.js?v=0.1.1786';
-import { localText } from './localize.js?v=0.1.1786';
-import { hasAirlineCallsign, planeLine, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1786';
+import { regularFor, clockText } from './sky-regulars.js?v=0.1.1787';
+import { TIERS, unlisted } from './flights.js?v=0.1.1787';
+import { flightFact } from './flight-facts.js?v=0.1.1787';
+import { typePhoto } from './type-photos.js?v=0.1.1787';
+import { housePhoto } from './house-photos.js?v=0.1.1787';
+import { gapPhoto } from './gap-photos.js?v=0.1.1787'; /* the types that had no photo (2026-11-18) */
+import { airlinePhoto } from './airline-photos.js?v=0.1.1787';
+import { airlineLogo } from './airline-logos.js?v=0.1.1787';
+import { fitStyle } from './photo-fit.js?v=0.1.1787';
+import { dist, speed, useMiles } from './units.js?v=0.1.1787';
+import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1787';
+import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1787';
+import { typeFact } from './sky-facts.js?v=0.1.1787';
+import { localText } from './localize.js?v=0.1.1787';
+import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1787';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
@@ -40,7 +44,6 @@ export function glyphSvg(kind = 'jet', cls = '') {
 const TIER_KEYS = ['common', 'uncommon', 'rare', 'epic', 'legendary'];
 const tierOf = (t) => (TIER_KEYS.includes(t) ? t : 'common');
 const tierPill = (tier, cls = 'fc-tier') => { const t = tierOf(tier), T = TIERS[t]; return `<span class="${cls}"><i aria-hidden="true">${T.mark}</i>${T.label.toUpperCase()}</span>`; };
-const stat = (label, value, unit = '') => `<div class="fc-stat"><span class="fc-stat-l">${label}</span><span class="fc-stat-v">${esc(value)}${unit && value !== '—' ? `<small>${unit}</small>` : ''}</span></div>`; /* no unit after a dash ("—mph") */
 const dateLong = (d) => (d ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase() : '');
 const dateShort = (d) => (d ? d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).toUpperCase() : '');
 const feet = (ft) => { if (!ft) return '—'; const r = Math.round(ft / 100) * 100; return r >= 1000 ? r.toLocaleString('en-US') : String(Math.round(ft)); };
@@ -63,11 +66,6 @@ const airlineIcao = (f) => f?.airlineIcao || (/^F:([A-Z]{3}):/.exec(f?.key || ''
 // airline: they sit next to its name and nowhere else, come from Wikimedia Commons in the public domain (js/airline-logos.js,
 // scripts/logos/).
 const logosOn = () => true; /* always on: the Settings switch was removed (2026-11-19) */
-// The airline as its logo when we have one (the logo is the name: a wordmark next to the same name read twice), else its name.
-function airlineMark(f, cls) {
-  const lg = logosOn() ? airlineLogo(airlineIcao(f)) : null;
-  return lg ? `<img class="${cls}" src="${esc(lg.url)}" alt="${esc(f.airline)}" title="${esc(f.airline)}" width="${lg.w}" height="${lg.h}" decoding="async" draggable="false">` : `<span>${esc(f.airline)}</span>`;
-}
 /* An airline's family (2026-11-15, Sevaan: an Alaska 737 MAX on an Air Canada Rouge card): brands and regional carriers that
    fly in, or alongside, their parent's paint. When we have no photo of that type in the flight's own livery, the parent's is
    the next best thing; only carriers that fly for ONE brand are listed (SkyWest and Republic fly for several, so not them). */
@@ -115,33 +113,18 @@ if (typeof document !== 'undefined' && typeof MutationObserver !== 'undefined') 
 // No photo: a daylight sky panel with soft cloud banks and the silhouette crossing it.
 const skyPanel = (glyph, cls, mark = '') => `<span class="${cls}" aria-hidden="true"><span class="fc-cloud fc-cloud--a"></span><span class="fc-cloud fc-cloud--b"></span>${mark ? `<span class="fc-sky-ring"></span><span class="fc-sky-mark">${esc(mark)}</span>` : ''}${glyphSvg(glyph, 'fc-glyph')}</span>`;
 
-// The route as a boarding-pass strip: origin code and city, a dashed great-circle arc with a plane on it, destination.
-function routeStrip(f, typeName) {
-  return `<div class="fc-route" aria-hidden="true">
-      <span class="fc-route-end"><b>${esc(code(f.from))}</b><small>${esc(f.from.city)}</small></span>
-      <span class="fc-route-mid"><svg viewBox="0 0 120 26" preserveAspectRatio="none"><path class="fc-route-arc" d="M4 22 Q60 -6 116 22"/><circle cx="4" cy="22" r="3.2" class="fc-route-a"/><circle cx="116" cy="22" r="3.2" class="fc-route-b"/></svg>
-        <svg class="fc-route-plane" viewBox="0 0 64 64">${GLYPHS.jet}</svg>${typeName ? `<small>${esc(typeName)}</small>` : ''}</span>
-      <span class="fc-route-end fc-route-end--b"><b>${esc(code(f.to))}</b><small>${esc(f.to.city)}</small></span>
-    </div>`;
-}
-
 // Layers over the printed face: foil (rarity), gloss, glare under the finger.
 const layers = '<span class="fc-foil" aria-hidden="true"></span><span class="fc-coat" aria-hidden="true"></span><span class="fc-glare" aria-hidden="true"></span>';
 
-function shell(kind, tier, inner, label, level = 'none') {
+// face: the print inside the frame ('bp' boarding pass, 'ss' spec sheet); mini: the Collection's small layout.
+function shell(kind, tier, inner, label, level = 'none', face = '', mini = false) {
   const t = tierOf(tier);
-  return `<article class="fc fc--${kind} fc--${t}${['rare', 'epic', 'legendary'].includes(t) ? ' fc--gilt' : ''}${level && level !== 'none' ? ` fc--lvl fc--lvl-${level}` : ''}" style="--tier:${TIERS[t].color}" aria-label="${esc(label)}">
-  <div class="fc-rot"><div class="fc-face"><div class="fc-in">${inner}</div></div>${layers}</div>
+  return `<article class="fc fc--${kind} fc--${t}${['rare', 'epic', 'legendary'].includes(t) ? ' fc--gilt' : ''}${level && level !== 'none' ? ` fc--lvl fc--lvl-${level}` : ''}${mini ? ' fc--mini' : ''}" style="--tier:${TIERS[t].color}" aria-label="${esc(label)}">
+  <div class="fc-rot"><div class="fc-face"><div class="fc-in${face ? ` fc-in--${face}` : ''}">${inner}</div></div>${layers}</div>
 </article>`;
 }
 
-function footer(caughtAt, right) {
-  const time = caughtAt ? caughtAt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).toUpperCase() : '';
-  return `<div class="fc-foot"><span class="fc-check" aria-hidden="true">✓</span><span class="fc-foot-t">CAUGHT · ${dateLong(caughtAt)}</span><span class="fc-foot-n">${time}</span>
-      <span class="fc-brand"><small>${esc(right)}</small>SKY COLLECTOR</span></div>`;
-}
-
-// ---- Stamps (js/sky-stamps.js): the passport row under the stats, and the level chip ----
+// ---- Stamps (js/sky-stamps.js): the progress line and the level chip ----
 const levelChip = (level, cls = 'fc-lvl') => (level && level !== 'none' ? `<span class="${cls} ${cls}--${level}">${levelWord(level)}</span>` : '');
 /* How far the card is toward its next level: a count and a bar (2026-11-18, Sevaan: no row of stamps marking each day or each
    aircraft's id, "if you see the same plane a hundred times it's untenable"). info: flightStampInfo / planeStampInfo.
@@ -157,25 +140,59 @@ function passport(info, { newest = false } = {}) {
 }
 export const passportHtml = passport;
 
-// opts: { caughtAt: Date, heightFt, sightings, type (ICAO, for older catches), planeName, eager, stampInfo (flightStampInfo), newStamp }
+// A printed barcode for the pass's stub: bars from the callsign, the same every time (decoration, it encodes nothing).
+function barcode(seed, n) {
+  let h = 2166136261; for (const c of String(seed || 'SKY')) h = Math.imul(h ^ c.charCodeAt(0), 16777619) >>> 0;
+  let s = '';
+  for (let i = 0; i < n; i++) { h = (Math.imul(h, 1103515245) + 12345) >>> 0; s += `<i style="width:${[.1, .1, .18, .28][h >>> 29 & 3]}em;margin-right:${[.08, .14, .2, .1][h >>> 26 & 3]}em"></i>`; }
+  return `<span class="fc-bars" aria-hidden="true">${s}</span>`;
+}
+const timeOf = (d) => (d ? d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).toUpperCase() : '');
+const jet = (cls = '') => `<svg class="${cls}" viewBox="0 0 64 64" aria-hidden="true">${GLYPHS.jet}</svg>`;
+const ICONS = {
+  lock: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V7a5 5 0 0110 0v3h1.5c.8 0 1.5.7 1.5 1.5v9c0 .8-.7 1.5-1.5 1.5h-13C4.7 22 4 21.3 4 20.5v-9C4 10.7 4.7 10 5.5 10H7zm2 0h6V7a3 3 0 00-6 0v3z"/></svg>',
+  box: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l9-4 9 4v10l-9 4-9-4V7zm9 2.2L6.2 6.8 12 4.3l5.8 2.5L12 9.2zM5 8.5v7.2l6 2.7v-7.2l-6-2.7z"/></svg>',
+  jet: `<svg viewBox="0 0 64 64" aria-hidden="true" class="fc-rot90">${GLYPHS.jet}</svg>`,
+};
+// The airline as its logo (the logo is the name), else its name as a printed wordmark.
+function passMark(f, cls, wm) {
+  const lg = logosOn() ? airlineLogo(airlineIcao(f)) : null;
+  return lg ? `<img class="${cls}" src="${esc(lg.url)}" alt="${esc(f.airline)}" title="${esc(f.airline)}" width="${lg.w}" height="${lg.h}" decoding="async" draggable="false">` : `<span class="${wm}">${esc(String(f.airline || airlineIcao(f) || '').toUpperCase())}</span>`;
+}
+const airLine = (air, tight = false) => (!air ? '—' : air.h ? `≈${air.h}${tight ? 'h' : ' h '}${String(air.m).padStart(2, '0')}` : `≈${air.m} min`); /* an estimate from the distance (flights.js airTime), so it says so */
+const field = (label, value, unit = '') => `<div><span>${label}</span><b>${esc(value)}${unit && value !== '—' ? `<small>${unit}</small>` : ''}</b></div>`;
+
+// FLIGHT = the boarding pass (design/card-spike/combo-pass-spec.html, approved 2026-11-19): the airline's logo across the
+// top with BOARDING PASS and the callsign, a smaller photo with rarity and set, the giant airport codes with their cities,
+// distance / time in the air / height caught at / aircraft, a fact on a red rule, then the tear line and the stub with when
+// you caught it, how often, its level and a barcode.
+// opts: { caughtAt: Date, heightFt, sightings, type (ICAO, for older catches), planeName, eager, small (Collection mini),
+//   stampInfo (flightStampInfo), newStamp }
 export function flightCardHtml(f, opts = {}) {
-  const type = f.type || opts.type || '', ph = flightPhotoFor(f, type), typeName = f.typeName || opts.planeName || '';
-  const air = !f.air ? '—' : f.air.h ? `≈${f.air.h} h ${String(f.air.m).padStart(2, '0')}` : `≈${f.air.m} min`; /* an estimate from the distance (flights.js airTime), so it says so */
-  const long = Math.max(f.from.city.length, f.to.city.length) > 11;
-  const art = ph ? `${photoImg(ph, 'fc-photo', opts.eager, opts.small)}${credit(ph)}` : skyPanel('jet', 'fc-sky', type);
+  const type = f.type || opts.type || '', ph = flightPhotoFor(f, type), si = opts.stampInfo, lvl = si?.level && si.level !== 'none' ? si.level : '';
+  const label = `${f.from.city} to ${f.to.city}, ${f.airline}, ${TIERS[tierOf(f.tier)].label}${lvl ? `, ${lvl} level` : ''}`;
+  if (opts.small) {
+    const pic = ph ? photoImg(ph, 'fc-photo', false, true) : skyPanel('jet', 'fc-sky', type);
+    const inner = `<div class="m-lg">${passMark(f, 'm-logo', 'm-wm')}</div>
+      <div class="fc-pic m-ph${ph ? '' : ' fc-pic--sky'}">${pic}${tierPill(f.tier, 'fc-tier m-tier')}</div>
+      <div class="m-cd"><span>${esc(code(f.from))}</span>${jet('fc-rot90')}<span>${esc(code(f.to))}</span></div>
+      <div class="bp-perf"></div>
+      <div class="m-st"><span>${opts.caughtAt ? `✓ ${dateShort(opts.caughtAt)}` : 'NOT YET'}</span>${barcode(f.callsign || f.key, 12)}</div>`;
+    return shell('flight', f.tier, inner, label, si?.level, 'bp', true);
+  }
+  const art = ph ? `${photoImg(ph, 'fc-photo', opts.eager)}${credit(ph)}` : skyPanel('jet', 'fc-sky', type);
+  const reg = (() => { try { const r = regularFor(f.callsign); return r ? `<span class="bp-reg">REGULAR · ABOUT ${esc(clockText(r.minute))}</span>` : ''; } catch { return ''; } })();
+  const d = dist(f.km ?? null), T = THRESHOLDS.flight, n = si?.count ?? 0, next = T.find((x) => n < x);
+  const prog = n ? `<span class="bp-prog${opts.newStamp ? ' fc-prog--new' : ''}">${n} DAY${n === 1 ? '' : 'S'}${si.nights ? ` · ${si.nights === n ? (n === 1 ? 'AT NIGHT' : 'ALL AT NIGHT') : `${si.nights} AT NIGHT`}` : ''} · ${next ? `${next - n} MORE TO ${next === T[1] ? 'SILVER' : 'GOLD'}` : 'TOP LEVEL'}</span>` : '';
   const inner = `
-    <div class="fc-art${ph ? '' : ' fc-art--sky'}">
-      <div class="fc-pic">${art}<span class="fc-holo" aria-hidden="true"></span>${tierPill(f.tier)}<span class="fc-set">${esc(String(f.setName ?? f.set ?? '').toUpperCase())}</span></div>
-      ${routeStrip(f, typeName)}
-    </div>
-    <h2 class="fc-name${long ? ' fc-name--long' : ''}"><span>${esc(f.from.city)} <i aria-label="to">→</i></span><span>${esc(f.to.city)}</span></h2>
-    <div class="fc-id"><span class="fc-id-l">${airlineMark(f, 'fc-logo')}</span><span class="fc-id-r">CALLSIGN ${esc(f.callsign || '—')}</span></div>
-    <div class="fc-stats">${stat('DISTANCE', dist(f.km ?? null).v, dist(f.km ?? null).u)}${stat('IN THE AIR', air)}${stat('CAUGHT AT', feet(opts.heightFt), 'ft')}${stat('SEEN', opts.sightings ?? 1, '×')}</div>
-    ${passport(opts.stampInfo, { newest: opts.newStamp })}
-    ${(() => { try { const r = regularFor(f.callsign); return r ? `<div class="fc-reg"><span>REGULAR</span> Usually over you about ${esc(clockText(r.minute))} · ${r.days} of the last ${r.of} days</div>` : ''; } catch { return ''; } })()}
-    <p class="fc-fact">${rich(localText(flightFact({ ...f, fact: String(f.fact ?? '').replace(' as the crow flies: about ', ', about ').replace(/ on a (?=[AEIOU])/, ' on an ') }, opts.stampInfo?.count ?? 1)))}</p>
-    ${footer(opts.caughtAt, type ? `TYPE ${type}` : 'FLIGHTS')}`;
-  return shell('flight', f.tier, inner, `${f.from.city} to ${f.to.city}, ${f.airline}, ${TIERS[tierOf(f.tier)].label}${opts.stampInfo?.level && opts.stampInfo.level !== 'none' ? `, ${opts.stampInfo.level} level` : ''}`, opts.stampInfo?.level);
+    <div class="bp-hd">${passMark(f, 'bp-logo', 'bp-wm')}<div class="bp-k">BOARDING PASS<b>${esc(f.callsign || '—')}</b></div></div>
+    <div class="fc-pic bp-ph${ph ? '' : ' fc-pic--sky'}">${art}<span class="fc-holo" aria-hidden="true"></span>${tierPill(f.tier)}<span class="fc-set">${esc(String(f.setName ?? f.set ?? '').toUpperCase())}</span>${reg}</div>
+    <div class="bp-codes"><div><b>${esc(code(f.from))}</b><small>${esc(f.from.city)}</small></div><div class="bp-mid">${jet('fc-rot90')}</div><div class="bp-to"><b>${esc(code(f.to))}</b><small>${esc(f.to.city)}</small></div></div>
+    <div class="bp-fields">${field('DISTANCE', d.v, d.u)}${field('IN THE AIR', airLine(f.air))}${field('CAUGHT AT', feet(opts.heightFt), 'ft')}${field('AIRCRAFT', type || '—')}</div>
+    <p class="fc-fact">${rich(localText(flightFact({ ...f, fact: String(f.fact ?? '').replace(' as the crow flies: about ', ', about ').replace(/ on a (?=[AEIOU])/, ' on an ') }, si?.count ?? 1)))}</p>
+    <div class="bp-perf"></div>
+    <div class="bp-stub"><div class="bp-when">CAUGHT <b>${opts.caughtAt ? dateLong(opts.caughtAt) : 'NOT YET'}</b><br>${opts.caughtAt ? `${timeOf(opts.caughtAt)} · ` : ''}SEEN ${esc(opts.sightings ?? 1)}×${lvl ? ` · <em class="bp-lvl bp-lvl--${lvl}">${levelWord(lvl)}</em>` : ''}${prog ? `<br>${prog}` : ''}</div>${barcode(f.callsign || f.key, 34)}</div>`;
+  return shell('flight', f.tier, inner, label, si?.level, 'bp');
 }
 
 /* A checked fact for the type first (js/sky-facts.js, 2026-11-17: 131 types, sources in docs/FACTS-SOURCES.md) */
@@ -186,54 +203,96 @@ const planeFact = (p, n = 1) => p.fact || unlisted(p.key)?.fact || typeFact(p.ty
   : p.glyph === 'prop' ? 'Propeller planes cruise lower and slower than jets, which makes them easier to spot and to hear.'
     : 'Every different aircraft of this type you catch counts toward this card’s **level**, and every airline it flies for is another livery.');
 
-// opts: { caughtAt, heightFt, speedKmh, awayKm, sightings, stampInfo (planeStampInfo), newStamp, callsign (the registration is hidden unless it's an airline's), eager }
+const COMPASS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+export const compass = (deg) => (Number.isFinite(deg) ? COMPASS[Math.round((((deg % 360) + 360) % 360) / 45) % 8] : '—');
+const SIZE_WORD = { A1: 'Light', A2: 'Small', A3: 'Large', A4: 'Large', A5: 'Heavy', A7: 'Rotorcraft', B1: 'Glider', B2: 'Balloon', B4: 'Ultralight' };
+// The class of the newest catch of a plane card (js/planes.js catchClass, saved on the sighting); older catches from before
+// it was saved are worked out again from what they kept (the airline callsign, the type, the card's size category).
+export function planeCatchClass(p, last) {
+  if (!last) return null;
+  const type = unlisted(p.key) ? '' : (p.type || ''), cat = last.cat || (/^P:UNKNOWN-(\w+)$/.exec(p.key ?? '') || [])[1] || '';
+  const cls = last.cls ?? catchClass({ callsign: last.callsign, category: cat, type, heli: p.glyph === 'heli' || p.key === 'P:HELI' });
+  const airline = cls === 'airline' || cls === 'cargo', cs = String(last.callsign ?? '').trim().toUpperCase();
+  return { cls, word: CLASS_WORDS[cls] ?? '', airline, routed: last.routed !== false, op: airline ? (last.op || airlineName(cs) || '') : '', icao: airline && hasAirlineCallsign(cs) ? cs.slice(0, 3) : '',
+    reg: airline && hasAirlineCallsign(cs) ? (last.reg || '') : '' };
+}
+// The band over a plane-only catch's photo: what kind of thing it was. null when the card shows an airline flight's operator
+// line instead, or (gov) when there's nothing to say.
+function classBand(k, mini = false) {
+  if (!k?.cls || (k.airline && k.routed)) return null;
+  if (k.cls === 'cargo') return { cls: 'cargo', icon: ICONS.box, head: mini ? 'Cargo' : 'Cargo airline', tail: mini ? k.op : [k.op, 'route not known'].filter(Boolean).join(' · '), logo: k.icao };
+  if (k.cls === 'airline') return { cls: 'airline', icon: ICONS.jet, head: 'Airline', tail: mini ? k.op : [k.op, 'route not known'].filter(Boolean).join(' · '), logo: k.icao };
+  if (k.cls === 'airliner') return { cls: 'noair', icon: ICONS.lock, head: mini ? 'No flight number' : 'No airline flight number', tail: mini ? '' : 'Airliner' };
+  return { cls: 'noair', icon: ICONS.lock, head: 'Not an airline', tail: mini ? '' : k.word };
+}
+function bandHtml(b, cls = 'ss-band') {
+  if (!b) return '';
+  const lg = b.logo && cls === 'ss-band' && logosOn() ? airlineLogo(b.logo) : null; /* no logo in the mini's thin band */
+  return `<div class="${cls} ${cls}--${b.cls}">${b.icon}<span>${esc(b.head)}${b.tail ? ` <small>· ${esc(b.tail)}</small>` : ''}</span>${lg ? `<img src="${esc(lg.url)}" alt="" decoding="async" draggable="false">` : ''}</div>`;
+}
+// The type's printed spec cells (js/type-specs.js, verified); a type we have none for shows what the feed and your catches say.
+function specCells(p, si, last, type) {
+  const s = typeSpecs(type);
+  if (s) return s.cells.map(([l, v, u]) => (l === 'Range' && u === 'km' && useMiles() ? [l, dist(Number(v.replace(/,/g, ''))).v, 'mi'] : [l, v, u]));
+  const cat = last?.cat || (/^P:UNKNOWN-(\w+)$/.exec(p.key ?? '') || [])[1] || '';
+  return [SIZE_WORD[cat] ? ['Size', SIZE_WORD[cat]] : null, si?.count ? ['Aircraft', String(si.count)] : null,
+    si?.liveryCount ? ['Operators', String(si.liveryCount)] : null, (si?.days ?? 0) > 1 ? ['Days seen', String(si.days)] : null].filter(Boolean);
+}
+
+// PLANE = the spec sheet (design/card-spike/combo-pass-spec.html, approved 2026-11-19): cream drafting paper with a blue grid,
+// an AIRCRAFT tab and the set, the TYPE plate, the photo (with a band saying what kind of thing a plane-only catch was), the
+// name, maker · country · kind, up to four checked spec cells, the operator (airline catches only), YOUR CATCH (the newest
+// catch: height, speed, distance away, heading, when), progress and a fact.
+// opts: { caughtAt, heightFt, speedKmh, awayKm, sightings, stampInfo (planeStampInfo, with .last: the newest catch, js/sky-cards.js
+//   skyStampInfo), newStamp, callsign (the registration is hidden unless it's an airline's), eager, small (Collection mini) }
 export function planeCardHtml(p, opts = {}) {
   /* un: an aircraft the feed has no type for (js/flights.js unlisted): named for its size, with the airline as its identity */
   const un = unlisted(p.key), type = un ? '' : (p.type || ''), name = un ? un.name : p.name;
-  const ph = photoFor(type), long = (name || '').length > 16;
-  const art = ph ? `${photoImg(ph, 'fc-photo', opts.eager, opts.small)}${credit(ph)}` : skyPanel(un ? un.glyph : p.glyph, 'fc-sky fc-sky--big', un ? un.mark : type);
-  const si = opts.stampInfo, stamps = si?.count ?? opts.stamps ?? (p.stamp ? 1 : 0);
-  const showReg = p.reg && hasAirlineCallsign(opts.callsign ?? p.callsign);
+  const ph = photoFor(type), si = opts.stampInfo, lvl = si?.level && si.level !== 'none' ? si.level : '';
+  const last = si?.last ?? (opts.callsign != null || opts.heightFt != null ? { callsign: opts.callsign ?? '', altFt: opts.heightFt } : null);
+  const k = planeCatchClass(p, last), plate = type || un?.mark || (p.glyph === 'heli' ? 'HELI' : '—');
+  const label = `${name}, ${TIERS[tierOf(p.tier)].label}${k?.word && !k.airline ? `, ${k.word}` : ''}${lvl ? `, ${lvl} level` : ''}`;
+  const cells = specCells(p, si, last, type), set = String(p.setName ?? p.set ?? 'Planes');
+  if (opts.small) {
+    const pic = ph ? photoImg(ph, 'fc-photo', false, true) : skyPanel(un ? un.glyph : p.glyph, 'fc-sky fc-sky--big', '');
+    const left = typeSpecs(type)?.cells.find((c) => c[0] === 'First flew') ?? cells[0];
+    const inner = `<div class="m-hd"><span class="m-kind">AIRCRAFT</span><span class="ss-plate m-plate"><b>${esc(plate)}</b></span></div>
+      <div class="fc-pic m-ph${ph ? '' : ' fc-pic--sky'}">${pic}${tierPill(p.tier, 'fc-tier m-tier')}${bandHtml(classBand(k, true), 'm-band')}</div>
+      <b class="m-n">${esc(name)}</b>
+      <div class="m-sp">${left && left[0] !== 'Aircraft' ? `<span>${esc(left[0])} <b>${esc(left[1])}</b></span>` : `<span>${esc(set)}</span>`}<span><b>${si?.count ?? 0}</b> aircraft</span></div>`;
+    return shell('plane', p.tier, inner, label, si?.level, 'ss', true);
+  }
+  const art = ph ? `${photoImg(ph, 'fc-photo', opts.eager)}${credit(ph)}` : skyPanel(un ? un.glyph : p.glyph, 'fc-sky fc-sky--big', un ? un.mark : type);
+  const band = classBand(k), specs = typeSpecs(type);
+  const mk = specs ? makerLine(specs) : un ? 'Not in the public registers yet' : '';
+  const who = k?.airline && k.routed && (k.op || k.reg) ? `<div class="ss-who"><b>${k.cls === 'cargo' ? 'CARGO AIRLINE' : 'AIRLINE'}</b><span>${esc([k.op, k.reg].filter(Boolean).join(' · '))}</span></div>` : '';
+  const when = last?.time ? new Date(last.time) : opts.caughtAt;
+  const kmh = last?.gsKt > 30 ? Math.round(last.gsKt * 1.852) : last?.gsKt != null ? null : opts.speedKmh ?? null;
+  const sp = speed(kmh), aw = dist(last?.rangeKm != null ? Math.round(last.rangeKm) : opts.awayKm ?? null);
   const inner = `
-    <div class="fc-art fc-art--plane${ph ? '' : ' fc-art--sky'}">
-      <div class="fc-pic">${art}<span class="fc-holo" aria-hidden="true"></span>${tierPill(p.tier)}<span class="fc-set">${esc(String(p.setName ?? p.set ?? 'Planes').toUpperCase())}</span>${opts.rareHere ? '<span class="fc-here" title="Unusual where you caught it">RARE HERE</span>' : ''}</div>
-    </div>
-    <h2 class="fc-name${long ? ' fc-name--long' : ''}"><span>${esc(name)}</span></h2>
-    <div class="fc-id"><span class="fc-id-l">${esc(un && (si?.count ?? 1) <= 1 ? (p.stamp || 'Type not listed') : si?.count ? planeLine(si, type) : p.stamp ? `${p.stamp}${stamps > 1 ? ` + ${stamps - 1} more` : ''}` : p.glyph === 'heli' ? 'Helicopter' : 'Aircraft')}</span><span class="fc-id-r">${esc(type || (un ? 'TYPE NOT LISTED' : '—'))}${showReg ? ` · ${esc(p.reg)}` : ''}</span></div>
-    <div class="fc-stats">${stat('CAUGHT AT', feet(opts.heightFt), 'ft')}${stat('GND SPEED', speed(opts.speedKmh ?? null).v, speed(0).u)}${stat('AWAY', dist(opts.awayKm ?? null).v, dist(0).u)}${stat('SEEN', opts.sightings ?? stamps ?? 1, '×')}</div>
+    <div class="ss-hd"><span class="ss-kind">${jet('fc-rot90')}AIRCRAFT</span><span class="ss-set">${esc(set.toUpperCase())}</span><span class="ss-plate"><span>TYPE</span><b>${esc(plate)}</b></span></div>
+    <div class="fc-pic ss-ph${band ? ' ss-ph--band' : ''}${ph ? '' : ' fc-pic--sky'}">${art}<span class="fc-holo" aria-hidden="true"></span><span class="ss-tick" aria-hidden="true"></span>${tierPill(p.tier)}${opts.rareHere ? '<span class="fc-here" title="Unusual where you caught it">RARE HERE</span>' : ''}${bandHtml(band)}</div>
+    <h2 class="fc-name ss-name${(name || '').length > 16 ? ' fc-name--long' : ''}"><span>${esc(name)}</span></h2>${mk ? `<div class="ss-mk">${esc(mk)}</div>` : ''}
+    ${cells.length ? `<div class="ss-spec" style="--n:${cells.length}">${cells.map(([l, v, u]) => `<div><span>${esc(l)}</span><b>${esc(v)}${u ? `<small>${esc(u)}</small>` : ''}</b></div>`).join('')}</div>` : ''}
+    ${who}
+    ${last || opts.caughtAt ? `<div class="ss-catch"><div class="ss-catch-h"><span>YOUR CATCH</span><em>${when ? `${dateLong(when)} · ${timeOf(when)}` : ''}</em></div><div class="ss-catch-g">
+      ${field('HEIGHT', feet(last?.altFt ?? opts.heightFt), 'ft')}${field('SPEED', sp.v, sp.u)}${field('AWAY', aw.v, aw.u)}${field('HEADING', compass(last?.track))}</div></div>` : ''}
     ${passport(si, { newest: opts.newStamp })}
     <p class="fc-fact">${rich(localText(planeFact(p, si?.count ?? 1)))}</p>
-    ${footer(opts.caughtAt, type ? `TYPE ${type}` : 'PLANES')}`;
-  return shell('plane', p.tier, inner, `${name}, ${TIERS[tierOf(p.tier)].label}${si?.level && si.level !== 'none' ? `, ${si.level} level` : ''}`, si?.level);
+    <div class="ss-foot"><span>AIRCRAFT · ${esc(plate)}</span><b>SKY COLLECTOR</b></div>`;
+  return shell('plane', p.tier, inner, label, si?.level, 'ss');
 }
 
-// A small card for the Collection grid: the same frame, photo, rarity, title, identity, two stats and footer, laid out
-// for ~110 px. e: { kind, card, type, last (ms), n (times seen), stamps (count), stampInfo }. Returns the inner markup; the caller
-// wraps it in its button.
+// A small card on its own (the catch panel's fallback when main.js gives no mini): the Collection's mini layout, the same
+// face as renderCard's mini, drawn 112 px wide. e: { kind, card, type, last (ms), n (times seen), stamps (count), stampInfo }.
+// Returns the markup; the caller wraps it.
 export function miniCardHtml({ kind, card: c, type, last, n = 1, stamps = 0, stampInfo = null }) {
-  const t = tierOf(c.tier), ty = c.type || type || '', ph = kind === 'flight' ? flightPhotoFor(c, ty) : photoFor(ty);
-  const glyph = kind === 'plane' ? c.glyph : 'jet';
-  const pic = ph ? photoImg(ph, 'sct-photo', false, true) : skyPanel(glyph, 'fc-sky sct-sky');
-  const gem = `<span class="sct-tier"><i aria-hidden="true">${TIERS[t].mark}</i>${TIERS[t].label.toUpperCase()}</span>`;
-  const lvl = stampInfo?.level && stampInfo.level !== 'none' ? stampInfo.level : '';
-  const medal = lvl ? `<span class="sct-lvl sct-lvl--${lvl}" title="${lvl} · ${stampInfo.count}"><i>${stampInfo.count}</i><em>${lvl.toUpperCase()}</em></span>` : '';
-  const when = last ? `<span class="sct-foot"><span>✓ ${dateShort(new Date(last))}</span><span>${n}×</span></span>` : '<span class="sct-foot"><span>NOT YET COLLECTED</span></span>'; /* the target ticket shows a card you don't have yet */
-  if (kind === 'flight') {
-    const air = !c.air ? '—' : c.air.h ? `≈${c.air.h}h${String(c.air.m).padStart(2, '0')}` : `≈${c.air.m} min`;
-    return `<span class="sct-face sct--${t}${lvl ? ` sct-face--lvl sct-face--${lvl}` : ''}" style="--tier:${TIERS[t].color}"><span class="sct-in">
-      <span class="sct-art${ph ? '' : ' sct-art--sky'}">${pic}${gem}${medal}<span class="sct-route"><b>${esc(code(c.from))}</b><svg viewBox="0 0 40 10" preserveAspectRatio="none" aria-hidden="true"><path d="M2 9 Q20 -3 38 9"/></svg><b>${esc(code(c.to))}</b></span></span>
-      <span class="sct-name">${esc(c.to.city)}</span>
-      <span class="sct-sub">${kind === 'flight' ? airlineMark(c, 'sct-logo') : `<span>${esc(c.airline)}</span>`}</span>
-      <span class="sct-stats"><span><small>${dist(0).u.toUpperCase()}</small>${esc(dist(c.km ?? null).v)}</span><span><small>AIR</small>${air}</span></span>
-      ${when}</span><span class="sct-shine" aria-hidden="true"></span></span>`;
-  }
-  return `<span class="sct-face sct--${t}${lvl ? ` sct-face--lvl sct-face--${lvl}` : ''}" style="--tier:${TIERS[t].color}"><span class="sct-in">
-    <span class="sct-art${ph ? '' : ' sct-art--sky'}">${pic}${gem}${medal}</span>
-    <span class="sct-name">${esc(unlisted(c.key)?.name ?? c.name)}</span>
-    <span class="sct-sub">${stampInfo?.count ? esc(`${stampInfo.count} aircraft${stampInfo.liveryCount ? ` · ${stampInfo.liveryCount} liver${stampInfo.liveryCount === 1 ? 'y' : 'ies'}` : ''}`) : esc(c.glyph === 'heli' ? 'Helicopter' : 'Aircraft')}</span>
-    <span class="sct-stats"><span><small>TYPE</small>${esc(c.type || '—')}</span><span><small>PLANES</small>${stampInfo?.count ?? stamps}</span></span>
-    ${when}</span><span class="sct-shine" aria-hidden="true"></span></span>`;
+  const si = stampInfo ?? (stamps ? { kind, count: stamps, level: 'none' } : null);
+  const opts = { small: true, caughtAt: last ? new Date(last) : null, sightings: n, stampInfo: si, type };
+  const html = kind === 'flight' ? flightCardHtml({ ...c, type: c.type || type }, opts) : planeCardHtml({ ...c, type: c.type || type || '' }, opts);
+  return `<span class="sct-face sct-mini">${html}</span>`;
 }
+
 
 // The catch screen. kind 'new' (default): the new-card screen, the flight card (or the plane card when there's no route)
 // plus the Planes strip. kind 'stamp': the "new stamp" moment for a card you own: the card with its newest stamp

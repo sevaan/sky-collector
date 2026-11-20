@@ -190,3 +190,59 @@ body.night #reveal.rv-tour #reveal-view { background: #ff6a55; color: #120606; }
 #rv-teach .tc-mini.has-mini { --mini-s: calc(52 / 280); aspect-ratio: 2 / 3; border: 0; box-shadow: none; background: none; border-radius: 5px; }
 #rv-teach .tc-mini.has-mini .mini-face { width: 100%; height: 100%; }
 @media (max-height: 640px) { #rv-teach .tc-mini.has-mini { --mini-s: calc(38 / 280); } }
+
+/* Two cards from one catch (Sky Collector, 2026-11-19, design/card-spike/team-d-reveal.html, Sevaan approved): a flight card
+   and a plane card in a two-card deck, Space Collector's Collection deck (css/collection.css .lb-deck) with lb- → dk-.
+   #reveal-card is the track; one card in front, the other peeking out above it, a little smaller and dimmer. */
+#reveal-card.dk-track { display: grid; --peek: 14px; }
+.dk-track > .dk-slot { grid-area: 1 / 1; margin: 0; min-width: 0; transition: transform .34s cubic-bezier(.2,.8,.25,1), filter .34s ease, opacity .34s ease; }
+.dk-track > .dk-front { z-index: 2; }
+#reveal.two .dk-track > .dk-back { z-index: 1; transform-origin: 50% 0; transform: translateY(calc(-1 * var(--peek))) scale(.94); filter: brightness(.55); cursor: pointer; }
+.dk-track > .dk-back * { pointer-events: none; }
+.dk-track > .dk-drag { transition: none; }
+.dk-track > .dk-leaving { transition: transform .2s ease-in; z-index: 3; }
+#reveal-card.dk-wait > .dk-back { opacity: 0; } /* a new front card turns over first; then the other one appears behind it */
+@media (prefers-reduced-motion: reduce) { .dk-track > .dk-slot { transition: opacity .2s ease; } }
+/* a sealed card behind glows in its rarity, so the peek already says "another new card" */
+.dk-slot.sealed .card__back { box-shadow: inset 0 0 0 .25em color-mix(in srgb, var(--glow) 70%, #0000), 0 0 calc(1.4 * var(--cf)) color-mix(in srgb, var(--glow) 85%, transparent); }
+#reveal.two .dk-track > .dk-back.sealed { filter: brightness(.8); }
+/* the nudge that teaches the swipe (the first few two-card catches) */
+@keyframes dkNudge { 0%, 100% { transform: none; } 35% { transform: translateX(-26px) rotate(-.65deg); } 60% { transform: translateX(6px); } }
+@keyframes dkPeek { 0%, 100% { transform: translateY(calc(-1 * var(--peek))) scale(.94); } 35% { transform: translateY(calc(-1 * var(--peek) - 8px)) translateX(10px) scale(.95); } }
+.dk-front.nudge { animation: dkNudge .9s cubic-bezier(.3,.7,.3,1); }
+#reveal.two .dk-back.nudge { animation: dkPeek .9s cubic-bezier(.3,.7,.3,1); }
+/* the stamp on an owned card: a passport stamp inked on as it comes forward */
+#reveal-card .dk-stamp { position: absolute; z-index: 8; right: 7%; top: 31%; padding: .35em .7em .3em; border: .18em solid #b42a20; border-radius: .5em; color: #b42a20; background: #fffdf6cc;
+  font: 500 1.25em/1.05 var(--label, 'SC Label'), sans-serif; letter-spacing: .12em; text-transform: uppercase; text-align: center; transform: rotate(-9deg); opacity: 0; pointer-events: none; mix-blend-mode: multiply; }
+#reveal-card .card--flight .dk-stamp { top: 47%; right: 6%; } /* on the cream, clear of the dark route strip */
+#reveal-card .dk-stamp small { display: block; font-size: .7em; letter-spacing: .14em; }
+#reveal-card .dk-stamp.in { animation: dkStamp .45s cubic-bezier(.2,1.4,.4,1) .25s both; }
+@keyframes dkStamp { 0% { opacity: 0; transform: rotate(-9deg) scale(1.9); } 100% { opacity: .92; transform: rotate(-9deg) scale(1); } }
+@media (prefers-reduced-motion: reduce) { #reveal-card .dk-stamp.in { animation: none; opacity: .92; } }
+/* the two cards as tabs, first in the chips row: which one is in front; tap the other to bring it forward */
+.rv-pager { flex: none; display: inline-flex; height: 26px; border-radius: 13px; border: 1px solid var(--edge, #627a8b); background: #0e1a29e6; overflow: hidden; pointer-events: auto;
+  opacity: 0; transform: translateY(-6px); transition: opacity .25s ease-out, transform .3s cubic-bezier(.2,1.1,.3,1); }
+.rv-pager.in { opacity: 1; transform: none; }
+.rv-pager button { all: unset; display: inline-flex; align-items: center; gap: 5px; padding: 0 9px; font: 500 12.5px/1 var(--label, 'SC Label'), sans-serif; letter-spacing: .05em; text-transform: uppercase;
+  color: #8fa3b5; cursor: pointer; transition: background .25s, color .25s; }
+.rv-pager button + button { border-left: 1px solid #627a8b88; }
+.rv-pager button:focus-visible { outline: 2px solid #fff2b3; outline-offset: -2px; }
+.rv-pager .dot { width: 6px; height: 6px; border-radius: 50%; border: 1px solid currentColor; box-sizing: border-box; transition: background .25s; }
+.rv-pager button.on { background: #fff2e0; color: #0d2238; }
+.rv-pager button.on .dot { background: currentColor; }
+.rv-pager em { font-style: normal; color: #ff6b5e; }
+.rv-pager button.on em { color: #b42a20; }
+.rv-pager button.lvl em { color: var(--gold, #f2c94c); } .rv-pager button.lvl.on em { color: #8a6400; }
+/* Sky's day and night reveal chips (css/sky-theme.css, css/sky-night.css): the pager matches them */
+body.sky-only #reveal .rv-pager { background: #ffffffd9; border-color: var(--sc-line, #c9d3dd); box-shadow: 0 2px 8px rgba(13,34,56,.12); }
+body.sky-only #reveal .rv-pager button { color: color-mix(in srgb, var(--sc-ink, #0d2238) 62%, transparent); }
+body.sky-only #reveal .rv-pager button + button { border-left-color: var(--sc-line, #c9d3dd); }
+body.sky-only #reveal .rv-pager button.on { background: var(--sc-ink, #0d2238); color: #fff8ee; }
+body.sky-only #reveal .rv-pager em { color: var(--sc-orange-ink, #c4442f); }
+body.sky-only #reveal .rv-pager button.on em { color: #ff9a8a; }
+body.sky-only #reveal .rv-pager button.lvl em { color: #9a6c00; } body.sky-only #reveal .rv-pager button.lvl.on em { color: #f2c94c; }
+html.sky-night body.sky-only #reveal .rv-pager { background: #11223ad9; border-color: #2b4058; box-shadow: 0 2px 10px #0006; }
+html.sky-night body.sky-only #reveal .rv-pager button { color: #9fb2c6; }
+html.sky-night body.sky-only #reveal .rv-pager button + button { border-left-color: #2b4058; }
+html.sky-night body.sky-only #reveal .rv-pager button.on { background: #e6eef7; color: #0d2238; }
+html.sky-night body.sky-only #reveal .rv-pager em { color: #ff6a5c; } html.sky-night body.sky-only #reveal .rv-pager button.on em { color: #b42a20; }
