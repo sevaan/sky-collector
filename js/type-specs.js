@@ -146,9 +146,9 @@ const S = {
   /* https://en.wikipedia.org/wiki/General_Dynamics_F-16_Fighting_Falcon: official first flight 2 February 1974 (an unplanned hop on 20 January);
      single-seat F-16A and two-seat F-16B; one F110 or F100 turbofan. Span left out (Block 50/52 figures) */
   F16: { maker: 'General Dynamics', country: 'USA', desc: 'multirole fighter', cells: [['First flew', '1974'], ['Crew', '1–2'], E(1, 'jets')] },
-  /* https://en.wikipedia.org/wiki/McDonnell_Douglas_F/A-18_Hornet: first flight 18 November 1978; crew "1 (C)/2 (D)"; 2 × F404 turbofans. Span
-     left out (measured with wingtip missiles) */
-  F18: { maker: 'McDonnell Douglas', country: 'USA', desc: 'carrier-based multirole fighter', cells: [['First flew', '1978'], ['Crew', '1–2'], E(2, 'jets')] },
+  /* https://en.wikipedia.org/wiki/Boeing_F/A-18E/F_Super_Hornet: first flight 29 November 1995; single-seat F/A-18E, tandem-seat F; 2 × GE F414
+     turbofans. ICAO F18S (the feed's code for the Super Hornet and the EA-18G Growler; the older Hornet is F18H). Span left out */
+  F18S: { maker: 'Boeing', country: 'USA', desc: 'carrier-based multirole fighter', cells: [['First flew', '1995'], ['Crew', '1–2'], E(2, 'jets')] },
   /* https://en.wikipedia.org/wiki/McDonnell_Douglas_F-15_Eagle: first F-15A flight 27 July 1972; single-seat F-15A/C, two-seat F-15B/D; 2 × F100
      afterburning turbofans. Span left out (F-15C figures) */
   F15: { maker: 'McDonnell Douglas', country: 'USA', desc: 'twin-engine fighter', cells: [['First flew', '1972'], ['Crew', '1–2'], E(2, 'jets')] },

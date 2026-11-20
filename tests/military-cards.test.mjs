@@ -11,7 +11,7 @@ import { photoFor } from '../js/flight-card.js';
 import { SKY_SETS } from '../js/sky-sets.js';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
-const MILITARY = ['C17', 'C130', 'C30J', 'C5M', 'A400', 'K35R', 'K35E', 'KC10', 'E3TF', 'E3CF', 'E6', 'B52', 'B1', 'B2', 'P8', 'C2', 'C295', 'V22', 'U2', 'F16', 'F18', 'F15', 'F35', 'EUFI', 'A10', 'H47', 'H53', 'H60', 'AN12', 'IL76'];
+const MILITARY = ['C17', 'C130', 'C30J', 'C5M', 'A400', 'K35R', 'K35E', 'E3TF', 'E3CF', 'E6', 'B52', 'B1', 'B2', 'P8', 'C2', 'C295', 'V22', 'U2', 'F16', 'F18S', 'F15', 'F35', 'EUFI', 'A10', 'H47', 'H53', 'H60', 'AN12', 'IL76'];
 const set = SKY_SETS.find((s) => s.id === 'military');
 
 test('the list here is the Military set', () => {

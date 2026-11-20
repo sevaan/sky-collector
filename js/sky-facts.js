@@ -833,10 +833,10 @@ export const TYPE_FACTS = {
     "The F-16 has a single engine fed by one big **air intake** slung under its body, and a frameless bubble canopy on top.",
     "The F-16 was the first production fighter built to be slightly **unstable** on purpose, with computers checking it thousands of times a second to keep it steady.",
   ],
-  F18: [
-    "The F/A-18's name tells its job: **F/A** means it is both a fighter and a ground-attack aircraft.",
-    "The Hornet has two engines side by side and **twin tail fins** that lean outwards, one of its most recognisable features.",
-    "The Hornet was built to fly from aircraft carriers, so it has **folding wings**, extra-strong landing gear and a strengthened tailhook.",
+  F18S: [
+    "The Super Hornet grew out of the F/A-18 Hornet but is about **20% larger**, so it is largely a new aircraft.",
+    "The Super Hornet's air intakes are **rectangular** and bigger than the older Hornet's, to feed its more powerful engines.",
+    "In the US Navy the Super Hornet's nickname is the **Rhino**, which tells it apart from older Hornets.",
   ],
   F2TH: [
     "The Falcon 2000 is a Falcon 900 with its third engine dropped and its body shortened by **2.1 m**.",

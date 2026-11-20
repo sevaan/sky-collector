@@ -827,7 +827,7 @@ export const HOUSE_PHOTOS = {
 0.64
 ]
 },
-"F18": {
+"F18S": {
 "credit": "Steve Lynes from Sandshurst, United Kingdom",
 "licence": "CC BY 2.0",
 "source": "https://commons.wikimedia.org/wiki/File:EGLF_-_Boeing_F_A-18F_Super_Hornet_-_US_Navy_-_166790_(43930505921).jpg",
@@ -1486,17 +1486,17 @@ export const HOUSE_PHOTOS = {
 ]
 },
 "H53": {
-"credit": "Matti Blume",
-"licence": "CC BY-SA 4.0",
-"source": "https://commons.wikimedia.org/wiki/File:Sikorsky_CH-53K_King_Stallion,_ILA_2018,_Sch%C3%B6nefeld_(1X7A6778).jpg",
-"title": "File:Sikorsky CH-53K King Stallion, ILA 2018, Schönefeld (1X7A6778).jpg",
+"credit": "Staff Sgt. Raul Gonzalez, USMC",
+"licence": "Public domain",
+"source": "https://commons.wikimedia.org/wiki/File:CH-53D_Sea_Stallion_of_HMH-362_in_Afghanistan_on_26_May_2012.jpg",
+"title": "File:CH-53D Sea Stallion of HMH-362 in Afghanistan on 26 May 2012.jpg",
 "w": 1280,
-"h": 853,
+"h": 777,
 "box": [
 -0.03,
-0.0,
-0.94,
-0.76
+-0.01,
+0.92,
+0.91
 ]
 },
 "A225": {

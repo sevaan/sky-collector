@@ -5,7 +5,7 @@ Usage: python3 -I scripts/research/build-tiers.py"""
 import collections, glob, gzip, json, os
 ROOT = os.path.join(os.path.dirname(__file__), '..', '..')
 EPIC = ['B741', 'B742', 'B743', 'B744', 'B748', 'B74S', 'B74R', 'B74D', 'BLCF', 'A388', 'A342', 'A343', 'A345', 'A346', 'MD11', 'DC10', 'C17', 'C130', 'C30J', 'C5M', 'A400',
-        'K35R', 'K35E', 'KC10', 'E3TF', 'E3CF', 'E6', 'B52', 'B1', 'B2', 'P8', 'C2', 'AN12', 'IL76', 'IL96', 'C295', 'V22', 'U2', 'F16', 'F18', 'F35', 'F15', 'EUFI', 'A10', 'H47', 'H53']
+        'K35R', 'K35E', 'E3TF', 'E3CF', 'E6', 'B52', 'B1', 'B2', 'P8', 'C2', 'AN12', 'IL76', 'IL96', 'C295', 'V22', 'U2', 'F16', 'F18S', 'F35', 'F15', 'EUFI', 'A10', 'H47', 'H53']
 LEGENDARY = ['A124', 'A3ST', 'A337', 'SHIP', 'BALL', 'DC3', 'B17', 'B29', 'LANC', 'SPIT', 'JU52', 'P51']
 # Common light, business and regional types the sample under-counts (they fly low, out of a receiver's range): Uncommon,
 # not Rare (aviation-enthusiast playtest 2026-11-19: "Rare Cessna 182"). E75S is the E175's other wing: Common, like E75L.

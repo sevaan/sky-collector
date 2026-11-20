@@ -9447,8 +9447,8 @@
    }
   ]
  },
- "F18": {
-  "name": "Boeing F/A-18 Hornet",
+ "F18S": {
+  "name": "Boeing F/A-18E/F Super Hornet",
   "options": [
    {
     "title": "File:MQ-25 T1 Stingray test aircraft takes off.jpg",
@@ -11212,6 +11212,17 @@
     "licence": "CC BY-SA 4.0",
     "artist": "Matti Blume",
     "year": 2018
+   },
+   {
+    "title": "File:CH-53D Sea Stallion of HMH-362 in Afghanistan on 26 May 2012.jpg",
+    "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fc/CH-53D_Sea_Stallion_of_HMH-362_in_Afghanistan_on_26_May_2012.jpg/960px-CH-53D_Sea_Stallion_of_HMH-362_in_Afghanistan_on_26_May_2012.jpg",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/f/fc/CH-53D_Sea_Stallion_of_HMH-362_in_Afghanistan_on_26_May_2012.jpg",
+    "page": "https://commons.wikimedia.org/wiki/File:CH-53D_Sea_Stallion_of_HMH-362_in_Afghanistan_on_26_May_2012.jpg",
+    "w": 2683,
+    "h": 1629,
+    "licence": "Public domain",
+    "artist": "Staff Sgt. Raul Gonzalez, USMC",
+    "year": 2012
    }
   ]
  },

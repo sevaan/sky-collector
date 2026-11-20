@@ -35,7 +35,7 @@ export const TYPE_NAMES = {
   // Military and special
   C17: 'Boeing C-17 Globemaster III', C130: 'Lockheed C-130 Hercules', C30J: 'Lockheed C-130J Super Hercules', C5M: 'Lockheed C-5M Super Galaxy', C2: 'Grumman C-2 Greyhound', C295: 'Airbus C295',
   K35R: 'Boeing KC-135R Stratotanker', K35E: 'Boeing KC-135E Stratotanker', KC10: 'McDonnell Douglas KC-10', E3TF: 'Boeing E-3 Sentry', E3CF: 'Boeing E-3 Sentry (CFM56)', E6: 'Boeing E-6 Mercury', P8: 'Boeing P-8 Poseidon',
-  B52: 'Boeing B-52 Stratofortress', B1: 'Rockwell B-1 Lancer', B2: 'Northrop B-2 Spirit', U2: 'Lockheed U-2', F16: 'F-16 Fighting Falcon', F18: 'F/A-18 Hornet', F15: 'F-15 Eagle', F35: 'F-35 Lightning II', EUFI: 'Eurofighter Typhoon', A10: 'A-10 Thunderbolt II',
+  B52: 'Boeing B-52 Stratofortress', B1: 'Rockwell B-1 Lancer', B2: 'Northrop B-2 Spirit', U2: 'Lockheed U-2', F16: 'F-16 Fighting Falcon', F18S: 'F/A-18 Super Hornet', F18H: 'F/A-18 Hornet', F15: 'F-15 Eagle', F35: 'F-35 Lightning II', EUFI: 'Eurofighter Typhoon', A10: 'A-10 Thunderbolt II',
   A124: 'Antonov An-124 Ruslan', A225: 'Antonov An-225 Mriya', AN12: 'Antonov An-12', IL76: 'Ilyushin Il-76', IL96: 'Ilyushin Il-96',
   // Classics and lighter than air
   DC3: 'Douglas DC-3', CONI: 'Lockheed Constellation', B17: 'Boeing B-17 Flying Fortress', B29: 'Boeing B-29 Superfortress', LANC: 'Avro Lancaster', SPIT: 'Supermarine Spitfire', P51: 'North American P-51 Mustang', JU52: 'Junkers Ju 52', CONC: 'Concorde',
