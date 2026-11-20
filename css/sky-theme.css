@@ -773,3 +773,11 @@ html.sky-cards:not(.sky-night) .sv-btn.o { background:linear-gradient(#e8493c, #
 
 /* App icon row (2026-11-19): the thumbnail's outline in Sky's paper tones by day (the design's #c9b98a), Space's at night */
 html:not(.sky-night) body.sky-only .set-icon-thumb { box-shadow: 0 0 0 1px #c9b98a; }
+
+/* The Plus page's widget picture (2026-11-19): paper by day like the real widget (SCWidgets), and its label kept its own
+   colour (the kit tiles' title colour was turning "NEXT REGULAR" navy on navy) */
+#plus-kit .kt .kt-widget b { color:#f3ead0; }
+html:not(.sky-night) body.sky-only #plus-kit .kt .kt-widget { background:#fffdf6; box-shadow:0 0 0 1px #d9cfb4, 0 6px 14px rgba(13,34,56,.18); color:#4a6178; }
+html:not(.sky-night) body.sky-only #plus-kit .kt .kt-widget b { color:#0d2238; }
+html:not(.sky-night) body.sky-only #plus-kit .kt .kt-widget i { color:#b42a20; }
+html:not(.sky-night) body.sky-only #plus-kit .kt .kt-widget small { color:#4a6178; }
