@@ -4,6 +4,9 @@
 
 /* Space Collector's night-sky helpers have nothing to say about planes. */
 #nextpass, #event-banner, #tk, #ud-now, #until-dark, #gh-remind, #plane, #skybar, #catchbar { display:none !important; } /* #discover is back: planes use it (2026-11-15) */
+/* ...but the circle's ticket comes back for the UFO and the secrets (Santa, the aviation anniversaries): it holds their name
+   and their Tap to collect / Tap to wave / Tap to remember button, so without it none of them could be caught (QA 2026-11-19) */
+#tk:is([data-ink="secret"], [data-ink="ufo"]):not([hidden]) { display: flex !important; }
 
 
 /* ---- The card (2026-11-15 fidelity pass, js/flight-card.js) ----
@@ -365,7 +368,7 @@ body.sky-only #sky-plus-line { display:none !important; } /* Observer stats is b
 
 /* ===== Stamps and levels (2026-11-15, Sevaan: catching a card again stamps it) =====
    Level metals follow Space Collector's fleet frames: bronze #b8793e, silver #b9c1cc, gold #e2b53c. The passport row
-   (.fc-pass) sits between the stats and the fact on the full card; mini cards carry no medal (2026-11-19, Sevaan: removed from Sky to match Space). */
+   (.fc-pass) sits between the stats and the fact on the full card; the medal (.sct-lvl) sits on the mini card's picture (Sevaan 2026-11-19: option B). */
 .fc { --lvl:#b8793e; --lvl-ink:#6e4416; --ink-stamp:#2d4f86; }
 .fc--lvl-silver, .sct-face--silver { --lvl:#aab4c0; --lvl-ink:#4a5663; }
 .fc--lvl-gold, .sct-face--gold { --lvl:#e2b53c; --lvl-ink:#7a5200; }
@@ -716,3 +719,11 @@ html.sky-cards .collection-tabs { gap:16px; }
 .fc:not(.fc--mini) .fc-in--bp .fc-fact { flex:none; }
 .fc:not(.fc--mini) .fc-in--bp .bp-perf { margin-top:auto; } /* spare height sits above the tear line, like a ticket */
 
+
+/* The level medal on the mini cards' picture (2026-11-19, Sevaan: 'Go with B'): the count in a disc of the level's metal */
+.sct-lvl { position:absolute; z-index:2; right:3px; top:3px; display:grid; place-items:center; min-width:17px; height:17px; padding:0 3px; border-radius:9px; color:#1a1305;
+  background:linear-gradient(150deg, color-mix(in srgb, var(--lvl) 55%, #fff), var(--lvl) 60%, color-mix(in srgb, var(--lvl) 80%, #000)); border:1px solid rgba(13,34,56,.4); box-shadow:0 1px 2px rgba(13,34,56,.3); }
+.sct-lvl--bronze { color:#fff7ee; }
+.sct-lvl i { font:400 11px/1 'SC Display','Russo One',sans-serif; font-style:normal; }
+.sct-lvl em { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); } /* the word is for screen readers; the metal says it */
+.fc--mini .sct-lvl { --lvl:#b8793e; } .fc--mini .sct-lvl--silver { --lvl:#aab4c0; } .fc--mini .sct-lvl--gold { --lvl:#e2b53c; }

@@ -119,6 +119,7 @@ const skyPanel = (glyph, cls, mark = '') => `<span class="${cls}" aria-hidden="t
 const layers = '<span class="fc-foil" aria-hidden="true"></span><span class="fc-coat" aria-hidden="true"></span><span class="fc-glare" aria-hidden="true"></span>';
 
 // face: the print inside the frame ('bp' boarding pass, 'ss' spec sheet); mini: the Collection's small layout.
+const miniMedal = (lvl, n) => (lvl ? `<span class="sct-lvl sct-lvl--${lvl}" title="${lvl} · ${n}"><i>${n}</i><em>${lvl.toUpperCase()}</em></span>` : ''); /* the level medal on a mini card's picture (Sevaan 2026-11-19: 'Go with B'): the catch count in a disc of the level's metal */
 function shell(kind, tier, inner, label, level = 'none', face = '', mini = false) {
   const t = tierOf(tier);
   return `<article class="fc fc--${kind} fc--${t}${['rare', 'epic', 'legendary'].includes(t) ? ' fc--gilt' : ''}${level && level !== 'none' ? ` fc--lvl fc--lvl-${level}` : ''}${mini ? ' fc--mini' : ''}" style="--tier:${TIERS[t].color}" aria-label="${esc(label)}">
@@ -176,7 +177,7 @@ export function flightCardHtml(f, opts = {}) {
   if (opts.small) {
     const pic = ph ? photoImg(ph, 'fc-photo', false, true) : skyPanel('jet', 'fc-sky', type);
     const inner = `<div class="m-lg">${passMark(f, 'm-logo', 'm-wm')}</div>
-      <div class="fc-pic m-ph${ph ? '' : ' fc-pic--sky'}">${pic}${tierPill(f.tier, 'fc-tier m-tier')}</div>
+      <div class="fc-pic m-ph${ph ? '' : ' fc-pic--sky'}">${pic}${tierPill(f.tier, 'fc-tier m-tier')}${miniMedal(lvl, si?.count ?? 0)}</div>
       <div class="m-cd"><span>${esc(code(f.from))}</span>${jet('fc-rot90')}<span>${esc(code(f.to))}</span></div>
       <div class="bp-perf"></div>
       <div class="m-st"><span>${opts.caughtAt ? `✓ ${dateShort(opts.caughtAt)}` : 'NOT YET'}</span>${barcode(f.callsign || f.key, 12)}</div>`;
@@ -259,7 +260,7 @@ export function planeCardHtml(p, opts = {}) {
     const pic = ph ? photoImg(ph, 'fc-photo', false, true) : skyPanel(un ? un.glyph : p.glyph, 'fc-sky fc-sky--big', '');
     const left = typeSpecs(type)?.cells.find((c) => c[0] === 'First flew') ?? cells[0];
     const inner = `<div class="m-hd"><span class="m-kind">AIRCRAFT</span><span class="ss-plate m-plate"><b>${esc(plate)}</b></span></div>
-      <div class="fc-pic m-ph${ph ? '' : ' fc-pic--sky'}">${pic}${tierPill(p.tier, 'fc-tier m-tier')}${bandHtml(classBand(k, true), 'm-band')}</div>
+      <div class="fc-pic m-ph${ph ? '' : ' fc-pic--sky'}">${pic}${tierPill(p.tier, 'fc-tier m-tier')}${miniMedal(lvl, si?.count ?? 0)}${bandHtml(classBand(k, true), 'm-band')}</div>
       <b class="m-n">${escName(name)}</b>
       <div class="m-sp">${left && left[0] !== 'Aircraft' ? `<span>${esc(left[0])} <b>${esc(left[1])}</b></span>` : `<span>${esc(set)}</span>`}<span><b>${si?.count ?? 0}</b> aircraft</span></div>`;
     return shell('plane', p.tier, inner, label, si?.level, 'ss', true);
