@@ -3767,3 +3767,9 @@ body.night .tell-text { color: #e8a59a; } body.night .tell-patch { filter: none;
 .kt-icons { position: relative; width: 132px; height: 58px; }
 .kt-icons img { position: absolute; top: 2px; left: calc(var(--i) * 38px); width: 54px; height: 54px; border-radius: 22.37%; box-shadow: 0 0 0 1px #45576a, 0 4px 10px #000a; }
 body.night .kt-icons img { filter: grayscale(1) sepia(1) hue-rotate(-50deg) saturate(3) brightness(.7); }
+
+/* Sky's Plus page: the widgets tile's picture, a small Next regular widget (2026-11-19) */
+.kt-widget { display: grid; align-content: center; gap: 2px; width: 118px; height: 96px; padding: 10px 12px; box-sizing: border-box; border-radius: 20px; background: #0b1626; box-shadow: 0 0 0 1px #2b4058, 0 6px 14px #0008; font: 500 9px/1.15 var(--label, 'Barlow Condensed', sans-serif); color: #9fb3c6; text-align: left; }
+.kt-widget b { font-weight: 500; letter-spacing: .14em; color: #f3ead0; }
+.kt-widget i { font: 400 24px/1 'SC Display', 'Russo One', sans-serif; font-style: normal; color: #ff6b5e; margin-top: 4px; }
+.kt-widget small { font-size: 9px; color: #9fb3c6; white-space: nowrap; }
