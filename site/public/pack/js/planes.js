@@ -118,7 +118,7 @@ export const CLASS_WORDS = {
   balloon: 'Balloon', airship: 'Airship', glider: 'Glider', ultralight: 'Ultralight', drone: 'Drone', heli: 'Helicopter',
   cargo: 'Cargo airline', airline: 'Airline', biz: 'Business jet', light: 'Light aircraft', turboprop: 'Turboprop',
   airliner: 'Airliner', small: 'Small aircraft', large: 'Large aircraft', heavy: 'Heavy aircraft',
-  mil: 'Military', gov: 'Government', /* the band says "Not an airline · Military": what it is, never whose */
+  mil: 'Military', gov: 'Government', /* the band says "Military": what it is, never whose */
 };
 const AIRLINER_SETS = new Set(['giants', 'b737', 'a320', 'twinaisle', 'regional']);
 export function catchClass(a) {

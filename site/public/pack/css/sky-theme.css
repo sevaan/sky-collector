@@ -282,7 +282,7 @@ html.sky-cards:not(.sky-night) .collection-tabs { box-shadow:0 0 0 100vmax #eef5
 html.sky-cards:not(.sky-night) .collection-tabs button { color:#4a6178; }
 html.sky-cards:not(.sky-night) .collection-tabs button[aria-pressed="true"] { color:#0d2238; }
 html.sky-cards:not(.sky-night) .collection-tabs .tab-ink { background:var(--gold); }
-html.sky-cards:not(.sky-night) #owned-count { background:#fffdf6; color:#b42a20; box-shadow:inset 0 0 0 1px #e7dcbd; }
+html.sky-cards:not(.sky-night) #owned-count, html.sky-cards:not(.sky-night) .send-view .tab-count { background:#fffdf6; color:#b42a20; box-shadow:inset 0 0 0 1px #e7dcbd; }
 html.sky-cards:not(.sky-night) .collection-tools, html.sky-cards:not(.sky-night) .collection-tools::before { background:#eef5fb; }
 html.sky-cards:not(.sky-night) .collection-tools { box-shadow:0 10px 14px -10px rgba(13,34,56,.18); }
 html.sky-cards:not(.sky-night) .search, html.sky-cards:not(.sky-night) .collection-tools .search { background:#fffdf6; border-color:#c9b98a; color:#4a6178; }
@@ -293,7 +293,7 @@ html.sky-cards:not(.sky-night) .filters-btn[aria-expanded="true"] { border-color
 html.sky-cards:not(.sky-night) .filters-btn.active::after { background:var(--gold); }
 html.sky-cards:not(.sky-night) .filter select { background:#fffdf6; border-color:#c9b98a; color:#0d2238; }
 html.sky-cards:not(.sky-night) .filter select option { background:#fffdf6; color:#0d2238; }
-html.sky-cards:not(.sky-night) .result-row, html.sky-cards:not(.sky-night) #results { color:#23405c; }
+html.sky-cards:not(.sky-night) .result-row, html.sky-cards:not(.sky-night) #results, html.sky-cards:not(.sky-night) .sv-results { color:#23405c; }
 html.sky-cards:not(.sky-night) #reset-filters { color:#b42a20; }
 html.sky-cards:not(.sky-night) .collection-notice { background:#fffdf6; border-color:#c9b98a; color:#23405c; }
 html.sky-cards:not(.sky-night) .grid .tile-slot:empty { background:#dbe9f5; background-clip:content-box; } html.sky-cards .tile-slot:not(:empty) { background:transparent; }
@@ -733,6 +733,7 @@ body.sky-only #discover:not(.owned) .d-ticket #d-cta { color:#fff !important; }
 :is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-bar .sv-n { background:#fffdf6; border-color:#d9b65a; color:#0d2238; box-shadow:0 6px 16px rgba(13,34,56,.12); }
 :is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-bar .sv-n small { color:#4a6178; }
 :is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-bar .sv-btn { background:linear-gradient(#e8493c, #c42d22); color:#fff; } :is(html:not(.sky-night) body.sky-only, html.sky-cards:not(.sky-night)) .sv-bar .sv-btn:disabled { background:#d9a19b; color:#fffdf6; }
+html.sky-cards .send-view, body.sky-only .send-view { --sv-tick-ink:#fff; } /* the picked card's tick: white on Sky's red (2026-11-20) */
 /* The tour before a place is chosen: the page's light colour behind it, not Space's night navy; Skip as a light pill */
 html:not(.sky-night) body.sky-only.day { background-color:#eef5fb; }
 html:not(.sky-night) body.sky-only.day #ob-skip.ob-exit { background:#fffdf6e6 !important; color:#0d2238 !important; border-color:#c9d6e3 !important; }
