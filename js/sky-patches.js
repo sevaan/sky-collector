@@ -2,8 +2,9 @@
 // earned in plain sight, read off the sightings like every patch (js/progress.js), nothing stored. Each catch's own
 // context (the sun's height, the weather, where you stood) is kept on its sighting when it is caught (main.js
 // capturePlane: sunEl, wx), so older catches count only for what they already carry. No DOM here.
-import { greatCircle } from './flight-facts.js?v=0.1.1815';
-import { isProp } from './sky-props.js?v=0.1.1815';
+import { greatCircle } from './flight-facts.js?v=0.1.1816';
+import { isProp } from './sky-props.js?v=0.1.1816';
+import { distRound as distText, distIn, distGoal } from './units.js?v=0.1.1816'; /* distances in the player's units (QA round 5) */
 
 const R = 6371, RAD = Math.PI / 180;
 const km = (a, b) => { const s = Math.sin((b.lat - a.lat) * RAD / 2) ** 2 + Math.cos(a.lat * RAD) * Math.cos(b.lat * RAD) * Math.sin((b.lon - a.lon) * RAD / 2) ** 2; return 2 * R * Math.asin(Math.min(1, Math.sqrt(s))); };
@@ -62,7 +63,8 @@ const rush = (ts) => { let best = 0; for (let i = 0, j = 0; i < ts.length; i++) 
 const K = (a) => a.sky2 ?? freshSky2();
 const maxSeasons = (a) => { let n = 0; for (const s of K(a).seasons.values()) n = Math.max(n, s.size); return n; };
 // [id, name, text, need, have]
-const P = (id, name, text, need, have) => ({ id, name, text, icon: '', done: (a) => have(a) >= need, prog: (a) => [Math.min(need, have(a)), need] });
+const P = (id, name, text, need, have, km = false) => ({ id, name, get text() { return typeof text === 'function' ? text() : text; }, icon: '', done: (a) => have(a) >= need,
+  prog: (a) => { if (!km) return [Math.min(need, have(a)), need]; const g = distGoal(need); return [Math.min(g, Math.round(distIn(have(a)))), g]; } }); /* km: a distance goal, its bar in the player's units like its text (QA round 5) */
 export const SKY_PATCHES_MORE = [
   P('sky-redeye', 'Red-eye', 'Catch a long-haul flight between midnight and 5 am', 1, (a) => K(a).redeye),
   P('sky-homerun', 'Home Run', 'Catch a flight landing at an airport near you', 1, (a) => K(a).homerun),
@@ -77,7 +79,7 @@ export const SKY_PATCHES_MORE = [
   P('sky-seasons', 'Four Seasons', 'Catch planes in all four seasons of one year', 4, maxSeasons),
   P('sky-clouds', 'Above the Clouds', 'Catch a plane on an overcast day', 1, (a) => K(a).clouds),
   P('sky-snow', 'Snow Day', 'Catch a plane while it snows', 1, (a) => K(a).snow),
-  P('sky-coast', 'Coast to Coast', 'Catch a flight of 3,500 km or more within one country', 1, (a) => K(a).coast),
+  P('sky-coast', 'Coast to Coast', () => `Catch a flight of ${distText(3500)} or more within one country`, 1, (a) => K(a).coast),
   P('sky-equator', 'Equator Crosser', 'Catch a flight between the northern and southern halves of the world', 1, (a) => K(a).equator),
   P('sky-dateline', 'Date Line', 'Catch a flight that crosses the International Date Line, where one day becomes the next', 1, (a) => K(a).dateline),
   P('sky-pole', 'Pole Hopper', 'Catch a flight that goes over the far north, past the Arctic Circle', 1, (a) => K(a).pole),
@@ -92,8 +94,8 @@ export const SKY_PATCHES_MORE = [
   P('sky-livery10', 'Livery Spotter', 'Catch 10 liveries: a type in an airline’s colours', 10, (a) => K(a).liveries.size),
   P('sky-livery25', 'Livery Collector', 'Catch 25 liveries', 25, (a) => K(a).liveries.size),
   P('sky-livery50', 'Paint Shop', 'Catch 50 liveries', 50, (a) => K(a).liveries.size),
-  P('sky-world', 'Round the World', 'Catch flights adding up to 40,075 km, once round the Earth', 40075, (a) => Math.round(K(a).distance)),
-  P('sky-moon', 'To the Moon', 'Catch flights adding up to 384,400 km, the distance to the Moon', 384400, (a) => Math.round(K(a).distance)),
+  P('sky-world', 'Round the World', () => `Catch flights adding up to ${distText(40075)}, once round the Earth`, 40075, (a) => Math.round(K(a).distance), true),
+  P('sky-moon', 'To the Moon', () => `Catch flights adding up to ${distText(384400)}, the distance to the Moon`, 384400, (a) => Math.round(K(a).distance), true),
 ];
 export { QUAD, TURBOPROP, isProp };
 
