@@ -3,7 +3,7 @@
 // group (or the date earned) along the bottom, one icon in the middle. Milestones get gold foil, the rarest holo
 // (css/ui.css .patch--gold / .patch--holo). Shared by Explore (the earning moment, its toast) and Collection (the wall).
 
-import { CON_BY_ID } from './constellations.js?v=0.1.1804';
+import { CON_BY_ID } from './constellations.js?v=0.1.1805';
 
 export const GROUPS = {
   collect: { c: '#14284a', t: 'Collection' }, rarity: { c: '#3a2259', t: 'Rarity' }, rocket: { c: '#5a2a1a', t: 'Rockets' },
@@ -14,17 +14,17 @@ export const GROUPS = {
 export const GROUP_ORDER = ['member', 'secret', 'week', 'album', 'collect', 'rarity', 'rocket', 'nation', 'history', 'fleet', 'planet', 'con', 'sky', 'time'];
 
 const GROUP_OF = {
-  collect: 'first ten twentyfive fifty hundred archivist curator catalogue sightings100 station stations satellites50 silver gold gold3 missions10',
-  rarity: 'legend epic spectrum legends5 legends25 shiny shiny5',
+  collect: 'first ten twentyfive fifty hundred archivist curator catalogue sightings100 station stations satellites50 silver gold gold3 missions10 sky-missions100 sky-albums10 sky-secrets3 sky-secrets10',
+  rarity: 'legend epic spectrum legends5 legends25 shiny shiny5 sky-shinyall',
   rocket: 'stage stages25 junk reunion reunion10 reunion25',
-  history: 'race oldtimer sputnik coldwar decades brandnew witness headliners',
+  history: 'race oldtimer sputnik coldwar decades brandnew witness headliners sky-newgen sky-makers5 sky-makers10 sky-bigtwo sky-trijet sky-single sky-engines4 sky-biz5',
   planet: 'moon mars saturn wanderers',
   con: 'stars10 deep3 deep10 cons5 zodiac cons25 cons44',
-  time: 'twilight owl dawn marathon double hattrick months3 months12 streak4 streak12 anniversary sky-redeye sky-seven sky-thirty sky-rush sky-golden sky-seasons sky-freightnight',
-  sky: 'zenith horizon compass faint brilliant close far roadtrip sky-clouds sky-snow sky-homerun sky-outbound',
+  time: 'sky-weeks4 sky-weeks12 twilight owl dawn marathon double hattrick months3 months12 streak4 streak12 anniversary sky-redeye sky-seven sky-thirty sky-rush sky-golden sky-seasons sky-freightnight',
+  sky: 'zenith horizon compass faint brilliant close far roadtrip sky-clouds sky-snow sky-homerun sky-outbound sky-upaway sky-nightshift',
   fleet: 'starlink starlink10 starlink50 fleets choochoo sky-star sky-oneworld sky-skyteam sky-airlines5 sky-airlines25 sky-airlines50 sky-airlines100 sky-quad sky-turboprop10 sky-rotors3 sky-livery10 sky-livery25 sky-livery50',
   /* Sky Collector's patches (js/progress.js, js/sky-patches.js) */
-  nation: 'nations diplomat bigthree redstar stripes longmarch europe japan india sky-passport10 sky-passport25 sky-passport50 sky-equator sky-dateline sky-pole sky-coast sky-globetrotter sky-hopper',
+  nation: 'nations diplomat bigthree redstar stripes longmarch europe japan india sky-passport10 sky-passport25 sky-passport50 sky-equator sky-dateline sky-pole sky-coast sky-globetrotter sky-hopper sky-continents3 sky-alliances',
 };
 const groupById = new Map(Object.entries(GROUP_OF).flatMap(([g, ids]) => ids.split(' ').map((id) => [id, g])));
 export const groupOf = (a) => (a.id === 'plus' || a.id === 'ambassador' ? 'member' : a.secret ? 'secret' : a.week ? 'week' : a.album ? 'album' : a.con === 'solar' ? 'planet' : a.con ? 'con' : groupById.get(a.id) ?? 'collect');
@@ -41,6 +41,7 @@ const GLYPH = {
   silver: 'cardAg', gold: 'cardAu', gold3: 'cardAu3', marathon: 'tally', double: 'cards2', hattrick: 'cards3', twilight: 'sunset', dawn: 'sunrise',
   horizon: 'horizon', coldwar: 'rocketOld', decades: 'hourglass', brandnew: 'launch', witness: 'flare', reunion: 'launch', reunion10: 'launch', reunion25: 'launch', headliners: 'star5', arecibo: 'globe', halley: 'far', sputnik: 'sputnik', laika: 'star', apollo11: 'moon', twohomes: 'station', anniversary: 'candle', close: 'close', far: 'far', roadtrip: 'road',
   brilliant: 'flare', spectrum: 'gems', europe: 'ring12', satellites50: 'sat',
+  'sky-shinyall': 'spark', 'sky-missions100': 'clipboard', 'sky-weeks4': 'calendar', 'sky-weeks12': 'calendar', 'sky-newgen': 'hourglass', /* Sky's 2026-11-20 patches */
 };
 // Finishes: gold foil for milestones, holo for the rarest few.
 const GOLD = new Set('deep10 con-solar hundred archivist curator gold gold3 starlink50 wanderers streak12 anniversary months12 cons5 legends5'.split(' '));

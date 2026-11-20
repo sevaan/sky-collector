@@ -714,6 +714,7 @@ html:not(.sky-night) body.sky-only #sky-missions .mc .top span:last-child { colo
 html:not(.sky-night) body.sky-only #sky-missions .mc .art { background-color:#cfe5f6; box-shadow:0 0 0 1px #0d22381f; }
 html:not(.sky-night) body.sky-only #sky-missions .mc b { color:#0d2238; background:none; -webkit-text-fill-color:#0d2238; text-shadow:none; filter:none; }
 html:not(.sky-night) body.sky-only #sky-missions .mc small { color:#b42a20; }
+body.sky-only #sky-missions .mc b { text-wrap:wrap; } /* plain wrapping: the page's text-wrap:pretty left "Catch" alone on the first line and cut a four-line goal (2026-11-20, missions round 2 at 360 px) */
 html:not(.sky-night) body.sky-only #sky-missions .mc.done small { color:#1f7a45; }
 html:not(.sky-night) body.sky-only #sky-missions .mc.done { box-shadow:0 0 0 2px #e2b53c, 0 0 14px rgba(226,181,60,.55), inset 0 0 0 3px #fffdf6, 0 8px 18px rgba(13,34,56,.18); }
 body.sky-only #sky-missions .mc.done::after { top:calc(8px + 22px + (100% - 16px) * .375 * .5); }

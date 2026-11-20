@@ -5,17 +5,19 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { isProp } from './sky-props.js?v=0.1.1804';
-import { planesUp } from './sky-up.js?v=0.1.1804';
-import { planeKey } from './flights.js?v=0.1.1804';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1804';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1804';
-import { airlineIcon } from './airline-icons.js?v=0.1.1804';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1804';
-import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1804';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1804';
-import { planeSet } from './sky-sets.js?v=0.1.1804';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1804';
+import { isProp } from './sky-props.js?v=0.1.1805';
+import { planesUp } from './sky-up.js?v=0.1.1805';
+import { planeKey } from './flights.js?v=0.1.1805';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1805';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1805';
+import { airlineIcon } from './airline-icons.js?v=0.1.1805';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1805';
+import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1805';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1805';
+import { planeSet } from './sky-sets.js?v=0.1.1805';
+import { MIL_TYPES } from './plane-privacy.js?v=0.1.1805';
+import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1805';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1805';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -33,14 +35,43 @@ function readSeen() {
 let seenCache = null, seenSaved = 0;
 // What a seen plane could count for in a mission (js/progress.js SKY_MISSIONS reads the same words).
 const localFlags = (p) => { const f = [], st = planeSet(p.type, isHelicopter(p)).id; if (st === 'helicopters') f.push('heli'); if (st === 'twinaisle' || st === 'giants') f.push('wide'); if (st === 'props' || st === 'light') f.push('prop'); if ((p.altFt ?? 0) >= 35000) f.push('high'); if (p.altFt != null && p.altFt < 5000) f.push('low'); if (/^[A-Z]{3}\d/.test(p.callsign ?? '')) f.push('airline'); return f; };
+/* More of what a plane could do for a mission (2026-11-20, design/missions-draft.md): its kind, whether it's climbing or coming
+   down, right overhead, rising into your sky; and once its route is known (only an airline's), where it's going. By type
+   only for military planes. a: { plane, el }; ctx.route(callsign): a route already looked up (never asks for one). */
+function moreFlags(a, ctx, now) {
+  const p = a.plane, f = [], t = String(p.type ?? '').toUpperCase(), st = planeSet(p.type, isHelicopter(p)).id, alt = p.altFt;
+  if (st === 'giants') f.push('giant'); if (st === 'regional') f.push('regional'); if (st === 'bizjets' || p.cls === 'biz') f.push('biz');
+  if (st === 'military' || MIL_TYPES.test(t)) f.push('mil'); if (isBoeing(t)) f.push('boeing'); if (isAirbus(t)) f.push('airbus');
+  if (isOldType(t)) f.push('oldtype'); if (isNewType(t, now)) f.push('newtype');
+  if (p.climbKnown && alt != null && alt < 15000) { if (p.climb >= 1000) f.push('up'); if (p.climb <= -1000) f.push('down'); }
+  if (a.el > 70) f.push('overhead');
+  if (rose.has(p.hex)) f.push('rise');
+  const full = /^[A-Z]{3}\d/.test(p.callsign ?? '') ? ctx?.route?.(p.callsign)?.full : null;
+  if (full?.from && full?.to) {
+    f.push('routed'); const km = kmOf(full), fc = full.from.cc, tc = full.to.cc, c1 = continentOfAirport(full.from), c2 = continentOfAirport(full.to);
+    if (fc && tc && fc !== tc) f.push('abroad'); if (c1 && c2 && c1 !== c2) f.push('cont');
+    if (km != null) { if (km > 3000) f.push('far'); if (km > 5000) f.push('ocean'); if (km < 500) f.push('short'); }
+    if (ctx?.obs && full.to.lat != null && hav(ctx.obs.lat, ctx.obs.lon, full.to.lat, full.to.lon) <= 30) f.push('landing');
+  }
+  return f;
+}
+/* Rising into your sky (the "first minute" mission): a plane the app saw at 5° or lower, then above it. Only planes seen
+   rising count, never ones already up when the app opened. hex → when it rose (ms), for today. */
+const low = new Set(), rose = new Map(); let riseDay = '';
+export const upForOf = (hex, t = Date.now()) => (rose.has(hex) ? Math.max(0, Math.round((t - rose.get(hex)) / 1000)) : null);
+const noted = new Map(); let flagsAt = 0;
 // Called with the planes above the horizon each poll (about every 10 s while Explore or Today is open).
-export function logSeen(list) {
+export function logSeen(list, ctx = null) {
   try { noteRegulars((list ?? []).map((a) => a.plane)); } catch {} /* Regulars: airline callsigns and when they pass (js/sky-regulars.js) */
   const s = seenCache && seenCache.day === dayKey() ? seenCache : (seenCache = readSeen());
-  const h = new Date().getHours(), have = new Set(s.hexes), newHour = !s.open[h], fresh = [];
+  const h = new Date().getHours(), have = new Set(s.hexes), newHour = !s.open[h], fresh = [], late = [], now = Date.now();
   s.open[h] = 1;
-  for (const a of list ?? []) { const x = a.plane?.hex; if (x && !have.has(x)) { have.add(x); s.hexes.push(x); s.hours[h]++; fresh.push({ type: a.plane.type, flags: localFlags(a.plane) }); } }
-  noteLocal(fresh, newHour); /* the 30-day tally behind "Rare here" and mission sizing (js/sky-local.js) */
+  if (riseDay !== s.day) { riseDay = s.day; low.clear(); rose.clear(); noted.clear(); }
+  for (const a of list ?? []) { const x = a.plane?.hex; if (!x) continue; if (a.el <= 5) low.add(x); else if (low.has(x) && !rose.has(x)) rose.set(x, now); }
+  for (const a of list ?? []) { const x = a.plane?.hex; if (x && !have.has(x)) { have.add(x); s.hexes.push(x); s.hours[h]++; const fl = localFlags(a.plane); noted.set(x, new Set(fl)); fresh.push({ type: a.plane.type, flags: fl }); } }
+  /* every couple of seconds: what each plane up has shown since it was first counted (each flag once a plane a day) */
+  if (now - flagsAt > 2000) { flagsAt = now; for (const a of list ?? []) { const x = a.plane?.hex; if (!x || a.el <= 5) continue; const n = noted.get(x) ?? noted.set(x, new Set()).get(x), add = moreFlags(a, ctx, now).filter((f) => !n.has(f)); if (add.length) { add.forEach((f) => n.add(f)); late.push({ flags: add }); } } }
+  noteLocal(fresh, newHour, h, late); /* the 30-day tally behind "Rare here" and mission sizing (js/sky-local.js) */
   if (Date.now() - seenSaved > 15000) { seenSaved = Date.now(); try { localStorage.setItem(SEEN, JSON.stringify(s)); } catch {} }
 }
 
@@ -180,7 +211,14 @@ function finisherFor(m, cands, route) {
     airlines3: (c) => !!c.r?.airline, high: (c) => altFt(c.p) >= 35000, low: (c) => altFt(c.p) > 0 && altFt(c.p) < 5000,
     bands: (c) => altFt(c.p) >= 35000 || (altFt(c.p) > 0 && altFt(c.p) < 5000), rarenew: (c) => c.isNew && ['rare', 'epic', 'legendary'].includes(c.tier?.id),
     rarehere: (c) => c.w?.gain !== 'none' && rareHereT(c.p.type), families2: (c) => c.w?.gain !== 'none' && !famsToday().has(planeSet(c.p.type, isHelicopter(c.p)).id), newflights2: (c) => c.isNew, again: (c) => !c.isNew && c.w?.gain !== 'none', /* QA 2026-11-19: 'rare here' and 'two families' took any new plane, 'again' a plane caught today */
-    firstcard: () => true, firstflight: (c) => !!c.full, types2: () => true,
+    firstcard: () => true, firstflight: (c) => !!c.full, types2: () => true, catches3: () => true,
+    /* round 2 (2026-11-20): the ones a plane up now or coming over can be told to do */
+    continent: (c) => { const x = continentOfAirport(c.full?.from), y = continentOfAirport(c.full?.to); return !!x && !!y && x !== y; },
+    oldtype: (c) => isOldType(c.p.type), newtype: (c) => isNewType(c.p.type), overhead: (c) => (c.a?.el ?? c.n?.peakEl ?? 0) > 70,
+    up: (c) => c.p.climbKnown && c.p.climb >= 1000 && altFt(c.p) > 0 && altFt(c.p) < 15000, down: (c) => c.p.climbKnown && c.p.climb <= -1000 && altFt(c.p) > 0 && altFt(c.p) < 15000,
+    giant: (c) => planeSet(c.p.type, isHelicopter(c.p)).id === 'giants', regional: (c) => planeSet(c.p.type, isHelicopter(c.p)).id === 'regional',
+    biz: (c) => planeSet(c.p.type, isHelicopter(c.p)).id === 'bizjets', military: (c) => planeSet(c.p.type, isHelicopter(c.p)).id === 'military' || MIL_TYPES.test(String(c.p.type ?? '').toUpperCase()),
+    boeingairbus: (c) => isBoeing(c.p.type) || isAirbus(c.p.type),
   }[m.id];
   return test ? cands.find((c) => { try { return test(c); } catch { return false; } }) ?? null : null;
 }
@@ -292,7 +330,7 @@ export function renderToday(el, ctx) {
      draws them with Space's deck (main.js mcTap: tap to turn one over, all face down and they shuffle; dealt face down
      the first time each day). Each card its own picture: the plane that would finish it, else one that fits the mission,
      never the same photo twice. */
-  const FIT = { firstcard: 'B738', firstflight: 'B789', types2: 'AT76', high: 'A359', low: 'C172', bands: 'DH8D', rarenew: 'A388', rarehere: 'B748', families2: 'E190', newflights2: 'A21N', again: 'A320', airlines3: 'B38M', revisit3: 'CRJ9', pair10: 'A321', levelup: 'B77W' };
+  const FIT = { firstcard: 'B738', firstflight: 'B789', types2: 'AT76', high: 'A359', low: 'C172', bands: 'DH8D', rarenew: 'A388', rarehere: 'B748', families2: 'E190', newflights2: 'A21N', again: 'A320', airlines3: 'B38M', revisit3: 'CRJ9', pair10: 'A321', levelup: 'B77W', catches3: 'E75L', continent: 'B77W', landing: 'E75L', oldtype: 'C172', newtype: 'A21N', overhead: 'B738', up: 'A320', down: 'B38M', three10: 'A20N', quick: 'CRJ9', dark: 'B789', shiny: 'A388', boeingairbus: 'B38M', giant: 'B748', regional: 'E75L', biz: 'C25B', military: 'C130', cardlevel: 'A321', newairline: 'B789', livery: 'A320', moreaircraft: 'A21N', livery2: 'B738', sameairline: 'A320', compass: 'B763', dusk: 'B77W' };
   const SPARE = ['B789', 'A359', 'AT76', 'E190', 'B38M', 'A21N', 'DH8D', 'B77W', 'CRJ9', 'A320', 'B738', 'A388'];
   const used = new Set(), smOf = (ph) => (ph ? (ph.sm ?? String(ph.url).replace(/\/([^/]+)$/, '/sm/$1')) : null), take = (u) => (u && !used.has(u) ? (used.add(u), u) : null);
   const mcItems = ms.map((m) => {

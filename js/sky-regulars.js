@@ -3,7 +3,7 @@
 // Airline flights only: private and other anonymous aircraft have no callsign here (js/planes.js isAnonymous), so a
 // person's plane can never become a "regular". The plane version of a satellite's pass. No DOM.
 // localStorage 'skyRegulars' = { CALLSIGN: { 'yyyy-m-d': minuteOfDay first seen } }, 14 days, at most 600 callsigns.
-import { privateCatch } from './plane-privacy.js?v=0.1.1804';
+import { privateCatch } from './plane-privacy.js?v=0.1.1805';
 const KEY = 'skyRegulars', KEEP_DAYS = 14, MAX = 600, WINDOW = 45, MIN_DAYS = 3, LOOK_DAYS = 7;
 const AIRLINE = /^[A-Z]{3}\d/;
 const dayKey = (t) => { const d = new Date(t); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
@@ -50,4 +50,11 @@ export function regulars(now = Date.now(), store = load()) {
 }
 export const regularFor = (callsign, now = Date.now()) => { const d = load()[String(callsign ?? '').toUpperCase()]; return d ? regularOf(d, now) : null; };
 export const clockText = (minute) => new Date(2000, 0, 1, Math.floor(minute / 60), minute % 60).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+/* Airlines (3-letter prefixes) seen here in the last `days` days at these clock hours (2026-11-20: "Catch an airline you've
+   never caught" is dealt only when one you don't have has flown here at this time of day this week) */
+export function airlinesAt(hours, now = Date.now(), days = 7, store = load()) {
+  const from = dayStart(dayKey(now)) - days * 86400e3, hs = new Set(hours), out = new Set();
+  for (const [cs, d] of Object.entries(store)) for (const [k, m] of Object.entries(d)) if (dayStart(k) >= from && hs.has(Math.floor(m / 60))) { out.add(cs.slice(0, 3)); break; }
+  return out;
+}
 export const _resetRegulars = (v = null) => { cache = v; savedAt = 0; }; // tests
