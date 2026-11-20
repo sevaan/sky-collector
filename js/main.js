@@ -71,6 +71,7 @@ import { airlineIcon } from './airline-icons.js?v=0.1.1798'; /* the radar strip 
 import { catchSightings, isSkyCard, skyStampInfo, skyModel, skyTypeCode } from './sky-cards.js?v=0.1.1798';
 import { THRESHOLDS as SKY_THRESHOLDS, levelFor as skyLevelFor, hasAirlineCallsign } from './sky-stamps.js?v=0.1.1798';
 import { renderToday, heroHtml as todayHero, logSeen, dirWord as todayDir, aroundPlanes, planePhoto, upcoming } from './sky-today.js?v=0.1.1798';
+import { feetPlanes, feetName } from './sky-feet.js?v=0.1.1798';
 import { catchPanel, catches as skyCatches, previewFor as skyPreview, highlightFor as skyHighlightFor, preparePlaneCatch, setCatchSource } from './sky-catch.js?v=0.1.1798';
 import { addStarfield } from './starfield.js?v=0.1.1798';
 import { pickAlert, pickRegular } from './sky-alerts.js?v=0.1.1798';
@@ -831,7 +832,7 @@ function tick0(ts) {
     ...(document.body.classList.toggle('bright-sky', (state.frame?.sunEl ?? -90) > -2 && !state.night) ? {} : {}), // daytime only (dusk is dark like night): chips, switcher and toasts in card paper (2026-10-08)
     weather: state.weather?.now ?? null,
     below: SKY_ONLY ? [] : belowGhosts(d), // see-through Earth: what’s under the horizon and when it rises
-    feet: SKY_ONLY ? [] : feetItems(),     belowSats: state.belowSats, belowStarLimit: SKY_ONLY ? 0 : belowLimits().stars, daySats: SKY_ONLY ? [] : daySats(d),
+    feet: SKY_ONLY ? skyFeetItems() : feetItems(),     belowSats: state.belowSats, belowStarLimit: SKY_ONLY ? 0 : belowLimits().stars, daySats: SKY_ONLY ? [] : daySats(d),
     ghosts: SKY_ONLY ? [] : state.guideRise && state.activeTarget ? [{ enu: enuFromAzEl(state.activeTarget.look.az, state.activeTarget.look.el), name: 'Appears here', note: fmtTime(state.guideRise.start) }] : dayGhosts(),
     bodies: state.showStars ? state.bodies : null,
     milky: state.showStars && state.showMilky && !state.saver ? state.milkyEnu : null,
@@ -5458,6 +5459,24 @@ function feetItems() {
   for (const n of stars) out.push({ name: label(n.obj), az: n.look.az, el: n.look.el, kind: 'star' });
   return out;
 }
+/* Sky Collector (2026-11-20, Sevaan: "The radar when I look down at the ground in sky collector should also indicate what's
+   up in the air around me like space collector does"): the same compass at your feet, fed the planes up now (js/sky-feet.js).
+   Each plane in its airline colour (planeLook, "E without the keyline"), new cards ringed as Space rings new satellites, the
+   Circle highlights respected, and names on only a few spokes. Worked out at most 4 times a second; tap a plane to be steered to it. */
+let skyFeetList = null, skyFeetAt = 0;
+function skyFeetItems() {
+  if ((state.basis?.back?.[2] ?? 0) > -0.6) { skyFeetList = null; return null; }
+  const t = performance.now();
+  if (skyFeetList && t - skyFeetAt < 250) {
+    /* between rebuilds, keep each plane where it is now so the map moves smoothly */
+    const by = new Map((state.planeItems ?? []).map((a) => [a.plane.hex, a]));
+    for (const g of skyFeetList) { const a = by.get(g.id); if (a) { g.az = a.az; g.el = a.el; g.track = a.plane.track; } }
+    return skyFeetList;
+  }
+  skyFeetAt = t; const fresh = radarFresh();
+  return (skyFeetList = feetPlanes(state.planeItems, { fresh: (p) => fresh.has(p.hex), highlight: skyHighlights, nameOf: feetPlaneName }));
+}
+const feetPlaneName = (p) => feetName(p, !p.anon && p.callsign ? state.planes.route(p.callsign) : null, aircraftName(p)); /* anonymous: the type only */
 let lookDown = false;
 function belowGhosts(d) {
   { const z = state.basis?.back?.[2], dn = z != null && z < -0.14; if (dn !== lookDown) { lookDown = dn; document.body.classList.toggle('look-down', dn); } } /* the sky slider steps aside below the horizon (playtest 2026-10-28) */
@@ -5903,6 +5922,11 @@ function tapSky(cx, cy) {
   }
   /* Sky Collector: tap a plane to be steered to it, as tapping a satellite does in Space Collector (parity audit 20,
      2026-11-17). The nearest plane within reach of the finger; the same code as Today's Show me. */
+  /* Looking down: tap a plane on the compass at your feet to be steered to it (Show me's way: the pulsing edge arrow and the
+     turn hint; with a finger, the view turns straight to it) (2026-11-20). */
+  if (SKY_ONLY && (sky.feetA ?? 0) > 0.5 && sky.feetHits?.length) { let fb = null, fd = TAP_REACH; for (const h of sky.feetHits) { const d = Math.hypot(h.x - x, h.y - y); if (d < fd) { fb = h; fd = d; } }
+    const a = fb && state.planeItems?.find((q) => q.plane.hex === fb.id);
+    if (a) { buzz('select'); state.planeGuide = { hex: a.plane.hex, name: planeGuideName(a.plane), lostAt: null }; if (state.drag.on || !hasSensorView()) { state.drag.on = true; state.drag.az = a.az; state.drag.el = Math.max(6, a.el); } return; } }
   if (SKY_ONLY) { let pb = null, pd = TAP_REACH; for (const a of state.planeItems ?? []) { const q = sky.project(a.enu); if (!q) continue; const d = Math.hypot(q.x - x, q.y - y); if (d < pd) { pb = a; pd = d; } }
     if (pb) { buzz('select'); if (state.planeHit !== pb.plane.hex) state.planeGuide = { hex: pb.plane.hex, name: planeGuideName(pb.plane), lostAt: null }; return; } }
   let best = null, bestD = TAP_REACH;
