@@ -3,8 +3,8 @@
 // "Notification Sound 2" by deadrobotmusic (Freesound, CC0), softened. Files: assets/audio/sfx/<name>.mp3.
 // Decoded once into memory after the first tap, played through the shared context (js/audio-ctx.js) so they’re instant.
 // Off with Settings → Sounds and vibration (localStorage sound = '0').
-import { audioCtx, audioOut, audioLeaving, audioTrack } from './audio-ctx.js?v=0.1.1809';
-import { VERSION } from './version.js?v=0.1.1809';
+import { audioCtx, audioOut, audioLeaving, audioTrack } from './audio-ctx.js?v=0.1.1810';
+import { VERSION } from './version.js?v=0.1.1810';
 export const SFX = ['lock', 'collect', 'arrive', 'flip', 'r_common', 'r_uncommon', 'r_rare', 'r_epic', 'r_legend', 'shiny', 'seen', 'stamp', 'levelup', 'xp',
   'mission', 'rankup', 'patch', 'coinroll', 'complete', 'secret', 'fossil', 'ufo', 'welcome', 'swipe', 'step', 'toggle', 'toast', 'page', 'rattle', 'plane', 'tear'];
 const BASE = new URL('../assets/audio/sfx/', import.meta.url).href;
@@ -65,8 +65,9 @@ function audibleLength(b) {
   return Math.max(0.05, end / b.sampleRate);
 }
 const UNCAPPED = new Set(['arrive', 'tear']); // the reveal’s whoosh and the pack's tear always play
-function start(ctx, name, b, gain, delay) {
-  try { const src = ctx.createBufferSource(), g = ctx.createGain(); src.buffer = b; g.gain.value = gain * (NORM[name] ?? 1) * LEVEL * sfxVolume(); src.connect(g).connect(audioOut() ?? ctx.destination); playing++; let freed = false; const free = () => { if (!freed) { freed = true; playing = Math.max(0, playing - 1); } }; setTimeout(free, (delay + Math.min(1.2 /* a long sound (the 5.6 s secret) must not hold a slot and mute the reveal's sounds: Fable hunt 2026-11-17 */, audible.get(name) ?? b.duration)) * 1000 + 30); audioTrack(src); src.start(ctx.currentTime + delay); } catch {}
+function start(ctx, name, b, gain, delay, dur = 0) {
+  try { const src = ctx.createBufferSource(), g = ctx.createGain(); src.buffer = b; g.gain.value = gain * (NORM[name] ?? 1) * LEVEL * sfxVolume(); src.connect(g).connect(audioOut() ?? ctx.destination); playing++;
+    if (dur > 0) { const t1 = ctx.currentTime + delay + dur / 1000; g.gain.setValueAtTime(g.gain.value, Math.max(ctx.currentTime, t1 - 0.06)); g.gain.linearRampToValueAtTime(0.0001, t1); src.stop(t1 + 0.01); } /* dur (ms): trimmed, with a 60 ms fade (the pack reveal's short tear, 2026-11-20) */ let freed = false; const free = () => { if (!freed) { freed = true; playing = Math.max(0, playing - 1); } }; setTimeout(free, (delay + Math.min(1.2 /* a long sound (the 5.6 s secret) must not hold a slot and mute the reveal's sounds: Fable hunt 2026-11-17 */, audible.get(name) ?? b.duration)) * 1000 + 30); audioTrack(src); src.start(ctx.currentTime + delay); } catch {}
 }
 /* wait (2026-11-18, Sevaan tore the welcome pack on his first touch and heard nothing): a sound that must not be lost
    can wait up to `wait` ms for its file to decode and for the context to run, then plays once, or is dropped. Only ever
@@ -90,8 +91,8 @@ function later(ctx, name, gain, delay, t0, wait) {
   };
   tick();
 }
-export function sfx(name, { gain = 1, gap = 0, delay = 0, wait = 0 } = {}) {
-  { const h = host(); if (h) return h.sfx(name, { gain, gap, delay, wait }); }
+export function sfx(name, { gain = 1, gap = 0, delay = 0, wait = 0, dur = 0 } = {}) {
+  { const h = host(); if (h) return h.sfx(name, { gain, gap, delay, wait, dur }); }
   if (soundOff() || document.hidden || audioLeaving()) return; // nothing to hear in the background, and audioCtx() would wake the suspended context (bug hunt 2026-10-22)
   const ctx = audioCtx(); if (!ctx) return;
   const b = bufs.get(name); if (!b && !wait) { loadSfx([name]); return; }
@@ -100,7 +101,7 @@ export function sfx(name, { gain = 1, gap = 0, delay = 0, wait = 0 } = {}) {
   /* Only on a running context: on a suspended one the clock is frozen, so every sound asked for meanwhile would start
      together on resume (a welcome card left rattling for a minute played eleven rattles at the first tap). A context
      that wakes within a quarter second (the tap that unlocks it) still gets its sound; one asked with `wait`, a little longer. */
-  if (b && ctx.state === 'running') start(ctx, name, b, gain, delay);
+  if (b && ctx.state === 'running') start(ctx, name, b, gain, delay, dur);
   else if (wait) later(ctx, name, gain, delay, now, wait);
   else ctx.resume().then(() => { if (ctx.state === 'running' && performance.now() - now < 250 && !document.hidden && !audioLeaving()) start(ctx, name, b, gain, delay); }).catch(() => {});
 }

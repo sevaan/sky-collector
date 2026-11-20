@@ -6,9 +6,9 @@
 //         renderCard, attachTilt, artImage, applyBack, sfx, feel, tierColor }
 const wait = (ms, reduced) => new Promise((r) => setTimeout(r, reduced ? Math.min(ms, 120) : ms));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-import { TIERS, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1809';
-import { attachGyro } from './card.js?v=0.1.1809';
-import { cloudsHtml } from './weather-art.js?v=0.1.1809';
+import { TIERS, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1810';
+import { attachGyro } from './card.js?v=0.1.1810';
+import { cloudsHtml } from './weather-art.js?v=0.1.1810';
 // Cards turn with the catch reveal's own flip and rarity table (js/card-moment.js, 2026-11-11): one turn for a catch, a
 // gift and the morning pack.
 // A tap that answers on the finger lifting, like main.js tapOn: the pack animates every frame, and WebKit drops a click
@@ -22,6 +22,9 @@ function tap(el, fn) {
   el.addEventListener('pointercancel', () => { down = null; });
   el.addEventListener('click', (e) => { if (performance.now() - fired < 800) return; fn(e); });
 }
+
+// The tear's zigzag, 41 points across a 100 x 12 box (x 0-100, y around 6). Shared with the two-card pack reveal (js/pack-reveal.js).
+export function tearJag() { const jag = []; for (let i = 0; i <= 40; i++) jag.push([i * 2.5, 6 + (i % 2 ? -1 : 1) * (2 + Math.random() * 2.2)]); return jag; }
 
 export function playPack(o) {
   return new Promise((resolve) => {
@@ -82,7 +85,7 @@ export function playPack(o) {
     pk.addEventListener('animationend', (e) => { if (e.animationName === 'gp-rattle') pk.classList.remove('rattle'); }); /* or the idle bob never came back after the first rattle */
     const rattleT = setInterval(() => { if (phase === 'sealed' && !tearing && !reduced) rattle(); }, 5200);
     // ---- the tear ----
-    const jag = []; for (let i = 0; i <= 40; i++) jag.push([i * 2.5, 6 + (i % 2 ? -1 : 1) * (2 + Math.random() * 2.2)]);
+    const jag = tearJag();
     const path = (p) => { const n = Math.max(1, Math.round(p * 40)); return `M${jag.slice(0, n + 1).map(([x, y]) => `${x} ${y.toFixed(2)}`).join(' L')}`; };
     const showProg = (p) => { prog = p; leak.style.opacity = (0.15 + p * 0.85).toFixed(3); tearPath.setAttribute('d', p > 0 ? path(p) : ''); cap.style.transform = `rotate(${(-p * 7).toFixed(2)}deg) translateY(${(-p * 5).toFixed(1)}px)`; };
     /* on frames, with a timer behind it: a WebView that stops sending animation frames (Android emulator 2026-11-07) must

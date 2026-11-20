@@ -1,4 +1,4 @@
-import { SERVER } from './server.js?v=0.1.1809';
+import { SERVER } from './server.js?v=0.1.1810';
 // Local weather from Open-Meteo (free, no key, CORS-open): what the sky is doing now, and whether tonight is
 // worth it. No DOM. Cached half an hour per place. Everything here is best-effort: no weather, no change.
 //
@@ -40,7 +40,8 @@ export async function fetchWeather(lat, lon) {
     cache = { key, at: Date.now(), data }; keep(cache);
     return data;
   }
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(2)}&longitude=${lon.toFixed(2)}&current=cloud_cover,weather_code&hourly=cloud_cover,weather_code,temperature_2m,wind_speed_10m&forecast_days=7&timeformat=unixtime&timezone=auto`;
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(1)}&longitude=${lon.toFixed(1)}&current=cloud_cover,weather_code&hourly=cloud_cover,weather_code,temperature_2m,wind_speed_10m&forecast_days=7&timeformat=unixtime&timezone=auto`;
+  /* a 0.1° square (~11 km), as the server's /wx: the phone's fix never leaves it (precise-location privacy, 2026-11-20) */
   const res = await fetch(url, { signal: AbortSignal.timeout?.(8000) }); // never hangs (bug hunt 2026-10-20)
   if (!res.ok) throw new Error(String(res.status));
   const j = await res.json();

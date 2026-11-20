@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<base href="../../"><!-- the app's own css, js and art, from the site root (works on localhost and on Pages) -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pack Reveal Spike</title>
+<!-- Pack opening for a two-card catch (2026-11-20, Sevaan: "a pack to show up, auto rip, two cards to come out, and then
+     the top one flips"). The real catch reveal (js/reveal.js playReveal) with the prototype pack (js/pack-reveal.js,
+     css/pack-reveal.css): the same code the app runs with Settings → Testing tools → Switches → Pack opening set to A, B
+     or C. Three timings to compare; strips and recordings of each sit next to this page.
+     URL: ?v=A|B|C|off  &short=1 (the cut after five packs)  &tier=common|rare|epic|legendary  &shiny=1  &auto=1 (plays on load)  &bare=1 (no controls) -->
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/cards.css">
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/icons.css">
+<link rel="stylesheet" href="css/reveal.css">
+<link rel="stylesheet" href="css/pack-reveal.css">
+<link rel="stylesheet" href="css/ui.css">
+<link rel="stylesheet" href="css/sky-cards.css">
+<link rel="stylesheet" href="css/sky-theme.css">
+<style>
+  :root { --bar-bg: #ffffffee; --bar-ink: #0d2238; --bar-line: #c9dcec; --bar-on: #c8102e; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bar-bg: #0e1a29ee; --bar-ink: #e8f0f8; --bar-line: #2c4258; --bar-on: #ff6b5e; } }
+  :root[data-theme="dark"] { --bar-bg: #0e1a29ee; --bar-ink: #e8f0f8; --bar-line: #2c4258; --bar-on: #ff6b5e; }
+  html, body { margin: 0; height: 100%; background: #cfe5f6; }
+  #reveal { z-index: 20; }
+  #bar { position: fixed; z-index: 40; left: 8px; right: 8px; bottom: calc(env(safe-area-inset-bottom, 0px) + 8px); display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: center;
+    padding: 8px; border-radius: 14px; background: var(--bar-bg); color: var(--bar-ink); box-shadow: 0 4px 18px #0d22382e; font: 600 12px/1 Inter, system-ui, sans-serif; }
+  #bar button { appearance: none; border: 1px solid var(--bar-line); background: transparent; color: inherit; font: inherit; padding: 8px 10px; border-radius: 9px; cursor: pointer; min-height: 34px; }
+  #bar button.on { border-color: var(--bar-on); color: var(--bar-on); }
+  #bar .grp { display: inline-flex; gap: 4px; }
+  #bar #play { background: var(--bar-on); border-color: var(--bar-on); color: #fff; }
+  #bar #t { min-width: 9ch; text-align: center; font-variant-numeric: tabular-nums; }
+  body.bare #bar { display: none; }
+</style>
+</head>
+<body class="sky-only">
+  <section id="reveal" class="overlay" role="dialog" aria-modal="true" aria-labelledby="reveal-eyebrow" hidden>
+    <div id="rv-dim"></div><div id="rv-shock"></div><div id="rv-dot"></div><div id="rv-flash"></div><canvas id="rv-fx"></canvas>
+    <div id="rv-top"><span class="eyebrow ui-eyebrow" id="reveal-eyebrow">NEW CARD</span><span class="rv-buttons"><button class="pill x-close" id="rv-close" aria-label="Close">✕</button></span></div>
+    <div id="rv-glow" aria-hidden="true"></div><div id="rv-holder" aria-label="Tap to reveal your card"><div id="rv-flipper">
+      <div class="rv-side rv-back" id="rv-back"><div class="back-holo"></div><div class="back-glare"></div></div>
+      <div class="rv-side rv-front" id="reveal-card"></div>
+    </div><div id="rv-sweep"></div></div>
+    <div id="rv-news" aria-live="polite"></div><div id="rv-rank" hidden><div class="rv-rank-row"><span id="rv-rank-name"></span><span><span id="rv-rank-xp"></span> / <span id="rv-rank-next"></span></span></div><div class="rv-bar"><i id="rv-rank-fill"></i></div></div>
+    <a id="reveal-view" class="ui-link" href="#" onclick="return false">View in collection</a>
+  </section>
+  <div id="bar">
+    <span class="grp" id="v"><button data-v="off">Today</button><button data-v="A">A 1.8</button><button data-v="B">B 2.1</button><button data-v="C">C 2.6</button></span>
+    <span class="grp" id="cut"><button data-s="0">Full</button><button data-s="1">Short</button></span>
+    <span class="grp" id="tier"><button data-t="common">Common</button><button data-t="rare">Rare</button><button data-t="legendary">Legendary</button></span>
+    <span class="grp"><button id="shiny">Shiny</button></span>
+    <button id="play" type="button">Catch</button><span id="t">–</span>
+  </div>
+  <div id="stats" style="position:fixed;z-index:41;left:8px;right:8px;bottom:calc(env(safe-area-inset-bottom,0px) + 120px);font:600 12px/1.3 Inter,system-ui,sans-serif;color:#0d2238;text-align:center"></div>
+<script type="module">
+  import { playReveal, rushReveal, primeReveal, stopReveal, onRevealDismiss } from './js/reveal.js';
+  import { renderCard } from './js/card.js';
+  import { cardsFor } from './js/flights.js';
+  import { catchSightings, skyModel } from './js/sky-cards.js';
+  import { primePack } from './js/pack-reveal.js';
+  const q = new URLSearchParams(location.search), $ = (id) => document.getElementById(id);
+  const st = { v: q.get('v') || 'B', short: q.get('short') === '1', tier: q.get('tier') || 'common', shiny: q.get('shiny') === '1' };
+  if (q.get('bare') === '1') document.body.classList.add('bare');
+  primePack();
+  // One real catch: Air Canada 856, a 787-9, Toronto to London. Its flight card and its plane card, both new.
+  const AP = { from: { icao: 'CYYZ', iata: 'YYZ', city: 'Toronto', cc: 'CA', lat: 43.68, lon: -79.63, name: 'Toronto' }, to: { icao: 'EGLL', iata: 'LHR', city: 'London', cc: 'GB', lat: 51.47, lon: -0.45, name: 'London' } };
+  function makeCards() {
+    const pl = { hex: 'c0a1b2', callsign: 'ACA856', reg: 'C-FRSA', type: 'B789', desc: 'BOEING 787-9 Dreamliner', category: 'A5' };
+    const c = cardsFor(pl, { ...AP, callsign: 'ACA856' }, 'Air Canada');
+    c.flight.tier = 'common'; c.plane.tier = st.tier; // the top card turns with the plain flip (rarer cards hold their breath first); the pack's foil follows the best card inside
+    const ss = catchSightings({ time: Date.now(), hex: pl.hex, callsign: pl.callsign, reg: pl.reg, type: pl.type, altFt: 36000, gsKt: 480, rangeKm: 18, lat: 43.66, lon: -79.58, flight: c.flight, plane: c.plane });
+    const flight = skyModel(c.flight, 'flight'), plane = skyModel(c.plane, 'plane');
+    const sf = ss.filter((s) => s.cardKey === flight.key), sp = ss.filter((s) => s.cardKey === plane.key);
+    const shiny = st.shiny ? { label: 'Sunset', line: 'Caught in the golden hour' } : null;
+    return [
+      { card: renderCard(flight, { sightings: sf }), o: flight, seen: 1, fleet: null, progress: { level: 'bronze', before: 'none', nights: 1 }, shiny: null },
+      { card: renderCard(plane, { sightings: sp }), o: plane, seen: 1, fleet: null, progress: { level: 'bronze', before: 'none', nights: 1 }, shiny },
+    ];
+  }
+  /* frame times from the tap to the face (&runs=N plays it N times and sums them up: the iPhone simulator check) */
+  let t0 = 0, t0s = 0, fr = null, all = [];
+  const loop = (t) => { if (!fr) return; fr.push(t); requestAnimationFrame(loop); };
+  addEventListener('sc:payoff', () => { if (!t0) return; const ms = Math.round(performance.now() - t0); window.__face = ms; t0 = 0;
+    const f = fr ?? [], ts = t0s; fr = null; const g = f.slice(1).map((x, i) => x - f[i]), g2 = f.slice(1).map((x, i) => (f[i] >= ts + 450 ? x - f[i] : null)).filter((x) => x != null); all.push({ ms, g, g2 }); /* g2: after the rush (the pack, or today's landing and flip) */
+    const G = all.flatMap((r) => r.g), over = G.filter((x) => x > 20).length, max = Math.max(0, ...G).toFixed(1), G2 = all.flatMap((r) => r.g2), over2 = G2.filter((x) => x > 20).length, max2 = Math.max(0, ...G2).toFixed(1), p50 = [...G2].sort((a, b) => a - b)[G2.length >> 1]?.toFixed(1);
+    $('t').textContent = `${(ms / 1000).toFixed(2)} s`; window.__stats = { runs: all.length, faceAvg: Math.round(all.reduce((a, r) => a + r.ms, 0) / all.length), frames: G.length, over20: over, max: +max };
+    if (q.get('runs')) { $('stats').textContent = `${st.v} · ${all.length} runs · face avg ${(window.__stats.faceAvg / 1000).toFixed(2)} s · tap→face ${G.length} frames, max ${max}, >20 ms ${over} · after the rush ${G2.length} frames, p50 ${p50}, max ${max2}, >20 ms ${over2}`; if (all.length < +q.get('runs')) setTimeout(play, 1600); } });
+  async function play() {
+    primeReveal(); stopReveal(); window.__face = null;
+    const cards = makeCards(), r = $('reveal'); r.hidden = false; r.classList.remove('rv-done');
+    const origin = { x: innerWidth / 2, y: innerHeight * 0.38 };
+    t0 = t0s = performance.now(); $('t').textContent = '…'; fr = []; requestAnimationFrame(loop);
+    rushReveal({ origin, tier: cards[1].o.tier }); /* the tap: the dot swells at once, as in the app */
+    await new Promise((res) => setTimeout(res, 60)); /* the catch's own work before playReveal, about this long on a phone */
+    const lead = cards[0];
+    playReveal({ card: lead.card, o: lead.o, seen: 1, origin, collected: 12, xp: 70, rank: null, earned: [{ kind: 'mission', text: 'Mission complete', xp: 50 }], cards, pack: st.v === 'off' ? '' : st.v, packShort: st.short });
+  }
+  window.__play = play;
+  onRevealDismiss(() => { $('reveal').hidden = true; });
+  $('rv-close').addEventListener('click', () => { stopReveal(); $('reveal').hidden = true; });
+  const sync = () => {
+    document.querySelectorAll('#v button').forEach((b) => b.classList.toggle('on', b.dataset.v === st.v));
+    document.querySelectorAll('#cut button').forEach((b) => b.classList.toggle('on', (b.dataset.s === '1') === st.short));
+    document.querySelectorAll('#tier button').forEach((b) => b.classList.toggle('on', b.dataset.t === st.tier));
+    $('shiny').classList.toggle('on', st.shiny);
+  };
+  $('v').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { st.v = b.dataset.v; sync(); play(); } });
+  $('cut').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { st.short = b.dataset.s === '1'; sync(); play(); } });
+  $('tier').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { st.tier = b.dataset.t; sync(); play(); } });
+  $('shiny').addEventListener('click', () => { st.shiny = !st.shiny; sync(); play(); });
+  $('play').addEventListener('click', play);
+  sync();
+  if (q.get('auto') === '1') setTimeout(play, 300);
+</script>
+</body>
+</html>

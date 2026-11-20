@@ -94,6 +94,7 @@ body.night #reveal { background: #000; }
 #rv-news { position: absolute; z-index: 4; left: 16px; right: 16px; top: calc(var(--safe-top, 0px) + 58px); display: flex; flex-wrap: nowrap; overflow: hidden; gap: 6px; pointer-events: none; }
 .rv-chip { flex: none; display: inline-flex; align-items: center; gap: 5px; height: 26px; padding: 0 9px; border-radius: 13px; white-space: nowrap; background: #0e1a29e6; border: 1px solid var(--edge, #627a8b); color: var(--text, #fff2b3); font: 500 12.5px/1 var(--label, 'SC Label', sans-serif); letter-spacing: .05em; text-transform: uppercase; opacity: 0; transform: translateY(-6px); transition: opacity .25s ease-out, transform .3s cubic-bezier(.2,1.1,.3,1); }
 .rv-chip.in { opacity: 1; transform: none; }
+.rv-chip--act::after { content: '›'; margin-left: 1px; font-size: 1.25em; line-height: 0; opacity: .8; } /* a chip you can tap (patch, card backs) */
 .rv-chip i { font-style: normal; color: var(--gold, var(--gold)); }
 .rv-chip b { font-weight: 500; color: var(--gold, var(--gold)); margin-left: 2px; }
 .rv-chip--rank { border-color: color-mix(in srgb, var(--gold, var(--gold)) 60%, transparent); }

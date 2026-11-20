@@ -1,0 +1,28 @@
+/* The two-card pack opening (prototype, js/pack-reveal.js; Settings → Testing tools → Switches → Pack opening). A flat
+   pack, drawn once into canvases, in the reveal card's place: a little narrower and shorter than a card, so the two backs
+   fit inside it, behind it by stacking order (no clip is animated). Everything that moves moves by transform or opacity. */
+#reveal .pk { position: absolute; left: 50%; top: calc(50% + var(--rv-y, 22px)); z-index: 3; pointer-events: none;
+  width: calc(24 * var(--cf)); height: calc(var(--ch, 39.2) * .9 * var(--cf)); margin-left: calc(-12 * var(--cf)); margin-top: calc(var(--ch, 39.2) * -.45 * var(--cf));
+  transform-origin: 50% 60%; opacity: 0; } /* no filter: a drop shadow on a moving layer is drawn again every frame */
+#reveal .pk > canvas { position: absolute; left: 0; top: 0; width: 100%; display: block; }
+#reveal .pk-body { height: 100%; }
+#reveal .pk-strip { height: 22%; transform-origin: 100% 100%; }
+/* the tear: a window that slides open over a line that stays put (outer and inner move opposite ways) */
+#reveal .pk-tw { position: absolute; left: 0; width: 100%; top: calc(var(--y0) - var(--lh) / 2); height: var(--lh); overflow: hidden; transform: translateX(-100%); }
+#reveal .pk-ti { width: 100%; height: 100%; transform: translateX(100%); }
+#reveal .pk-ti canvas { display: block; width: 100%; height: 100%; }
+#reveal .pk-spark { position: absolute; left: -9px; top: calc(var(--y0) - 9px); width: 18px; height: 18px; border-radius: 50%; opacity: 0;
+  background: radial-gradient(circle, #fff 0 22%, #fff6d8cc 36%, #ffd98a55 60%, transparent 72%); }
+/* a shiny card inside: a glint across the pack */
+#reveal .pk-glint { position: absolute; inset: 0; overflow: hidden; border-radius: calc(.4 * var(--cf)); }
+#reveal .pk-glint i { position: absolute; top: -10%; bottom: -10%; left: 0; width: 38%; transform: translateX(-120%) skewX(-14deg);
+  background: linear-gradient(100deg, transparent, #ffffff00 20%, #ffffffb0 45%, #ff8fd866 55%, #8ff0ff66 65%, transparent 85%); }
+/* the card behind, held under the top one while they rise (a copy of the deck's sealed back slot; the deck's own slot
+   takes over once the top card has turned) */
+#reveal .pk-under { position: absolute; left: 50%; top: calc(50% + var(--rv-y, 22px)); z-index: 2; pointer-events: none; opacity: 0;
+  width: calc(28 * var(--cf)); height: calc(var(--ch, 39.2) * var(--cf)); margin-left: calc(-14 * var(--cf)); margin-top: calc(var(--ch, 39.2) * var(--cf) / -2); }
+#reveal .pk-under > .dk-slot { position: relative; width: 100%; height: 100%; font-size: var(--cf); filter: brightness(.8); }
+#reveal .pk-under .card { font-size: var(--cf); }
+#reveal .pk-under .fc { --fc-u: var(--cf); }
+/* "1 of 2" before the two tabs */
+#rv-news .rv-of { align-self: center; margin-right: 6px; font: 700 11px/1 Inter, system-ui, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--sc-ink, #dfe6ee); opacity: .75; white-space: nowrap; }

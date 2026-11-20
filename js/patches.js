@@ -3,8 +3,8 @@
 // group (or the date earned) along the bottom, one icon in the middle. Milestones get gold foil, the rarest holo
 // (css/ui.css .patch--gold / .patch--holo). Shared by Explore (the earning moment, its toast) and Collection (the wall).
 
-import { CON_BY_ID } from './constellations.js?v=0.1.1809';
-import { skyGround, skyArt, SKY_THREAD, SKY_LABEL, SKY_MERROW } from './sky-patch-colours.js?v=0.1.1809';
+import { CON_BY_ID } from './constellations.js?v=0.1.1810';
+import { skyGround, skyArt, SKY_THREAD, SKY_LABEL, SKY_MERROW } from './sky-patch-colours.js?v=0.1.1810';
 
 export const GROUPS = {
   collect: { c: '#14284a', t: 'Collection' }, rarity: { c: '#3a2259', t: 'Rarity' }, rocket: { c: '#5a2a1a', t: 'Rockets' },
@@ -267,6 +267,7 @@ export function patchSvg(a, opts = {}) {
     <circle r="${R + 0.5}" fill="${K.drop}" transform="translate(.6 2.6)"/>
     <circle r="${rIn + 1}" fill="${K.ground}"/><circle r="${rIn + 1}" fill="url(#${id}w)"/><circle r="${rIn + 1}" fill="url(#${id}s)"/>
     <image href="assets/art/patch/${K.edge}" x="${-R}" y="${-R}" width="${2 * R}" height="${2 * R}"${stitch ? ` mask="url(#${id}m)"` : ''}/>
+    ${sky ? `<circle class="patch-rim" r="${R - 0.6}" fill="none" stroke="${SKY_THREAD}" stroke-width="2.4"/><circle class="patch-rim" r="${rIn + 0.5}" fill="none" stroke="${SKY_THREAD}" stroke-width="2.4"/>` : ''}<!-- small sizes only (css/ui.css .patch-rim): the edge outlined so a pale patch reads as a patch at toast size (QA round 4: the white Member patch was a plain disc) -->
     ${fossil ? '' : `<circle r="${R - 22}" fill="none" stroke="${K.thread}" stroke-opacity=".35" stroke-width=".9" stroke-dasharray="1.6 1.6"/>`}
     <g ${lift}><text font-family="SC Label, Arial Narrow, sans-serif" font-size="${nameSize}" font-weight="600" letter-spacing="2" fill="${K.thread}" text-anchor="middle"><textPath href="#${id}t" startOffset="50%">${esc(name)}</textPath></text>
     <text font-family="SC Label, Arial Narrow, sans-serif" font-size="8.5" font-weight="600" letter-spacing="2" fill="${K.label}" text-anchor="middle" dy="7"><textPath href="#${id}b" startOffset="50%">${esc(date || (a.sub ?? g.t).toUpperCase())}</textPath></text>

@@ -27,7 +27,7 @@ import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // A type name escaped, with its hyphenated model codes kept on one line ('Boeing KC-135R Stratotanker' broke after 'KC-').
-const escName = (s) => esc(s).replace(/\S+-\S+/g, (w) => `<span style="white-space:nowrap">${w}</span>`);
+export const escName = (s) => esc(s).replace(/\S+-\S+/g, (w) => `<span style="white-space:nowrap">${w}</span>`);
 const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
 
 export const GLYPHS = {

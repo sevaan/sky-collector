@@ -35,3 +35,11 @@ test('the art map re-points the cream ink and the accent', () => {
   assert.ok(!/fff2b3|var\(--gold\)|14284a/i.test(out), out);
   assert.equal(SKY_ART_MAP['#fff2b3'], SKY_THREAD);
 });
+
+test('locked patch captions read 4.5:1 on the day and night pages, and the CSS uses them (QA round 4)', async () => {
+  const { SKY_LOCKED_CAPTION, SKY_PAGE } = await import('../js/sky-patch-colours.js');
+  for (const k of ['day', 'night']) assert.ok(contrast(SKY_LOCKED_CAPTION[k], SKY_PAGE[k]) >= 4.5, `${k}: ${contrast(SKY_LOCKED_CAPTION[k], SKY_PAGE[k]).toFixed(2)}`);
+  const css = readFileSync(new URL('../css/sky-theme.css', import.meta.url), 'utf8');
+  assert.ok(css.includes(`html.sky-cards .pw-item.locked span { color:${SKY_LOCKED_CAPTION.day}; }`));
+  assert.ok(css.includes(`html.sky-cards.sky-night .pw-item.locked span { color:${SKY_LOCKED_CAPTION.night}; }`));
+});

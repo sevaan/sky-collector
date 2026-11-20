@@ -94,6 +94,7 @@ html body .tn-pack::after { content:''; position:absolute; inset:0; background:#
 html body #toasts .ticket .tn-pack::after { -webkit-mask-size:170% auto; mask-size:170% auto; }
 html body .tn-pack::before { border-top-color:#ffffffbb; z-index:1; }
 html body #toasts .tn-ic.art:has(.tn-pack) { background:#1f5a99; }
+html:not(.sky-night) body.sky-only #toasts .tn-ic.art:has(.patch) { background:#dce8f2; } /* by day a patch sits on pale sky, not night navy, so its navy edge shows (QA round 4) */
 html body #toasts .ticket .tn-ic.art:has(.tn-pack) { background:none; }
 html body #toasts .ticket .tn-pack { box-shadow:inset 0 0 0 1px #ffffff55, 0 4px 10px #0d223855; }
 html body #gift .gp-lines { background:repeating-linear-gradient(0deg,#0d223806 0 1px,transparent 1px 3px); }
@@ -319,7 +320,7 @@ html.sky-cards:not(.sky-night) .album__next { color:#b42a20; } html.sky-cards .a
 /* Patches wall and patch detail */
 html.sky-cards:not(.sky-night) .pw-chip.on { border-color:#b42a20; background:var(--gold)1f; }
 html.sky-cards:not(.sky-night) .pw-chip:not(.on) b { color:#0d2238; }
-html.sky-cards:not(.sky-night) .pw-item span { color:#23405c; } html.sky-cards .pw-item.locked span { color:#6a8196; }
+html.sky-cards:not(.sky-night) .pw-item span { color:#23405c; } html.sky-cards .pw-item.locked span { color:#566c81; } html.sky-cards.sky-night .pw-item.locked span { color:#8aa0b4; } /* locked captions (QA round 4: #6a8196 was 3.68:1 by day, 4.49:1 at night): 4.95:1 and 6.7:1, still quieter than earned (js/sky-patch-colours.js SKY_LOCKED_CAPTION) */
 html.sky-cards:not(.sky-night) .pw-start > span { color:#b42a20; } html.sky-cards:not(.sky-night) .pw-start .pw-grid .pw-item span { color:#0d2238; }
 html.sky-cards:not(.sky-night) .pw-start .pw-item small { color:#4a6178; }
 html.sky-cards:not(.sky-night) .pw-item.new::after { background:#b42a20; color:#fffdf6; box-shadow:0 1px 2px rgba(13,34,56,.25); } /* cream on text red, 6.4:1 (navy on #d7362b was 3.6:1) */
@@ -374,6 +375,13 @@ html.sky-cards:not(.sky-night) #viewer .v-up .v-up__show { background:#eaf3fa; c
 html.sky-cards:not(.sky-night) .v-next { background:#fffdf6; border-color:#c9b98a; }
 html.sky-cards:not(.sky-night) .fd-pass, html.sky-cards:not(.sky-night) .fd-pass .fd-when { color:#4a6178; } html.sky-cards:not(.sky-night) .fd-pass .fd-when b { color:#0d2238; } html.sky-cards .fd-pass .fd-when .soon, html.sky-cards .fd-pill.new { color:#b42a20; }
 html.sky-cards:not(.sky-night) .fd-pill { background:#0d223812; color:#0d2238; } html.sky-cards:not(.sky-night) .fd-pill.own { color:#4a6178; }
+/* Find's names, times and empty line were Space's cream #fff2b3 and #bdbea9, about 1:1 on the day page (Sky Build playtest
+   v0.1.1809: "Flown over you, not caught yet" names near unreadable); Sky's ink and muted here (tests/find-contrast.test.mjs) */
+html.sky-cards:not(.sky-night) .fd-main b, html.sky-cards:not(.sky-night) .fd-pass b { color:#0d2238; }
+html.sky-cards:not(.sky-night) :is(.find-none, .fd-main small, .fd-wait) { color:#4a6178; }
+html.sky-cards:not(.sky-night) :is(.fd-pass .fd-w em, .fd-main small em) { color:color-mix(in srgb, var(--c) 45%, #0d2238); } /* tier word ("★ Legendary" was #ffc545, 1.6:1): every tier 4.7:1 or better */
+/* at night the New card pill was day red #b42a20 on navy (2.9:1): the night red of Find's heading */
+html.sky-cards.sky-night .fd-pill.new { color:#ff6a5c; }
 html.sky-cards:not(.sky-night) .ui-btn { background:#fffdf6; border-color:#0d2238; color:#0d2238; }
 html.sky-cards:not(.sky-night) .ui-btn--primary { background:var(--gold); border-color:var(--gold); color:#0d2238; box-shadow:0 3px 0 #b42a20; }
 html.sky-cards:not(.sky-night) .ui-btn--accent { border-color:#b42a20; color:#b42a20; }
@@ -461,6 +469,7 @@ html:not(.sky-night) body.sky-only:not(.night) :is(#debug, .set-sheet, #recap) {
 html:not(.sky-night) body.sky-only:not(.night) #debug { background:#eef5fb; }
 html:not(.sky-night) body.sky-only:not(.night) #debug .panel-head { background:#eef5fb; }
 html:not(.sky-night) body.sky-only:not(.night) #debug .panel-head :is(h2, .x-close, .sub, small), html:not(.sky-night) body.sky-only:not(.night) .set-sheet :is(h2, h3, .x-close) { color:#0d2238; }
+html:not(.sky-night) body.sky-only:not(.night) .loc-denied { color:#b42a20; } /* Space's peach was for a navy sheet: on Sky's white one it was too faint to read (Android playtest 2026-11-20) */
 html:not(.sky-night) body.sky-only:not(.night) #debug .set-card { background:#ffffff !important; border:1px solid #c9d9e6 !important; outline:none; box-shadow:0 1px 2px rgba(13,34,56,.06) !important; }
 html:not(.sky-night) body.sky-only:not(.night) #debug .set-bar { background:#f6f9fc; border-bottom-color:#d5e2ee; }
 html:not(.sky-night) body.sky-only:not(.night) #debug .set-bar :is(h3, b) { color:var(--sc-orange-ink); }
@@ -864,6 +873,7 @@ html.sky-cards #logbook.lb-climb .lb-foot .lb-events { gap:4px 10px; justify-con
 html.sky-cards #logbook.lb-climb .lb-foot .ui-chip { padding:0; border:0; background:none; box-shadow:none; color:var(--rc-muted); font:500 13px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; text-transform:uppercase; }
 html.sky-cards #logbook.lb-climb .lb-foot .ui-chip :is(b, .ui-chip__k) { color:inherit; font:inherit; letter-spacing:inherit; }
 html.sky-cards #logbook.lb-climb .lb-foot .ui-chip--earned { color:var(--rc-redink); }
+html.sky-cards #logbook.lb-climb .lb-face > .lb-mission:last-child { border-bottom:0; margin-bottom:6px; } /* no EVENTS foot in Sky (playtest v0.1.1809): the last mission ends the card, no rule against its edge */
 /* the slim day-one card (few cards, short phones): the dial on paper */
 html.sky-cards #logbook.lb-climb .lbd-name { font:400 23px/1 'SC Display','Russo One',Impact,sans-serif; text-transform:none; background:none; color:var(--rc-ink); -webkit-text-fill-color:var(--rc-ink); animation:none; }
 html.sky-cards #logbook.lb-climb .lb-dial .lb-xp b { color:var(--rc-redink); }
