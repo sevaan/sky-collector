@@ -2,7 +2,7 @@
 
 Written 2026-11-20. **Draft text, not HTML. Not published.** It replaces `sky-help-page-2026-11-20.md` (kept for diffing). Same shape as Space Collector's (`space-help-page-v2-2026-11-20.md` in the Space repo): answers that are true for both games are shared, and the satellite ones are replaced with Sky's own.
 
-**Layout.** Part 1 is the page, clean. Part 2 checks each answer against Sky's code and marks what I could not verify. I did not run the app, and nobody has yet seen shiny cards, regulars or the morning pack in a Sky build (Sky Build said so today), so those three answers rest on the code alone.
+**Layout.** Part 1 is the page, clean. Part 2 checks each answer against Sky's code and marks what I could not verify. I did not run the app, and Sky Dev has since checked shiny cards, regulars, the morning pack and the widgets on the iPhone simulator (2026-11-20; Android from code only), and those answers are updated to match.
 
 ---
 
@@ -53,13 +53,13 @@ Cards level up when you catch them again. A flight card turns silver when you've
 The mark a card gets each time you add to it: the same flight on another day, or another aircraft of the same kind.
 
 **What is a shiny card?**
-A card from a lucky moment: a plane passing right beside the Moon, a plane caught as the sun sits on the horizon, or a rare kind of plane in an airline's colours you haven't collected before.
+A card from a lucky moment, and they are rare: a plane crossing in front of the Moon, a plane caught in the few minutes the sun sits on the horizon, or a rare kind of plane in an airline's colours you haven't collected before.
 
 **What are sets?**
 Groups of cards to fill, like The 737 Family, Giants or Short Hops. There are nineteen. Each has a bronze, silver and gold goal, so a quiet sky can still finish one.
 
 **What are my regulars?**
-Airline flights that pass over you at about the same time most days. After a few days the app spots them and tells you when each is usually due. It works this out on your phone. Only airline flights can be regulars.
+Airline flights that pass over you at about the same time most days. Once the app has seen one on three days in a week, it becomes a regular and the app tells you when it is usually due. It works this out on your phone. Only airline flights can be regulars.
 
 ## Missions and patches
 
@@ -70,7 +70,7 @@ Three small goals a day, chosen to fit how busy your sky is. A new themed week s
 Patches are awards for milestones, like your first card or a finished set. XP raises your rank. All of it is free to earn.
 
 **What is the pack I get in the morning?**
-After a day of catching, your cards from that day wait as a sealed pack. Tear it open and turn over the best ones.
+The morning after you've been catching, your cards from that day or night wait as a sealed pack. Tear it open and turn over the best ones.
 
 ## Alerts
 
@@ -81,7 +81,7 @@ They are free, and off until you turn them on in Settings → Notifications. Whe
 The app can't look for planes while it's closed. It can only warn you about ones it could already see coming when you left, and about your regulars. Alerts work best on days you've opened the app.
 
 **What are the widgets?**
-On iPhone, widgets for your Home Screen and Lock Screen. The medium, large and Lock Screen ones come with Plus. There are no widgets on Android.
+On iPhone, widgets for your Home Screen and Lock Screen. The small one, which shows your next regular flight, is free. The medium and large ones, and the Lock Screen ones, come with Plus. There are no widgets on Android.
 
 ## Sky Collector Plus
 
@@ -89,7 +89,7 @@ On iPhone, widgets for your Home Screen and Lock Screen. The medium, large and L
 Optional extras for players who want to support the game. Everything you collect and earn is free without it, and so are plane alerts. Plus adds every card back, seven more app icons, widgets on iPhone and a members' patch.
 
 **What does it cost, and is there a free trial?**
-You can pay monthly, yearly, or once to keep it for good. The yearly plan starts with a free week for new subscribers. Your store shows the price in your own currency. Plus is on iPhone now and is coming to Android.
+You can pay monthly, yearly, or once to keep it for good. The yearly plan starts with a free week for new subscribers. Your store shows the price in your own currency. Plus is on iPhone now. On Android the Plus page says "Coming soon to Google Play".
 
 **I bought Plus and it isn't on (or I have a new phone).**
 Open the Plus page, scroll to the bottom and tap Restore purchases. Use the same Apple Account you bought it with.
@@ -169,4 +169,4 @@ Sky's working tree, 2026-11-20. I did not run the app.
 1. **The privacy page must be live first.** Two answers point at skycollector.app/privacy, which is still the test-version page.
 2. **Where it lives:** the site, a Help row in Settings, or both.
 3. **Android and Plus:** the page says "coming to Android". Change it the day Plus is on sale on Google Play, and add the Google lines to Restore and Cancel.
-4. **Three answers describe things nobody has seen in a build** (shiny cards, regulars, the morning pack). Someone should see each one once before this is public.
+4. Shiny cards, regulars, the morning pack and widgets were checked by Sky Dev on the iPhone simulator on 2026-11-20. Android is from code only.

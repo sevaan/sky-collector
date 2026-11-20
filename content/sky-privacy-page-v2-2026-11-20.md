@@ -2,7 +2,7 @@
 
 Written 2026-11-20. **Draft text, not HTML. Nothing published.** It is the blocker for store submission: the page at skycollector.app/privacy still says it covers the test version. This replaces `sky-privacy-page-2026-11-20.md` (the earlier pass, kept for diffing).
 
-**How this file is laid out.** Part 1 is the page, clean, ready to turn into HTML. Part 2 is a table that checks every statement against Sky's code and docs, and marks what I could not verify. Part 3 is the questions for Sky Dev. **Publishes after the logging and weather fixes are live (Sevaan, 2026-11-20).** Updated the same day with Sky Dev's answers (`sky-privacy-answers-2026-11-20.md`). Part 1 is now written to be **true today**. Four sentences change when a fix is deployed; they are marked ①, ②, ⑦ and ⑧, and Part 1b gives each one both ways so the page can change in step with the deploys.
+**How this file is laid out.** Part 1 is the page, clean, ready to turn into HTML. Part 2 is a table that checks every statement against Sky's code and docs, and marks what I could not verify. Part 3 is the questions for Sky Dev. **Publishes after the logging and weather fixes are live (Sevaan, 2026-11-20).** Updated the same day with Sky Dev's answers (`sky-privacy-answers-2026-11-20.md`). Part 1 is now written to be **true today**. Three sentences still change when a fix is live (②, ⑦, ⑧), and ① loses its dated caveat on 20 December 2026; and Part 1b gives each one both ways so the page can change in step with the deploys.
 
 It follows Space Collector's privacy page for structure and tone, and agrees with the store answers in `sky-store-listing-2026-11-20.md` (section 8) and `design/privacy-store-checklist.md`.
 
@@ -22,7 +22,7 @@ Sky Collector needs to know where you are to show the planes in your sky. If you
 
 **Your exact position stays on your phone.** Anything that leaves your phone is rounded first, and is used for two things only.
 
-**To find the planes near you.** Your phone asks adsb.lol for aircraft around a position rounded to about 5 km. If adsb.lol is busy, or your phone has used its allowance for the day, it asks our own server instead. Our server passes on only the centre of a much larger square, about 100 km across, to a second service, FlyItalyADSB. It holds each answer for under a minute. Google Cloud, which runs our server, keeps ordinary request logs, with your internet address and the rounded position, for up to 30 days. ①
+**To find the planes near you.** Your phone asks adsb.lol for aircraft around a position rounded to about 5 km. If adsb.lol is busy, or your phone has used its allowance for the day, it asks our own server instead. Our server passes on only the centre of a much larger square, about 100 km across, to a second service, FlyItalyADSB. It holds each answer for under a minute and keeps no record of who asked. (Until 20 December 2026, some older request logs, with an internet address and the rounded position, are still ageing out. No new ones are kept.) ①
 
 **To get the weather.** The forecast comes from Open-Meteo, asked with a position rounded to about 10 km. ②
 
@@ -62,9 +62,9 @@ The pack is kept on our server under a random code for 90 days, then deleted. An
 
 ## Anonymous usage notes
 
-To learn whether the game works for people (does a first day end with a card? do people come back?), the app sends a few notes: when it was opened, each day you caught something, how long a session lasted, what kind of aircraft a catch was and how rare, whether the tour was finished, whether a reminder was set, and any error that stopped something working.
+To learn whether the game works for people (does a first day end with a card? do people come back?), the app sends a few notes about how it is used: when it was opened and for how long; what kind of aircraft a catch was, how rare, and whether it was new to you; which parts of the app you used (the tour, reminders, alerts, sending cards, Plus, the review prompt, the app icon you chose); how the app is doing on your phone (whether motion sensors and notifications work, how you lined up the compass and how far the sky turned, where the sky slider is set, how long it took to start, how the plane feed did); which secrets you've found; how cloudy the forecast was; and any error that stopped something working, with the error's message and the file it came from.
 
-Each note carries a random ID made on your phone, the app's version, and whether the phone is an iPhone or an Android phone. **It carries no location, no name and no device identifier, and nothing that identifies an aircraft.** The notes are kept on our server, in Google Cloud, and used only to improve the game. ⑦
+Each note carries a random ID made on your phone, the app's version, whether the phone is an iPhone or an Android phone, how many days since you installed, and how many cards and days of play you have. **It carries no location, no name and no device identifier, and nothing that identifies an aircraft.** The notes are kept on our server, in Google Cloud, and used only to improve the game. ⑦
 
 To turn them off: Settings → Help → Share anonymous usage.
 
@@ -110,8 +110,8 @@ Part 1 above is the "true today" column. Swap in the right-hand sentence the day
 
 | | True today (in Part 1) | True after the fix | The fix, and who |
 |---|---|---|---|
-| ① | It holds each answer for under a minute. Google Cloud, which runs our server, keeps ordinary request logs, with your internet address and the rounded position, for up to 30 days. | It holds each answer for under a minute and keeps no record of who asked. | Exclude the `api` service's request log from Cloud Logging, as Space did. Needs Sevaan's yes in Sky Dev's chat. Lines already stored age out within 30 days, so the stricter sentence is fully true 30 days after the change (or at once if the old log is deleted). |
-| ② | **To get the weather.** The forecast comes from Open-Meteo, asked with a position rounded to about 10 km. | **To get the weather.** The forecast comes from MET Norway, through our own server, asked with a position rounded to about 10 km. | Deploy `/wx`, then point the app at it. Until both are done the app really does ask Open-Meteo, so the left sentence is the true one. (Open-Meteo's free plan doesn't cover an app with a subscription: this fix should not wait long.) Credits change with it. |
+| ① | **LIVE since 2026-11-20** (Sky Dev, with Sevaan's yes). Part 1 now has the after-fix sentence plus a dated caveat. | From 20 December 2026, delete the sentence in brackets, leaving: "It holds each answer for under a minute and keeps no record of who asked." | Done. Only the caveat's removal is pending, by date. |
+| ② | **To get the weather.** The forecast comes from Open-Meteo, asked with a position rounded to about 10 km. | **To get the weather.** The forecast comes from MET Norway, through our own server, asked with a position rounded to about 10 km. | The server side (`/wx`) is LIVE; the app switch (v0.1.1817) is committed but not pushed. Until that build is what players have, the app really does ask Open-Meteo, so the left sentence is the true one. (Open-Meteo's free plan doesn't cover an app with a subscription: this fix should not wait long.) Credits change with it. |
 | ⑦ | The notes are kept on our server, in Google Cloud, and used only to improve the game. | The notes are kept on our server, in Google Cloud, and used only to improve the game. Each note is deleted after one year. We keep daily totals, such as how many people played, which hold no IDs. | DECIDED (Sevaan, 2026-11-20): one year, both apps; daily totals with no IDs are kept. Not live yet: use the right-hand sentence only once the expiry is deployed AND the older rows have been dealt with (given an expiry or deleted), or "deleted after one year" isn't true of them. |
 | ⑧ | No use of your contacts, photos or microphone. | No use of your contacts, photos, camera or microphone. | The camera view is now hidden in store builds (code, not yet committed), but the iPhone app still carries a camera permission line. Add "camera" once that line is gone from the store build. |
 

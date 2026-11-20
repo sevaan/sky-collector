@@ -17,6 +17,7 @@ import { Firestore } from '@google-cloud/firestore';
 import { gzipSync, gunzipSync } from 'node:zlib';
 import { planesNear, relayState } from './planes-relay.js';
 import { statsHtml } from './stats-page.js';
+import { dailyDocs, windowStart } from './daily.js';
 const db = new Firestore(); /* Sky's own Firestore (sky-collector-app, Native mode); never Space Collector's */
 
 const ALLOWED = [/^https:\/\/sevaan\.github\.io$/, /^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/, /^capacitor:\/\/localhost$/, /^https:\/\/localhost$/, /^https:\/\/(www\.)?skycollector\.app$/];
@@ -43,7 +44,7 @@ function watchBudget() {
 const EVENTS = 'sky_events', CACHE = 'sky_statcache', CHUNK = 900000, SLOT = 10 * 60e3;
 /* Each usage note carries 'exp', so a Firestore TTL policy on sky_events.exp deletes it after EVENT_DAYS (privacy page
    2026-11-20: notes had no end date). The stats page reads 120 days. The policy itself is a console/gcloud step (Sevaan). */
-const EVENT_DAYS = 365; // one year (Sevaan, 2026-11-20); daily totals are to be kept forever (planned with Space), and no TTL is switched on yet
+const EVENT_DAYS = 365; // one year (Sevaan, 2026-11-20); daily totals are kept forever in sky_daily (dailyPass below); no TTL is switched on yet
 // Sky adds 'feed' (where each session's planes came from) and 'rare' (a rare type alert) to Space's names.
 const NAMES = new Set(['install', 'open', 'night', 'end', 'tour', 'motion', 'calib', 'plus', 'err', 'sky', 'help', 'remind', 'catch', 'share', 'boot', 'perm', 'secret', 'gift', 'review', 'feed', 'rare']);
 async function report(body) {
@@ -88,12 +89,35 @@ async function statRows(at, rebuild) {
   if (added >= 300 || (added && Date.now() - Number(snap.ver) > 6 * 3600e3)) await saveSnapshot(rows, top).catch((e) => console.warn('stats snapshot save', e?.message));
   return [...rows.values()];
 }
+/* sky_daily (2026-11-20, Space's sc_daily, 5f591d4b): one doc per Toronto day, no install ids (server/daily.js). Each
+   10-minute mark: rewrite the days still in the raw window whose numbers changed (set by day id, so two renders at once
+   write the same thing), mark a day final once it has left the window (its last write), and return those frozen days. */
+const DAILY = 'sky_daily';
+const sortKeys = (k, v) => (v && typeof v === 'object' && !Array.isArray(v) ? Object.fromEntries(Object.entries(v).sort(([a], [b]) => (a < b ? -1 : 1))) : v);
+let dailyMem = { at: 0, past: [] };
+async function dailyPass(rows, at, B) {
+  if (dailyMem.at === at) return dailyMem.past;
+  const stored = new Map((await db.collection(DAILY).get()).docs.map((d) => [d.id, d.data()]));
+  const fresh = dailyDocs(rows, { now: at, from: B }), batch = db.batch(); let n = 0;
+  const same = (a, b) => JSON.stringify(a, sortKeys) === JSON.stringify(b, sortKeys); /* Firestore can hand fields back in another order */
+  const isPast = (d) => Date.parse(`${d.day}T12:00:00Z`) / 86400e3 < B;
+  for (const [id, doc] of Object.entries(fresh)) if (!same(stored.get(id), doc)) { batch.set(db.collection(DAILY).doc(id), doc); stored.set(id, doc); n++; }
+  /* a window day with nothing left to count (its only installs were flagged as tests later): its saved doc goes too */
+  for (const [id, doc] of [...stored]) if (!isPast(doc) && !fresh[id]) { batch.delete(db.collection(DAILY).doc(id)); stored.delete(id); n++; }
+  for (const [id, doc] of stored) if (isPast(doc) && !doc.final) { batch.update(db.collection(DAILY).doc(id), { final: true }); stored.set(id, { ...doc, final: true }); n++; }
+  if (n) { await batch.commit(); console.log('daily totals written', n); }
+  const past = [...stored.values()].filter(isPast);
+  dailyMem = { at, past }; return past;
+}
 const statsMemo = new Map();
 async function stats(all, before = false, rebuild = false) {
   const at = Math.floor(Date.now() / SLOT) * SLOT, mk = `${all}|${before}`, hit = statsMemo.get(mk);
   if (!rebuild && hit && hit.at === at) return hit.html;
   const rows = (await statRows(at, rebuild)).filter((e) => e.ts <= at);
-  const html = statsHtml(rows, { all, before, now: at, keyQs: `key=${encodeURIComponent(process.env.STATS_KEY ?? '')}`, relay: relayState() });
+  /* Daily totals (2026-11-20): days inside the raw window are (re)written; older days are read back for the lifetime
+     numbers. Only the players' view uses them (?all / ?before stay raw: the totals leave tests out). */
+  const B = windowStart(at), past = await dailyPass(rows, at, B).catch((e) => { console.warn('daily totals', e?.message); return []; });
+  const html = statsHtml(rows, { all, before, now: at, keyQs: `key=${encodeURIComponent(process.env.STATS_KEY ?? '')}`, relay: relayState(), ...(all || before ? {} : { past, from: B }) });
   statsMemo.set(mk, { at, html }); return html;
 }
 

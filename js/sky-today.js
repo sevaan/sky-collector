@@ -5,19 +5,19 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { isProp } from './sky-props.js?v=0.1.1817';
-import { planesUp } from './sky-up.js?v=0.1.1817';
-import { planeKey } from './flights.js?v=0.1.1817';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1817';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1817';
-import { airlineIcon } from './airline-icons.js?v=0.1.1817';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1817';
-import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1817';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1817';
-import { planeSet } from './sky-sets.js?v=0.1.1817';
-import { MIL_TYPES } from './plane-privacy.js?v=0.1.1817';
-import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1817';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1817';
+import { isProp } from './sky-props.js?v=0.1.1818';
+import { planesUp } from './sky-up.js?v=0.1.1818';
+import { planeKey } from './flights.js?v=0.1.1818';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1818';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1818';
+import { airlineIcon } from './airline-icons.js?v=0.1.1818';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1818';
+import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1818';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1818';
+import { planeSet } from './sky-sets.js?v=0.1.1818';
+import { MIL_TYPES } from './plane-privacy.js?v=0.1.1818';
+import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1818';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1818';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -384,7 +384,7 @@ export function renderToday(el, ctx) {
   let regs = ''; try { const now = Date.now(), rl = regulars(now).filter((r) => r.next - now < 12 * 3600e3).slice(0, 3);
     if (rl.length) regs = `${sec('Your regulars', 'Learned here')}<div class="td2-card td2-regs">${rl.map((r) => { const rt = ctx.route(r.callsign), full = rt?.full, a3 = r.callsign.slice(0, 3), fkey = full ? `F:${a3}:${full.from.icao}-${full.to.icao}` : null, mine = fkey && owned.has(fkey), mins = Math.round((r.next - now) / 60000);
       const name = full ? `${rt.airline || a3} ${r.callsign.replace(/^[A-Z]{3}/, '')} to ${full.to.city}` : `${rt?.airline || a3} ${r.callsign.replace(/^[A-Z]{3}/, '')}`;
-      return `<div class="td2-reg"><b>${esc(name)}</b><span>Usually ${esc(clockText(r.minute))} · seen ${r.days} of the last ${r.of} days · ${mins <= 2 ? 'due now' : mins < 60 ? `in ${mins} min` : `at ${esc(clockText(r.minute))}`}${mine ? ' · <em>in your collection</em>' : ''}</span></div>`; }).join('')}</div>`; } catch {}
+      return `<div class="td2-reg"><b>${esc(name)}</b><span>Usually ${esc(clockText(r.minute))} · seen ${r.days} of the last ${r.of} days${mins <= 2 ? ' · due now' : mins < 60 ? ` · in ${mins} min` : ''}${mine ? ' · <em>in your collection</em>' : ''}</span></div>`; }).join('')}</div>`; } catch {}
   el.innerHTML = live + missions + regs + tl + board + map + story;
   try { ctx.fillMinis?.(el); } catch {} /* the real mini cards in the hero and the tiles (js/main.js skyFillMinis) */
   try { const n2 = ctx.note?.(); if (n2) el.prepend(n2); } catch {} /* Space's daily note, the app talking (js/main.js skyDailyNote) */
