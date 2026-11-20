@@ -5,3 +5,49 @@ export const GOV_OPS = new Set('AAC ACW AFP AIO AME ASF ASY AYB BAF BFW BRS CEF 
 export const MIL_TYPES = /^(C17|C130|C30J|C5M|A400|K35[ER]|KC10|KC46|E3[TC]F|E6|B52|B1|B2|P8|C2|C295|V22|U2|F16|F18|F15|F22|F35|EUFI|A10|H47|H53|H60|AN12|IL76|T38|T6|TEX2|HAWK|TOR|RFAL|GRIF|MRF1|C160|CN35|E2|R135|C40|C32|C37[AB]|VC25)$/;
 export const opOf = (a) => String(a?.flight ?? a?.callsign ?? '').trim().toUpperCase().slice(0, 3);
 export const isGovOrMil = (a) => (Number(a?.dbFlags) & 1) !== 0 || GOV_OPS.has(opOf(a)) || MIL_TYPES.test(String(a?.t ?? a?.type ?? '').toUpperCase());
+
+/* Callsigns that look like an airline's (three letters and a number) */
+export const AIRLINE_CS = /^[A-Z]{3}\d/;
+/* fractional / charter business-jet operators: anonymous like any private plane (js/planes.js) */
+export const BIZ_OPS = new Set(['EJA', 'NJE', 'EJM', 'LXJ', 'XOJ', 'JRE', 'ASP', 'VJT']);
+/* A hidden aircraft's id: a salted hash of its hex, kept on this phone, so the same aircraft still counts once */
+let anonSalt = null;
+export function anonId(hex) {
+  if (anonSalt == null) { try { anonSalt = localStorage.getItem('anonSalt'); if (!anonSalt) { anonSalt = Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem('anonSalt', anonSalt); } } catch { anonSalt = 'x'; } }
+  let h1 = 0x811c9dc5, h2 = 0x01000193; const s = anonSalt + '|' + String(hex ?? '').toLowerCase();
+  for (let i = 0; i < s.length; i++) { const c = s.charCodeAt(i); h1 = Math.imul(h1 ^ c, 16777619) >>> 0; h2 = Math.imul(h2 ^ c, 2246822519) >>> 0; }
+  return `~${h1.toString(36)}${h2.toString(36)}`; /* "~" marks it: never a real ICAO hex */
+}
+
+// ---- Saved and sent catches (2026-11-19, QA: catches saved before the privacy rules, and packs from older apps, could
+// still carry a private, business, military or government aircraft's callsign, registration, real hex or operator) ----
+const flightOp = (key) => (/^F:([A-Z0-9]{2,4}):/.exec(String(key ?? '')) || [])[1] || '';
+/* Was this saved catch one that must not be named? From what it kept: the callsign, the type, a flight card's operator. */
+export function privateCatch(s) {
+  if (!s) return false;
+  const cs = String(s.callsign ?? s.cardSnapshot?.callsign ?? '').trim().toUpperCase(), type = String(s.typeCode ?? s.cardSnapshot?.type ?? '').toUpperCase();
+  const op = flightOp(s.cardKey) || cs.slice(0, 3);
+  if (isGovOrMil({ flight: cs, t: type }) || GOV_OPS.has(op) || BIZ_OPS.has(op)) return true;
+  if (/^F:/.test(String(s.cardKey ?? ''))) return !!cs && !AIRLINE_CS.test(cs); /* a flight card is an airline's by nature; one kept with another callsign isn't */
+  return !!cs && !AIRLINE_CS.test(cs); /* a plane catch with a non-airline callsign (a registration, N123AB) */
+}
+const hidHex = (h) => (!h || String(h).startsWith('~') ? h : anonId(h));
+/* A private catch made safe: its flight card goes (the card itself names the operator), a plane catch keeps only the
+   type: no callsign, registration or operator, and the aircraft's id hashed. Returns null to drop, else the sighting
+   (a new object when anything changed). */
+export function scrubSighting(s) {
+  if (!privateCatch(s)) return s;
+  if (/^F:/.test(String(s.cardKey ?? '')) || s.type === 'flight') return null;
+  const t = { ...s, callsign: '', reg: '' }; delete t.op; if (t.cls === 'airline' || t.cls === 'cargo') delete t.cls;
+  if (t.hex) t.hex = hidHex(t.hex);
+  if (/^HEX:/.test(String(t.stampKey ?? ''))) t.stampKey = `HEX:${hidHex(t.stampKey.slice(4))}`;
+  if (t.cardSnapshot && typeof t.cardSnapshot === 'object') { const c = { ...t.cardSnapshot }; delete c.reg; delete c.callsign; if (c.stamp) c.stamp = ''; t.cardSnapshot = c; }
+  if (t.flight) t.flight = null;
+  return t;
+}
+/* A whole list: [kept, changed (count), dropped (keys)] */
+export function scrubSightings(list) {
+  const out = [], dropped = []; let changed = 0;
+  for (const s of list ?? []) { const t = scrubSighting(s); if (t === null) { dropped.push(s.key); continue; } if (t !== s) changed++; out.push(t); }
+  return { list: out, changed, dropped };
+}

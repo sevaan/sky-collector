@@ -3,13 +3,14 @@
 // Airline flights only: private and other anonymous aircraft have no callsign here (js/planes.js isAnonymous), so a
 // person's plane can never become a "regular". The plane version of a satellite's pass. No DOM.
 // localStorage 'skyRegulars' = { CALLSIGN: { 'yyyy-m-d': minuteOfDay first seen } }, 14 days, at most 600 callsigns.
+import { privateCatch } from './plane-privacy.js';
 const KEY = 'skyRegulars', KEEP_DAYS = 14, MAX = 600, WINDOW = 45, MIN_DAYS = 3, LOOK_DAYS = 7;
 const AIRLINE = /^[A-Z]{3}\d/;
 const dayKey = (t) => { const d = new Date(t); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
 const dayStart = (k) => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d).getTime(); };
 const minuteOf = (t) => { const d = new Date(t); return d.getHours() * 60 + d.getMinutes(); };
 let cache = null, savedAt = 0;
-const load = () => { if (cache) return cache; try { cache = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch { cache = {}; } return cache; };
+const load = () => { if (cache) return cache; try { cache = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch { cache = {}; } for (const cs of Object.keys(cache)) if (privateCatch({ callsign: cs })) delete cache[cs]; /* never a business, military or government callsign, even one saved before the rule (QA 2026-11-19) */ return cache; };
 const save = () => { if (Date.now() - savedAt < 15000) return; savedAt = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(cache)); } catch {} };
 // Callsigns seen now ([{ callsign }]); each callsign's first sighting of the day is kept.
 export function noteRegulars(planes, now = Date.now()) {
