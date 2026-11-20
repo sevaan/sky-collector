@@ -9,6 +9,9 @@ import { plugin } from './native.js';
 import { lookupRoute } from './routes.js';
 import { typeName } from './sky-type-names.js';
 import { noteFeed } from './sky-local.js';
+import { planeSet } from './sky-sets.js';
+import { isProp } from './sky-props.js';
+import { CARGO_AIRLINES } from './sky-cargo.js';
 import { DEFAULTS, clampDial, freshFeed, pickSource, nextGap, afterAnswer, feedDown, maxAgeS, easeLeft } from './plane-feed.js';
 // Empty = feature off. localStorage 'planeRelay' overrides it (testing). Our server's /planes (adsb.lol only) once it's
 // deployed; until then the Val Town relay (relay/handler.ts).
@@ -113,6 +116,36 @@ export function anonId(hex) {
   for (let i = 0; i < s.length; i++) { const c = s.charCodeAt(i); h1 = Math.imul(h1 ^ c, 16777619) >>> 0; h2 = Math.imul(h2 ^ c, 2246822519) >>> 0; }
   return `~${h1.toString(36)}${h2.toString(36)}`; /* "~" marks it: never a real ICAO hex */
 }
+/* What kind of thing it was, per CATCH (2026-11-19, card spike, design/card-spike/team-c-information.html §2): one B763 card
+   can be caught as a UPS freighter one day and a charter the next, so the class belongs to the catch, not the type. Decided
+   here while the raw callsign is in hand; only the class word is kept (plus the airline's name for an airline callsign,
+   which is public). First match wins. Gov / military: no class word at all (no military content), the card shows its size.
+   a: { callsign (raw), category, type, heli, anon, gov, biz }. Returns '' or one of CLASS_WORDS' keys. */
+export const CLASS_WORDS = {
+  balloon: 'Balloon', airship: 'Airship', glider: 'Glider', ultralight: 'Ultralight', drone: 'Drone', heli: 'Helicopter',
+  cargo: 'Cargo airline', airline: 'Airline', biz: 'Business jet', light: 'Light aircraft', turboprop: 'Turboprop',
+  airliner: 'Airliner', small: 'Small aircraft', large: 'Large aircraft', heavy: 'Heavy aircraft',
+};
+const AIRLINER_SETS = new Set(['giants', 'b737', 'a320', 'twinaisle', 'regional']);
+export function catchClass(a) {
+  if (a?.gov) return '';
+  const t = String(a?.type ?? '').toUpperCase(), cat = String(a?.category ?? '').toUpperCase(), cs = String(a?.callsign ?? '').trim().toUpperCase();
+  if (t === 'SHIP') return 'airship';
+  if (t === 'BALL' || cat === 'B2') return 'balloon';
+  if (t === 'GLID' || cat === 'B1') return 'glider';
+  if (cat === 'B4') return 'ultralight';
+  if (cat === 'B6') return 'drone';
+  if (a?.heli) return 'heli';
+  const airline = !a?.anon && !a?.biz && AIRLINE_CS.test(cs);
+  if (airline) return CARGO_AIRLINES.has(cs.slice(0, 3)) ? 'cargo' : 'airline';
+  if (a?.biz) return 'biz';
+  const set = t ? planeSet(t, false)?.id : '';
+  if (set === 'bizjets') return 'biz';
+  if (set === 'light' || cat === 'A1') return set === 'light' && cat === 'A2' && isProp(t) ? 'turboprop' : 'light'; /* a King Air or PC-12 that says it's over 7 t */
+  if (set === 'props') return 'turboprop';
+  if (AIRLINER_SETS.has(set) || /^A[345]$/.test(cat)) return 'airliner';
+  return cat === 'A2' ? 'small' : '';
+}
 export const parsePlanes = (json) => parse(json); // tests
 function parse(json) {
   const at = json.now < 1e12 ? json.now * 1000 : json.now;
@@ -133,7 +166,10 @@ function parse(json) {
       lat: a.lat, lon: a.lon, hKm: ft * FT, altFt: ft, altBaro: typeof a.alt_baro === 'number' ? a.alt_baro : undefined /* what Flightradar24 and pilots read (alt_geom is GPS height, used for where it is in the sky) */, gs: a.gs ?? 0, track: a.track ?? a.true_heading ?? 0,
       climb: a.geom_rate ?? a.baro_rate ?? 0, at: at - (a.seen_pos ?? 0) * 1000,
     });
-    out[out.length - 1].heli = isHelicopter(out[out.length - 1]);
+    const q = out[out.length - 1]; q.heli = isHelicopter(q);
+    /* the class of this catch, from the raw callsign; the airline's name only for an airline callsign (public) */
+    q.cls = catchClass({ callsign: cs0, category: a.category, type: q.type, heli: q.heli, anon, gov, biz: BIZ_OPS.has(opOf(a)) });
+    if (q.cls === 'cargo' || q.cls === 'airline') { const n = airlineName(cs0.toUpperCase()); if (n) q.clsOp = n; }
   }
   return out;
 }
@@ -219,6 +255,9 @@ export class PlaneTracker {
         const before = this.feed;
         this.feed = afterAnswer(this.feed, { src, ok: r.ok, status: r.status, remaining: r.remaining, retryAfter: r.retryAfter, net: r.net, online: typeof navigator === 'undefined' ? undefined : navigator.onLine }, Date.now(), this.cfg);
         this.count(src, r, before);
+        /* the phone's own ask failed and the relay takes over: not a failure yet, and the relay is asked now, not a gap
+           later (iOS simulator 2026-11-19: a 429 on the first ask said "Plane feed down" for 30 s before the relay answered) */
+        if (src === 'phone' && !r.ok && pickSource(this.feed, { phoneOk: true, relayOk: true, now: Date.now() }) === 'relay') { this.failures = Math.max(0, this.failures - 1); this.lastFetch = 0; }
         try { localStorage.setItem('planeFeed', JSON.stringify(this.feed)); } catch {}
       })
       .finally(() => { this.busy = false; });
