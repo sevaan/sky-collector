@@ -47,8 +47,11 @@ export function assignSets(objects) {
 // Albums (one per set): bronze / silver / gold goals scale with the set’s size, so every album has a reachable gold.
 export function albumGoals(n) { return n <= 30 ? [1, Math.ceil(n / 2), n] : n <= 300 ? [10, 50, 100] : [10, 50, 200]; }
 // For progress(): each album’s cards and its gold goal (a filled album earns its own patch, 2026-10-10 #17).
+// An album with fixed goals (Sky's) is listed even before it has a card, so its patch shows locked and the patch total
+// ("N of M earned") stays put as cards arrive (QA round 5, Sevaan's option 1: a catch used to raise the total). An album
+// whose goals scale with its size needs cards to have goals at all, so it still waits for them.
 export function albumList(cards) {
-  return SETS.map((s) => { const keys = cards.filter((c) => (c.setId ?? c.set) === s.id).map((c) => String(c.key ?? c.id)); return { id: s.id, name: s.name, keys, goal: goalsOf(s, keys.length)[2], silver: goalsOf(s, keys.length)[1] }; }).filter((a) => a.keys.length);
+  return SETS.map((s) => { const keys = cards.filter((c) => (c.setId ?? c.set) === s.id).map((c) => String(c.key ?? c.id)); return { id: s.id, name: s.name, keys, goal: goalsOf(s, keys.length)[2], silver: goalsOf(s, keys.length)[1], fixed: !!s.goals }; }).filter((a) => a.keys.length || a.fixed);
 }
 // Albums you’ve filled to gold (cards-page writes localStorage goldAlbums): their cards wear an album card back.
 export function goldAlbums() { try { return new Set(JSON.parse(localStorage.getItem('goldAlbums')) || []); } catch { return new Set(); } }

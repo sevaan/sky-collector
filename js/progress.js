@@ -1,15 +1,15 @@
 // Player progress from the sighting log: XP and observer rank, tonight’s three missions, a weekly streak and
 // achievements. Everything is derived from the saved sightings (nothing extra is stored), so it can’t drift.
 // info(cardKey) -> { tier, type, owner, launch, natural, con } | null. No DOM.
-import { isProp } from './sky-props.js?v=0.1.1815';
-import { SKY_PATCHES_MORE, freshSky2, noteSky2 } from './sky-patches.js?v=0.1.1815';
-import { nightKey, useCalendarDays } from './observation.js?v=0.1.1815';
-import { fleetThresholds } from './card-model.js?v=0.1.1815';
-import { distRound as distText } from './units.js?v=0.1.1815';
-import { firstFlew, isNewType, isOldType, engines, makerOf, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1815';
-import { planeSet } from './sky-sets.js?v=0.1.1815';
-import { privateCatch, MIL_TYPES } from './plane-privacy.js?v=0.1.1815';
-import { localDay, THRESHOLDS } from './sky-stamps.js?v=0.1.1815';
+import { isProp } from './sky-props.js?v=0.1.1816';
+import { SKY_PATCHES_MORE, freshSky2, noteSky2 } from './sky-patches.js?v=0.1.1816';
+import { nightKey, useCalendarDays } from './observation.js?v=0.1.1816';
+import { fleetThresholds } from './card-model.js?v=0.1.1816';
+import { distRound as distText } from './units.js?v=0.1.1816';
+import { firstFlew, isNewType, isOldType, engines, makerOf, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1816';
+import { planeSet } from './sky-sets.js?v=0.1.1816';
+import { privateCatch, MIL_TYPES } from './plane-privacy.js?v=0.1.1816';
+import { localDay, THRESHOLDS } from './sky-stamps.js?v=0.1.1816';
 
 // A longer climb (2026-10-12, playtest room: three ranks on night 1, Mission Control in about two weeks), with two
 // prestige ranks past Mission Control. Nobody drops a rank they had on the old curve (rankFloor below).
@@ -400,7 +400,7 @@ export const SKY_CHALLENGES = [
   { id: 'revisit3', text: 'Catch three planes you’ve caught before', done: (n) => nCatches(n, (s) => !s.first) >= 3 },
   { id: 'pair10', text: 'Catch two planes in 10 minutes', done: (n) => inTen(n, 2) },
   { id: 'levelup', text: 'Turn a card silver or gold', done: (n) => n.some((s) => s.lv) },
-  { id: 'moreaircraft', text: 'Add a new plane to a card you already own', done: (n) => n.some((s) => s.moreAircraft) },
+  { id: 'moreaircraft', text: 'Catch another plane of a kind you already have', done: (n) => n.some((s) => s.moreAircraft) },
   /* newColours: saved on the catch from 2026-11-20 (js/sky-stamps.js newLivery); before that, the same rule from your history */
   { id: 'livery2', text: 'Catch a kind you own in new colours', done: (n) => n.some((s) => s.newColours ?? s.ownLivery) },
   { id: 'sameairline', text: 'Catch two planes from the same airline', done: (n) => { const by = new Map(); for (const c of catchesOf(n)) { const s = c.list.find((x) => /^[A-Z]{3}\d/.test(x.callsign ?? '')); if (!s) continue; const a = s.callsign.slice(0, 3), h = by.get(a) ?? by.set(a, new Set()).get(a); h.add(String(s.hex ?? c.time)); if (h.size >= 2) return true; } return false; } },
@@ -528,7 +528,7 @@ const SKY_ACHIEVEMENTS = [
   { id: 'sky-propday', name: 'Prop Day', text: 'Catch three propeller planes in one day', icon: '✣3', done: (a) => maxSize(skyK(a).propDays) >= 3 },
   { id: 'sky-freightnight', name: 'Freight Night', text: 'Catch a cargo flight after dark', icon: '▣', done: (a) => skyK(a).freightNight >= 1 },
   { id: 'sky-hopper', name: 'Hopper', get text() { return `Catch a flight shorter than ${distText(300)}`; }, icon: '⤻', done: (a) => skyK(a).hop >= 1 },
-  { id: 'sky-globetrotter', name: 'Globetrotter', text: 'Catch a flight longer than 10,000 km', icon: '10K', done: (a) => skyK(a).far >= 1 },
+  { id: 'sky-globetrotter', name: 'Globetrotter', get text() { return `Catch a flight longer than ${distText(10000)}`; }, icon: '10K', done: (a) => skyK(a).far >= 1 },
   { id: 'sky-airlines5', name: 'Five Airlines', text: 'Catch five different airlines', icon: '5', done: (a) => skyK(a).airlines.size >= 5 },
   { id: 'sky-airlines25', name: 'Twenty-five Airlines', text: 'Catch 25 different airlines', icon: '25', done: (a) => skyK(a).airlines.size >= 25 },
   { id: 'sky-regular', name: 'Regular', text: 'Catch the same flight on 15 days: a gold flight card', icon: '15', done: (a) => maxSize(skyK(a).flightDays) >= 15 },
@@ -572,7 +572,7 @@ const SKY_OVER = {
   marathon: { text: 'Catch 10 planes in one day' },
   /* QA round 3 (2026-11-20): Space's words (log, observe, night) left on Sky's patches */
   owl: { text: 'Catch a plane between 1 and 4 AM' }, twilight: { text: 'Catch a plane between 5 and 9 PM' }, dawn: { text: 'Catch a plane between 4 and 7 AM' }, /* wording pass 2026-11-20 (content/sky-patches-missions-wording-2026-11-20.md 2a) */
-  months3: { text: 'Catch a plane in 3 different months' }, months12: { text: 'Catch a plane in 12 different months' }, roadtrip: { text: 'Catch planes from two places more than 100 km apart' }, streak4: { text: 'Catch a plane 4 weeks in a row' }, streak12: { text: 'Catch a plane 12 weeks in a row' },
+  months3: { text: 'Catch a plane in 3 different months' }, months12: { text: 'Catch a plane in 12 different months' }, roadtrip: { get text() { return `Catch planes from two places more than ${distText(100)} apart`; } }, streak4: { text: 'Catch a plane 4 weeks in a row' }, streak12: { text: 'Catch a plane 12 weeks in a row' },
   anniversary: { text: 'Still spotting a year after your first catch' }, fullhouse: { text: 'Complete all three missions in one day' },
 };
 export const ACHIEVEMENTS = [

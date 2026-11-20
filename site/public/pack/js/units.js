@@ -17,4 +17,8 @@ export const dist = (km) => (useMiles() ? { v: fmt(km == null ? null : km * 0.62
 export const distText = (km) => { const d = dist(km); return `${d.v} ${d.u}`; };
 export const speed = (kmh) => (useMiles() ? { v: fmt(kmh == null ? null : kmh * 0.621371), u: 'mph' } : { v: fmt(kmh), u: 'km/h' });
 // A round figure for a goal ("more than 3,000 km" → "more than 1,900 mi", not 1,864): two significant figures.
-export const distRound = (km) => { if (!useMiles()) return `${fmt(km)} km`; const mi = km * 0.621371, step = 10 ** (Math.floor(Math.log10(mi)) - 1); return `${fmt(Math.round(mi / step) * step)} mi`; };
+// distIn: a distance as a number in the player's units; distGoal: the same round figure distRound writes, as a number (a
+// progress bar under "25,000 mi" counts to 25,000, QA round 5).
+export const distIn = (km) => (useMiles() ? km * 0.621371 : km);
+export const distGoal = (km) => { if (!useMiles()) return km; const mi = km * 0.621371, step = 10 ** (Math.floor(Math.log10(mi)) - 1); return Math.round(mi / step) * step; };
+export const distRound = (km) => `${fmt(distGoal(km))} ${useMiles() ? 'mi' : 'km'}`;

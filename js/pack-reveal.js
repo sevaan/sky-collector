@@ -9,7 +9,7 @@
 // the card pictures decoded (at most 150 ms); the cards sit behind the pack by stacking order, so nothing is clipped per
 // frame; no tilt and no layout reads while it plays. The pure helpers (timing table, the switch) are tested in
 // tests/pack-reveal.test.mjs.
-import { TIER_INFO, TIERS } from './rarity.js?v=0.1.1815';
+import { TIER_INFO, TIERS } from './rarity.js?v=0.1.1816';
 
 // The beats in ms, from the pack popping in to the top card's face (B is the plan; A quicker; C with a longer tear).
 export const PACK_VARIANTS = {

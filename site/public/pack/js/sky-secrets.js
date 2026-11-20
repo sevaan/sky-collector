@@ -6,6 +6,7 @@
 // military or police aircraft; no emergencies. Every fact in the texts is checked (sources in the doc).
 
 // The patches. The text is what the patch's card says once found.
+import { speed } from './units.js'; /* Jet Stream's speed in the player's units (QA round 5) */
 export const SKY_SECRET_PATCHES = {
   overhead: { id: 'overhead', name: 'Straight Up', /* was 'Zenith' (wording pass 2026-11-20); the id stays 'overhead' (not 'zenith': that's a Space Collector patch id) */ text: 'You caught a plane flying almost straight over your head.' },
   balloon: { id: 'balloon', name: 'Up, Up and Away', text: 'You caught a hot-air balloon.' },
@@ -16,7 +17,7 @@ export const SKY_SECRET_PATCHES = {
   firebird: { id: 'firebird', name: 'Firebird', text: 'You caught a water bomber, a plane built to scoop up water from a lake.' } /* names the aircraft, no fire in progress (Sevaan, 2026-11-20) */,
   hurricane: { id: 'hurricane', name: 'Into the Eye', text: 'You caught a NOAA hurricane hunter, a plane that flies into storms to measure them.' },
   vintage: { id: 'vintage', name: 'Vintage', text: 'You caught a plane of a type built more than 50 years ago.' },
-  jetstream: { id: 'jetstream', name: 'Jet Stream', text: 'You caught an airliner going faster than 1,000 km/h over the ground, pushed along by the jet stream.' },
+  jetstream: { id: 'jetstream', name: 'Jet Stream', get text() { const s = speed(1000); return `You caught an airliner going faster than ${s.v} ${s.u} over the ground, pushed along by the jet stream.`; } },
   ceiling: { id: 'ceiling', name: 'Ceiling', text: 'You caught a plane flying higher than 45,000 ft.' },
   formation: { id: 'formation', name: 'Two of a Kind', /* not 'Formation': that means military or airshow flying (avgeek playtest 2026-11-19); the id stays so earned patches keep */ text: 'You caught a plane with another of the same airline, a different type, in your circle.' },
   /* aviation anniversaries (2026-11-19, review Part 2 F): Space Collector's dated secrets (js/secrets.js DATED,
@@ -123,7 +124,7 @@ const SKY_ART = {
 const SKY_TWILL = { overhead: '#14284a', balloon: '#5a2a1a', glider: '#1f3d3a', airship: '#22265a', whale: '#173d5c', heavylift: '#3a3a3a', firebird: '#5a2a1a', hurricane: '#1f2a3a', vintage: '#4a3a22', jetstream: '#173d5c', ceiling: '#14284a', formation: '#10433f', sixcont: '#3f2a58' };
 // Into Space Collector's secrets (js/secrets.js) and patch art (js/patches.js); called by main.js and cards-page.js in Sky.
 export function registerSkySecrets(SECRET_PATCHES, addSecretArt, patchArt = {}) {
-  for (const p of Object.values(SKY_SECRET_PATCHES)) SECRET_PATCHES[p.id] = { ...p, secret: true, icon: '' };
+  for (const p of Object.values(SKY_SECRET_PATCHES)) SECRET_PATCHES[p.id] = Object.assign(Object.defineProperties({}, Object.getOwnPropertyDescriptors(p)), { secret: true, icon: '' }); /* descriptors, not a spread: Jet Stream's text is a getter that follows Settings → Units */
   addSecretArt?.({ ...SKY_ART, ...patchArt }, SKY_TWILL); /* patchArt: js/sky-patches.js's patches, drawn the same way */
 }
 

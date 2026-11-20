@@ -2,8 +2,8 @@
 // badges"). Your history under the sky, from the sighting log plus what the Collection page already knows (rank,
 // patches, constellations, stories, albums). computeStats(sightings, byKey, nightKey, year, ctx) -> numbers;
 // statsHtml(st) -> the panel. No network; the map uses js/geo.js’s coarse outlines.
-import { LAND } from './geo.js?v=0.1.1815';
-import { TIER_INFO, TIERS } from './rarity.js?v=0.1.1815';
+import { LAND } from './geo.js?v=0.1.1816';
+import { TIER_INFO, TIERS } from './rarity.js?v=0.1.1816';
 
 const RANK = { common: 0, uncommon: 1, rare: 2, epic: 3, legendary: 4 };
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -45,7 +45,9 @@ export function computeStats(sightings, byKey, nightKey, year = null, ctx = {}) 
   if (storyRow.have) tiers.push(storyRow); // a Story row once you have one, so the rows add up to the total (round-3 playtest 2026-10-30)
   const total = tiers.reduce((a, r) => a + r.all, 0);
   const shinies = new Set(list.filter((s) => s.shiny && !byKey.get(s.cardKey)?.launches).map((s) => s.cardKey)).size;
-  return { sightings: list.length, cards: first.size, nights: nights.size, places: [...places.values()], months, rarest, busiest, bestRun: best, since: list[0]?.time ?? null, year,
+  /* Sky: one catch saves two cards (flight and plane) a moment apart, so catches are counted as progress.js catchesOf does (same hex, under 3 s) */
+  let catches = 0; { let l = null; for (const s of list) { if (!(l && s.time - l.time < 3000 && String(s.hex ?? '') === String(l.hex ?? ''))) catches++; l = s; } }
+  return { sightings: list.length, catches, cards: first.size, nights: nights.size, places: [...places.values()], months, rarest, busiest, bestRun: best, since: list[0]?.time ?? null, year,
     most, firstCard, tiers, total, shinies, ctx };
 }
 
@@ -80,7 +82,7 @@ export function statsHtml(st) {
   // Your time out there.
   const tiles = `<section class="st-sec"><div class="st-head"><span>Time under the sky</span>${since ? `<span class="st-since">since ${esc(since)}</span>` : ''}</div><div class="st-tiles">
     <div class="st-tile"><b>${n(st.nights)}</b><small>${x.sky ? (st.nights === 1 ? 'day out' : 'days out') : st.nights === 1 ? 'night out' : 'nights out'}</small></div>
-    <div class="st-tile"><b>${n(st.sightings)}</b><small>${st.sightings === 1 ? 'sighting' : 'sightings'}</small></div>
+    <div class="st-tile">${x.sky ? `<b>${n(st.catches)}</b><small>${st.catches === 1 ? 'catch' : 'catches'}</small>` : `<b>${n(st.sightings)}</b><small>${st.sightings === 1 ? 'sighting' : 'sightings'}</small>`}</div>
     <div class="st-tile"><b>${n(st.bestRun)}</b><small>${x.sky ? 'Best run of days' : 'Best night run'}</small></div>
     <div class="st-tile"><b>${n(st.places.length)}</b><small>${st.places.length === 1 ? 'place' : 'places'}</small></div></div>
     <div class="st-bars" aria-label="${x.sky ? 'Days' : 'Nights'} out by month">${st.months.map((v, i) => `<div class="st-bar${i === nowM ? ' now' : ''}"><em>${v || ''}</em><span style="height:${(v / max) * 100}%"></span><small>${MONTHS[i][0]}</small></div>`).join('')}</div></section>`;
