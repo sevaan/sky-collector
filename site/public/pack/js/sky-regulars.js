@@ -50,4 +50,11 @@ export function regulars(now = Date.now(), store = load()) {
 }
 export const regularFor = (callsign, now = Date.now()) => { const d = load()[String(callsign ?? '').toUpperCase()]; return d ? regularOf(d, now) : null; };
 export const clockText = (minute) => new Date(2000, 0, 1, Math.floor(minute / 60), minute % 60).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+/* Airlines (3-letter prefixes) seen here in the last `days` days at these clock hours (2026-11-20: "Catch an airline you've
+   never caught" is dealt only when one you don't have has flown here at this time of day this week) */
+export function airlinesAt(hours, now = Date.now(), days = 7, store = load()) {
+  const from = dayStart(dayKey(now)) - days * 86400e3, hs = new Set(hours), out = new Set();
+  for (const [cs, d] of Object.entries(store)) for (const [k, m] of Object.entries(d)) if (dayStart(k) >= from && hs.has(Math.floor(m / 60))) { out.add(cs.slice(0, 3)); break; }
+  return out;
+}
 export const _resetRegulars = (v = null) => { cache = v; savedAt = 0; }; // tests

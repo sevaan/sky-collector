@@ -82,6 +82,19 @@ const S = {
   /* https://en.wikipedia.org/wiki/Eurocopter_AS350_Écureuil (H125 = AS350 B3e): first flight 27 June 1974; 5 pax; 1 × Arriel
      2B turboshaft; main rotor 10.7 m. Range left out (662 km is the B3 only) */
   AS50: { maker: 'Airbus Helicopters', country: 'France', desc: 'light helicopter', cells: [['First flew', '1974'], ['Passengers', '5'], E(1, 'turbine'), ['Rotor', '10.7', 'm']] },
+  /* First-flight years for the missions' "first flew" checks (2026-11-20, design/missions-draft.md), each read on its
+     English Wikipedia article: Airbus_A330neo "The -900 made its maiden flight on 19 October 2017"; Embraer_E-Jet_E2_family
+     "the E190-E2, made its maiden flight on 23 May 2016"; Cessna_182_Skylane infobox "First flight 10 September 1955";
+     De_Havilland_Canada_DHC-6_Twin_Otter "first flight on 20 May 1965"; Beechcraft_Super_King_Air "the first prototype flew
+     for the first time on October 27, 1972"; Cessna_208_Caravan "The prototype first flew on December 9, 1982";
+     Robinson_R44 "the R44 first flew on 31 March 1990". Engine counts are the type's own (twin, single). Only what was read. */
+  A339: { maker: 'Airbus', desc: 'wide-body jet airliner', cells: [['First flew', '2017'], E(2, 'jets')] },
+  E290: { maker: 'Embraer', desc: 'twin-jet regional airliner', cells: [['First flew', '2016'], E(2, 'jets')] },
+  C182: { maker: 'Cessna', desc: 'light aircraft', cells: [['First flew', '1955'], E(1, 'piston')] },
+  DHC6: { maker: 'de Havilland Canada', desc: 'twin turboprop utility aircraft', cells: [['First flew', '1965'], E(2, 'props')] },
+  BE20: { maker: 'Beechcraft', desc: 'twin turboprop', cells: [['First flew', '1972'], E(2, 'props')] },
+  C208: { maker: 'Cessna', desc: 'single-engine turboprop', cells: [['First flew', '1982'], E(1, 'prop')] },
+  R44: { maker: 'Robinson', desc: 'light helicopter', cells: [['First flew', '1990'], E(1, 'piston')] },
   /* https://en.wikipedia.org/wiki/Bell_407: first flight 29 June 1995; five passengers in the main cabin; 1 × Allison 250-C47B
      turboshaft; main rotor 35 ft. Country "United States/Canada" */
   B407: { maker: 'Bell', country: 'USA / Canada', desc: 'light utility helicopter', cells: [['First flew', '1995'], ['Passengers', '5'], E(1, 'turbine'), ['Rotor', '10.7', 'm']] },

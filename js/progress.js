@@ -1,11 +1,15 @@
 // Player progress from the sighting log: XP and observer rank, tonight’s three missions, a weekly streak and
 // achievements. Everything is derived from the saved sightings (nothing extra is stored), so it can’t drift.
 // info(cardKey) -> { tier, type, owner, launch, natural, con } | null. No DOM.
-import { isProp } from './sky-props.js?v=0.1.1804';
-import { SKY_PATCHES_MORE, freshSky2, noteSky2 } from './sky-patches.js?v=0.1.1804';
-import { nightKey, useCalendarDays } from './observation.js?v=0.1.1804';
-import { fleetThresholds } from './card-model.js?v=0.1.1804';
-import { distRound as distText } from './units.js?v=0.1.1804';
+import { isProp } from './sky-props.js?v=0.1.1805';
+import { SKY_PATCHES_MORE, freshSky2, noteSky2 } from './sky-patches.js?v=0.1.1805';
+import { nightKey, useCalendarDays } from './observation.js?v=0.1.1805';
+import { fleetThresholds } from './card-model.js?v=0.1.1805';
+import { distRound as distText } from './units.js?v=0.1.1805';
+import { firstFlew, isNewType, isOldType, engines, makerOf, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1805';
+import { planeSet } from './sky-sets.js?v=0.1.1805';
+import { privateCatch, MIL_TYPES } from './plane-privacy.js?v=0.1.1805';
+import { localDay, THRESHOLDS } from './sky-stamps.js?v=0.1.1805';
 
 // A longer climb (2026-10-12, playtest room: three ranks on night 1, Mission Control in about two weeks), with two
 // prestige ranks past Mission Control. Nobody drops a rank they had on the old curve (rankFloor below).
@@ -65,7 +69,7 @@ export const WEEK_THEMES = [
 // theme index is the local calendar week, so it's the same for everyone whatever their time zone (bug hunt 2026-10-25).
 export const weekStartOf = (t) => { const d = new Date(SKY ? t : t - 12 * 3600e3); /* Sky's weeks start Monday at midnight (QA 2026-11-19) */ d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d.getTime(); };
 const weekIndex = (ws) => { const d = new Date(ws); return Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5 + 3) / 7); };
-export const weekThemeFor = (ws, chosen = null) => WEEK_THEMES.find((x) => x.id === chosen?.[ws]) ?? WEEK_THEMES[weekIndex(ws) % WEEK_THEMES.length];
+export const weekThemeFor = (ws, chosen = null) => (chosen?.[ws] ? sizedWeek(chosen[ws]) : null) ?? (SKY && ws < SKY_V2_WEEKS ? SKY_WEEK_THEMES_V1[weekIndex(ws) % SKY_WEEK_THEMES_V1.length] : WEEK_THEMES[weekIndex(ws) % WEEK_THEMES.length]);
 const WEEKS_FROM = new Date(2026, 9, 26).getTime(); // weeks count from when they started (an update gave old weeks' XP at once)
 export function readWeekThemes() { try { return JSON.parse(localStorage.getItem('weekThemes')) || {}; } catch { return {}; } }
 const real = (sightings) => sightings.filter((s) => !s.sim && s.via !== 'gift').slice().sort((a, b) => a.time - b.time); /* cards you were sent are yours, but only your own sightings count toward XP, rank, missions, streak and patches (2026-11-11) */
@@ -127,7 +131,12 @@ export const CHALLENGES = [
   { id: 'brightstar', text: 'Find a bright named star', done: (n) => n.some((s) => /^star:(?!hip)/.test(s.cardKey)) },
   { id: 'wanderer', text: 'See a planet again', done: (n) => n.some((s) => !s.first && s.info?.type === 'planet') },
 ];
-export function challengeFor(night) { let h = 7; for (const c of String(night)) h = Math.imul(h ^ c.charCodeAt(0), 2246822519) >>> 0; const C = SKY ? SKY_CHALLENGES : CHALLENGES; return C[h % C.length]; }
+export function challengeFor(night) { let h = 7; for (const c of String(night)) h = Math.imul(h ^ c.charCodeAt(0), 2246822519) >>> 0; const C = SKY ? (Number(night) >= nightKey(SKY_V2_CH) ? SKY_CHALLENGES : SKY_CHALLENGES_V1) : CHALLENGES; return C[h % C.length]; }
+/* Sky's deal keeps its challenge ('ch:id', main.js skyDealMissions); a day without one draws as before */
+export function challengeOf(night, deals = null) { const c = SKY ? (deals?.[night] ?? []).find?.((x) => String(x).startsWith('ch:')) : null; return (c && SKY_CHALLENGES.find((x) => x.id === c.slice(3))) || challengeFor(night); }
+/* Round 2 of Sky's missions starts here: a first day from 2026-11-20 gets the new day-one set, challenges and the plain draw
+   change from 2026-11-21 (so a day already under way keeps what it showed), the 12 week themes from Monday 2026-11-23 */
+const SKY_V2_DAY = new Date(2026, 10, 20).getTime(), SKY_V2_CH = new Date(2026, 10, 21).getTime(), SKY_V2_WEEKS = new Date(2026, 10, 23).getTime();
 
 // A player’s first night gets a fixed starter set a beginner can finish (playtest 2026-10-09: the random three were
 // debris, pre-1980 and a rocket stage, and the first catch left them 0 / 3).
@@ -149,8 +158,37 @@ const firstFlight = (s) => s.first && snap(s).sky === 'flight';
 const SIZES = { new: { airlines: 2, cards: 1 }, quiet: { airlines: 1, cards: 1 }, steady: { airlines: 2, cards: 2 }, busy: { airlines: 4, cards: 3 } }; /* sized for a 15-minute look (QA 2026-11-19, #6): steady is 1 to 5 planes in 15 min, busy 5 or more */
 let SIZE = SIZES.steady;
 export function setSkySize(sky) { SIZE = SIZES[sky] ?? SIZES.steady; }
-const NUM = ['', 'one', 'two', 'three', 'four', 'five'];
+const NUM = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight'];
 const airlinesOf = (n) => new Set(n.filter((s) => /^[A-Z]{3}\d/.test(s.callsign ?? '')).map((s) => s.callsign.slice(0, 3))).size;
+/* ---- Sky missions, round 2 (2026-11-20, design/missions-draft.md, Sevaan: "Build it with the 7 cuts") ----
+   One tap is one catch (Sevaan's decision 1): a catch saves its flight and plane sightings at the same moment
+   (js/sky-cards.js catchSightings), so counts go by catches, never by sightings. */
+export function catchesOf(n) {
+  const out = [];
+  for (const s of [...(n ?? [])].sort((a, b) => a.time - b.time)) { const l = out[out.length - 1]; if (l && s.time - l.time < 3000 && String(s.hex ?? '') === String(l.hex ?? '')) l.list.push(s); else out.push({ time: s.time, hex: s.hex, list: [s] }); }
+  return out;
+}
+const nCatches = (n, f) => catchesOf(n).filter((c) => c.list.some(f)).length;
+/* Route data: only an airline's flight card has it. Private, business and military catches never do (js/plane-privacy.js),
+   and a route mission never reads one, even a card saved before the privacy rules. */
+const route = (s) => (snap(s).sky === 'flight' && !privateCatch(s) ? snap(s) : null);
+const setOf = (s) => (snap(s).sky === 'plane' && snap(s).setId) || planeSet(s.typeCode ?? '', !!(snap(s).heli || snap(s).glyph === 'heli')).id;
+const inTen = (n, k) => { const t = catchesOf(n).map((c) => c.time); for (let i = k - 1; i < t.length; i++) if (t[i] - t[i - k + 1] <= 600000) return true; return false; };
+/* climb: the feed's climb rate when it had one (saved on catches from 2026-11-20); below 15,000 ft, so it's leaving or
+   coming to an airport, not stepping between cruising heights */
+const climbing = (s, dir) => Number.isFinite(s.climb) && s.altFt != null && s.altFt < 15000 && (dir > 0 ? s.climb >= 1000 : s.climb <= -1000);
+const isDark = (s) => typeof s.sunEl === 'number' && s.sunEl < -6;
+const quarterOf = (az) => Math.floor(((((az + 45) % 360) + 360) % 360) / 90); // 0 north, 1 east, 2 south, 3 west
+const isMil = (s) => setOf(s) === 'military' || MIL_TYPES.test(String(s.typeCode ?? '').toUpperCase()); /* by type only, never callsign, unit, base or route */
+/* Missions sized to the sky (key 'id:n', kept in the day's deal so its score never changes). Any-catch ones count catches. */
+const SIZED = {
+  airlines3: (k) => ({ text: k === 1 ? 'Catch an airline flight' : `Catch ${NUM[k]} different airlines`, done: (n) => airlinesOf(n) >= k }),
+  newflights2: (k) => ({ text: k === 1 ? 'Collect a new card' : `Get new cards from ${NUM[k]} planes`, done: (n) => nCatches(n, (s) => s.first) >= k }),
+  again: (k) => ({ text: k === 1 ? 'Catch a plane you’ve caught before' : `Catch ${NUM[k]} planes you’ve caught before`, done: (n) => nCatches(n, (s) => !s.first) >= k }),
+  livery: (k) => ({ text: k === 1 ? 'Catch a plane in new colours' : `Catch ${NUM[k]} planes in new colours`, done: (n) => nCatches(n, (s) => s.newLivery) >= k }),
+  families2: (k) => ({ text: `Catch planes from ${NUM[k]} plane families`, done: (n) => new Set(n.filter((s) => snap(s).sky === 'plane').map((s) => snap(s).setId ?? snap(s).set).filter(Boolean)).size >= k }),
+  three10: (k) => ({ text: `Catch ${NUM[k]} planes in 10 minutes`, done: (n) => inTen(n, k) }),
+};
 /* Mission wording (2026-11-18, the age playtest: a 7-year-old couldn't read "Catch one plane below 5,000 ft and one above
    35,000 ft"): short, plain words; the exact numbers live in the rules ("really high" is 35,000 ft and up, "low" under
    5,000 ft, a long flight over 3,000 km). */
@@ -158,10 +196,10 @@ export const SKY_MISSIONS = [
   { id: 'wide', text: 'Catch a big wide jet', done: (n) => n.some((s) => WIDE.test(s.typeCode ?? '')) },
   { id: 'heli', text: 'Catch a helicopter', done: (n) => n.some((s) => snap(s).heli || snap(s).glyph === 'heli') },
   { id: 'prop', text: 'Catch a propeller plane', done: (n) => n.some((s) => PROP.test(s.typeCode ?? '')) },
-  { id: 'far', get text() { return `Catch a long flight (over ${distText(3000)})`; }, done: (n) => n.some((s) => (snap(s).km ?? 0) > 3000) },
-  { id: 'ocean', get text() { return `Catch a very long flight (over ${distText(5000)})`; }, done: (n) => n.some((s) => (snap(s).km ?? 0) > 5000) },
-  { id: 'short', get text() { return `Catch a short hop (under ${distText(500)})`; }, done: (n) => n.some((s) => snap(s).sky === 'flight' && snap(s).km != null && snap(s).km < 500) },
-  { id: 'abroad', text: 'Catch a flight to another country', done: (n) => n.some((s) => snap(s).sky === 'flight' && ccOf(snap(s).from) && ccOf(snap(s).to) && ccOf(snap(s).from) !== ccOf(snap(s).to)) },
+  { id: 'far', get text() { return `Catch a long flight (over ${distText(3000)})`; }, done: (n) => n.some((s) => (route(s)?.km ?? 0) > 3000) },
+  { id: 'ocean', get text() { return `Catch a very long flight (over ${distText(5000)})`; }, done: (n) => n.some((s) => (route(s)?.km ?? 0) > 5000) },
+  { id: 'short', get text() { return `Catch a short hop (under ${distText(500)})`; }, done: (n) => n.some((s) => route(s)?.km != null && route(s).km < 500) },
+  { id: 'abroad', text: 'Catch a flight to another country', done: (n) => n.some((s) => { const c = route(s); return !!c && !!ccOf(c.from) && !!ccOf(c.to) && ccOf(c.from) !== ccOf(c.to); }) },
   { id: 'airlines3', get text() { return SIZE.airlines === 1 ? 'Catch an airline flight' : `Catch ${NUM[SIZE.airlines]} different airlines`; }, done: (n) => airlinesOf(n) >= SIZE.airlines },
   { id: 'high', text: 'Catch a plane flying really high', done: (n) => n.some((s) => (s.altFt ?? 0) >= 35000) },
   { id: 'low', text: 'Catch a plane flying low', done: (n) => n.some((s) => s.altFt != null && s.altFt < 5000) },
@@ -171,6 +209,28 @@ export const SKY_MISSIONS = [
   { id: 'families2', text: 'Catch planes from two plane families', done: (n) => new Set(n.filter((s) => snap(s).sky === 'plane').map((s) => snap(s).setId ?? snap(s).set).filter(Boolean)).size >= 2 },
   { id: 'newflights2', get text() { return SIZE.cards === 1 ? 'Collect a new card' : `Collect ${NUM[SIZE.cards]} new cards`; }, done: (n) => n.filter((s) => s.first).length >= SIZE.cards },
   { id: 'again', text: 'Catch a plane you’ve caught before', done: (n) => n.some((s) => !s.first) },
+  /* Round 2 (2026-11-20, design/missions-draft.md). Words a 7-year-old can read; the exact rules here. */
+  { id: 'continent', text: 'Catch a flight to another continent', done: (n) => n.some((s) => { const c = route(s); if (!c) return false; const a = continentOfAirport(c.from), b = continentOfAirport(c.to); return !!a && !!b && a !== b; }) },
+  /* nearTo: the flight's airport was within 30 km of where you stood (saved on the catch from 2026-11-20; never your position) */
+  { id: 'landing', text: 'Catch a flight landing near you', done: (n) => n.some((s) => !!route(s) && s.nearTo === true) },
+  /* the year that exact model first flew, as printed on its card; a type with no year never counts (js/sky-kinds.js) */
+  { id: 'oldtype', text: 'Catch a plane type from before 1980' /* first flew before 1980 */, done: (n) => n.some((s) => isOldType(s.typeCode)) },
+  { id: 'newtype', get text() { return `Catch a plane type from ${new Date().getFullYear() - 10} or later`; } /* the last 10 years, rolling each January */, done: (n, t) => n.some((s) => isNewType(s.typeCode, s.time ?? t)) },
+  /* el, climb and upFor are saved on catches from 2026-11-20; a catch without them never counts */
+  { id: 'overhead', text: 'Catch a plane right over your head', done: (n) => n.some((s) => Number.isFinite(s.el) && s.el > 70) },
+  { id: 'up', text: 'Catch a plane on its way up', done: (n) => n.some((s) => climbing(s, 1)) },
+  { id: 'down', text: 'Catch a plane on its way down', done: (n) => n.some((s) => climbing(s, -1)) },
+  { id: 'quick', text: 'Catch a plane in its first minute up' /* up: over the trees, 5° (js/sky-up.js) */, done: (n) => n.some((s) => Number.isFinite(s.upFor) && s.upFor <= 90) },
+  { id: 'dark', text: 'Catch a plane after dark', done: (n) => n.some(isDark) },
+  { id: 'shiny', text: 'Catch a shiny', done: (n) => n.some((s) => s.shiny) },
+  { id: 'boeingairbus', text: 'Catch a Boeing and an Airbus', done: (n) => n.some((s) => isBoeing(s.typeCode)) && n.some((s) => isAirbus(s.typeCode)) },
+  { id: 'giant', text: 'Catch a Giant, like a 747 or A380', done: (n) => n.some((s) => setOf(s) === 'giants') },
+  { id: 'regional', text: 'Catch a regional jet', done: (n) => n.some((s) => setOf(s) === 'regional') },
+  { id: 'biz', text: 'Catch a business jet', done: (n) => n.some((s) => setOf(s) === 'bizjets' || s.cls === 'biz') },
+  { id: 'military', text: 'Catch a military plane', done: (n) => n.some(isMil) },
+  { id: 'cardlevel', text: 'Turn a card silver or gold', done: (n) => n.some((s) => s.lv) },
+  { id: 'newairline', text: 'Catch an airline you’ve never caught', done: (n) => n.some((s) => s.newAirline) },
+  ...['three10', 'livery'].map((id) => ({ id, ...SIZED[id](id === 'three10' ? 3 : 1) })),
 ];
 const ALWAYS = new Set(['newflights2', 'airlines3', 'again', 'high']);
 /* Which Sky missions can be dealt now (main.js skyDealMissions; docs/DESIGN-LOOP.md §3). st: js/sky-local.js localStats().
@@ -180,31 +240,150 @@ const ALWAYS = new Set(['newflights2', 'airlines3', 'again', 'high']);
    no helicopters, propellers or low planes, which hardly fly then. Space Collector's rule is the same idea from its
    side: only missions tonight's passes can give (main.js dealMissions). */
 export const NIGHT_ONLY_NOT = ['heli', 'prop', 'low', 'bands'];
-export function skyPossible(st, { owned = false, hour = new Date().getHours() } = {}) {
+export function skyPossible(st, { owned = false, hour = new Date().getHours(), dark = false, golden = false, nearLevel = false, newAirline = false } = {}) {
   const can = new Set(['newflights2', 'families2']);
   if (owned) can.add('again');
-  if (!st || st.sky === 'new') return can;
+  /* days 2 and 3, before this place has a log (design/missions-draft.md, pacing): only what any sky can give */
+  if (!st || st.sky === 'new') { for (const id of ['airlines3', 'high', 'three10', 'boeingairbus']) can.add(id); return can; }
   const known = (st.soonOpen ?? 0) >= 2, f = known ? st.flagsSoon ?? {} : st.flags7 ?? {}, night = hour >= 22 || hour < 6;
   if (f.wide) can.add('wide'); if (f.heli) can.add('heli'); if (f.prop) can.add('prop'); if (f.high) can.add('high'); if (f.low) can.add('low');
   if (f.high && f.low) can.add('bands');
-  if (f.airline) { can.add('airlines3'); can.add('short'); can.add('far'); can.add('abroad'); if (f.wide) can.add('ocean'); }
-  if (st.total >= 200) { can.add('rarehere'); can.add('rarenew'); }
+  if (f.airline) { can.add('airlines3'); can.add('livery'); }
+  /* where flights go: from the routes seen here once there are any, else any airline flight as before */
+  if (f.routed) { for (const [id, k] of [['abroad', 'abroad'], ['continent', 'cont'], ['far', 'far'], ['ocean', 'ocean'], ['short', 'short'], ['landing', 'landing']]) if (f[k]) can.add(id); }
+  else if (f.airline) { can.add('short'); can.add('far'); can.add('abroad'); if (f.wide) can.add('ocean'); }
+  for (const [id, k] of [['giant', 'giant'], ['regional', 'regional'], ['biz', 'biz'], ['oldtype', 'oldtype'], ['newtype', 'newtype'], ['overhead', 'overhead'], ['up', 'up'], ['down', 'down'], ['quick', 'rise']]) if (f[k]) can.add(id);
+  if (f.boeing && f.airbus) can.add('boeingairbus');
+  /* military: only where military types have been seen at these hours (Sevaan's decision 6), never from the week's tally */
+  if (known && st.flagsSoon?.mil) can.add('military');
+  if ((known ? st.soonRate ?? 0 : st.perHour ?? 0) >= 3) can.add('three10');
+  if (dark) can.add('dark'); if (golden) can.add('shiny');
+  if (nearLevel) can.add('cardlevel'); if (newAirline) can.add('newairline');
+  if (st.total >= 200) { can.add('rarehere'); can.add('rarenew'); } else if (f.heli || f.giant) can.add('rarenew'); /* every helicopter is Rare, and so is every Giant */
   if (!known && night) for (const id of NIGHT_ONLY_NOT) can.delete(id);
   return can;
 }
+/* ---- The day's deal (design/missions-draft.md, pacing rules; Sevaan 2026-11-20) ----
+   One easy, one medium, one stretch; no single catch finishes two of them; each fits the hour and what flew here in the
+   last 7 days (skyPossible); a stretch eases in a quiet sky. */
+const TIER = { short: 'easy', landing: 'easy', newtype: 'easy', high: 'easy', low: 'easy', up: 'easy', down: 'easy', dark: 'easy', regional: 'easy', prop: 'easy', newflights2: 'easy', again: 'easy', livery: 'easy', airlines3: 'easy',
+  abroad: 'medium', continent: 'medium', far: 'medium', oldtype: 'medium', bands: 'medium', overhead: 'medium', quick: 'medium', boeingairbus: 'medium', families2: 'medium', wide: 'medium', heli: 'medium', biz: 'medium', rarenew: 'medium', newairline: 'medium',
+  ocean: 'stretch', shiny: 'stretch', giant: 'stretch', military: 'stretch', cardlevel: 'stretch', rarehere: 'stretch', three10: 'stretch' };
+export const SKY_POOL = Object.keys(TIER); // 35 (the draft's 42 less region, countries3, golden, jetprop, sameairline, newalbum, cargo)
+/* Partner groups: missions one plane often does together (the draft's, plus military and business jets). Two single-catch
+   missions in one group are never dealt on the same day. */
+const PARTNERS = { long: 'wide giant high far ocean abroad continent newtype', regional: 'regional short low down up landing', light: 'prop low oldtype', heli: 'heli low', mil: 'military oldtype low heli', biz: 'biz high' };
+const GROUPS_OF = new Map(); for (const [g, ids] of Object.entries(PARTNERS)) for (const id of ids.split(' ')) (GROUPS_OF.get(id) ?? GROUPS_OF.set(id, new Set()).get(id)).add(g);
+/* Any catch can do these (a new card, a plane after dark, one overhead…): partners of every single-catch mission */
+const ANY = new Set(['newflights2', 'airlines3', 'again', 'livery', 'newairline', 'cardlevel', 'rarenew', 'rarehere', 'dark', 'quick', 'overhead', 'shiny']);
+const MULTI = { bands: () => 2, boeingairbus: () => 2, three10: (k) => k, families2: (k) => k, airlines3: (k) => k, newflights2: (k) => k, again: (k) => k, livery: (k) => k };
+export const catchesNeeded = (base, k = 1) => MULTI[base]?.(k) ?? 1;
+const NEVER = [['up', 'down'], ['far', 'ocean'], ['low', 'bands'], ['high', 'bands'], ['abroad', 'continent']].map((p) => p.join('|'));
+const NEVER_CH = { three10: 'pair10', cardlevel: 'levelup', livery: 'livery2', again: 'revisit3', dark: 'dusk' };
+// Could one catch finish both? a, b: { base, k }
+export function partners(a, b) {
+  if (NEVER.includes(`${a.base}|${b.base}`) || NEVER.includes(`${b.base}|${a.base}`)) return true;
+  if (catchesNeeded(a.base, a.k) > 1 || catchesNeeded(b.base, b.k) > 1) return false;
+  if (ANY.has(a.base) || ANY.has(b.base)) return true;
+  const ga = GROUPS_OF.get(a.base), gb = GROUPS_OF.get(b.base);
+  return !!ga && !!gb && [...ga].some((g) => gb.has(g));
+}
+/* The size of a counting mission from how busy these hours have been over the last 7 days (hz: js/sky-local.js soonSky) */
+const sizeFor = (base, hz) => ({ airlines3: (SIZES[hz] ?? SIZES.steady).airlines, newflights2: (SIZES[hz] ?? SIZES.steady).cards, again: hz === 'steady' || hz === 'busy' ? 2 : 1, livery: hz === 'steady' || hz === 'busy' ? 2 : 1,
+  families2: hz === 'busy' ? 3 : 2, three10: hz === 'busy' ? 5 : hz === 'steady' ? 3 : 2 })[base] ?? 1;
+const FLAG = { wide: 'wide', heli: 'heli', prop: 'prop', high: 'high', low: 'low', giant: 'giant', regional: 'regional', biz: 'biz', military: 'mil', up: 'up', down: 'down', overhead: 'overhead', newtype: 'newtype', oldtype: 'oldtype' };
+const ROUTE_FLAG = { abroad: 'abroad', continent: 'cont', far: 'far', ocean: 'ocean', short: 'short', landing: 'landing' };
+/* How hard it is HERE: once this place has 3 days of log and enough planes at these hours, the share of them that would do
+   it (30% or more easy, 5 to 30% medium, under 5% stretch); before that the draft's tier. Any-catch ones stay easy. */
+export function shareOf(base, st = null) {
+  const f = st?.flagsSoon ?? {};
+  if (!((st?.days ?? 0) >= 3 && (st?.soonOpen ?? 0) >= 2 && (st?.soonN ?? 0) >= 10)) return null;
+  return FLAG[base] ? (f[FLAG[base]] ?? 0) / st.soonN : ROUTE_FLAG[base] && (f.routed ?? 0) >= 10 ? (f[ROUTE_FLAG[base]] ?? 0) / f.routed : null;
+}
+export function tierOf(base, st = null) {
+  if (MULTI[base] && ANY.has(base)) return 'easy';
+  if (base === 'three10') return 'stretch';
+  const share = shareOf(base, st);
+  if (share != null) return share >= 0.3 ? 'easy' : share >= 0.05 ? 'medium' : 'stretch';
+  return TIER[base] ?? 'medium';
+}
+const seeded = (night) => { let h = 0; for (const c of String(night)) h = Math.imul(h ^ c.charCodeAt(0), 2654435761) >>> 0; return () => { h = (h + 0x6d2b79f5) >>> 0; let t = Math.imul(h ^ (h >>> 15), 1 | h); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0); }; };
+const shuffle = (l, rnd) => { const a = l.slice(); for (let i = a.length - 1; i > 0; i--) { const j = rnd() % (i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const baseOf = (key) => String(key).split(':')[0];
+/* night: the day's key; possible: skyPossible(); hz: how busy these hours are; recent: the last days' deals, newest first
+   ([[key…]]); quietNight: under 2 planes an hour in the coming hours. Returns { ids: [easy, medium, stretch] keys, challenge }. */
+export function skyDeal(night, { possible = new Set(), st = null, hz = 'steady', recent = [], quietNight = false, owned = false, nearLevel = false, dark = false } = {}) {
+  const rnd = seeded(`deal${night}`), f = st?.flags7 ?? {};
+  const opt = (base) => { const k = sizeFor(base, hz); return { base, k, tier: tierOf(base, st), key: SIZED[base] ? `${base}:${k}` : base }; };
+  const all = SKY_POOL.filter((id) => possible.has(id)).map(opt);
+  let E = shuffle(all.filter((o) => o.tier === 'easy'), rnd); const M = shuffle(all.filter((o) => o.tier === 'medium'), rnd), S = shuffle(all.filter((o) => o.tier === 'stretch'), rnd);
+  if (quietNight) { const q = E.filter((o) => (o.base === 'again' || o.base === 'newflights2') && o.k === 1); if (q.length) E = q; }
+  const last = new Set((recent[0] ?? []).map(baseOf)), weeks = recent.slice(0, 7).map((r) => r.map(baseOf).filter((x) => !x.startsWith('ch')).sort().join('|'));
+  const ok = (t, strict) => { for (let i = 0; i < t.length; i++) for (let j = i + 1; j < t.length; j++) if (t[i].base === t[j].base || partners(t[i], t[j])) return false;
+    return !strict || (!t.some((o) => last.has(o.base)) && !weeks.includes(t.map((o) => o.base).sort().join('|'))); };
+  let pick = null;
+  const tryAll = (E1, M1, S1, strict) => { for (const e of E1) for (const m of M1) for (const s of S1) if (ok([e, m, s], strict)) return [e, m, s]; return null; };
+  /* no repeats first; then a harder medium may take the stretch slot (a quiet sky's pool is small: draft rule 5); only then
+     yesterday's again */
+  const hard = (o) => shareOf(o.base, st) ?? 0.5; /* the rarest here first */
+  const byHard = (l) => l.filter((o) => !(MULTI[o.base] && ANY.has(o.base))).sort((x, y) => hard(x) - hard(y)); /* any-catch ones stay in the easy slot */
+  pick = tryAll(E, M, S, true) ?? tryAll(E, M, [...S, ...byHard(M)], true) ?? tryAll(E, [...M, ...byHard(E)], [...S, ...byHard(M)], true) ?? tryAll(E, M, S, false);
+  if (pick) pick = pick.map((o, i) => ({ ...o, tier: ['easy', 'medium', 'stretch'][i] }));
+  /* a tier with nothing that fits here: the nearest tier fills in, still never two that one catch could finish */
+  if (!pick) { const L = [...S, ...M, ...E]; outer: for (const strict of [true, false]) for (let i = 0; i < L.length; i++) for (let j = i + 1; j < L.length; j++) for (let k = j + 1; k < L.length; k++) if (ok([L[i], L[j], L[k]], strict)) { pick = [L[k], L[j], L[i]]; break outer; } }
+  if (!pick) return null;
+  const blocked = new Set(pick.map((o) => NEVER_CH[o.base]).filter(Boolean));
+  const chOk = { revisit3: owned, pair10: hz !== 'quiet', levelup: nearLevel, moreaircraft: owned, livery2: owned && !!f.airline, sameairline: !!f.airline, compass: true, dusk: owned && dark };
+  const chs = SKY_CHALLENGES.filter((c) => chOk[c.id] && !blocked.has(c.id));
+  return { ids: pick.map((o) => o.key), challenge: (chs[rnd() % Math.max(1, chs.length)] ?? SKY_CHALLENGES.find((c) => c.id === 'compass')).id, tiers: pick.map((o) => o.tier) };
+}
+/* Is a card one catch away from silver or gold? (deals 'Turn a card silver or gold' only then) */
+export function nearLevelUp(sightings, now = Date.now()) {
+  const fd = new Map(), ph = new Map(), lastF = new Map();
+  for (const s of real(sightings)) {
+    if (/^F:/.test(String(s.cardKey ?? ''))) { (fd.get(s.cardKey) ?? fd.set(s.cardKey, new Set()).get(s.cardKey)).add(localDay(s.time)); lastF.set(s.cardKey, Math.max(lastF.get(s.cardKey) ?? 0, s.time)); }
+    if (s.plane?.key) (ph.get(s.plane.key) ?? ph.set(s.plane.key, new Set()).get(s.plane.key)).add(String(s.hex || `anon:${s.time}`).toLowerCase());
+  }
+  const [, fs, fg] = THRESHOLDS.flight, [, ps, pg] = THRESHOLDS.plane;
+  for (const [k, d] of fd) if ((d.size === fs - 1 || d.size === fg - 1) && now - lastF.get(k) < 7 * 864e5 && !d.has(localDay(now))) return true;
+  for (const h of ph.values()) if (h.size === ps - 1 || h.size === pg - 1) return true;
+  return false;
+}
+/* Day one: one step per catch, so the first catch shows 1 of 3 (2026-11-20). A quiet sky asks for two catches. */
+const STARTER_N = () => (SIZE === SIZES.quiet ? 2 : 3);
 export const SKY_STARTER = [
   { id: 'firstcard', text: 'Collect your first card', done: (n) => n.some((s) => s.first) },
-  { id: 'firstflight', text: 'Catch a plane on its way somewhere', done: (n) => n.some(firstFlight) },
   { id: 'types2', text: 'Catch two different kinds of plane', done: (n) => new Set(n.map((s) => s.typeCode).filter(Boolean)).size >= 2 },
+  { id: 'catches3', get text() { return STARTER_N() === 2 ? 'Catch two planes' : 'Catch three planes'; }, done: (n) => catchesOf(n).length >= STARTER_N() },
 ];
-export const SKY_CHALLENGES = [
+/* the first day's set before 2026-11-20, so a first day played then still scores the same */
+const SKY_STARTER_V1 = [
+  SKY_STARTER[0],
+  { id: 'firstflight', text: 'Catch a plane on its way somewhere', done: (n) => n.some(firstFlight) },
+  SKY_STARTER[1],
+];
+const SKY_CHALLENGES_V1 = [
   { id: 'revisit3', text: 'Catch 3 cards you own again', done: (n) => n.filter((s) => !s.first).length >= 3 },
   { id: 'pair10', text: 'Catch two planes in 10 minutes', done: (n) => { const t = n.map((s) => s.time).sort((a, b) => a - b); return t.some((x, i) => i && x - t[i - 1] <= 600000); } },
   { id: 'levelup', text: 'Turn a card silver or gold', done: (n) => n.some((s) => s.lv) },
 ];
+/* The bonus challenge, eight from 2026-11-21 (design/missions-draft.md): each can be done with cards you own. Counted by catches. */
+export const SKY_CHALLENGES = [
+  { id: 'revisit3', text: 'Catch three planes you’ve caught before', done: (n) => nCatches(n, (s) => !s.first) >= 3 },
+  { id: 'pair10', text: 'Catch two planes in 10 minutes', done: (n) => inTen(n, 2) },
+  { id: 'levelup', text: 'Turn a card silver or gold', done: (n) => n.some((s) => s.lv) },
+  { id: 'moreaircraft', text: 'Add a new aircraft to a plane card you own', done: (n) => n.some((s) => s.moreAircraft) },
+  /* newColours: saved on the catch from 2026-11-20 (js/sky-stamps.js newLivery); before that, the same rule from your history */
+  { id: 'livery2', text: 'Catch a kind you own in new colours', done: (n) => n.some((s) => s.newColours ?? s.ownLivery) },
+  { id: 'sameairline', text: 'Catch two planes from the same airline', done: (n) => { const by = new Map(); for (const c of catchesOf(n)) { const s = c.list.find((x) => /^[A-Z]{3}\d/.test(x.callsign ?? '')); if (!s) continue; const a = s.callsign.slice(0, 3), h = by.get(a) ?? by.set(a, new Set()).get(a); h.add(String(s.hex ?? c.time)); if (h.size >= 2) return true; } return false; } },
+  /* az: saved from 2026-11-20; catches without it don't count */
+  { id: 'compass', text: 'Catch planes in two different parts of the sky', done: (n) => new Set(n.filter((s) => Number.isFinite(s.az)).map((s) => quarterOf(s.az))).size >= 2 },
+  { id: 'dusk', text: 'Catch a plane you own after dark', done: (n) => n.some((s) => !s.first && isDark(s)) },
+];
 // The patches that mean the same for planes (cards, rarity, time of day, streaks, missions); the rest are about satellites.
 const SKY_PATCHES = new Set(['first', 'ten', 'twentyfive', 'fifty', 'hundred', 'archivist', 'curator', 'catalogue', 'sightings100', 'legend', 'epic', 'spectrum', 'legends5', 'legends25',
-  'twilight', 'owl', 'dawn', 'marathon', 'double', 'hattrick', 'months3', 'months12', 'streak4', 'streak12', 'anniversary', 'roadtrip', 'missions10', 'fullhouse', 'missions50']);
+  'twilight', 'owl', 'dawn', 'marathon', 'double', 'hattrick', 'months3', 'months12', 'streak4', 'streak12', 'anniversary', 'roadtrip', 'missions10', 'fullhouse', 'missions50',
+  'silver', 'gold', 'gold3', 'shiny', 'shiny5', 'oldtimer', 'decades', 'compass']); /* the last eight from 2026-11-20, in Sky's words (SKY_OVER) */
 let SKY = false;
 const RANK_NAMES = RANKS.map((r) => r[1]), SKY_RANK_NAMES = ['Spotter', 'Plane Spotter', 'Tracker', 'Navigator', 'Air Traffic Controller', 'Chief Pilot', 'Ace', 'Sky Legend'];
 // Sky Collector's weekly themes (2026-11-17; Space Collector's are rocket stages, the Moon, debris…). Same machinery:
@@ -218,7 +397,30 @@ const SKY_WEEK_THEMES = [
   { id: 'sky-regulars', name: 'Regulars week', short: 'Regulars Week', text: 'Catch five cards you already own again.', icon: 'x5', need: 5, have: (w) => new Set(w.filter((s) => !s.first).map((s) => s.cardKey)).size },
   { id: 'sky-newcards', name: 'New cards week', short: 'New Cards Week', text: 'Collect eight new cards.', icon: '+8', need: 8, have: (w) => w.filter((s) => s.first).length },
   { id: 'sky-hops', name: 'Short hop week', short: 'Short Hop Week', get text() { return `Catch three flights under ${distText(500)}.`; }, icon: 'HOP', need: 3, have: (w) => new Set(w.filter((s) => snap(s).sky === 'flight' && snap(s).km != null && snap(s).km < 500).map((s) => s.cardKey)).size },
+  /* four more (2026-11-20, design/missions-draft.md): twelve, so each comes back about once a season */
+  { id: 'sky-night', name: 'Night Flight week', short: 'Night Flight Week', text: 'Catch five planes after dark.', icon: 'NGT', need: 5, have: (w) => nCatches(w, isDark) },
+  { id: 'sky-passport', name: 'Passport week', short: 'Passport Week', text: 'Catch flights to four different countries.', icon: 'PAS', need: 4, have: (w) => new Set(w.map(route).filter(Boolean).map((c) => ccOf(c.to)).filter(Boolean)).size },
+  { id: 'sky-livery', name: 'Livery week', short: 'Livery Week', text: 'Catch five planes in new colours.', icon: 'LIV', need: 5, have: (w) => nCatches(w, (s) => s.newLivery) },
+  { id: 'sky-makers', name: 'Makers week', short: 'Makers Week', text: 'Catch planes from four different makers.', icon: 'MKR', need: 4, have: (w) => new Set(w.map((s) => makerOf(s.typeCode)).filter(Boolean)).size },
 ];
+const SKY_WEEK_THEMES_V1 = SKY_WEEK_THEMES.slice(0, 8); /* the rotation before 2026-11-23, so past weeks keep their theme */
+/* New cards week sized to the sky (a quiet sky can't find eight new cards in month three): stored as 'sky-newcards:4' */
+const sizedWeek = (id) => { const [b, k] = String(id).split(':'), th = WEEK_THEMES.find((x) => x.id === b) ?? SKY_WEEK_THEMES.find((x) => x.id === b); if (!th || !k || b !== 'sky-newcards') return th ?? null; const n = Number(k); return { ...th, need: n, text: `Collect ${NUM[n] ?? n} new cards.` }; };
+/* Can this sky give a week theme? f: the last 7 days' flags (js/sky-local.js flags7); ctx: { owned, dark (planes here after
+   dark), makers (different makers seen here) }. A theme it can't give is swapped for the next one (main.js skyDealMissions). */
+export function skyWeekPossible(id, st, { owned = false, dark = false, makers = 0 } = {}) {
+  const f = st?.flags7 ?? {}, b = String(id).split(':')[0];
+  if (!st || st.sky === 'new') return true; /* nothing known yet: the rotation's own */
+  return ({ 'sky-airlines': !!f.airline, 'sky-heavy': !!f.wide, 'sky-props': !!f.prop, 'sky-longhaul': f.routed ? !!f.ocean : !!(f.wide && f.airline), 'sky-families': true,
+    'sky-regulars': owned, 'sky-newcards': true, 'sky-hops': f.routed ? !!f.short : !!(f.low && f.airline), 'sky-night': dark, 'sky-passport': f.routed ? !!f.abroad : !!f.airline,
+    'sky-livery': !!f.airline, 'sky-makers': makers >= 4 })[b] ?? true;
+}
+export function chooseSkyWeek(ws, chosen, st, ctx = {}) {
+  if (chosen?.[ws] || ws < SKY_V2_WEEKS) return null;
+  const L = SKY_WEEK_THEMES, i0 = weekIndex(ws) % L.length;
+  for (let k = 0; k < L.length; k++) { const th = L[(i0 + k) % L.length]; if (skyWeekPossible(th.id, st, ctx)) return th.id === 'sky-newcards' ? `sky-newcards:${({ quiet: 4, steady: 6 })[st?.sky] ?? 8}` : th.id; }
+  return L[i0].id;
+}
 const SPACE_WEEK_THEMES = WEEK_THEMES.slice();
 const RANK_AT = RANKS.map((r) => r[0]), SKY_RANK_AT = { 1: 480, 2: 2000 }; /* 480 (was 700) with the starter missions worth 20 XP each (2026-11-19, scripts/sim/week.mjs: the first rank-up now lands on day 2 for light, normal and heavy players) */ /* a plane catch makes two cards, so the first two ranks sit further out and the first rank-up still lands on day 2 (docs/DESIGN-LOOP.md §4) */
 /* Space words on a shared patch, renamed for planes (playtest 2026-11-18: "First Light" is a telescope's first look) */
@@ -226,9 +428,17 @@ const SKY_PATCH_NAMES = { first: 'Wheels Up' }, SPACE_PATCH_NAMES = {};
 export function setSkyProgress(on) { SKY = !!on; useCalendarDays(SKY); for (const x of ACHIEVEMENTS) if (x.id in SKY_PATCH_NAMES) { SPACE_PATCH_NAMES[x.id] ??= x.name; x.name = SKY ? SKY_PATCH_NAMES[x.id] : SPACE_PATCH_NAMES[x.id]; } RANKS.forEach((r, i) => { r[1] = (SKY ? SKY_RANK_NAMES : RANK_NAMES)[i] ?? r[1]; r[0] = SKY ? SKY_RANK_AT[i] ?? RANK_AT[i] : RANK_AT[i]; }); WEEK_THEMES.splice(0, WEEK_THEMES.length, ...(SKY ? SKY_WEEK_THEMES : SPACE_WEEK_THEMES)); }
 const SKY_REPEAT_XP = 3, RARE_HERE_XP = 10, SKY_STARTER_XP = 20; /* the first day's three missions: their own badge (Cleared for Takeoff), less XP than a day's missions (QA 2026-11-19: the first session gave 460 XP and 8 patches) */ /* a stamp on a card you own; a plane that is unusual where you stand */
 export const isSkyProgress = () => SKY;
-const activeMissions = () => (SKY ? SKY_MISSIONS : MISSIONS);
-export const activeAchievements = () => (SKY ? [...ACHIEVEMENTS.filter((x) => SKY_PATCHES.has(x.id)), ...SKY_ACHIEVEMENTS, ...SKY_PATCHES_MORE] : ACHIEVEMENTS);
-const MISSION_BY_ID = new Map([...MISSIONS, ...RETIRED, ...STARTER, ...SKY_MISSIONS, ...SKY_STARTER].map((m) => [m.id, m]));
+const activeMissions = () => (SKY ? SKY_MISSIONS.slice(0, 16) /* the plain draw (a day with no stored deal) keeps the first sixteen, so past days score the same */ : MISSIONS);
+export const activeAchievements = () => (SKY ? [...ACHIEVEMENTS.filter((x) => SKY_PATCHES.has(x.id)).map((x) => (SKY_OVER[x.id] ? { ...x, ...SKY_OVER[x.id] } : x)), ...SKY_ACHIEVEMENTS, ...SKY_PATCHES_MORE] : ACHIEVEMENTS);
+const MISSION_BY_ID = new Map([...MISSIONS, ...RETIRED, ...STARTER].map((m) => [m.id, m]));
+const SKY_BY_ID = new Map([...SKY_STARTER_V1, ...SKY_STARTER, ...SKY_MISSIONS].map((m) => [m.id, m]));
+/* a stored id: 'wide', or a sized one 'three10:2' (its id stays 'three10' for the screens) */
+function missionById(key) {
+  if (!SKY) return MISSION_BY_ID.get(key) ?? null;
+  const [base, k] = String(key).split(':');
+  if (k != null) return SIZED[base] && Number(k) > 0 ? { id: base, key, ...SIZED[base](Number(k)) } : null;
+  return SKY_BY_ID.get(base) ?? null;
+}
 // Seeded by the night (a day index from nightKey): integer mixing with Math.imul, so the picks spread evenly
 // from one night to the next. (The old float LCG overflowed 2^53 and kept dealing the same few missions.)
 // possible (optional): a Set of mission ids that can be done tonight from here (main.js asks the tonight worker
@@ -247,9 +457,9 @@ export function missionsFor(night, possible = null) {
 // The missions a night actually had: the starter set on a first night, else a stored deal (main.js saves tonight’s
 // once, from the sky), else the plain draw. Everywhere that shows or scores missions goes through this.
 function missionsOf(night, { first = false, deals = null } = {}) {
-  if (first) return SKY ? SKY_STARTER : STARTER;
-  const ids = deals?.[night];
-  if (ids?.length === 3 && ids.every((id) => MISSION_BY_ID.has(id))) return ids.map((id) => MISSION_BY_ID.get(id));
+  if (first) return SKY ? (Number(night) >= nightKey(SKY_V2_DAY) ? SKY_STARTER : SKY_STARTER_V1) : STARTER;
+  const ids = (deals?.[night] ?? []).filter?.((id) => !String(id).startsWith('ch:')) ?? [], ms = ids.map(missionById);
+  if (ms.length === 3 && ms.every(Boolean)) return ms;
   return missionsFor(night);
 }
 
@@ -292,7 +502,43 @@ const SKY_ACHIEVEMENTS = [
   { id: 'sky-regular', name: 'Regular', text: 'Catch the same flight on 15 days: a gold flight card', icon: '15', done: (a) => maxSize(skyK(a).flightDays) >= 15 },
   { id: 'sky-rarehere', name: 'Rare Here', text: 'Catch five planes that are rare where you are', icon: '◆5', done: (a) => (a.rareHere ?? 0) >= 5 },
   { id: 'sky-fullhangar', name: 'Full Hangar', text: 'Bring five albums to silver', icon: '▦5', done: (a) => (a.albumsSilver ?? 0) >= 5 },
+  /* 2026-11-20 (design/missions-draft.md "Milestones"): the new ones. Kinds are type codes you've caught; a type with no
+     verified year, engine count or maker never counts (js/sky-kinds.js). */
+  ...[
+    ['sky-shinyall', 'Full Shine', 'Catch all three kinds of shiny: by the Moon, at sunrise or sunset, and in new colours', '✧3', 3, (a) => ['moon', 'golden', 'colours'].filter((x) => K3(a).shinies.has(x)).length],
+    ['sky-secrets3', 'Secret Keeper', 'Find 3 secrets', 'S3', 3, (a) => K3(a).secrets ?? 0],
+    ['sky-secrets10', 'Hidden Hangar', 'Find 10 secrets', 'S10', 10, (a) => K3(a).secrets ?? 0],
+    ['sky-trijet', 'Three Engines', 'Catch a plane with three engines', '3E', 1, (a) => (K3(a).engines?.has(3) ? 1 : 0)],
+    ['sky-single', 'One Engine', 'Catch a plane with one engine', '1E', 1, (a) => (K3(a).engines?.has(1) ? 1 : 0)],
+    ['sky-engines4', 'Engine Room', 'Catch planes with one, two, three and four engines', '1234', 4, (a) => [1, 2, 3, 4].filter((n) => K3(a).engines?.has(n)).length],
+    ['sky-makers5', 'Plane Makers', 'Catch planes from 5 different makers', 'MK5', 5, (a) => K3(a).makers?.size ?? 0],
+    ['sky-makers10', 'Factory Tour', 'Catch planes from 10 different makers', 'MK10', 10, (a) => K3(a).makers?.size ?? 0],
+    ['sky-bigtwo', 'Big Two', 'Catch five kinds of Boeing and five kinds of Airbus', 'B+A', 10, (a) => Math.min(5, K3(a).boeing ?? 0) + Math.min(5, K3(a).airbus ?? 0)],
+    ['sky-newgen', 'New Generation', 'Catch 5 kinds of plane that first flew in the last 10 years', 'NEW', 5, (a) => K3(a).newgen ?? 0],
+    ['sky-nightshift', 'Night Shift', 'Catch 25 planes after dark', 'NGT', 25, (a) => K3(a).night],
+    ['sky-upaway', 'Up and Away', 'Catch 10 planes on their way up', 'UP', 10, (a) => K3(a).up],
+    ['sky-continents3', 'Three Continents', 'Catch flights heading to 3 continents', 'C3', 3, (a) => K3(a).continents.size],
+    ['sky-alliances', 'Alliance Hat Trick', 'Catch an airline from each of the three alliances', 'AL3', 3, (a) => (a.sky2 ? ['star', 'oneworld', 'skyteam'].filter((x) => a.sky2.alliances[x].size).length : 0)],
+    ['sky-biz5', 'Jet Set', 'Catch 5 kinds of business jet', 'BIZ', 5, (a) => K3(a).biz ?? 0],
+    ['sky-albums10', 'Album Starter', 'Have a card in 10 albums', 'AB10', 10, (a) => K3(a).albums.size],
+    ['sky-missions100', 'Old Hand', 'Complete 100 missions', 'M100', 100, (a) => a.missionsDone],
+    ['sky-weeks4', 'Four Weeks', 'Finish 4 week themes', 'W4', 4, (a) => a.weeksDone ?? 0],
+    ['sky-weeks12', 'Every Week', 'Earn all 12 week badges', 'W12', 12, (a) => a.weekThemes?.size ?? 0],
+  ].map(([id, name, text, icon, need, have]) => ({ id, name, text, icon, done: (a) => have(a) >= need, prog: (a) => [Math.min(need, have(a)), need] })),
 ];
+const K3 = (a) => a.sky3 ?? { types: new Set(), shinies: new Set(), continents: new Set(), quarters: new Set(), albums: new Set(), night: 0, up: 0 };
+/* Space patches that Sky now has too, in Sky's own words and counts (2026-11-20): levels per card, shinies, first-flight
+   years, the four quarters of the sky (north, east, south and west) */
+const SKY_OVER = {
+  silver: { text: 'Turn a card silver: a flight on 5 days, or 10 aircraft of one kind', done: (a) => (a.skySilver ?? 0) >= 1, skyProg: (a) => [Math.min(1, a.skySilver ?? 0), 1] },
+  gold: { text: 'Turn a card gold: a flight on 15 days, or 50 aircraft of one kind', done: (a) => (a.skyGold ?? 0) >= 1, skyProg: (a) => [Math.min(1, a.skyGold ?? 0), 1] },
+  gold3: { text: 'Three gold cards', done: (a) => (a.skyGold ?? 0) >= 3, skyProg: (a) => [Math.min(3, a.skyGold ?? 0), 3] },
+  oldtimer: { text: 'Catch a kind of plane that first flew before 1970', done: (a) => K3(a).oldest != null && K3(a).oldest < 1970, skyProg: null },
+  decades: { text: 'Catch kinds of plane that first flew in 6 different decades', done: (a) => (K3(a).decades?.size ?? 0) >= 6, skyProg: (a) => [Math.min(6, K3(a).decades?.size ?? 0), 6] },
+  compass: { text: 'Catch planes in all four quarters of the sky: north, east, south and west', done: (a) => K3(a).quarters.size >= 4, skyProg: (a) => [K3(a).quarters.size, 4] },
+  sightings100: { text: 'Catch 100 planes', skyProg: (a) => [Math.min(100, a.sightings), 100] },
+  marathon: { text: 'Catch 10 planes in one day' },
+};
 export const ACHIEVEMENTS = [
   // Collecting
   { id: 'first', name: 'First Light', text: 'Collect your first card', icon: '✦', done: (a) => a.cards >= 1 },
@@ -445,9 +691,34 @@ export function progress(sightings, info, { constellations = [], albums = [], no
     closest: null, farthest: null, maxNight: 0, months: new Set(), spanDays: 0, maxNightsOnCard: 0, goldCards: 0, spreadKm: 0, missionsDone: 0, fullHouse: false };
   // (Legacy XP reads tier0, each object’s tier before the 2026-10-10 difficulty re-tier.)
   const firsts = [], firstFlags = [], nightsOnCard = new Map(), fleetStamps = new Map(), places = [], placeSeen = new Set(), reunionRoles = new Map();
+  /* Sky (2026-11-20, design/missions-draft.md): each card's own level (flights silver at 5 days and gold at 15, plane types
+     at 10 and 50 aircraft, js/sky-stamps.js), history flags on each sighting (as `first`), and catches counted once */
+  const histFlags = [], lvF = new Map(), lvP = new Map(), seenA3 = new Set(), seenLiv = new Set(), seenCc = new Set(), seenSet = new Set(), cardHex = new Map();
+  const k3 = a.sky3 = { types: new Set(), night: 0, up: 0, shinies: new Set(), continents: new Set(), quarters: new Set(), albums: new Set() };
+  let lastCatch = null, nCatch = 0;
   for (const s of list) {
     const i = info(s.cardKey), night = nightKey(s.time, s.lon ?? 0), first = !seenCard.has(s.cardKey), nk = `${s.cardKey}|${night}`;
     firstFlags.push(first); // in list order, for the weeks loop below (Star week needs it; bug hunt 2026-10-27)
+    const newCatch = SKY && (!lastCatch || s.time - lastCatch.time >= 3000 || String(s.hex ?? '') !== String(lastCatch.hex ?? '')); if (newCatch) { lastCatch = s; nCatch++; }
+    let hf = null, skyLv = false;
+    if (SKY) {
+      const c = snap(s), cs = String(s.callsign ?? ''), a3 = /^[A-Z]{3}\d/.test(cs) ? cs.slice(0, 3) : '', tc = String(s.typeCode ?? '').toUpperCase(), ck = String(s.cardKey ?? ''), r = route(s);
+      hf = {};
+      if (a3 && !seenA3.has(a3)) { seenA3.add(a3); hf.newAirline = true; }
+      if (c.sky === 'plane' && tc && a3 && !seenLiv.has(`${tc}|${a3}`)) { seenLiv.add(`${tc}|${a3}`); hf.newLivery = true; if (!first) hf.ownLivery = true; } /* as the Livery patches count it */
+      if (r?.to && ccOf(r.to) && !seenCc.has(ccOf(r.to))) { seenCc.add(ccOf(r.to)); hf.newCountry = true; }
+      if (first && c.setId && !seenSet.has(c.setId)) { seenSet.add(c.setId); hf.newAlbum = true; }
+      const hx = String(s.hex || `anon:${s.time}`).toLowerCase();
+      if (/^F:/.test(ck)) { const d = lvF.get(ck) ?? lvF.set(ck, new Set()).get(ck), day = localDay(s.time); if (!d.has(day)) { d.add(day); skyLv = d.size === THRESHOLDS.flight[1] || d.size === THRESHOLDS.flight[2]; } }
+      else if (c.sky === 'plane' || /^P:/.test(ck)) { const h = lvP.get(ck) ?? lvP.set(ck, new Set()).get(ck); if (!h.has(hx)) { h.add(hx); skyLv = h.size === THRESHOLDS.plane[1] || h.size === THRESHOLDS.plane[2]; if (!first) hf.moreAircraft = true; } }
+      if (tc && !/^UNKNOWN/.test(tc)) k3.types.add(tc);
+      if (newCatch) { if (isDark(s)) k3.night++; if (climbing(s, 1)) k3.up++; }
+      if (s.shiny) k3.shinies.add(s.shiny);
+      if (r) { const ct = continentOfAirport(r.to); if (ct) k3.continents.add(ct); }
+      if (Number.isFinite(s.az)) k3.quarters.add(quarterOf(s.az));
+      if (first && c.setId) k3.albums.add(c.setId);
+    }
+    histFlags.push(hf);
     const fam = s.stampKey && !String(s.stampKey).startsWith('MOON:') ? String(s.stampKey).split(':')[0] : null; // a fleet card (Starlink…): levelled by stamps, not nights
     if (first) {
       seenCard.add(s.cardKey); xp += tierXp[(tierXp === LEGACY_TIER_XP && i?.tier0) || i?.tier] ?? 10; a.cards++;
@@ -492,6 +763,7 @@ export function progress(sightings, info, { constellations = [], albums = [], no
     if (!seenNight.has(nk) && !i?.natural && !fam) { const c = (nightsOnCard.get(s.cardKey) ?? 0) + 1; /* no levels for the Moon, planets, stars… (2026-10-21, Sevaan) */ nightsOnCard.set(s.cardKey, c); lv = c === 3 || c === 10; }
     seenNight.add(nk);
     if (s.stampKey) { const f = String(s.stampKey).split(':')[0]; if (!fleetStamps.has(f)) fleetStamps.set(f, new Set()); const set = fleetStamps.get(f); if (!set.has(s.stampKey)) { set.add(s.stampKey); if (fam) { const [, sv, g] = fleetThresholds(fam); lv = set.size === sv || set.size === g; } } } // fleet level-ups as card.js fleetLevel counts them (bug hunt 2026-10-27: nights had been counted here)
+    if (SKY) lv = skyLv; /* per card (the fleet and night rules above are Space's) */
     if (s.shiny) { xp += SHINY_XP; a.shinies++; }
     if (i?.tier && i.natural !== 'story') a.tiers.add(i.tier);
     const d = new Date(s.time); a.hours.push(d.getHours()); a.months.add(`${d.getFullYear()}-${d.getMonth()}`);
@@ -503,9 +775,19 @@ export function progress(sightings, info, { constellations = [], albums = [], no
     if (typeof s.rangeKm === 'number' && !i?.natural) { if (a.closest == null || s.rangeKm < a.closest) a.closest = s.rangeKm; if (a.farthest == null || s.rangeKm > a.farthest) a.farthest = s.rangeKm; }
     if (typeof s.lat === 'number' && typeof s.lon === 'number') { const pk = `${s.lat.toFixed(1)},${s.lon.toFixed(1)}`; if (!placeSeen.has(pk)) { placeSeen.add(pk); places.push([s.lat, s.lon]); } } // one per ~10 km spot, so the farthest-pair check stays small (QA 2026-10-08)
     if (!nights.has(night)) nights.set(night, []);
-    nights.get(night).push({ ...s, info: i, first, lv });
+    nights.get(night).push({ ...s, info: i, first, lv, ...hf });
   }
-  for (const n of nights.values()) { if (n.some((s) => soviet(s.info)) && n.some((s) => american(s.info))) a.race = true; a.maxNight = Math.max(a.maxNight, n.length); }
+  if (SKY) {
+    a.sightings = nCatch; /* Hundred Sightings counts catches: one tap is one (Sevaan's decision 1) */
+    a.skySilver = [...lvF.values()].filter((d) => d.size >= THRESHOLDS.flight[1]).length + [...lvP.values()].filter((h) => h.size >= THRESHOLDS.plane[1]).length;
+    a.skyGold = [...lvF.values()].filter((d) => d.size >= THRESHOLDS.flight[2]).length + [...lvP.values()].filter((h) => h.size >= THRESHOLDS.plane[2]).length;
+    const T = [...k3.types], yrs = T.map(firstFlew).filter(Boolean);
+    k3.engines = new Set(T.map(engines).filter(Boolean)); k3.makers = new Set(T.map(makerOf).filter(Boolean));
+    k3.decades = new Set(yrs.map((y) => Math.floor(y / 10))); k3.oldest = yrs.length ? Math.min(...yrs) : null; k3.newgen = T.filter((t) => isNewType(t, now)).length;
+    k3.biz = T.filter((t) => planeSet(t).id === 'bizjets').length; k3.boeing = T.filter(isBoeing).length; k3.airbus = T.filter(isAirbus).length;
+    try { k3.secrets = Object.keys(JSON.parse(localStorage.getItem('secrets')) || {}).length; } catch { k3.secrets = 0; }
+  }
+  for (const n of nights.values()) { if (n.some((s) => soviet(s.info)) && n.some((s) => american(s.info))) a.race = true; a.maxNight = Math.max(a.maxNight, SKY ? catchesOf(n).length : n.length); } /* Sky's Marathon counts catches */
   a.wanderers = ['moon', 'planet:mercury', 'planet:venus', 'planet:mars', 'planet:jupiter', 'planet:saturn'].filter((k) => seenCard.has(k)).length;
   for (const c of constellations) if (c.stars.every((k) => seenCard.has(k))) { if (!c.system) a.cons++; xp += CON_XP; if (c.zodiac) a.zodiac++; }
   for (const [fam, set] of fleetStamps) a.fleet[fam] = set.size;
@@ -533,14 +815,14 @@ export function progress(sightings, info, { constellations = [], albums = [], no
     const done = missionsOf(night, { first: firstNights.has(night), deals }).filter((m) => m.done(n, n[0].time)).length;
     xp += done * (SKY && firstNights.has(night) ? SKY_STARTER_XP : MISSION_XP); a.missionsDone += done; if (done === 3 && !(SKY && firstNights.has(night))) a.fullHouse = true;
     if (SKY && done === 3 && firstNights.has(night)) a.starterDone = true; /* Cleared for Takeoff */ /* Sky: the starter day's three (done in two catches) don't earn Full House (QA 2026-11-19) */
-    if (!firstNights.has(night) && challengeFor(night).done(n, n[0].time)) xp += MISSION_XP;
+    if (!firstNights.has(night) && challengeOf(night, deals).done(n, n[0].time)) xp += MISSION_XP;
   }
   a.reunions = [...reunionRoles.values()].filter((r) => r.size === 2).length; // launches where you own the stage and its satellite
   // Themed weeks: each week's sightings against that week's theme. Fleet stamps count only the first time you stamp a launch.
   const weeks = new Map(), firstStamp = new Set();
-  for (const [k, s] of list.entries()) { const ws = weekStartOf(s.time), e = { ...s, info: info(s.cardKey), first: firstFlags[k] }; if (s.stampKey && !String(s.stampKey).startsWith('MOON:') && !firstStamp.has(s.stampKey)) { firstStamp.add(s.stampKey); e.newStampKey = s.stampKey; } if (!weeks.has(ws)) weeks.set(ws, []); weeks.get(ws).push(e); }
+  for (const [k, s] of list.entries()) { const ws = weekStartOf(s.time), e = { ...s, info: info(s.cardKey), first: firstFlags[k], ...histFlags[k] }; if (s.stampKey && !String(s.stampKey).startsWith('MOON:') && !firstStamp.has(s.stampKey)) { firstStamp.add(s.stampKey); e.newStampKey = s.stampKey; } if (!weeks.has(ws)) weeks.set(ws, []); weeks.get(ws).push(e); }
   a.weekThemes = new Set();
-  for (const [ws, w] of weeks) { if (ws < WEEKS_FROM) continue; const th = weekThemeFor(ws, weekThemes); if (th.have(w) >= th.need) { xp += WEEK_XP; a.weekThemes.add(th.id); } }
+  for (const [ws, w] of weeks) { if (ws < WEEKS_FROM) continue; const th = weekThemeFor(ws, weekThemes); if (th.have(w) >= th.need) { xp += WEEK_XP; a.weekThemes.add(th.id); a.weeksDone = (a.weeksDone ?? 0) + 1; } }
   const wsNow = weekStartOf(now), thNow = weekThemeFor(wsNow, weekThemes), wNow = weeks.get(wsNow) ?? [];
   const week = { id: thNow.id, name: thNow.name, text: thNow.text, need: thNow.need, have: Math.min(thNow.need, thNow.have(wNow)), start: wsNow, sightings: wNow };
   const st = streaks(list, now); a.bestStreak = st.best;
@@ -553,15 +835,18 @@ export function progress(sightings, info, { constellations = [], albums = [], no
   ri = Math.max(ri, rankFloor(xp));
   const rank = { name: RANKS[ri][1], index: ri, at: RANKS[ri][0], next: RANKS[ri + 1]?.[0] ?? null, nextName: RANKS[ri + 1]?.[1] ?? null };
   a.albumsSilver = albums.filter((al) => al.silver && al.keys.filter((k) => seenCard.has(k)).length >= al.silver).length; /* Sky's Full Hangar patch */
-  const achievements = activeAchievements().map((x) => ({ id: x.id, name: x.name, text: x.text, icon: x.icon, done: x.done(a), prog: PROG[x.id]?.(a) ?? x.prog?.(a) }));
+  const achievements = activeAchievements().map((x) => ({ id: x.id, name: x.name, text: x.text, icon: x.icon, done: x.done(a), prog: x.skyProg !== undefined ? x.skyProg?.(a) : PROG[x.id]?.(a) ?? x.prog?.(a) }));
   // Every constellation is its own mission patch (2026-10-09, Sevaan: they replace the gold constellation cards),
   // and so is the Solar System. The patch art is the stick figure (js/patches.js).
   if (!SKY) /* Sky Collector has no constellation patches (2026-11-17) */ for (const c of constellations) achievements.push({ id: `con-${c.id}`, con: c.id, name: c.system ? 'Solar System' : c.name, sub: c.system ? 'Home system' : c.nick.replace(/^part of /, ''), icon: '',
     text: c.system ? 'See the Sun, the Moon and all seven planets' : `Collect all ${c.stars.length} stars of ${c.name}`, done: c.stars.every((k) => seenCard.has(k)), prog: [c.stars.filter((k) => seenCard.has(k)).length, c.stars.length] });
-  const ch = challengeFor(tonightKey), challenge = list.length && !firstNights.has(tonightKey) ? { id: ch.id, text: ch.text, done: ch.done(tonight, now) } : null; // not on a first night: the starter set is enough
+  const ch = challengeOf(tonightKey, deals), challenge = list.length && !firstNights.has(tonightKey) ? { id: ch.id, text: ch.text, done: ch.done(tonight, now) } : null; // not on a first night: the starter set is enough
   // A filled album earns its own gold-foil patch (2026-10-10, playtest #17).
   for (const al of albums) { const have = al.keys.filter((k) => seenCard.has(k)).length; achievements.push({ id: `album-${al.id}`, album: al.id, name: al.name, sub: 'Gold album', icon: '', text: `Fill the ${al.name.replace(/^The /, "")} album to gold: ${al.goal.toLocaleString("en-US")} cards`, done: have >= al.goal, prog: [Math.min(have, al.goal), al.goal] }); }
   for (const th of WEEK_THEMES) achievements.push({ id: `week-${th.id}`, week: th.id, name: th.short, sub: 'Week badge', icon: th.icon, text: `${th.text.replace(/\.$/, '')} in one week`, done: a.weekThemes.has(th.id), prog: [a.weekThemes.has(th.id) ? 1 : 0, 1] });
   if (keep) { const kept = new Set(giftCarry().patches); if (kept.size) for (const x of achievements) if (kept.has(x.id)) x.done = true; } /* patches past gifts gave (giftCarry) */
+  /* Sky: a patch once earned stays earned when a rule is put right (2026-11-20: Hundred Sightings now counts catches, levels
+     are per card): every patch Explore or the wall recorded (localStorage patchDates) */
+  if (keep && SKY) { let d = {}; try { d = JSON.parse(localStorage.getItem('patchDates') || '{}') || {}; } catch {} for (const x of achievements) if (d[x.id]) x.done = true; }
   return { xp, rank, missions, challenge, streak: st, achievements, cards: a.cards, week };
 }

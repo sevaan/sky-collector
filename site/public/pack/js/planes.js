@@ -169,7 +169,7 @@ function parse(json) {
     out.push({
       hex: anon ? anonId(a.hex) : a.hex, callsign: anon ? '' : (a.flight ?? '').trim(), reg: anon ? '' : a.r ?? '', anon, tag: tagOf(a), year: Number(a.year) || undefined, type: badType ? '' : a.t ?? '', desc: badType ? '' : a.desc ?? '', /* a dropped type takes its description with it */ category: a.category ?? '',
       lat: a.lat, lon: a.lon, hKm: ft * FT, altFt: ft, altBaro: typeof a.alt_baro === 'number' ? a.alt_baro : undefined /* what Flightradar24 and pilots read (alt_geom is GPS height, used for where it is in the sky) */, gs: a.gs ?? 0, track: a.track ?? a.true_heading ?? 0,
-      climb: a.geom_rate ?? a.baro_rate ?? 0, at: at - (a.seen_pos ?? 0) * 1000,
+      climb: a.geom_rate ?? a.baro_rate ?? 0, climbKnown: typeof (a.geom_rate ?? a.baro_rate) === 'number' /* the feed gave a climb rate (missions: on its way up / down) */, at: at - (a.seen_pos ?? 0) * 1000,
     });
     const q = out[out.length - 1]; q.heli = isHelicopter(q); if (gov) q.gov = true; /* never a flight card (js/flights.js cardsFor) */
     /* the class of this catch, from the raw callsign; the airline's name only for an airline callsign (public) */
