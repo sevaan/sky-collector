@@ -5,19 +5,19 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { isProp } from './sky-props.js?v=0.1.1813';
-import { planesUp } from './sky-up.js?v=0.1.1813';
-import { planeKey } from './flights.js?v=0.1.1813';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1813';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1813';
-import { airlineIcon } from './airline-icons.js?v=0.1.1813';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1813';
-import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1813';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1813';
-import { planeSet } from './sky-sets.js?v=0.1.1813';
-import { MIL_TYPES } from './plane-privacy.js?v=0.1.1813';
-import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1813';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1813';
+import { isProp } from './sky-props.js?v=0.1.1814';
+import { planesUp } from './sky-up.js?v=0.1.1814';
+import { planeKey } from './flights.js?v=0.1.1814';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1814';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1814';
+import { airlineIcon } from './airline-icons.js?v=0.1.1814';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1814';
+import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1814';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1814';
+import { planeSet } from './sky-sets.js?v=0.1.1814';
+import { MIL_TYPES } from './plane-privacy.js?v=0.1.1814';
+import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1814';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1814';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -93,6 +93,9 @@ function worth(a, route, owned) {
   return { name, sub, tag, score, gain, isNew: newFlight || newPlane, glyph: isHelicopter(p) ? 'heli' : 'jet' };
 }
 
+/* A Coming over next row's second line: the type, unless the title already is the type (Sky Build playtest v0.1.1812: "Boeing
+   737-800" over "Common · Boeing 737-800 · from the north" for a plane with no route), then where it comes from. */
+export const nextSub = (name, p, az) => { const ty = aircraftName(p); return [ty && ty !== name ? ty : null, az != null ? `from the ${dirWord(az)}` : null].filter(Boolean).join(' · '); };
 // ---------- Coming over next: straight-line projection from position, speed and track ----------
 export const upcoming = (...a) => forecast(...a); // js/sky-alerts.js: what's coming over in the next 15 minutes
 /* A fix older than 2 minutes isn't projected (Sky Tester 2026-11-20): coming back to the app, the planes from before you
@@ -316,7 +319,7 @@ export function renderToday(el, ctx) {
     const ft = Math.round(altFt(p) / 100) * 100;
     live = heroHtml({ hex: p.hex, color: tier?.color, kick: `Up now${up.length > 1 ? ` · best of ${up.length}` : ''}${sky.word ? ` · ${sky.word}` : ''}`, left: best.left, until: best.left != null ? t + best.left * 1000 : null,
       tierLine: `${tier ? `${tier.gem ?? ''} ${tier.label}` : ''}${newWord ? ` · ${newWord}` : ''}${fin ? ' · finishes a mission' : ''}`, name: best.w.name,
-      what: [best.r?.airline && best.full ? best.r.airline : null, type].filter(Boolean).join(' · '), where: [ft ? `${ft.toLocaleString('en-US')} ft` : null, where(best.a)].filter(Boolean).join(' · '),
+      what: [best.r?.airline && best.full ? best.r.airline : null, type !== best.w.name ? type : null].filter(Boolean).join(' · ') /* never the title again */, where: [ft ? `${ft.toLocaleString('en-US')} ft` : null, where(best.a)].filter(Boolean).join(' · '),
       az: best.a.az, hint: ctx.hint?.({ az: best.a.az, el: best.a.el }) || `Look ${where(best.a)}` });
   } else live = `<section class="tn-wx td-wx${sky.cls}">${sky.html}<span class="k">Up now${sky.word ? `<em>${esc(sky.word)}</em>` : ''}</span>${best ? allCaught(nexts) : skyState(ctx)}</section>`;
 
@@ -325,7 +328,7 @@ export function renderToday(el, ctx) {
   const rare = rares[0];
   /* the rare plane, when it isn't the hero: Space's way, a row in the run with a .tn-pill (no banner of its own) */
   const rareRow = rare && rare.p.hex !== best?.p?.hex ? (() => { const p = rare.p; return `<div class="tn-r next" style="--c:${rare.tier.color}" role="button" tabindex="0" data-open="${esc(p.hex)}"><div class="t"><b>${rare.n ? esc(new Date(t + rare.n.inS * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })) : 'Now'}</b><small class="soon">${rare.n ? `in ${mins(rare.n.inS)} min` : 'up now'}</small></div>
-      <div class="n"><b>${esc(aircraftName(p) || rare.w?.name || rare.name)}</b><div class="w"><span class="g nw">${esc(rare.tier.gem ?? '')} ${esc(rare.tier.label)}&nbsp;·</span> <span class="nw">${esc(rare.w?.name ?? rare.name)} · ${esc(rare.n ? dirWord(rare.n.az) : where(rare.a))}</span></div><div class="tn-pills"><span class="tn-pill hd">${esc(rare.tier.gem ?? '')} ${esc(rare.tier.label)} · ${rare.n ? 'on its way' : 'up now'}</span></div></div>
+      <div class="n"><b>${esc(aircraftName(p) || rare.w?.name || rare.name)}</b><div class="w"><span class="g nw">${esc(rare.tier.gem ?? '')} ${esc(rare.tier.label)}&nbsp;·</span> <span class="nw">${esc([(rare.w?.name ?? rare.name) !== (aircraftName(p) || rare.w?.name || rare.name) ? (rare.w?.name ?? rare.name) : null, rare.n ? `from the ${dirWord(rare.n.az)}` : where(rare.a)].filter(Boolean).join(' · '))}</span></div><div class="tn-pills"><span class="tn-pill hd">${esc(rare.tier.gem ?? '')} ${esc(rare.tier.label)} · ${rare.n ? 'on its way' : 'up now'}</span></div></div>
       <div class="acts"><button type="button" class="ic showme" data-show="${esc(p.hex)}"${rare.n ? ` data-az="${rare.n.az.toFixed(1)}" data-el="15" data-at="${t + rare.n.inS * 1000}" data-name="${esc(rare.name)}"` : ''} aria-label="Show me">${TARGET}</button></div></div>`; })() : '';
 
   // 3 · mission cards
@@ -351,7 +354,7 @@ export function renderToday(el, ctx) {
 
   // 4 · coming over next
   const runRow = (c) => `<div class="tn-r" style="--c:${c.tier?.color ?? '#9aa4b1'}" role="button" tabindex="0" data-open="${esc(c.p.hex)}"><div class="t"><b>${esc(new Date(t + c.n.inS * 1000).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }))}</b><small class="${c.n.inS < 300 ? 'soon' : ''}">in ${mins(c.n.inS)} min</small></div>
-      <div class="n"><b>${esc(c.name)}</b><div class="w"><span class="g nw">${esc(c.tier?.gem ?? '')} ${esc(c.tier?.label ?? '')}&nbsp;·</span> <span class="nw">${esc([aircraftName(c.p), `from the ${dirWord(c.n.az)}`].filter(Boolean).join(' · '))}</span></div>${c.isNew ? '<div class="tn-pills"><span class="tn-pill">New to you</span></div>' : ''}</div>
+      <div class="n"><b>${esc(c.name)}</b><div class="w"><span class="g nw">${esc(c.tier?.gem ?? '')} ${esc(c.tier?.label ?? '')}&nbsp;·</span> <span class="nw">${esc(nextSub(c.name, c.p, c.n.az))}</span></div>${c.isNew ? '<div class="tn-pills"><span class="tn-pill">New to you</span></div>' : ''}</div>
       <div class="acts"><button type="button" class="ic showme" data-show="${esc(c.p.hex)}" data-az="${c.n.az.toFixed(1)}" data-el="15" data-at="${t + c.n.inS * 1000}" data-name="${esc(c.name)}" aria-label="Show me">${TARGET}</button></div></div>`;
   const tl = nexts.length || rareRow ? `${sec('Coming over next', 'Next 15 min')}<div class="tn-run">${rareRow}${nexts.slice(0, 4).map(runRow).join('')}</div>` : `${sec('Coming over next')}<p class="td-empty td2-card">${ctx.planes?.status === 'failing' ? 'Waiting for the plane feed to answer.' /* not a quiet sky (QA 2026-11-19) */ : 'Nothing heading your way in the next 15 minutes that we can see yet.'}</p>`;
 

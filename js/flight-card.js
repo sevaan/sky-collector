@@ -9,21 +9,21 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { regularFor, clockText } from './sky-regulars.js?v=0.1.1813';
-import { TIERS, unlisted } from './flights.js?v=0.1.1813';
-import { flightFact } from './flight-facts.js?v=0.1.1813';
-import { typePhoto } from './type-photos.js?v=0.1.1813';
-import { housePhoto } from './house-photos.js?v=0.1.1813';
-import { gapPhoto } from './gap-photos.js?v=0.1.1813'; /* the types that had no photo (2026-11-18) */
-import { airlinePhoto } from './airline-photos.js?v=0.1.1813';
-import { airlineLogo } from './airline-logos.js?v=0.1.1813';
-import { fitStyle } from './photo-fit.js?v=0.1.1813';
-import { dist, speed, useMiles } from './units.js?v=0.1.1813';
-import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1813';
-import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1813';
-import { typeFact } from './sky-facts.js?v=0.1.1813';
-import { localText } from './localize.js?v=0.1.1813';
-import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1813';
+import { regularFor, clockText } from './sky-regulars.js?v=0.1.1814';
+import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js?v=0.1.1814';
+import { flightFact } from './flight-facts.js?v=0.1.1814';
+import { typePhoto } from './type-photos.js?v=0.1.1814';
+import { housePhoto } from './house-photos.js?v=0.1.1814';
+import { gapPhoto } from './gap-photos.js?v=0.1.1814'; /* the types that had no photo (2026-11-18) */
+import { airlinePhoto } from './airline-photos.js?v=0.1.1814';
+import { airlineLogo } from './airline-logos.js?v=0.1.1814';
+import { fitStyle } from './photo-fit.js?v=0.1.1814';
+import { dist, speed, useMiles } from './units.js?v=0.1.1814';
+import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1814';
+import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1814';
+import { typeFact } from './sky-facts.js?v=0.1.1814';
+import { localText } from './localize.js?v=0.1.1814';
+import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1814';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // A type name escaped, with its hyphenated model codes kept on one line ('Boeing KC-135R Stratotanker' broke after 'KC-').
@@ -162,7 +162,7 @@ function passMark(f, cls, wm) {
   const lg = logosOn() ? airlineLogo(airlineIcao(f)) : null;
   return lg ? `<img class="${cls}" src="${esc(lg.url)}" alt="${esc(f.airline)}" title="${esc(f.airline)}" width="${lg.w}" height="${lg.h}" decoding="async" draggable="false">` : `<span class="${wm}">${esc(String(f.airline || airlineIcao(f) || '').toUpperCase())}</span>`;
 }
-const airLine = (air, tight = false) => (!air ? '—' : air.h ? `≈${air.h}${tight ? 'h' : ' h '}${String(air.m).padStart(2, '0')}` : `≈${air.m} min`); /* an estimate from the distance (flights.js airTime), so it says so */
+const airLine = (air, tight = false) => (!air ? '—' : `≈${hoursMins(air, tight ? { h: 'h', m: '', mins: ' min', gap: '' } : { h: ' h', m: '', mins: ' min' })}`); /* ≈2 h, ≈1 h 05, ≈45 min: no zero part (Sky Build playtest v0.1.1812) */ /* an estimate from the distance (flights.js airTime), so it says so */
 const field = (label, value, unit = '') => `<div><span>${label}</span><b>${esc(value)}${unit && value !== '—' ? `<small>${unit}</small>` : ''}</b></div>`;
 
 // FLIGHT = the boarding pass (design/card-spike/combo-pass-spec.html, approved 2026-11-19): the airline's logo across the
@@ -192,7 +192,7 @@ export function flightCardHtml(f, opts = {}) {
     <div class="fc-pic bp-ph${ph ? '' : ' fc-pic--sky'}">${art}<span class="fc-holo" aria-hidden="true"></span>${tierPill(f.tier)}${opts.shrunk ? miniMedal(lvl, si?.count ?? 0) : ''}<span class="fc-set">${esc(String(f.setName ?? f.set ?? '').toUpperCase())}</span>${reg}</div>
     <div class="bp-codes"><div><b>${esc(code(f.from))}</b><small>${esc(f.from.city)}</small></div><div class="bp-mid">${jet('fc-rot90')}</div><div class="bp-to"><b>${esc(code(f.to))}</b><small>${esc(f.to.city)}</small></div></div>
     <div class="bp-fields">${field('DISTANCE', d.v, d.u)}${field('IN THE AIR', airLine(f.air))}${field('CAUGHT AT', feet(opts.heightFt), 'ft')}${field('AIRCRAFT', type || '—')}</div>
-    <p class="fc-fact">${rich(localText(flightFact({ ...f, fact: String(f.fact ?? '').replace(' as the crow flies: about ', ', about ').replace(/ on a (?=[AEIOU])/, ' on an ') }, si?.count ?? 1)))}</p>
+    <p class="fc-fact">${rich(localText(flightFact({ ...f, fact: tidyHours(String(f.fact ?? '')).replace(' as the crow flies: about ', ', about ').replace(/ on a (?=[AEIOU])/, ' on an ') }, si?.count ?? 1)))}</p>
     <div class="bp-perf"></div>
     <div class="bp-stub"><div class="bp-when">CAUGHT <b>${opts.caughtAt ? dateLong(opts.caughtAt) : 'NOT YET'}</b><br>${opts.caughtAt ? `${timeOf(opts.caughtAt)} · ` : ''}SEEN ${esc(opts.sightings ?? 1)}×${lvl ? ` · <em class="bp-lvl bp-lvl--${lvl}">${levelWord(lvl)}</em>` : ''}${prog ? `<br>${prog}` : ''}</div>${barcode(f.callsign || f.key, 34)}</div>`;
   return shell('flight', f.tier, inner, label, si?.level, 'bp');

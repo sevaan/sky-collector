@@ -98,6 +98,7 @@ html[data-theme='night'] .send-view, body.night .send-view { filter: none; }
 #gift .gp-skin { position: absolute; left: 0; width: var(--pw); height: var(--ph); }
 #gift .gp-cap .gp-skin { top: 0; } #gift .gp-main .gp-skin { top: calc(var(--ph) * -.14); }
 #gift .gp-skin > div { position: absolute; inset: 0; pointer-events: none; }
+#gift .gp-pk:not(.opened) .gp-art { will-change: transform; } /* its own layer while sealed, so a tear that misses never redraws the artwork (Sky Build playtest v0.1.1812, Android: blank for a moment; js/gift-pack.js) */
 #gift .gp-base { background: radial-gradient(ellipse at 50% 40%, #13243a, #070d18 75%); }
 #gift .gp-art { background: linear-gradient(120deg, #7a5a14, #f7d77a 30%, #a87d22 45%, #fff2c2 55%, #b88a2a 70%, #f0c860) calc(var(--mx, 50) * 1%) 0 / 260% 100%;
   -webkit-mask: url('../assets/art/backs/back-collector-mask.webp') 50% 52% / 118% auto no-repeat; mask: url('../assets/art/backs/back-collector-mask.webp') 50% 52% / 118% auto no-repeat; /* an alpha mask: WKWebView ignores mask-mode luminance (iPhone 14 simulator 2026-11-07) */ opacity: .95; }

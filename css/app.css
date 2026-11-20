@@ -75,8 +75,10 @@ body.night #plane { --plane:#ff3b2b; }
 .tc.waiting .acts { opacity:.55; pointer-events:none; transition:opacity .2s; } /* risen early, not handed over yet (Space Collector 7eaf6967) */
 /* ...and it says it's working, not stuck (Android playtest 2026-11-20: "Allow motion" sat dimmed for seconds while the
    location fix came in, and after "Turn on" the next card sat dimmed until the notification prompt): a spinner on the
-   waiting card's main button, and on a tapped one at once */
-.tc.waiting .acts:not(.pick) .yes::after, .tc .acts .yes.working::after { content:''; display:inline-block; width:.85em; height:.85em; margin-left:.65em; vertical-align:-.1em; box-sizing:border-box; border:2px solid currentColor; border-right-color:transparent; border-radius:50%; animation:banner-spin .8s linear infinite; }@media (prefers-reduced-motion: reduce) { .tc.waiting .acts:not(.pick) .yes::after, .tc .acts .yes.working::after { animation-duration:2.4s; } }
+   waiting card's main button, and on a tapped one at once). Since Sky Build's playtest v0.1.1812 only on the tapped one:
+   a card that asks the system stays up, working, until the prompt is answered, and the card rising behind it, which
+   the player hasn't reached, never spins (it rose with a spinner before the location prompt had shown) */
+.tc .acts .yes.working::after { content:''; display:inline-block; width:.85em; height:.85em; margin-left:.65em; vertical-align:-.1em; box-sizing:border-box; border:2px solid currentColor; border-right-color:transparent; border-radius:50%; animation:banner-spin .8s linear infinite; }@media (prefers-reduced-motion: reduce) { .tc .acts .yes.working::after { animation-duration:2.4s; } }
 #d-hit { position:absolute;left:calc(var(--cx) - var(--r) - 16px);top:calc(var(--cy) - var(--r) - 16px);width:calc(var(--r) * 2 + 32px);height:calc(var(--r) * 2 + 32px);border-radius:50%;background:transparent;border:0;pointer-events:auto;cursor:pointer; }
 #d-hit:active { background:color-mix(in srgb,var(--gold) 12%,transparent); }
 #discover .d-actions { position:absolute;left:50%;top:calc(var(--cy) + var(--r) + 20px);transform:translateX(-50%);display:flex;align-items:center;gap:8px;max-width:calc(var(--vws) - 32px); }
@@ -1487,6 +1489,8 @@ body:has(.overlay.panel:not([hidden]))::before { content: ''; position: fixed; l
    ~24px handle keeps the content under it, as on iPhone): the clamp is 0 below 32px of inset and the full inset above. */
 html.android { --nav3: clamp(0px, calc((env(safe-area-inset-bottom, 0px) - 32px) * 100), env(safe-area-inset-bottom, 0px)); }
 html.android .overlay.panel::after { content: ''; position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; pointer-events: none; background: inherit; height: var(--nav3); }
+html.android #set-plus-sheet::after { content: ''; position: fixed; left: 0; right: 0; bottom: 0; z-index: 2; pointer-events: none; height: var(--nav3); background: #080f1b; } /* the Plus page scrolls inside its sheet card (a set-sheet, not a panel); the card slides with a transform, so the cover hangs on the fixed sheet */
+html.android body.night #set-plus-sheet::after { background: #090303; }
 /* The tour's cards run off the bottom of the screen; with 3-button navigation they stop at the bar instead of running
    under back/home/recents (same playtest). The gesture bar keeps the run-off. */
 html.android .ob-deck { clip-path: inset(-100vh -100vw calc(var(--nav3) - env(safe-area-inset-bottom, 0px)) -100vw); }

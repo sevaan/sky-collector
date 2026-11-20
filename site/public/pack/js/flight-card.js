@@ -10,7 +10,7 @@
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
 import { regularFor, clockText } from './sky-regulars.js';
-import { TIERS, unlisted } from './flights.js';
+import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js';
 import { flightFact } from './flight-facts.js';
 import { typePhoto } from './type-photos.js';
 import { housePhoto } from './house-photos.js';
@@ -162,7 +162,7 @@ function passMark(f, cls, wm) {
   const lg = logosOn() ? airlineLogo(airlineIcao(f)) : null;
   return lg ? `<img class="${cls}" src="${esc(lg.url)}" alt="${esc(f.airline)}" title="${esc(f.airline)}" width="${lg.w}" height="${lg.h}" decoding="async" draggable="false">` : `<span class="${wm}">${esc(String(f.airline || airlineIcao(f) || '').toUpperCase())}</span>`;
 }
-const airLine = (air, tight = false) => (!air ? '—' : air.h ? `≈${air.h}${tight ? 'h' : ' h '}${String(air.m).padStart(2, '0')}` : `≈${air.m} min`); /* an estimate from the distance (flights.js airTime), so it says so */
+const airLine = (air, tight = false) => (!air ? '—' : `≈${hoursMins(air, tight ? { h: 'h', m: '', mins: ' min', gap: '' } : { h: ' h', m: '', mins: ' min' })}`); /* ≈2 h, ≈1 h 05, ≈45 min: no zero part (Sky Build playtest v0.1.1812) */ /* an estimate from the distance (flights.js airTime), so it says so */
 const field = (label, value, unit = '') => `<div><span>${label}</span><b>${esc(value)}${unit && value !== '—' ? `<small>${unit}</small>` : ''}</b></div>`;
 
 // FLIGHT = the boarding pass (design/card-spike/combo-pass-spec.html, approved 2026-11-19): the airline's logo across the
@@ -192,7 +192,7 @@ export function flightCardHtml(f, opts = {}) {
     <div class="fc-pic bp-ph${ph ? '' : ' fc-pic--sky'}">${art}<span class="fc-holo" aria-hidden="true"></span>${tierPill(f.tier)}${opts.shrunk ? miniMedal(lvl, si?.count ?? 0) : ''}<span class="fc-set">${esc(String(f.setName ?? f.set ?? '').toUpperCase())}</span>${reg}</div>
     <div class="bp-codes"><div><b>${esc(code(f.from))}</b><small>${esc(f.from.city)}</small></div><div class="bp-mid">${jet('fc-rot90')}</div><div class="bp-to"><b>${esc(code(f.to))}</b><small>${esc(f.to.city)}</small></div></div>
     <div class="bp-fields">${field('DISTANCE', d.v, d.u)}${field('IN THE AIR', airLine(f.air))}${field('CAUGHT AT', feet(opts.heightFt), 'ft')}${field('AIRCRAFT', type || '—')}</div>
-    <p class="fc-fact">${rich(localText(flightFact({ ...f, fact: String(f.fact ?? '').replace(' as the crow flies: about ', ', about ').replace(/ on a (?=[AEIOU])/, ' on an ') }, si?.count ?? 1)))}</p>
+    <p class="fc-fact">${rich(localText(flightFact({ ...f, fact: tidyHours(String(f.fact ?? '')).replace(' as the crow flies: about ', ', about ').replace(/ on a (?=[AEIOU])/, ' on an ') }, si?.count ?? 1)))}</p>
     <div class="bp-perf"></div>
     <div class="bp-stub"><div class="bp-when">CAUGHT <b>${opts.caughtAt ? dateLong(opts.caughtAt) : 'NOT YET'}</b><br>${opts.caughtAt ? `${timeOf(opts.caughtAt)} · ` : ''}SEEN ${esc(opts.sightings ?? 1)}×${lvl ? ` · <em class="bp-lvl bp-lvl--${lvl}">${levelWord(lvl)}</em>` : ''}${prog ? `<br>${prog}` : ''}</div>${barcode(f.callsign || f.key, 34)}</div>`;
   return shell('flight', f.tier, inner, label, si?.level, 'bp');
