@@ -489,6 +489,7 @@ html:not(.sky-night) body.sky-only:not(.night) #debug :is(.set-range, .set-sl-th
 html:not(.sky-night) body.sky-only:not(.night) .set-step, html:not(.sky-night) body.sky-only:not(.night) .set-chip span { border-color:#9fb3c6; }
 html:not(.sky-night) body.sky-only:not(.night) .set-sheet.in { background:rgba(13,34,56,.35); }
 html:not(.sky-night) body.sky-only:not(.night) .set-sheet-card, html:not(.sky-night) body.sky-only:not(.night) :is(#set-plus-sheet, #set-credits-sheet) .set-sheet-card { background:#f6f9fc; border-top-color:#c9d9e6; color:#0d2238; }
+html.android:not(.sky-night) body.sky-only:not(.night) #set-plus-sheet::after { background:#f6f9fc; } /* the 3-button bar's cover (app.css) in the Plus page's day colour */
 html:not(.sky-night) body.sky-only:not(.night) .set-grab { background:#c9d9e6; }
 html:not(.sky-night) body.sky-only:not(.night) .set-prev { background:linear-gradient(180deg,#8cc2ec,#e4f1fa); }
 html:not(.sky-night) body.sky-only:not(.night) .set-ix { border-color:#d5e2ee; }

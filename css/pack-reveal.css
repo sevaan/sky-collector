@@ -21,7 +21,7 @@
    takes over once the top card has turned) */
 #reveal .pk-under { position: absolute; left: 50%; top: calc(50% + var(--rv-y, 22px)); z-index: 2; pointer-events: none; opacity: 0;
   width: calc(28 * var(--cf)); height: calc(var(--ch, 39.2) * var(--cf)); margin-left: calc(-14 * var(--cf)); margin-top: calc(var(--ch, 39.2) * var(--cf) / -2); }
-#reveal .pk-under > .dk-slot { position: relative; width: 100%; height: 100%; font-size: var(--cf); filter: brightness(.8); }
+#reveal .pk-under > .dk-slot { position: relative; width: 100%; height: 100%; font-size: var(--cf); } /* shaded like the deck's card behind (css/reveal.css .dk-back::after) */
 #reveal .pk-under .card { font-size: var(--cf); }
 #reveal .pk-under .fc { --fc-u: var(--cf); }
 /* "1 of 2" before the two tabs */

@@ -44,10 +44,10 @@ const soonHours = (now) => { const h = new Date(now).getHours(); return Array.fr
 //   flagsSoon: { flag: n } seen in the coming hours of the clock on the last 7 days, soonOpen: how many of those hours the
 //   app was open (0: nothing known about this time of day yet) }
 export function localStats(now = Date.now()) {
-  const c = load(true), byType = new Map(), types7 = new Map(), flags7 = {}, flagsSoon = {}, soon = soonHours(now), byHour = {}, openByHour = {}; let total = 0, hours = 0, soonOpen = 0, soonN = 0, days = 0, soonPlanes = 0; const week = now - 7 * 86400e3;
+  const c = load(true), byType = new Map(), typeDays = new Map(), typesToday = new Set(), today = dayKey(now), types7 = new Map(), flags7 = {}, flagsSoon = {}, soon = soonHours(now), byHour = {}, openByHour = {}; let total = 0, hours = 0, soonOpen = 0, soonN = 0, days = 0, soonPlanes = 0; const week = now - 7 * 86400e3;
   for (const [k, d] of Object.entries(c.d)) {
     hours += d.h ?? 0; if (d.h) days++;
-    for (const [t, n] of Object.entries(d.t ?? {})) { byType.set(t, (byType.get(t) ?? 0) + n); total += n; }
+    for (const [t, n] of Object.entries(d.t ?? {})) { byType.set(t, (byType.get(t) ?? 0) + n); total += n; if (n > 0) { typeDays.set(t, (typeDays.get(t) ?? 0) + 1); if (k === today) typesToday.add(t); } }
     if (dayTime(k) >= week - 86400e3) {
       for (const [f, n] of Object.entries(d.f ?? {})) flags7[f] = (flags7[f] ?? 0) + n;
       for (const [t, n] of Object.entries(d.t ?? {})) types7.set(t, (types7.get(t) ?? 0) + n);
@@ -60,7 +60,18 @@ export function localStats(now = Date.now()) {
   const soonRate = soonPlanes >= 2 ? soonN / soonPlanes : perHour, sky = hours < 3 ? 'new' : word(perHour);
   /* how many different airlines and destination countries flew here in the last 7 days (week themes) */
   const distinct = (pre) => Object.keys(flags7).filter((k) => k.startsWith(pre)).length;
-  return { total, hours, days, byType, types7, airlines7: distinct('al:'), countries7: distinct('to:'), flags7, flagsSoon, soonOpen, soonN, soonRate, soonSky: sky === 'new' ? 'new' : soonPlanes >= 2 ? word(soonRate) : sky, byHour, openByHour, perHour, sky };
+  return { total, hours, days, byType, typeDays, typesToday, types7, airlines7: distinct('al:'), countries7: distinct('to:'), flags7, flagsSoon, soonOpen, soonN, soonRate, soonSky: sky === 'new' ? 'new' : soonPlanes >= 2 ? word(soonRate) : sky, byHour, openByHour, perHour, sky };
+}
+/* Find's line under a type that has flown over you (Sky Build playtest v0.1.1812: a fresh install said "Seen 8 times near
+   you in the last 30 days" after 2 minutes, 8 different aircraft of one type in the first feed, as if it were a month's
+   history). A visit is a day, as for Regulars (js/sky-regulars.js): the days this type was seen here, out of the days
+   Sky was open. Until there are HISTORY_DAYS of them, only what's true today, or nothing. */
+export const HISTORY_DAYS = 3;
+export function seenLine(type, stats) {
+  const t = String(type || '').toUpperCase(), n = stats?.typeDays?.get(t) ?? 0, of = stats?.days ?? 0;
+  if (!t || t === '?' || !n) return '';
+  if (of < HISTORY_DAYS) return stats.typesToday?.has(t) ? 'Flew over you today' : '';
+  return n >= of ? `Seen near you all ${of} days you’ve looked` : `Seen near you on ${n} of ${of} days`;
 }
 // Is this type unusual where you are? Never before enough has been seen, and never for a plane with no type code.
 export function rareHere(type, stats = localStats()) {

@@ -56,6 +56,12 @@ export function playPack(o) {
       <div class="gp-count2 gone"></div>`;
     document.body.appendChild(root);
     const q = (s) => root.querySelector(s), pk = q('.gp-pk'), cap = q('.gp-cap'), main = q('.gp-main'), tearPath = q('.gp-tear path');
+    /* The pack's artwork stays drawn through a tear that misses (Sky Build playtest v0.1.1812, Android: a swipe off the dashed
+       line left the pack blank for a moment). Sky's artwork is an image (the foil masked by --pk-mask), and Android's Chrome
+       decodes images off to the side when a layer is drawn again, painting nothing until the decode lands: the tear's
+       changes (the cap's turn, the path, the bob stopping and starting) drew the pack again. The picture is decoded now and
+       held while the pack is up, and the artwork is its own layer (css/gift.css), so the tear never redraws it. */
+    try { const cs = getComputedStyle(q('.gp-art')), m = /url\(["']?([^"')]+)/.exec(cs.maskImage || cs.webkitMaskImage || cs.backgroundImage || ''); if (m) { const im = new Image(); im.src = m[1]; im.decode?.().catch(() => {}); root._art = im; } } catch {}
     /* Sky Collector (2026-11-16, Sevaan: "realistic moving clouds … use the weather effects from Space Collector"): the
        pack opens over a daylight sky (css/sky-theme.css) with Tonight's drifting noise clouds in white, three decks,
        where Space Collector twinkles stars. */

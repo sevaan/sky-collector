@@ -38,7 +38,7 @@ let precision = null; // 'precise' | 'approximate' | null (not known yet), from 
 export const locationPrecision = () => precision;
 export const preciseLocationOn = () => PRECISE;
 const platformOf = () => capOf()?.getPlatform?.() ?? 'web';
-export async function getPosition(opts, { askPrecise = false } = {}) {
+export async function getPosition(opts, { askPrecise = false, onAnswer = null } = {}) { // onAnswer: the permission prompt was answered (or wasn't needed); the fix may still be on its way
   const geo = plugin('Geolocation');
   if (geo) {
     try {
@@ -46,6 +46,7 @@ export async function getPosition(opts, { askPrecise = false } = {}) {
       let perm = await geo.checkPermissions().catch(() => null);
       if (!has(perm)) perm = await (PRECISE ? geo.requestPermissions({ permissions: ['location'] }).catch(() => geo.requestPermissions({ permissions: ['coarseLocation'] })) /* a build whose manifest lacks FINE */ : geo.requestPermissions({ permissions: ['coarseLocation'] }));
       else if (PRECISE && askPrecise && android && perm?.location !== 'granted') perm = await geo.requestPermissions({ permissions: ['location'] }).catch(() => perm); /* Android's "change to precise?" dialog; a refusal keeps Approximate */
+      try { onAnswer?.(); } catch {}
       if (!has(perm)) throw { code: 1 };
       const fine = PRECISE && (android ? perm?.location === 'granted' : true); /* iOS reports one state for both; its Precise switch shows only in the fix's accuracy */
       let p;
@@ -64,6 +65,7 @@ export async function getPosition(opts, { askPrecise = false } = {}) {
     } catch (e) { const m = `${e?.code ?? ''} ${e?.message ?? ''}`; throw { code: e?.code === 1 || /denied/i.test(m) ? 1 : /GLOC-0007|not enabled|services are (off|disabled)/i.test(m) ? 3 : 2 }; } // 3 = the phone's location is switched off (Android playtest 2026-10-20)
   }
   if (!navigator.geolocation) throw { code: 2 };
+  if (onAnswer) { try { navigator.permissions.query({ name: 'geolocation' }).then((st) => { if (st.state !== 'prompt') onAnswer(); else st.addEventListener('change', () => onAnswer(), { once: true }); }, () => {}); } catch {} } /* no Permissions API: the caller hears when the fix settles */
   return new Promise((ok, no) => navigator.geolocation.getCurrentPosition(ok, no, opts));
 }
 

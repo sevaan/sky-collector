@@ -1,46 +1,46 @@
-import { pullToClose } from './pull-close.js?v=0.1.1813';
-import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1813';
-import { computeStats, statsHtml } from './stats.js?v=0.1.1813';
-import { nightKey } from './observation.js?v=0.1.1813';
-import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1813';
-import { sfx } from './sfx.js?v=0.1.1813';
-import { expandFacts } from './catalog-facts.js?v=0.1.1813';
-import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned, addSecretArt } from './patches.js?v=0.1.1813';
-import { registerSkySecrets } from './sky-secrets.js?v=0.1.1813';
-import { SKY_PATCH_ART } from './sky-patches.js?v=0.1.1813';
-import { registerSkyStories } from './sky-stories.js?v=0.1.1813';
-import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1813';
-import { ticket } from './toast.js?v=0.1.1813';
-import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1813';
-import { satGlobe } from './sat-globe.js?v=0.1.1813';
-import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1813';
-import { cardArt } from './art.js?v=0.1.1813';
-import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1813';
-import { applyBack } from './card-backs.js?v=0.1.1813';
-import { localStats } from './sky-local.js?v=0.1.1813';
-import { retier, rekeyUnlisted } from './flights.js?v=0.1.1813';
-import { SETS, assignSets, albumGoals, albumList, useSets, goalsOf } from './sets.js?v=0.1.1813';
-import { SKY_ALBUM_SETS, FLIGHT_SETS, PLANE_SETS } from './sky-sets.js?v=0.1.1813';
+import { pullToClose } from './pull-close.js?v=0.1.1814';
+import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1814';
+import { computeStats, statsHtml } from './stats.js?v=0.1.1814';
+import { nightKey } from './observation.js?v=0.1.1814';
+import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1814';
+import { sfx } from './sfx.js?v=0.1.1814';
+import { expandFacts } from './catalog-facts.js?v=0.1.1814';
+import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned, addSecretArt } from './patches.js?v=0.1.1814';
+import { registerSkySecrets } from './sky-secrets.js?v=0.1.1814';
+import { SKY_PATCH_ART } from './sky-patches.js?v=0.1.1814';
+import { registerSkyStories } from './sky-stories.js?v=0.1.1814';
+import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1814';
+import { ticket } from './toast.js?v=0.1.1814';
+import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1814';
+import { satGlobe } from './sat-globe.js?v=0.1.1814';
+import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1814';
+import { cardArt } from './art.js?v=0.1.1814';
+import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1814';
+import { applyBack } from './card-backs.js?v=0.1.1814';
+import { localStats, seenLine } from './sky-local.js?v=0.1.1814';
+import { retier, rekeyUnlisted } from './flights.js?v=0.1.1814';
+import { SETS, assignSets, albumGoals, albumList, useSets, goalsOf } from './sets.js?v=0.1.1814';
+import { SKY_ALBUM_SETS, FLIGHT_SETS, PLANE_SETS } from './sky-sets.js?v=0.1.1814';
 const FLIGHT_SET_IDS = new Set(FLIGHT_SETS.map((s) => s.id));
 /* plane albums too (playtest 2026-11-20 #13: Helicopters read "0 / 1", only the listed types counted): any helicopter is a card */
 const OPEN_SET_IDS = new Set([...FLIGHT_SET_IDS, ...PLANE_SETS.map((s) => s.id)]);
-import { skyCatalogue } from './sky-catalogue.js?v=0.1.1813';
-import { skyCardPhotoUrl, glyphSvg } from './flight-card.js?v=0.1.1813';
-import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1813';
-import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1813';
-import { STORIES } from './stories.js?v=0.1.1813';
-import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1813';
-import { conArt } from './con-art.js?v=0.1.1813';
-import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1813';
-import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1813';
-import { climbSvg, climbGeom, xpLevel } from './rank-climb.js?v=0.1.1813';
-import { shareCardEl } from './share-card.js?v=0.1.1813';
-import { forgetSighting } from './cloud-backup.js?v=0.1.1813';
-import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1813';
-import { allSightings, deleteSighting } from './store.js?v=0.1.1813';
-import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1813';
-import { SECRET_PATCHES, NOT_SECRET, hasPatch } from './secrets.js?v=0.1.1813';
-import { localText } from './localize.js?v=0.1.1813';
+import { skyCatalogue } from './sky-catalogue.js?v=0.1.1814';
+import { skyCardPhotoUrl, glyphSvg } from './flight-card.js?v=0.1.1814';
+import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1814';
+import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1814';
+import { STORIES } from './stories.js?v=0.1.1814';
+import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1814';
+import { conArt } from './con-art.js?v=0.1.1814';
+import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1814';
+import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1814';
+import { climbSvg, climbGeom, xpLevel } from './rank-climb.js?v=0.1.1814';
+import { shareCardEl } from './share-card.js?v=0.1.1814';
+import { forgetSighting } from './cloud-backup.js?v=0.1.1814';
+import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1814';
+import { allSightings, deleteSighting } from './store.js?v=0.1.1814';
+import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1814';
+import { SECRET_PATCHES, NOT_SECRET, hasPatch } from './secrets.js?v=0.1.1814';
+import { localText } from './localize.js?v=0.1.1814';
 // Sky Collector (Milestone 1.5): the same Collection, with plane cards from your catches and no satellite catalogue.
 const SKY = (() => { try { return !!window.parent?.__skyOnly; } catch { return false; } })() || /[?&]sky\b/.test(location.search);
 if (SKY) { /* night follows the game's own switch (html.sky-night, set where Explore decides day and night) */
@@ -427,7 +427,7 @@ function fillStats() {
   if ($('stats-body')) $('stats-body').scrollTop = 0; // always opens at the top (iPad playtest 2026-10-24: it reopened at Rarest finds)
   // Everything the Collection already knows, for the stats page (2026-10-16 redesign).
   const info = (k) => { const c = state.byKey.get(k); return c ? { tier: c.tier, tier0: c.tier0, type: c.type, owner: c.owner, launch: c.launch, natural: c.natural, con: c.con, reunion: c.reunion, role: c.type === 'rocket-body' ? 'stage' : 'payload' } : null; };
-  const p = progress(state.raw, info, { constellations: conList(), deals: readDeals(), weekThemes: readWeekThemes(), albums: state.albums, lon: obsLon(), carry: xpCarry(state.raw, info, { constellations: conList(), deals: readDeals() }) });
+  const p = progress(state.raw, info, { constellations: conList(), deals: readDeals(), weekThemes: readWeekThemes(), albums: albumsNow(), lon: obsLon(), carry: xpCarry(state.raw, info, { constellations: conList(), deals: readDeals() }) });
   const lv = SETS.map((set) => albumStats(set.id)).filter((a) => a.cards.length);
   const cd = conDone();
   const ctx = { sky: SKY, cards: state.cards, title: titleFor, art: (c) => (c?.sky ? skyCardPhotoUrl(c, c.type) : artImage(c, 'small')),
@@ -518,10 +518,14 @@ function lastWeekWorth() {
   const first = new Map(); for (const s of real) if (!first.has(s.cardKey) || s.time < first.get(s.cardKey)) first.set(s.cardKey, s.time);
   return [...first].some(([k, t]) => t >= last && t < w0 && ['rare', 'epic', 'legendary'].includes(state.byKey?.get(k)?.tier));
 }
+// The albums as the collection stands now: the album patches count them, so the patch total ("N of M earned") moves only
+// when they do (Sky Build playtest v0.1.1812: the patch card said 1 of 126, the wall 130; the first logbook ran before
+// the albums were listed, and a catch's new cards never refreshed the list it kept).
+let albumsMemo = null;
+function albumsNow() { if (albumsMemo?.n !== state.cards.length) albumsMemo = { n: state.cards.length, list: albumList(state.cards) }; return (state.albums = albumsMemo.list); }
 function renderLogbook() {
   const info = (k) => { const c = state.byKey.get(k); return c ? { tier: c.tier, tier0: c.tier0, type: c.type, owner: c.owner, launch: c.launch, natural: c.natural, con: c.con, reunion: c.reunion, role: c.type === 'rocket-body' ? 'stage' : 'payload' } : null; };
-  const p = progress(state.raw, info, { constellations: conList(), deals: readDeals(), weekThemes: readWeekThemes(), albums: state.albums, lon: obsLon(), carry: xpCarry(state.raw, info, { constellations: conList(), deals: readDeals() }) });
-  state.albums ??= albumList(state.cards);
+  const p = progress(state.raw, info, { constellations: conList(), deals: readDeals(), weekThemes: readWeekThemes(), albums: albumsNow(), lon: obsLon(), carry: xpCarry(state.raw, info, { constellations: conList(), deals: readDeals() }) });
   try { localStorage.setItem('goldAlbums', JSON.stringify(SETS.filter((s) => albumStats(s.id).level === 3).map((s) => s.id))); } catch {}
   const card = $('logbook'); card.hidden = false; $('stats-open').hidden = true; // Observer stats moved to Settings → Account (2026-10-13, Sevaan)
   // Compact until opened (UX room 2026-10-12: the rank card pushed the first card to the bottom of the screen). Remembered.
@@ -694,14 +698,14 @@ function renderFind() {
    in your collection yet, most often seen first (js/sky-local.js, kept on this phone). Search still finds any card. */
 function renderSkyFind(grid) {
   let st = null; try { st = localStats(); } catch {}
-  const seen = [...(st?.byType ?? new Map())].filter(([t]) => t && t !== '?').sort((a, b) => b[1] - a[1]);
-  const list = seen.map(([t, n]) => { const c = state.byKey.get(`P:${t}`); return c && !hasSightings(c) ? { c, n } : null; }).filter(Boolean).slice(0, 12);
+  const seen = [...(st?.byType ?? new Map())].filter(([t]) => t && t !== '?').sort((a, b) => (st.typeDays?.get(b[0]) ?? 0) - (st.typeDays?.get(a[0]) ?? 0) || b[1] - a[1]); /* most days first (a visit is a day), then most aircraft */
+  const list = seen.map(([t]) => { const c = state.byKey.get(`P:${t}`); return c && !hasSightings(c) ? { c, line: seenLine(t, st) } : null; }).filter(Boolean).slice(0, 12);
   state.list = list.map((x) => x.c); $('results').hidden = true;
   const head = document.createElement('div'); head.className = 'find-head'; head.textContent = 'Flown over you, not caught yet'; grid.append(head);
   if (!list.length) { grid.insertAdjacentHTML('beforeend', `<p class="find-none">${st?.total ? 'You’ve caught every kind of plane that has flown over you lately. Search any plane to see its card.' : 'Keep Sky Collector open under the sky: the planes that fly over you, and aren’t in your collection yet, are listed here.'}</p>`); return; }
-  for (const { c, n } of list) {
+  for (const { c, line } of list) {
     const t = TIER_INFO[c.tier] ?? TIER_INFO.common, row = document.createElement('div'); row.className = 'find-row'; row.style.setProperty('--c', t.color);
-    row.innerHTML = `<span class="fd-art fd-mini"></span><span class="fd-main"><b>${esc(titleFor(c))}</b><span class="fd-pass">Seen ${n === 1 ? 'once' : `${n.toLocaleString()} times`} near you in the last 30 days</span><span class="fd-pills"><span class="fd-pill new">New card</span></span></span>`;
+    row.innerHTML = `<span class="fd-art fd-mini"></span><span class="fd-main"><b>${esc(titleFor(c))}</b>${line ? `<span class="fd-pass">${esc(line)}</span>` : ''}<span class="fd-pills"><span class="fd-pill new">New card</span></span></span>`;
     row.querySelector('.fd-mini').append(miniCard(c, { sightings: [], status: 'Not yet collected', locked: true }));
     row.addEventListener('click', () => openViewer(state.list.indexOf(c), row.getBoundingClientRect()));
     grid.append(row);
@@ -1399,7 +1403,7 @@ function earnedDates() {
   const list = state.raw.filter((x) => !x.sim).slice().sort((a, b) => a.time - b.time), dates = {};
   const want = new Set((state.achievements ?? []).filter((a) => a.done && !stored[a.id]).map((a) => a.id));
   for (let i = 0; i < list.length && want.size; i++) {
-    const p = progress(list.slice(0, i + 1), info, { constellations: cons, albums: state.albums, now: list[i].time, deals: readDeals(), weekThemes: readWeekThemes(), carry: xpCarry(state.raw, info, { constellations: cons, deals: readDeals() }) });
+    const p = progress(list.slice(0, i + 1), info, { constellations: cons, albums: albumsNow(), now: list[i].time, deals: readDeals(), weekThemes: readWeekThemes(), carry: xpCarry(state.raw, info, { constellations: cons, deals: readDeals() }) });
     for (const a of p.achievements) if (a.done && want.has(a.id)) { dates[a.id] = list[i].time; want.delete(a.id); }
   }
   /* worked out once, then kept with the ones Explore records (2026-11-11 jank audit: the replay ran a full progress() per
@@ -1449,14 +1453,8 @@ function renderPatches() {
 }
 function openPatch(id, from = null) {
   feel('light');
-  let fossil = null; try { fossil = JSON.parse(localStorage.getItem('fossilFound')); } catch {}
-  let ufo = null; try { ufo = JSON.parse(localStorage.getItem('ufoFound')); } catch {}
-  let sec = {}; try { sec = JSON.parse(localStorage.getItem('secrets')) || {}; } catch {}
-  const SEC = Object.fromEntries(Object.values(SECRET_PATCHES).map((x) => [x.id, [x.name, x.text.replace(/\.$/, '')]])); // every secret, from js/secrets.js
-  const secs = Object.keys(SEC).filter((k) => sec[k] && hasPatch(k, sec[k])).map((k) => ({ id: k, name: SEC[k][0], text: SEC[k][1], icon: '', secret: !NOT_SECRET.has(k), done: true }));
-  if (!secs.some((x) => x.id === 'ambassador')) secs.push({ id: 'ambassador', name: SECRET_PATCHES.ambassador.name, text: SKY ? 'Tell a friend about Sky Collector' : 'Tell a friend about Space Collector', icon: '', done: false }); /* shown locked until earned; tapping it tells a friend (2026-11-18) */
-  const all = [...secs, ...(fossil ? [{ id: 'fossil', name: 'Fossil Hunter', text: 'Found dinosaur bones buried under your feet', icon: '', secret: true, done: true }] : []), ...(ufo ? [{ id: 'ufo', name: 'Close Encounter', text: "Something crossed your sky that isn’t in any catalogue", icon: '', secret: true, done: true }] : []), ...(state.achievements ?? [])], a = all.find((x) => x.id === id); if (!a) return;
-  const date = earnedDates()[id] ?? (id === 'fossil' ? fossil?.at : id === 'ufo' ? ufo?.at : sec[id] ?? null), f = finishOf(a);
+  const { all, dates } = patchWall(), a = all.find((x) => x.id === id); if (!a) return; /* the wall's own list, so the card's "N of M" is the wall's (Sky Build playtest v0.1.1812) */
+  const date = dates[id] ?? null, f = finishOf(a);
   $('pv-position').textContent = `PATCH · ${all.filter((x) => x.done).length} of ${all.length} earned`;
   // On a card (2026-10-09, Sevaan): the patch sits on a card like the collection’s, which you flick up and away.
   $('pv-body').innerHTML = `<div class="pv-card${a.done ? '' : ' locked'}"><div class="pv-bar"><span>Mission patch</span><span>${esc(GROUPS[groupOf(a)].t)}</span></div>

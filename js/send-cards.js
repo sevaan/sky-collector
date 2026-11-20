@@ -3,11 +3,11 @@
 // know who sent it; 2026-11-07, Sevaan).
 // Sharing only copies: the cards stay on this phone too (2026-11-07, Sevaan: "we don't need Move as a concept... I don't
 // see anyone getting rid of cards they've collected"). Built by cards-page.js, which hands in what it knows (ctx).
-import { plural, ownSightings } from './gift.js?v=0.1.1813';
-import { nightKey } from './observation.js?v=0.1.1813';
-import { TIER_INFO } from './rarity.js?v=0.1.1813';
-import { packLinkFor, shareLink } from './pack-share.js?v=0.1.1813';
-import { createPicks, toggle, allPicked, countPicked, pickShown, pickedSightings, countLine, filtersOn } from './send-pick.js?v=0.1.1813';
+import { plural, ownSightings } from './gift.js?v=0.1.1814';
+import { nightKey } from './observation.js?v=0.1.1814';
+import { TIER_INFO } from './rarity.js?v=0.1.1814';
+import { packLinkFor, shareLink } from './pack-share.js?v=0.1.1814';
+import { createPicks, toggle, allPicked, countPicked, pickShown, pickedSightings, countLine, filtersOn } from './send-pick.js?v=0.1.1814';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const day = (t) => new Date(t).toLocaleDateString([], { weekday: 'short', day: 'numeric', month: 'short' });

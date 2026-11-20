@@ -9,7 +9,7 @@
 // the card pictures decoded (at most 150 ms); the cards sit behind the pack by stacking order, so nothing is clipped per
 // frame; no tilt and no layout reads while it plays. The pure helpers (timing table, the switch) are tested in
 // tests/pack-reveal.test.mjs.
-import { TIER_INFO, TIERS } from './rarity.js?v=0.1.1813';
+import { TIER_INFO, TIERS } from './rarity.js?v=0.1.1814';
 
 // The beats in ms, from the pack popping in to the top card's face (B is the plan; A quicker; C with a longer tear).
 export const PACK_VARIANTS = {
@@ -134,9 +134,9 @@ export function packIntro(ctx) {
   const anims = [], A = (el, kf, o) => { if (!el) return null; const a = el.animate(kf, { fill: 'forwards', ...o }); anims.push(a); return a; };
   const T = (x, y, s, r) => `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) scale(${s}) rotate(${r}deg)`;
   // poses (the holder's own box; under is the card behind, first held a few px and degrees off, then fanned, then where
-  // the deck keeps it: 14 px up and 94% from the top edge, as css/reveal.css .dk-back, written about its centre)
+  // the deck keeps it: 3 px over, 9 px up, 98.5% and turned 1.2°, as css/reveal.css .dk-back, about its centre)
   const hid = T(0, H * 0.058, 0.7, 0), up = T(0, -H * 0.11, 1.03, -1.5), rest = T(0, 0, 1, 0);
-  const uHid = T(4, H * 0.058 + 2, 0.7, -2.5), uUp = T(4, -H * 0.11 - 2, 1.03, -4), uFan = T(W * 0.075, -H * 0.035, 0.96, 5.5), uDeck = T(0, -14 - H * 0.03, 0.94, 0);
+  const uHid = T(4, H * 0.058 + 2, 0.7, -2.5), uUp = T(4, -H * 0.11 - 2, 1.03, -4), uFan = T(W * 0.075, -H * 0.035, 0.96, 5.5), uDeck = T(3, -9, 0.985, 1.2); /* the deck's pose for the card behind (css/reveal.css .dk-back, about its centre) */
   let skipped = false, done = null, timers = [];
   const result = new Promise((r) => { done = r; });
   const stop = () => { timers.forEach(clearTimeout); timers = []; anims.forEach((a) => { try { a.cancel(); } catch {} }); pk.remove(); root.removeEventListener('pointerdown', onTap, true); };

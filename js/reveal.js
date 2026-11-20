@@ -5,15 +5,15 @@
 //  Everything scales with rarity (Legendary dims the sky, shockwave, held breath, slow flip, fanfare).
 // Waits use timers, not animation.finished, so a paused tab can never freeze the sequence.
 
-import { sfx, loadSfx } from './sfx.js?v=0.1.1813';
-import { audioCtx } from './audio-ctx.js?v=0.1.1813';
-import { TIER_INFO } from './rarity.js?v=0.1.1813';
-import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1813';
-import { applyBack } from './card-backs.js?v=0.1.1813';
-import { addStarfield } from './starfield.js?v=0.1.1813';
-import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1813';
-import { packPlan, packFoil, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1813'; /* the two-card pack opening (prototype, 2026-11-20) */
-import { tearJag } from './gift-pack.js?v=0.1.1813';
+import { sfx, loadSfx } from './sfx.js?v=0.1.1814';
+import { audioCtx } from './audio-ctx.js?v=0.1.1814';
+import { TIER_INFO } from './rarity.js?v=0.1.1814';
+import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1814';
+import { applyBack } from './card-backs.js?v=0.1.1814';
+import { addStarfield } from './starfield.js?v=0.1.1814';
+import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1814';
+import { packPlan, packFoil, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1814'; /* the two-card pack opening (prototype, 2026-11-20) */
+import { tearJag } from './gift-pack.js?v=0.1.1814';
 
 const FX = TIER_FX; /* one rarity table for every card moment (js/card-moment.js, 2026-11-11) */
 const NIGHT_MILESTONES = [3, 5, 10, 25, 50, 100, 200, 365], STAMP_MILESTONES = [5, 10, 25, 50, 100, 200, 300, 400];
@@ -552,7 +552,7 @@ function holderTo(x, y, ms) {
 // reveal: #reveal-card is the track, each card sits in a slot. One card in front, the other peeking out above it, a little
 // smaller and dimmer. Swipe the front card either way, tap the one behind, or tap its tab in the chips row: the front card
 // flies off and settles behind while the other comes forward. Flick up throws both away; double tap flips the front one.
-const DECK_PEEK = 14, LEVEL_WORD = { bronze: 'Bronze', silver: 'Silver', gold: 'Gold' };
+const DECK_PEEK = 8, /* how far the card behind shows above the front one (css/reveal.css .dk-back, 2026-11-20) */ LEVEL_WORD = { bronze: 'Bronze', silver: 'Silver', gold: 'Gold' };
 let deck = null, deckTook = false, onFront = null;
 export function onRevealFront(fn) { onFront = fn; } // main.js: Share and View in collection follow the front card
 export const revealFrontCard = () => (deck?.items.length ? deck.items[deck.front].card : null);
@@ -568,7 +568,7 @@ export function revealDeckClone() {
   for (const s of ss) {
     const cs = getComputedStyle(s), w = document.createElement('div');
     Object.assign(w.style, { transform: cs.transform === 'none' ? '' : cs.transform, transformOrigin: cs.transformOrigin, filter: cs.filter === 'none' ? '' : cs.filter });
-    if (!s.classList.contains('dk-front')) w.style.clipPath = 'inset(-40px -40px 85% -40px)'; // only its top peeks out from behind the front card: drawing all of it doubled the flight's cost a frame (4x CPU: 34 ms frames, 18 ms clipped, the same as one card)
+    if (!s.classList.contains('dk-front')) { w.style.clipPath = 'inset(-40px -40px 85% -40px)'; w.classList.add('bf-back'); w.style.setProperty('--peek', '6px'); } /* bf-back: the front card's contact shadow on it, as in the deck */ // only its top peeks out from behind the front card: drawing all of it doubled the flight's cost a frame (4x CPU: 34 ms frames, 18 ms clipped, the same as one card)
     const c = s.firstElementChild?.cloneNode(true); if (!c) continue; c.removeAttribute('id');
     w.append(c); st.append(w); // the card keeps its own transform: a sealed one, or one double-tapped to its back, flies turned over
   }
@@ -675,7 +675,7 @@ function syncPager() { const of = $('rv-news').querySelector('.rv-of'); if (of &
       dragging = true; deckTook = true; slot.classList.add('dk-drag'); try { d.setPointerCapture(e.pointerId); } catch {}
       deck.items[k].card.dataset.swiping = '1'; deck.items[k].tilt?.reset(true); } /* at rest at once (2026-11-20): a settling tilt repainted the card face every frame of the drag */ // while the deck has the finger the card stops tilting and can't count a tap (js/card.js reads data-swiping)
     slot.style.transform = `translateX(${dx}px) rotate(${dx / 40}deg)`;
-    const back = slots()[1 - k], p = Math.min(1, Math.abs(dx) / 140); if (back) back.style.filter = `brightness(${(back.classList.contains('sealed') ? .8 : .55) + p * .3})`; }); // the card behind brightens as you pull
+  }); /* the card behind no longer brightens as you pull: it is barely shaded now, and a filter written each move repainted the whole card (2026-11-20) */
   const end = () => { if (!on) return; on = false; if (!dragging) return; slot.classList.remove('dk-drag'); const back = slots()[1 - k]; if (back) back.style.filter = '';
     const el = deck?.items[k]?.card; setTimeout(() => { if (el) delete el.dataset.swiping; deckTook = false; }, 0);
     const fast = Math.abs(dx) / Math.max(1, performance.now() - t0) > 0.5;

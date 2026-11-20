@@ -2,14 +2,14 @@
 // e.g. Icelandair Toronto → Reykjavík), and every catch also counts toward PLANES (the aircraft type). Anything with no
 // route (helicopters, light planes, balloons, private jets) is a Planes card only. No DOM here.
 
-import { isProp } from './sky-props.js?v=0.1.1813';
-import { aircraftName, isHelicopter, catchClass, isGovOrMil } from './planes.js?v=0.1.1813';
-import { routeKm } from './routes.js?v=0.1.1813';
-import { hasAirlineCallsign } from './sky-stamps.js?v=0.1.1813';
-import { typeTier } from './sky-tiers.js?v=0.1.1813';
-import { planeSet, flightSet, homeCountry } from './sky-sets.js?v=0.1.1813';
-import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1813';
-import { typeName } from './sky-type-names.js?v=0.1.1813';
+import { isProp } from './sky-props.js?v=0.1.1814';
+import { aircraftName, isHelicopter, catchClass, isGovOrMil } from './planes.js?v=0.1.1814';
+import { routeKm } from './routes.js?v=0.1.1814';
+import { hasAirlineCallsign } from './sky-stamps.js?v=0.1.1814';
+import { typeTier } from './sky-tiers.js?v=0.1.1814';
+import { planeSet, flightSet, homeCountry } from './sky-sets.js?v=0.1.1814';
+import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1814';
+import { typeName } from './sky-type-names.js?v=0.1.1814';
 
 export const TIERS = {
   common: { label: 'Common', mark: '●', color: '#4a6178' },
@@ -101,6 +101,11 @@ export function rekeyUnlisted(list) {
 
 const fmtKm = (km) => (km == null ? '—' : km.toLocaleString('en-US'));
 // Rough time in the air: 800 km/h cruise plus half an hour for climbing and landing.
+// A flight time in words, without a zero part (Sky Build playtest v0.1.1812: "about 2 h 00 m"): "2 h", "1 h 05 m",
+// "45 minutes" (never "0 h 45 m"). t: { h, m } (airTime). h, m, mins: the unit words, with their spaces.
+export const hoursMins = (t, { h = '\u00a0h', m = '\u00a0m', mins = ' minutes', gap = ' ' } = {}) => !t ? '' : t.h ? `${t.h}${h}${t.m ? `${gap}${String(t.m).padStart(2, '0')}${m}` : ''}` : `${t.m}${mins}`;
+// Cards saved before hoursMins kept their words ("about 2 h 00 m"): the zero part goes when they're shown.
+export const tidyHours = (s) => typeof s === 'string' ? s.replace(/(\d+)\u00a0h 00\u00a0m/g, '$1\u00a0h').replace(/\b0\u00a0h (\d+)\u00a0m/g, (_, x) => `${Number(x)} minutes`) : s;
 const airTime = (km) => { if (km == null) return null; const m = Math.round((km / 800 + 0.5) * 60 / 5) * 5; return { h: Math.floor(m / 60), m: m % 60 }; };
 
 // A caught plane + its route (or null) -> { flight, plane }: the card data for each collection.
@@ -131,7 +136,7 @@ export function cardsFor(p, route, airline) {
     type: p.type || '', typeName, // the aircraft that flew it: the card shows its photo (js/type-photos.js)
     km, kmText: fmtKm(km), air: t, set, setId: st.id, homeCc, tier: flightTier(km, a3), /* homeCc: where it was caught, so its set doesn't change when you travel */
     fact: km == null ? `${route.to.city} is where this ${airline || ''} flight is headed.`.replace('  ', ' ')
-      : `${route.from.city} to ${route.to.city} is **${fmtKm(km)} km**, about ${t.h ? `${t.h}\u00a0h ${String(t.m).padStart(2, '0')}\u00a0m` : `${t.m} minutes`} in the air${typeName === 'Aircraft' || typeName === 'Helicopter' ? '' : `, on ${/^[AEIOU]/i.test(typeName) ? 'an' : 'a'} ${typeName}`}.` /* no "on an Aircraft" when the type isn't known (visual playtest 2026-11-19) */,
+      : `${route.from.city} to ${route.to.city} is **${fmtKm(km)} km**, about ${hoursMins(t)} in the air${typeName === 'Aircraft' || typeName === 'Helicopter' ? '' : `, on ${/^[AEIOU]/i.test(typeName) ? 'an' : 'a'} ${typeName}`}.` /* no "on an Aircraft" when the type isn't known (visual playtest 2026-11-19) */,
   };
   return { flight, plane };
 }
