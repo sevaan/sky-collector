@@ -40,5 +40,7 @@ export const TYPE_NAMES = {
   // Classics and lighter than air
   DC3: 'Douglas DC-3', CONI: 'Lockheed Constellation', B17: 'Boeing B-17 Flying Fortress', B29: 'Boeing B-29 Superfortress', LANC: 'Avro Lancaster', SPIT: 'Supermarine Spitfire', P51: 'North American P-51 Mustang', JU52: 'Junkers Ju 52', CONC: 'Concorde',
   SHIP: 'Airship', BALL: 'Balloon',
+  /* the feed's generic codes (playtest 2026-11-20: a glider or an ultralight was an "Aircraft" card) */
+  GLID: 'Glider', ULAC: 'Ultralight', GYRO: 'Gyroplane', TEX2: 'Beechcraft T-6 Texan II',
 };
 export const typeName = (code) => TYPE_NAMES[String(code || '').toUpperCase()] ?? null;

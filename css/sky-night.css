@@ -39,3 +39,8 @@ html.sky-night body.sky-only #sky-today :is(.td2-card, .td-chart) { background:#
 html.sky-night body.sky-only #sky-today .td-chart i.gap { background:#24384f; }
 html.sky-night body.sky-only #sky-today .td2-big span { color:#9fb3c6; }
 html.sky-night body.sky-only #sky-today .td2-reg span { color:#9fb3c6; }
+/* Today's secondary words at night (playtest 2026-11-20): the age playtest's darker #33495f (css/sky-cards.css) had no
+   night guard, so the Farthest line, the hours chart's axis and the note under it were slate on navy */
+html.sky-night body.sky-only #sky-today { --sc-muted:#9fb3c6; }
+html.sky-night body.sky-only #sky-today :is(.td2-far span, .td-axis, .td-axis span) { color:#9fb3c6; }
+html.sky-night body.sky-only #sky-today .td-note { color:#9fb3c6 !important; }

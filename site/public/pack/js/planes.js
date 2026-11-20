@@ -146,6 +146,9 @@ function parse(json) {
   const out = [];
   for (const a of json.ac ?? json.aircraft ?? []) {
     if (a.lat == null || a.lon == null || a.alt_baro === 'ground') continue;
+    /* not aircraft (playtest 2026-11-20): ADS-B categories C1-C7 are airport vehicles and obstacles, and the feed's
+       pseudo-types SERV/EMER/GND/TWR are vehicles too; one reporting a number for its height became an "AIRCRAFT" card */
+    if (/^C[1-7]$/i.test(String(a.category ?? '')) || /^(SERV|EMER|GND|TWR|GRND)$/i.test(String(a.t ?? ''))) continue;
     const ft = typeof a.alt_geom === 'number' ? a.alt_geom : a.alt_baro;
     if (typeof ft !== 'number') continue;
     const anon = isAnonymous(a), gov = isGovOrMil(a);
