@@ -117,7 +117,6 @@ const skyPanel = (glyph, cls, mark = '') => `<span class="${cls}" aria-hidden="t
 const layers = '<span class="fc-foil" aria-hidden="true"></span><span class="fc-coat" aria-hidden="true"></span><span class="fc-glare" aria-hidden="true"></span>';
 
 // face: the print inside the frame ('bp' boarding pass, 'ss' spec sheet); mini: the Collection's small layout.
-const miniMedal = (lvl, n) => (lvl ? `<span class="sct-lvl sct-lvl--${lvl}" title="${lvl} · ${n}"><i>${n}</i><em>${lvl.toUpperCase()}</em></span>` : ''); /* the level medal on a mini card's picture (QA 2026-11-19: missing on plane minis): count in a metal disc */
 function shell(kind, tier, inner, label, level = 'none', face = '', mini = false) {
   const t = tierOf(tier);
   return `<article class="fc fc--${kind} fc--${t}${['rare', 'epic', 'legendary'].includes(t) ? ' fc--gilt' : ''}${level && level !== 'none' ? ` fc--lvl fc--lvl-${level}` : ''}${mini ? ' fc--mini' : ''}" style="--tier:${TIERS[t].color}" aria-label="${esc(label)}">
@@ -175,7 +174,7 @@ export function flightCardHtml(f, opts = {}) {
   if (opts.small) {
     const pic = ph ? photoImg(ph, 'fc-photo', false, true) : skyPanel('jet', 'fc-sky', type);
     const inner = `<div class="m-lg">${passMark(f, 'm-logo', 'm-wm')}</div>
-      <div class="fc-pic m-ph${ph ? '' : ' fc-pic--sky'}">${pic}${tierPill(f.tier, 'fc-tier m-tier')}${miniMedal(lvl, si?.count ?? 0)}</div>
+      <div class="fc-pic m-ph${ph ? '' : ' fc-pic--sky'}">${pic}${tierPill(f.tier, 'fc-tier m-tier')}</div>
       <div class="m-cd"><span>${esc(code(f.from))}</span>${jet('fc-rot90')}<span>${esc(code(f.to))}</span></div>
       <div class="bp-perf"></div>
       <div class="m-st"><span>${opts.caughtAt ? `✓ ${dateShort(opts.caughtAt)}` : 'NOT YET'}</span>${barcode(f.callsign || f.key, 12)}</div>`;
@@ -258,7 +257,7 @@ export function planeCardHtml(p, opts = {}) {
     const pic = ph ? photoImg(ph, 'fc-photo', false, true) : skyPanel(un ? un.glyph : p.glyph, 'fc-sky fc-sky--big', '');
     const left = typeSpecs(type)?.cells.find((c) => c[0] === 'First flew') ?? cells[0];
     const inner = `<div class="m-hd"><span class="m-kind">AIRCRAFT</span><span class="ss-plate m-plate"><b>${esc(plate)}</b></span></div>
-      <div class="fc-pic m-ph${ph ? '' : ' fc-pic--sky'}">${pic}${tierPill(p.tier, 'fc-tier m-tier')}${miniMedal(lvl, si?.count ?? 0)}${bandHtml(classBand(k, true), 'm-band')}</div>
+      <div class="fc-pic m-ph${ph ? '' : ' fc-pic--sky'}">${pic}${tierPill(p.tier, 'fc-tier m-tier')}${bandHtml(classBand(k, true), 'm-band')}</div>
       <b class="m-n">${esc(name)}</b>
       <div class="m-sp">${left && left[0] !== 'Aircraft' ? `<span>${esc(left[0])} <b>${esc(left[1])}</b></span>` : `<span>${esc(set)}</span>`}<span><b>${si?.count ?? 0}</b> aircraft</span></div>`;
     return shell('plane', p.tier, inner, label, si?.level, 'ss', true);
@@ -273,7 +272,7 @@ export function planeCardHtml(p, opts = {}) {
   const inner = `
     <div class="ss-hd"><span class="ss-kind">${jet('fc-rot90')}AIRCRAFT</span><span class="ss-set">${esc(set.toUpperCase())}</span><span class="ss-plate"><span>TYPE</span><b>${esc(plate)}</b></span></div>
     <div class="fc-pic ss-ph${band ? ' ss-ph--band' : ''}${ph ? '' : ' fc-pic--sky'}">${art}<span class="fc-holo" aria-hidden="true"></span><span class="ss-tick" aria-hidden="true"></span>${tierPill(p.tier)}${opts.rareHere ? '<span class="fc-here" title="Unusual where you caught it">RARE HERE</span>' : ''}${bandHtml(band)}</div>
-    <h2 class="fc-name ss-name${(name || '').length > 16 ? ' fc-name--long' : ''}"><span>${esc(name)}</span></h2>${mk ? `<div class="ss-mk">${esc(mk)}</div>` : ''}
+    <h2 class="fc-name ss-name${(name || '').length > 24 ? ' fc-name--xl' : (name || '').length > 16 ? ' fc-name--long' : ''}"><span>${esc(name)}</span></h2>${mk ? `<div class="ss-mk">${esc(mk)}</div>` : ''}
     ${cells.length ? `<div class="ss-spec" style="--n:${cells.length}">${cells.map(([l, v, u]) => `<div><span>${esc(l)}</span><b>${esc(v)}${u ? `<small>${esc(u)}</small>` : ''}</b></div>`).join('')}</div>` : ''}
     ${who}
     ${last || opts.caughtAt ? `<div class="ss-catch"><div class="ss-catch-h"><span>YOUR CATCH</span><em>${when ? `${dateLong(when)} · ${timeOf(when)}` : ''}</em></div><div class="ss-catch-g">

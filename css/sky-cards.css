@@ -193,6 +193,7 @@
 .ss-ph .fc-here { bottom:auto; top:.6em; }
 .fc-name.ss-name { margin:.45em 0 0; font-size:2.05em; line-height:1; flex:none; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .fc-name.ss-name.fc-name--long { font-size:1.72em; }
+.fc-name.ss-name.fc-name--xl { font-size:1.6em; white-space:normal; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; } /* the longest names wrap to two lines rather than lose their end (2026-11-19: 'Boeing C-17 Globemaster III') */
 .ss-mk { margin-top:.25em; font:500 .98em/1.15 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.06em; color:var(--ink2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:none; }
 .ss-spec { display:grid; grid-template-columns:repeat(4, 1fr); margin-top:.45em; padding:.4em 0 .45em; border-top:.1em solid var(--blue); border-bottom:.1em solid var(--blue); flex:none; }
 .ss-spec > div { display:flex; flex-direction:column; gap:.28em; padding:0 .5em; border-left:.08em dashed rgba(31,79,143,.45); min-width:0; }
@@ -364,7 +365,7 @@ body.sky-only #sky-plus-line { display:none !important; } /* Observer stats is b
 
 /* ===== Stamps and levels (2026-11-15, Sevaan: catching a card again stamps it) =====
    Level metals follow Space Collector's fleet frames: bronze #b8793e, silver #b9c1cc, gold #e2b53c. The passport row
-   (.fc-pass) sits between the stats and the fact on the full card; the medal (.sct-lvl) sits on the mini card's picture. */
+   (.fc-pass) sits between the stats and the fact on the full card; mini cards carry no medal (2026-11-19, Sevaan: removed from Sky to match Space). */
 .fc { --lvl:#b8793e; --lvl-ink:#6e4416; --ink-stamp:#2d4f86; }
 .fc--lvl-silver, .sct-face--silver { --lvl:#aab4c0; --lvl-ink:#4a5663; }
 .fc--lvl-gold, .sct-face--gold { --lvl:#e2b53c; --lvl-ink:#7a5200; }
@@ -390,11 +391,6 @@ body.sky-only #sky-plus-line { display:none !important; } /* Observer stats is b
 @media (prefers-reduced-motion: reduce) { .fc-prog--new .fc-prog-bar i { animation:none; } }
 .fc--lvl .fc-fact { margin-top:.5em; }
 
-.sct-lvl { position:absolute; z-index:2; right:3px; top:3px; display:grid; place-items:center; min-width:17px; height:17px; padding:0 3px; border-radius:9px; color:#1a1305;
-  background:linear-gradient(150deg, color-mix(in srgb, var(--lvl) 55%, #fff), var(--lvl) 60%, color-mix(in srgb, var(--lvl) 80%, #000)); border:1px solid rgba(13,34,56,.4); box-shadow:0 1px 2px rgba(13,34,56,.3); }
-.sct-lvl--bronze { color:#fff7ee; }
-.sct-lvl i { font:400 11px/1 'SC Display','Russo One',sans-serif; font-style:normal; }
-.sct-lvl em { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); } /* the word is for screen readers; the metal says it */
 /* Catch panel: a plane already stamped today (same aircraft, same local day) */
 
 
@@ -720,5 +716,3 @@ html.sky-cards .collection-tabs { gap:16px; }
 .fc:not(.fc--mini) .fc-in--bp .fc-fact { flex:none; }
 .fc:not(.fc--mini) .fc-in--bp .bp-perf { margin-top:auto; } /* spare height sits above the tear line, like a ticket */
 
-/* The level medal on the new mini cards' picture (2026-11-19): the old .sct-lvl disc, with the level's metal */
-.fc--mini .sct-lvl { --lvl:#b8793e; } .fc--mini .sct-lvl--silver { --lvl:#aab4c0; } .fc--mini .sct-lvl--gold { --lvl:#e2b53c; }
