@@ -3,18 +3,18 @@
 // on the website, because adsb.lol doesn’t allow browser requests directly. The airline comes from the callsign's prefix.
 // No DOM here. Positions are extrapolated between fetches using ground speed, track and climb rate.
 
-import { tagOf } from './sky-secrets.js?v=0.1.1807';
-import { GOV_OPS, BIZ_OPS, AIRLINE_CS, MIL_TYPES, isGovOrMil, opOf, anonId } from './plane-privacy.js?v=0.1.1807';
+import { tagOf } from './sky-secrets.js?v=0.1.1808';
+import { GOV_OPS, BIZ_OPS, AIRLINE_CS, MIL_TYPES, isGovOrMil, opOf, anonId } from './plane-privacy.js?v=0.1.1808';
 export { GOV_OPS, isGovOrMil, anonId };
-import { SERVER } from './server.js?v=0.1.1807';
-import { plugin } from './native.js?v=0.1.1807';
-import { lookupRoute } from './routes.js?v=0.1.1807';
-import { typeName } from './sky-type-names.js?v=0.1.1807';
-import { noteFeed } from './sky-local.js?v=0.1.1807';
-import { planeSet } from './sky-sets.js?v=0.1.1807';
-import { isProp } from './sky-props.js?v=0.1.1807';
-import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1807';
-import { DEFAULTS, clampDial, freshFeed, pickSource, nextGap, afterAnswer, feedDown, maxAgeS, easeLeft } from './plane-feed.js?v=0.1.1807';
+import { SERVER } from './server.js?v=0.1.1808';
+import { plugin } from './native.js?v=0.1.1808';
+import { lookupRoute } from './routes.js?v=0.1.1808';
+import { typeName } from './sky-type-names.js?v=0.1.1808';
+import { noteFeed } from './sky-local.js?v=0.1.1808';
+import { planeSet } from './sky-sets.js?v=0.1.1808';
+import { isProp } from './sky-props.js?v=0.1.1808';
+import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1808';
+import { DEFAULTS, clampDial, freshFeed, pickSource, nextGap, afterAnswer, feedDown, maxAgeS, easeLeft } from './plane-feed.js?v=0.1.1808';
 // Empty = feature off. localStorage 'planeRelay' overrides it (testing). Our server's /planes (adsb.lol only) once it's
 // deployed; until then the Val Town relay (relay/handler.ts).
 // Sky Collector (2026-11-15): Space Collector's Val Town relay is turned away by adsb.lol now, so the website needs Sky
@@ -284,6 +284,8 @@ export class PlaneTracker {
     const now = Date.now(), old = new Map(this.planes.map((p) => [p.hex, p]));
     for (const p of fresh) {
       const o = old.get(p.hex); if (!o) continue;
+      /* how fast it's turning (deg/s, + right), from its last two fixes: js/sky-alerts.js sure() only foretells steady planes */
+      const dt = (p.at - o.at) / 1000; if (dt >= 5 && dt <= 180 && p.gs > 50 && o.gs > 50) p.turn = ((((p.track - o.track) % 360) + 540) % 360 - 180) / dt; else if (dt < 5 && Number.isFinite(o.turn)) p.turn = o.turn;
       const a = drawnAt(o, now), b = extrapolate(p, Math.max(0, (now - p.at) / 1000));
       const d = { lat: a.lat - b.lat, lon: a.lon - b.lon, hKm: a.hKm - b.hKm };
       if (Math.abs(d.lat) + Math.abs(d.lon) < 0.2) p.ease = { ...d, t0: now }; /* a big jump (a wrong old fix) just moves */
@@ -339,7 +341,7 @@ const AIRLINES = { ACA: 'Air Canada', ROU: 'Air Canada Rouge', JZA: 'Jazz (Air C
 // Every ICAO airline code -> name (js/airlines.js, built by scripts/build-airlines.mjs), loaded once, lazily.
 let airlineTable = null, airlineLoad = null;
 export function loadAirlines() {
-  return (airlineLoad ??= import('./airlines.js?v=0.1.1807').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
+  return (airlineLoad ??= import('./airlines.js?v=0.1.1808').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
 }
 export function airlineName(callsign) { return /^[A-Z]{3}\d/.test(callsign ?? '') ? airlineFor(callsign, null) : ''; }
 function airlineFor(callsign, a) {

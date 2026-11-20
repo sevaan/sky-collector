@@ -1,0 +1,554 @@
+{
+ "C-one-360-day": {
+  "pairs": [
+   {
+    "what": "body",
+    "fg": "#0d2238",
+    "bg": "#ffffff",
+    "ratio": 16.12
+   }
+  ],
+  "page": "#eef5fb"
+ },
+ "C-two-360-day": {
+  "pairs": [
+   {
+    "what": "body",
+    "fg": "#0d2238",
+    "bg": "#ffffff",
+    "ratio": 16.12
+   },
+   {
+    "what": "body",
+    "fg": "#0d2238",
+    "bg": "#ffffff",
+    "ratio": 16.12
+   },
+   {
+    "what": "link (em)",
+    "fg": "#b42a20",
+    "bg": "#ffffff",
+    "ratio": 6.38
+   }
+  ],
+  "page": "#eef5fb"
+ },
+ "C-three-360-day": {
+  "pairs": [
+   {
+    "what": "headline",
+    "fg": "#0d2238",
+    "bg": "#d9eaf8",
+    "ratio": 13.1
+   },
+   {
+    "what": "body",
+    "fg": "#0d2238",
+    "bg": "#ffffff",
+    "ratio": 16.12
+   },
+   {
+    "what": "body",
+    "fg": "#0d2238",
+    "bg": "#ffffff",
+    "ratio": 16.12
+   },
+   {
+    "what": "link (em)",
+    "fg": "#b42a20",
+    "bg": "#ffffff",
+    "ratio": 6.38
+   }
+  ],
+  "page": "#eef5fb"
+ },
+ "C-long-360-day": {
+  "pairs": [
+   {
+    "what": "headline",
+    "fg": "#0d2238",
+    "bg": "#d9eaf8",
+    "ratio": 13.1
+   },
+   {
+    "what": "body",
+    "fg": "#0d2238",
+    "bg": "#ffffff",
+    "ratio": 16.12
+   },
+   {
+    "what": "link (em)",
+    "fg": "#b42a20",
+    "bg": "#ffffff",
+    "ratio": 6.38
+   },
+   {
+    "what": "dim line",
+    "fg": "#4a6178",
+    "bg": "#ffffff",
+    "ratio": 6.42
+   }
+  ],
+  "page": "#eef5fb"
+ },
+ "C-one-390-day": {
+  "pairs": [
+   {
+    "what": "body",
+    "fg": "#0d2238",
+    "bg": "#ffffff",
+    "ratio": 16.12
+   }
+  ],
+  "page": "#eef5fb"
+ },
+ "C-two-390-day": {
+  "pairs": [
+   {
+    "what": "body",
+    "fg": "#0d2238",
+    "bg": "#ffffff",
+    "ratio": 16.12
+   },
+   {
+    "what": "body",
+    "fg": "#0d2238",
+    "bg": "#ffffff",
+    "ratio": 16.12
+   },
+   {
+    "what": "link (em)",
+    "fg": "#b42a20",
+    "bg": "#ffffff",
+    "ratio": 6.38
+   }
+  ],
+  "page": "#eef5fb"
+ },
+ "C-three-390-day": {
+  "pairs": [
+   {
+    "what": "headline",
+    "fg": "#0d2238",
+    "bg": "#d9eaf8",
+    "ratio": 13.1
+   },
+   {
+    "what": "body",
+    "fg": "#0d2238",
+    "bg": "#ffffff",
+    "ratio": 16.12
+   },
+   {
+    "what": "body",
+    "fg": "#0d2238",
+    "bg": "#ffffff",
+    "ratio": 16.12
+   },
+   {
+    "what": "link (em)",
+    "fg": "#b42a20",
+    "bg": "#ffffff",
+    "ratio": 6.38
+   }
+  ],
+  "page": "#eef5fb"
+ },
+ "C-long-390-day": {
+  "pairs": [
+   {
+    "what": "headline",
+    "fg": "#0d2238",
+    "bg": "#d9eaf8",
+    "ratio": 13.1
+   },
+   {
+    "what": "body",
+    "fg": "#0d2238",
+    "bg": "#ffffff",
+    "ratio": 16.12
+   },
+   {
+    "what": "link (em)",
+    "fg": "#b42a20",
+    "bg": "#ffffff",
+    "ratio": 6.38
+   },
+   {
+    "what": "dim line",
+    "fg": "#4a6178",
+    "bg": "#ffffff",
+    "ratio": 6.42
+   }
+  ],
+  "page": "#eef5fb"
+ },
+ "C-one-430-day": {
+  "pairs": [
+   {
+    "what": "body",
+    "fg": "#0d2238",
+    "bg": "#ffffff",
+    "ratio": 16.12
+   }
+  ],
+  "page": "#eef5fb"
+ },
+ "C-two-430-day": {
+  "pairs": [
+   {
+    "what": "body",
+    "fg": "#0d2238",
+    "bg": "#ffffff",
+    "ratio": 16.12
+   },
+   {
+    "what": "body",
+    "fg": "#0d2238",
+    "bg": "#ffffff",
+    "ratio": 16.12
+   },
+   {
+    "what": "link (em)",
+    "fg": "#b42a20",
+    "bg": "#ffffff",
+    "ratio": 6.38
+   }
+  ],
+  "page": "#eef5fb"
+ },
+ "C-three-430-day": {
+  "pairs": [
+   {
+    "what": "headline",
+    "fg": "#0d2238",
+    "bg": "#d9eaf8",
+    "ratio": 13.1
+   },
+   {
+    "what": "body",
+    "fg": "#0d2238",
+    "bg": "#ffffff",
+    "ratio": 16.12
+   },
+   {
+    "what": "body",
+    "fg": "#0d2238",
+    "bg": "#ffffff",
+    "ratio": 16.12
+   },
+   {
+    "what": "link (em)",
+    "fg": "#b42a20",
+    "bg": "#ffffff",
+    "ratio": 6.38
+   }
+  ],
+  "page": "#eef5fb"
+ },
+ "C-long-430-day": {
+  "pairs": [
+   {
+    "what": "headline",
+    "fg": "#0d2238",
+    "bg": "#d9eaf8",
+    "ratio": 13.1
+   },
+   {
+    "what": "body",
+    "fg": "#0d2238",
+    "bg": "#ffffff",
+    "ratio": 16.12
+   },
+   {
+    "what": "link (em)",
+    "fg": "#b42a20",
+    "bg": "#ffffff",
+    "ratio": 6.38
+   },
+   {
+    "what": "dim line",
+    "fg": "#4a6178",
+    "bg": "#ffffff",
+    "ratio": 6.42
+   }
+  ],
+  "page": "#eef5fb"
+ },
+ "C-one-360-night": {
+  "pairs": [
+   {
+    "what": "body",
+    "fg": "#e6eef7",
+    "bg": "#1a2f4b",
+    "ratio": 11.56
+   }
+  ],
+  "page": "#0b1626"
+ },
+ "C-two-360-night": {
+  "pairs": [
+   {
+    "what": "body",
+    "fg": "#e6eef7",
+    "bg": "#1a2f4b",
+    "ratio": 11.56
+   },
+   {
+    "what": "body",
+    "fg": "#e6eef7",
+    "bg": "#1a2f4b",
+    "ratio": 11.56
+   },
+   {
+    "what": "link (em)",
+    "fg": "#ff7a6d",
+    "bg": "#1a2f4b",
+    "ratio": 5.32
+   }
+  ],
+  "page": "#0b1626"
+ },
+ "C-three-360-night": {
+  "pairs": [
+   {
+    "what": "headline",
+    "fg": "#e6eef7",
+    "bg": "#22395a",
+    "ratio": 9.96
+   },
+   {
+    "what": "body",
+    "fg": "#e6eef7",
+    "bg": "#1a2f4b",
+    "ratio": 11.56
+   },
+   {
+    "what": "body",
+    "fg": "#e6eef7",
+    "bg": "#1a2f4b",
+    "ratio": 11.56
+   },
+   {
+    "what": "link (em)",
+    "fg": "#ff7a6d",
+    "bg": "#1a2f4b",
+    "ratio": 5.32
+   }
+  ],
+  "page": "#0b1626"
+ },
+ "C-long-360-night": {
+  "pairs": [
+   {
+    "what": "headline",
+    "fg": "#e6eef7",
+    "bg": "#22395a",
+    "ratio": 9.96
+   },
+   {
+    "what": "body",
+    "fg": "#e6eef7",
+    "bg": "#1a2f4b",
+    "ratio": 11.56
+   },
+   {
+    "what": "link (em)",
+    "fg": "#ff7a6d",
+    "bg": "#1a2f4b",
+    "ratio": 5.32
+   },
+   {
+    "what": "dim line",
+    "fg": "#9fb3c6",
+    "bg": "#1a2f4b",
+    "ratio": 6.27
+   }
+  ],
+  "page": "#0b1626"
+ },
+ "C-one-390-night": {
+  "pairs": [
+   {
+    "what": "body",
+    "fg": "#e6eef7",
+    "bg": "#1a2f4b",
+    "ratio": 11.56
+   }
+  ],
+  "page": "#0b1626"
+ },
+ "C-two-390-night": {
+  "pairs": [
+   {
+    "what": "body",
+    "fg": "#e6eef7",
+    "bg": "#1a2f4b",
+    "ratio": 11.56
+   },
+   {
+    "what": "body",
+    "fg": "#e6eef7",
+    "bg": "#1a2f4b",
+    "ratio": 11.56
+   },
+   {
+    "what": "link (em)",
+    "fg": "#ff7a6d",
+    "bg": "#1a2f4b",
+    "ratio": 5.32
+   }
+  ],
+  "page": "#0b1626"
+ },
+ "C-three-390-night": {
+  "pairs": [
+   {
+    "what": "headline",
+    "fg": "#e6eef7",
+    "bg": "#22395a",
+    "ratio": 9.96
+   },
+   {
+    "what": "body",
+    "fg": "#e6eef7",
+    "bg": "#1a2f4b",
+    "ratio": 11.56
+   },
+   {
+    "what": "body",
+    "fg": "#e6eef7",
+    "bg": "#1a2f4b",
+    "ratio": 11.56
+   },
+   {
+    "what": "link (em)",
+    "fg": "#ff7a6d",
+    "bg": "#1a2f4b",
+    "ratio": 5.32
+   }
+  ],
+  "page": "#0b1626"
+ },
+ "C-long-390-night": {
+  "pairs": [
+   {
+    "what": "headline",
+    "fg": "#e6eef7",
+    "bg": "#22395a",
+    "ratio": 9.96
+   },
+   {
+    "what": "body",
+    "fg": "#e6eef7",
+    "bg": "#1a2f4b",
+    "ratio": 11.56
+   },
+   {
+    "what": "link (em)",
+    "fg": "#ff7a6d",
+    "bg": "#1a2f4b",
+    "ratio": 5.32
+   },
+   {
+    "what": "dim line",
+    "fg": "#9fb3c6",
+    "bg": "#1a2f4b",
+    "ratio": 6.27
+   }
+  ],
+  "page": "#0b1626"
+ },
+ "C-one-430-night": {
+  "pairs": [
+   {
+    "what": "body",
+    "fg": "#e6eef7",
+    "bg": "#1a2f4b",
+    "ratio": 11.56
+   }
+  ],
+  "page": "#0b1626"
+ },
+ "C-two-430-night": {
+  "pairs": [
+   {
+    "what": "body",
+    "fg": "#e6eef7",
+    "bg": "#1a2f4b",
+    "ratio": 11.56
+   },
+   {
+    "what": "body",
+    "fg": "#e6eef7",
+    "bg": "#1a2f4b",
+    "ratio": 11.56
+   },
+   {
+    "what": "link (em)",
+    "fg": "#ff7a6d",
+    "bg": "#1a2f4b",
+    "ratio": 5.32
+   }
+  ],
+  "page": "#0b1626"
+ },
+ "C-three-430-night": {
+  "pairs": [
+   {
+    "what": "headline",
+    "fg": "#e6eef7",
+    "bg": "#22395a",
+    "ratio": 9.96
+   },
+   {
+    "what": "body",
+    "fg": "#e6eef7",
+    "bg": "#1a2f4b",
+    "ratio": 11.56
+   },
+   {
+    "what": "body",
+    "fg": "#e6eef7",
+    "bg": "#1a2f4b",
+    "ratio": 11.56
+   },
+   {
+    "what": "link (em)",
+    "fg": "#ff7a6d",
+    "bg": "#1a2f4b",
+    "ratio": 5.32
+   }
+  ],
+  "page": "#0b1626"
+ },
+ "C-long-430-night": {
+  "pairs": [
+   {
+    "what": "headline",
+    "fg": "#e6eef7",
+    "bg": "#22395a",
+    "ratio": 9.96
+   },
+   {
+    "what": "body",
+    "fg": "#e6eef7",
+    "bg": "#1a2f4b",
+    "ratio": 11.56
+   },
+   {
+    "what": "link (em)",
+    "fg": "#ff7a6d",
+    "bg": "#1a2f4b",
+    "ratio": 5.32
+   },
+   {
+    "what": "dim line",
+    "fg": "#9fb3c6",
+    "bg": "#1a2f4b",
+    "ratio": 6.27
+   }
+  ],
+  "page": "#0b1626"
+ }
+}

@@ -5,19 +5,19 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { isProp } from './sky-props.js?v=0.1.1807';
-import { planesUp } from './sky-up.js?v=0.1.1807';
-import { planeKey } from './flights.js?v=0.1.1807';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1807';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1807';
-import { airlineIcon } from './airline-icons.js?v=0.1.1807';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1807';
-import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1807';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1807';
-import { planeSet } from './sky-sets.js?v=0.1.1807';
-import { MIL_TYPES } from './plane-privacy.js?v=0.1.1807';
-import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1807';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1807';
+import { isProp } from './sky-props.js?v=0.1.1808';
+import { planesUp } from './sky-up.js?v=0.1.1808';
+import { planeKey } from './flights.js?v=0.1.1808';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1808';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1808';
+import { airlineIcon } from './airline-icons.js?v=0.1.1808';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1808';
+import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1808';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1808';
+import { planeSet } from './sky-sets.js?v=0.1.1808';
+import { MIL_TYPES } from './plane-privacy.js?v=0.1.1808';
+import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1808';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1808';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -95,16 +95,21 @@ function worth(a, route, owned) {
 
 // ---------- Coming over next: straight-line projection from position, speed and track ----------
 export const upcoming = (...a) => forecast(...a); // js/sky-alerts.js: what's coming over in the next 15 minutes
+/* A fix older than 2 minutes isn't projected (Sky Tester 2026-11-20): coming back to the app, the planes from before you
+   left were carried 10+ minutes along a straight line and listed as coming over until the feed answered. upS: how long
+   it stays above 15° (js/sky-alerts.js sure). */
+export const FORECAST_MAX_AGE = 120e3;
 function forecast(planes, obs, nowMs, visibleHexes) {
   const out = [];
   for (const p of planes) {
-    if (visibleHexes.has(p.hex)) continue;
+    if (visibleHexes.has(p.hex) || !(nowMs - p.at <= FORECAST_MAX_AGE)) continue;
     const path = planePath(p, obs, nowMs, 0, 900, 15); // the next 15 minutes, every 15 s
     const i = path.findIndex((q) => q.el > 15);
     if (i < 0) continue;
     let peak = path[i]; for (let j = i; j < path.length && path[j].el >= peak.el; j++) peak = path[j];
     const az = (Math.atan2(path[i].enu[0], path[i].enu[1]) * 180 / Math.PI + 360) % 360;
-    out.push({ p, inS: path[i].t, peakEl: peak.el, az });
+    let j = i; while (j < path.length && path[j].el > 15) j++;
+    out.push({ p, inS: path[i].t, peakEl: peak.el, az, upS: (j - i) * 15 });
   }
   return out.sort((a, b) => a.inS - b.inS).slice(0, 8);
 }

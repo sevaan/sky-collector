@@ -44,3 +44,17 @@ html.sky-night body.sky-only #sky-today .td2-reg span { color:#9fb3c6; }
 html.sky-night body.sky-only #sky-today { --sc-muted:#9fb3c6; }
 html.sky-night body.sky-only #sky-today :is(.td2-far span, .td-axis, .td-axis span) { color:#9fb3c6; }
 html.sky-night body.sky-only #sky-today .td-note { color:#9fb3c6 !important; }
+/* Today's note at night (2026-11-20, option C, design/bubbles/): lifted navy bubbles with a hairline, light ink; the link
+   is a lighter red than the accent (#ff7a6d, 5.3:1 on the bubble; #ff6a5c was 4.8:1). The tail follows. */
+html.sky-night body.sky-only .n2-b { background:#1a2f4b; color:#e6eef7; box-shadow:inset 0 0 0 1px #2f4a68; }
+html.sky-night body.sky-only .n2-b.big { background:#22395a; box-shadow:inset 0 0 0 1px #2f4a68; color:#e6eef7; }
+html.sky-night body.sky-only .n2-b em { color:#ff7a6d; }
+html.sky-night body.sky-only .n2-b.dim { color:#9fb3c6; }
+html.sky-night body.sky-only .n2-stack > .n2-b:last-child::before { background:#1a2f4b; }
+html.sky-night body.sky-only .n2-stack > .n2-b:last-child::after { background:#2f4a68; }
+html.sky-night body.sky-only .n2-stack > .n2-b.big:last-child::before { background:#22395a; }
+html.sky-night body.sky-only .n2-att { background:#1a2f4b; box-shadow:inset 0 0 0 1px #2f4a68; color:#e6eef7; }
+html.sky-night body.sky-only .n2-att .tx small { color:#9fb3c6; }
+html.sky-night body.sky-only .n2-att .tm { color:#ff7a6d; }
+html.sky-night body.sky-only .n2-att .tm small { color:#5fd08a; }
+html.sky-night body.sky-only .n2-pips i:not(.on, .now) { background:#2f4a68; }

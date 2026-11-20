@@ -284,6 +284,8 @@ export class PlaneTracker {
     const now = Date.now(), old = new Map(this.planes.map((p) => [p.hex, p]));
     for (const p of fresh) {
       const o = old.get(p.hex); if (!o) continue;
+      /* how fast it's turning (deg/s, + right), from its last two fixes: js/sky-alerts.js sure() only foretells steady planes */
+      const dt = (p.at - o.at) / 1000; if (dt >= 5 && dt <= 180 && p.gs > 50 && o.gs > 50) p.turn = ((((p.track - o.track) % 360) + 540) % 360 - 180) / dt; else if (dt < 5 && Number.isFinite(o.turn)) p.turn = o.turn;
       const a = drawnAt(o, now), b = extrapolate(p, Math.max(0, (now - p.at) / 1000));
       const d = { lat: a.lat - b.lat, lon: a.lon - b.lon, hKm: a.hKm - b.hKm };
       if (Math.abs(d.lat) + Math.abs(d.lon) < 0.2) p.ease = { ...d, t0: now }; /* a big jump (a wrong old fix) just moves */
