@@ -45,17 +45,15 @@ Red-eye, Livery Spotter / Livery Collector / Paint Shop ("a type in an airline�
 
 For `owl` Sky already says "Catch a plane between 1 and 4 AM", so these now match it.
 
-**Names that contain "sighting":** `sightings100` is named "Hundred Sightings" (its text now says "Catch 100 planes") and `double` is "Double Sighting". Same question as Space: rename to "Hundred Catches" and "Double Catch"? Names are on earned patches already (the id stays). Decision for Sevaan, shared with the Space file.
+**Names that contain "sighting":** DECIDED (Sevaan, 2026-11-20): "Hundred Sightings" becomes **"Hundred Catches"** and "Double Sighting" becomes **"Double Catch"**. The ids stay.
 
-### 2b. badge vs patch
-
-Same rule as Space: **patch** for anything on the wall, **badge** only for a sky event's badge (Sky Dev: please confirm sky events cannot show in Sky; if not, there should be no "badge" at all).
+### 2b. badge → patch (DECIDED 2026-11-20: patches everywhere, "badge" is retired)
 
 | Where | Current | Replacement |
 |---|---|---|
 | `js/progress.js` ~881 (week achievements) `sub` | Week badge | Week patch |
 | `js/progress.js` ~558 `sky-weeks12`, "Every Week" | Earn all 12 week badges | Earn all 12 week patches |
-| `js/sky-events-data.js` (63 lines) and `js/events.js` event texts | "Catch either one tonight for the badge." | only if sky events can show in Sky. Sky Dev: please confirm they cannot. If they can, they also say "tonight", which does not fit Sky (see the audit). |
+| `js/sky-events-data.js` (63 lines) and `js/events.js` event texts | "Catch either one tonight for the badge." | "…for the patch." Change the generator (`scripts/build-sky-events.mjs` in Space; Sky's copy of it if it has one), not the data. Only if sky events can show in Sky. Sky Dev: please confirm they cannot; they also say "tonight", which does not fit Sky. |
 
 ### 2c. Collect vs Catch
 
@@ -81,7 +79,7 @@ Current strings that break it:
 
 ## Part 3. Questions of principle (not wording)
 
-1. **Sky patch "Firebird"** (`js/sky-secrets.js`, `firebird`): "You caught a water bomber, a plane that skims a lake to fill up with water for fighting fires." The brief says no copy built on emergencies. Firefighting is emergency response, not an aircraft emergency, and the card shows type only. I think it passes, but it is a judgement. **Boss or Sevaan to decide.** If it should go, a replacement idea is "You caught a water bomber, a plane built to scoop up water from a lake."
+1. **Sky patch "Firebird" (DECIDED 2026-11-20: stays, as an aircraft type).** Current text (`js/sky-secrets.js`, `firebird`): "You caught a water bomber, a plane that skims a lake to fill up with water for fighting fires." It names the type, and "for fighting fires" says what the plane is for, not a fire in progress. To be safe, here is wording with no mention of fire: **"You caught a water bomber, a plane built to scoop up water from a lake."** Use it if the current line is thought too close to an emergency. (The rest of the patch, name "Firebird", stays.)
 2. **Sky patch "Into the Eye"** (`hurricane`): a NOAA hurricane hunter, "a plane that flies into storms to measure them". Science flight, type only; I think it is fine.
 3. **Mission "Catch a military plane"** (`military`): shows type only and is only dealt where military types have been seen (Sevaan's decision 6, per the code comment). Fine under the rule. It is the one mission that names a category the privacy rule treats specially, so Boss may want to look at it.
 4. **Hop distance:** the patch `sky-hopper` says "Catch a flight shorter than 300 km", while the mission `short` and the week `sky-hops` say 500 km. A player who sees both gets two meanings of "short hop". Choose one number (or call the patch "Hopper (300 km)"). Decision for Sky Dev or Sevaan; wording only follows.

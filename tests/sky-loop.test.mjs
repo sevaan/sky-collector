@@ -56,7 +56,7 @@ test('missions sized to the sky', () => {
   assert.equal(SKY_MISSIONS.find((x) => x.id === 'rarehere').done([{ rareHere: true }]), true);
 });
 test('Sky ranks: the first two stretched, Space Collector\'s restored when off', () => {
-  setSkyProgress(true); assert.deepEqual(RANKS.slice(0, 4).map((r) => r[0]), [0, 480, 2000, 4000]); assert.equal(RANKS[1][1], 'Plane Spotter');
+  setSkyProgress(true); assert.deepEqual(RANKS.slice(0, 4).map((r) => r[0]), [0, 480, 2000, 4000]); assert.equal(RANKS[1][1], 'Spotter'); assert.deepEqual(RANKS.map((r) => r[1]), ['Skywatcher', 'Spotter', 'Type Spotter', 'Plane Expert', 'Sky Scholar', 'Sky Master', 'Sky Legend', 'Hall of Fame']); assert.deepEqual(RANKS.map((r) => r[0]), [0, 480, 2000, 4000, 10000, 25000, 50000, 90000]);
   setSkyProgress(false); assert.deepEqual(RANKS.slice(0, 3).map((r) => r[0]), [0, 500, 1500]); assert.equal(RANKS[1][1], 'Spotter');
 });
 test('distances follow the Units setting; missions say them in the player\'s units', async () => {
@@ -114,3 +114,13 @@ test('a plane catch is shiny by the Moon, with the sun on the horizon, or in new
   assert.equal(shinyForPlane({ newColours: true, tier: 'rare' }), 'colours'); assert.equal(shinyForPlane({ newColours: true, tier: 'common' }), null, 'not every new airline on an A320');
   for (const k of ['golden', 'colours']) assert.ok(SHINY[k].label && SHINY[k].line);
 });
+
+test('Hopper patch: the 300 km rule, written in the player\'s units (km by default, miles on a US phone)', () => {
+  const hop = activeHop(); localStorage.setItem('units', 'metric');
+  assert.equal(hop().text, 'Catch a flight shorter than 300 km');
+  localStorage.setItem('units', 'imperial');
+  assert.match(hop().text, /^Catch a flight shorter than 190 mi$/); assert.doesNotMatch(hop().text, /km/);
+  localStorage.removeItem('units');
+});
+function activeHop() { setSkyProgress(true); return () => progressMod.activeAchievements().find((x) => x.id === 'sky-hopper'); }
+const progressMod = await import('../js/progress.js');

@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { climbLevel, xpLevel, climbGeom, climbSvg, FLIGHT_LEVELS } from '../js/rank-climb.js';
 
-const SKY_RANKS = [[0, 'Spotter'], [480, 'Plane Spotter'], [2000, 'Tracker'], [4000, 'Navigator'], [10000, 'Air Traffic Controller'], [25000, 'Chief Pilot'], [50000, 'Ace'], [90000, 'Sky Legend']];
+const SKY_RANKS = [[0, 'Skywatcher'], [480, 'Spotter'], [2000, 'Type Spotter'], [4000, 'Plane Expert'], [10000, 'Sky Scholar'], [25000, 'Sky Master'], [50000, 'Sky Legend'], [90000, 'Hall of Fame']]; /* Sevaan's ladder, 2026-11-20 */
 const AT = SKY_RANKS.map((r) => r[0]);
 
 test('the plane sits between its rank level and the next, by XP', () => {
@@ -28,8 +28,8 @@ test('XP to levels, with Sky thresholds', () => {
 test('the picture labels every rank from the real list, current highlighted, next tagged with XP to go', () => {
   const svg = climbSvg({ ranks: SKY_RANKS, index: 1, into: (510 - 480) / 1520, xp: 510 });
   for (const f of FLIGHT_LEVELS) assert.ok(svg.includes(`>${f}<`), f);
-  assert.ok(svg.includes('AIR TRAFFIC CTRL') && svg.includes('SKY LEGEND'));
-  assert.match(svg, /lbc-cur"><line[^]*?PLANE SPOTTER/);
+  assert.ok(svg.includes('SKY SCHOLAR') && svg.includes('HALL OF FAME'));
+  assert.match(svg, /lbc-cur"><line[^]*?SPOTTER/);
   assert.equal((svg.match(/lbc-past/g) || []).length, 1);
   assert.equal((svg.match(/lbc-fut/g) || []).length, 5);
   assert.ok(svg.includes('NEXT · 1,490 XP TO GO'));

@@ -178,10 +178,12 @@ export async function tidyChannels() {
 }
 // The buttons under a notification (long-press on iPhone, expand on Android). Registered once per launch.
 let actionsReady = null;
+/* The "skip" button's word: planes fly by day, so Sky says "Not today" (content audit item 4, 2026-11-20). The id stays 'nottonight'. */
+export const noteSkipWord = (sky = !!globalThis.__skyOnly) => (sky ? 'Not today' : 'Not tonight');
 export function noteActions() {
   if (!isNative()) return Promise.resolve();
   actionsReady ??= plugin('LocalNotifications').registerActionTypes({ types: [
-    { id: 'auto', actions: [{ id: 'show', title: 'Show me', foreground: true }, { id: 'nottonight', title: 'Not tonight', foreground: false }] },
+    { id: 'auto', actions: [{ id: 'show', title: 'Show me', foreground: true }, { id: 'nottonight', title: noteSkipWord(), foreground: false }] }, /* Sky's time-away notes carry it too (content audit item 4) */
     { id: 'pass', actions: [{ id: 'show', title: 'Show me', foreground: true }] },
   ] }).catch(() => {});
   return actionsReady;

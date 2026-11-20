@@ -1,46 +1,46 @@
-import { pullToClose } from './pull-close.js?v=0.1.1814';
-import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1814';
-import { computeStats, statsHtml } from './stats.js?v=0.1.1814';
-import { nightKey } from './observation.js?v=0.1.1814';
-import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1814';
-import { sfx } from './sfx.js?v=0.1.1814';
-import { expandFacts } from './catalog-facts.js?v=0.1.1814';
-import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned, addSecretArt } from './patches.js?v=0.1.1814';
-import { registerSkySecrets } from './sky-secrets.js?v=0.1.1814';
-import { SKY_PATCH_ART } from './sky-patches.js?v=0.1.1814';
-import { registerSkyStories } from './sky-stories.js?v=0.1.1814';
-import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1814';
-import { ticket } from './toast.js?v=0.1.1814';
-import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1814';
-import { satGlobe } from './sat-globe.js?v=0.1.1814';
-import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1814';
-import { cardArt } from './art.js?v=0.1.1814';
-import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1814';
-import { applyBack } from './card-backs.js?v=0.1.1814';
-import { localStats, seenLine } from './sky-local.js?v=0.1.1814';
-import { retier, rekeyUnlisted } from './flights.js?v=0.1.1814';
-import { SETS, assignSets, albumGoals, albumList, useSets, goalsOf } from './sets.js?v=0.1.1814';
-import { SKY_ALBUM_SETS, FLIGHT_SETS, PLANE_SETS } from './sky-sets.js?v=0.1.1814';
+import { pullToClose } from './pull-close.js?v=0.1.1815';
+import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1815';
+import { computeStats, statsHtml } from './stats.js?v=0.1.1815';
+import { nightKey } from './observation.js?v=0.1.1815';
+import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1815';
+import { sfx } from './sfx.js?v=0.1.1815';
+import { expandFacts } from './catalog-facts.js?v=0.1.1815';
+import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned, addSecretArt } from './patches.js?v=0.1.1815';
+import { registerSkySecrets } from './sky-secrets.js?v=0.1.1815';
+import { SKY_PATCH_ART } from './sky-patches.js?v=0.1.1815';
+import { registerSkyStories } from './sky-stories.js?v=0.1.1815';
+import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1815';
+import { ticket } from './toast.js?v=0.1.1815';
+import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1815';
+import { satGlobe } from './sat-globe.js?v=0.1.1815';
+import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1815';
+import { cardArt } from './art.js?v=0.1.1815';
+import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1815';
+import { applyBack } from './card-backs.js?v=0.1.1815';
+import { localStats, seenLine } from './sky-local.js?v=0.1.1815';
+import { retier, rekeyUnlisted } from './flights.js?v=0.1.1815';
+import { SETS, assignSets, albumGoals, albumList, useSets, goalsOf } from './sets.js?v=0.1.1815';
+import { SKY_ALBUM_SETS, FLIGHT_SETS, PLANE_SETS } from './sky-sets.js?v=0.1.1815';
 const FLIGHT_SET_IDS = new Set(FLIGHT_SETS.map((s) => s.id));
 /* plane albums too (playtest 2026-11-20 #13: Helicopters read "0 / 1", only the listed types counted): any helicopter is a card */
 const OPEN_SET_IDS = new Set([...FLIGHT_SET_IDS, ...PLANE_SETS.map((s) => s.id)]);
-import { skyCatalogue } from './sky-catalogue.js?v=0.1.1814';
-import { skyCardPhotoUrl, glyphSvg } from './flight-card.js?v=0.1.1814';
-import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1814';
-import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1814';
-import { STORIES } from './stories.js?v=0.1.1814';
-import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1814';
-import { conArt } from './con-art.js?v=0.1.1814';
-import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1814';
-import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1814';
-import { climbSvg, climbGeom, xpLevel } from './rank-climb.js?v=0.1.1814';
-import { shareCardEl } from './share-card.js?v=0.1.1814';
-import { forgetSighting } from './cloud-backup.js?v=0.1.1814';
-import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1814';
-import { allSightings, deleteSighting } from './store.js?v=0.1.1814';
-import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1814';
-import { SECRET_PATCHES, NOT_SECRET, hasPatch } from './secrets.js?v=0.1.1814';
-import { localText } from './localize.js?v=0.1.1814';
+import { skyCatalogue } from './sky-catalogue.js?v=0.1.1815';
+import { skyCardPhotoUrl, glyphSvg } from './flight-card.js?v=0.1.1815';
+import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1815';
+import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1815';
+import { STORIES } from './stories.js?v=0.1.1815';
+import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1815';
+import { conArt } from './con-art.js?v=0.1.1815';
+import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1815';
+import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1815';
+import { climbSvg, climbGeom, xpLevel } from './rank-climb.js?v=0.1.1815';
+import { shareCardEl } from './share-card.js?v=0.1.1815';
+import { forgetSighting } from './cloud-backup.js?v=0.1.1815';
+import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1815';
+import { allSightings, deleteSighting } from './store.js?v=0.1.1815';
+import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1815';
+import { SECRET_PATCHES, NOT_SECRET, hasPatch } from './secrets.js?v=0.1.1815';
+import { localText } from './localize.js?v=0.1.1815';
 // Sky Collector (Milestone 1.5): the same Collection, with plane cards from your catches and no satellite catalogue.
 const SKY = (() => { try { return !!window.parent?.__skyOnly; } catch { return false; } })() || /[?&]sky\b/.test(location.search);
 if (SKY) { /* night follows the game's own switch (html.sky-night, set where Explore decides day and night) */
@@ -145,8 +145,8 @@ async function boot() {
   const sightings = sightingResult.status === 'fulfilled' ? sightingResult.value : [];
   ingest(sightings);
   linkConstellations();
-  if (catalogueResult.status === 'rejected') notice('The catalogue could not load. Your saved field records are still shown. Refresh to try again.');
-  if (sightingResult.status === 'rejected') notice('Your saved sightings could not be opened. You can explore the field guide; refresh to retry your collection.');
+  if (!SKY && catalogueResult.status === 'rejected') notice( /* Sky's Collection doesn't use Space's catalogue (cat above), so no Space notice */'The catalogue could not load. Your saved field records are still shown. Refresh to try again.');
+  if (sightingResult.status === 'rejected') notice(SKY ? 'Your saved cards could not be opened. Refresh this page to try again.' : 'Your saved sightings could not be opened. You can explore the field guide; refresh to retry your collection.');
   /* loading hidden behind Explore: the first render is its own task, after a frame (perf budget 2026-11-10: data + render was one 45 ms block) */
   if (document.documentElement.classList.contains('away')) await new Promise((r) => requestAnimationFrame(() => setTimeout(r, 0)));
   state.ready = true;
@@ -161,7 +161,7 @@ async function boot() {
   if (!state.byKey.has(key) && /^[A-Z]+:/.test(key)) key = key.split(':')[0]; // old launch-card link
   if (key && !state.byKey.has(key)) key = state.keyOfId.get(key) ?? key; // a satellite that’s now part of a fleet
   if (key && state.byKey.has(key)) openKey(key);
-  else if (key) notice('That card is not in this catalogue or your saved collection. Search the field guide to find another target.');
+  else if (key) notice(SKY ? 'That card is not in your collection. Search your collection to find another.' : 'That card is not in this catalogue or your saved collection. Search the field guide to find another target.');
 }
 
 // A search word matches the start of a word, so "iss" finds the ISS and not every "missile" in a fact (playtest 2026-11-10).
@@ -562,7 +562,7 @@ function renderLogbook() {
   // At risk (a streak going, nothing logged yet this week): a Remind me for Saturday evening (QA 2026-10-09: the button
   // was lost in the card redesign, so remindStreak was unreachable).
   const atRisk = p.streak.current && !p.streak.thisWeek;
-  el.innerHTML = `<div class="lb-top"><span>${SKY ? 'Spotter rank' : 'Observer rank'}</span><span class="lb-streak">${streak}${atRisk ? '<button type="button" class="lb-remind" id="streak-remind">Remind me Sat</button>' : ''}</span></div>
+  el.innerHTML = `<div class="lb-top"><span>${SKY ? 'Your rank' : 'Observer rank'}</span><span class="lb-streak">${streak}${atRisk ? '<button type="button" class="lb-remind" id="streak-remind">Remind me Sat</button>' : ''}</span></div>
     <div class="lb-pic">${ladder}<button type="button" class="lb-more" id="lb-more" aria-expanded="${!$('logbook').classList.contains('compact')}">${$('logbook').classList.contains('compact') ? 'Missions ›' : 'Less'}</button>${EMBED && lastWeekWorth() ? '<button type="button" class="lb-week" id="lb-week">Last week ›</button>' : ''}</div>
     <div class="lb-dial" aria-hidden="true"><span class="lbd-ring"><svg viewBox="0 0 74 74"><circle cx="37" cy="37" r="32" fill="none" stroke="#24344a" stroke-width="5"/><circle cx="37" cy="37" r="32" fill="none" stroke="var(--gold)" stroke-width="5" stroke-linecap="round" stroke-dasharray="${(into * 201.06).toFixed(1)} 202" transform="rotate(-90 37 37)"/><g stroke="#fff2b355" stroke-width="1.5"><line x1="37" y1="0" x2="37" y2="5"/><line x1="74" y1="37" x2="69" y2="37"/><line x1="37" y1="74" x2="37" y2="69"/><line x1="0" y1="37" x2="5" y2="37"/></g></svg><b>${p.rank.next ? `${Math.floor(into * 100)}%<small>to next</small>` : 'Top<small>rank</small>'}</b></span><span class="lbd-m"><span class="lbd-l"><span class="lbd-name">${esc(p.rank.name)}</span><span class="lb-xp"><b>${p.xp.toLocaleString()}</b> XP</span></span><span class="lbd-l"><span class="lbd-to">${p.rank.next ? `${(p.rank.next - p.xp).toLocaleString()} XP to <b>${esc(RANKS[ri + 1]?.[1] ?? 'the next rank')}</b>` : 'The top rank'}</span><button type="button" class="lbd-more">${$('logbook').classList.contains('compact') ? 'Missions ›' : 'Less'}</button></span></span></div><!-- design/rank-compact.html A: the slim card when there's no ladder picture (2026-10-28, Sevaan) -->
     <div class="lb-rankrow"><span class="lb-name">${esc(p.rank.name)}</span><span class="lb-xp"><b>${p.xp.toLocaleString()}</b> XP</span></div>
@@ -796,7 +796,8 @@ function renderView() {
   if (!total) {
     const empty = document.createElement('div'); empty.className = 'empty';
     if (state.view === 'owned' && !caught) {
-      empty.innerHTML = '<span class="empty__orbit" aria-hidden="true">✧</span><h2>Your first card is up there.</h2><p>Catch something in the live sky to earn your first card. The ISS is a good place to start.</p><a href="./?resume=1">Explore the sky ↗</a><button type="button" class="secondary">Browse the field guide</button>';
+      empty.innerHTML = SKY ? '<span class="empty__orbit" aria-hidden="true">✧</span><h2>Your first card is flying by.</h2><p>Point your phone at a plane and tap Collect.</p><a href="./?resume=1">Explore the sky ↗</a><button type="button" class="secondary">See what\'s out there</button>' /* Sky's own empty Collection (content audit item 3, 2026-11-20) */
+        : '<span class="empty__orbit" aria-hidden="true">✧</span><h2>Your first card is up there.</h2><p>Catch something in the live sky to earn your first card. The ISS is a good place to start.</p><a href="./?resume=1">Explore the sky ↗</a><button type="button" class="secondary">Browse the field guide</button>';
       empty.querySelector('button').addEventListener('click', () => setView('discover'));
     } else {
       empty.innerHTML = '<span class="empty__orbit empty__search" aria-hidden="true"><svg viewBox="0 0 48 48" width="44" height="44" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="21" cy="21" r="12"/><path d="M30 30 L40 40"/><circle cx="21" cy="21" r="5.5" stroke-dasharray="2 3.2" opacity=".6"/><path d="M17 13.5a8 8 0 0 1 8.5-0.8" opacity=".55"/></svg></span><h2>No cards found</h2><p>Try a different name, album or rarity.</p><button type="button">Clear filters</button>';
@@ -1273,8 +1274,8 @@ $('viewer').addEventListener('keydown', (e) => {
 });
 reducedMotion.addEventListener('change', () => { if (reducedMotion.matches) { stopGyro?.(); stopGyro = null; tilt?.reset(); } });
 boot().catch(() => {
-  notice('The field guide could not open. Refresh this page to try again.');
-  $('count').textContent = 'Your next discovery is waiting.';
+  notice(SKY ? 'Your collection could not open. Refresh this page to try again.' : 'The field guide could not open. Refresh this page to try again.');
+  $('count').textContent = SKY ? 'Your next plane is on its way.' : 'Your next discovery is waiting.';
   $('grid').replaceChildren();
 });
 
