@@ -5,13 +5,13 @@
 //  Everything scales with rarity (Legendary dims the sky, shockwave, held breath, slow flip, fanfare).
 // Waits use timers, not animation.finished, so a paused tab can never freeze the sequence.
 
-import { sfx, loadSfx } from './sfx.js?v=0.1.1801';
-import { audioCtx } from './audio-ctx.js?v=0.1.1801';
-import { TIER_INFO } from './rarity.js?v=0.1.1801';
-import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1801';
-import { applyBack } from './card-backs.js?v=0.1.1801';
-import { addStarfield } from './starfield.js?v=0.1.1801';
-import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1801';
+import { sfx, loadSfx } from './sfx.js?v=0.1.1802';
+import { audioCtx } from './audio-ctx.js?v=0.1.1802';
+import { TIER_INFO } from './rarity.js?v=0.1.1802';
+import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1802';
+import { applyBack } from './card-backs.js?v=0.1.1802';
+import { addStarfield } from './starfield.js?v=0.1.1802';
+import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1802';
 
 const FX = TIER_FX; /* one rarity table for every card moment (js/card-moment.js, 2026-11-11) */
 const NIGHT_MILESTONES = [3, 5, 10, 25, 50, 100, 200, 365], STAMP_MILESTONES = [5, 10, 25, 50, 100, 200, 300, 400];
@@ -391,10 +391,8 @@ function showNews(news, alive) {
   const ORDER = { ghost: -1, rank: 0, back: 1, backs: 1.5, reunion: 2, peak: 2.5, train: 2.6, birthday: 0.5, event: 3, patch: 4, mission: 5 }; // a new card back is rare news: up front (2026-10-24)
   const sorted = news.slice().sort((a, b) => (ORDER[a.kind] ?? 9) - (ORDER[b.kind] ?? 9));
   const max = (innerWidth < 430 ? 2 : 3) - (pager ? 1 : 0); /* the pager takes a chip's room */
-  const rest = sorted.length > max ? sorted.slice(max) : []; // three long chips don't fit a phone (iPhone 14 playtest 2026-10-30: the third was cut mid-word)
-  news = rest.length ? [...sorted.slice(0, max), { kind: 'more', text: `+${rest.length} more` }] : sorted;
-  news.forEach((n, i) => setTimeout(() => {
-    if (!alive()) return;
+  let shown = sorted.slice(0, max), rest = sorted.slice(max); // three long chips don't fit a phone (iPhone 14 playtest 2026-10-30: the third was cut mid-word)
+  const chip = (n) => {
     const c = document.createElement('span'); c.className = `rv-chip rv-chip--${n.kind}`;
     c.innerHTML = `${n.kind === 'more' ? '' : `<i aria-hidden="true">${NEWS_ICON[n.kind] ?? '◆'}</i>`}${esc(n.text)}${n.xp ? `<b>+${n.xp}</b>` : ''}`;
     if (n.kind === 'more') { // tap to see the rest (iOS playtest 2026-10-20: it was a dead tap)
@@ -402,7 +400,20 @@ function showNews(news, alive) {
       c.addEventListener('click', () => { c.remove(); Object.assign(box.style, { overflowX: 'auto', pointerEvents: 'auto', touchAction: 'pan-x', scrollbarWidth: 'none' }); /* one row you can swipe along: wrapped rows ran onto the card (iPhone playtest 2026-10-26) */ for (const m of rest) { const x = document.createElement('span'); x.className = `rv-chip rv-chip--${m.kind} in`; x.innerHTML = `<i aria-hidden="true">${NEWS_ICON[m.kind] ?? '◆'}</i>${esc(m.text)}${m.xp ? `<b>+${m.xp}</b>` : ''}`; wireAct(x, m); box.append(x); } }, { once: true });
     }
     wireAct(c, n); /* e.g. "see them all" card backs → Plus (2026-10-24) */
-    box.append(c); requestAnimationFrame(() => c.classList.add('in'));
+    return c;
+  };
+  /* Laid out at once (still invisible: a chip shows when it gets .in), then fitted: the last chip, "+N more" included, must end
+     before the row's 28px right-hand fade, else the chip before it goes into "+N more" (playtest 2026-11-20 #10: with the
+     two-card pager first, "+2 MORE" was faded to "+2 MOR" at 360-430 px). */
+  let els = [];
+  const lay = () => { els.forEach((c) => c.remove()); const list = rest.length ? [...shown, { kind: 'more', text: `+${rest.length} more` }] : shown; els = list.map((n) => { const c = chip(n); box.append(c); return c; }); return list; };
+  let list = lay();
+  const fits = () => { const w = box.clientWidth, last = els.at(-1); return !w || !last || last.offsetLeft + last.offsetWidth <= w - 28; };
+  while (!fits() && shown.length) { rest = [shown.pop(), ...rest]; list = lay(); }
+  list.forEach((n, i) => setTimeout(() => {
+    if (!alive()) return;
+    const c = els[i]; if (!c?.isConnected) return;
+    requestAnimationFrame(() => c.classList.add('in'));
     // Each chip sounds and feels like what it is (2026-10-17 haptics playtest: a rank-up got the generic XP tick).
     if (n.kind === 'rank') sfx('rankup'); else if (n.kind === 'reunion') { sfx('complete', { gain: 0.8 }); dispatchEvent(new CustomEvent('sc:feel', { detail: 'success' })); } else if (n.kind === 'mission') { sfx('mission', { gain: 0.8 }); dispatchEvent(new CustomEvent('sc:feel', { detail: 'light' })); } else if ((n.kind === 'patch' || n.kind === 'ghost')) sfx('patch', { gain: 0.7 }); else sfx('xp', { gain: 0.7 });
   }, (reduced() ? 0 : 900) + i * (reduced() ? 0 : 260)));
