@@ -5,15 +5,15 @@
 //  Everything scales with rarity (Legendary dims the sky, shockwave, held breath, slow flip, fanfare).
 // Waits use timers, not animation.finished, so a paused tab can never freeze the sequence.
 
-import { sfx, loadSfx } from './sfx.js?v=0.1.1826';
-import { audioCtx } from './audio-ctx.js?v=0.1.1826';
-import { TIER_INFO } from './rarity.js?v=0.1.1826';
-import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1826';
-import { applyBack } from './card-backs.js?v=0.1.1826';
-import { addStarfield } from './starfield.js?v=0.1.1826';
-import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1826';
-import { packPlan, packFoil, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1826'; /* the two-card pack opening (prototype, 2026-11-20) */
-import { tearJag } from './gift-pack.js?v=0.1.1826';
+import { sfx, loadSfx } from './sfx.js?v=0.1.1827';
+import { audioCtx } from './audio-ctx.js?v=0.1.1827';
+import { TIER_INFO } from './rarity.js?v=0.1.1827';
+import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1827';
+import { applyBack } from './card-backs.js?v=0.1.1827';
+import { addStarfield } from './starfield.js?v=0.1.1827';
+import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1827';
+import { packPlan, packFoil, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1827'; /* the two-card pack opening (prototype, 2026-11-20) */
+import { tearJag } from './gift-pack.js?v=0.1.1827';
 
 const FX = TIER_FX; /* one rarity table for every card moment (js/card-moment.js, 2026-11-11) */
 const NIGHT_MILESTONES = [3, 5, 10, 25, 50, 100, 200, 365], STAMP_MILESTONES = [5, 10, 25, 50, 100, 200, 300, 400];
@@ -204,7 +204,7 @@ export async function playReveal({ card, o, seen, origin, fleet = null, progress
   setRank(xp > 0 ? rank : null);
   $('rv-news').replaceChildren(); earnedNow = earned;
   setDeck(items);
-  if (items[1]?.fresh || plan) seal(items[1]); /* a new card behind waits face down, glowing in its rarity (out of a pack, any card) */
+  if ((items[1]?.fresh || plan) && !isPass(items[1])) seal(items[1]); /* a new card behind waits face down, glowing in its rarity (out of a pack, any card); a boarding pass is paper, not a card, so it's always face up (2026-11-21, Sevaan) */
   $('reveal-card').classList.toggle('dk-wait', (fresh || plan) && items.length > 1); /* and shows once the front one has turned over */
   for (const id of ['rv-holder', 'rv-flipper', ...(rushed ? [] : ['rv-dot', 'rv-dim']), 'rv-flash', 'rv-shock']) $(id).getAnimations().forEach((a) => a.cancel());
   $('rv-holder').style.opacity = 0; $('rv-holder').classList.remove('live');
@@ -225,8 +225,8 @@ export async function playReveal({ card, o, seen, origin, fleet = null, progress
     under = document.createElement('div'); under.className = 'pk-under'; under.setAttribute('aria-hidden', 'true');
     /* only its back, not the whole card: a full card copy (face, photo) under a scaling rise cost ~170 frames over 20 ms in
        ten catches at 4x CPU in Chromium (its raster went from 163 to 644 ms a catch) */
-    { const sl = slots()[1], w = document.createElement('div'), bk = sl.querySelector('.card__back')?.cloneNode(true); w.className = 'dk-slot sealed'; w.style.cssText = sl.style.cssText;
-      if (bk) { bk.removeAttribute('id'); bk.style.transform = 'none'; w.append(bk); } under.append(w); } $('rv-holder').before(under);
+    { const sl = slots()[1], w = document.createElement('div'), pass = isPass(items[1]), bk = (pass ? items[1].card : sl.querySelector('.card__back'))?.cloneNode(true); w.className = pass ? 'dk-slot' : 'dk-slot sealed'; w.style.cssText = sl.style.cssText;
+      if (bk) { bk.removeAttribute('id'); bk.style.transform = 'none'; w.append(bk); } under.append(w); } $('rv-holder').before(under); /* a boarding pass rises face up */
     for (const it of items) it.card.dataset.swiping = '1';
     const srcs = new Set();
     for (const el of [$('rv-back'), under, ...items.map((it) => it.card)]) for (const e of [el, ...el.querySelectorAll('img, [style*="url("]')]) {
@@ -605,6 +605,7 @@ function setDeck(items) {
   $('reveal').classList.toggle('two', items.length > 1);
   deck = items.length ? { items, front: 0, busy: false, ready: false } : null;
 }
+const isPass = (it) => it?.o?.sky === 'flight'; // a boarding pass (the flight card): paper, face up, never turned over
 function seal(it) { // face down behind: its real card back, turned over when it first comes forward
   const back = it.card.querySelector('.card__back'); if (!back) return;
   applyBack(back, it.o); back.style.opacity = '1'; it.card.style.transform = 'perspective(1600px) rotateY(180deg)'; it.sealed = true;
@@ -613,7 +614,7 @@ function seal(it) { // face down behind: its real card back, turned over when it
 // Once the front card has landed: tilt and double-tap flip on both, the phone's tilt on the front one, the swipe is live.
 function armDeck(alive) {
   const d = deck; if (!d) return;
-  d.items.forEach((it) => { it.tilt = attachTilt(it.card); it.flip = attachFlip(it.card, { onBack: applyBack }); });
+  d.items.forEach((it) => { it.tilt = attachTilt(it.card); it.flip = isPass(it) ? null : attachFlip(it.card, { onBack: applyBack }); }); /* no double-tap flip on a boarding pass: it has no back */
   tilt = d.items[d.front].tilt; stopGyro = attachGyro(d.items[d.front].card, tilt);
   d.ready = true;
   if (d.items.length < 2) return;
