@@ -9,21 +9,21 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { regularFor, clockText } from './sky-regulars.js?v=0.1.1843';
-import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js?v=0.1.1843';
-import { flightFact } from './flight-facts.js?v=0.1.1843';
-import { typePhoto } from './type-photos.js?v=0.1.1843';
-import { housePhoto } from './house-photos.js?v=0.1.1843';
-import { gapPhoto } from './gap-photos.js?v=0.1.1843'; /* the types that had no photo (2026-11-18) */
-import { airlinePhoto } from './airline-photos.js?v=0.1.1843';
-import { airlineLogo } from './airline-logos.js?v=0.1.1843';
-import { fitStyle } from './photo-fit.js?v=0.1.1843';
-import { dist, speed, useMiles } from './units.js?v=0.1.1843';
-import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1843';
-import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1843';
-import { typeFact } from './sky-facts.js?v=0.1.1843';
-import { localText } from './localize.js?v=0.1.1843';
-import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1843';
+import { regularFor, clockText } from './sky-regulars.js?v=0.1.1844';
+import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js?v=0.1.1844';
+import { flightFact } from './flight-facts.js?v=0.1.1844';
+import { typePhoto } from './type-photos.js?v=0.1.1844';
+import { housePhoto } from './house-photos.js?v=0.1.1844';
+import { gapPhoto } from './gap-photos.js?v=0.1.1844'; /* the types that had no photo (2026-11-18) */
+import { airlinePhoto } from './airline-photos.js?v=0.1.1844';
+import { airlineLogo } from './airline-logos.js?v=0.1.1844';
+import { fitStyle } from './photo-fit.js?v=0.1.1844';
+import { dist, speed, useMiles } from './units.js?v=0.1.1844';
+import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1844';
+import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1844';
+import { typeFact } from './sky-facts.js?v=0.1.1844';
+import { localText } from './localize.js?v=0.1.1844';
+import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1844';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // A type name escaped, with its hyphenated model codes kept on one line ('Boeing KC-135R Stratotanker' broke after 'KC-').
@@ -230,7 +230,7 @@ function classBand(k, mini = false) {
   if (k.cls === 'cargo') return { cls: 'cargo', icon: ICONS.box, head: mini ? 'Cargo' : 'Cargo airline', tail: mini ? k.op : [k.op, 'route not known'].filter(Boolean).join(' · '), logo: k.icao };
   if (k.cls === 'airline') return { cls: 'airline', icon: ICONS.jet, head: 'Airline', tail: mini ? k.op : [k.op, 'route not known'].filter(Boolean).join(' · '), logo: k.icao };
   if (k.cls === 'airliner') return { cls: 'noair', icon: '', head: mini ? 'No flight number' : 'No airline flight number', tail: mini ? '' : 'Airliner' };
-  return { cls: 'noair', icon: '', head: k.word || 'Aircraft', tail: '' }; /* no lock icon (2026-11-21, Sevaan: "I don't like the little lock icon when it's a private craft") */ /* just what it is (2026-11-20, Sevaan: "Doesn't need to say not an airline") */
+  return null; /* no band for private, business, military, government or rotorcraft (2026-11-21, Sevaan: a Gulfstream said "Business jet" under the photo and "Business Jets" in the header; the set and the size already say what kind it is) */
 }
 function bandHtml(b, cls = 'ss-band') {
   if (!b) return '';
