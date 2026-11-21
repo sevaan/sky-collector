@@ -35,3 +35,16 @@ test('Sky makes only its own notification channels and drops Space Collector\'s'
   assert.deepEqual(staleChannels(have, true), ['events']);
   assert.deepEqual(staleChannels(have, false), [], 'Space Collector keeps all four');
 });
+
+test('catching: up, and near enough for its size (2026-11-21: a light aircraft 56 km off was collectable)', async () => {
+  const { canCatch, catchKm, firstUp } = await import('../js/sky-up.js');
+  const P = (cat, el, km) => ({ plane: { hex: `${cat}-${km}`, category: cat }, az: 0, el, rangeKm: km });
+  assert.equal(canCatch(P('A1', 20, 56)), false, 'a light aircraft 56 km off');
+  assert.equal(canCatch(P('A1', 20, 10)), true);
+  assert.equal(canCatch(P('A3', 20, 56)), true, 'an airliner 56 km off');
+  assert.equal(canCatch(P('A5', 3, 20)), false, 'on the horizon');
+  assert.equal(canCatch(P('A7', 30, 15)), false, 'a helicopter 15 km off');
+  assert.equal(catchKm({}), 60, 'no category: an airliner');
+  assert.equal(firstUp([P('A1', 30, 40), P('A3', 30, 50)]).plane.category, 'A3', 'the first catch steers to one you can catch');
+  assert.equal(firstUp([P('A1', 30, 40)]), null);
+});
