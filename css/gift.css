@@ -515,3 +515,9 @@ html.embedded .send-view, .send-view:focus, .send-view:focus-visible { outline: 
 .sv-grid .sv-tile { contain: strict; } /* each tile is its own box (sized by the grid and its 2:3), so a card filling in never relays the page */
 .sv-grid .sv-tile .sv-art { content-visibility: auto; } /* and a card off screen skips its paint (with the line above: 58 ms to 32 ms a frame, 600 cards at 4x CPU throttle) */
 .sv-grid .sv-tile .sv-art:empty { background: var(--panel, #0f1b2a); border-radius: inherit; }
+/* Android: no 3D sides or back on the pack (2026-11-20, Sevaan chose this after measuring: with the cap fix alone the pack
+   still went blank for 46-76 of ~230 frames over four missed-tear swipes on the API 37 emulator; the sides and back are three
+   more 3D layers in the masked, tilted pack). The pack is flat again there, the front unchanged; iPhone and the website keep
+   the sides. */
+html.android #gift .gp-pk { --pd: 0px; }
+html.android #gift :is(.gp-back, .gp-wall) { display: none; }
