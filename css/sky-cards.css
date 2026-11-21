@@ -759,3 +759,18 @@ body.sky-only .tc .art .ob-moon { display:none; } /* When to look up: no Moon in
 /* the Collection's mini pass: the same paper, no frame; too small for the notches */
 .fc--mini.fc--flight .fc-face { padding:0; -webkit-mask:none; mask:none; }
 .fc--mini.fc--flight .m-lg { border-bottom-color:#b42a20; }
+
+/* ---- The pass as real paper (2026-11-21, Sevaan: "The boarding passes need to look and feel more like paper"): a warm
+   off-white stock with a printed grain over everything (ink and photo sit in the paper, not on glass), a soft fold crease
+   across the middle, edges that tone slightly darker the way handled paper does, a faint lift at the bottom-right corner,
+   and the low, soft shadow of something thin rather than a thick card. ---- */
+.fc--flight { --pass:#fbf9f2; }
+.fc--flight .fc-rot { box-shadow:0 .1em .15em rgba(13,34,56,.14), 0 .7em 1.4em rgba(13,34,56,.13); }
+.fc--flight .fc-in { background:
+  linear-gradient(176deg, transparent 47%, rgba(13,34,56,.045) 49.6%, rgba(255,255,255,.65) 50.4%, transparent 53%),
+  radial-gradient(70% 40% at 100% 100%, rgba(255,255,255,.55), transparent 70%),
+  radial-gradient(130% 95% at 50% 45%, transparent 62%, rgba(140,112,60,.09) 100%),
+  var(--pass); }
+.fc--flight .fc-face::after { display:block; content:''; position:absolute; inset:0; z-index:5; pointer-events:none; border-radius:inherit; padding:0;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .28 0 0 0 0 .2 0 0 0 .42 -.12'/%3E%3C/filter%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .55' numOctaves='2' seed='9'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .4 0 0 0 0 .3 0 0 0 .5 -.22'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23f%29'/%3E%3Crect width='100%25' height='100%25' filter='url%28%23g%29'/%3E%3C/svg%3E") 0 0 / 16em 16em; mix-blend-mode:multiply; opacity:.7; } /* grain and faint fibres */
+.fc--flight .fc-in :is(.bp-codes b, .bp-fields b, .bp-k b, .m-cd) { color:#13283d; } /* printed ink, a touch softer than pure navy */
