@@ -1,48 +1,48 @@
-import { pullToClose } from './pull-close.js?v=0.1.1828';
-import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1828';
-import { computeStats, statsHtml } from './stats.js?v=0.1.1828';
-import { nightKey } from './observation.js?v=0.1.1828';
-import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1828';
-import { sfx } from './sfx.js?v=0.1.1828';
-import { expandFacts } from './catalog-facts.js?v=0.1.1828';
-import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned, addSecretArt } from './patches.js?v=0.1.1828';
-import { registerSkySecrets } from './sky-secrets.js?v=0.1.1828';
-import { SKY_PATCH_ART } from './sky-patches.js?v=0.1.1828';
-import { registerSkyStories } from './sky-stories.js?v=0.1.1828';
-import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1828';
-import { ticket } from './toast.js?v=0.1.1828';
-import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1828';
-import { satGlobe } from './sat-globe.js?v=0.1.1828';
-import { routeMap } from './route-map.js?v=0.1.1828';
-import { dist } from './units.js?v=0.1.1828';
-import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1828';
-import { cardArt } from './art.js?v=0.1.1828';
-import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1828';
-import { applyBack } from './card-backs.js?v=0.1.1828';
-import { localStats, seenLine } from './sky-local.js?v=0.1.1828';
-import { retier, rekeyUnlisted } from './flights.js?v=0.1.1828';
-import { SETS, assignSets, albumGoals, albumList, useSets, goalsOf } from './sets.js?v=0.1.1828';
-import { SKY_ALBUM_SETS, FLIGHT_SETS, PLANE_SETS } from './sky-sets.js?v=0.1.1828';
+import { pullToClose } from './pull-close.js?v=0.1.1830';
+import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1830';
+import { computeStats, statsHtml } from './stats.js?v=0.1.1830';
+import { nightKey } from './observation.js?v=0.1.1830';
+import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1830';
+import { sfx } from './sfx.js?v=0.1.1830';
+import { expandFacts } from './catalog-facts.js?v=0.1.1830';
+import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned, addSecretArt } from './patches.js?v=0.1.1830';
+import { registerSkySecrets } from './sky-secrets.js?v=0.1.1830';
+import { SKY_PATCH_ART } from './sky-patches.js?v=0.1.1830';
+import { registerSkyStories } from './sky-stories.js?v=0.1.1830';
+import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1830';
+import { ticket } from './toast.js?v=0.1.1830';
+import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1830';
+import { satGlobe } from './sat-globe.js?v=0.1.1830';
+import { routeMap } from './route-map.js?v=0.1.1830';
+import { dist } from './units.js?v=0.1.1830';
+import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1830';
+import { cardArt } from './art.js?v=0.1.1830';
+import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1830';
+import { applyBack } from './card-backs.js?v=0.1.1830';
+import { localStats, seenLine } from './sky-local.js?v=0.1.1830';
+import { retier, rekeyUnlisted } from './flights.js?v=0.1.1830';
+import { SETS, assignSets, albumGoals, albumList, useSets, goalsOf } from './sets.js?v=0.1.1830';
+import { SKY_ALBUM_SETS, FLIGHT_SETS, PLANE_SETS } from './sky-sets.js?v=0.1.1830';
 const FLIGHT_SET_IDS = new Set(FLIGHT_SETS.map((s) => s.id));
 /* plane albums too (playtest 2026-11-20 #13: Helicopters read "0 / 1", only the listed types counted): any helicopter is a card */
 const OPEN_SET_IDS = new Set([...FLIGHT_SET_IDS, ...PLANE_SETS.map((s) => s.id)]);
-import { skyCatalogue } from './sky-catalogue.js?v=0.1.1828';
-import { skyCardPhotoUrl, glyphSvg } from './flight-card.js?v=0.1.1828';
-import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1828';
-import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1828';
-import { STORIES } from './stories.js?v=0.1.1828';
-import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1828';
-import { conArt } from './con-art.js?v=0.1.1828';
-import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1828';
-import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1828';
-import { climbSvg, climbGeom, xpLevel } from './rank-climb.js?v=0.1.1828';
-import { shareCardEl } from './share-card.js?v=0.1.1828';
-import { forgetSighting } from './cloud-backup.js?v=0.1.1828';
-import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1828';
-import { allSightings, deleteSighting } from './store.js?v=0.1.1828';
-import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1828';
-import { SECRET_PATCHES, NOT_SECRET, hasPatch } from './secrets.js?v=0.1.1828';
-import { localText } from './localize.js?v=0.1.1828';
+import { skyCatalogue } from './sky-catalogue.js?v=0.1.1830';
+import { skyCardPhotoUrl, glyphSvg } from './flight-card.js?v=0.1.1830';
+import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1830';
+import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1830';
+import { STORIES } from './stories.js?v=0.1.1830';
+import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1830';
+import { conArt } from './con-art.js?v=0.1.1830';
+import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1830';
+import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1830';
+import { climbSvg, climbGeom, xpLevel } from './rank-climb.js?v=0.1.1830';
+import { shareCardEl } from './share-card.js?v=0.1.1830';
+import { forgetSighting } from './cloud-backup.js?v=0.1.1830';
+import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1830';
+import { allSightings, deleteSighting } from './store.js?v=0.1.1830';
+import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1830';
+import { SECRET_PATCHES, NOT_SECRET, hasPatch } from './secrets.js?v=0.1.1830';
+import { localText } from './localize.js?v=0.1.1830';
 // Sky Collector (Milestone 1.5): the same Collection, with plane cards from your catches and no satellite catalogue.
 const SKY = (() => { try { return !!window.parent?.__skyOnly; } catch { return false; } })() || /[?&]sky\b/.test(location.search);
 if (SKY) { /* night follows the game's own switch (html.sky-night, set where Explore decides day and night) */
@@ -614,7 +614,7 @@ function renderRouteCard(sec) {
       const p = m.longest.pass, d = dist(m.longest.km), x = m.earths >= 0.1 ? ` · ${m.earths >= 10 ? Math.round(m.earths) : m.earths.toFixed(1)}× Earth` : '';
       sec.innerHTML = `<div class="lb-rot"><div class="sg-face"><div class="lb-top"><span>Route map</span><span class="rm-count">${m.count} pass${m.count === 1 ? '' : 'es'}${x}</span></div>
         <div class="sg-pic rm-pic">${m.svg}</div>
-        <div class="rm-foot"><div class="lb-rankrow"><span class="lb-name"><b>${esc(d.v)}</b> ${esc(d.u)}</span><span class="lb-xp">Longest route</span></div>
+        <div class="rm-foot"><div class="rm-row"><span class="rm-km"><b>${esc(d.v)}</b> ${esc(d.u)}</span><span class="rm-k">Longest route</span></div>
         <div class="rm-sub"><b>${esc(p.from.city || p.from.iata)} → ${esc(p.to.city || p.to.iata)}</b>${p.airline ? ` · ${esc(p.airline)}` : ''}${p.callsign ? ` ${esc(p.callsign)}` : ''} · ${m.airports} airport${m.airports === 1 ? '' : 's'}</div></div></div></div>`;
       sec.querySelector('.sg-face').onclick = () => { feel('select'); setKind('flight'); };
       /* the arcs draw in along their own length (a pathLength="1" dash didn't draw at all in Chromium) */

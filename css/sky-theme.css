@@ -955,11 +955,23 @@ html.sky-cards.sky-night #sat-card.rm-card .rm-pic { background:radial-gradient(
 #sat-card .rm-lab { font:500 8.5px 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.8px; fill:var(--rc-ink); paint-order:stroke; stroke:var(--rc-paper); stroke-width:2.4px; stroke-linejoin:round; }
 #sat-card .rm-lab--top { fill:var(--rc-redink); font-size:9.5px; }
 #sat-card .rm-jet path { fill:var(--rc-redink); stroke:var(--rc-paper); stroke-width:1; paint-order:stroke; }
-html.sky-cards #sat-card.rm-card .lb-rankrow { display:flex; justify-content:space-between; align-items:baseline; margin:0; padding:12px 16px 0; gap:8px; }
-html.sky-cards #sat-card.rm-card .lb-name { margin:0; font:400 25px/1 'SC Display','Russo One',Impact,sans-serif; letter-spacing:.01em; text-transform:none; background:none; color:var(--rc-ink); -webkit-text-fill-color:var(--rc-ink); animation:none; white-space:nowrap; }
-html.sky-cards #sat-card.rm-card .lb-name b { font-weight:400; color:var(--rc-redink); -webkit-text-fill-color:var(--rc-redink); }
-html.sky-cards #sat-card.rm-card .lb-xp { color:var(--rc-muted); font:500 14px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; text-transform:uppercase; white-space:nowrap; }
+html.sky-cards #sat-card.rm-card .rm-row { display:flex; justify-content:space-between; align-items:baseline; margin:0; padding:12px 16px 0; gap:8px; }
+html.sky-cards #sat-card.rm-card .rm-km { margin:0; font:400 25px/1 'SC Display','Russo One',Impact,sans-serif; letter-spacing:.01em; text-transform:none; background:none; color:var(--rc-ink); -webkit-text-fill-color:var(--rc-ink); animation:none; white-space:nowrap; }
+html.sky-cards #sat-card.rm-card .rm-km b { font-weight:400; color:var(--rc-redink); -webkit-text-fill-color:var(--rc-redink); }
+html.sky-cards #sat-card.rm-card .rm-k { color:var(--rc-muted); font:500 14px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; text-transform:uppercase; white-space:nowrap; }
 html.sky-cards #sat-card.rm-card .rm-sub { padding:9px 16px 14px; font:500 15px/1.2 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.03em; color:var(--rc-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 html.sky-cards #sat-card.rm-card .rm-sub b { color:var(--rc-ink); font-weight:500; }
 .turning #sat-card .rm-jet, .lb-back .rm-jet { display:none; } /* the jet rests while the card is behind */
 @media (prefers-reduced-motion: reduce) { #sat-card .rm-draw .rm-arc { animation:none; stroke-dashoffset:0 !important; } #sat-card .rm-jet { display:none; } }
+/* With the route map beside it, the rank card keeps its climbing-plane picture even on day one (2026-11-21, Sevaan: "where'd
+   our plane ascending rank card go?"). Under 5 cards the rank card slims to a dial (body.few-cards); alone that was right,
+   but in the two-card deck both share one height, so the slim card was stretched to the map's height with an empty middle.
+   Short phones (under 700px tall) keep the slim card, and the map's picture grows to match it. */
+@media (min-height: 701px) {
+  html.sky-cards body.few-cards .lb-deck.two #logbook.lb-climb .lb-dial { display:none !important; }
+  html.sky-cards body.few-cards .lb-deck.two #logbook.lb-climb .lb-pic { display:block !important; height:auto !important; background:var(--rc-sky); border-bottom:1px solid var(--rc-rule); } /* not the 44px day-one strip */
+  html.sky-cards body.few-cards .lb-deck.two #logbook.lb-climb :is(.lb-rankrow, .lb-to) { display:flex !important; }
+  html.sky-cards body.few-cards .lb-deck.two #logbook.lb-climb .lb-bar { display:block !important; }
+}
+html.sky-cards #sat-card.rm-card .sg-face { min-height:100%; }
+html.sky-cards #sat-card.rm-card .rm-pic { flex:1 0 196px; height:auto; }
