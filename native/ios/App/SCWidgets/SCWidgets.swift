@@ -181,6 +181,7 @@ struct RingArt: View {
     var body: some View {
         ZStack {
             if let img = Store.art(pass?.art) {
+                Circle().fill(Color.well).frame(width: size - 14, height: size - 14) // behind a silhouette's clear corners
                 Image(uiImage: img).resizable().scaledToFill().frame(width: size - 14, height: size - 14).clipShape(Circle())
             } else {
                 Circle().fill(Color.well).frame(width: size - 14, height: size - 14)
@@ -293,7 +294,7 @@ struct PassRow: View {
             HStack(spacing: 8) {
                 timeText(p.startDate).font(.display(13)).foregroundStyle(lead ? Color.orange : Color.cream).frame(width: 46, alignment: .leading).lineLimit(1).minimumScaleFactor(0.7)
                 if art {
-                    Group { if let img = Store.art(p.art) { Image(uiImage: img).resizable().scaledToFill() } else { Color.well } }
+                    Group { if let img = Store.art(p.art) { ZStack { Color.well; Image(uiImage: img).resizable().scaledToFill() } } else { ZStack { Color.well; Image(systemName: "airplane").font(.system(size: 11, weight: .semibold)).foregroundStyle(Color.muted) } } }
                         .frame(width: 26, height: 26).clipShape(Circle()).overlay(Circle().stroke(lead ? Color.ring : Color.ink.opacity(0.15), lineWidth: 1.5))
                 }
                 VStack(alignment: .leading, spacing: 0) {

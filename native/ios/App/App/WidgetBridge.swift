@@ -48,8 +48,14 @@ public class WidgetBridgePlugin: CAPPlugin, CAPBridgedPlugin {
             call.reject("No shared container"); return
         }
         let art = call.getArray("art", String.self) ?? []
+        // Pictures the web app drew itself (Sky: a type's silhouette when there's no photo), base64 PNG by name.
+        let png = (call.getObject("png") ?? [:]).compactMapValues { ($0 as? String).flatMap { Data(base64Encoded: $0) } }
         DispatchQueue.global(qos: .utility).async {
             Self.copyArt(art, to: dir)
+            let artDir = dir.appendingPathComponent("art", isDirectory: true)
+            for (name, data) in png where name.range(of: "^[a-z0-9-]+$", options: .regularExpression) != nil {
+                try? data.write(to: artDir.appendingPathComponent(name + ".png"), options: .atomic)
+            }
             do {
                 try plan.data(using: .utf8)?.write(to: dir.appendingPathComponent("plan.json"), options: .atomic)
             } catch { call.reject("Couldn't save the plan"); return }
