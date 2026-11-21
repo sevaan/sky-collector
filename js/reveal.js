@@ -5,15 +5,15 @@
 //  Everything scales with rarity (Legendary dims the sky, shockwave, held breath, slow flip, fanfare).
 // Waits use timers, not animation.finished, so a paused tab can never freeze the sequence.
 
-import { sfx, loadSfx } from './sfx.js?v=0.1.1850';
-import { audioCtx } from './audio-ctx.js?v=0.1.1850';
-import { TIER_INFO } from './rarity.js?v=0.1.1850';
-import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1850';
-import { applyBack } from './card-backs.js?v=0.1.1850';
-import { addStarfield } from './starfield.js?v=0.1.1850';
-import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1850';
-import { packPlan, packFoil, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1850'; /* the two-card pack opening (prototype, 2026-11-20) */
-import { tearJag } from './gift-pack.js?v=0.1.1850';
+import { sfx, loadSfx } from './sfx.js?v=0.1.1851';
+import { audioCtx } from './audio-ctx.js?v=0.1.1851';
+import { TIER_INFO } from './rarity.js?v=0.1.1851';
+import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1851';
+import { applyBack } from './card-backs.js?v=0.1.1851';
+import { addStarfield } from './starfield.js?v=0.1.1851';
+import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1851';
+import { packPlan, packFoil, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1851'; /* the two-card pack opening (prototype, 2026-11-20) */
+import { tearJag } from './gift-pack.js?v=0.1.1851';
 
 const FX = TIER_FX; /* one rarity table for every card moment (js/card-moment.js, 2026-11-11) */
 const NIGHT_MILESTONES = [3, 5, 10, 25, 50, 100, 200, 365], STAMP_MILESTONES = [5, 10, 25, 50, 100, 200, 300, 400];
@@ -465,6 +465,8 @@ function showNews(news, alive) {
   let list = lay();
   const fits = () => { const w = box.clientWidth, last = els.at(-1); return !w || !last || last.offsetLeft + last.offsetWidth <= w - 28; };
   while (!fits() && shown.length) { rest = [shown.pop(), ...rest]; list = lay(); }
+  /* still too wide (the two-card pager on a 320 px screen, playtest 2026-11-21: "+1 MO"): just the count */
+  if (!fits() && rest.length && els.length) { const c = els.at(-1); c.firstChild && (c.firstChild.textContent = `+${rest.length}`); c.setAttribute('aria-label', `${rest.length} more`); }
   list.forEach((n, i) => setTimeout(() => {
     if (!alive()) return;
     const c = els[i]; if (!c?.isConnected) return;

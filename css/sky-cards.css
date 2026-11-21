@@ -853,3 +853,13 @@ body.sky-only .tc .art .ob-moon { display:none; } /* When to look up: no Moon in
 #reveal .dk-track > .dk-front.dk-pass { transform:translateY(var(--lp-dy, 0px)) scale(var(--lpk, 1)) rotate(7.5deg); }
 /* The Collection's card view (cards-page.js #slot): the pass a little bigger and tilted, as when it comes forward in the reveal */
 #slot .card--flight > .fc--land { transform:rotate(7.5deg) scale(1.12); transform-origin:50% 50%; }
+/* the swipe-teaching nudge for a pass behind the card keeps its end showing (playtest 2026-11-21: Space's dkPeek replaced
+   the pass's lift, so it sank behind the card for a second and snapped back) */
+@keyframes dkPeekPass { 0%, 100% { transform:translateY(calc(var(--cf) * -4.9)); } 35% { transform:translate(10px, calc(var(--cf) * -4.9 - 10px)) rotate(1.5deg); } }
+#reveal.two .dk-track > .dk-back.dk-pass.nudge { animation:dkPeekPass .9s cubic-bezier(.3,.7,.3,1); }
+#reveal .dk-track > .dk-front.dk-pass.nudge { animation:none; }
+/* playtest 2026-11-21: the pass's photo credit wraps instead of being cut off; the Collection tile's count coin sits on the
+   stub, not on the photo; the route map's line under the distance wraps on narrow screens instead of cutting off */
+.lp-ph .fc-credit { white-space:normal; overflow:visible; text-overflow:clip; max-width:calc(100% - 1em); line-height:1.2; }
+.lp-in .sct-lvl { position:absolute; top:.7em; right:.7em; left:auto; }
+html.sky-cards #sat-card.rm-card .rm-sub { white-space:normal; overflow:visible; }

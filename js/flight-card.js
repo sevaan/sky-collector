@@ -9,22 +9,22 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { regularFor, clockText } from './sky-regulars.js?v=0.1.1850';
-import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js?v=0.1.1850';
-import { flightFact } from './flight-facts.js?v=0.1.1850';
-import { typePhoto } from './type-photos.js?v=0.1.1850';
-import { housePhoto } from './house-photos.js?v=0.1.1850';
-import { gapPhoto } from './gap-photos.js?v=0.1.1850'; /* the types that had no photo (2026-11-18) */
-import { airlinePhoto } from './airline-photos.js?v=0.1.1850';
-import { airlineLogo } from './airline-logos.js?v=0.1.1850';
-import { fitStyle } from './photo-fit.js?v=0.1.1850';
-import { dist, speed, useMiles } from './units.js?v=0.1.1850';
-import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1850';
-import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1850';
-import { typeFact } from './sky-facts.js?v=0.1.1850';
-import { localText } from './localize.js?v=0.1.1850';
-import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1850';
-import { qrEncode, qrSvg } from './qr.js?v=0.1.1850';
+import { regularFor, clockText } from './sky-regulars.js?v=0.1.1851';
+import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js?v=0.1.1851';
+import { flightFact } from './flight-facts.js?v=0.1.1851';
+import { typePhoto } from './type-photos.js?v=0.1.1851';
+import { housePhoto } from './house-photos.js?v=0.1.1851';
+import { gapPhoto } from './gap-photos.js?v=0.1.1851'; /* the types that had no photo (2026-11-18) */
+import { airlinePhoto } from './airline-photos.js?v=0.1.1851';
+import { airlineLogo } from './airline-logos.js?v=0.1.1851';
+import { fitStyle } from './photo-fit.js?v=0.1.1851';
+import { dist, speed, useMiles } from './units.js?v=0.1.1851';
+import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1851';
+import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1851';
+import { typeFact } from './sky-facts.js?v=0.1.1851';
+import { localText } from './localize.js?v=0.1.1851';
+import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1851';
+import { qrEncode, qrSvg } from './qr.js?v=0.1.1851';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // A type name escaped, with its hyphenated model codes kept on one line ('Boeing KC-135R Stratotanker' broke after 'KC-').
@@ -202,7 +202,7 @@ export function flightCardHtml(f, opts = {}) {
   const inner = `<div class="lp-turn"><div class="lp"><div class="lp-paper">
     <div class="lp-main">
       <div class="lp-hd">${passMark(f, 'lp-logo', 'lp-wm')}<div class="lp-k">BOARDING PASS<b>${esc(f.callsign || '—')}</b></div></div>
-      <div class="fc-pic lp-ph${ph ? '' : ' fc-pic--sky'}">${art}${tierPill(f.tier)}<span class="fc-set">${esc(String(f.setName ?? f.set ?? '').toUpperCase())}</span>${reg}${opts.shrunk ? miniMedal(lvl, si?.count ?? 0) : ''}</div>
+      <div class="fc-pic lp-ph${ph ? '' : ' fc-pic--sky'}">${art}${tierPill(f.tier)}<span class="fc-set">${esc(String(f.setName ?? f.set ?? '').toUpperCase())}</span>${reg}</div>
       <div class="lp-info">
         <div class="lp-codes"><div><b>${esc(code(f.from))}</b><small>${esc(f.from.city)}</small></div><div class="lp-mid">${jet('lp-jet')}</div><div class="lp-to"><b>${esc(code(f.to))}</b><small>${esc(f.to.city)}</small></div></div>
         <div class="lp-fields">${field('DISTANCE', d.v, d.u)}${field('IN THE AIR', airLine(f.air))}${field('CAUGHT AT', feet(opts.heightFt), 'ft')}</div>
@@ -211,7 +211,7 @@ export function flightCardHtml(f, opts = {}) {
     </div>
     <div class="lp-perf"></div>
     <div class="lp-stub">
-      <div class="lp-in"><div><span class="lp-l">CAUGHT</span><b class="lp-v">${when ? timeOf(when) : 'NOT YET'}</b></div>${passQr()}<div class="lp-lv"><b>${esc(type || '—')}</b>SEEN ${esc(opts.sightings ?? 1)}×${lvl ? ` · <em class="bp-lvl bp-lvl--${lvl}">${levelWord(lvl)}</em>` : ''}${prog ? `<br>${prog}` : ''}</div></div>
+      <div class="lp-in">${opts.shrunk ? miniMedal(lvl, si?.count ?? 0) : ''}<div><span class="lp-l">CAUGHT</span><b class="lp-v">${when ? timeOf(when) : 'NOT YET'}</b></div>${passQr()}<div class="lp-lv"><b>${esc(type || '—')}</b>SEEN ${esc(opts.sightings ?? 1)}×${lvl ? ` · <em class="bp-lvl bp-lvl--${lvl}">${levelWord(lvl)}</em>` : ''}${prog ? `<br>${prog}` : ''}</div></div>
       <div class="lp-band"><div class="lp-band-in"><div class="lp-r1">${passMark(f, 'lp-blogo', 'lp-bwm')}<span class="lp-dt">${when ? dateLong(when) : ''}</span></div>
         <div class="lp-r2"><span class="lp-rt">${esc(code(f.from))}${jet('lp-jet')}${esc(code(f.to))}</span><span class="lp-fl">FLIGHT<b>${esc(f.callsign || '—')}</b></span></div></div></div>
     </div>
@@ -264,7 +264,7 @@ function specCells(p, si, last, type) {
   const s = typeSpecs(type);
   if (s) return s.cells.map(([l, v, u]) => (l === 'Range' && u === 'km' && useMiles() ? [l, dist(Number(v.replace(/,/g, ''))).v, 'mi'] : [l, v, u]));
   const cat = last?.cat || (/^P:UNKNOWN-(\w+)$/.exec(p.key ?? '') || [])[1] || '';
-  return [SIZE_WORD[cat] ? ['Size', SIZE_WORD[cat]] : null, si?.count ? ['Aircraft', String(si.count)] : null,
+  return [SIZE_WORD[cat] && cat !== 'A7' ? ['Size', SIZE_WORD[cat]] : null, /* not 'Rotorcraft' on a helicopter's card: it says so already, and the word ran out of its cell (playtest 2026-11-21) */ si?.count ? ['Aircraft', String(si.count)] : null,
     si?.liveryCount ? ['Operators', String(si.liveryCount)] : null, (si?.days ?? 0) > 1 ? ['Days seen', String(si.days)] : null].filter(Boolean);
 }
 
