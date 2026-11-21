@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Landscape Boarding Pass</title>
+<!-- Design spike, 2026-11-21. Sevaan: "make the boarding pass landscape. Its width would match the height of the playing card,
+     but it would be skinnier, like a boarding pass rectangle. And the player could just turn their phone sideways to look at it."
+     The pass is 42em x 16em (2.625 : 1), the plane card 28em x 42em, so the pass's long side equals the card's height at the
+     same unit. Nothing here is app code; open via the dev server so the ../../ asset paths resolve. -->
+<style>
+@font-face { font-family:'SC Display'; src:url('../../fonts/RussoOne-Regular.woff2') format('woff2'); font-weight:400; }
+@font-face { font-family:'SC Label'; src:url('../../fonts/BarlowCondensed-Medium.woff2') format('woff2'); font-weight:500; }
+:root { --navy:#0d2238; --ink:#13283d; --ink2:#1b3047; --muted:#4a6178; --cream:#fffdf6; --pass:#fbf9f2; --red:#b42a20; --gold:#b8892a;
+  --sky1:#8fc0e8; --sky2:#cfe3f4; --sky3:#eef5fb; --bg:#e6eef5; }
+* { box-sizing:border-box; }
+html, body { margin:0; background:var(--bg); color:var(--navy); font:16px/1.45 -apple-system, system-ui, sans-serif; }
+.doc { max-width:1180px; margin:0 auto; padding:40px 24px 80px; }
+.doc h1 { font:400 34px/1.1 'SC Display',sans-serif; margin:0 0 8px; }
+.doc h2 { font:400 22px/1.2 'SC Display',sans-serif; margin:56px 0 6px; }
+.doc p.lede, .doc p.note { max-width:760px; color:#33495f; margin:6px 0 18px; }
+.eyebrow { font:500 13px/1 'SC Label',sans-serif; letter-spacing:.2em; color:var(--muted); margin-bottom:10px; }
+.row { display:flex; flex-wrap:wrap; gap:36px; align-items:flex-start; }
+.cap { font:500 14px/1.3 'SC Label',sans-serif; letter-spacing:.12em; color:var(--muted); margin-top:12px; max-width:375px; }
+.cap b { color:var(--navy); font-weight:500; }
+.flatwrap { padding:22px; background:linear-gradient(180deg,#dcebf7,#eef5fb); border-radius:14px; display:inline-block; }
+
+/* ===================== The landscape pass ===================== */
+.bp { --stub:10.4em; --cut:1em; position:relative; width:42em; height:16em; color:var(--ink); }
+.bp-sh { filter:drop-shadow(0 .1em .12em rgba(13,34,56,.18)) drop-shadow(0 .6em .9em rgba(13,34,56,.13)); }
+.bp-paper { position:absolute; inset:0; border-radius:.7em; overflow:hidden;
+  background:
+    linear-gradient(94deg, transparent 47%, rgba(13,34,56,.04) 49.6%, rgba(255,255,255,.6) 50.4%, transparent 53%),
+    radial-gradient(40% 70% at 100% 100%, rgba(255,255,255,.55), transparent 70%),
+    radial-gradient(95% 130% at 45% 50%, transparent 62%, rgba(140,112,60,.1) 100%),
+    var(--pass);
+  /* half-circle notches cut through, top and bottom, on the tear line */
+  -webkit-mask:radial-gradient(circle at calc(100% - var(--stub)) 0, #0000 var(--cut), #000 calc(var(--cut) + .05em)) top / 100% 51% no-repeat,
+               radial-gradient(circle at calc(100% - var(--stub)) 100%, #0000 var(--cut), #000 calc(var(--cut) + .05em)) bottom / 100% 51% no-repeat;
+          mask:radial-gradient(circle at calc(100% - var(--stub)) 0, #0000 var(--cut), #000 calc(var(--cut) + .05em)) top / 100% 51% no-repeat,
+               radial-gradient(circle at calc(100% - var(--stub)) 100%, #0000 var(--cut), #000 calc(var(--cut) + .05em)) bottom / 100% 51% no-repeat; }
+.bp-paper::after { content:''; position:absolute; inset:0; z-index:5; pointer-events:none;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .28 0 0 0 0 .2 0 0 0 .42 -.12'/%3E%3C/filter%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.55 .012' numOctaves='2' seed='9'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .4 0 0 0 0 .3 0 0 0 .5 -.22'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23f%29'/%3E%3Crect width='100%25' height='100%25' filter='url%28%23g%29'/%3E%3C/svg%3E") 0 0 / 16em 16em;
+  mix-blend-mode:multiply; opacity:.7; }
+.bp-perf { position:absolute; top:var(--cut); bottom:var(--cut); right:var(--stub); width:0; border-left:.14em dashed rgba(13,34,56,.35); z-index:2; }
+.bp-main { position:absolute; left:0; top:0; bottom:0; right:var(--stub); }
+.bp-stub { position:absolute; right:0; top:0; bottom:0; width:var(--stub); }
+
+/* shared printed bits */
+.lbl { display:block; font:500 .74em/1.1 'SC Label',sans-serif; letter-spacing:.16em; color:var(--muted); white-space:nowrap; text-transform:uppercase; }
+.val { display:block; font:400 1.22em/1.15 'SC Display',sans-serif; color:var(--ink); white-space:nowrap; }
+.val small { font:500 .62em 'SC Label',sans-serif; letter-spacing:.06em; color:var(--muted); margin-left:.1em; }
+.logo { display:block; height:2em; width:auto; }
+.ph { position:relative; overflow:hidden; border-radius:.4em; background:#3f84d6; }
+.ph img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
+.ph img.bg { filter:blur(.5em) saturate(1.1); transform:scale(1.25); }
+.ph img.fg { object-fit:contain; }
+.credit { position:absolute; z-index:3; right:.45em; bottom:.4em; padding:.18em .45em; border-radius:.3em; background:rgba(13,34,56,.66); color:#fff; font:600 .56em/1.15 'SC Label',sans-serif; letter-spacing:.04em; white-space:nowrap; }
+.tier { position:absolute; z-index:3; left:.55em; top:.55em; display:flex; align-items:center; gap:.4em; padding:.28em .6em .26em .45em; border-radius:.45em;
+  background:rgba(255,253,246,.95); border:.09em solid var(--t); color:var(--ti); box-shadow:0 .15em .4em rgba(13,34,56,.2); font:600 .74em/1 'SC Label',sans-serif; letter-spacing:.16em; }
+.tier i { font-style:normal; color:var(--t); }
+.t-common { --t:#6b7f93; --ti:#3d5266; } .t-uncommon { --t:#1f7a50; --ti:#18693f; } .t-rare { --t:#2a64c0; --ti:#1a52a6; }
+.set { position:absolute; z-index:3; right:.55em; top:.55em; padding:.34em .55em .3em; border-radius:.4em; background:rgba(13,34,56,.8); color:#fffdf6; font:600 .66em/1 'SC Label',sans-serif; letter-spacing:.18em; }
+.jet { display:block; fill:var(--red); }
+.fact { margin:0; border-left:.2em solid var(--red); padding:.05em 0 .05em .6em; font:400 .8em/1.35 Georgia,'Times New Roman',serif; color:var(--ink2); overflow:hidden; }
+.fact b { color:var(--ink); }
+.when { font:500 .8em/1.3 'SC Label',sans-serif; letter-spacing:.13em; color:var(--ink2); white-space:nowrap; }
+.when b { font-weight:500; color:var(--red); }
+.when .prog { color:var(--muted); font-size:.92em; }
+.bars { display:flex; align-items:stretch; }
+.bars i { display:block; background:var(--ink); }
+.aztec { display:block; }
+.aztec rect { fill:var(--ink); }
+
+/* ---- L1: photo on the left, details to its right, Aztec code on the stub ---- */
+.L1 .hd { position:absolute; left:0; right:0; top:0; height:3.3em; display:flex; align-items:center; justify-content:space-between; padding:0 1em 0 1.05em; border-bottom:.22em solid var(--red); }
+.L1 .hd .k { text-align:right; font:500 .74em/1.1 'SC Label',sans-serif; letter-spacing:.18em; color:var(--muted); }
+.L1 .hd .k b { display:block; font:400 1.75em/1.05 'SC Display',sans-serif; letter-spacing:.02em; color:var(--ink); }
+.L1 .ph { position:absolute; left:.85em; top:4.05em; bottom:.85em; width:13.4em; }
+.L1 .info { position:absolute; left:15.05em; right:1em; top:3.85em; bottom:.75em; display:flex; flex-direction:column; }
+.L1 .codes { display:grid; grid-template-columns:auto 1fr auto; align-items:end; column-gap:.4em; }
+.L1 .codes b { display:block; font:400 3em/.95 'SC Display',sans-serif; letter-spacing:-.02em; color:var(--ink); }
+.L1 .codes small { display:block; font:500 .78em/1.1 'SC Label',sans-serif; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin-top:.15em; }
+.L1 .codes .to { text-align:right; }
+.L1 .codes .mid { align-self:center; display:flex; align-items:center; gap:.3em; padding-bottom:1em; }
+.L1 .codes .mid::before, .L1 .codes .mid::after { content:''; flex:1; border-top:.12em dashed rgba(180,42,32,.55); }
+.L1 .codes .jet { width:1.6em; height:1.6em; transform:rotate(90deg); }
+.L1 .fields { display:grid; grid-template-columns:repeat(3,auto); justify-content:space-between; margin-top:.55em; padding-top:.45em; border-top:.08em solid rgba(13,34,56,.18); }
+.L1 .fields .val { font-size:1.15em; }
+.L1 .fact { margin-top:auto; font-size:.74em; }
+.L1 .stub-hd { position:absolute; left:0; right:0; top:0; height:3.3em; border-bottom:.22em solid var(--red); padding:0 .9em 0 1.15em; display:flex; flex-direction:column; justify-content:center; }
+.L1 .stub-hd .lbl { font-size:.62em; }
+.L1 .stub-hd b { font:400 1.15em/1.1 'SC Display',sans-serif; color:var(--ink); letter-spacing:.02em; }
+.L1 .stub-body { position:absolute; left:1.15em; right:.9em; top:3.95em; bottom:.85em; display:flex; flex-direction:column; }
+.L1 .stub-rt { font:400 1.1em/1 'SC Display',sans-serif; color:var(--ink); display:flex; align-items:center; gap:.3em; }
+.L1 .stub-rt svg { width:.85em; height:.85em; transform:rotate(90deg); }
+.L1 .stub .when { margin-top:.6em; font-size:.66em; line-height:1.32; }
+.L1 .stub-ft { margin-top:auto; display:flex; align-items:flex-end; justify-content:space-between; }
+.L1 .stub .aztec { width:4.4em; height:4.4em; }
+.L1 .stub .seat { text-align:right; }
+.L1 .stub .seat .val { font-size:1.05em; }
+
+/* ---- L2: photo band across the top, codes and details below, vertical barcode on the stub ---- */
+.L2 .hd { position:absolute; left:0; right:0; top:0; height:2.75em; display:flex; align-items:center; gap:.8em; padding:0 1em 0 1.05em; }
+.L2 .hd .logo { height:1.7em; }
+.L2 .hd .k { margin-left:auto; font:500 .74em/1 'SC Label',sans-serif; letter-spacing:.18em; color:var(--muted); white-space:nowrap; }
+.L2 .hd .k b { font:400 1.6em/1 'SC Display',sans-serif; letter-spacing:.02em; color:var(--ink); margin-left:.35em; vertical-align:-.08em; }
+.L2 .ph { position:absolute; left:.8em; right:.9em; top:2.75em; height:5.5em; border-top:.22em solid var(--red); border-radius:0 0 .4em .4em; }
+.L2 .ph img.bg { transform-origin:0 0; transform:scale(3.2); filter:blur(.3em); } /* the photo's own top-left sky, stretched behind */
+.L2 .ph img.fg { left:50%; right:auto; width:auto; height:150%; top:-22%; transform:translateX(-50%); aspect-ratio:16/9; object-fit:cover;
+  -webkit-mask:linear-gradient(90deg,#0000,#000 14%,#000 86%,#0000); mask:linear-gradient(90deg,#0000,#000 14%,#000 86%,#0000); }
+.L2 .ph .tier { top:auto; bottom:.5em; }
+.L2 .low { position:absolute; left:1.05em; right:1em; top:8.85em; bottom:.75em; display:flex; flex-direction:column; }
+.L2 .r1 { display:flex; align-items:flex-end; gap:1.1em; }
+.L2 .codes { display:flex; align-items:flex-end; gap:.45em; }
+.L2 .codes b { display:block; font:400 2.85em/.95 'SC Display',sans-serif; letter-spacing:-.02em; color:var(--ink); }
+.L2 .codes small { display:block; font:500 .74em/1.1 'SC Label',sans-serif; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin-top:.15em; }
+.L2 .codes .jet { width:1.5em; height:1.5em; transform:rotate(90deg); margin-bottom:1.25em; }
+.L2 .fields { flex:1; display:grid; grid-template-columns:repeat(3,auto); justify-content:space-between; padding-left:1em; border-left:.08em solid rgba(13,34,56,.18); padding-bottom:.2em; }
+.L2 .fields .val { font-size:1.12em; }
+.L2 .fact { margin-top:auto; font-size:.72em; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+.L2 .stub { padding:.95em 3.6em .9em 1.15em; display:flex; flex-direction:column; }
+.L2 .stub .lbl { font-size:.62em; }
+.L2 .stub .fl { font:400 1.25em/1.1 'SC Display',sans-serif; color:var(--ink); }
+.L2 .stub .rt { font:400 1em/1.2 'SC Display',sans-serif; color:var(--ink); margin-top:.35em; display:flex; align-items:center; gap:.25em; }
+.L2 .stub .rt svg { width:.8em; height:.8em; transform:rotate(90deg); }
+.L2 .stub .when { margin-top:.75em; font-size:.66em; line-height:1.32; }
+.L2 .stub .seat { margin-top:auto; } .L2 .stub .seat .val { font-size:1.05em; }
+.L2 .stub .vbars { position:absolute; right:.85em; top:1em; bottom:1em; width:2.3em; display:flex; flex-direction:column; }
+.L2 .stub .vbars i { display:block; background:var(--ink); }
+
+/* ---- Mini pass for the Collection (same paper and cut, fewer words) ---- */
+.bpm { --stub:9.4em; --cut:1.1em; }
+.bpm .hd { position:absolute; left:0; right:0; top:0; height:3.6em; display:flex; align-items:center; justify-content:space-between; padding:0 1.1em; border-bottom:.3em solid var(--red); }
+.bpm .hd .logo { height:2.1em; max-width:17em; object-fit:contain; object-position:left center; }
+.bpm .hd .k { font:400 1.9em/1 'SC Display',sans-serif; color:var(--ink); }
+.bpm .ph { position:absolute; left:1em; top:4.5em; bottom:1em; width:14.5em; }
+.bpm .ph .tier { font-size:1em; }
+.bpm .cd { position:absolute; left:16.6em; right:1.1em; top:4.6em; display:flex; justify-content:space-between; align-items:flex-start; }
+.bpm .cd b { display:block; font:400 3.05em/.95 'SC Display',sans-serif; letter-spacing:-.02em; color:var(--ink); }
+.bpm .cd small { display:block; font:500 1.15em/1.1 'SC Label',sans-serif; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-top:.2em; }
+.bpm .cd .to { text-align:right; }
+.bpm .cd .jet { flex:none; width:1.8em; height:1.8em; transform:rotate(90deg); margin-top:.7em; }
+.bpm .ty { position:absolute; left:16.6em; bottom:1.05em; font:500 1.2em/1 'SC Label',sans-serif; letter-spacing:.14em; color:var(--muted); }
+.bpm .ty b { font:400 1.15em 'SC Display',sans-serif; color:var(--ink); letter-spacing:.02em; margin-left:.25em; }
+.bpm .stub .d { position:absolute; left:1.3em; right:.9em; top:1.1em; font:500 1.2em/1.25 'SC Label',sans-serif; letter-spacing:.12em; color:var(--muted); }
+.bpm .stub .d b { display:block; font:400 1.25em/1.1 'SC Display',sans-serif; color:var(--red); letter-spacing:.02em; }
+.bpm .stub .aztec { position:absolute; left:1.3em; bottom:1.1em; width:6.4em; height:6.4em; }
+.bpm.tiny .ty, .bpm.tiny .stub .d span, .bpm.tiny .cd small { display:none; }
+.bpm.tiny .cd { top:5.4em; } .bpm.tiny .cd b { font-size:3.15em; } .bpm.tiny .cd .jet { margin-top:1.1em; width:2em; height:2em; }
+.bpm.tiny .ph .tier { display:none; }
+.bpm.tiny .ph .dot { position:absolute; z-index:3; left:.9em; top:.9em; width:2.2em; height:2.2em; border-radius:50%; background:var(--t); border:.4em solid var(--cream); }
+
+/* rotated holders: a 16em x 42em box holding the pass turned 90 degrees clockwise (reads top to bottom) */
+.rot { position:relative; width:16em; height:42em; }
+.rot > .bp { position:absolute; left:0; top:0; transform-origin:0 0; transform:translateX(16em) rotate(90deg); }
+
+/* ===================== Phone frames ===================== */
+.phone { position:relative; width:375px; height:812px; border-radius:46px; overflow:hidden; background:linear-gradient(180deg,var(--sky1) 0%, #b4d5f0 28%, var(--sky2) 48%, var(--sky3) 78%, #f4f8fc 100%);
+  box-shadow:0 0 0 7px #10161d, 0 0 0 8px #3a434d; flex:none; }
+.phone.land { width:812px; height:375px; background:linear-gradient(180deg,var(--sky1) 0%, #b9d8f1 45%, var(--sky3) 100%); }
+.shot { padding:9px; display:inline-block; }
+.status { position:absolute; left:0; right:0; top:0; height:50px; display:flex; justify-content:space-between; align-items:center; padding:6px 30px 0 34px; font:600 16px/1 -apple-system,system-ui,sans-serif; color:var(--navy); z-index:20; }
+.island { position:absolute; left:50%; top:11px; width:122px; height:35px; margin-left:-61px; border-radius:20px; background:#05080b; z-index:21; }
+.land .island { left:11px; top:50%; width:35px; height:122px; margin:-61px 0 0; }
+.homebar { position:absolute; left:50%; bottom:8px; width:134px; height:5px; margin-left:-67px; border-radius:3px; background:rgba(13,34,56,.75); z-index:21; }
+.land .homebar { bottom:6px; }
+.topbar { position:absolute; left:22px; right:22px; top:62px; display:flex; align-items:center; justify-content:space-between; font:500 16px/1 'SC Label',sans-serif; letter-spacing:.2em; color:var(--navy); z-index:15; }
+.topbar .xp { color:var(--red); }
+.topbar .ic { display:flex; gap:22px; }
+.topbar svg { width:26px; height:26px; stroke:var(--navy); fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+.chips { position:absolute; left:16px; top:96px; display:flex; gap:8px; z-index:15; }
+.seg { display:flex; border-radius:20px; border:1.5px solid var(--navy); overflow:hidden; font:500 14px/1 'SC Label',sans-serif; letter-spacing:.14em; }
+.seg span { padding:9px 12px 8px; background:var(--cream); color:var(--navy); white-space:nowrap; }
+.seg span.on { background:var(--navy); color:var(--cream); }
+.seg em { font-style:normal; color:var(--red); }
+.seg span.on em { color:#ff8d82; }
+.chip { padding:9px 12px 8px; border-radius:20px; background:rgba(255,253,246,.85); border:1.5px solid rgba(13,34,56,.15); font:500 14px/1 'SC Label',sans-serif; letter-spacing:.14em; color:var(--navy); white-space:nowrap; }
+.rank { position:absolute; left:36px; right:36px; bottom:84px; font:500 15px/1 'SC Label',sans-serif; letter-spacing:.24em; color:var(--navy); display:flex; justify-content:space-between; }
+.rank::after { content:''; position:absolute; left:0; right:0; top:24px; height:6px; border-radius:3px; background:linear-gradient(90deg,#d7362b,#e9a23b) 0 0 / 14% 100% no-repeat, rgba(13,34,56,.12); }
+.viewcol { position:absolute; left:0; right:0; bottom:36px; text-align:center; font:500 15px/1 'SC Label',sans-serif; letter-spacing:.24em; color:var(--navy); }
+.abs { position:absolute; }
+.cardimg { position:absolute; display:block; filter:drop-shadow(0 6px 14px rgba(13,34,56,.22)); }
+.cardimg img { display:block; width:100%; height:100%; }
+.dots { position:absolute; display:flex; gap:7px; z-index:15; }
+.dots i { width:7px; height:7px; border-radius:50%; background:rgba(13,34,56,.25); }
+.dots i.on { background:var(--navy); }
+.lbtn { position:absolute; width:40px; height:40px; border-radius:50%; background:rgba(255,253,246,.85); border:1.5px solid rgba(13,34,56,.15); display:grid; place-items:center; z-index:15; }
+.lbtn svg { width:20px; height:20px; stroke:var(--navy); fill:none; stroke-width:2.2; stroke-linecap:round; }
+.anno { position:absolute; z-index:30; font:500 12px/1.2 'SC Label',sans-serif; letter-spacing:.1em; color:var(--red); background:rgba(255,253,246,.92); padding:4px 7px; border-radius:6px; border:1px solid rgba(180,42,32,.35); white-space:nowrap; }
+
+/* Collection */
+.chdr { position:absolute; left:0; right:0; top:50px; height:56px; display:flex; align-items:center; justify-content:space-between; padding:0 18px; z-index:10; }
+.chdr .wm { font:400 21px/1 'SC Display',sans-serif; color:var(--navy); }
+.chdr .wm span { display:block; font:500 10px/1 'SC Label',sans-serif; letter-spacing:.2em; color:var(--muted); margin-top:4px; }
+.chdr .ib { width:38px; height:38px; border-radius:50%; background:rgba(255,253,246,.85); border:1.5px solid rgba(13,34,56,.15); }
+.ctabs { position:absolute; left:16px; right:16px; top:112px; display:flex; border-radius:22px; background:rgba(255,253,246,.7); border:1.5px solid rgba(13,34,56,.12); padding:3px; z-index:10; }
+.ctabs span { flex:1; text-align:center; padding:9px 0 8px; border-radius:18px; font:500 15px/1 'SC Label',sans-serif; letter-spacing:.16em; color:var(--muted); }
+.ctabs span.on { background:var(--navy); color:var(--cream); }
+.cmeta { position:absolute; left:18px; right:18px; top:166px; display:flex; justify-content:space-between; font:500 13px/1 'SC Label',sans-serif; letter-spacing:.16em; color:var(--muted); z-index:10; }
+.clist { position:absolute; left:16px; right:16px; top:192px; bottom:0; display:flex; flex-direction:column; gap:12px; overflow:hidden; }
+.cgrid { position:absolute; left:16px; right:16px; top:192px; bottom:0; display:grid; grid-template-columns:1fr 1fr; gap:12px 11px; align-content:start; overflow:hidden; }
+.cgroup { font:500 12px/1 'SC Label',sans-serif; letter-spacing:.18em; color:var(--muted); grid-column:1/-1; margin:4px 2px -2px; }
+.tabbar { position:absolute; left:0; right:0; bottom:0; height:84px; background:rgba(255,253,246,.94); border-top:1px solid rgba(13,34,56,.1); display:flex; justify-content:space-around; padding-top:12px; z-index:12; font:500 11px/1 'SC Label',sans-serif; letter-spacing:.14em; color:var(--muted); }
+.tabbar span { display:flex; flex-direction:column; align-items:center; gap:6px; }
+.tabbar span::before { content:''; width:24px; height:24px; border-radius:7px; background:rgba(13,34,56,.18); }
+.tabbar span.on { color:var(--navy); } .tabbar span.on::before { background:var(--red); }
+
+/* overview composite */
+#overview { background:var(--bg); padding:36px; width:max-content; }
+#overview h3 { font:400 20px/1 'SC Display',sans-serif; margin:0 0 14px; color:var(--navy); }
+#overview .ov-row { display:flex; gap:30px; align-items:flex-start; margin-bottom:34px; }
+#overview .ov-c { font:500 13px/1.25 'SC Label',sans-serif; letter-spacing:.12em; color:var(--muted); margin-top:10px; max-width:380px; }
+</style>
+</head>
+<body>
+<div class="doc" id="doc">
+  <div class="eyebrow">SKY COLLECTOR · DESIGN SPIKE · 2026-11-21</div>
+  <h1>The boarding pass, landscape</h1>
+  <p class="lede">The pass becomes a real boarding-pass rectangle: 42em wide (the plane card's height) by 16em tall, 2.625&nbsp;:&nbsp;1. Same paper as today's pass: warm stock, grain and fibres, a red airline rule, a dashed tear line with notches cut through, and the stub on the right end. Everything below is drawn at true proportions with the real fonts, logo and photo. The plane card in the phone frames is a screenshot of the real card.</p>
+
+  <h2>1 · Two layouts</h2>
+  <p class="note"><b>L1</b>: photo on the left, the route and numbers to its right, an Aztec code (the 2D code real passes carry) on the stub. <b>L2</b>: the photo as a wide band across the top, route and numbers in one row under it, a barcode running down the stub.</p>
+  <div class="row" id="flats"></div>
+
+  <h2>2 · The two-card reveal, portrait</h2>
+  <p class="note">The plane card in front at its usual size (300 px wide on a 375 px phone). Two ways to stand the pass behind it, then the pass brought forward.</p>
+  <div class="row" id="reveal"></div>
+
+  <h2>3 · Turned sideways</h2>
+  <p class="note">Turn the phone and the pass fills the screen, the right way up, at about 1.6 times the size the plane card is drawn at.</p>
+  <div class="row" id="landrow"></div>
+
+  <h2>4 · Collection, Passes tab</h2>
+  <p class="note">Passes as tickets instead of the portrait grid: one per row reads like a stack of real passes; two per row fits twice as many on screen.</p>
+  <div class="row" id="coll"></div>
+</div>
+<div id="overview" hidden></div>
+
+<script type="module">
+const PAGE_VARIANT = new URLSearchParams(location.search).get('v') || 'L1';
+const A = '../../assets/';
+const JET = '<path d="M32 3c2.2 0 3.4 3 3.4 6.5V24l22.6 12.2v4.3L35.4 34v15.2l7.2 5.6v3.6L32 55.6l-10.6 2.8v-3.6l7.2-5.6V34L6 40.5v-4.3L28.6 24V9.5C28.6 6 29.8 3 32 3z"/>';
+const jet = (c = 'jet') => `<svg class="${c}" viewBox="0 0 64 64" aria-hidden="true">${JET}</svg>`;
+const TIER = { common: ['•', 'COMMON'], uncommon: ['▲', 'UNCOMMON'], rare: ['◆', 'RARE'] };
+const tier = (t) => `<span class="tier t-${t}"><i>${TIER[t][0]}</i>${TIER[t][1]}</span>`;
+
+const F = { cs: 'ACA412', icao: 'ACA', airline: 'Air Canada', from: ['YYZ', 'Toronto'], to: ['YUL', 'Montréal'], dist: ['315', 'mi'], air: '≈55 min', ft: '21,300', type: 'BCS3', typeName: 'A220-300',
+  tier: 'uncommon', set: 'HOME SKIES', photo: 'photos/airlines/ACA-BCS3.webp', credit: 'Photo: 4300streetcar, CC BY 4.0',
+  fact: 'Air Canada’s planes since 2017 are white with a black belly, a red maple leaf on the tail and a <b>black mask</b> around the cockpit windows.',
+  date: 'NOV 21, 2026', time: '11:56 AM', seen: 1, prog: '1 DAY · 4 MORE TO SILVER' };
+
+function hash(s) { let h = 2166136261; for (const c of String(s)) h = Math.imul(h ^ c.charCodeAt(0), 16777619) >>> 0; return () => (h = (Math.imul(h, 1103515245) + 12345) >>> 0); }
+function aztec(seed) { /* a compact-Aztec look: 19 x 19, bullseye in the middle, orientation marks, the rest from the seed */
+  const N = 19, c = 9, r = hash(seed); let s = '';
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
+    const d = Math.max(Math.abs(x - c), Math.abs(y - c)); let on;
+    if (d <= 4) on = d % 2 === 0;
+    else if (d === 5) on = (x === c - 5 && (y === c - 5 || y === c - 4)) || (y === c - 5 && x === c - 4) || (x === c + 5 && y === c - 5) || (x === c + 5 && y === c + 4) || (r() >>> 30) === 0;
+    else on = (r() >>> 31) === 1;
+    if (on) s += `<rect x="${x}" y="${y}" width="1.02" height="1.02"/>`;
+  }
+  return `<svg class="aztec" viewBox="0 0 ${N} ${N}" shape-rendering="crispEdges" aria-hidden="true">${s}</svg>`;
+}
+function vbars(seed, n) { const r = hash(seed); let s = ''; for (let i = 0; i < n; i++) { const v = r(); s += `<i style="height:${[.1, .1, .18, .28][v >>> 29 & 3]}em;margin-bottom:${[.08, .14, .2, .1][v >>> 26 & 3]}em"></i>`; } return `<span class="vbars">${s}</span>`; }
+
+const photo = (f, extra = '') => `<div class="ph"><img class="bg" src="${A}${f.photo}" alt=""><img class="fg" src="${A}${f.photo}" alt="">${tier(f.tier)}<span class="set">${f.set}</span><span class="credit">${f.credit}</span>${extra}</div>`;
+const fields = (f) => `<div class="fields"><div><span class="lbl">Distance</span><b class="val">${f.dist[0]}<small>${f.dist[1]}</small></b></div><div><span class="lbl">In the air</span><b class="val">${f.air}</b></div><div><span class="lbl">Caught at</span><b class="val">${f.ft}<small>ft</small></b></div></div>`;
+const shell = (cls, main, stub, em) => `<div class="bp bp-sh ${cls}" style="font-size:${em}px"><div class="bp-paper"><div class="bp-main">${main}</div><div class="bp-perf"></div><div class="bp-stub stub">${stub}</div></div></div>`;
+
+function L1(f, em) {
+  const main = `<div class="hd"><img class="logo" src="${A}logos/${f.icao}.webp" alt="${f.airline}"><div class="k">BOARDING PASS<b>${f.cs}</b></div></div>
+    ${photo(f)}
+    <div class="info"><div class="codes"><div><b>${f.from[0]}</b><small>${f.from[1]}</small></div><div class="mid">${jet()}</div><div class="to"><b>${f.to[0]}</b><small>${f.to[1]}</small></div></div>
+    ${fields(f)}<p class="fact">${f.fact}</p></div>`;
+  const stub = `<div class="stub-hd"><span class="lbl">FLIGHT</span><b>${f.cs}</b></div>
+    <div class="stub-body"><div class="stub-rt">${f.from[0]}${jet('jet')}${f.to[0]}</div>
+    <div class="when">CAUGHT <b>${f.date}</b><br>${f.time} · SEEN ${f.seen}×<br><span class="prog">${f.prog}</span></div>
+    <div class="stub-ft">${aztec(f.cs + f.date)}<div class="seat"><span class="lbl">Aircraft</span><b class="val">${f.type}</b></div></div></div>`;
+  return shell('L1', main, stub, em);
+}
+function L2(f, em) {
+  const main = `<div class="hd"><img class="logo" src="${A}logos/${f.icao}.webp" alt="${f.airline}"><div class="k">BOARDING PASS<b>${f.cs}</b></div></div>
+    ${photo(f)}
+    <div class="low"><div class="r1"><div class="codes"><div><b>${f.from[0]}</b><small>${f.from[1]}</small></div>${jet()}<div><b>${f.to[0]}</b><small>${f.to[1]}</small></div></div>${fields(f)}</div>
+    <p class="fact">${f.fact}</p></div>`;
+  const stub = `<span class="lbl">FLIGHT</span><b class="fl">${f.cs}</b><div class="rt">${f.from[0]}${jet('jet')}${f.to[0]}</div>
+    <div class="when">CAUGHT<br><b>${f.date}</b><br>${f.time} · SEEN ${f.seen}×<br><span class="prog">${f.prog.replace(' · ', '<br>')}</span></div><div class="seat"><span class="lbl">Aircraft</span><b class="val">${f.type}</b></div>${vbars(f.cs, 30)}`;
+  return shell('L2', main, stub, em);
+}
+const PASS = { L1, L2 };
+const rot = (html, em) => `<div class="rot" style="font-size:${em}px">${html}</div>`;
+
+/* the Collection's mini pass */
+function mini(f, em, tiny = false) {
+  const main = `<div class="hd"><img class="logo" src="${A}logos/${f.icao}.webp" alt="${f.airline}"><span class="k">${f.cs}</span></div>
+    <div class="ph"><img src="${A}${f.photo}" alt="">${tiny ? `<span class="dot t-${f.tier}"></span>` : tier(f.tier)}</div>
+    <div class="cd"><div><b>${f.from[0]}</b><small>${f.from[1]}</small></div>${jet()}<div class="to"><b>${f.to[0]}</b><small>${f.to[1]}</small></div></div>
+    <div class="ty">AIRCRAFT<b>${f.type}</b></div>`;
+  const stub = `<div class="d"><span>CAUGHT</span><b>${f.date.replace(', 2026', '')}</b></div>${aztec(f.cs + f.date)}`;
+  return `<div class="bp bp-sh bpm${tiny ? ' tiny' : ''}" style="font-size:${em}px"><div class="bp-paper"><div class="bp-main">${main}</div><div class="bp-perf"></div><div class="bp-stub stub">${stub}</div></div></div>`;
+}
+const COLL = [F,
+  { ...F, cs: 'WJA651', icao: 'WJA', airline: 'WestJet', from: ['YYC', 'Calgary'], to: ['YYZ', 'Toronto'], type: 'B38M', tier: 'common', photo: 'photos/airlines/WJA-B38M.webp', date: 'NOV 20, 2026' },
+  { ...F, cs: 'POE2271', icao: 'POE', airline: 'Porter', from: ['YTZ', 'Toronto'], to: ['YOW', 'Ottawa'], type: 'DH8D', tier: 'common', photo: 'photos/airlines/POE-DH8D.webp', date: 'NOV 19, 2026' },
+  { ...F, cs: 'KLM691', icao: 'KLM', airline: 'KLM', from: ['AMS', 'Amsterdam'], to: ['YYZ', 'Toronto'], type: 'B77W', tier: 'rare', photo: 'photos/airlines/KLM-B77W.webp', date: 'NOV 18, 2026' },
+  { ...F, cs: 'DAL1194', icao: 'DAL', airline: 'Delta', from: ['ATL', 'Atlanta'], to: ['YYZ', 'Toronto'], type: 'A321', tier: 'common', photo: 'photos/airlines/DAL-A321.webp', date: 'NOV 17, 2026' },
+  { ...F, cs: 'JZA8616', icao: 'JZA', airline: 'Jazz', from: ['YUL', 'Montréal'], to: ['YYZ', 'Toronto'], type: 'E75L', tier: 'common', photo: 'photos/airlines/JZA-E75L.webp', date: 'NOV 16, 2026' },
+  { ...F, cs: 'TSC722', icao: 'TSC', airline: 'Air Transat', from: ['YYZ', 'Toronto'], to: ['CUN', 'Cancún'], type: 'A332', tier: 'uncommon', photo: 'photos/airlines/TSC-A332.webp', date: 'NOV 15, 2026' },
+  { ...F, cs: 'UAL2402', icao: 'UAL', airline: 'United', from: ['ORD', 'Chicago'], to: ['YYZ', 'Toronto'], type: 'B738', tier: 'common', photo: 'photos/airlines/UAL-B738.webp', date: 'NOV 14, 2026' },
+  { ...F, cs: 'ACA897', icao: 'ACA', airline: 'Air Canada', from: ['YYZ', 'Toronto'], to: ['YVR', 'Vancouver'], type: 'B789', tier: 'uncommon', photo: 'photos/airlines/ACA-B789.webp', date: 'NOV 13, 2026' },
+  { ...F, cs: 'WJA1103', icao: 'WJA', airline: 'WestJet', from: ['YYZ', 'Toronto'], to: ['YHZ', 'Halifax'], type: 'B738', tier: 'common', photo: 'photos/airlines/WJA-B738.webp', date: 'NOV 12, 2026' },
+];
+
+/* ---------- phone chrome ---------- */
+const ICON = { share: '<svg viewBox="0 0 24 24"><path d="M12 15V3M7.5 7.5 12 3l4.5 4.5M5 11v9h14v-9"/></svg>', x: '<svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5 5 19"/></svg>' };
+const status = (land) => `<div class="island"></div>${land ? '' : '<div class="status"><span>11:56</span><span style="letter-spacing:.06em;font-size:14px">5G ▮</span></div>'}<div class="homebar"></div>`;
+const top = (front) => `<div class="topbar"><span>2 NEW CARDS <span class="xp">· +60 XP</span></span><span class="ic">${ICON.share}${ICON.x}</span></div>
+  <div class="chips"><div class="seg"><span class="${front === 'plane' ? 'on' : ''}">● PLANE · <em>NEW</em></span><span class="${front === 'flight' ? 'on' : ''}">○ FLIGHT · <em>NEW</em></span></div><span class="chip">WHEELS UP</span></div>`;
+const bottom = () => `<div class="rank"><span>SPOTTER</span><span>60 / 480</span></div><div class="viewcol">VIEW IN COLLECTION</div>`;
+/* the real plane card screenshot: 370 x 535.6 css px at --fc-u 11.8px, card itself 330.4 x 495.6 inset 20px */
+const card = (x, y, w, z = 10, extra = '') => { const s = w / 330.4; return `<div class="cardimg" style="left:${x - 20 * s}px;top:${y - 20 * s}px;width:${370 * s}px;height:${535.6 * s}px;z-index:${z};${extra}"><img src="shots/ref-plane-card.png" alt="Plane card"></div>`; };
+const frame = (id, inner, land = false) => `<div class="shot"><div class="phone${land ? ' land' : ''}" id="${id}">${inner}${status(land)}</div></div>`;
+
+/* ---------- render ---------- */
+const $ = (id) => document.getElementById(id);
+const V = PASS[PAGE_VARIANT];
+
+// 1. flats at full width (16 px em: 672 x 256)
+$('flats').innerHTML = ['L1', 'L2'].map((k) => `<div><div class="flatwrap" id="flat-${k}">${PASS[k](F, 16)}</div><div class="cap"><b>${k}</b> · 42 × 16em, drawn at 16 px/em (672 × 256 px)</div></div>`).join('');
+
+// card geometry on a 375 x 812 phone: 300 x 450, centred
+const CW = 300, CH = 450, CX = 37.5, em = CW / 28; // 10.714 px
+// (a) rotated, standing behind at the same height, peeking out to the right and a little above
+const a = (() => { const y = 196, pw = 16 * em; return frame('rev-a', `${top('plane')}
+  <div class="abs" style="left:${CX + CW - pw + 22}px;top:${y - 14}px;transform:rotate(2.2deg);transform-origin:50% 100%;z-index:5">${rot(V(F, em), em)}</div>
+  ${card(CX, y, CW)}${bottom()}`); })();
+// (b) flat behind, full phone width minus gutters, peeking above the card
+const b = (() => { const pw = 343, pem = pw / 42, ph = 16 * pem, y = 218; return frame('rev-b', `${top('plane')}
+  <div class="abs" style="left:16px;top:${y - 50}px;z-index:5">${V(F, pem)}</div>
+  ${card(CX, y, CW)}${bottom()}`); })();
+// (c) pass in front, portrait: sideways, tilted 4 degrees, brought forward over the card (no hint, 2026-11-21 Sevaan)
+const c = (() => { const L = 630, pem = L / 42, pw = 16 * pem, x = (375 - pw) / 2, y = 472 - L / 2; return frame('rev-c', `${top('flight')}
+  ${card(52, 205, 271, 4, 'opacity:.9;filter:drop-shadow(0 4px 10px rgba(13,34,56,.18)) saturate(.9)')}
+  <div class="abs" style="left:${x}px;top:${y}px;z-index:10;transform:rotate(-4deg);filter:drop-shadow(0 18px 26px rgba(13,34,56,.22))">${rot(V(F, pem), pem)}</div>`); })();
+// (c2) the same pass flat in front, portrait: what you get without rotating (for comparison)
+const c2 = (() => { const pw = 343, pem = pw / 42, y = 300; return frame('rev-c2', `${top('flight')}
+  ${card(CX, 230, CW, 4)}
+  <div class="abs" style="left:16px;top:${y}px;z-index:10">${V(F, pem)}</div>${bottom()}`); })();
+$('reveal').innerHTML = `<div>${a}<div class="cap"><b>A · Rotated behind.</b> The pass stands upright at the card's height, turned 90°; its top edge (the airline header) peeks out on the right.</div></div>
+  <div>${b}<div class="cap"><b>B · Flat behind.</b> The pass lies landscape, wider than the card (343 vs 300 px), its header peeking above: logo and BOARDING PASS read straight away.</div></div>
+  <div>${c}<div class="cap"><b>C · Pass in front, sideways.</b> Turned 90° and tilted 4° off vertical, brought forward: 630 px long (15 px/em vs the card's 10.7), bigger than the card behind it. No hint: it is already sideways, so you turn the phone.</div></div>
+  <div>${c2}<div class="cap"><b>C2 · Pass in front, flat.</b> For comparison: flat in portrait it's only 8.2 px/em, so its small labels are about 6 px. Readable at a glance, not up close.</div></div>`;
+
+// 3. landscape phone: 812 x 375, island on the left; pass 700 px wide (16.7 px/em)
+const land = (() => { const pw = 700, pem = pw / 42, ph = 16 * pem, x = (812 - pw) / 2 + 6, y = (375 - ph) / 2 + 4; return frame('land', `
+  <div class="abs" style="left:${x}px;top:${y}px">${V(F, pem)}</div>
+  <div class="seg abs" style="left:${x}px;top:14px;transform:scale(.86);transform-origin:0 0"><span>● PLANE</span><span class="on">○ FLIGHT · <em>NEW</em></span></div>
+  <div class="lbtn" style="right:52px;top:10px">${ICON.x.replace('viewBox', 'viewBox')}</div>
+  <div class="dots" style="left:50%;bottom:14px;margin-left:-11px"><i></i><i class="on"></i></div>`, true); })();
+$('landrow').innerHTML = `<div>${land}<div class="cap" style="max-width:812px"><b>Phone turned.</b> The pass at full size, 700 × 267 px, every word readable. Swipe sideways for the plane card (shown upright in landscape, scaled to the height); turn back for the two-card deck.</div></div>`;
+
+// 4. Collection, Passes tab
+const chead = (n) => `<div class="chdr"><span class="wm">SKY COLLECTOR<span>COLLECT WHAT FLIES OVER YOU</span></span><span class="ib"></span></div>
+  <div class="ctabs"><span>PLANES</span><span class="on">PASSES</span><span>SETS</span></div>
+  <div class="cmeta"><span>${n} PASSES · NEWEST FIRST</span><span>28 AIRPORTS</span></div>
+  <div class="tabbar"><span>SKY</span><span class="on">COLLECTION</span><span>MISSIONS</span><span>YOU</span></div>`;
+const c1 = frame('coll-1', `${chead(46)}<div class="clist">${COLL.slice(0, 5).map((f) => mini(f, 343 / 42)).join('')}</div>`);
+const c2g = frame('coll-2', `${chead(46)}<div class="cgrid"><div class="cgroup">THIS WEEK</div>${COLL.map((f, i) => mini(f, 166 / 42, true)).join('')}<div class="cgroup">LAST WEEK</div>${COLL.slice(2, 8).map((f) => mini(f, 166 / 42, true)).join('')}</div>`);
+$('coll').innerHTML = `<div>${c1}<div class="cap"><b>One per row.</b> 343 × 131 px, logo, flight, big codes, photo, rarity, type, date. Five on screen.</div></div>
+  <div>${c2g}<div class="cap"><b>Two per row.</b> 166 × 63 px tickets: logo, codes, photo, date; rarity as a dot. Ten to twelve on screen, the codes still read.</div></div>`;
+
+await Promise.all([...document.images].map((i) => i.complete ? 0 : new Promise((r) => { i.onload = i.onerror = r; })));
+await document.fonts.ready;
+document.documentElement.dataset.ready = '1';
+</script>
+</body>
+</html>

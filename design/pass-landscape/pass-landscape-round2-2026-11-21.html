@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shorter Boarding Pass</title>
+<!-- Design spike round 2, 2026-11-21. Sevaan after round 1: peek out the top of the card, centred (no side peek); brought
+     forward it turns the other way (-90deg, read from the right side of the screen) with a slight tilt and no enlarging; no
+     special view when the phone is turned; a shorter rectangle, about 2:1 and about 1.7:1, keeping L1's photo-left, stub-right
+     idea. The long side stays 42em (the plane card's height), so the pass gets taller rather than narrower: 42 x 21em and
+     42 x 24.7em. Nothing here is app code; open via the dev server so the ../../ asset paths resolve. -->
+<style>
+@font-face { font-family:'SC Display'; src:url('../../fonts/RussoOne-Regular.woff2') format('woff2'); font-weight:400; }
+@font-face { font-family:'SC Label'; src:url('../../fonts/BarlowCondensed-Medium.woff2') format('woff2'); font-weight:500; }
+:root { --navy:#0d2238; --ink:#13283d; --ink2:#1b3047; --muted:#4a6178; --cream:#fffdf6; --pass:#fbf9f2; --red:#b42a20; --gold:#b8892a;
+  --sky1:#8fc0e8; --sky2:#cfe3f4; --sky3:#eef5fb; --bg:#e6eef5; }
+* { box-sizing:border-box; }
+html, body { margin:0; background:var(--bg); color:var(--navy); font:16px/1.45 -apple-system, system-ui, sans-serif; }
+.doc { max-width:1180px; margin:0 auto; padding:40px 24px 80px; }
+.doc h1 { font:400 34px/1.1 'SC Display',sans-serif; margin:0 0 8px; }
+.doc h2 { font:400 22px/1.2 'SC Display',sans-serif; margin:56px 0 6px; }
+.doc p.lede, .doc p.note { max-width:760px; color:#33495f; margin:6px 0 18px; }
+.eyebrow { font:500 13px/1 'SC Label',sans-serif; letter-spacing:.2em; color:var(--muted); margin-bottom:10px; }
+.row { display:flex; flex-wrap:wrap; gap:36px; align-items:flex-start; }
+.cap { font:500 14px/1.3 'SC Label',sans-serif; letter-spacing:.12em; color:var(--muted); margin-top:12px; max-width:375px; }
+.cap b { color:var(--navy); font-weight:500; }
+.flatwrap { padding:22px; background:linear-gradient(180deg,#dcebf7,#eef5fb); border-radius:14px; display:inline-block; }
+
+/* ===================== The landscape pass ===================== */
+.bp { --stub:10.4em; --cut:1em; position:relative; width:42em; height:16em; color:var(--ink); }
+.bp-sh { filter:drop-shadow(0 .1em .12em rgba(13,34,56,.18)) drop-shadow(0 .6em .9em rgba(13,34,56,.13)); }
+.bp-paper { position:absolute; inset:0; border-radius:.7em; overflow:hidden;
+  background:
+    linear-gradient(94deg, transparent 47%, rgba(13,34,56,.04) 49.6%, rgba(255,255,255,.6) 50.4%, transparent 53%),
+    radial-gradient(40% 70% at 100% 100%, rgba(255,255,255,.55), transparent 70%),
+    radial-gradient(95% 130% at 45% 50%, transparent 62%, rgba(140,112,60,.1) 100%),
+    var(--pass);
+  /* half-circle notches cut through, top and bottom, on the tear line */
+  -webkit-mask:radial-gradient(circle at calc(100% - var(--stub)) 0, #0000 var(--cut), #000 calc(var(--cut) + .05em)) top / 100% 51% no-repeat,
+               radial-gradient(circle at calc(100% - var(--stub)) 100%, #0000 var(--cut), #000 calc(var(--cut) + .05em)) bottom / 100% 51% no-repeat;
+          mask:radial-gradient(circle at calc(100% - var(--stub)) 0, #0000 var(--cut), #000 calc(var(--cut) + .05em)) top / 100% 51% no-repeat,
+               radial-gradient(circle at calc(100% - var(--stub)) 100%, #0000 var(--cut), #000 calc(var(--cut) + .05em)) bottom / 100% 51% no-repeat; }
+.bp-paper::after { content:''; position:absolute; inset:0; z-index:5; pointer-events:none;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .28 0 0 0 0 .2 0 0 0 .42 -.12'/%3E%3C/filter%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.55 .012' numOctaves='2' seed='9'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .4 0 0 0 0 .3 0 0 0 .5 -.22'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23f%29'/%3E%3Crect width='100%25' height='100%25' filter='url%28%23g%29'/%3E%3C/svg%3E") 0 0 / 16em 16em;
+  mix-blend-mode:multiply; opacity:.7; }
+.bp-perf { position:absolute; top:var(--cut); bottom:var(--cut); right:var(--stub); width:0; border-left:.14em dashed rgba(13,34,56,.35); z-index:2; }
+.bp-main { position:absolute; left:0; top:0; bottom:0; right:var(--stub); }
+.bp-stub { position:absolute; right:0; top:0; bottom:0; width:var(--stub); }
+
+/* shared printed bits */
+.lbl { display:block; font:500 .74em/1.1 'SC Label',sans-serif; letter-spacing:.16em; color:var(--muted); white-space:nowrap; text-transform:uppercase; }
+.val { display:block; font:400 1.22em/1.15 'SC Display',sans-serif; color:var(--ink); white-space:nowrap; }
+.val small { font:500 .62em 'SC Label',sans-serif; letter-spacing:.06em; color:var(--muted); margin-left:.1em; }
+.logo { display:block; height:2em; width:auto; }
+.ph { position:relative; overflow:hidden; border-radius:.4em; background:#3f84d6; }
+.ph img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
+.ph img.bg { filter:blur(.5em) saturate(1.1); transform:scale(1.25); }
+.ph img.fg { object-fit:contain; }
+.credit { position:absolute; z-index:3; right:.45em; bottom:.4em; padding:.18em .45em; border-radius:.3em; background:rgba(13,34,56,.66); color:#fff; font:600 .56em/1.15 'SC Label',sans-serif; letter-spacing:.04em; white-space:nowrap; }
+.tier { position:absolute; z-index:3; left:.55em; top:.55em; display:flex; align-items:center; gap:.4em; padding:.28em .6em .26em .45em; border-radius:.45em;
+  background:rgba(255,253,246,.95); border:.09em solid var(--t); color:var(--ti); box-shadow:0 .15em .4em rgba(13,34,56,.2); font:600 .74em/1 'SC Label',sans-serif; letter-spacing:.16em; }
+.tier i { font-style:normal; color:var(--t); }
+.t-common { --t:#6b7f93; --ti:#3d5266; } .t-uncommon { --t:#1f7a50; --ti:#18693f; } .t-rare { --t:#2a64c0; --ti:#1a52a6; }
+.set { position:absolute; z-index:3; right:.55em; top:.55em; padding:.34em .55em .3em; border-radius:.4em; background:rgba(13,34,56,.8); color:#fffdf6; font:600 .66em/1 'SC Label',sans-serif; letter-spacing:.18em; }
+.jet { display:block; fill:var(--red); }
+.fact { margin:0; border-left:.2em solid var(--red); padding:.05em 0 .05em .6em; font:400 .8em/1.35 Georgia,'Times New Roman',serif; color:var(--ink2); overflow:hidden; }
+.fact b { color:var(--ink); }
+.when { font:500 .8em/1.3 'SC Label',sans-serif; letter-spacing:.13em; color:var(--ink2); white-space:nowrap; }
+.when b { font-weight:500; color:var(--red); }
+.when .prog { color:var(--muted); font-size:.92em; }
+.bars { display:flex; align-items:stretch; }
+.bars i { display:block; background:var(--ink); }
+.aztec { display:block; }
+.aztec rect { fill:var(--ink); }
+
+
+/* ===================== Phone frames ===================== */
+.phone { position:relative; width:375px; height:812px; border-radius:46px; overflow:hidden; background:linear-gradient(180deg,var(--sky1) 0%, #b4d5f0 28%, var(--sky2) 48%, var(--sky3) 78%, #f4f8fc 100%);
+  box-shadow:0 0 0 7px #10161d, 0 0 0 8px #3a434d; flex:none; }
+.phone.land { width:812px; height:375px; background:linear-gradient(180deg,var(--sky1) 0%, #b9d8f1 45%, var(--sky3) 100%); }
+.shot { padding:9px; display:inline-block; }
+.status { position:absolute; left:0; right:0; top:0; height:50px; display:flex; justify-content:space-between; align-items:center; padding:6px 30px 0 34px; font:600 16px/1 -apple-system,system-ui,sans-serif; color:var(--navy); z-index:20; }
+.island { position:absolute; left:50%; top:11px; width:122px; height:35px; margin-left:-61px; border-radius:20px; background:#05080b; z-index:21; }
+.land .island { left:11px; top:50%; width:35px; height:122px; margin:-61px 0 0; }
+.homebar { position:absolute; left:50%; bottom:8px; width:134px; height:5px; margin-left:-67px; border-radius:3px; background:rgba(13,34,56,.75); z-index:21; }
+.land .homebar { bottom:6px; }
+.topbar { position:absolute; left:22px; right:22px; top:62px; display:flex; align-items:center; justify-content:space-between; font:500 16px/1 'SC Label',sans-serif; letter-spacing:.2em; color:var(--navy); z-index:15; }
+.topbar .xp { color:var(--red); }
+.topbar .ic { display:flex; gap:22px; }
+.topbar svg { width:26px; height:26px; stroke:var(--navy); fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+.chips { position:absolute; left:16px; top:96px; display:flex; gap:8px; z-index:15; }
+.seg { display:flex; border-radius:20px; border:1.5px solid var(--navy); overflow:hidden; font:500 14px/1 'SC Label',sans-serif; letter-spacing:.14em; }
+.seg span { padding:9px 12px 8px; background:var(--cream); color:var(--navy); white-space:nowrap; }
+.seg span.on { background:var(--navy); color:var(--cream); }
+.seg em { font-style:normal; color:var(--red); }
+.seg span.on em { color:#ff8d82; }
+.chip { padding:9px 12px 8px; border-radius:20px; background:rgba(255,253,246,.85); border:1.5px solid rgba(13,34,56,.15); font:500 14px/1 'SC Label',sans-serif; letter-spacing:.14em; color:var(--navy); white-space:nowrap; }
+.rank { position:absolute; left:36px; right:36px; bottom:84px; font:500 15px/1 'SC Label',sans-serif; letter-spacing:.24em; color:var(--navy); display:flex; justify-content:space-between; }
+.rank::after { content:''; position:absolute; left:0; right:0; top:24px; height:6px; border-radius:3px; background:linear-gradient(90deg,#d7362b,#e9a23b) 0 0 / 14% 100% no-repeat, rgba(13,34,56,.12); }
+.viewcol { position:absolute; left:0; right:0; bottom:36px; text-align:center; font:500 15px/1 'SC Label',sans-serif; letter-spacing:.24em; color:var(--navy); }
+.abs { position:absolute; }
+.cardimg { position:absolute; display:block; filter:drop-shadow(0 6px 14px rgba(13,34,56,.22)); }
+.cardimg img { display:block; width:100%; height:100%; }
+.dots { position:absolute; display:flex; gap:7px; z-index:15; }
+.dots i { width:7px; height:7px; border-radius:50%; background:rgba(13,34,56,.25); }
+.dots i.on { background:var(--navy); }
+.lbtn { position:absolute; width:40px; height:40px; border-radius:50%; background:rgba(255,253,246,.85); border:1.5px solid rgba(13,34,56,.15); display:grid; place-items:center; z-index:15; }
+.lbtn svg { width:20px; height:20px; stroke:var(--navy); fill:none; stroke-width:2.2; stroke-linecap:round; }
+.anno { position:absolute; z-index:30; font:500 12px/1.2 'SC Label',sans-serif; letter-spacing:.1em; color:var(--red); background:rgba(255,253,246,.92); padding:4px 7px; border-radius:6px; border:1px solid rgba(180,42,32,.35); white-space:nowrap; }
+
+/* Collection */
+.chdr { position:absolute; left:0; right:0; top:50px; height:56px; display:flex; align-items:center; justify-content:space-between; padding:0 18px; z-index:10; }
+.chdr .wm { font:400 21px/1 'SC Display',sans-serif; color:var(--navy); }
+.chdr .wm span { display:block; font:500 10px/1 'SC Label',sans-serif; letter-spacing:.2em; color:var(--muted); margin-top:4px; }
+.chdr .ib { width:38px; height:38px; border-radius:50%; background:rgba(255,253,246,.85); border:1.5px solid rgba(13,34,56,.15); }
+.ctabs { position:absolute; left:16px; right:16px; top:112px; display:flex; border-radius:22px; background:rgba(255,253,246,.7); border:1.5px solid rgba(13,34,56,.12); padding:3px; z-index:10; }
+.ctabs span { flex:1; text-align:center; padding:9px 0 8px; border-radius:18px; font:500 15px/1 'SC Label',sans-serif; letter-spacing:.16em; color:var(--muted); }
+.ctabs span.on { background:var(--navy); color:var(--cream); }
+.cmeta { position:absolute; left:18px; right:18px; top:166px; display:flex; justify-content:space-between; font:500 13px/1 'SC Label',sans-serif; letter-spacing:.16em; color:var(--muted); z-index:10; }
+.clist { position:absolute; left:16px; right:16px; top:192px; bottom:0; display:flex; flex-direction:column; gap:12px; overflow:hidden; }
+.cgrid { position:absolute; left:16px; right:16px; top:192px; bottom:0; display:grid; grid-template-columns:1fr 1fr; gap:12px 11px; align-content:start; overflow:hidden; }
+.cgroup { font:500 12px/1 'SC Label',sans-serif; letter-spacing:.18em; color:var(--muted); grid-column:1/-1; margin:4px 2px -2px; }
+.tabbar { position:absolute; left:0; right:0; bottom:0; height:84px; background:rgba(255,253,246,.94); border-top:1px solid rgba(13,34,56,.1); display:flex; justify-content:space-around; padding-top:12px; z-index:12; font:500 11px/1 'SC Label',sans-serif; letter-spacing:.14em; color:var(--muted); }
+.tabbar span { display:flex; flex-direction:column; align-items:center; gap:6px; }
+.tabbar span::before { content:''; width:24px; height:24px; border-radius:7px; background:rgba(13,34,56,.18); }
+.tabbar span.on { color:var(--navy); } .tabbar span.on::before { background:var(--red); }
+
+/* overview composite */
+#overview { background:var(--bg); padding:36px; width:max-content; }
+#overview h3 { font:400 20px/1 'SC Display',sans-serif; margin:0 0 14px; color:var(--navy); }
+#overview .ov-row { display:flex; gap:30px; align-items:flex-start; margin-bottom:34px; }
+#overview .ov-c { font:500 13px/1.25 'SC Label',sans-serif; letter-spacing:.12em; color:var(--muted); margin-top:10px; max-width:380px; }
+/* ---- Round 2: L1 reworked for 2:1 and 1.7:1 ---- */
+.bp.r2 { height:21em; --phw:14.6em; --cd:2.85em; --fy:8.95em; }
+.bp.r17 { height:24.7em; --phw:18.2em; --cd:3.7em; --fy:9.6em; }
+.bp.L { --stub:10.6em; }
+.L .hd { position:absolute; left:0; right:0; top:0; height:3.6em; display:flex; align-items:center; justify-content:space-between; padding:0 1em 0 1.05em; border-bottom:.22em solid var(--red); }
+.L .hd .logo { height:2.15em; }
+.L .hd .k { text-align:right; font:500 .76em/1.1 'SC Label',sans-serif; letter-spacing:.18em; color:var(--muted); }
+.L .hd .k b { display:block; font:400 1.75em/1.05 'SC Display',sans-serif; letter-spacing:.02em; color:var(--ink); }
+.L .codes { position:absolute; left:1.05em; right:1em; top:4.15em; display:grid; grid-template-columns:auto 1fr auto; align-items:end; column-gap:.6em; }
+.L .codes .lbl { font-size:.66em; margin-bottom:.25em; }
+.L .codes b { display:block; font:400 var(--cd)/.95 'SC Display',sans-serif; letter-spacing:-.02em; color:var(--ink); }
+.L .codes small { display:block; font:500 .82em/1.1 'SC Label',sans-serif; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin-top:.18em; }
+.L .codes .to { text-align:right; }
+.L .codes .mid { align-self:center; display:flex; align-items:center; gap:.4em; padding-top:.6em; }
+.L .codes .mid::before, .L .codes .mid::after { content:''; flex:1; border-top:.12em dashed rgba(180,42,32,.55); }
+.L .codes .jet { width:1.8em; height:1.8em; transform:rotate(90deg); }
+.L .ph { position:absolute; left:.9em; bottom:.9em; width:var(--phw); aspect-ratio:16/9; }
+.L .ph .credit2 { position:absolute; z-index:3; right:.45em; bottom:.4em; padding:.18em .45em; border-radius:.3em; background:rgba(13,34,56,.66); color:#fff; font:600 .56em/1.15 'SC Label',sans-serif; letter-spacing:.04em; white-space:nowrap; }
+.L .info { position:absolute; left:calc(var(--phw) + 1.9em); right:1em; bottom:.8em; display:flex; flex-direction:column; }
+.L .fields { display:grid; gap:.55em .8em; }
+.L .fields .val { font-size:1.15em; }
+.L .fact { font-size:.76em; }
+/* both: a row of four details across the pass under the codes, the fact beside the photo */
+.r2 .info { top:calc(21em - .9em - var(--phw) * 9 / 16); }
+.r2 .fact { margin-top:auto; font-size:.74em; }
+.L .fields { position:absolute; left:1.05em; right:1em; top:var(--fy); grid-template-columns:repeat(4,auto); justify-content:space-between; padding-top:.55em; border-top:.08em solid rgba(13,34,56,.18); }
+.r17 .info { top:calc(24.7em - .9em - var(--phw) * 9 / 16); }
+.r17 .fact { font-size:.8em; margin-top:auto; }
+/* stub */
+.L .stub-hd { position:absolute; left:0; right:0; top:0; height:3.6em; border-bottom:.22em solid var(--red); padding:0 .9em 0 1.2em; display:flex; flex-direction:column; justify-content:center; }
+.L .stub-hd .lbl { font-size:.64em; }
+.L .stub-hd b { font:400 1.2em/1.1 'SC Display',sans-serif; color:var(--ink); letter-spacing:.02em; }
+.L .stub-body { position:absolute; left:1.2em; right:.95em; top:4.3em; bottom:.9em; display:flex; flex-direction:column; }
+.L .stub-rt { font:400 1.2em/1 'SC Display',sans-serif; color:var(--ink); display:flex; align-items:center; gap:.3em; }
+.L .stub-rt svg { width:.85em; height:.85em; transform:rotate(90deg); }
+.L .stub .when { margin-top:.7em; font-size:.7em; line-height:1.35; white-space:normal; }
+.L .stub .when .lvl { display:block; margin-top:.35em; }
+.L .stub .when .meter { display:block; height:.45em; border-radius:.25em; margin-top:.35em; background:linear-gradient(90deg,#c58a52,#e2b07d) 0 0 / 20% 100% no-repeat, rgba(13,34,56,.12); }
+.L .stub-ft { margin-top:auto; display:flex; flex-direction:column; gap:.6em; }
+.L .stub .aztec { width:5.4em; height:5.4em; }
+.r17 .stub .aztec { width:6.4em; height:6.4em; }
+.L .stub .seat .val { font-size:1.1em; }
+
+/* turned the other way: a W x H box holding the pass rotated -90deg (letter tops point left; read from the right side) */
+.rotl { position:relative; }
+.rotl > .bp { position:absolute; left:0; top:0; transform-origin:0 0; }
+</style>
+</head>
+<body>
+<div class="doc" id="doc">
+  <div class="eyebrow">SKY COLLECTOR · DESIGN SPIKE · ROUND 2 · 2026-11-21</div>
+  <h1>A shorter boarding pass</h1>
+  <p class="lede">Round 2 after Sevaan's notes: two shorter proportions of L1 (photo on the left, stub on the right). The long side stays 42em, the plane card's height, so the pass grows taller instead of narrower: <b>2 : 1</b> is 42 × 21em and <b>1.7 : 1</b> is 42 × 24.7em. Behind the card it peeks out the top, centred; brought forward it turns −90° (you read it from the right side of the screen) with a slight tilt, at the plane card's own scale. Turning the phone just shows that same screen the right way up.</p>
+  <h2>1 · The two proportions, flat</h2>
+  <div class="row" id="flats"></div>
+  <h2>2 · Behind the card, peeking out the top</h2>
+  <div class="row" id="behind"></div>
+  <h2>3 · Brought forward, turned −90°</h2>
+  <div class="row" id="front"></div>
+  <h2>4 · Phone turned</h2>
+  <p class="note">No special view: the screen stays as it is, so turning the phone clockwise simply brings the pass upright, at the same size, still with its slight tilt. (These are the frames above, turned.)</p>
+  <div class="row" id="turned"><div><img src="shots2/turned-2to1.png" width="830" alt=""><div class="cap"><b>2 : 1, phone turned.</b></div></div><div><img src="shots2/turned-1.7to1.png" width="830" alt=""><div class="cap"><b>1.7 : 1, phone turned.</b></div></div></div>
+</div>
+<script type="module">
+const A = '../../assets/';
+const JET = '<path d="M32 3c2.2 0 3.4 3 3.4 6.5V24l22.6 12.2v4.3L35.4 34v15.2l7.2 5.6v3.6L32 55.6l-10.6 2.8v-3.6l7.2-5.6V34L6 40.5v-4.3L28.6 24V9.5C28.6 6 29.8 3 32 3z"/>';
+const jet = (c = 'jet') => `<svg class="${c}" viewBox="0 0 64 64" aria-hidden="true">${JET}</svg>`;
+const TIER = { common: ['•', 'COMMON'], uncommon: ['▲', 'UNCOMMON'], rare: ['◆', 'RARE'] };
+const tier = (t) => `<span class="tier t-${t}"><i>${TIER[t][0]}</i>${TIER[t][1]}</span>`;
+const F = { cs: 'ACA412', icao: 'ACA', airline: 'Air Canada', from: ['YYZ', 'Toronto'], to: ['YUL', 'Montréal'], dist: ['315', 'mi'], air: '≈55 min', ft: '21,300', type: 'BCS3',
+  tier: 'uncommon', set: 'HOME SKIES', photo: 'photos/airlines/ACA-BCS3.webp', credit: 'Photo: 4300streetcar, CC BY 4.0',
+  fact: 'Air Canada’s planes since 2017 are white with a black belly, a red maple leaf on the tail and a <b>black mask</b> around the cockpit windows.',
+  date: 'NOV 21, 2026', time: '11:56 AM', seen: 1 };
+function hash(s) { let h = 2166136261; for (const c of String(s)) h = Math.imul(h ^ c.charCodeAt(0), 16777619) >>> 0; return () => (h = (Math.imul(h, 1103515245) + 12345) >>> 0); }
+function aztec(seed) { const N = 19, c = 9, r = hash(seed); let s = '';
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) { const d = Math.max(Math.abs(x - c), Math.abs(y - c)); let on;
+    if (d <= 4) on = d % 2 === 0; else if (d === 5) on = (x === c - 5 && (y === c - 5 || y === c - 4)) || (y === c - 5 && x === c - 4) || (x === c + 5 && y === c - 5) || (x === c + 5 && y === c + 4) || (r() >>> 30) === 0; else on = (r() >>> 31) === 1;
+    if (on) s += `<rect x="${x}" y="${y}" width="1.02" height="1.02"/>`; }
+  return `<svg class="aztec" viewBox="0 0 ${N} ${N}" shape-rendering="crispEdges" aria-hidden="true">${s}</svg>`; }
+const field = (l, v, u = '') => `<div><span class="lbl">${l}</span><b class="val">${v}${u ? `<small>${u}</small>` : ''}</b></div>`;
+const RATIO = { r2: 21, r17: 24.7 };
+function pass(f, em, r) {
+  const fl = field('Distance', f.dist[0], f.dist[1]) + field('In the air', f.air) + field('Caught at', f.ft, 'ft') + field('Aircraft', f.type);
+  const main = `<div class="hd"><img class="logo" src="${A}logos/${f.icao}.webp" alt="${f.airline}"><div class="k">BOARDING PASS<b>${f.cs}</b></div></div>
+    <div class="codes"><div><span class="lbl">From</span><b>${f.from[0]}</b><small>${f.from[1]}</small></div><div class="mid">${jet()}</div><div class="to"><span class="lbl">To</span><b>${f.to[0]}</b><small>${f.to[1]}</small></div></div>
+    <div class="ph"><img class="bg" src="${A}${f.photo}" alt=""><img class="fg" src="${A}${f.photo}" alt="">${tier(f.tier)}<span class="set">${f.set}</span><span class="credit2">${f.credit}</span></div>
+    <div class="fields">${fl}</div><div class="info"><p class="fact">${f.fact}</p></div>`;
+  const stub = `<div class="stub-hd"><span class="lbl">FLIGHT</span><b>${f.cs}</b></div>
+    <div class="stub-body"><div class="stub-rt">${f.from[0]}${jet('jet')}${f.to[0]}</div>
+    <div class="when">CAUGHT <b>${f.date}</b><br>${f.time} · SEEN ${f.seen}×<span class="lvl prog">1 DAY · 4 MORE TO SILVER</span><span class="meter"></span></div>
+    <div class="stub-ft">${aztec(f.cs + f.date)}</div></div>`;
+  return `<div class="bp bp-sh L ${r}" style="font-size:${em}px"><div class="bp-paper"><div class="bp-main">${main}</div><div class="bp-perf"></div><div class="bp-stub stub">${stub}</div></div></div>`;
+}
+/* rotated -90deg: box is H wide, 42 tall (em) */
+const rotl = (r, em) => { const H = RATIO[r]; return `<div class="rotl" style="font-size:${em}px;width:${H}em;height:42em">${pass(F, em, r).replace('class="bp ', `style="transform:translateY(42em) rotate(-90deg)" class="bp `)}</div>`; };
+
+const ICON = { share: '<svg viewBox="0 0 24 24"><path d="M12 15V3M7.5 7.5 12 3l4.5 4.5M5 11v9h14v-9"/></svg>', x: '<svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5 5 19"/></svg>' };
+const status = () => `<div class="island"></div><div class="status"><span>11:56</span><span style="letter-spacing:.06em;font-size:14px">5G ▮</span></div><div class="homebar"></div>`;
+const top = (front) => `<div class="topbar"><span>2 NEW CARDS <span class="xp">· +60 XP</span></span><span class="ic">${ICON.share}${ICON.x}</span></div>
+  <div class="chips"><div class="seg"><span class="${front === 'plane' ? 'on' : ''}">● PLANE · <em>NEW</em></span><span class="${front === 'flight' ? 'on' : ''}">○ FLIGHT · <em>NEW</em></span></div><span class="chip">WHEELS UP</span></div>`;
+const bottom = () => `<div class="rank"><span>SPOTTER</span><span>60 / 480</span></div><div class="viewcol">VIEW IN COLLECTION</div>`;
+const card = (x, y, w, z = 10, extra = '') => { const s = w / 330.4; return `<div class="cardimg" style="left:${x - 20 * s}px;top:${y - 20 * s}px;width:${370 * s}px;height:${535.6 * s}px;z-index:${z};${extra}"><img src="shots/ref-plane-card.png" alt="Plane card"></div>`; };
+const frame = (id, inner) => `<div class="shot"><div class="phone" id="${id}">${inner}${status()}</div></div>`;
+const $ = (id) => document.getElementById(id);
+const CW = 300, CX = 37.5, cem = CW / 28; // the card: 300 x 450, 10.71 px/em
+
+$('flats').innerHTML = ['r2', 'r17'].map((r) => `<div><div class="flatwrap" id="flat-${r}">${pass(F, 16, r)}</div><div class="cap"><b>${r === 'r2' ? '2 : 1' : '1.7 : 1'}</b> · 42 × ${RATIO[r]}em, drawn at 16 px/em (672 × ${Math.round(RATIO[r] * 16)} px)</div></div>`).join('');
+
+// 1. behind, peeking out the top, centred. The pass is scaled to the phone width (292 px, just inside the card's 300) in the deck; the card at its usual place.
+$('behind').innerHTML = ['r2', 'r17'].map((r) => { const pw = 292, pem = pw / 42, peek = 29, cy = 250; return `<div>${frame(`behind-${r}`, `${top('plane')}
+  <div class="abs" style="left:${(375 - pw) / 2}px;top:${cy - peek}px;z-index:5">${pass(F, pem, r)}</div>${card(CX, cy, CW)}${bottom()}`)}
+  <div class="cap"><b>${r === 'r2' ? '2 : 1' : '1.7 : 1'} behind.</b> 343 × ${Math.round(RATIO[r] * pem)} px (6.95 px/em), centred and just narrower than the card, so only its header (logo, BOARDING PASS ACA412, FLIGHT) shows, ${peek} px above the card.</div></div>`; }).join('');
+
+// 2. brought forward: rotated -90deg, tilted 4deg, at the card's own scale (long side 450 px = the card's height); card stays behind
+$('front').innerHTML = ['r2', 'r17'].map((r) => { const pw = RATIO[r] * cem, x = (375 - pw) / 2, y = 250; return `<div>${frame(`front-${r}`, `${top('flight')}
+  ${card(CX, 250, CW, 4, 'opacity:.92')}
+  <div class="abs" style="left:${x}px;top:${y}px;z-index:10;transform:rotate(4deg);filter:drop-shadow(0 14px 22px rgba(13,34,56,.22))">${rotl(r, cem)}</div>${bottom()}`)}
+  <div class="cap"><b>${r === 'r2' ? '2 : 1' : '1.7 : 1'} in front.</b> Turned −90° and tilted 4°, ${Math.round(pw)} × 450 px: the card's height and scale (10.7 px/em), nothing enlarged.</div></div>`; }).join('');
+
+await Promise.all([...document.images].map((i) => i.complete ? 0 : new Promise((r) => { i.onload = i.onerror = r; })));
+await document.fonts.ready;
+document.documentElement.dataset.ready = '1';
+</script>
+</body>
+</html>

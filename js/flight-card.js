@@ -9,21 +9,22 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { regularFor, clockText } from './sky-regulars.js?v=0.1.1845';
-import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js?v=0.1.1845';
-import { flightFact } from './flight-facts.js?v=0.1.1845';
-import { typePhoto } from './type-photos.js?v=0.1.1845';
-import { housePhoto } from './house-photos.js?v=0.1.1845';
-import { gapPhoto } from './gap-photos.js?v=0.1.1845'; /* the types that had no photo (2026-11-18) */
-import { airlinePhoto } from './airline-photos.js?v=0.1.1845';
-import { airlineLogo } from './airline-logos.js?v=0.1.1845';
-import { fitStyle } from './photo-fit.js?v=0.1.1845';
-import { dist, speed, useMiles } from './units.js?v=0.1.1845';
-import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1845';
-import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1845';
-import { typeFact } from './sky-facts.js?v=0.1.1845';
-import { localText } from './localize.js?v=0.1.1845';
-import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1845';
+import { regularFor, clockText } from './sky-regulars.js?v=0.1.1850';
+import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js?v=0.1.1850';
+import { flightFact } from './flight-facts.js?v=0.1.1850';
+import { typePhoto } from './type-photos.js?v=0.1.1850';
+import { housePhoto } from './house-photos.js?v=0.1.1850';
+import { gapPhoto } from './gap-photos.js?v=0.1.1850'; /* the types that had no photo (2026-11-18) */
+import { airlinePhoto } from './airline-photos.js?v=0.1.1850';
+import { airlineLogo } from './airline-logos.js?v=0.1.1850';
+import { fitStyle } from './photo-fit.js?v=0.1.1850';
+import { dist, speed, useMiles } from './units.js?v=0.1.1850';
+import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1850';
+import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1850';
+import { typeFact } from './sky-facts.js?v=0.1.1850';
+import { localText } from './localize.js?v=0.1.1850';
+import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1850';
+import { qrEncode, qrSvg } from './qr.js?v=0.1.1850';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // A type name escaped, with its hyphenated model codes kept on one line ('Boeing KC-135R Stratotanker' broke after 'KC-').
@@ -190,17 +191,38 @@ export function flightCardHtml(f, opts = {}) {
   const art = ph ? `${photoImg(ph, 'fc-photo', opts.eager, !!opts.shrunk)}${credit(ph)}` : skyArt('large', 'fc-sky');
   const reg = (() => { try { const r = regularFor(f.callsign); return r ? `<span class="bp-reg">REGULAR · ABOUT ${esc(clockText(r.minute))}</span>` : ''; } catch { return ''; } })();
   const d = dist(f.km ?? null), T = THRESHOLDS.flight, n = si?.count ?? 0, next = T.find((x) => n < x);
-  const prog = n ? `<span class="bp-prog${opts.newStamp ? ' fc-prog--new' : ''}">${n} DAY${n === 1 ? '' : 'S'}${si.nights ? ` · ${si.nights === n ? (n === 1 ? 'AT NIGHT' : 'ALL AT NIGHT') : `${si.nights} AT NIGHT`}` : ''} · ${next ? `${next - n} MORE TO ${next === T[1] ? 'SILVER' : 'GOLD'}` : 'TOP LEVEL'}</span>` : '';
-  const inner = `
-    <div class="bp-hd">${passMark(f, 'bp-logo', 'bp-wm')}<div class="bp-k">BOARDING PASS<b>${esc(f.callsign || '—')}</b></div></div>
-    <div class="fc-pic bp-ph${ph ? '' : ' fc-pic--sky'}">${art}<span class="fc-holo" aria-hidden="true"></span>${tierPill(f.tier)}${opts.shrunk ? miniMedal(lvl, si?.count ?? 0) : ''}<span class="fc-set">${esc(String(f.setName ?? f.set ?? '').toUpperCase())}</span>${reg}</div>
-    <div class="bp-codes"><div><b>${esc(code(f.from))}</b><small>${esc(f.from.city)}</small></div><div class="bp-mid">${jet('fc-rot90')}</div><div class="bp-to"><b>${esc(code(f.to))}</b><small>${esc(f.to.city)}</small></div></div>
-    <div class="bp-fields">${field('DISTANCE', d.v, d.u)}${field('IN THE AIR', airLine(f.air))}${field('CAUGHT AT', feet(opts.heightFt), 'ft')}${field('AIRCRAFT', type || '—')}</div>
-    <p class="fc-fact">${rich(localText(flightFact({ ...f, fact: tidyHours(String(f.fact ?? '')).replace(' as the crow flies: about ', ', about ').replace(/ on a (?=[AEIOU])/, ' on an ') }, si?.count ?? 1)))}</p>
-    <div class="bp-perf"></div>
-    <div class="bp-stub"><div class="bp-when">CAUGHT <b>${opts.caughtAt ? dateLong(opts.caughtAt) : 'NOT YET'}</b><br>${opts.caughtAt ? `${timeOf(opts.caughtAt)} · ` : ''}SEEN ${esc(opts.sightings ?? 1)}×${lvl ? ` · <em class="bp-lvl bp-lvl--${lvl}">${levelWord(lvl)}</em>` : ''}${prog ? `<br>${prog}` : ''}</div>${barcode(f.callsign || f.key, 34)}</div>`;
-  return shell('flight', f.tier, inner, label, si?.level, 'bp');
+  const prog = n ? `${n} DAY${n === 1 ? '' : 'S'}${si.nights ? ` · ${si.nights === n ? (n === 1 ? 'AT NIGHT' : 'ALL AT NIGHT') : `${si.nights} AT NIGHT`}` : ''}<br>${next ? `${next - n} MORE TO ${next === T[1] ? 'SILVER' : 'GOLD'}` : 'TOP LEVEL'}` : '';
+  const fact = rich(localText(flightFact({ ...f, fact: tidyHours(String(f.fact ?? '')).replace(' as the crow flies: about ', ', about ').replace(/ on a (?=[AEIOU])/, ' on an ') }, si?.count ?? 1)));
+  /* The landscape pass (2026-11-21, Sevaan, design/pass-landscape/ round 3b): 42 x 16em, as long as the plane card is tall,
+     always turned -90deg so you read it from the right side of the screen; the element itself is 16 x 42em. Behind the plane
+     card only its end shows above the card, so that end (the band) carries the airline, date, route and flight written
+     along it; the stub has when you caught it, a real QR code and the type; the main part the header, photo, codes, details
+     and fact. css/sky-cards.css .fc--land; the reveal's deck (js/reveal.js) stands it behind the card and brings it forward. */
+  const when = opts.caughtAt;
+  const inner = `<div class="lp-turn"><div class="lp"><div class="lp-paper">
+    <div class="lp-main">
+      <div class="lp-hd">${passMark(f, 'lp-logo', 'lp-wm')}<div class="lp-k">BOARDING PASS<b>${esc(f.callsign || '—')}</b></div></div>
+      <div class="fc-pic lp-ph${ph ? '' : ' fc-pic--sky'}">${art}${tierPill(f.tier)}<span class="fc-set">${esc(String(f.setName ?? f.set ?? '').toUpperCase())}</span>${reg}${opts.shrunk ? miniMedal(lvl, si?.count ?? 0) : ''}</div>
+      <div class="lp-info">
+        <div class="lp-codes"><div><b>${esc(code(f.from))}</b><small>${esc(f.from.city)}</small></div><div class="lp-mid">${jet('lp-jet')}</div><div class="lp-to"><b>${esc(code(f.to))}</b><small>${esc(f.to.city)}</small></div></div>
+        <div class="lp-fields">${field('DISTANCE', d.v, d.u)}${field('IN THE AIR', airLine(f.air))}${field('CAUGHT AT', feet(opts.heightFt), 'ft')}</div>
+        <p class="lp-fact">${fact}</p>
+      </div>
+    </div>
+    <div class="lp-perf"></div>
+    <div class="lp-stub">
+      <div class="lp-in"><div><span class="lp-l">CAUGHT</span><b class="lp-v">${when ? timeOf(when) : 'NOT YET'}</b></div>${passQr()}<div class="lp-lv"><b>${esc(type || '—')}</b>SEEN ${esc(opts.sightings ?? 1)}×${lvl ? ` · <em class="bp-lvl bp-lvl--${lvl}">${levelWord(lvl)}</em>` : ''}${prog ? `<br>${prog}` : ''}</div></div>
+      <div class="lp-band"><div class="lp-band-in"><div class="lp-r1">${passMark(f, 'lp-blogo', 'lp-bwm')}<span class="lp-dt">${when ? dateLong(when) : ''}</span></div>
+        <div class="lp-r2"><span class="lp-rt">${esc(code(f.from))}${jet('lp-jet')}${esc(code(f.to))}</span><span class="lp-fl">FLIGHT<b>${esc(f.callsign || '—')}</b></span></div></div></div>
+    </div>
+  </div></div></div>`;
+  const t = tierOf(f.tier);
+  return `<article class="fc fc--flight fc--land fc--${t}${lvl ? ` fc--lvl fc--lvl-${lvl}` : ''}" style="--tier:${TIERS[t].color}" aria-label="${esc(label)}"><div class="fc-rot">${inner}</div></article>`;
 }
+/* The stub's code is a real QR code (js/qr.js), the same on every pass: it opens a well-known music video (2026-11-21,
+   Sevaan). Made once. */
+let QR_SVG = '';
+function passQr() { if (!QR_SVG) { try { QR_SVG = qrSvg(qrEncode('https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'L'), { quiet: 3, cls: 'lp-qr' }); } catch { QR_SVG = ''; } } return QR_SVG; }
 
 /* A checked fact for the type first (js/sky-facts.js, 2026-11-17: 131 types, sources in docs/FACTS-SOURCES.md) */
 /* Several facts per type (2026-11-18, Sevaan: "there may be multiple facts too"): the card shows the one for how many

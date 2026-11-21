@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boarding Pass Round 3</title>
+<!-- Design spike round 3, 2026-11-21. Sevaan: back to the long pass (42 x 16em, 2.625:1), turned -90deg (read from the right
+     side of the screen). In the deck it stands upright behind the plane card at the size it's viewed at, centred, with only
+     its stub end peeking out above the card; that end is redesigned so the strip reads on its own. Swiping brings it forward
+     with only a slight tilt (no turn, no scaling). The code on the stub is a real QR code (qr.mjs, decoded with Chromium's
+     BarcodeDetector). Left-hand mode turns it +90deg instead, with the stub on the other end so it still peeks out the top.
+     Nothing here is app code; open via the dev server so the ../../ asset paths resolve. -->
+<style>
+@font-face { font-family:'SC Display'; src:url('../../fonts/RussoOne-Regular.woff2') format('woff2'); font-weight:400; }
+@font-face { font-family:'SC Label'; src:url('../../fonts/BarlowCondensed-Medium.woff2') format('woff2'); font-weight:500; }
+:root { --navy:#0d2238; --ink:#13283d; --ink2:#1b3047; --muted:#4a6178; --cream:#fffdf6; --pass:#fbf9f2; --red:#b42a20; --gold:#b8892a;
+  --sky1:#8fc0e8; --sky2:#cfe3f4; --sky3:#eef5fb; --bg:#e6eef5; }
+* { box-sizing:border-box; }
+html, body { margin:0; background:var(--bg); color:var(--navy); font:16px/1.45 -apple-system, system-ui, sans-serif; }
+.doc { max-width:1180px; margin:0 auto; padding:40px 24px 80px; }
+.doc h1 { font:400 34px/1.1 'SC Display',sans-serif; margin:0 0 8px; }
+.doc h2 { font:400 22px/1.2 'SC Display',sans-serif; margin:56px 0 6px; }
+.doc p.lede, .doc p.note { max-width:760px; color:#33495f; margin:6px 0 18px; }
+.eyebrow { font:500 13px/1 'SC Label',sans-serif; letter-spacing:.2em; color:var(--muted); margin-bottom:10px; }
+.row { display:flex; flex-wrap:wrap; gap:36px; align-items:flex-start; }
+.cap { font:500 14px/1.3 'SC Label',sans-serif; letter-spacing:.12em; color:var(--muted); margin-top:12px; max-width:375px; }
+.cap b { color:var(--navy); font-weight:500; }
+.flatwrap { padding:22px; background:linear-gradient(180deg,#dcebf7,#eef5fb); border-radius:14px; display:inline-block; }
+
+/* ===================== The landscape pass ===================== */
+.bp { --stub:10.4em; --cut:1em; position:relative; width:42em; height:16em; color:var(--ink); }
+.bp-sh { filter:drop-shadow(0 .1em .12em rgba(13,34,56,.18)) drop-shadow(0 .6em .9em rgba(13,34,56,.13)); }
+.bp-paper { position:absolute; inset:0; border-radius:.7em; overflow:hidden;
+  background:
+    linear-gradient(94deg, transparent 47%, rgba(13,34,56,.04) 49.6%, rgba(255,255,255,.6) 50.4%, transparent 53%),
+    radial-gradient(40% 70% at 100% 100%, rgba(255,255,255,.55), transparent 70%),
+    radial-gradient(95% 130% at 45% 50%, transparent 62%, rgba(140,112,60,.1) 100%),
+    var(--pass);
+  /* half-circle notches cut through, top and bottom, on the tear line */
+  -webkit-mask:radial-gradient(circle at calc(100% - var(--stub)) 0, #0000 var(--cut), #000 calc(var(--cut) + .05em)) top / 100% 51% no-repeat,
+               radial-gradient(circle at calc(100% - var(--stub)) 100%, #0000 var(--cut), #000 calc(var(--cut) + .05em)) bottom / 100% 51% no-repeat;
+          mask:radial-gradient(circle at calc(100% - var(--stub)) 0, #0000 var(--cut), #000 calc(var(--cut) + .05em)) top / 100% 51% no-repeat,
+               radial-gradient(circle at calc(100% - var(--stub)) 100%, #0000 var(--cut), #000 calc(var(--cut) + .05em)) bottom / 100% 51% no-repeat; }
+.bp-paper::after { content:''; position:absolute; inset:0; z-index:5; pointer-events:none;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .28 0 0 0 0 .2 0 0 0 .42 -.12'/%3E%3C/filter%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.55 .012' numOctaves='2' seed='9'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .4 0 0 0 0 .3 0 0 0 .5 -.22'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23f%29'/%3E%3Crect width='100%25' height='100%25' filter='url%28%23g%29'/%3E%3C/svg%3E") 0 0 / 16em 16em;
+  mix-blend-mode:multiply; opacity:.7; }
+.bp-perf { position:absolute; top:var(--cut); bottom:var(--cut); right:var(--stub); width:0; border-left:.14em dashed rgba(13,34,56,.35); z-index:2; }
+.bp-main { position:absolute; left:0; top:0; bottom:0; right:var(--stub); }
+.bp-stub { position:absolute; right:0; top:0; bottom:0; width:var(--stub); }
+
+/* shared printed bits */
+.lbl { display:block; font:500 .74em/1.1 'SC Label',sans-serif; letter-spacing:.16em; color:var(--muted); white-space:nowrap; text-transform:uppercase; }
+.val { display:block; font:400 1.22em/1.15 'SC Display',sans-serif; color:var(--ink); white-space:nowrap; }
+.val small { font:500 .62em 'SC Label',sans-serif; letter-spacing:.06em; color:var(--muted); margin-left:.1em; }
+.logo { display:block; height:2em; width:auto; }
+.ph { position:relative; overflow:hidden; border-radius:.4em; background:#3f84d6; }
+.ph img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
+.ph img.bg { filter:blur(.5em) saturate(1.1); transform:scale(1.25); }
+.ph img.fg { object-fit:contain; }
+.credit { position:absolute; z-index:3; right:.45em; bottom:.4em; padding:.18em .45em; border-radius:.3em; background:rgba(13,34,56,.66); color:#fff; font:600 .56em/1.15 'SC Label',sans-serif; letter-spacing:.04em; white-space:nowrap; }
+.tier { position:absolute; z-index:3; left:.55em; top:.55em; display:flex; align-items:center; gap:.4em; padding:.28em .6em .26em .45em; border-radius:.45em;
+  background:rgba(255,253,246,.95); border:.09em solid var(--t); color:var(--ti); box-shadow:0 .15em .4em rgba(13,34,56,.2); font:600 .74em/1 'SC Label',sans-serif; letter-spacing:.16em; }
+.tier i { font-style:normal; color:var(--t); }
+.t-common { --t:#6b7f93; --ti:#3d5266; } .t-uncommon { --t:#1f7a50; --ti:#18693f; } .t-rare { --t:#2a64c0; --ti:#1a52a6; }
+.set { position:absolute; z-index:3; right:.55em; top:.55em; padding:.34em .55em .3em; border-radius:.4em; background:rgba(13,34,56,.8); color:#fffdf6; font:600 .66em/1 'SC Label',sans-serif; letter-spacing:.18em; }
+.jet { display:block; fill:var(--red); }
+.fact { margin:0; border-left:.2em solid var(--red); padding:.05em 0 .05em .6em; font:400 .8em/1.35 Georgia,'Times New Roman',serif; color:var(--ink2); overflow:hidden; }
+.fact b { color:var(--ink); }
+.when { font:500 .8em/1.3 'SC Label',sans-serif; letter-spacing:.13em; color:var(--ink2); white-space:nowrap; }
+.when b { font-weight:500; color:var(--red); }
+.when .prog { color:var(--muted); font-size:.92em; }
+.bars { display:flex; align-items:stretch; }
+.bars i { display:block; background:var(--ink); }
+.aztec { display:block; }
+.aztec rect { fill:var(--ink); }
+
+
+/* ===================== Phone frames ===================== */
+.phone { position:relative; width:375px; height:812px; border-radius:46px; overflow:hidden; background:linear-gradient(180deg,var(--sky1) 0%, #b4d5f0 28%, var(--sky2) 48%, var(--sky3) 78%, #f4f8fc 100%);
+  box-shadow:0 0 0 7px #10161d, 0 0 0 8px #3a434d; flex:none; }
+.phone.land { width:812px; height:375px; background:linear-gradient(180deg,var(--sky1) 0%, #b9d8f1 45%, var(--sky3) 100%); }
+.shot { padding:9px; display:inline-block; }
+.status { position:absolute; left:0; right:0; top:0; height:50px; display:flex; justify-content:space-between; align-items:center; padding:6px 30px 0 34px; font:600 16px/1 -apple-system,system-ui,sans-serif; color:var(--navy); z-index:20; }
+.island { position:absolute; left:50%; top:11px; width:122px; height:35px; margin-left:-61px; border-radius:20px; background:#05080b; z-index:21; }
+.land .island { left:11px; top:50%; width:35px; height:122px; margin:-61px 0 0; }
+.homebar { position:absolute; left:50%; bottom:8px; width:134px; height:5px; margin-left:-67px; border-radius:3px; background:rgba(13,34,56,.75); z-index:21; }
+.land .homebar { bottom:6px; }
+.topbar { position:absolute; left:22px; right:22px; top:62px; display:flex; align-items:center; justify-content:space-between; font:500 16px/1 'SC Label',sans-serif; letter-spacing:.2em; color:var(--navy); z-index:15; }
+.topbar .xp { color:var(--red); }
+.topbar .ic { display:flex; gap:22px; }
+.topbar svg { width:26px; height:26px; stroke:var(--navy); fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+.chips { position:absolute; left:16px; top:96px; display:flex; gap:8px; z-index:15; }
+.seg { display:flex; border-radius:20px; border:1.5px solid var(--navy); overflow:hidden; font:500 14px/1 'SC Label',sans-serif; letter-spacing:.14em; }
+.seg span { padding:9px 12px 8px; background:var(--cream); color:var(--navy); white-space:nowrap; }
+.seg span.on { background:var(--navy); color:var(--cream); }
+.seg em { font-style:normal; color:var(--red); }
+.seg span.on em { color:#ff8d82; }
+.chip { padding:9px 12px 8px; border-radius:20px; background:rgba(255,253,246,.85); border:1.5px solid rgba(13,34,56,.15); font:500 14px/1 'SC Label',sans-serif; letter-spacing:.14em; color:var(--navy); white-space:nowrap; }
+.rank { position:absolute; left:36px; right:36px; bottom:84px; font:500 15px/1 'SC Label',sans-serif; letter-spacing:.24em; color:var(--navy); display:flex; justify-content:space-between; }
+.rank::after { content:''; position:absolute; left:0; right:0; top:24px; height:6px; border-radius:3px; background:linear-gradient(90deg,#d7362b,#e9a23b) 0 0 / 14% 100% no-repeat, rgba(13,34,56,.12); }
+.viewcol { position:absolute; left:0; right:0; bottom:36px; text-align:center; font:500 15px/1 'SC Label',sans-serif; letter-spacing:.24em; color:var(--navy); }
+.abs { position:absolute; }
+.cardimg { position:absolute; display:block; filter:drop-shadow(0 6px 14px rgba(13,34,56,.22)); }
+.cardimg img { display:block; width:100%; height:100%; }
+.dots { position:absolute; display:flex; gap:7px; z-index:15; }
+.dots i { width:7px; height:7px; border-radius:50%; background:rgba(13,34,56,.25); }
+.dots i.on { background:var(--navy); }
+.lbtn { position:absolute; width:40px; height:40px; border-radius:50%; background:rgba(255,253,246,.85); border:1.5px solid rgba(13,34,56,.15); display:grid; place-items:center; z-index:15; }
+.lbtn svg { width:20px; height:20px; stroke:var(--navy); fill:none; stroke-width:2.2; stroke-linecap:round; }
+.anno { position:absolute; z-index:30; font:500 12px/1.2 'SC Label',sans-serif; letter-spacing:.1em; color:var(--red); background:rgba(255,253,246,.92); padding:4px 7px; border-radius:6px; border:1px solid rgba(180,42,32,.35); white-space:nowrap; }
+
+/* Collection */
+.chdr { position:absolute; left:0; right:0; top:50px; height:56px; display:flex; align-items:center; justify-content:space-between; padding:0 18px; z-index:10; }
+.chdr .wm { font:400 21px/1 'SC Display',sans-serif; color:var(--navy); }
+.chdr .wm span { display:block; font:500 10px/1 'SC Label',sans-serif; letter-spacing:.2em; color:var(--muted); margin-top:4px; }
+.chdr .ib { width:38px; height:38px; border-radius:50%; background:rgba(255,253,246,.85); border:1.5px solid rgba(13,34,56,.15); }
+.ctabs { position:absolute; left:16px; right:16px; top:112px; display:flex; border-radius:22px; background:rgba(255,253,246,.7); border:1.5px solid rgba(13,34,56,.12); padding:3px; z-index:10; }
+.ctabs span { flex:1; text-align:center; padding:9px 0 8px; border-radius:18px; font:500 15px/1 'SC Label',sans-serif; letter-spacing:.16em; color:var(--muted); }
+.ctabs span.on { background:var(--navy); color:var(--cream); }
+.cmeta { position:absolute; left:18px; right:18px; top:166px; display:flex; justify-content:space-between; font:500 13px/1 'SC Label',sans-serif; letter-spacing:.16em; color:var(--muted); z-index:10; }
+.clist { position:absolute; left:16px; right:16px; top:192px; bottom:0; display:flex; flex-direction:column; gap:12px; overflow:hidden; }
+.cgrid { position:absolute; left:16px; right:16px; top:192px; bottom:0; display:grid; grid-template-columns:1fr 1fr; gap:12px 11px; align-content:start; overflow:hidden; }
+.cgroup { font:500 12px/1 'SC Label',sans-serif; letter-spacing:.18em; color:var(--muted); grid-column:1/-1; margin:4px 2px -2px; }
+.tabbar { position:absolute; left:0; right:0; bottom:0; height:84px; background:rgba(255,253,246,.94); border-top:1px solid rgba(13,34,56,.1); display:flex; justify-content:space-around; padding-top:12px; z-index:12; font:500 11px/1 'SC Label',sans-serif; letter-spacing:.14em; color:var(--muted); }
+.tabbar span { display:flex; flex-direction:column; align-items:center; gap:6px; }
+.tabbar span::before { content:''; width:24px; height:24px; border-radius:7px; background:rgba(13,34,56,.18); }
+.tabbar span.on { color:var(--navy); } .tabbar span.on::before { background:var(--red); }
+
+/* overview composite */
+#overview { background:var(--bg); padding:36px; width:max-content; }
+#overview h3 { font:400 20px/1 'SC Display',sans-serif; margin:0 0 14px; color:var(--navy); }
+#overview .ov-row { display:flex; gap:30px; align-items:flex-start; margin-bottom:34px; }
+#overview .ov-c { font:500 13px/1.25 'SC Label',sans-serif; letter-spacing:.12em; color:var(--muted); margin-top:10px; max-width:380px; }
+/* ---- Round 3: the long pass with an end made to peek out ---- */
+.bp.R3 { --stub:12em; --band:4.6em; }
+.R3 .hd { position:absolute; left:0; right:0; top:0; height:3.3em; display:flex; align-items:center; justify-content:space-between; padding:0 1em 0 1.05em; border-bottom:.22em solid var(--red); }
+.R3 .hd .logo { height:2em; }
+.R3 .hd .k { text-align:right; font:500 .74em/1.1 'SC Label',sans-serif; letter-spacing:.18em; color:var(--muted); }
+.R3 .hd .k b { display:block; font:400 1.75em/1.05 'SC Display',sans-serif; letter-spacing:.02em; color:var(--ink); }
+.R3 .ph { position:absolute; left:.85em; top:4.05em; bottom:.85em; width:12.4em; }
+.R3 .ph img.bg { filter:blur(.5em) saturate(1.1); transform:scale(1.25); }
+.R3 .ph img.fg { object-fit:contain; }
+.R3 .info { position:absolute; left:14.05em; right:1em; top:3.85em; bottom:.75em; display:flex; flex-direction:column; }
+.R3 .codes { display:grid; grid-template-columns:auto 1fr auto; align-items:end; column-gap:.35em; }
+.R3 .codes b { display:block; font:400 2.8em/.95 'SC Display',sans-serif; letter-spacing:-.02em; color:var(--ink); }
+.R3 .codes small { display:block; font:500 .76em/1.1 'SC Label',sans-serif; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin-top:.15em; }
+.R3 .codes .to { text-align:right; }
+.R3 .codes .mid { align-self:center; display:flex; align-items:center; gap:.25em; padding-bottom:1em; }
+.R3 .codes .mid::before, .R3 .codes .mid::after { content:''; flex:1; border-top:.12em dashed rgba(180,42,32,.55); }
+.R3 .codes .jet { width:1.5em; height:1.5em; transform:rotate(90deg); }
+.R3 .fields { display:grid; grid-template-columns:repeat(3,auto); justify-content:space-between; margin-top:.55em; padding-top:.45em; border-top:.08em solid rgba(13,34,56,.18); }
+.R3 .fields .val { font-size:1.08em; }
+.R3 .fact { margin-top:auto; font-size:.72em; }
+/* the stub: an inner part with the QR code, and the outer band whose words run along the end so they read when it peeks out */
+.R3 .in { position:absolute; top:0; bottom:0; width:calc(var(--stub) - var(--band)); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:.5em; padding:0 .4em; }
+.R3 .in .lbl { font-size:.62em; }
+.R3 .in .val { font-size:1em; }
+.R3 .in .qr { display:block; width:6.3em; height:6.3em; position:relative; z-index:6; }
+.R3 .in .qr path { fill:var(--ink); }
+.R3 .in .lv { font:500 .62em/1.3 'SC Label',sans-serif; letter-spacing:.13em; color:var(--muted); }
+.R3 .in .lv b { display:block; font:400 1.45em/1.15 'SC Display',sans-serif; letter-spacing:.02em; color:var(--ink); }
+.R3 .band { position:absolute; top:0; bottom:0; width:var(--band); }
+.R3 .band-in { position:absolute; left:0; top:0; width:16em; height:var(--band); transform-origin:0 0; padding:.7em .9em .62em; display:flex; flex-direction:column; justify-content:space-between; border-bottom:.2em solid var(--red); }
+.R3 .band-r1, .R3 .band-r2 { display:flex; align-items:center; justify-content:space-between; gap:.6em; }
+.R3 .band .logo { height:1.08em; flex:none; }
+.R3 .band .dt { font:400 .85em/1 'SC Display',sans-serif; color:var(--red); letter-spacing:.03em; white-space:nowrap; }
+.R3 .band .rt { white-space:nowrap; font:400 1.3em/1 'SC Display',sans-serif; color:var(--ink); display:flex; align-items:center; gap:.25em; letter-spacing:.01em; }
+.R3 .band .rt svg { width:.8em; height:.8em; transform:rotate(90deg); }
+.R3 .band .fl { font:500 .72em/1 'SC Label',sans-serif; letter-spacing:.16em; color:var(--muted); white-space:nowrap; }
+.R3 .band .fl b { font:400 1.65em/1 'SC Display',sans-serif; letter-spacing:.03em; color:var(--ink); margin-left:.3em; vertical-align:-.06em; }
+/* right-hand (default): stub on the right end; band words turned +90deg so they read upright when the pass is turned -90deg */
+.R3.rh .in { left:0; } .R3.rh .band { right:0; }
+.R3.rh .band-in { transform:translateX(var(--band)) rotate(90deg); }
+/* left-hand: the stub on the left end (so it still peeks out the top when turned +90deg); band words turned -90deg */
+.R3.lh .bp-main { left:var(--stub); right:0; } .R3.lh .bp-stub { left:0; right:auto; } .R3.lh .bp-perf { right:auto; left:var(--stub); border-left:0; border-right:.14em dashed rgba(13,34,56,.35); }
+.R3.lh .in { right:0; } .R3.lh .band { left:0; }
+.R3.lh .band-in { transform:translateY(16em) rotate(-90deg); }
+.R3.lh .bp-paper { -webkit-mask:radial-gradient(circle at var(--stub) 0, #0000 var(--cut), #000 calc(var(--cut) + .05em)) top / 100% 51% no-repeat, radial-gradient(circle at var(--stub) 100%, #0000 var(--cut), #000 calc(var(--cut) + .05em)) bottom / 100% 51% no-repeat;
+  mask:radial-gradient(circle at var(--stub) 0, #0000 var(--cut), #000 calc(var(--cut) + .05em)) top / 100% 51% no-repeat, radial-gradient(circle at var(--stub) 100%, #0000 var(--cut), #000 calc(var(--cut) + .05em)) bottom / 100% 51% no-repeat; }
+.R3 .bp-paper { background:
+    linear-gradient(94deg, transparent 47%, rgba(13,34,56,.04) 49.6%, rgba(255,255,255,.6) 50.4%, transparent 53%),
+    radial-gradient(95% 130% at 45% 50%, transparent 62%, rgba(140,112,60,.1) 100%), var(--pass); }
+/* turned holders, 16 x 42em */
+.turn { position:relative; width:16em; height:42em; }
+.turn > .bp { position:absolute; left:0; top:0; transform-origin:0 0; }
+.turn.rh > .bp { transform:translateY(42em) rotate(-90deg); }
+.turn.lh > .bp { transform:translateX(16em) rotate(90deg); }
+/* settings mock (the daylight Settings card: white card, set bar, set rows, pill switch) */
+.sp { position:absolute; inset:0; background:#eef5fb; }
+.sp-head { position:absolute; left:20px; right:20px; top:58px; height:56px; display:flex; align-items:center; justify-content:space-between; border-bottom:3px double rgba(13,34,56,.25); }
+.sp-head h2 { margin:0; font:400 26px/1 'SC Display',sans-serif; color:var(--navy); }
+.sp-head .xc { width:28px; height:28px; stroke:var(--navy); fill:none; stroke-width:2.2; stroke-linecap:round; }
+.sp-body { position:absolute; left:16px; right:16px; top:134px; }
+.set-card { background:#fff; border:1px solid #c9d9e6; border-radius:12px; padding:6px 12px 4px; margin-bottom:18px; box-shadow:0 1px 2px rgba(13,34,56,.06); }
+.set-bar { display:flex; justify-content:space-between; align-items:center; padding:8px 2px; border-bottom:1px solid #d5e2ee; background:#f6f9fc; margin:-6px -12px 0; padding-inline:14px; border-radius:11px 11px 0 0; }
+.set-bar h3, .set-bar b { margin:0; font:500 13px/1 'SC Label',sans-serif; letter-spacing:.2em; text-transform:uppercase; color:#b42a20; }
+.set-row { display:flex; align-items:center; gap:12px; min-height:52px; padding:0 2px; border-top:1px solid #e3ecf4; font:500 16px/1.2 'SC Label',sans-serif; letter-spacing:.03em; color:#0d2238; }
+.set-bar + .set-row { border-top:0; }
+.set-ic { width:22px; height:22px; flex:none; display:grid; place-items:center; }
+.set-ic svg { width:19px; height:19px; stroke:#23405c; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+.set-main { flex:1; min-width:0; padding:8px 0; } .set-main small { display:block; margin-top:2px; font:500 12.5px/1.2 'SC Label',sans-serif; color:#4a6178; letter-spacing:.04em; }
+.set-seg { display:inline-flex; border-radius:6px; box-shadow:inset 0 0 0 1px #9fb3c6; overflow:hidden; }
+.set-seg span { font:500 12px/30px 'SC Label',sans-serif; letter-spacing:.08em; text-transform:uppercase; color:#4a6178; padding:0 9px; min-width:40px; text-align:center; }
+.set-seg span + span { box-shadow:inset 1px 0 0 #9fb3c6; }
+.set-seg span.on { color:#d7362b; box-shadow:inset 0 0 0 1px #d7362b; background:rgba(215,54,43,.08); }
+.set-tog { position:relative; flex:none; width:46px; height:28px; border-radius:99px; background:#cfdbe6; box-shadow:inset 0 1px 2px rgba(13,34,56,.18); }
+.set-tog::before { content:''; position:absolute; top:3px; left:3px; width:22px; height:22px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(13,34,56,.3); }
+.set-tog.on { background:#d7362b; } .set-tog.on::before { transform:translateX(18px); }
+.set-new { outline:2px dashed rgba(180,42,32,.5); outline-offset:3px; border-radius:6px; }
+.zoomwrap { display:inline-block; border-radius:14px; overflow:hidden; box-shadow:0 0 0 1px rgba(13,34,56,.12); }
+</style>
+</head>
+<body>
+<div class="doc">
+  <div class="eyebrow">SKY COLLECTOR · DESIGN SPIKE · ROUND 3 · 2026-11-21</div>
+  <h1>The long pass, standing behind the card</h1>
+  <p class="lede">Back to the long pass (42 × 16em, 2.625 : 1). It is always turned −90° (you read it from the right side of the screen) and always the same size: the plane card's scale, 450 px long on a 375 px phone. Behind the card it stands upright and centred with only its stub end showing above the card; that end now carries the airline, route, flight and date written along the edge, so the strip reads on its own. Swipe and it comes forward, tilting a few degrees, with no turn and no scaling. The stub's code is a real QR code (made by <code>qr.mjs</code>).</p>
+  <h2>1 · The pass, flat</h2>
+  <p class="note">Right-hand (stub on the right) and left-hand (stub on the left). The band at the end is printed sideways so it reads upright once the pass is turned.</p>
+  <div class="row" id="flats"></div>
+  <h2>2 · Right-hand: deck, swipe, forward</h2>
+  <div class="row" id="rh"></div>
+  <h2>3 · The peeking strip, close up</h2>
+  <div class="row" id="zoom"></div>
+  <h2>4 · Left-hand mode</h2>
+  <p class="note">Turned +90° instead (read from the left side). The stub sits on the other end of the pass so it still peeks out the top; the tilt is mirrored.</p>
+  <div class="row" id="lh"></div>
+</div>
+<script type="module">
+import { qrEncode, qrSvg } from './qr.mjs';
+const A = '../../assets/';
+const URL_ = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+const Q = qrEncode(URL_, 'L'); // version 3, 29 x 29
+window.__qr = { version: Q.version, ecl: Q.ecl, mask: Q.mask, size: Q.size };
+const QR = qrSvg(Q, { quiet: 3 });
+const JET = '<path d="M32 3c2.2 0 3.4 3 3.4 6.5V24l22.6 12.2v4.3L35.4 34v15.2l7.2 5.6v3.6L32 55.6l-10.6 2.8v-3.6l7.2-5.6V34L6 40.5v-4.3L28.6 24V9.5C28.6 6 29.8 3 32 3z"/>';
+const jet = (c = 'jet') => `<svg class="${c}" viewBox="0 0 64 64" aria-hidden="true">${JET}</svg>`;
+const F = { cs: 'ACA412', icao: 'ACA', airline: 'Air Canada', from: ['YYZ', 'Toronto'], to: ['YUL', 'Montréal'], dist: ['315', 'mi'], air: '≈55 min', ft: '21,300', type: 'BCS3',
+  photo: 'photos/airlines/ACA-BCS3.webp', credit: 'Photo: 4300streetcar, CC BY 4.0',
+  fact: 'Air Canada’s planes since 2017 are white with a black belly, a red maple leaf on the tail and a <b>black mask</b> around the cockpit windows.' };
+const field = (l, v, u = '') => `<div><span class="lbl">${l}</span><b class="val">${v}${u ? `<small>${u}</small>` : ''}</b></div>`;
+function pass(f, em, hand = 'rh') {
+  const main = `<div class="hd"><img class="logo" src="${A}logos/${f.icao}.webp" alt="${f.airline}"><div class="k">BOARDING PASS<b>${f.cs}</b></div></div>
+    <div class="ph"><img class="bg" src="${A}${f.photo}" alt=""><img class="fg" src="${A}${f.photo}" alt=""><span class="tier t-uncommon"><i>▲</i>UNCOMMON</span><span class="set">HOME SKIES</span><span class="credit">${f.credit}</span></div>
+    <div class="info"><div class="codes"><div><b>${f.from[0]}</b><small>${f.from[1]}</small></div><div class="mid">${jet()}</div><div class="to"><b>${f.to[0]}</b><small>${f.to[1]}</small></div></div>
+    <div class="fields">${field('Distance', f.dist[0], f.dist[1])}${field('In the air', f.air)}${field('Caught at', f.ft, 'ft')}</div><p class="fact">${f.fact}</p></div>`;
+  const stub = `<div class="in"><div><span class="lbl">CAUGHT</span><b class="val">11:56 AM</b></div>${QR}<div class="lv"><b>${f.type}</b>SEEN 1× · 1 DAY<br>4 MORE TO SILVER</div></div>
+    <div class="band"><div class="band-in"><div class="band-r1"><img class="logo" src="${A}logos/${f.icao}.webp" alt=""><span class="dt">NOV 21, 2026</span></div>
+    <div class="band-r2"><span class="rt">${f.from[0]}${jet('jet')}${f.to[0]}</span><span class="fl">FLIGHT<b>${f.cs}</b></span></div></div></div>`;
+  return `<div class="bp bp-sh R3 ${hand}" style="font-size:${em}px"><div class="bp-paper"><div class="bp-main">${main}</div><div class="bp-perf"></div><div class="bp-stub stub">${stub}</div></div></div>`;
+}
+const turned = (em, hand) => `<div class="turn ${hand}" style="font-size:${em}px">${pass(F, em, hand)}</div>`;
+
+const ICON = { share: '<svg viewBox="0 0 24 24"><path d="M12 15V3M7.5 7.5 12 3l4.5 4.5M5 11v9h14v-9"/></svg>', x: '<svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5 5 19"/></svg>' };
+const status = () => `<div class="island"></div><div class="status"><span>11:56</span><span style="letter-spacing:.06em;font-size:14px">5G ▮</span></div><div class="homebar"></div>`;
+const top = (front) => `<div class="topbar"><span>2 NEW CARDS <span class="xp">· +60 XP</span></span><span class="ic">${ICON.share}${ICON.x}</span></div>
+  <div class="chips"><div class="seg"><span class="${front === 'plane' ? 'on' : ''}">● PLANE · <em>NEW</em></span><span class="${front === 'flight' ? 'on' : ''}">○ FLIGHT · <em>NEW</em></span></div><span class="chip">WHEELS UP</span></div>`;
+const bottom = () => `<div class="rank"><span>SPOTTER</span><span>60 / 480</span></div><div class="viewcol">VIEW IN COLLECTION</div>`;
+const card = (x, y, w, z = 10, extra = '') => { const s = w / 330.4; return `<div class="cardimg" style="left:${x - 20 * s}px;top:${y - 20 * s}px;width:${370 * s}px;height:${535.6 * s}px;z-index:${z};${extra}"><img src="shots/ref-plane-card.png" alt="Plane card"></div>`; };
+const frame = (id, inner) => `<div class="shot"><div class="phone" id="${id}">${inner}${status()}</div></div>`;
+const $ = (id) => document.getElementById(id);
+
+const CW = 300, CX = 37.5, CY = 250, em = CW / 28, PW = 16 * em, PX = (375 - PW) / 2, PEEK = 52;
+$('flats').innerHTML = ['rh', 'lh'].map((h) => `<div><div class="flatwrap" id="flat-${h}">${pass(F, 16, h)}</div><div class="cap"><b>${h === 'rh' ? 'Right-hand' : 'Left-hand'}</b> · 42 × 16em at 16 px/em. QR: version ${Q.version}, level ${Q.ecl}, mask ${Q.mask}, opens the link on the stub.</div></div>`).join('');
+
+const deck = (h) => frame(`deck-${h}`, `${top('plane')}<div class="abs" style="left:${PX}px;top:${CY - PEEK}px;z-index:5">${turned(em, h)}</div>${card(CX, CY, CW)}${bottom()}`);
+const mid = (h) => { const t = h === 'rh' ? 1.5 : -1.5, ct = h === 'rh' ? -7 : 7; return frame(`mid-${h}`, `${top('plane')}
+  <div class="abs" style="left:${PX}px;top:${CY - PEEK / 2}px;z-index:5;transform:rotate(${t}deg);filter:drop-shadow(0 10px 16px rgba(13,34,56,.18))">${turned(em, h)}</div>
+  ${card(CX, CY - 300, CW, 12, `transform:rotate(${ct}deg) scale(.97);transform-origin:50% 100%`)}${bottom()}`); };
+const front = (h) => { const t = h === 'rh' ? 3 : -3; return frame(`front-${h}`, `${top('flight')}${card(CX, CY, CW, 4)}
+  <div class="abs" style="left:${PX}px;top:${CY}px;z-index:10;transform:rotate(${t}deg);filter:drop-shadow(0 14px 22px rgba(13,34,56,.24))">${turned(em, h)}</div>${bottom()}`); };
+$('rh').innerHTML = `<div>${deck('rh')}<div class="cap"><b>Deck.</b> The pass stands upright behind the card, ${Math.round(PW)} × 450 px (the size it's read at), centred; only its end shows, ${PEEK} px above the card: airline, date, YYZ ✈ YUL, FLIGHT ACA412.</div></div>
+  <div>${mid('rh')}<div class="cap"><b>Mid-swipe.</b> A flick up throws the plane card up and away; the pass comes down into its place, starting to tilt.</div></div>
+  <div>${front('rh')}<div class="cap"><b>Forward.</b> The same pass at the same size, tilted 3°, the card settled behind. Read from the right side, or turn the phone clockwise.</div></div>`;
+$('zoom').innerHTML = ['rh', 'lh'].map((h) => `<div><div class="zoomwrap" id="zoom-${h}" style="width:375px;height:150px;position:relative;overflow:hidden"><div style="position:absolute;left:0;top:${-(CY - PEEK - 30)}px">${frame(`zf-${h}`, `<div class="abs" style="left:${PX}px;top:${CY - PEEK}px;z-index:5">${turned(em, h)}</div>${card(CX, CY, CW)}`).replace('class="shot"', 'class="shot" style="padding:0"')}</div></div><div class="cap"><b>${h === 'rh' ? 'Right-hand' : 'Left-hand'} strip.</b> ${Math.round(PW)} × ${PEEK} px: the end of the pass, its red rule just above the card.</div></div>`).join('');
+
+const settings = frame('settings', `<div class="sp"><div class="sp-head"><h2>Settings</h2><svg class="xc" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5 5 19"/></svg></div><div class="sp-body">
+  <div class="set-card"><div class="set-bar"><h3>Display</h3><b>04</b></div>
+    <div class="set-row"><span class="set-ic"><svg viewBox="0 0 24 24"><path d="M3 15h18v4H3zM7 15v-2M11 15v-3M15 15v-2M19 15v-3"/></svg></span><span class="set-main">Units</span><span class="set-seg"><span class="on">Auto</span><span>km</span><span>mi</span></span></div>
+    <div class="set-row"><span class="set-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/></svg></span><span class="set-main">Clock</span><span class="set-seg"><span class="on">Auto</span><span>12 h</span><span>24 h</span></span></div>
+    <div class="set-row set-new"><span class="set-ic"><svg viewBox="0 0 24 24"><path d="M8 12V5.5a1.5 1.5 0 0 1 3 0V11M11 10V4.5a1.5 1.5 0 0 1 3 0V11M14 10.5V6a1.5 1.5 0 0 1 3 0v8c0 4-2.5 7-6.5 7-2.6 0-4.2-1.2-5.6-3.4L3 13.6a1.5 1.5 0 0 1 2.5-1.6L8 15"/></svg></span><span class="set-main">Left-hand mode<small>Turns boarding passes the other way, for holding your phone in your left hand</small></span><span class="set-tog on"></span></div>
+  </div>
+  <div class="set-card"><div class="set-bar"><h3>What shows</h3><b>05</b></div>
+    <div class="set-row"><span class="set-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M3 13c3-2 15-4 18-2"/></svg></span><span class="set-main">Moon, planets and stars<small>Scenery in the sky, to look at, not to collect</small></span><span class="set-tog on"></span></div>
+  </div></div></div>`);
+$('lh').innerHTML = `<div>${deck('lh')}<div class="cap"><b>Left-hand deck.</b> The same stub end peeks out the top, its words upright.</div></div>
+  <div>${front('lh')}<div class="cap"><b>Left-hand forward.</b> Turned +90°, tilted −3°: read from the left side, or turn the phone anticlockwise.</div></div>
+  <div>${settings}<div class="cap"><b>The setting.</b> A new row in Settings › Display (dashed outline here only to mark it), in the same style as the other switches.</div></div>`;
+
+await Promise.all([...document.images].map((i) => i.complete ? 0 : new Promise((r) => { i.onload = i.onerror = r; })));
+await document.fonts.ready;
+document.documentElement.dataset.ready = '1';
+</script>
+</body>
+</html>
