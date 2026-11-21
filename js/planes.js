@@ -3,18 +3,18 @@
 // on the website, because adsb.lol doesn’t allow browser requests directly. The airline comes from the callsign's prefix.
 // No DOM here. Positions are extrapolated between fetches using ground speed, track and climb rate.
 
-import { tagOf } from './sky-secrets.js?v=0.1.1821';
-import { GOV_OPS, BIZ_OPS, AIRLINE_CS, MIL_TYPES, isGovOrMil, opOf, anonId } from './plane-privacy.js?v=0.1.1821';
+import { tagOf } from './sky-secrets.js?v=0.1.1822';
+import { GOV_OPS, BIZ_OPS, AIRLINE_CS, MIL_TYPES, isGovOrMil, opOf, anonId } from './plane-privacy.js?v=0.1.1822';
 export { GOV_OPS, isGovOrMil, anonId };
-import { SERVER } from './server.js?v=0.1.1821';
-import { plugin } from './native.js?v=0.1.1821';
-import { lookupRoute } from './routes.js?v=0.1.1821';
-import { typeName } from './sky-type-names.js?v=0.1.1821';
-import { noteFeed } from './sky-local.js?v=0.1.1821';
-import { planeSet } from './sky-sets.js?v=0.1.1821';
-import { isProp } from './sky-props.js?v=0.1.1821';
-import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1821';
-import { DEFAULTS, clampDial, freshFeed, pickSource, nextGap, afterAnswer, feedDown, maxAgeS, easeLeft } from './plane-feed.js?v=0.1.1821';
+import { SERVER } from './server.js?v=0.1.1822';
+import { plugin } from './native.js?v=0.1.1822';
+import { lookupRoute } from './routes.js?v=0.1.1822';
+import { typeName } from './sky-type-names.js?v=0.1.1822';
+import { noteFeed } from './sky-local.js?v=0.1.1822';
+import { planeSet } from './sky-sets.js?v=0.1.1822';
+import { isProp } from './sky-props.js?v=0.1.1822';
+import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1822';
+import { DEFAULTS, clampDial, freshFeed, pickSource, nextGap, afterAnswer, feedDown, maxAgeS, easeLeft } from './plane-feed.js?v=0.1.1822';
 // Empty = feature off. localStorage 'planeRelay' overrides it (testing). Our server's /planes (adsb.lol only) once it's
 // deployed; until then the Val Town relay (relay/handler.ts).
 // Sky Collector (2026-11-15): Space Collector's Val Town relay is turned away by adsb.lol now, so the website needs Sky
@@ -331,7 +331,8 @@ export class PlaneTracker {
     /* The plane itself goes with the lookup (2026-11-17): a route the plane isn't plausibly flying (Detroit to Detroit, or
        a path it's nowhere near) comes back null and the catch is a plane card with no flight card. */
     const pl = plane ?? this.planes.find((p) => p.callsign === callsign) ?? null;
-    if (r && !SERVER) lookupRoute(callsign, pl).then((x) => { if (x) { r.from = x.from.city; r.to = x.to.city; r.full = x; } else r.none = true; }).catch(() => {});
+    /* `wait` (not saved with the route) settles once the lookup is done: the widgets write again then (js/main.js sendSkyWidgets) */
+    if (r && !SERVER) Object.defineProperty(r, 'wait', { value: lookupRoute(callsign, pl).then((x) => { if (x) { r.from = x.from.city; r.to = x.to.city; r.full = x; } else r.none = true; }).catch(() => {}) });
     if (r && SERVER) fetch(`${SERVER}/route?cs=${encodeURIComponent(callsign)}`, { signal: AbortSignal.timeout?.(8000) })
       .then((x) => (x.ok ? x.json() : null)).then((j) => { const st = j?.route; if (st?.length >= 2) { const nm = (a) => a.city || a.iata || a.icao; r.from = nm(st[0]); r.to = nm(st[st.length - 1]); } }).catch(() => {});
     return r;
@@ -352,7 +353,7 @@ const AIRLINES = { ACA: 'Air Canada', ROU: 'Air Canada Rouge', JZA: 'Jazz (Air C
 // Every ICAO airline code -> name (js/airlines.js, built by scripts/build-airlines.mjs), loaded once, lazily.
 let airlineTable = null, airlineLoad = null;
 export function loadAirlines() {
-  return (airlineLoad ??= import('./airlines.js?v=0.1.1821').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
+  return (airlineLoad ??= import('./airlines.js?v=0.1.1822').then((m) => { airlineTable = m.AIRLINE_NAMES; return airlineTable; }).catch(() => { airlineTable = {}; return airlineTable; }));
 }
 export function airlineName(callsign) { return /^[A-Z]{3}\d/.test(callsign ?? '') ? airlineFor(callsign, null) : ''; }
 function airlineFor(callsign, a) {

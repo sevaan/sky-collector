@@ -3713,6 +3713,7 @@ body.night .tc .acts .yes { background-image: none; box-shadow: 0 3px 0 #3a0b07,
 .n2-att .th { width: 54px; height: 54px; border-radius: 10px; position: relative; overflow: hidden; background: #060b14 center / cover no-repeat; }
 .n2-att .th::before { content: ''; position: absolute; inset: -6px; background: inherit; filter: blur(3px) brightness(.55) saturate(.4); }
 .n2-att .th::after { content: '?'; position: absolute; inset: 0; display: grid; place-items: center; font: 400 22px 'SC Display', sans-serif; color: #fff2b3cc; }
+.n2-att .th .th-gl { position: absolute; inset: 12px; width: 30px; height: 30px; fill: #8496ab; stroke: #8496ab; z-index: 1; } /* a Sky plane with no photo: its silhouette (js/main.js n2Build) */
 .n2-att .tx { min-width: 0; }
 .n2-att .tx b { display: block; font: 400 15px/1.1 'SC Display', sans-serif; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .n2-att .tx small { display: block; margin-top: 3px; font: 500 13.5px 'SC Label', sans-serif; color: #c9c6ad; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

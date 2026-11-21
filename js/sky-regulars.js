@@ -3,7 +3,7 @@
 // Airline flights only: private and other anonymous aircraft have no callsign here (js/planes.js isAnonymous), so a
 // person's plane can never become a "regular". The plane version of a satellite's pass. No DOM.
 // localStorage 'skyRegulars' = { CALLSIGN: { 'yyyy-m-d': minuteOfDay first seen } }, 14 days, at most 600 callsigns.
-import { privateCatch } from './plane-privacy.js?v=0.1.1821';
+import { privateCatch } from './plane-privacy.js?v=0.1.1822';
 const KEY = 'skyRegulars', KEEP_DAYS = 14, MAX = 600, WINDOW = 45, MIN_DAYS = 3, LOOK_DAYS = 7;
 const AIRLINE = /^[A-Z]{3}\d/;
 const dayKey = (t) => { const d = new Date(t); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
@@ -14,14 +14,23 @@ const load = () => { if (cache) return cache; try { cache = JSON.parse(localStor
 const save = () => { if (Date.now() - savedAt < 15000) return; savedAt = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(cache)); } catch {} };
 // Callsigns seen now ([{ callsign }]); each callsign's first sighting of the day is kept.
 export function noteRegulars(planes, now = Date.now()) {
-  const c = load(), k = dayKey(now), m = minuteOf(now); let changed = false;
-  for (const p of planes ?? []) { const cs = String(p?.callsign ?? '').trim().toUpperCase(); if (!AIRLINE.test(cs)) continue; const r = (c[cs] ??= {}); if (r[k] == null) { r[k] = m; changed = true; } }
+  const c = load(), k = dayKey(now), m = minuteOf(now), ty = loadTypes(); let changed = false, typed = false;
+  for (const p of planes ?? []) { const cs = String(p?.callsign ?? '').trim().toUpperCase(); if (!AIRLINE.test(cs)) continue; const r = (c[cs] ??= {}); if (r[k] == null) { r[k] = m; changed = true; }
+    const t = String(p?.type ?? '').trim().toUpperCase(); if (/^[A-Z0-9]{2,4}$/.test(t) && ty[cs] !== t) { ty[cs] = t; typed = true; } }
+  if (typed) saveTypes(c);
   if (!changed) return;
   const cut = now - KEEP_DAYS * 86400e3;
   for (const [cs, r] of Object.entries(c)) { for (const d of Object.keys(r)) if (dayStart(d) < cut) delete r[d]; if (!Object.keys(r).length) delete c[cs]; }
   const all = Object.keys(c); if (all.length > MAX) all.sort((a, b) => Math.max(...Object.keys(c[a]).map(dayStart)) - Math.max(...Object.keys(c[b]).map(dayStart))).slice(0, all.length - MAX).forEach((cs) => delete c[cs]);
   save();
 }
+/* Each regular's aircraft type, last seen (2026-11-20, simulator check: a regular that isn't flying now had no type, so the
+   widgets and the daily note had no photo of it). localStorage 'skyRegularTypes' = { CALLSIGN: 'B38M' }, only callsigns in
+   'skyRegulars' (pruned with it) */
+const TYPES = 'skyRegularTypes'; let types = null, typesAt = 0;
+const loadTypes = () => { if (types) return types; try { types = JSON.parse(localStorage.getItem(TYPES) || '{}') || {}; } catch { types = {}; } return types; };
+function saveTypes(c) { if (Date.now() - typesAt < 15000) return; typesAt = Date.now(); for (const cs of Object.keys(types)) if (!c[cs]) delete types[cs]; try { localStorage.setItem(TYPES, JSON.stringify(types)); } catch {} }
+export const regularType = (callsign) => loadTypes()[String(callsign ?? '').toUpperCase()] || '';
 // Minutes apart on a clock face (23:50 and 00:10 are 20 apart)
 const apart = (a, b) => { const d = Math.abs(a - b) % 1440; return Math.min(d, 1440 - d); };
 // One callsign's days → { minute (usual time), days (in the window), of (days looked at) } or null when it isn't regular.
@@ -57,4 +66,4 @@ export function airlinesAt(hours, now = Date.now(), days = 7, store = load()) {
   for (const [cs, d] of Object.entries(store)) for (const [k, m] of Object.entries(d)) if (dayStart(k) >= from && hs.has(Math.floor(m / 60))) { out.add(cs.slice(0, 3)); break; }
   return out;
 }
-export const _resetRegulars = (v = null) => { cache = v; savedAt = 0; }; // tests
+export const _resetRegulars = (v = null) => { cache = v; savedAt = 0; types = null; typesAt = 0; }; // tests

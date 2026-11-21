@@ -331,7 +331,8 @@ export class PlaneTracker {
     /* The plane itself goes with the lookup (2026-11-17): a route the plane isn't plausibly flying (Detroit to Detroit, or
        a path it's nowhere near) comes back null and the catch is a plane card with no flight card. */
     const pl = plane ?? this.planes.find((p) => p.callsign === callsign) ?? null;
-    if (r && !SERVER) lookupRoute(callsign, pl).then((x) => { if (x) { r.from = x.from.city; r.to = x.to.city; r.full = x; } else r.none = true; }).catch(() => {});
+    /* `wait` (not saved with the route) settles once the lookup is done: the widgets write again then (js/main.js sendSkyWidgets) */
+    if (r && !SERVER) Object.defineProperty(r, 'wait', { value: lookupRoute(callsign, pl).then((x) => { if (x) { r.from = x.from.city; r.to = x.to.city; r.full = x; } else r.none = true; }).catch(() => {}) });
     if (r && SERVER) fetch(`${SERVER}/route?cs=${encodeURIComponent(callsign)}`, { signal: AbortSignal.timeout?.(8000) })
       .then((x) => (x.ok ? x.json() : null)).then((j) => { const st = j?.route; if (st?.length >= 2) { const nm = (a) => a.city || a.iata || a.icao; r.from = nm(st[0]); r.to = nm(st[st.length - 1]); } }).catch(() => {});
     return r;
