@@ -1,4 +1,4 @@
-// The two-card pack opening (prototype, js/pack-reveal.js): the timing table and the Testing switch's default.
+// The two-card pack opening (js/pack-reveal.js, on for everyone since 2026-11-21): the timing table and the switch's default.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { PACK_VARIANTS, PACK_FLIP, PACK_SHORT_AFTER, packChoice, packPlan, packFoil, packSetting } from '../js/pack-reveal.js';
@@ -7,7 +7,7 @@ test('the switch is off unless a variant is picked', () => {
   for (const raw of [null, undefined, '', 'off', 'b', 'D', 'toString', 'constructor', 0, 1]) assert.equal(packChoice(raw), '');
   for (const v of ['A', 'B', 'C']) assert.equal(packChoice(v), v);
   assert.equal(packPlan(''), null); assert.equal(packPlan('off'), null); assert.equal(packPlan(null), null);
-  assert.equal(packSetting(), ''); // no localStorage here: off
+  assert.equal(packSetting(), 'B'); // no localStorage here: on for everyone, B (2026-11-21)
   for (const on of ['on', '1', true]) assert.equal(packChoice(on), 'B'); // turned on without a variant: B
 });
 

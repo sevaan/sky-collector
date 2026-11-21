@@ -9,7 +9,7 @@
 // the card pictures decoded (at most 150 ms); the cards sit behind the pack by stacking order, so nothing is clipped per
 // frame; no tilt and no layout reads while it plays. The pure helpers (timing table, the switch) are tested in
 // tests/pack-reveal.test.mjs.
-import { TIER_INFO, TIERS } from './rarity.js?v=0.1.1830';
+import { TIER_INFO, TIERS } from './rarity.js?v=0.1.1843';
 
 // The beats in ms, from the pack popping in to the top card's face (B is the plan; A quicker; C with a longer tear).
 export const PACK_VARIANTS = {
@@ -21,7 +21,7 @@ export const PACK_FLIP = 520;          // the reveal's flip for a Common card (j
 export const PACK_SHORT_AFTER = 5;     // after five packs, the short cut: no settle beat, a quicker pop and tear (airline catches give two cards often)
 export const PACK_KEY = 'packReveal', PACK_SEEN_KEY = 'packSeen';
 
-/** The Testing switch's value: 'A' | 'B' | 'C', or '' (off, the default). Turned on without a variant ('on', '1', true), it is
+/** The Testing switch's value: 'A' | 'B' | 'C' (B, the default since 2026-11-21), or '' (turned off). Turned on without a variant ('on', '1', true), it is
     B (Sevaan picked B, 2026-11-20); A and C stay as choices. */
 export const PACK_DEFAULT = 'B';
 export function packChoice(raw) { if (raw === true || raw === 'on' || raw === '1') return PACK_DEFAULT; return typeof raw === 'string' && Object.prototype.hasOwnProperty.call(PACK_VARIANTS, raw) /* not Object.hasOwn: iOS 15.4+ only */ ? raw : ''; }
@@ -39,8 +39,10 @@ export function packFoil(items) {
   return { tier: TIERS[Math.max(0, best)], shiny: (items ?? []).some((it) => !!it?.shiny) };
 }
 // The switch and the count, on this device.
+/* On for everyone (2026-11-21, Sevaan: "let's add it in"): with nothing saved it's B. Turning the Testing switch off saves
+   'off'; a timing saves A, B or C. */
 export function packSetting(v) {
-  try { if (v !== undefined) { const c = packChoice(v); if (c) localStorage.setItem(PACK_KEY, c); else localStorage.removeItem(PACK_KEY); } return packChoice(localStorage.getItem(PACK_KEY)); } catch { return ''; }
+  try { if (v !== undefined) localStorage.setItem(PACK_KEY, packChoice(v) || 'off'); const raw = localStorage.getItem(PACK_KEY); return raw == null ? PACK_DEFAULT : packChoice(raw); } catch { return PACK_DEFAULT; }
 }
 export function packSeen(add = 0) { try { const n = (+localStorage.getItem(PACK_SEEN_KEY) || 0) + add; if (add) localStorage.setItem(PACK_SEEN_KEY, String(n)); return n; } catch { return 0; } }
 

@@ -948,7 +948,10 @@ html.sky-cards.sky-night #sat-card.rm-card .rm-pic { background:radial-gradient(
 #sat-card .rm-arc { fill:none; stroke:var(--rc-accent); stroke-width:1.4; stroke-linecap:round; opacity:.75; }
 #sat-card .rm-arc.gold { stroke:var(--rc-gold); stroke-width:2; opacity:.95; }
 #sat-card .rm-arc.rm-top { stroke:var(--rc-redink); stroke-width:2.4; opacity:1; }
-#sat-card .rm-draw .rm-arc { animation:rmDraw 1.1s cubic-bezier(.4,.1,.3,1) forwards; } /* js/cards-page.js sets each arc's dash to its length */
+#sat-card .rm-arc.rm-rep { stroke-width:2; opacity:.9; }
+#sat-card .rm-busy .rm-arc:not(.rm-top) { stroke-width:.8; opacity:.4; }
+#sat-card .rm-busy .rm-arc.rm-rep:not(.rm-top) { stroke-width:1.3; opacity:.65; }
+#sat-card .rm-draw .rm-arc:not(.rm-still) { animation:rmDraw 1.1s cubic-bezier(.4,.1,.3,1) forwards; } /* js/cards-page.js sets each arc's dash to its length */
 @keyframes rmDraw { to { stroke-dashoffset:0; } }
 #sat-card .rm-apt { fill:var(--rc-ink); stroke:var(--rc-paper); stroke-width:1; }
 #sat-card .rm-apt.rm-hub { fill:var(--rc-paper); stroke:var(--rc-ink); stroke-width:1.6; }
@@ -962,16 +965,23 @@ html.sky-cards #sat-card.rm-card .rm-k { color:var(--rc-muted); font:500 14px/1 
 html.sky-cards #sat-card.rm-card .rm-sub { padding:9px 16px 14px; font:500 15px/1.2 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.03em; color:var(--rc-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 html.sky-cards #sat-card.rm-card .rm-sub b { color:var(--rc-ink); font-weight:500; }
 .turning #sat-card .rm-jet, .lb-back .rm-jet { display:none; } /* the jet rests while the card is behind */
-@media (prefers-reduced-motion: reduce) { #sat-card .rm-draw .rm-arc { animation:none; stroke-dashoffset:0 !important; } #sat-card .rm-jet { display:none; } }
+@media (prefers-reduced-motion: reduce) { #sat-card .rm-draw .rm-arc:not(.rm-still) { animation:none; stroke-dashoffset:0 !important; } #sat-card .rm-jet { display:none; } }
 /* With the route map beside it, the rank card keeps its climbing-plane picture even on day one (2026-11-21, Sevaan: "where'd
    our plane ascending rank card go?"). Under 5 cards the rank card slims to a dial (body.few-cards); alone that was right,
    but in the two-card deck both share one height, so the slim card was stretched to the map's height with an empty middle.
-   Short phones (under 700px tall) keep the slim card, and the map's picture grows to match it. */
-@media (min-height: 701px) {
-  html.sky-cards body.few-cards .lb-deck.two #logbook.lb-climb .lb-dial { display:none !important; }
-  html.sky-cards body.few-cards .lb-deck.two #logbook.lb-climb .lb-pic { display:block !important; height:auto !important; background:var(--rc-sky); border-bottom:1px solid var(--rc-rule); } /* not the 44px day-one strip */
-  html.sky-cards body.few-cards .lb-deck.two #logbook.lb-climb :is(.lb-rankrow, .lb-to) { display:flex !important; }
-  html.sky-cards body.few-cards .lb-deck.two #logbook.lb-climb .lb-bar { display:block !important; }
+   Short screens too (Sevaan's iPhone with Display Zoom is 693 tall, where Space's rule slims the rank card on any phone under
+   700): with the map beside it, the rank card is always the full climb card. */
+html.sky-cards .lb-deck.two #logbook.lb-climb .lb-dial { display:none !important; }
+html.sky-cards .lb-deck.two #logbook.lb-climb .lb-pic { display:block !important; height:auto !important; background:var(--rc-sky); border-bottom:1px solid var(--rc-rule); } /* not the 44px day-one strip */
+html.sky-cards .lb-deck.two #logbook.lb-climb :is(.lb-rankrow, .lb-to) { display:flex !important; }
+html.sky-cards .lb-deck.two #logbook.lb-climb .lb-bar { display:block !important; }
 }
 html.sky-cards #sat-card.rm-card .sg-face { min-height:100%; }
 html.sky-cards #sat-card.rm-card .rm-pic { flex:1 0 196px; height:auto; }
+/* The deck at the top of Sky's Collection (2026-11-21, Sevaan: "The shadow under the cards is cut off and … the background
+   card needs to look better"): room under it for the paper's shadow (the tabs bar below has its own background, which cut
+   it off), and the card behind is a lighter, slightly greyed paper instead of Space's 55% dim, which turned cream to mud.
+   Its strip (ROUTE MAP · 3 PASSES or YOUR RANK) stays readable as the tease. */
+html.sky-cards .lb-deck { margin-bottom:34px; }
+html.sky-cards .lb-track > .lb-back { filter:brightness(.94) saturate(.8) contrast(.96); }
+html.sky-cards .lb-track > .lb-back > .lb-rot { box-shadow:0 1px 0 rgba(255,255,255,.7) inset, 0 3px 10px rgba(13,34,56,.12), 0 0 0 1px rgba(13,34,56,.1); }
