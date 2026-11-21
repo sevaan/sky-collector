@@ -5,15 +5,15 @@
 //  Everything scales with rarity (Legendary dims the sky, shockwave, held breath, slow flip, fanfare).
 // Waits use timers, not animation.finished, so a paused tab can never freeze the sequence.
 
-import { sfx, loadSfx } from './sfx.js?v=0.1.1854';
-import { audioCtx } from './audio-ctx.js?v=0.1.1854';
-import { TIER_INFO } from './rarity.js?v=0.1.1854';
-import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1854';
-import { applyBack } from './card-backs.js?v=0.1.1854';
-import { addStarfield } from './starfield.js?v=0.1.1854';
-import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1854';
-import { packPlan, packFoil, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1854'; /* the two-card pack opening (prototype, 2026-11-20) */
-import { tearJag } from './gift-pack.js?v=0.1.1854';
+import { sfx, loadSfx } from './sfx.js?v=0.1.1861';
+import { audioCtx } from './audio-ctx.js?v=0.1.1861';
+import { TIER_INFO } from './rarity.js?v=0.1.1861';
+import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1861';
+import { applyBack } from './card-backs.js?v=0.1.1861';
+import { addStarfield } from './starfield.js?v=0.1.1861';
+import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1861';
+import { packPlan, packFoil, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1861'; /* the two-card pack opening (prototype, 2026-11-20) */
+import { tearJag } from './gift-pack.js?v=0.1.1861';
 
 const FX = TIER_FX; /* one rarity table for every card moment (js/card-moment.js, 2026-11-11) */
 const NIGHT_MILESTONES = [3, 5, 10, 25, 50, 100, 200, 365], STAMP_MILESTONES = [5, 10, 25, 50, 100, 200, 300, 400];
@@ -93,6 +93,7 @@ function unzoom() {
 // Fold, unfold or rotate with a card up: size it again for the new window (big-screen playtest 2026-10-22: it kept the
 // old size, a small card in the middle of an iPad).
 let sizedCard = null;
+const LP_PEEK = 2.25; // em of the pass that shows above the plane card (css/sky-cards.css --lp-peek)
 addEventListener('resize', () => { if (sizedCard && !$('reveal').hidden) requestAnimationFrame(() => sizeCard(sizedCard)); });
 function sizeCard(cardEl) {
   sizedCard = cardEl;
@@ -127,10 +128,11 @@ function sizeCard(cardEl) {
      card sat ~40px high of the gap; Sky measured the same, 40-41px at 360-412 wide). */
   let mid = (top + bot) / 2; const half = em * cf / 2;
   if (peek && mid - half - peek < top) mid = Math.min(mid + (top - (mid - half - peek)), bot - half); /* the peek clears the chips row */
-  /* The landscape pass (css/sky-cards.css .dk-pass): behind the card its end shows above it, 4.9em, so that comes off the
+  /* The landscape pass (css/sky-cards.css .dk-pass): behind the card its end shows above it, LP_PEEK em (just the airline and
+     the date, 2026-11-21, Sevaan), so that comes off the
      room like the peek; in front it grows to fill the room between the chips and the rank bar, tilted 7.5deg (--lpk). */
   const passBack = !!$('reveal-card').querySelector(':scope > .dk-back.dk-pass'), passAny = !!$('reveal-card').querySelector(':scope > .dk-pass');
-  if (passBack) { cf = Math.min(cf, 0.95 * (bot - top) / (em + 4.9)); root.style.setProperty('--cf', `${cf}px`); mid = (top + bot) / 2; const hh = em * cf / 2, pk = 4.9 * cf; if (mid - hh - pk < top) mid = Math.min(mid + (top - (mid - hh - pk)), bot - hh); }
+  if (passBack) { cf = Math.min(cf, 0.95 * (bot - top) / (em + LP_PEEK)); root.style.setProperty('--cf', `${cf}px`); mid = (top + bot) / 2; const hh = em * cf / 2, pk = LP_PEEK * cf; if (mid - hh - pk < top) mid = Math.min(mid + (top - (mid - hh - pk)), bot - hh); }
   if (passAny) { const th = 7.5 * Math.PI / 180, w = 16 * cf, hgt = 42 * cf, bw = w * Math.cos(th) + hgt * Math.sin(th), bh = w * Math.sin(th) + hgt * Math.cos(th);
     const k = Math.min(0.97 * (bot - top) / bh, (root.clientWidth - 24) / bw); root.style.setProperty('--lpk', Math.max(1, k).toFixed(3));
     /* the pass in front is centred on the holder; keep its tilted box inside the room */
