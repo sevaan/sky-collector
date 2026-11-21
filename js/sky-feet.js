@@ -7,7 +7,7 @@
 // highlight(plane): Settings → Circle highlights would let the circle lock on; nameOf(plane): its name on the map.
 // Every plane up (js/sky-up.js isUp, the same rule as the radar's count and Today) is drawn (at most `max`); only `labels` of them get a spoke and a name, as Space keeps to the
 // Moon, planets and 4 new satellites: highlighted ones first, new ones first among those, then the highest.
-import { isUp } from './sky-up.js?v=0.1.1853';
+import { isUp } from './sky-up.js?v=0.1.1854';
 export const FEET_MAX = 40, FEET_LABELS = 4;
 export function feetPlanes(list, { fresh = () => false, highlight = () => true, nameOf = () => 'Plane', max = FEET_MAX, labels = FEET_LABELS } = {}) {
   const up = (list ?? []).filter(isUp).map((a) => {
