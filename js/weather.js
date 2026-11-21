@@ -1,4 +1,4 @@
-import { SERVER, SKY_API } from './server.js?v=0.1.1820';
+import { SERVER, SKY_API } from './server.js?v=0.1.1821';
 // Local weather from Open-Meteo (free, no key, CORS-open): what the sky is doing now, and whether tonight is
 // worth it. No DOM. Cached half an hour per place. Everything here is best-effort: no weather, no change.
 //

@@ -77,6 +77,10 @@ test('the catch label is measured to the fraction of a pixel', () => {
 });
 
 test('the pack keeps its artwork drawn through a missed tear', () => {
-  assert.match(read('js/gift-pack.js'), /im\.decode\?\.\(\)/);
-  assert.match(read('css/gift.css'), /#gift \.gp-pk:not\(\.opened\) \.gp-art \{ will-change: transform; \}/);
+  /* the cause was GPU memory (2026-11-20, API 37 emulator): the cap carries no full-size moving lights, and the artwork's
+     own layer (the first guess) is gone */
+  const css = read('css/gift.css');
+  assert.match(css, /#gift \.gp-cap :is\(\.gp-glow, \.gp-sheen, \.gp-band\) \{ display: none; \}/);
+  assert.doesNotMatch(css, /\.gp-art \{ will-change: transform; \}/);
+  assert.doesNotMatch(read('js/gift-pack.js'), /root\._art = im/);
 });
