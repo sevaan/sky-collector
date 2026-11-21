@@ -17,7 +17,7 @@ import { Firestore } from '@google-cloud/firestore';
 import { gzipSync, gunzipSync } from 'node:zlib';
 import { planesNear, relayState } from './planes-relay.js';
 import { statsHtml } from './stats-page.js';
-import { dailyDocs, windowStart } from './daily.js';
+import { dailyDocs, windowStart, WINDOW_DAYS } from './daily.js';
 const db = new Firestore(); /* Sky's own Firestore (sky-collector-app, Native mode); never Space Collector's */
 
 const ALLOWED = [/^https:\/\/sevaan\.github\.io$/, /^http:\/\/localhost(:\d+)?$/, /^http:\/\/127\.0\.0\.1(:\d+)?$/, /^capacitor:\/\/localhost$/, /^https:\/\/localhost$/, /^https:\/\/(www\.)?skycollector\.app$/];
@@ -43,8 +43,8 @@ function watchBudget() {
 // for Sky's own project. Same rows, same snapshot cache, so fixes port both ways. Collections: sky_events, sky_statcache.
 const EVENTS = 'sky_events', CACHE = 'sky_statcache', CHUNK = 900000, SLOT = 10 * 60e3;
 /* Each usage note carries 'exp', so a Firestore TTL policy on sky_events.exp deletes it after EVENT_DAYS (privacy page
-   2026-11-20: notes had no end date). The stats page reads 120 days. The policy itself is a console/gcloud step (Sevaan). */
-const EVENT_DAYS = 365; // one year (Sevaan, 2026-11-20); daily totals are kept forever in sky_daily (dailyPass below); no TTL is switched on yet
+   2026-11-20: notes had no end date). The stats page reads the last WINDOW_DAYS (90). The policy itself is a console/gcloud step (Sevaan). */
+const EVENT_DAYS = 90; // 90 days (Sevaan, 2026-11-20, first one year, changed the same day; Space 1c595988); daily totals are kept forever in sky_daily (dailyPass below); no TTL is switched on yet
 // Sky adds 'feed' (where each session's planes came from) and 'rare' (a rare type alert) to Space's names.
 const NAMES = new Set(['install', 'open', 'night', 'end', 'tour', 'motion', 'calib', 'plus', 'err', 'sky', 'help', 'remind', 'catch', 'share', 'boot', 'perm', 'secret', 'gift', 'review', 'feed', 'rare']);
 async function report(body) {
@@ -67,7 +67,7 @@ async function loadSnapshot() {
   snapMem = { ver: meta.ver, rtUpTo: meta.rtUpTo, rows: new Map(list.map((r) => [r._id, r])) }; return snapMem;
 }
 async function saveSnapshot(rows, rtUpTo) {
-  const keep = Date.now() - 120 * 86400e3, list = [...rows.values()].filter((r) => r.ts > keep);
+  const keep = Date.now() - WINDOW_DAYS * 86400e3, list = [...rows.values()].filter((r) => r.ts > keep);
   const gz = gzipSync(Buffer.from(JSON.stringify(list), 'utf8')), n = Math.max(1, Math.ceil(gz.length / CHUNK)), ver = `${Date.now()}`;
   const batch = db.batch();
   for (let k = 0; k < n; k++) batch.set(db.collection(CACHE).doc(`c${k}`), { b: gz.subarray(k * CHUNK, (k + 1) * CHUNK) });
@@ -78,7 +78,7 @@ async function saveSnapshot(rows, rtUpTo) {
 async function statRows(at, rebuild) {
   const snap = rebuild ? null : await loadSnapshot().catch((e) => { console.warn('stats snapshot', e?.message); return null; });
   if (!snap) {
-    const all = await db.collection(EVENTS).where('ts', '>', at - 120 * 86400e3).get();
+    const all = await db.collection(EVENTS).where('ts', '>', at - WINDOW_DAYS * 86400e3).get();
     const rows = new Map(all.docs.map((d) => [d.id, { ...d.data(), _id: d.id }])), mark = Date.now() - 60e3;
     await saveSnapshot(rows, mark).catch((e) => console.warn('stats snapshot save', e?.message));
     return [...rows.values()];
