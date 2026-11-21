@@ -5,7 +5,7 @@
 // Pure: builds SVG markup from the passes (no DOM), so js/cards-page.js can draw it and tests/route-map.test.mjs check it.
 // Coastlines: js/coast.js (Natural Earth 1:110m land, public domain), the same outlines as the orbit globe.
 
-import { COAST } from './coast.js?v=0.1.1830';
+import { COAST } from './coast.js?v=0.1.1834';
 
 const R = Math.PI / 180, EARTH_KM = 40075;
 const vec = (lon, lat) => [Math.cos(lat * R) * Math.cos(lon * R), Math.cos(lat * R) * Math.sin(lon * R), Math.sin(lat * R)];
@@ -54,23 +54,35 @@ const dense = (ring0) => { const ring = []; for (const [lon, lat] of ring0) { le
   const out = []; for (let i = 0; i < ring.length - 1; i++) { const a = ring[i], b = ring[i + 1], n = Math.max(1, Math.ceil(Math.max(Math.abs(b[0] - a[0]), Math.abs(b[1] - a[1])) / 3)); for (let k = 0; k < n; k++) out.push([a[0] + (b[0] - a[0]) * k / n, a[1] + (b[1] - a[1]) * k / n]); } return out; };
 const JET = 'M-14 1.5L10 1.5C13 1.5 15 .4 15-.6 15-1.6 13-2.4 10-2.4L-9-2.4-12.5-7-15.5-7-13.5-2C-15-1.5-15 1.5-14 1.5ZM-3 0L3 0 -2 6 -5 6Z';
 const code = (a) => a.iata || a.icao || '';
+const rank = (t) => ['common', 'uncommon', 'rare', 'epic', 'legendary'].indexOf(t);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 // -> null with no mappable pass, else { svg, count, airports, longest: { pass, km }, earths }.
 // opts: { W, H, anim (draw the arcs in one by one), uid (keeps ids unique when two maps are on the page) }
 export function routeMap(passes, { W = 335, H = 196, anim = true, uid = 'rm' } = {}) {
   const list = mappable(passes); if (!list.length) return null;
-  const withKm = list.map((p) => ({ p, km: kmBetween(p.from, p.to), arc: greatCircle(p.from, p.to) }));
+  /* the same two airports (either way round, any airline) are one arc, drawn bolder the more passes fly it: a few dozen
+     regulars would otherwise stack dozens of identical lines. Short routes need fewer points. */
+  const byPair = new Map();
+  for (const p of list) {
+    const k = [p.from.icao || code(p.from), p.to.icao || code(p.to)].sort().join('-'), km = kmBetween(p.from, p.to), r = byPair.get(k);
+    if (r) { r.n++; if (rank(p.tier) > rank(r.p.tier)) r.p = p; } else byPair.set(k, { p, km, n: 1 });
+  }
+  const withKm = [...byPair.values()].map((x) => ({ ...x, arc: greatCircle(x.p.from, x.p.to, Math.max(8, Math.min(48, Math.round(x.km / 220)))) }));
   const top = withKm.reduce((m, x) => (x.km > m.km ? x : m));
   const proj = viewFor(withKm.map((x) => x.arc), W, H);
   const land = COAST.filter((ring) => ring.reduce((s, [, lat]) => s + lat, 0) / ring.length > -50) /* not Antarctica: from over the North Pole it wraps the whole card */
     .map((ring) => pathOf(dense(ring), proj, true)).join('');
   const tierCls = (t) => (t === 'legendary' || t === 'epic' || t === 'rare' ? 'gold' : '');
-  const others = withKm.filter((x) => x !== top);
-  const arcs = others.map((x, i) => `<path d="${pathOf(x.arc, proj)}" class="rm-arc ${tierCls(x.p.tier)}" style="animation-delay:${Math.min(i * 0.07, 1.4).toFixed(2)}s"/>`).join('')
+  /* Only the first 30 arcs draw in (with hundreds, animating every one janked and took too long); the rest are just there.
+     Lots of routes get thinner, fainter lines so the busy corridors read as density, not a solid mass. */
+  const others = withKm.filter((x) => x !== top), busy = withKm.length > 60 ? ' rm-busy' : '';
+  const arcs = others.map((x, i) => `<path d="${pathOf(x.arc, proj)}" class="rm-arc ${tierCls(x.p.tier)}${x.n > 1 ? ' rm-rep' : ''}${i >= 30 ? ' rm-still' : ''}"${i < 30 ? ` style="animation-delay:${Math.min(i * 0.07, 1.4).toFixed(2)}s"` : ''}/>`).join('')
     + `<path id="${uid}-top" d="${pathOf(top.arc, proj)}" class="rm-arc rm-top" style="animation-delay:${Math.min(others.length * 0.07, 1.4).toFixed(2)}s"/>`;
   const visits = new Map(); for (const { p } of withKm) for (const a of [p.from, p.to]) { const k = a.icao || code(a); const v = visits.get(k) ?? { a, n: 0 }; v.n++; visits.set(k, v); }
-  const dots = [...visits.values()].map(({ a, n }) => { const [x, y] = proj(a.lon, a.lat); return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${n >= 4 ? 3.4 : 2.1}" class="rm-apt${n >= 4 ? ' rm-hub' : ''}"/>`; }).join('');
+  /* hollow dots for your busiest airports: four or more routes, and only the top eight, so a big map isn't all rings */
+  const hubMin = Math.max(4, [...visits.values()].map((v) => v.n).sort((x, y) => y - x)[7] ?? 0);
+  const dots = [...visits.values()].map(({ a, n }) => { const [x, y] = proj(a.lon, a.lat), hub = n >= hubMin; return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${hub ? 3.4 : busy ? 1.6 : 2.1}" class="rm-apt${hub ? ' rm-hub' : ''}"/>`; }).join('');
   // Labels: the longest route's two ends, then the busiest airports, as long as they don't crowd one another.
   const want = [top.p.from, top.p.to, ...[...visits.values()].sort((a, b) => b.n - a.n).map((v) => v.a)], placed = [], labs = [];
   for (const a of want) {
@@ -82,7 +94,7 @@ export function routeMap(passes, { W = 335, H = 196, anim = true, uid = 'rm' } =
   }
   const begin = anim ? (Math.min(others.length * 0.07, 1.4) + 1.1).toFixed(1) : '0';
   const jet = `<g class="rm-jet"><path d="${JET}" transform="scale(.62)"/><animateMotion dur="7s" begin="${begin}s" repeatCount="indefinite" rotate="auto"><mpath href="#${uid}-top"/></animateMotion></g>`;
-  const svg = `<svg class="rm-svg${anim ? ' rm-draw' : ''}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><path d="${land}" class="rm-land"/><g>${arcs}</g>${dots}${labs.join('')}${jet}</svg>`;
-  const km = withKm.reduce((s, x) => s + x.km, 0);
-  return { svg, count: list.length, airports: visits.size, longest: { pass: top.p, km: top.km }, earths: km / EARTH_KM };
+  const svg = `<svg class="rm-svg${anim ? ' rm-draw' : ''}${busy}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><path d="${land}" class="rm-land"/><g>${arcs}</g>${dots}${labs.join('')}${jet}</svg>`;
+  const km = list.reduce((s, p) => s + kmBetween(p.from, p.to), 0);
+  return { svg, count: list.length, routes: withKm.length, airports: visits.size, longest: { pass: top.p, km: top.km }, earths: km / EARTH_KM };
 }
