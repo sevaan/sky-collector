@@ -5,15 +5,15 @@
 //  Everything scales with rarity (Legendary dims the sky, shockwave, held breath, slow flip, fanfare).
 // Waits use timers, not animation.finished, so a paused tab can never freeze the sequence.
 
-import { sfx, loadSfx } from './sfx.js?v=0.1.1843';
-import { audioCtx } from './audio-ctx.js?v=0.1.1843';
-import { TIER_INFO } from './rarity.js?v=0.1.1843';
-import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1843';
-import { applyBack } from './card-backs.js?v=0.1.1843';
-import { addStarfield } from './starfield.js?v=0.1.1843';
-import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1843';
-import { packPlan, packFoil, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1843'; /* the two-card pack opening (prototype, 2026-11-20) */
-import { tearJag } from './gift-pack.js?v=0.1.1843';
+import { sfx, loadSfx } from './sfx.js?v=0.1.1850';
+import { audioCtx } from './audio-ctx.js?v=0.1.1850';
+import { TIER_INFO } from './rarity.js?v=0.1.1850';
+import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1850';
+import { applyBack } from './card-backs.js?v=0.1.1850';
+import { addStarfield } from './starfield.js?v=0.1.1850';
+import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1850';
+import { packPlan, packFoil, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1850'; /* the two-card pack opening (prototype, 2026-11-20) */
+import { tearJag } from './gift-pack.js?v=0.1.1850';
 
 const FX = TIER_FX; /* one rarity table for every card moment (js/card-moment.js, 2026-11-11) */
 const NIGHT_MILESTONES = [3, 5, 10, 25, 50, 100, 200, 365], STAMP_MILESTONES = [5, 10, 25, 50, 100, 200, 300, 400];
@@ -127,6 +127,14 @@ function sizeCard(cardEl) {
      card sat ~40px high of the gap; Sky measured the same, 40-41px at 360-412 wide). */
   let mid = (top + bot) / 2; const half = em * cf / 2;
   if (peek && mid - half - peek < top) mid = Math.min(mid + (top - (mid - half - peek)), bot - half); /* the peek clears the chips row */
+  /* The landscape pass (css/sky-cards.css .dk-pass): behind the card its end shows above it, 4.9em, so that comes off the
+     room like the peek; in front it grows to fill the room between the chips and the rank bar, tilted 7.5deg (--lpk). */
+  const passBack = !!$('reveal-card').querySelector(':scope > .dk-back.dk-pass'), passAny = !!$('reveal-card').querySelector(':scope > .dk-pass');
+  if (passBack) { cf = Math.min(cf, 0.95 * (bot - top) / (em + 4.9)); root.style.setProperty('--cf', `${cf}px`); mid = (top + bot) / 2; const hh = em * cf / 2, pk = 4.9 * cf; if (mid - hh - pk < top) mid = Math.min(mid + (top - (mid - hh - pk)), bot - hh); }
+  if (passAny) { const th = 7.5 * Math.PI / 180, w = 16 * cf, hgt = 42 * cf, bw = w * Math.cos(th) + hgt * Math.sin(th), bh = w * Math.sin(th) + hgt * Math.cos(th);
+    const k = Math.min(0.97 * (bot - top) / bh, (root.clientWidth - 24) / bw); root.style.setProperty('--lpk', Math.max(1, k).toFixed(3));
+    /* the pass in front is centred on the holder; keep its tilted box inside the room */
+    root.style.setProperty('--lp-dy', `${((top + bot) / 2 - mid).toFixed(1)}px`); }
   root.style.setProperty('--rv-y', `${(mid - H / 2).toFixed(1)}px`);
 }
 
@@ -604,7 +612,7 @@ function orderDeck(items) {
 }
 function setDeck(items) {
   const tr = $('reveal-card'); tr.classList.add('dk-track'); tr.classList.remove('dk-wait', 'instant');
-  tr.replaceChildren(...items.map((it, i) => { const s = document.createElement('div'); s.className = `dk-slot ${i ? 'dk-back' : 'dk-front'}`; if (i) s.setAttribute('aria-hidden', 'true'); s.append(it.card); return s; }));
+  tr.replaceChildren(...items.map((it, i) => { const s = document.createElement('div'); s.className = `dk-slot ${i ? 'dk-back' : 'dk-front'}${it.card.querySelector?.('.fc--land') ? ' dk-pass' : ''}`; /* the landscape boarding pass (css/sky-cards.css #reveal .dk-pass) */ if (i) s.setAttribute('aria-hidden', 'true'); s.append(it.card); return s; }));
   $('reveal').classList.toggle('two', items.length > 1);
   deck = items.length ? { items, front: 0, busy: false, ready: false } : null;
 }
