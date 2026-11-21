@@ -18,6 +18,8 @@ const mdText = (s) => s.replace(/^#+ /gm, '').replace(/^- /gm, '').replace(/\*\*
 const pageText = (s) => s.split('<body>')[1].replace(/<span class="eyebrow">[^<]*<\/span>/, '') /* the header, as on help.html */.replace(/<!--[\s\S]*?-->/g, '').replace(/<[^>]+>/g, ' ')
   .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&nbsp;/g, ' ');
 
+const RET = ['used only to improve the game.', 'used only to improve the game. Each note is deleted after 90 days. We keep daily totals, such as how many people played, which hold no IDs.']; /* ⑦: the 90-day sentence, live since 2026-11-20 */
+
 test('the chosen Part 1b sentences are the source file\'s own', () => {
   const table = md.split('## Part 1b.')[1].split('## Part 2.')[0];
   for (const s of WEATHER) assert.ok(table.includes(s), s);
@@ -26,7 +28,7 @@ test('the chosen Part 1b sentences are the source file\'s own', () => {
 });
 
 test('privacy.html is Part 1 word for word, apart from the date and the chosen Part 1b sentences', () => {
-  const want = words(mdText(part1()).replace(DATE[0], DATE[1]).replace(WEATHER[0], WEATHER[1]));
+  const want = words(mdText(part1()).replace(DATE[0], DATE[1]).replace(WEATHER[0], WEATHER[1]).replace(RET[0], RET[1]));
   const got = words(pageText(page));
   const diffs = [];
   for (let i = 0; i < Math.max(want.length, got.length); i++) if (want[i] !== got[i]) { diffs.push(`word ${i}: want ${JSON.stringify(want.slice(i, i + 6).join(' '))}, got ${JSON.stringify(got.slice(i, i + 6).join(' '))}`); break; }
@@ -35,8 +37,7 @@ test('privacy.html is Part 1 word for word, apart from the date and the chosen P
 });
 
 test('privacy.html: true-today sentences, and notes for the swaps to come', () => {
-  assert.match(page, /The notes are kept on our server, in Google Cloud, and used only to improve the game\.<\/p>/);
-  assert.match(page, /<!-- Part 1b ⑦[\s\S]*?Each note is deleted after 90 days\. We keep daily totals, such as how many people\s+played, which hold no IDs\." -->/);
+  assert.match(page, /used only to improve the game\. Each note is deleted after 90 days\. We keep daily totals, such as how many people played, which hold no IDs\.<\/p>/); /* ⑦ live */
   assert.match(page, /<li>No use of your contacts, photos or microphone\.<\/li>/);
   assert.doesNotMatch(page, /Open-Meteo|test version|left out\?/);
   assert.doesNotMatch(page, /PENDING/);
