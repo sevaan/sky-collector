@@ -1,7 +1,7 @@
 // The privacy page for the store release (2026-11-20): privacy.html is Part 1 of content/sky-privacy-page-v2-2026-11-20.md
 // word for word. The only differences allowed are the date and Part 1b's sentences chosen for what is live with 0.1.1819:
 // ① the after-fix sentence with its dated bracket (already in Part 1), ② MET Norway (the app's /wx switch ships with it),
-// ⑦ the true-today sentence (the one-year expiry isn't live), ⑧ the true-today list (no "camera" yet). The apps bundle no
+// ⑦ the true-today sentence (the 90-day expiry isn't live), ⑧ the true-today list (no "camera" yet). The apps bundle no
 // copy of the page (js/native.js opens skycollector.app/privacy), so this one page covers the website and both apps.
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -36,7 +36,7 @@ test('privacy.html is Part 1 word for word, apart from the date and the chosen P
 
 test('privacy.html: true-today sentences, and notes for the swaps to come', () => {
   assert.match(page, /The notes are kept on our server, in Google Cloud, and used only to improve the game\.<\/p>/);
-  assert.match(page, /<!-- Part 1b ⑦[\s\S]*?Each note is deleted after one year\. We keep daily totals, such as how many people\s+played, which hold no IDs\." -->/);
+  assert.match(page, /<!-- Part 1b ⑦[\s\S]*?Each note is deleted after 90 days\. We keep daily totals, such as how many people\s+played, which hold no IDs\." -->/);
   assert.match(page, /<li>No use of your contacts, photos or microphone\.<\/li>/);
   assert.doesNotMatch(page, /Open-Meteo|test version|left out\?/);
   assert.doesNotMatch(page, /PENDING/);

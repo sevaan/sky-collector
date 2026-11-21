@@ -1,17 +1,17 @@
 // Daily usage totals (2026-11-20, ported from Space Collector's functions/daily.js, 5f591d4b; Sevaan: keep daily totals
-// forever, delete raw usage rows after one year). One doc per Toronto day in Firestore 'sky_daily'. No install ids
+// forever, delete raw usage rows after 90 days). One doc per Toronto day in Firestore 'sky_daily'. No install ids
 // anywhere: distinct counts that can't be added up later ("installs since launch", return rates) are kept as counts on
 // the install's FIRST day (its cohort). Test installs are left out exactly as on the stats page (prep in stats-page.js).
 //
-// A day's doc is rewritten on every stats render while the day is inside the raw window (the last 120 days), so a phone
+// A day's doc is rewritten on every stats render while the day is inside the raw window (the last 90 days), so a phone
 // flagged as a test later drops out of its past days; once the day leaves the window it is marked final and never
 // written again, and the page reads it from here. Writing the same day twice gives the same doc (set by day id).
 // Sky: days, not nights (firstDay, days1/2/3/7: caught on at least N different days); per-platform cohorts at the top
 // level (byPlatform.ios / .android; the website is always a test); a 'final' flag.
 import { prep, dayNum, numOf, dayOf } from './stats-page.js';
 
-export const WINDOW_DAYS = 120;
-// The first whole day the raw rows cover when they are read from `at - 120 days`: earlier days come from sky_daily.
+export const WINDOW_DAYS = 90; /* Sevaan 2026-11-20: raw usage notes are kept 90 days (Space 1c595988) */
+// The first whole day the raw rows cover when they are read from `at - 90 days`: earlier days come from sky_daily.
 export const windowStart = (at) => dayNum(dayOf(at - WINDOW_DAYS * 86400e3)) + 1;
 
 const TIERS = ['common', 'uncommon', 'rare', 'epic', 'legendary'];

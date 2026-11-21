@@ -40,7 +40,7 @@ test('saved days give the same lifetime numbers as the raw rows', () => {
   for (let i = 0; i < a.length; i++) { assert.ok(a[i].length > 0); assert.equal(b[i], a[i]); }
 });
 
-// Today's data: Sky has sent since Nov 19, so every row is inside the 120-day window and nothing is frozen yet. The page
+// Today's data: Sky has sent since Nov 19, so every row is inside the 90-day window and nothing is frozen yet. The page
 // with the daily totals switched on must be the same page, byte for byte.
 test('the switch changes no number on today\'s data', () => {
   const at = Date.parse('2026-11-20T21:00:00Z'), r = (iid, name, ts, d = {}, extra = {}) => ({ iid, name, ts, rt: ts, v: '0.1.1790', p: 'ios', x: 0, d: JSON.stringify(d), ...extra });
