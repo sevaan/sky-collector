@@ -55,7 +55,8 @@ test("'who's flying it' is gone: true when a route isn't known", () => {
 });
 
 test('support email on the privacy page and the site', () => {
-  assert.match(src('privacy.html'), /Questions, or an aircraft you would like left out\? Email <a href="mailto:hello@skycollector\.app">hello@skycollector\.app<\/a>/);
+  assert.match(src('privacy.html'), /<p>Questions\? Email <a href="mailto:hello@skycollector\.app">hello@skycollector\.app<\/a><\/p>/);
+  assert.doesNotMatch(src('privacy.html'), /left out\?/); // no promise to remove an aircraft (Sevaan, 2026-11-20)
   assert.match(src('scripts/build-site.mjs'), /mailto:hello@skycollector\.app/);
 });
 

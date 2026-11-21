@@ -6,12 +6,16 @@
 <title>Sky Collector Privacy</title>
 <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="description" content="What Sky Collector does with your location and your collection.">
+<!-- The privacy page for the store release (2026-11-20): Part 1 of content/sky-privacy-page-v2-2026-11-20.md, word for
+     word, with Part 1b's sentences chosen for what is live with the 0.1.1819 push (tests/privacy-page.test.mjs checks it).
+     scripts/build-site.mjs copies it to skycollector.app/privacy. The apps bundle no copy: js/native.js opens
+     skycollector.app/privacy for any privacy.html link, so this is the one page for the website and both apps. -->
 <style>
   @font-face { font-family: 'SC Display'; src: url('/fonts/RussoOne-Regular.woff2') format('woff2'), url('/fonts/RussoOne-Regular.ttf') format('truetype'); }
   @font-face { font-family: 'SC Label'; src: url('/fonts/BarlowCondensed-Medium.woff2') format('woff2'), url('/fonts/BarlowCondensed-Medium.ttf') format('truetype'); font-weight: 500; }
   :root { --bg: #080f1b; --text: #e6ecf5; --ink: #fff2b3; --muted: #9fb3c8; --org: #fa8127; --edge: #22344a; }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 -apple-system, system-ui, sans-serif; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 -apple-system, system-ui, sans-serif; overflow-wrap: break-word; }
   main { max-width: 680px; margin: 0 auto; padding: 40px 16px 80px; }
   .eyebrow { font: 500 14px 'SC Label', sans-serif; letter-spacing: .2em; text-transform: uppercase; color: var(--org); }
   h1 { font: 400 32px/1.1 'SC Display', sans-serif; color: var(--ink); margin: 6px 0 8px; }
@@ -27,48 +31,78 @@
 <body><main>
   <span class="eyebrow">Sky Collector</span>
   <h1>Privacy</h1>
-  <p class="muted">Last updated 20 November 2026 · This covers the test version at sevaan.github.io/sky-collector and the sample pack at skycollector.app/pack. It will be rewritten before the game is in the app stores.</p>
+  <p class="muted">Last updated 20 November 2026. This covers the Sky Collector apps for iPhone and Android, and the website skycollector.app.</p>
 
-  <div class="box"><p style="margin:0">The short version: your location is used to find the planes over you. There are no accounts. Your collection stays on your device. There are no ads, no tracking and no selling of data; the game sends a few anonymous usage notes, which you can turn off.</p></div>
+  <div class="box"><p style="margin:0"><b>The short version.</b> Sky Collector uses your location to find the planes over you, and your exact position never leaves your phone. There are no accounts. Your collection stays on your phone and in your own phone backup. There are no ads and no tracking, and nothing is sold. The app sends a few anonymous notes about how it is used, which you can turn off.</p></div>
 
   <h2>Your location</h2>
-  <p>Sky Collector needs to know where you are to show the planes in your sky. If you allow precise location, your phone uses it to draw each plane where it really is (a plane 10 km away can be drawn several degrees off from an approximate position). <b>Your precise position never leaves your device.</b> Everything that is sent is rounded first, and it is used for two things only:</p>
-  <ul>
-    <li><b>Planes near you, in the apps.</b> The iPhone and Android apps ask <a href="https://adsb.lol/">adsb.lol</a> directly from your phone for aircraft around a position rounded to a 0.05-degree grid (about 5 km), and switch to Sky Collector's own relay (which asks <a href="https://flyitalyadsb.com/">Fly Italy ADSB</a>) with the same rounded position if adsb.lol is busy or your phone has used its daily allowance. The search circle is made a little bigger so the rounding never hides a plane. Aircraft data: adsb.lol contributors, under the <a href="https://opendatacommons.org/licenses/odbl/1-0/">Open Database License (ODbL) 1.0</a>.</li>
-    <li><b>Planes near you, on the website.</b> The page asks Sky Collector's own server for aircraft around the same rounded position. The server asks <a href="https://flyitalyadsb.com/">Fly Italy ADSB</a> for the whole 1-degree square around it (only the square's centre is sent onward), keeps the answer for under a minute, and keeps no record of who asked. Aircraft data: Fly Italy ADSB, <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>.</li>
-    <li><b>The weather.</b> The forecast for your area comes from <a href="https://open-meteo.com/">Open-Meteo</a>, asked with a position rounded to 0.1 degree (about 10 km).</li>
-  </ul>
-  <p>The anonymous usage notes described below never contain a location. If you choose "Approximate" location, the game still works; planes may be drawn a little off, and Settings says so.</p>
-  <p>Like any website, each of those services sees your internet address when it is asked. You can choose a place by hand in Settings, and the game works without your location (it shows an example sky).</p>
-
-  <h2>The sample pack page</h2>
-  <p>The sample pack at <a href="https://skycollector.app/pack">skycollector.app/pack</a>, which players send their friends, never asks for your location. To put a real flight in the pack, the page reads your device's time zone (for example "America/Toronto"), picks that time zone's big city and asks Sky Collector's own plane server for the aircraft near the city's centre. Only the city's coordinates are sent, never yours. The server asks the community flight-tracking network <a href="https://flyitalyadsb.com/">FlyItalyADSB</a> about the centre of a 1-degree square around that city, never the city or you. Like any website, Sky Collector's server sees your internet address when it is asked. If it doesn't answer in time, the pack shows a flight the server saw over a nearby city earlier, with the day it was seen. Nothing from the pack is kept.</p>
-
-  <h2>Your collection</h2>
-  <p>Your cards, catches, patches and progress are stored in your browser on your device. Each catch records the time, the aircraft and where you were standing, because that is part of the card. There is no sign-up and no account, and nothing of your collection is sent anywhere. Clearing this site's data in your browser deletes it.</p>
-  <p>Sky Collector also keeps a tally on your device of the aircraft types that have flown over you in the last 30 days. It is how the game knows what is rare where you are. It never leaves your device.</p>
+  <p>Sky Collector needs to know where you are to show the planes in your sky. If you allow precise location, your phone uses it to draw each plane exactly where it is. With only an approximate location, a plane 10 km away can be drawn several degrees from where you see it.</p>
+  <p><b>Your exact position stays on your phone.</b> Anything that leaves your phone is rounded first, and is used for two things only.</p>
+  <!-- Part 1b ①: the request-log exclusion is live (2026-11-20). From 20 December 2026, delete the sentence in brackets. -->
+  <p><b>To find the planes near you.</b> Your phone asks adsb.lol for aircraft around a position rounded to about 5 km. If adsb.lol is busy, or your phone has used its allowance for the day, it asks our own server instead. Our server passes on only the centre of a much larger square, about 100 km across, to a second service, FlyItalyADSB. It holds each answer for under a minute and keeps no record of who asked. (Until 20 December 2026, some older request logs, with an internet address and the rounded position, are still ageing out. No new ones are kept.)</p>
+  <!-- Part 1b ②: the after-fix sentence; the app's switch to Sky's /wx ships in the same push (0.1.1819). -->
+  <p><b>To get the weather.</b> The forecast comes from MET Norway, through our own server, asked with a position rounded to about 10 km.</p>
+  <p>Like any service on the internet, each of these sees your internet address when your phone asks it.</p>
+  <p>You don't have to share your location. Choose "Approximate" in your phone's settings and the game still works; planes may be drawn a little off, and Settings says so. Or pick a city in Settings. The city list is inside the app, so the name you type goes nowhere.</p>
 
   <h2>The aircraft you see</h2>
-  <p>Aircraft broadcast their position publicly, and volunteers with receivers share those broadcasts. Sky Collector shows the airline, the route and the type of an airline flight. Every other aircraft is anonymous in the game: private and business planes (including fractional and charter business jets), helicopters, and any aircraft whose owner has asked for it not to be tracked publicly (the FAA's LADD and PIA programmes). For those Sky Collector shows the type only. Military, police, coast guard and other government aircraft are shown by their type only, such as a C-17 or a B-2, and only when they broadcast their position: never by callsign, registration, unit or route, and they never get a flight card. It never shows or keeps a registration, a callsign or an owner, and the aircraft's transponder code is replaced on your device by a scrambled number that only lets your card count different aircraft. Nothing in the game rewards following one aircraft or person.</p>
-  <p>Routes come from <a href="https://github.com/vradarserver/standing-data">Virtual Radar Server's standing data</a> (CC0), bundled with the game. Aircraft photos and airline logos come from <a href="https://commons.wikimedia.org/">Wikimedia Commons</a>; each photo's author and licence is shown on its card. Airline names and logos belong to their owners and are used only to say which airline a flight is.</p>
+  <p>Aircraft broadcast their own position, and volunteers around the world pick up those broadcasts and share them. Sky Collector shows what they share. That is why coverage is best in North America and Europe and thinner elsewhere, and why not every aircraft appears.</p>
+  <p><b>Airline flights.</b> For a scheduled airline flight, Sky Collector shows the airline and the kind of plane, and the route when it is known.</p>
+  <p><b>Everything else is anonymous.</b> Private and business aircraft, including charter and shared business jets. Military, police, coast guard and other government aircraft. Any aircraft whose owner has asked not to be tracked publicly. For all of these, Sky Collector shows the kind of aircraft and nothing else: never a callsign, a registration, an owner, an operator, a unit or a route.</p>
+  <p>The code that identifies each of those aircraft is replaced on your phone with a scrambled number. It only lets the game tell one aircraft from another, and it never leaves your phone.</p>
+  <p>Sky Collector is a collecting game. It can't follow a particular plane or person, and nothing in it rewards trying.</p>
 
-  <h2>Usage and error reports</h2>
-  <p>To learn whether the game works for people (does a first day end with a card? do people come back?), Sky Collector (the apps and this website) sends a few anonymous notes: when the app is opened, each day you catch something, how long a session lasted, what kind of aircraft each catch was (an airliner, a private plane, a helicopter, a balloon and so on) and whether it gave you a new card, whether the phone's motion sensors work, the tour finished or skipped, how the plane feed did in that session (how many times it asked for planes and whether the free feed's daily limit was reached), and errors that stop something working. They're tied to a random ID made on your phone, not to you: no location, no name, no device identifier, nothing from your contacts or photos, and nothing that identifies an aircraft (no callsign, registration or transponder code). They're kept on our server (Google Cloud, in Sky Collector's own project) and used only to improve the game. You can turn them off any time in Settings → Help → <b>Share anonymous usage</b>. The test website's notes are marked as tests and left out of the counts.</p>
-
-  <h2>What this version does not do</h2>
+  <h2>Your collection</h2>
+  <p>Your cards, patches and progress are stored on your phone. Each catch keeps the time, the aircraft and where you were standing, because that is part of the card.</p>
   <ul>
-    <li>No ads and no advertising trackers.</li>
-    <li>No advertising or third-party analytics; only the anonymous usage notes above, which you can turn off.</li>
-    <li>No purchases: Sky Collector Plus is not on sale in the test version.</li>
-    <li>No notifications sent from a server, and no shared-card links.</li>
-    <li>It never sells or shares your data.</li>
+    <li><b>On iPhone,</b> your collection is backed up to your own iCloud, so it follows you to a new iPhone or iPad. We can't see it.</li>
+    <li><b>On Android,</b> it is saved with your phone's own Google backup, if you have that turned on.</li>
+    <li>There is no account and nothing to sign in to. Settings → Reset everything deletes your cards, patches, settings and reminders from this phone, and your iCloud backup if you have one, and starts you again as a new player. The random ID on the usage notes stays the same.</li>
+  </ul>
+  <p>The app also keeps a count, on your phone, of the kinds of aircraft that have flown over you in the last 30 days, and the times your regular flights usually pass. That is how it knows what is rare where you are and when to look up. Neither leaves your phone.</p>
+
+  <h2>Sending cards to a friend</h2>
+  <p>When you send cards, the app makes a short link. Behind it is a pack: the cards you chose and when you caught them, with the flight number for an airline flight. <b>A pack never holds where you were, and never holds your name.</b> Cards for private, military and government aircraft carry only the kind of aircraft, as everywhere else.</p>
+  <p>The pack is kept on our server under a random code for 90 days, then deleted. Anyone who has the link can open it, so send it only to people you mean to.</p>
+  <p>"Tell a friend" sends a sample pack instead. It has nothing of yours in it.</p>
+
+  <h2>Anonymous usage notes</h2>
+  <p>To learn whether the game works for people (does a first day end with a card? do people come back?), the app sends a few notes about how it is used: when it was opened and for how long, and whether it was dark where you are at the time (yes or no, never where); what kind of aircraft a catch was, how rare, and whether it was new to you; which parts of the app you used (the tour, including whether you shared your location, chose a city or skipped that step, but never where you are; reminders; alerts; sending cards; Plus, and which plan if you buy it; the review prompt; the app icon you chose); how the app is doing on your phone (whether motion sensors and notifications work, how you lined up the compass and how far the sky turned, where the sky slider is set, how long it took to start, how the plane feed did); which secrets you've found; how cloudy the forecast was; and any error that stopped something working, with the error's message and the file it came from.</p>
+  <!-- Part 1b ⑦: the true-today sentence. Once the one-year expiry is deployed AND the older rows have an expiry or are
+       deleted (needs Sevaan's yes), swap the last sentence for: "The notes are kept on our server, in Google Cloud, and
+       used only to improve the game. Each note is deleted after one year. We keep daily totals, such as how many people
+       played, which hold no IDs." -->
+  <p>Each note carries a random ID made on your phone, the app's version, and whether the phone is an iPhone or an Android phone. The note for opening the app also says how many days it has been since you installed, and how many cards and days of play you have. The note for a day you caught something says the days since install and the days of play too, and whether it was your first day. <b>It carries no location, no name and no device identifier, and nothing that identifies an aircraft.</b> The notes are kept on our server, in Google Cloud, and used only to improve the game.</p>
+  <p>To turn them off: Settings → Help → Share anonymous usage.</p>
+
+  <h2>Purchases</h2>
+  <p>Sky Collector is free. Sky Collector Plus is optional, and is bought through the App Store. (It is not on sale on Google Play yet.) We never see your payment details. To know whether Plus is on, the iPhone app uses a service called RevenueCat, which receives the store's record of the purchase and an anonymous ID. It never gets your name or email.</p>
+
+  <h2>Notifications</h2>
+  <p>Plane alerts and reminders are made on your phone. No server sends them, and the app can't look for planes while it is closed. Alerts are off until you turn them on.</p>
+
+  <h2>The website</h2>
+  <p>skycollector.app has no accounts and no advertising or analytics trackers.</p>
+  <p>The sample pack at <a href="https://skycollector.app/pack">skycollector.app/pack</a> never asks for your location. To put a real flight in the pack, it reads your device's time zone, picks that zone's main city, and asks our server for aircraft near the middle of that city. Only the city's position is sent, never yours.</p>
+
+  <h2>What Sky Collector doesn't do</h2>
+  <!-- Part 1b ⑧: the true-today line. Add "camera" (No use of your contacts, photos, camera or microphone.) only once the
+       iPhone store build no longer carries a camera permission line. The apps open this same page, so it stays one list. -->
+  <ul>
+    <li>No ads.</li>
+    <li>No tracking across apps or websites.</li>
+    <li>No selling or sharing of your data.</li>
+    <li>No accounts.</li>
+    <li>No use of your contacts, photos or microphone.</li>
   </ul>
 
   <h2>Children</h2>
-  <p>Sky Collector is made for everyone, including families. There are no accounts, and it collects no personal information from anyone, children included.</p>
+  <p>Sky Collector is made for everyone, families included. It has no accounts and collects no personal information from anyone, children included.</p>
+
+  <h2>Changes to this page</h2>
+  <p>If this page changes in a way that matters, we'll say so here and update the date at the top.</p>
 
   <h2>Contact</h2>
-  <p>Questions, or an aircraft you would like left out? Email <a href="mailto:hello@skycollector.app">hello@skycollector.app</a></p>
-  <p>You can also open an issue at <a href="https://github.com/sevaan/sky-collector/issues">github.com/sevaan/sky-collector</a>.</p>
+  <p>Questions? Email <a href="mailto:hello@skycollector.app">hello@skycollector.app</a></p>
 </main></body>
 </html>
