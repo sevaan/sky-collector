@@ -9,7 +9,7 @@
 // the card pictures decoded (at most 150 ms); the cards sit behind the pack by stacking order, so nothing is clipped per
 // frame; no tilt and no layout reads while it plays. The pure helpers (timing table, the switch) are tested in
 // tests/pack-reveal.test.mjs.
-import { TIER_INFO, TIERS } from './rarity.js?v=0.1.1824';
+import { TIER_INFO, TIERS } from './rarity.js?v=0.1.1825';
 
 // The beats in ms, from the pack popping in to the top card's face (B is the plan; A quicker; C with a longer tear).
 export const PACK_VARIANTS = {
@@ -24,7 +24,7 @@ export const PACK_KEY = 'packReveal', PACK_SEEN_KEY = 'packSeen';
 /** The Testing switch's value: 'A' | 'B' | 'C', or '' (off, the default). Turned on without a variant ('on', '1', true), it is
     B (Sevaan picked B, 2026-11-20); A and C stay as choices. */
 export const PACK_DEFAULT = 'B';
-export function packChoice(raw) { if (raw === true || raw === 'on' || raw === '1') return PACK_DEFAULT; return typeof raw === 'string' && Object.hasOwn(PACK_VARIANTS, raw) ? raw : ''; }
+export function packChoice(raw) { if (raw === true || raw === 'on' || raw === '1') return PACK_DEFAULT; return typeof raw === 'string' && Object.prototype.hasOwnProperty.call(PACK_VARIANTS, raw) /* not Object.hasOwn: iOS 15.4+ only */ ? raw : ''; }
 /** The timeline for a variant (null when off). seen: how many packs this player has opened. */
 export function packPlan(variant, seen = 0) {
   const v = PACK_VARIANTS[packChoice(variant)]; if (!v) return null;
