@@ -774,3 +774,11 @@ body.sky-only .tc .art .ob-moon { display:none; } /* When to look up: no Moon in
 .fc--flight .fc-face::after { display:block; content:''; position:absolute; inset:0; z-index:5; pointer-events:none; border-radius:inherit; padding:0;
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .28 0 0 0 0 .2 0 0 0 .42 -.12'/%3E%3C/filter%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .55' numOctaves='2' seed='9'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .4 0 0 0 0 .3 0 0 0 .5 -.22'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23f%29'/%3E%3Crect width='100%25' height='100%25' filter='url%28%23g%29'/%3E%3C/svg%3E") 0 0 / 16em 16em; mix-blend-mode:multiply; opacity:.7; } /* grain and faint fibres */
 .fc--flight .fc-in :is(.bp-codes b, .bp-fields b, .bp-k b, .m-cd) { color:#13283d; } /* printed ink, a touch softer than pure navy */
+/* The notches cut right through (2026-11-21, Sevaan: "still show a slight transparency behind them"): the cut-out was on
+   the face, so the gloss and glare layers and the box shadow, which sit beside it in .fc-rot, still filled the half-circles
+   faintly. The mask is on the whole pass now, and its shadow is a drop-shadow on the article, which follows the cut shape. */
+.fc--flight:not(.fc--mini) .fc-face { -webkit-mask:none; mask:none; }
+.fc--flight:not(.fc--mini) .fc-rot { box-shadow:none;
+  -webkit-mask:radial-gradient(circle at 0 calc(100% - var(--stub)), #0000 1em, #000 1.05em) left / 51% 100% no-repeat, radial-gradient(circle at 100% calc(100% - var(--stub)), #0000 1em, #000 1.05em) right / 51% 100% no-repeat;
+          mask:radial-gradient(circle at 0 calc(100% - var(--stub)), #0000 1em, #000 1.05em) left / 51% 100% no-repeat, radial-gradient(circle at 100% calc(100% - var(--stub)), #0000 1em, #000 1.05em) right / 51% 100% no-repeat; }
+.fc--flight:not(.fc--mini) { filter:drop-shadow(0 .1em .12em rgba(13,34,56,.16)) drop-shadow(0 .6em .9em rgba(13,34,56,.12)); }
