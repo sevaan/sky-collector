@@ -5,15 +5,15 @@
 //  Everything scales with rarity (Legendary dims the sky, shockwave, held breath, slow flip, fanfare).
 // Waits use timers, not animation.finished, so a paused tab can never freeze the sequence.
 
-import { sfx, loadSfx } from './sfx.js?v=0.1.1840';
-import { audioCtx } from './audio-ctx.js?v=0.1.1840';
-import { TIER_INFO } from './rarity.js?v=0.1.1840';
-import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1840';
-import { applyBack } from './card-backs.js?v=0.1.1840';
-import { addStarfield } from './starfield.js?v=0.1.1840';
-import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1840';
-import { packPlan, packFoil, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1840'; /* the two-card pack opening (prototype, 2026-11-20) */
-import { tearJag } from './gift-pack.js?v=0.1.1840';
+import { sfx, loadSfx } from './sfx.js?v=0.1.1841';
+import { audioCtx } from './audio-ctx.js?v=0.1.1841';
+import { TIER_INFO } from './rarity.js?v=0.1.1841';
+import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1841';
+import { applyBack } from './card-backs.js?v=0.1.1841';
+import { addStarfield } from './starfield.js?v=0.1.1841';
+import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1841';
+import { packPlan, packFoil, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1841'; /* the two-card pack opening (prototype, 2026-11-20) */
+import { tearJag } from './gift-pack.js?v=0.1.1841';
 
 const FX = TIER_FX; /* one rarity table for every card moment (js/card-moment.js, 2026-11-11) */
 const NIGHT_MILESTONES = [3, 5, 10, 25, 50, 100, 200, 365], STAMP_MILESTONES = [5, 10, 25, 50, 100, 200, 300, 400];
@@ -531,6 +531,9 @@ function holderTo(x, y, ms) {
     const dx = last.x - from.x, dy = last.y - from.y, dt = Math.max(16, now - from.t);
     const total = last.y - pts[0].y;
     if (!(dy < -45 && total < -60 && Math.abs(dx) < -dy * 0.9 && -dy / dt > 0.6)) return;
+    /* Two cards, the one behind not seen yet: a flick up brings it forward instead of throwing both away (2026-11-21,
+       Sevaan: so nobody swipes away without seeing the boarding pass). The next flick up dismisses as usual. */
+    if (deck?.ready && deck.items.length > 1 && !deck.items[1 - deck.front].seenFront) { deckSwap(0, dx); return; }
     // Fly off the top at the speed of the flick (no fade: you should see it go), keeping some of the
     // sideways throw and a little spin that way.
     if (intoBinderOk?.()) { tilt?.reset(); sfx('swipe'); onDismiss?.(); return; } // it flies from here into the Collection tab
@@ -630,9 +633,9 @@ function deckFront(i) {
   slots().forEach((c, k) => { c.classList.toggle('dk-front', k === i); c.classList.toggle('dk-back', k !== i); c.setAttribute('aria-hidden', String(k !== i)); c.style.transform = ''; c.style.filter = ''; });
   syncPager();
 }
-function deckSwap(dir) { // the front card flies off to that side and settles behind; the back one comes forward
+function deckSwap(dir, dx = 0) { // the front card flies off to that side (dir 0: up, a flick up with the other card unseen) and settles behind; the back one comes forward
   const d = deck; if (!d || d.busy || !d.ready || d.items.length < 2) return;
-  d.busy = true; const k = d.front, f = slots()[k]; f.classList.add('dk-leaving'); f.style.transform = `translateX(${dir * 115}%) rotate(${dir * 8}deg)`;
+  d.busy = true; const k = d.front, f = slots()[k]; f.classList.add('dk-leaving'); f.style.transform = dir ? `translateX(${dir * 115}%) rotate(${dir * 8}deg)` : `translate(${Math.max(-120, Math.min(120, dx * 2)).toFixed(0)}px, -120%) rotate(${Math.sign(dx) * 5}deg)`;
   d.items[k].tilt?.reset(); sfx('swipe', { gain: 0.5 });
   setTimeout(() => { if (deck !== d) return; f.classList.remove('dk-leaving'); deckFront(1 - k); onFront?.(d.items[1 - k]); forward(1 - k); setTimeout(() => { d.busy = false; }, 320); }, 200);
 }
