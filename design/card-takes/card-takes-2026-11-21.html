@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Card Takes</title>
+<!-- Sky Collector design takes, 2026-11-21. Sevaan: "I feel like they need to look a little bit more different to each other."
+     Plane card vs flight card (boarding pass). Sample: Air Canada AC 412, Airbus A220-300, Toronto YYZ to Montreal YUL.
+     Design only: nothing here is wired into the app. Catch values (time, height) are a sample catch. -->
+<style>
+@font-face { font-family: 'SC Display'; src: url('../../fonts/RussoOne-Regular.woff2') format('woff2'); font-display: block; }
+@font-face { font-family: 'SC Label'; src: url('../../fonts/BarlowCondensed-Medium.woff2') format('woff2'); font-display: block; }
+:root {
+  --ink: #0d2238; --ink2: #1b2a3d; --muted: #5b6878; --paper: #fffdf6; --white: #fcfcf8;
+  --red: #b42a20; --red2: #c8513f; --sky1: #8cc2ec; --sky2: #eef5fb; --gold: #c9a227;
+  --steel: linear-gradient(135deg, #e9edf1 0%, #aab4bf 22%, #f4f6f8 45%, #8d99a6 70%, #dfe4ea 100%);
+  --sage: linear-gradient(135deg, #e6eee8 0%, #8fa596 24%, #f1f5f2 46%, #73897a 72%, #d5e0d8 100%);
+  --uncommon: #2f8a4e; --common: #7b8794;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body { background: linear-gradient(180deg, var(--sky1) 0, #cfe4f5 340px, var(--sky2) 900px, var(--sky2)); color: var(--ink);
+  font-family: Georgia, 'Times New Roman', serif; min-height: 100vh; }
+.page { max-width: 760px; margin: 0 auto; padding: 22px 16px 48px; overflow-x: hidden; }
+h1 { font-family: 'SC Display'; font-weight: 400; font-size: 26px; letter-spacing: .01em; }
+.lede { font-size: 15px; line-height: 1.45; margin-top: 6px; color: var(--ink2); }
+.lede b { font-weight: 700; }
+.take { margin-top: 34px; padding-top: 18px; border-top: 1px solid rgba(13,34,56,.18); }
+.take-h { display: flex; align-items: baseline; gap: 10px; }
+.take-l { font-family: 'SC Display'; font-size: 13px; color: #fff; background: var(--ink); border-radius: 6px; padding: 3px 8px 2px; }
+.take h2 { font-family: 'SC Display'; font-weight: 400; font-size: 20px; }
+.take p.why { font-size: 15px; line-height: 1.45; margin: 6px 0 14px; color: var(--ink2); }
+.cap { font-family: 'SC Label'; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 16px 0 8px; }
+.note { font-size: 13px; line-height: 1.4; color: var(--muted); margin-top: 10px; font-style: italic; }
+
+/* ---------- layout: pair + deck ---------- */
+.pair { display: flex; gap: 12px; justify-content: center; align-items: flex-start; font-size: clamp(9px, calc((100vw - 44px) / 32), 14px); }
+.deck { position: relative; margin: 0 auto; font-size: clamp(11px, calc((100vw - 32px) / 22), 15px); width: 16em; height: calc(22.4em + var(--peek, 5em)); }
+.deck > .back { position: absolute; left: 50%; top: 0; transform: translateX(-50%) scale(.95); transform-origin: 50% 0; }
+.deck > .front { position: absolute; left: 0; top: var(--peek, 5em); }
+.sh { filter: drop-shadow(0 .5em .7em rgba(13,34,56,.22)) drop-shadow(0 .08em .12em rgba(13,34,56,.25)); }
+.deck .front.sh { filter: drop-shadow(0 -.3em .6em rgba(13,34,56,.28)) drop-shadow(0 .6em .9em rgba(13,34,56,.22)); }
+
+/* ---------- shared bits ---------- */
+.card { width: 16em; height: 22.4em; position: relative; }
+.lab { font-family: 'SC Label'; text-transform: uppercase; letter-spacing: .12em; font-size: .62em; color: var(--muted); line-height: 1.1; }
+.val { font-family: 'SC Display'; font-size: 1.02em; line-height: 1.15; color: var(--ink); white-space: nowrap; }
+.val small { font-family: 'SC Label'; font-size: .62em; letter-spacing: .04em; margin-left: .12em; color: var(--muted); }
+.ph { position: relative; overflow: hidden; background: linear-gradient(#9fcbef, #e6f1fa); }
+.ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; display: block; }
+.credit { position: absolute; right: .35em; bottom: .25em; font-family: 'SC Label'; font-size: .42em; letter-spacing: .04em; color: #fff; background: rgba(13,34,56,.55); padding: .1em .35em; border-radius: .3em; }
+.pill { display: inline-flex; align-items: center; gap: .35em; font-family: 'SC Label'; font-size: .6em; letter-spacing: .14em; text-transform: uppercase; padding: .2em .55em .15em; border-radius: 99em; background: rgba(255,253,246,.94); color: var(--ink); border: 1px solid rgba(13,34,56,.25); }
+.pill i { font-style: normal; color: var(--uncommon); }
+.fact { font-size: .66em; line-height: 1.38; color: var(--ink2); border-left: .22em solid var(--red2); padding-left: .55em; }
+.fact b { font-weight: 700; }
+.bars { display: flex; align-items: stretch; height: 100%; }
+.bars i { display: block; background: var(--ink); height: 100%; }
+.qr { display: block; width: 100%; height: 100%; }
+.codes { display: flex; align-items: center; justify-content: space-between; }
+.code { font-family: 'SC Display'; line-height: .95; letter-spacing: .01em; }
+.city { font-family: 'SC Label'; text-transform: uppercase; letter-spacing: .14em; font-size: .58em; color: var(--muted); margin-top: .2em; }
+.plane-ico { width: 1.3em; height: 1.3em; fill: var(--red2); }
+.grid { display: grid; gap: .45em .5em; }
+
+/* ======================= TAKE A: metal trading card + paper pass ======================= */
+.pa { border-radius: 1em; padding: .42em; background: var(--sage); }
+.pa .in { height: 100%; border-radius: .66em; background: var(--paper); overflow: hidden; display: flex; flex-direction: column; position: relative; }
+.pa .ph { height: 9.1em; flex: none; }
+.pa .top { position: absolute; left: .55em; right: .55em; top: .55em; display: flex; justify-content: space-between; align-items: center; z-index: 2; }
+.pa .type { font-family: 'SC Display'; font-size: .66em; color: var(--ink); background: var(--paper); border: .14em solid var(--ink); border-radius: .35em; padding: .12em .4em 0; }
+.pa .plate { background: var(--ink); color: #fff; margin: -1.15em .55em 0; position: relative; z-index: 2; border-radius: .4em; padding: .4em .6em .38em; box-shadow: 0 .2em .4em rgba(13,34,56,.3); border-top: .16em solid var(--gold); }
+.pa .plate .nm { font-family: 'SC Display'; font-size: 1.28em; line-height: 1; letter-spacing: .01em; }
+.pa .plate .sub { font-family: 'SC Label'; font-size: .62em; letter-spacing: .1em; text-transform: uppercase; color: #bcd3ea; margin-top: .25em; }
+.pa .stats { grid-template-columns: repeat(4, 1fr); padding: .6em .75em .5em; }
+.pa .stats > div { border-left: 1px solid rgba(13,34,56,.18); padding-left: .35em; }
+.pa .stats .lab { white-space: nowrap; }
+.pa .stats > div:first-child { border-left: 0; padding-left: 0; }
+.pa .fact { margin: 0 .75em; }
+.pa .foot { margin-top: auto; display: flex; justify-content: space-between; align-items: center; padding: .45em .75em .5em; border-top: 1px solid rgba(13,34,56,.15); }
+.pa .foot .lab { color: var(--ink); white-space: nowrap; }
+.pa .foot .brand { font-family: 'SC Display'; font-size: .6em; color: var(--ink); }
+
+.fa { --tear: 84%; background: var(--white); border-radius: .5em;
+  -webkit-mask: radial-gradient(circle at 0 var(--tear), #0000 .62em, #000 .66em) left / 51% 100% no-repeat, radial-gradient(circle at 100% var(--tear), #0000 .62em, #000 .66em) right / 51% 100% no-repeat;
+          mask: radial-gradient(circle at 0 var(--tear), #0000 .62em, #000 .66em) left / 51% 100% no-repeat, radial-gradient(circle at 100% var(--tear), #0000 .62em, #000 .66em) right / 51% 100% no-repeat;
+  display: flex; flex-direction: column; overflow: hidden; }
+.fa .hd { display: flex; justify-content: space-between; align-items: center; padding: .7em .8em .55em; border-bottom: .2em solid var(--red); }
+.fa .hd img { height: 1.05em; width: auto; display: block; }
+.fa .hd .r { text-align: right; }
+.fa .hd .r .val { font-size: .9em; }
+.fa .codes { padding: .45em .8em 0; }
+.fa .code { font-size: 2.35em; }
+.fa .city.r { text-align: right; }
+.fa .ph { margin: .4em .8em 0; height: 5.5em; border-radius: .3em; }
+.fa .flds { grid-template-columns: 1fr 1fr 1fr; padding: .45em .8em 0; gap: .3em .5em; }
+.fa .grp { display: inline-block; font-family: 'SC Display'; font-size: .68em; border: .14em solid var(--common); color: var(--common); padding: 0 .3em; border-radius: .2em; line-height: 1.2; margin-top: .1em; }
+.fa .tear { position: absolute; left: .9em; right: .9em; top: var(--tear); border-top: .14em dashed rgba(13,34,56,.35); }
+.fa .stub { position: absolute; left: 0; right: 0; top: var(--tear); bottom: 0; display: flex; align-items: center; gap: .6em; padding: .25em .8em 0; }
+.fa .stub .bc { height: 1.9em; min-width: 0; overflow: hidden; flex: 1; }
+.fa .stub .t { text-align: right; }
+
+/* ======================= TAKE B: porthole on sky stock + bag tag ======================= */
+.pb { border-radius: 1em; padding: .38em; background: var(--steel); }
+.pb .in { height: 100%; border-radius: .7em; overflow: hidden; position: relative; display: flex; flex-direction: column; align-items: center;
+  background: radial-gradient(120% 60% at 50% 0, #fff8 0, #fff0 60%), linear-gradient(180deg, var(--sky1) 0%, #bcdcf4 45%, var(--sky2) 100%); }
+.pb .row { align-self: stretch; display: flex; justify-content: space-between; align-items: center; padding: .6em .7em 0; }
+.pb .row .lab { color: var(--ink); }
+.pb .row .type { font-family: 'SC Display'; font-size: .66em; color: #fff; background: var(--ink); border-radius: .35em; padding: .15em .45em .05em; }
+.pb .port { margin-top: .55em; width: 13.4em; height: 8.6em; border-radius: 3.4em; padding: .5em; background: linear-gradient(160deg, #fdfcf7, #dcd8cc); box-shadow: 0 .25em .5em rgba(13,34,56,.25), inset 0 -.15em .3em rgba(0,0,0,.12); }
+.pb .port .ph { width: 100%; height: 100%; border-radius: 2.9em; box-shadow: inset 0 0 .6em rgba(13,34,56,.45); }
+.pb .port .ph::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 .4em .9em rgba(13,34,56,.35); background: linear-gradient(115deg, #fff4 0, #fff0 35%); }
+.pb .pill { position: absolute; top: 4.1em; left: 50%; transform: translateX(-50%); z-index: 3; font-size: .56em; }
+.pb .nm { font-family: 'SC Display'; font-size: 1.3em; margin-top: .45em; text-align: center; line-height: 1; }
+.pb .sub { font-style: italic; font-size: .64em; color: var(--ink2); margin-top: .25em; text-align: center; }
+.pb .gauges { display: flex; gap: .4em; margin-top: .55em; }
+.pb .g { width: 3.2em; height: 3.2em; border-radius: 50%; background: #fff; border: .16em solid var(--ink); display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: inset 0 0 0 .14em #fff, inset 0 0 0 .22em rgba(13,34,56,.18); }
+.pb .g .val { font-size: .86em; }
+.pb .g .lab { font-size: .46em; margin-top: .1em; letter-spacing: .08em; }
+.pb .fact { margin: .6em .8em 0; align-self: stretch; }
+.pb .foot { margin-top: auto; align-self: stretch; display: flex; justify-content: space-between; padding: .4em .75em .5em; }
+.pb .foot .lab { color: var(--ink); }
+
+.tagw { width: 16em; height: 22.4em; position: relative; }
+.fb { position: absolute; inset: 0; background: var(--white);
+  clip-path: polygon(22% 0, 78% 0, 100% 8.5%, 100% 100%, 0 100%, 0 8.5%);
+  -webkit-mask: radial-gradient(circle at 50% 1.55em, #0000 .55em, #000 .58em);
+          mask: radial-gradient(circle at 50% 1.55em, #0000 .55em, #000 .58em);
+  display: flex; flex-direction: column; align-items: center; }
+.fb .ring { position: absolute; left: 50%; top: 1.55em; width: 1.75em; height: 1.75em; margin: -.875em 0 0 -.875em; border-radius: 50%; border: .3em solid #cfd6de; }
+.fb .lg { margin-top: 2.75em; height: .95em; }
+.fb .line { font-family: 'SC Label'; font-size: .7em; letter-spacing: .16em; color: var(--ink); margin-top: .45em; text-transform: uppercase; }
+.fb .big { font-family: 'SC Display'; font-size: 5em; line-height: .9; margin-top: .12em; color: var(--ink); letter-spacing: -.01em; }
+.fb .bigcity { font-family: 'SC Label'; font-size: .78em; letter-spacing: .3em; color: var(--ink); text-transform: uppercase; margin-top: .25em; }
+.fb .band { align-self: stretch; margin-top: .55em; background: var(--red2); color: #fff; display: flex; justify-content: space-between; align-items: center; padding: .3em .9em .25em; }
+.fb .band .lab { color: #fff; font-size: .66em; }
+.fb .ph { align-self: stretch; margin: .5em .9em 0; height: 5.5em; border-radius: .25em; }
+.fb .bc { align-self: stretch; margin: .5em .9em 0; height: 1.7em; }
+.fb .bcl { font-family: 'SC Label'; font-size: .55em; letter-spacing: .3em; color: var(--ink); margin-top: .2em; }
+.string { position: absolute; left: 50%; top: -3.2em; width: 6em; height: 5.2em; margin-left: -3em; pointer-events: none; }
+
+/* ======================= TAKE C: photo print + navy ink pass ======================= */
+.pc { background: #fefefc; border-radius: .3em; padding: .85em .85em 0; display: flex; flex-direction: column; box-shadow: inset 0 0 0 1px rgba(13,34,56,.08); }
+.pc .ph { height: 9.5em; flex: none; background: #bcd7ee; }
+.pc .ph::after { content: ''; position: absolute; inset: 0; background: linear-gradient(125deg, #fff5 0, #fff0 30%, #fff0 70%, #fff2 100%); }
+.pc .corner { position: absolute; width: 1.6em; height: 1.6em; z-index: 2; background: var(--sage); }
+.pc .c1 { left: .55em; top: .55em; clip-path: polygon(0 0, 100% 0, 0 100%); }
+.pc .c2 { right: .55em; top: .55em; clip-path: polygon(0 0, 100% 0, 100% 100%); }
+.pc .c3 { left: .55em; top: calc(.85em + 9.5em - 1.3em); clip-path: polygon(0 0, 0 100%, 100% 100%); }
+.pc .c4 { right: .55em; top: calc(.85em + 9.5em - 1.3em); clip-path: polygon(100% 0, 0 100%, 100% 100%); }
+.pc .date { position: absolute; right: 1.5em; bottom: .35em; font-family: 'SC Display'; font-size: .62em; color: #ff8a3c; text-shadow: 0 0 .3em rgba(255,120,40,.7); letter-spacing: .08em; z-index: 2; }
+.pc .nm { font-family: 'SC Display'; font-size: 1.32em; margin-top: .6em; line-height: 1; }
+.pc .sub { font-style: italic; font-size: .66em; color: var(--ink2); margin-top: .28em; line-height: 1.3; }
+.pc .specs { display: flex; margin-top: .5em; border-top: 1px solid rgba(13,34,56,.2); border-bottom: 1px solid rgba(13,34,56,.2); padding: .35em 0; }
+.pc .specs > div { flex: 1; text-align: center; border-left: 1px solid rgba(13,34,56,.15); }
+.pc .specs > div:first-child { border-left: 0; }
+.pc .fact { margin-top: .5em; border-left: 0; padding-left: 0; font-style: italic; }
+.pc .foot { margin-top: auto; display: flex; justify-content: space-between; align-items: center; padding: .4em 0 .6em; }
+.pc .foot .lab { color: var(--ink); }
+.pc .foot .pill { font-size: .52em; }
+
+.fc { --tear: 84%; border-radius: .7em; overflow: hidden; background: var(--paper); display: flex; flex-direction: column;
+  -webkit-mask: radial-gradient(circle at 0 var(--tear), #0000 .62em, #000 .66em) left / 51% 100% no-repeat, radial-gradient(circle at 100% var(--tear), #0000 .62em, #000 .66em) right / 51% 100% no-repeat;
+          mask: radial-gradient(circle at 0 var(--tear), #0000 .62em, #000 .66em) left / 51% 100% no-repeat, radial-gradient(circle at 100% var(--tear), #0000 .62em, #000 .66em) right / 51% 100% no-repeat; }
+.fc .navy { background: radial-gradient(90% 70% at 85% 0, #23466e 0, #0d2238 70%); color: #f6efdc; padding: .65em .8em .6em; position: relative; }
+.fc .hd { display: flex; justify-content: space-between; align-items: center; }
+.fc .air { display: flex; align-items: center; gap: .4em; }
+.fc .air .ic { width: 1.5em; height: 1.5em; border-radius: 50%; background: #fff; display: grid; place-items: center; }
+.fc .air .ic img { width: 1.1em; height: 1.1em; }
+.fc .air span { font-family: 'SC Label'; font-size: .78em; letter-spacing: .2em; }
+.fc .navy .lab { color: #9fb6cf; }
+.fc .flt { font-family: 'SC Display'; font-size: .95em; color: #fff; }
+.fc .codes { margin-top: .35em; }
+.fc .code { font-size: 2.45em; color: #fff; }
+.fc .navy .city { color: #9fb6cf; }
+.fc .arc { flex: 1; position: relative; height: 2.6em; margin: 0 .3em; }
+.fc .arc svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.fc .ph { margin-top: .5em; height: 5.2em; border-radius: .35em; box-shadow: 0 0 0 .14em rgba(255,255,255,.18); }
+.fc .flds { grid-template-columns: 1fr 1fr 1fr; padding: .5em .8em 0; gap: .3em .5em; }
+.fc .grp { white-space: nowrap; font-family: 'SC Display'; font-size: .7em; color: var(--common); }
+.fc .tear { position: absolute; left: .9em; right: .9em; top: var(--tear); border-top: .14em dashed rgba(13,34,56,.35); }
+.fc .stub { position: absolute; left: 0; right: 0; top: var(--tear); bottom: 0; display: flex; align-items: center; gap: .6em; padding: .25em .8em 0; }
+.fc .stub .bc { flex: 1; min-width: 0; overflow: hidden; height: 1.9em; }
+.fc .stub .t { text-align: right; }
+
+/* ======================= TAKE D: a real boarding pass ======================= */
+.tk-wrap { font-size: clamp(10px, calc((100vw - 34px) / 24.4), 24px); width: 24em; margin: 0 auto; }
+.tk { --perf: 74%; width: 24em; height: 10.6em; position: relative; background: var(--white); border-radius: .45em; display: flex;
+  -webkit-mask: radial-gradient(circle at var(--perf) 0, #0000 .5em, #000 .54em) top / 100% 51% no-repeat, radial-gradient(circle at var(--perf) 100%, #0000 .5em, #000 .54em) bottom / 100% 51% no-repeat;
+          mask: radial-gradient(circle at var(--perf) 0, #0000 .5em, #000 .54em) top / 100% 51% no-repeat, radial-gradient(circle at var(--perf) 100%, #0000 .5em, #000 .54em) bottom / 100% 51% no-repeat; }
+.tk .main { width: var(--perf); position: relative; display: flex; flex-direction: column; }
+.tk .hd { height: 1.75em; background: var(--ink); color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 .6em 0 .35em; border-top-left-radius: .45em; }
+.tk .hd .chip { background: #fff; border-radius: .25em; padding: .22em .4em; display: flex; }
+.tk .hd .chip img { height: .78em; display: block; }
+.tk .hd .bp { font-family: 'SC Label'; font-size: .6em; letter-spacing: .22em; text-transform: uppercase; color: #cfe0f0; }
+.tk .hd .bp b { color: #fff; font-weight: 400; }
+.tk .mid { display: flex; padding: .45em .6em 0; gap: .6em; }
+.tk .route { flex: 1; min-width: 0; }
+.tk .codes { align-items: flex-start; }
+.tk .code { font-size: 2em; }
+.tk .codes { gap: .3em; }
+.tk .route .plane-ico { margin-top: .5em; }
+.tk .ph { width: 6.6em; height: 3.25em; border-radius: .25em; flex: none; }
+.tk .flds { display: grid; grid-template-columns: 1.1fr 1fr 1.2fr; gap: .3em .4em; padding: .4em 0 0; border-top: 1px dashed rgba(13,34,56,.22); margin: .4em .6em 0; }
+.tk .flds .val { font-size: .82em; }
+.tk .flds .lab { font-size: .5em; }
+.tk .grp { color: var(--common); }
+.tk .strip { margin-top: auto; height: .5em; background: repeating-linear-gradient(90deg, var(--red) 0 1.2em, var(--red2) 1.2em 1.25em); border-bottom-left-radius: .45em; }
+.tk .perf { position: absolute; left: var(--perf); top: .7em; bottom: .7em; border-left: .12em dashed rgba(13,34,56,.4); }
+.tk .stub { flex: 1; display: flex; flex-direction: column; align-items: center; padding: .5em .45em .4em .55em; text-align: center; }
+.tk .stub .lab { font-size: .46em; letter-spacing: .16em; }
+.tk .stub .sc { font-family: 'SC Display'; font-size: .8em; color: var(--ink); line-height: 1.1; }
+.tk .stub .qrbox { width: 3.9em; height: 3.9em; margin: .3em 0 .25em; padding: .18em; background: #fff; border: 1px solid rgba(13,34,56,.15); border-radius: .2em; }
+.tk .stub .grpband { margin-top: auto; align-self: stretch; font-family: 'SC Label'; font-size: .55em; letter-spacing: .2em; color: #fff; background: var(--common); border-radius: .25em; padding: .15em 0 .1em; }
+
+.deck-d { position: relative; margin: 0 auto; font-size: clamp(10px, calc((100vw - 34px) / 24.4), 18px); width: 24em; height: calc(22.4em + 5.6em + .6em); }
+.deck-d .back { position: absolute; left: 0; top: .4em; transform: rotate(-2.2deg); transform-origin: 50% 50%; }
+.deck-d .front { position: absolute; left: 4em; top: 5.6em; }
+.deck-d .front .card { font-size: 1em; }
+.ticket-alone { display: flex; justify-content: center; }
+@media (min-width: 700px) { .pair { gap: 24px; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Plane card vs boarding pass</h1>
+  <p class="lede">Four takes on making the two cards from one catch read as <b>two different objects</b>. The sample catch is Air Canada AC 412, an Airbus A220-300, Toronto YYZ to Montréal YUL (507 km). Each take shows the pair, then the reveal deck: the plane in front, the pass peeking out behind it.</p>
+
+  <!-- ============================== TAKE A ============================== -->
+  <section class="take">
+    <div class="take-h"><span class="take-l">A</span><h2>Shiny card, paper pass</h2></div>
+    <p class="why">The plane is a metal-framed trading card with a navy name plate; the flight loses the frame and becomes thin white paper with notched corners, a red airline rule and a tear-off stub.</p>
+    <div class="cap">The pair</div>
+    <div class="pair">
+      <div class="sh"><div class="card pa" data-tpl="planeA"></div></div>
+      <div class="sh"><div class="card fa" data-tpl="flightA"></div></div>
+    </div>
+    <div class="cap">The reveal deck</div>
+    <div class="deck" style="--peek:5.2em">
+      <div class="back sh"><div class="card fa" data-tpl="flightA"></div></div>
+      <div class="front sh"><div class="card pa" data-tpl="planeA"></div></div>
+    </div>
+  </section>
+
+  <!-- ============================== TAKE B ============================== -->
+  <section class="take">
+    <div class="take-h"><span class="take-l">B</span><h2>Window seat, bag tag</h2></div>
+    <p class="why">The plane is seen through a cabin window on sky-blue stock with round cockpit-style dials; the flight is a die-cut baggage tag with a punched hole and a huge destination code, so the shapes differ even before you read them.</p>
+    <div class="cap">The pair</div>
+    <div class="pair">
+      <div class="sh"><div class="card pb" data-tpl="planeB"></div></div>
+      <div class="sh"><div class="tagw" data-tpl="flightB"></div></div>
+    </div>
+    <div class="cap">The reveal deck</div>
+    <div class="deck" style="--peek:4.8em; margin-top: 3em">
+      <div class="back sh"><div class="tagw" data-tpl="flightB" data-string="1"></div></div>
+      <div class="front sh"><div class="card pb" data-tpl="planeB"></div></div>
+    </div>
+    <p class="note">In the deck the tag's string loops up above the stack, which marks it as the flight at a glance.</p>
+  </section>
+
+  <!-- ============================== TAKE C ============================== -->
+  <section class="take">
+    <div class="take-h"><span class="take-l">C</span><h2>Photo print, ink pass</h2></div>
+    <p class="why">The plane is a white-bordered photo print held by metal photo corners (the tier) with the catch date burned in; the flight is a navy-topped pass, so one card is light and the other dark-headed at a glance.</p>
+    <div class="cap">The pair</div>
+    <div class="pair">
+      <div class="sh"><div class="card pc" data-tpl="planeC"></div></div>
+      <div class="sh"><div class="card fc" data-tpl="flightC"></div></div>
+    </div>
+    <div class="cap">The reveal deck</div>
+    <div class="deck" style="--peek:5.4em">
+      <div class="back sh"><div class="card fc" data-tpl="flightC"></div></div>
+      <div class="front sh"><div class="card pc" data-tpl="planeC"></div></div>
+    </div>
+  </section>
+
+  <!-- ============================== TAKE D ============================== -->
+  <section class="take">
+    <div class="take-h"><span class="take-l">D</span><h2>A real boarding pass</h2></div>
+    <p class="why">The flight stops being a playing card: it's a wide paper ticket with a tear-off stub, QR code and pass-style fields (the gate and seat slots hold your catch: when, how high, the set and the rarity as the boarding group), with the plane's photo printed on it.</p>
+    <div class="cap">The ticket</div>
+    <div class="ticket-alone"><div class="tk-wrap sh"><div class="tk" data-tpl="ticket"></div></div></div>
+    <div class="cap">The reveal deck · the ticket tucked behind the plane card (take A's)</div>
+    <div class="deck-d">
+      <div class="back sh"><div class="tk" data-tpl="ticket"></div></div>
+      <div class="front sh"><div class="card pa" data-tpl="planeA"></div></div>
+    </div>
+    <p class="note">The ticket is wider than the card, so its airline band, YYZ → YUL and the stub's QR stay visible on three sides of the plane card. In the Collection it would sit in a wide row of its own rather than in the card grid.</p>
+  </section>
+</div>
+
+<template id="planeA">
+  <div class="in">
+    <div class="top"><span class="pill"><i>▲</i>Uncommon</span><span class="type">BCS3</span></div>
+    <div class="ph"><img src="../../assets/photos/house/BCS3.webp" alt="Airbus A220-300 in flight"></div>
+    <div class="plate"><div class="nm">AIRBUS A220-300</div><div class="sub">Airbus · twin-jet narrowbody · ex-Bombardier CSeries</div></div>
+    <div class="grid stats">
+      <div><div class="lab">Flew</div><div class="val">2015</div></div>
+      <div><div class="lab">Length</div><div class="val">38.7<small>m</small></div></div>
+      <div><div class="lab">Engines</div><div class="val">2<small>jets</small></div></div>
+      <div><div class="lab">Across</div><div class="val">5<small>seats</small></div></div>
+    </div>
+    <p class="fact">Bombardier's CSeries became the Airbus A220 in <b>July 2018</b>, ten days after Airbus took a majority stake.</p>
+    <div class="foot"><span class="lab">✈ Plane · Narrowbodies</span><span class="lab" style="font-size:.5em;color:var(--muted);white-space:nowrap">Photo: R. Coupy, CC BY-SA</span></div>
+  </div>
+</template>
+
+<template id="flightA">
+  <div class="hd"><img src="../../assets/logos/ACA.webp" alt="Air Canada"><div class="r"><div class="lab">Boarding pass</div><div class="val">AC 412</div></div></div>
+  <div class="codes">
+    <div><div class="code">YYZ</div><div class="city">Toronto</div></div>
+    <svg class="plane-ico" viewBox="0 0 64 64"><path transform="rotate(90 32 32)" d="M32 3c2.2 0 3.4 3 3.4 6.5V24l22.6 12.2v4.3L35.4 34v15.2l7.2 5.6v3.6L32 55.6l-10.6 2.8v-3.6l7.2-5.6V34L6 40.5v-4.3L28.6 24V9.5C28.6 6 29.8 3 32 3z"/></svg>
+    <div><div class="code">YUL</div><div class="city r">Montréal</div></div>
+  </div>
+  <div class="ph"><img src="../../assets/photos/airlines/ACA-BCS3.webp" alt="Air Canada A220-300"><span class="credit">Photo: 4300streetcar, CC BY 4.0</span></div>
+  <div class="grid flds">
+    <div><div class="lab">Date</div><div class="val">21 NOV</div></div>
+    <div><div class="lab">Caught at</div><div class="val">21,300<small>ft</small></div></div>
+    <div><div class="lab">Distance</div><div class="val">507<small>km</small></div></div>
+    <div><div class="lab">Aircraft</div><div class="val">A220-300</div></div>
+    <div><div class="lab">Zone</div><div class="val" style="font-size:.8em">HOME SKIES</div></div>
+    <div><div class="lab">Group</div><span class="grp">● COMMON</span></div>
+  </div>
+  <div class="tear"></div>
+  <div class="stub"><div class="bc" data-bars="ACA412-YYZYUL"></div><div class="t"><div class="lab">Caught</div><div class="val" style="font-size:.8em">4:12 PM</div></div></div>
+</template>
+
+<template id="planeB">
+  <div class="in">
+    <div class="row"><span class="lab">✈ Plane · Narrowbodies</span><span class="type">BCS3</span></div>
+    <div class="port"><div class="ph"><img src="../../assets/photos/house/BCS3.webp" alt="Airbus A220-300"></div></div>
+    <span class="pill"><i>▲</i>Uncommon</span>
+    <div class="nm">AIRBUS A220-300</div>
+    <div class="sub">Airbus · twin-jet narrowbody airliner</div>
+    <div class="gauges">
+      <div class="g"><div class="val">2015</div><div class="lab">First flew</div></div>
+      <div class="g"><div class="val">38.7</div><div class="lab">Metres</div></div>
+      <div class="g"><div class="val">2</div><div class="lab">Jets</div></div>
+      <div class="g"><div class="val">5</div><div class="lab">Across</div></div>
+    </div>
+    <p class="fact">About <b>70 percent</b> of the A220's airframe is lightweight material: carbon wings and tail, aluminium-lithium body.</p>
+    <div class="foot"><span class="lab">1 aircraft · Bronze</span><span class="lab">Photo: R. Coupy, CC BY-SA</span></div>
+  </div>
+</template>
+
+<template id="flightB">
+  <div class="fb">
+    <span class="ring"></span>
+    <img class="lg" src="../../assets/logos/ACA.webp" alt="Air Canada">
+    <div class="line">AC 412 · from YYZ Toronto</div>
+    <div class="big">YUL</div>
+    <div class="bigcity">Montréal</div>
+    <div class="band"><span class="lab">● Common · Home Skies</span><span class="lab">21 NOV 2026</span></div>
+    <div class="ph"><img src="../../assets/photos/airlines/ACA-BCS3.webp" alt="Air Canada A220-300"><span class="credit">Photo: 4300streetcar, CC BY 4.0</span></div>
+    <div class="bc" data-bars="AC412YUL"></div>
+    <div class="bcl">AC412 · YYZ · YUL · 507 KM</div>
+  </div>
+</template>
+
+<template id="planeC">
+  <div class="ph"><img src="../../assets/photos/house/BCS3.webp" alt="Airbus A220-300"><span class="date">21 11 '26</span></div>
+  <span class="corner c1"></span><span class="corner c2"></span><span class="corner c3"></span><span class="corner c4"></span>
+  <div class="nm">AIRBUS A220-300</div>
+  <div class="sub">Airbus · twin-jet narrowbody, born as the Bombardier CSeries. Photo: Romain Coupy, CC BY-SA 4.0</div>
+  <div class="specs">
+    <div><div class="lab">First flew</div><div class="val">2015</div></div>
+    <div><div class="lab">Length</div><div class="val">38.7<small>m</small></div></div>
+    <div><div class="lab">Engines</div><div class="val">2<small>jets</small></div></div>
+    <div><div class="lab">Across</div><div class="val">5</div></div>
+  </div>
+  <p class="fact">Five seats across, with a window at every row.</p>
+  <div class="foot"><span class="lab">✈ Plane · Narrowbodies</span><span class="pill"><i>▲</i>Uncommon</span></div>
+</template>
+
+<template id="flightC">
+  <div class="navy">
+    <div class="hd"><div class="air"><span class="ic"><img src="../../assets/logos/icons/ACA.webp" alt=""></span><span>AIR CANADA</span></div><div style="text-align:right"><div class="lab">Boarding pass</div><div class="flt">AC 412</div></div></div>
+    <div class="codes">
+      <div><div class="code">YYZ</div><div class="city">Toronto</div></div>
+      <div class="arc"><svg viewBox="0 0 100 30" preserveAspectRatio="none"><path d="M2 26 Q50 -6 98 26" fill="none" stroke="#c8513f" stroke-width="1.6" stroke-dasharray="3 3" vector-effect="non-scaling-stroke"/></svg></div>
+      <div style="text-align:right"><div class="code">YUL</div><div class="city">Montréal</div></div>
+    </div>
+    <div class="ph"><img src="../../assets/photos/airlines/ACA-BCS3.webp" alt="Air Canada A220-300"><span class="credit">Photo: 4300streetcar, CC BY 4.0</span></div>
+  </div>
+  <div class="grid flds">
+    <div><div class="lab">Date</div><div class="val">21 NOV</div></div>
+    <div><div class="lab">Caught at</div><div class="val">21,300<small>ft</small></div></div>
+    <div><div class="lab">Distance</div><div class="val">507<small>km</small></div></div>
+    <div><div class="lab">Aircraft</div><div class="val">A220-300</div></div>
+    <div><div class="lab">Zone</div><div class="val" style="font-size:.8em">HOME SKIES</div></div>
+    <div><div class="lab">Group</div><div class="grp">● COMMON</div></div>
+  </div>
+  <div class="tear"></div>
+  <div class="stub"><div class="bc" data-bars="ACA412-C"></div><div class="t"><div class="lab">Caught</div><div class="val" style="font-size:.8em">4:12 PM</div></div></div>
+</template>
+
+<template id="ticket">
+  <div class="main">
+    <div class="hd"><span class="chip"><img src="../../assets/logos/ACA.webp" alt="Air Canada"></span><span class="bp"><b>Boarding pass</b> · AC 412</span></div>
+    <div class="mid">
+      <div class="route">
+        <div class="codes">
+          <div><div class="code">YYZ</div><div class="city">Toronto</div></div>
+          <svg class="plane-ico" viewBox="0 0 64 64"><path transform="rotate(90 32 32)" d="M32 3c2.2 0 3.4 3 3.4 6.5V24l22.6 12.2v4.3L35.4 34v15.2l7.2 5.6v3.6L32 55.6l-10.6 2.8v-3.6l7.2-5.6V34L6 40.5v-4.3L28.6 24V9.5C28.6 6 29.8 3 32 3z"/></svg>
+          <div style="text-align:right"><div class="code">YUL</div><div class="city">Montréal</div></div>
+        </div>
+      </div>
+      <div class="ph"><img src="../../assets/photos/airlines/ACA-BCS3.webp" alt="Air Canada A220-300"><span class="credit">4300streetcar, CC BY 4.0</span></div>
+    </div>
+    <div class="flds">
+      <div><div class="lab">Flight</div><div class="val">AC 412</div></div>
+      <div><div class="lab">Date</div><div class="val">21 NOV</div></div>
+      <div><div class="lab">Caught</div><div class="val">4:12 PM</div></div>
+      <div><div class="lab">Altitude</div><div class="val">21,300<small>ft</small></div></div>
+      <div><div class="lab">Zone</div><div class="val">HOME</div></div>
+      <div><div class="lab">Group</div><div class="val grp">COMMON</div></div>
+    </div>
+    <div class="strip"></div>
+  </div>
+  <div class="perf"></div>
+  <div class="stub">
+    <div class="lab">Flight</div><div class="sc">AC 412</div>
+    <div class="qrbox"><svg class="qr" data-qr="ACA412YYZYUL20261121" viewBox="0 0 25 25" shape-rendering="crispEdges"></svg></div>
+    <div class="sc" style="font-size:.66em">YYZ → YUL</div>
+    <div class="grpband">GROUP · COMMON</div>
+  </div>
+</template>
+
+<script>
+// Fill each card from its template, then draw the decorative barcodes and QR codes (they encode nothing).
+const hash = (s) => { let h = 2166136261; for (const c of s) h = Math.imul(h ^ c.charCodeAt(0), 16777619) >>> 0; return h; };
+const rng = (seed) => { let h = hash(seed); return () => ((h = (Math.imul(h, 1103515245) + 12345) >>> 0) / 4294967296); };
+document.querySelectorAll('[data-tpl]').forEach((el) => {
+  el.appendChild(document.getElementById(el.dataset.tpl).content.cloneNode(true));
+  if (el.dataset.string) el.insertAdjacentHTML('beforeend', '<svg class="string" viewBox="0 0 60 52"><path d="M30 50 C 12 30, 6 6, 22 2 C 34 -1, 40 14, 30 50" fill="none" stroke="#c8513f" stroke-width="2.2" stroke-linecap="round"/></svg>');
+});
+document.querySelectorAll('[data-bars]').forEach((el) => {
+  const r = rng(el.dataset.bars); let s = '<div class="bars">';
+  for (let i = 0; i < 46; i++) s += `<i style="width:${[.08, .08, .15, .24][r() * 4 | 0]}em;margin-right:${[.07, .12, .17, .09][r() * 4 | 0]}em"></i>`;
+  el.innerHTML = s + '</div>';
+});
+document.querySelectorAll('[data-qr]').forEach((svg) => {
+  const r = rng(svg.dataset.qr), N = 25; let d = '';
+  const finder = (x, y) => { d += `M${x} ${y}h7v7h-7zM${x + 1} ${y + 1}v5h5v-5zM${x + 2} ${y + 2}h3v3h-3z`; };
+  const inFinder = (x, y) => (x < 8 && y < 8) || (x > N - 9 && y < 8) || (x < 8 && y > N - 9);
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) if (!inFinder(x, y) && r() < .48) d += `M${x} ${y}h1v1h-1z`;
+  finder(0, 0); finder(N - 7, 0); finder(0, N - 7);
+  svg.innerHTML = `<path d="${d}" fill="#0d2238" fill-rule="evenodd"/>`;
+});
+</script>
+</body>
+</html>

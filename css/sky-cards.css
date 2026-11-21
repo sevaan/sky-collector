@@ -734,3 +734,28 @@ html.sky-cards .collection-tabs { gap:16px; }
 .mini-face .fc { --fc-u:10px; }
 .mini-face .fc .sct-lvl { min-width:4.4em; height:4.4em; border-radius:2.2em; top:.9em; right:.9em; padding:0 .7em; border-width:.25em; }
 .mini-face .fc .sct-lvl i { font-size:2.7em; }
+body.sky-only .tc .art .ob-moon { display:none; } /* When to look up: no Moon in Sky's picture (2026-11-21, Sevaan) */
+
+/* ---- The boarding pass as paper (2026-11-21, Sevaan picked take A of design/card-takes/card-takes-2026-11-21.html:
+   "Keep our current plane card design but use the boarding pass design from A"). The flight card loses the metal frame,
+   the foil and the gloss: thin white paper with a red airline rule under the header, a dashed tear line with two
+   half-circle notches cut out of the edges, and the barcode stub below it. The rarity is its pill on the photo. The plane
+   card keeps the frame, so the two read as different things in the reveal's deck. The stub has a fixed height, so the
+   notches (a mask on the face) always sit on the tear line. ---- */
+.fc--flight { --pass:#fcfcf8; --stub:5.6em; }
+.fc--flight .fc-rot { border-radius:.7em; }
+.fc--flight .fc-face { padding:0; border-radius:.7em; background:var(--pass); box-shadow:none; animation:none;
+  -webkit-mask:radial-gradient(circle at 0 calc(100% - var(--stub)), #0000 1em, #000 1.05em) left / 51% 100% no-repeat, radial-gradient(circle at 100% calc(100% - var(--stub)), #0000 1em, #000 1.05em) right / 51% 100% no-repeat;
+          mask:radial-gradient(circle at 0 calc(100% - var(--stub)), #0000 1em, #000 1.05em) left / 51% 100% no-repeat, radial-gradient(circle at 100% calc(100% - var(--stub)), #0000 1em, #000 1.05em) right / 51% 100% no-repeat; }
+.fc--flight .fc-face::before, .fc--flight .fc-face::after { display:none; }
+.fc--flight :is(.fc-foil, .fc-coat) { display:none; }
+.fc--flight .fc-glare { border-radius:.7em; }
+.fc--flight .fc-in { border-radius:.7em; background:var(--pass); box-shadow:none; }
+.fc--flight .bp-hd { border-bottom:.22em solid #b42a20; }
+.fc--flight .bp-perf { border-top-color:rgba(13,34,56,.35); margin:0 1.4em; }
+.fc--flight .bp-perf::before, .fc--flight .bp-perf::after { display:none; }
+.fc--flight:not(.fc--mini) .bp-stub { height:var(--stub); margin-top:0; }
+.fc--flight .fc-holo { display:none; }
+/* the Collection's mini pass: the same paper, no frame; too small for the notches */
+.fc--mini.fc--flight .fc-face { padding:0; -webkit-mask:none; mask:none; }
+.fc--mini.fc--flight .m-lg { border-bottom-color:#b42a20; }

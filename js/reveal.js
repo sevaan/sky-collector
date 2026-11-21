@@ -5,15 +5,15 @@
 //  Everything scales with rarity (Legendary dims the sky, shockwave, held breath, slow flip, fanfare).
 // Waits use timers, not animation.finished, so a paused tab can never freeze the sequence.
 
-import { sfx, loadSfx } from './sfx.js?v=0.1.1824';
-import { audioCtx } from './audio-ctx.js?v=0.1.1824';
-import { TIER_INFO } from './rarity.js?v=0.1.1824';
-import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1824';
-import { applyBack } from './card-backs.js?v=0.1.1824';
-import { addStarfield } from './starfield.js?v=0.1.1824';
-import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1824';
-import { packPlan, packFoil, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1824'; /* the two-card pack opening (prototype, 2026-11-20) */
-import { tearJag } from './gift-pack.js?v=0.1.1824';
+import { sfx, loadSfx } from './sfx.js?v=0.1.1826';
+import { audioCtx } from './audio-ctx.js?v=0.1.1826';
+import { TIER_INFO } from './rarity.js?v=0.1.1826';
+import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1826';
+import { applyBack } from './card-backs.js?v=0.1.1826';
+import { addStarfield } from './starfield.js?v=0.1.1826';
+import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1826';
+import { packPlan, packFoil, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1826'; /* the two-card pack opening (prototype, 2026-11-20) */
+import { tearJag } from './gift-pack.js?v=0.1.1826';
 
 const FX = TIER_FX; /* one rarity table for every card moment (js/card-moment.js, 2026-11-11) */
 const NIGHT_MILESTONES = [3, 5, 10, 25, 50, 100, 200, 365], STAMP_MILESTONES = [5, 10, 25, 50, 100, 200, 300, 400];
@@ -592,10 +592,11 @@ function cardNews(e) {
   }
   return { ...e, o, seen, fleet, progress, shiny: e.shiny ?? null, fresh, tierKey, level, levelUp, newStamp, nights: progress?.nights ?? 0, tab, stamp, kind: flight ? 'Flight' : o.sky === 'plane' ? 'Plane' : 'Card' };
 }
-// The order (Sevaan's OK on the prototype): new cards in front (the flight first when both are), then a level-up, then the flight.
+// The order: the plane you caught in front, its boarding pass (the flight card) behind (2026-11-21, Sevaan: "the plane you
+// collect should be first"; it was new cards first, the flight first when both were). Otherwise new, then a level-up.
 function orderDeck(items) {
   if (items.length < 2) return items;
-  const rank = (it) => (it.fresh ? 0 : 4) + (it.levelUp ? 0 : 2) + (it.o?.sky === 'flight' ? 0 : 1);
+  const rank = (it) => (it.o?.sky === 'plane' ? 0 : 8) + (it.fresh ? 0 : 4) + (it.levelUp ? 0 : 2);
   return items.slice(0, 2).sort((a, b) => rank(a) - rank(b));
 }
 function setDeck(items) {

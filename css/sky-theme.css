@@ -905,3 +905,29 @@ body.sky-only .n2-att .tx small { color:#4a6178; }
 body.sky-only .n2-att .tm { color:#b42a20; }
 body.sky-only .n2-att .tm small { color:#1f7a45; }
 body.sky-only .n2-pips i:not(.on, .now) { background:#c9d9e6; }
+
+/* The welcome card's three pictures take turns (2026-11-21, Sevaan: all three starting together was distracting). Each
+   plays its 6 s animation, then rests 3 s, on a 9 s loop; picture 2 starts halfway through picture 1, picture 3 halfway
+   through picture 2, and picture 1 again halfway through picture 3. These are the .wsk-* and .wa-* keyframes above, played
+   in the first two thirds of the loop and holding their resting pose after. */
+@media (prefers-reduced-motion: no-preference) {
+  #wc-holder .wc-mission .wc-step :is(.wsk-fly, .wa-phone, .wsk-blink, .wsk-in, .wsk-ring, .wsk-float, .wsk-sheen, .wsk-dot) { animation-duration:9s; animation-fill-mode:backwards; }
+  #wc-holder .wc-mission .wc-step:nth-child(2) :is(.wsk-in, .wsk-ring) { animation-delay:3s; }
+  #wc-holder .wc-mission .wc-step:nth-child(3) :is(.wsk-float, .wsk-sheen, .wsk-dot) { animation-delay:6s; }
+  #wc-holder .wc-mission .wsk-fly { animation-name:wskFly9; }
+  @keyframes wskFly9 { 0% { transform:translate(-58px, 16px); opacity:0; } 6.67% { opacity:1; } 41.33% { transform:translate(0, 0); opacity:1; } 54.67%, 100% { transform:translate(16px, -2px); opacity:0; } }
+  #wc-holder .wc-mission .wa-phone { animation-name:waPhone9; }
+  @keyframes waPhone9 { 0%, 66.67%, 100% { transform:rotate(-4deg); } 14.67% { transform:rotate(5deg); } 30% { transform:rotate(-1deg); } }
+  #wc-holder .wc-mission .wsk-blink { animation-name:waLens9; }
+  @keyframes waLens9 { 0%, 8%, 20%, 100% { opacity:1; } 13.33% { opacity:.35; } }
+  #wc-holder .wc-mission .wsk-in { animation-name:wskIn9; }
+  @keyframes wskIn9 { 0%, 8% { transform:translate(-40px, 34px); opacity:0; } 13.33% { opacity:1; } 30.67%, 57.33% { transform:none; opacity:1; } 64%, 100% { transform:none; opacity:0; } }
+  #wc-holder .wc-mission .wsk-ring { animation-name:wskRing9; }
+  @keyframes wskRing9 { 0%, 29.33% { transform:scale(1); } 33.33% { transform:scale(.88); } 38.67%, 100% { transform:scale(1); } }
+  #wc-holder .wc-mission .wsk-float { animation-name:wskFloat9; }
+  @keyframes wskFloat9 { 0%, 30.67% { transform:rotate(4deg); } 42.67% { transform:rotate(1deg) translateY(-4px) scale(1.04); } 56%, 100% { transform:rotate(4deg); } }
+  #wc-holder .wc-mission .wsk-sheen { animation-name:wskSheen9; }
+  @keyframes wskSheen9 { 0%, 36% { transform:skewX(-18deg) translateX(-60px); } 50.67%, 100% { transform:skewX(-18deg) translateX(90px); } }
+  #wc-holder .wc-mission .wsk-dot { animation-name:wskDot9; }
+  @keyframes wskDot9 { 0%, 40% { transform:scale(1); } 44% { transform:scale(1.8); } 49.33%, 100% { transform:scale(1); } }
+}
