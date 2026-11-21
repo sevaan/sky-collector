@@ -782,3 +782,7 @@ body.sky-only .tc .art .ob-moon { display:none; } /* When to look up: no Moon in
   -webkit-mask:radial-gradient(circle at 0 calc(100% - var(--stub)), #0000 1em, #000 1.05em) left / 51% 100% no-repeat, radial-gradient(circle at 100% calc(100% - var(--stub)), #0000 1em, #000 1.05em) right / 51% 100% no-repeat;
           mask:radial-gradient(circle at 0 calc(100% - var(--stub)), #0000 1em, #000 1.05em) left / 51% 100% no-repeat, radial-gradient(circle at 100% calc(100% - var(--stub)), #0000 1em, #000 1.05em) right / 51% 100% no-repeat; }
 .fc--flight:not(.fc--mini) { filter:drop-shadow(0 .1em .12em rgba(13,34,56,.16)) drop-shadow(0 .6em .9em rgba(13,34,56,.12)); }
+/* Real-sky art (js/flight-card.js skyArt, 2026-11-21): the picture fills the window like a photo; the sky gradient behind it
+   shows only until it loads, with no grid lines, clouds or drawn plane. */
+.fc-sky--art::before { display:none; }
+.fc-skyart { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 50%; display:block; }

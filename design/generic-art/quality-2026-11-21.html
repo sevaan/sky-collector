@@ -1,0 +1,786 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Generic Art Quality</title>
+<!-- Sky Collector design spike, 2026-11-21 (second pass). Sevaan, on generic-art-2026-11-21.html: "Probably C but that was just
+     temp mockup art right? ... Can I see just a few art examples from each category?" A quality pass: three examples per
+     direction (Heavy, Light, Helicopter), plus a nearer C variant of each. Every aircraft is a small 3D model (real
+     proportions: 787-class twin, Cessna 172, AS350-class helicopter) projected and lit in the page, so the shapes stay true
+     from any angle. Each piece is a self-contained inline SVG; its size is printed under it. Design only: nothing here is
+     wired into the app. -->
+<style>
+@font-face { font-family: 'SC Display'; src: url('../../fonts/RussoOne-Regular.woff2') format('woff2'); font-display: block; }
+@font-face { font-family: 'SC Label'; src: url('../../fonts/BarlowCondensed-Medium.woff2') format('woff2'); font-display: block; }
+:root { --ink: #0d2238; --ink2: #1b2a3d; --muted: #5b6878; --cream: #fffdf6; }
+* { box-sizing: border-box; }
+body { margin: 0; background: #eef5fb; color: var(--ink); font-family: Georgia, 'Times New Roman', serif; }
+.page { max-width: 375px; margin: 0 auto; overflow-x: hidden; }
+header { padding: 22px 16px 6px; }
+h1 { font: 400 24px/1.1 'SC Display', sans-serif; margin: 0; }
+.lede { font-size: 14.5px; line-height: 1.45; margin: 8px 0 0; color: var(--ink2); }
+section { padding: 18px 16px 22px; background: #eef5fb; }
+section + section { border-top: 1px solid rgba(13,34,56,.14); }
+.sec-h { display: flex; align-items: baseline; gap: 10px; }
+.sec-l { font: 400 13px/1 'SC Display', sans-serif; color: #fff; background: var(--ink); border-radius: 6px; padding: 4px 8px 3px; }
+h2 { font: 400 19px/1.1 'SC Display', sans-serif; margin: 0; }
+.why { font-size: 14px; line-height: 1.42; margin: 6px 0 2px; color: var(--ink2); }
+.piece { margin-top: 18px; }
+.win { position: relative; width: 297px; height: 200px; margin: 0 auto; border-radius: 3px; overflow: hidden; background: #cfe2f2;
+  box-shadow: 0 0 0 1.2px #1f4f8f, 0 2px 6px rgba(13,34,56,.15); }
+.win svg, .mini svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.row { display: flex; gap: 12px; align-items: flex-start; width: 297px; margin: 8px auto 0; }
+.mini { position: relative; flex: none; width: 92px; height: 106px; border-radius: 3px; overflow: hidden; background: #cfe2f2;
+  box-shadow: 0 0 0 1px #1f4f8f, 0 1px 3px rgba(13,34,56,.15); }
+.cap { flex: 1; font-size: 13.5px; line-height: 1.38; color: var(--ink2); }
+.cap b { font: 400 13px/1 'SC Display', sans-serif; letter-spacing: .02em; display: block; margin-bottom: 4px; color: var(--ink); }
+.cap .kb { display: block; margin-top: 5px; font: 500 12px/1.2 'SC Label', sans-serif; letter-spacing: .06em; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <h1>Generic art, quality pass</h1>
+    <p class="lede">Three examples from each direction: a Heavy (wide-body twin), a Light (high-wing single) and a Helicopter. Each is drawn at the card's photo window size (297 × 200), with the small Collection card crop beside its caption. C, the real sky, gets a second, nearer take of each, for readability on small cards.</p>
+  </header>
+  <section id="sec-a" data-dir="A">
+    <div class="sec-h"><span class="sec-l">A</span><h2>Travel poster</h2></div>
+    <p class="why">Screen-print shading in three flat tones, warm cream against cool shadow, a red tail and the app's navy, gold and sky blues. Each aircraft gets its own place.</p>
+  </section>
+  <section id="sec-b" data-dir="B">
+    <div class="sec-h"><span class="sec-l">B</span><h2>Blueprint</h2></div>
+    <p class="why">A spotter's general-arrangement sheet: from below, side and front, all at one scale, with real dimensions, control-surface lines and a title block.</p>
+  </section>
+  <section id="sec-c" data-dir="C">
+    <div class="sec-h"><span class="sec-l">C</span><h2>Real sky</h2></div>
+    <p class="why">A photo without a photo: the sky as you see it looking up, the aircraft lit by the sun and softened by the air between you. Far takes first, then the same aircraft nearer.</p>
+  </section>
+</div>
+
+<script type="module">
+// =====================================================================================================================
+// 1. Small 3D engine: build aircraft from lofted sections, wings and bodies of revolution; project; light; paint as SVG.
+// Body axes: x forward (nose at 0 pointing -x... no: nose at x=0, tail at +x), y left, z up. Units: metres.
+// =====================================================================================================================
+const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+const add = (a, b) => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+const scl = (a, k) => [a[0] * k, a[1] * k, a[2] * k];
+const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+const nrm = (a) => { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l]; };
+const mm = (A, B) => A.map((r) => [0, 1, 2].map((j) => r[0] * B[0][j] + r[1] * B[1][j] + r[2] * B[2][j]));
+const mv = (M, v) => M.map((r) => r[0] * v[0] + r[1] * v[1] + r[2] * v[2]);
+const rad = (d) => d * Math.PI / 180;
+const RX = (d) => { const c = Math.cos(rad(d)), s = Math.sin(rad(d)); return [[1, 0, 0], [0, c, -s], [0, s, c]]; };
+const RY = (d) => { const c = Math.cos(rad(d)), s = Math.sin(rad(d)); return [[c, 0, s], [0, 1, 0], [-s, 0, c]]; };
+const RZ = (d) => { const c = Math.cos(rad(d)), s = Math.sin(rad(d)); return [[c, -s, 0], [s, c, 0], [0, 0, 1]]; };
+const M0 = [[-1, 0, 0], [0, 0, 1], [0, -1, 0]]; // nose (x=0 end) to screen right, z up, y (left wing) away: right-side view
+// Camera: rz screen roll, ry turn about screen vertical, rx tilt (negative shows the belly). Body: pitch (+ = nose up), roll (+ = right wing down).
+const camR = ({ rz = 0, ry = 0, rx = 0, pitch = 0, roll = 0 }) => mm(RZ(rz), mm(RY(ry), mm(RX(rx), mm(M0, mm(RY(pitch), RX(-roll))))));
+const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+const win01 = (x, a, b, c, d) => smooth(a, b, x) * (1 - smooth(c, d, x));
+const F = (v, p = 1) => { const k = 10 ** p; return String(Math.round(v * k) / k); };
+function rng(seed) { let a = seed >>> 0; return () => { a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+const hex = (c) => '#' + c.map((v) => Math.round(Math.min(1, Math.max(0, v)) * 255).toString(16).padStart(2, '0')).join('');
+const unhex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255);
+const mix = (a, b, t) => a.map((v, i) => v * (1 - t) + b[i] * t);
+
+// Monotone cubic through keys [[x, v], ...]
+function curve(keys) {
+  const n = keys.length, xs = keys.map((k) => k[0]), ys = keys.map((k) => k[1]), d = [], m = [];
+  for (let i = 0; i < n - 1; i++) d.push((ys[i + 1] - ys[i]) / (xs[i + 1] - xs[i]));
+  m[0] = d[0]; m[n - 1] = d[n - 2];
+  for (let i = 1; i < n - 1; i++) m[i] = d[i - 1] * d[i] <= 0 ? 0 : (d[i - 1] + d[i]) / 2;
+  for (let i = 0; i < n - 1; i++) {
+    if (d[i] === 0) { m[i] = m[i + 1] = 0; continue; }
+    const a = m[i] / d[i], b = m[i + 1] / d[i], h = a * a + b * b;
+    if (h > 9) { const t = 3 / Math.sqrt(h); m[i] = t * a * d[i]; m[i + 1] = t * b * d[i]; }
+  }
+  return (x) => {
+    if (x <= xs[0]) return ys[0]; if (x >= xs[n - 1]) return ys[n - 1];
+    let i = 0; while (x > xs[i + 1]) i++;
+    const h = xs[i + 1] - xs[i], t = (x - xs[i]) / h, t2 = t * t, t3 = t2 * t;
+    return (2 * t3 - 3 * t2 + 1) * ys[i] + (t3 - 2 * t2 + t) * h * m[i] + (-2 * t3 + 3 * t2) * ys[i + 1] + (t3 - t2) * h * m[i + 1];
+  };
+}
+
+const newModel = () => ({ polys: [], lines: [] });
+// Fuselage section point: th = 0 left side (+y), pi/2 top. e = superellipse exponent.
+function secPt(p, x, th, e, lift = 1) {
+  const c = Math.cos(th), s = Math.sin(th), pc = Math.sign(c) * Math.abs(c) ** (2 / e), ps = Math.sign(s) * Math.abs(s) ** (2 / e);
+  return [x, p.w * pc * lift, p.zm + (s > 0 ? p.zt - p.zm : p.zm - p.zb) * ps * lift];
+}
+function addFuselage(m, { xs, prof, n = 24, e = 2, mat = 'skin', comp = 'fuse', matFn, bias = .05 }) {
+  const P = xs.map(prof), rings = xs.map((x, i) => Array.from({ length: n }, (_, j) => secPt(P[i], x, j / n * 2 * Math.PI, e)));
+  for (let i = 0; i < xs.length - 1; i++) for (let j = 0; j < n; j++) {
+    const j1 = (j + 1) % n, pts = [rings[i][j], rings[i + 1][j], rings[i + 1][j1], rings[i][j1]];
+    const ref = [(xs[i] + xs[i + 1]) / 2, 0, (P[i].zm + P[i + 1].zm) / 2];
+    const cen = scl(pts.reduce(add), .25);
+    m.polys.push({ pts, ref, mat: matFn ? matFn(cen, (j + .5) / n * 2 * Math.PI) || mat : mat, comp });
+  }
+  const L = xs.length - 1;
+  if (P[L].w > .02) m.polys.push({ pts: rings[L].slice().reverse(), ref: [xs[L] - .3, 0, P[L].zm], mat: 'exhaust', comp });
+  return { prof, e, bias };
+}
+// Paint a patch of the fuselage skin: x0..x1 and angle th0..th1 (numbers or functions of x).
+function fuseDecal(m, fz, x0, x1, th0, th1, mat, comp = 'fuse', nx = 3, nt = 3, bias = null) {
+  bias = bias ?? fz.bias;
+  const T = (f, x) => (typeof f === 'function' ? f(x) : f);
+  for (let i = 0; i < nx; i++) for (let j = 0; j < nt; j++) {
+    const xa = x0 + (x1 - x0) * i / nx, xb = x0 + (x1 - x0) * (i + 1) / nx;
+    const pt = (x, k) => { const a = T(th0, x), b = T(th1, x); return secPt(fz.prof(x), x, a + (b - a) * k, fz.e, 1.006); };
+    const pts = [pt(xa, j / nt), pt(xb, j / nt), pt(xb, (j + 1) / nt), pt(xa, (j + 1) / nt)];
+    const xm = (xa + xb) / 2;
+    m.polys.push({ pts, ref: [xm, 0, fz.prof(xm).zm], mat, comp, bias });
+  }
+}
+// A lifting surface. st: [{x (leading edge), s (span station), o (offset: z for horizontal, y for vertical), c (chord), t (thickness)}]
+function addSurface(m, st, { vertical = false, mirror = !vertical, cp = 8, mat = 'wing', comp = 'wing', camber = .02, xf = null, matFn = null, tipCap = true }) {
+  const us = Array.from({ length: cp }, (_, i) => (1 - Math.cos(Math.PI * i / (cp - 1))) / 2);
+  const yt = (u) => 5 * (0.2969 * Math.sqrt(u) - 0.126 * u - 0.3516 * u * u + 0.2843 * u ** 3 - 0.1036 * u ** 4);
+  const order = [...us.slice().reverse().map((u) => [u, 1]), ...us.slice(1, -1).map((u) => [u, -1])];
+  for (const side of mirror ? [1, -1] : [1]) {
+    const put = (S, u, sgn) => {
+      const X = S.x + u * S.c, zc = vertical ? 0 : camber * S.c * 4 * u * (1 - u), th = sgn * yt(u) * S.t;
+      const p = vertical ? [X, S.o + th, S.s] : [X, side * S.s, S.o + zc + th];
+      const q = vertical ? [X, S.o, S.s] : [X, side * S.s, S.o + zc];
+      return xf ? [xf(p), xf(q)] : [p, q];
+    };
+    const rings = st.map((S) => order.map(([u, sg]) => put(S, u, sg)));
+    const cname = mirror ? comp + (side > 0 ? 'L' : 'R') : comp;
+    for (let i = 0; i < st.length - 1; i++) for (let k = 0; k < order.length; k++) {
+      const k1 = (k + 1) % order.length, A = rings[i][k], B = rings[i + 1][k], C = rings[i + 1][k1], D = rings[i][k1];
+      const ref = scl(add(add(A[1], B[1]), add(C[1], D[1])), .25);
+      const pts = [A[0], B[0], C[0], D[0]];
+      m.polys.push({ pts, ref, mat: matFn ? matFn(scl(pts.reduce(add), .25), order[k][0], i) || mat : mat, comp: cname });
+    }
+    if (tipCap) {
+      const r = rings[st.length - 1], S0 = st[st.length - 2], S1 = st[st.length - 1];
+      const inward = put({ ...S1, s: S1.s - .2 * Math.sign(S1.s - S0.s || 1), x: S1.x }, .5, 0)[1];
+      m.polys.push({ pts: r.map((q) => q[0]), ref: inward, mat, comp: cname });
+    }
+  }
+}
+// Body of revolution along axis ax from origin o; prof [[s, r], ...]; su/sv stretch the section.
+function addRevolve(m, { o, ax = [1, 0, 0], u = [0, 1, 0], v = [0, 0, 1], prof, n = 16, mat = 'nacelle', comp, su = 1, sv = 1, matFn, capA, capB }) {
+  const rings = prof.map(([s, r]) => Array.from({ length: n }, (_, j) => { const f = j / n * 2 * Math.PI; return add(add(o, scl(ax, s)), add(scl(u, Math.cos(f) * r * su), scl(v, Math.sin(f) * r * sv))); }));
+  for (let i = 0; i < prof.length - 1; i++) {
+    const ref = add(o, scl(ax, (prof[i][0] + prof[i + 1][0]) / 2 + (prof[i][0] === prof[i + 1][0] ? -.5 : 0)));
+    for (let j = 0; j < n; j++) {
+      const j1 = (j + 1) % n;
+      m.polys.push({ pts: [rings[i][j], rings[i + 1][j], rings[i + 1][j1], rings[i][j1]], ref, mat: matFn ? matFn(i) || mat : mat, comp });
+    }
+  }
+  const L = prof.length - 1;
+  if (prof[0][1] > 0) m.polys.push({ pts: rings[0], ref: add(o, scl(ax, prof[0][0] + .2)), mat: capA || mat, comp });
+  if (prof[L][1] > 0) m.polys.push({ pts: rings[L], ref: add(o, scl(ax, prof[L][0] - .2)), mat: capB || mat, comp });
+}
+const perp = (a) => { const t = Math.abs(a[2]) < .9 ? [0, 0, 1] : [1, 0, 0]; const u = nrm(cross(a, t)); return [u, cross(a, u)]; };
+function addTube(m, a, b, r, opts = {}) {
+  const ax = nrm(sub(b, a)), L = Math.hypot(...sub(b, a)), [u, v] = perp(ax);
+  addRevolve(m, { o: a, ax, u, v, prof: [[0, r], [L, r]], n: opts.n || 8, mat: opts.mat || 'strut', comp: opts.comp, su: opts.su || 1, sv: opts.sv || 1 });
+}
+function addDisc(m, o, u, v, r, { n = 48, mat = 'disc', comp, bias = 0 } = {}) {
+  const pts = Array.from({ length: n }, (_, j) => { const f = j / n * 2 * Math.PI; return add(o, add(scl(u, Math.cos(f) * r), scl(v, Math.sin(f) * r))); });
+  m.polys.push({ pts, ref: add(o, cross(u, v)), mat, comp, twoSided: true, disc: true, bias });
+}
+const transformModel = (m, f) => { for (const p of m.polys) { p.pts = p.pts.map(f); p.ref = f(p.ref); } for (const l of m.lines) l.pts = l.pts.map(f); return m; };
+
+// ---------- projection ----------
+// cam: { R, s (px per metre), cx, cy, D (perspective distance in m, 0 = orthographic) }
+function project(m, cam) {
+  const out = [];
+  for (const p of m.polys) {
+    const P = p.pts.map((q) => mv(cam.R, q));
+    let n = [0, 0, 0];
+    for (let i = 0; i < P.length; i++) { const a = P[i], b = P[(i + 1) % P.length]; n[0] += (a[1] - b[1]) * (a[2] + b[2]); n[1] += (a[2] - b[2]) * (a[0] + b[0]); n[2] += (a[0] - b[0]) * (a[1] + b[1]); }
+    if (Math.hypot(...n) < 1e-10) continue;
+    n = nrm(n);
+    const C = scl(P.reduce(add), 1 / P.length), Rf = mv(cam.R, p.ref);
+    if (dot(n, sub(C, Rf)) < 0) n = scl(n, -1);
+    const view = cam.D ? nrm(sub([0, 0, cam.D], C)) : [0, 0, 1], facing = dot(n, view);
+    if (!p.twoSided && facing <= 1e-4) continue;
+    if (p.twoSided && facing < 0) n = scl(n, -1);
+    const S = P.map((q) => { const k = cam.D ? cam.D / (cam.D - q[2]) : 1; return [cam.cx + q[0] * cam.s * k, cam.cy - q[1] * cam.s * k]; });
+    let A = 0; for (let i = 0; i < S.length; i++) { const a = S[i], b = S[(i + 1) % S.length]; A += a[0] * b[1] - b[0] * a[1]; }
+    if (Math.abs(A) < .004 && !p.disc) continue;
+    out.push({ S, n, z: C[2] + (p.bias || 0), p });
+  }
+  return out.sort((a, b) => a.z - b.z);
+}
+// Fit a model's projection: returns cam with s and cx, cy so that the bbox centre lands at (x, y) and its width (or height) is w.
+function fit(m, R, { x, y, w, h, D = 0, s }) {
+  let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+  for (const p of m.polys) for (const q of p.pts) { const c = mv(R, q); const k = D ? D / (D - c[2]) : 1; x0 = Math.min(x0, c[0] * k); x1 = Math.max(x1, c[0] * k); y0 = Math.min(y0, c[1] * k); y1 = Math.max(y1, c[1] * k); }
+  const S = s || (w ? w / (x1 - x0) : h / (y1 - y0));
+  return { R, s: S, D, cx: x - (x0 + x1) / 2 * S, cy: y + (y0 + y1) / 2 * S, bb: [x - (x1 - x0) / 2 * S, y - (y1 - y0) / 2 * S, (x1 - x0) * S, (y1 - y0) * S] };
+}
+const pt2 = (cam, q) => { const c = mv(cam.R, q), k = cam.D ? cam.D / (cam.D - c[2]) : 1; return [cam.cx + c[0] * cam.s * k, cam.cy - c[1] * cam.s * k]; };
+const pathD = (S, p = 1) => 'M' + S.map(([x, y]) => F(x, p) + ',' + F(y, p)).join(' ') + 'Z';
+
+// Paint projected polygons. shade(it) -> colour; discs get (shadeDisc(it) -> svg) instead.
+function paint(items, shade, { seam = .35, prec = 1, disc } = {}) {
+  let s = '';
+  for (const it of items) {
+    if (it.p.disc) { if (disc) s += disc(it); continue; }
+    const c = shade(it);
+    s += `<path d="${pathD(it.S, prec)}" fill="${c}" stroke="${c}"/>`;
+  }
+  return `<g stroke-width="${seam}" stroke-linejoin="round">${s}</g>`;
+}
+
+// =====================================================================================================================
+// 2. The aircraft
+// =====================================================================================================================
+// HEAVY: a 787-9 class wide-body twin. 63 m long, 60 m span, 32-35 degree sweep, raked tips, two big high-bypass fans.
+function heavyModel({ gear = false, n = 24, cp = 8, windows = true, fine = true } = {}) {
+  const m = newModel();
+  const W = curve([[0, 0], [.35, .95], [1.1, 1.6], [2.4, 2.25], [4, 2.68], [6, 2.9], [8.5, 2.96], [42, 2.96], [48, 2.78], [54, 2.2], [59, 1.3], [62.3, .5], [63, .32]]);
+  const ZT = curve([[0, -.6], [.35, .2], [1.4, .9], [3, 1.55], [4.6, 2.15], [6.6, 2.72], [9.5, 2.96], [47, 2.96], [54, 2.68], [60, 1.95], [63, 1.3]]);
+  const ZB = curve([[0, -.6], [.35, -1.3], [1.4, -1.95], [3, -2.45], [5, -2.8], [8.5, -2.96], [39, -2.96], [44.5, -2.78], [50, -2.1], [56, -.95], [60, .1], [63, .9]]);
+  const prof = (x) => { const zt = ZT(x), zb0 = ZB(x); return { w: W(x) * (1 + .03 * win01(x, 18, 23, 34, 40)), zt, zb: zb0 - .34 * win01(x, 17, 23, 34, 41), zm: (zt + zb0) / 2 }; };
+  const xs = fine ? [0, .12, .35, .7, 1.1, 1.6, 2.2, 2.9, 3.7, 4.6, 5.6, 6.7, 8, 9.6, 12, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 43, 45, 47, 49, 51, 53, 55, 57, 59, 60.5, 62, 63]
+    : [0, .35, 1.1, 2.2, 3.7, 5.6, 8, 12, 17, 22, 27, 32, 37, 41, 45, 49, 53, 57, 60.5, 63];
+  const fz = addFuselage(m, { xs, prof, n, e: 2, bias: fine ? .7 : 1.4, matFn: (c) => (c[2] < -2.2 && c[0] > 6 && c[0] < 52 ? 'belly' : 0) });
+  // cockpit windows and the passenger window row (both sides)
+  for (const sd of [1, -1]) {
+    const th = (a) => (sd > 0 ? a : Math.PI - a);
+    fuseDecal(m, fz, 3.15, 5.35, (x) => th(.62 + (x - 3.15) * .06), (x) => th(1.05 - (x - 3.15) * .02), 'glass', 'fuse', 3, 2);
+    if (windows) for (let x = 8.6; x < 52; x += 1.07) if (Math.abs(x - 16.2) > .9 && Math.abs(x - 33.9) > .9 && Math.abs(x - 44.5) > .9) fuseDecal(m, fz, x, x + .3, th(.42), th(.53), 'win', 'fuse', 1, 1);
+  }
+  // wing: 787-ish planform with the trailing-edge kink, dihedral 6 degrees and in-flight flex
+  const wz = (s) => -1.55 + (s - 2.9) * .105 + .9 * Math.max(0, (s - 2.9) / 27.2) ** 2;
+  const wst = [[2.4, 22.6, 12.4, 1.55], [5, 24.6, 10.0, 1.3], [10, 28.2, 7.6, .95], [16, 32.4, 5.6, .7], [22, 36.6, 4.0, .5], [28, 40.8, 2.6, .3], [30.1, 43.4, 1.15, .16]]
+    .map(([s, x, c, t]) => ({ s, x, c, t, o: wz(s) }));
+  addSurface(m, wst, { cp, mat: 'wing', comp: 'wing' });
+  // tailplane and fin
+  addSurface(m, [{ s: .8, x: 52.4, c: 6.3, t: .62, o: 1.0 }, { s: 9.8, x: 59.0, c: 2.0, t: .2, o: 2.1 }], { cp: Math.max(5, cp - 2), mat: 'wing', comp: 'stab' });
+  addSurface(m, [{ s: 2.2, x: 46.0, c: 12.8, t: 1.1, o: 0 }, { s: 3.4, x: 48.6, c: 10.0, t: .95, o: 0 }, { s: 11.0, x: 55.9, c: 3.7, t: .35, o: 0 }], { vertical: true, cp: Math.max(5, cp - 2), mat: 'tail', comp: 'fin' });
+  // engines (GEnx-class nacelles) and pylons
+  for (const sd of [1, -1]) {
+    const y = 9.8 * sd, o = [23.4, y, -2.9];
+    addRevolve(m, { o, prof: [[0, 1.6], [.18, 1.78], [.7, 1.94], [2.6, 1.95], [4.3, 1.74], [5.1, 1.42], [5.1, 1.08], [6.5, .84], [6.5, .55], [7.7, .02]], n: fine ? 20 : 14, mat: 'nacelle', comp: 'eng' + (sd > 0 ? 'L' : 'R'),
+      matFn: (i) => (i === 0 ? 'lip' : i === 5 ? 'exhaust' : i === 6 ? 'core' : i >= 7 ? 'exhaust' : 0), capA: 'intake' });
+    addSurface(m, [{ s: -1.15, x: 25.6, c: 6.4, t: .55, o: y }, { s: -.85, x: 26.2, c: 6.2, t: .5, o: y }], { vertical: true, cp: 5, mat: 'wing', comp: 'pyl' + (sd > 0 ? 'L' : 'R'), tipCap: false });
+    // flap-track fairings under the wing
+    if (fine) for (const s of [6.2, 13.5, 19.5]) { const i = wst.findIndex((q, j) => wst[j + 1] && wst[j + 1].s >= s), A = wst[i], B = wst[i + 1], t = (s - A.s) / (B.s - A.s), xte = A.x + A.c + (B.x + B.c - A.x - A.c) * t; addRevolve(m, { o: [xte - 3.3, sd * s, wz(s) - .42], prof: [[0, 0], [.6, .2], [3, .24], [4.7, 0]], n: 6, mat: 'wing', comp: 'wing' + (sd > 0 ? 'L' : 'R'), sv: 1.4 }); }
+  }
+  if (gear) {
+    for (const sd of [1, -1]) {
+      const c = 'gear' + (sd > 0 ? 'L' : 'R'), y = 5.6 * sd;
+      addTube(m, [33.4, y, -2.0], [33.4, y, -5.25], .22, { comp: c });
+      addTube(m, [32.2, y, -5.35], [34.6, y, -5.35], .14, { comp: c });
+      for (const dx of [-.75, .75]) for (const dy of [-.55, .55]) addRevolve(m, { o: [33.4 + dx, y + dy - .23, -5.35], ax: [0, 1, 0], u: [1, 0, 0], v: [0, 0, 1], prof: [[0, .62], [.46, .62]], n: 14, mat: 'tire', comp: c, capA: 'metal', capB: 'metal' });
+    }
+    addTube(m, [6.4, 0, -2.6], [6.4, 0, -5.4], .17, { comp: 'ngear' });
+    for (const dy of [-.36, .36]) addRevolve(m, { o: [6.4, dy - .16, -5.5], ax: [0, 1, 0], u: [1, 0, 0], v: [0, 0, 1], prof: [[0, .5], [.32, .5]], n: 12, mat: 'tire', comp: 'ngear', capA: 'metal', capB: 'metal' });
+  }
+  // blueprint feature lines
+  const lw = (pts, comp, k = 1, dash = 0) => m.lines.push({ pts, comp, k, dash });
+  for (const sd of [1, -1]) {
+    const c = 'wing' + (sd > 0 ? 'L' : 'R'), at = (s, f) => { const i = wst.findIndex((q, j) => wst[j + 1] && wst[j + 1].s >= s); const A = wst[i], B = wst[i + 1], t = (s - A.s) / (B.s - A.s); return [A.x + (B.x - A.x) * t + f * (A.c + (B.c - A.c) * t), sd * s, wz(s) - .3]; };
+    lw([at(3.2, .72), at(10, .72), at(22, .76)], c, .7); lw([at(22, .74), at(28, .74)], c, .7);
+    lw([at(10, .72), at(10, 1)], c, .7); lw([at(22, .76), at(22, 1)], c, .7); lw([at(6, .07), at(28, .07)], c, .55, 1);
+    lw([[54.3, sd * 3, 1.3], [59.7, sd * 9.6, 2.3]].map((p, i) => p), 'stab' + (sd > 0 ? 'L' : 'R'), .6);
+  }
+  lw([[54.6, 0, 3.4], [58.4, 0, 10.9]], 'fin', .6);
+  return m;
+}
+
+// LIGHT: a Cessna 172 class high-wing single. 8.3 m long, 11 m span, strut-braced, fixed tricycle gear with spats.
+function lightModel({ n = 22, cp = 7, prop = 'disc', fine = true } = {}) {
+  const m = newModel();
+  const W = curve([[0, 0], [.08, .12], [.25, .2], [.45, .4], [.8, .5], [1.5, .55], [2.2, .57], [3.4, .57], [4.3, .47], [6, .27], [7.6, .13], [8.15, .09]]);
+  const ZT = curve([[0, .02], [.1, .11], [.25, .18], [.5, .32], [1, .42], [1.45, .46], [1.8, .68], [2.1, .93], [2.4, 1.0], [3.3, 1.0], [3.6, .96], [4.4, .8], [6, .64], [8.15, .5]]);
+  const ZB = curve([[0, -.02], [.1, -.11], [.25, -.18], [.5, -.36], [.9, -.45], [1.6, -.52], [3.2, -.53], [4.2, -.44], [6, -.08], [8.15, .27]]);
+  const prof = (x) => ({ w: W(x), zt: ZT(x), zb: ZB(x), zm: (ZT(x) + ZB(x)) / 2 - .05 });
+  const xs = fine ? [0, .05, .12, .25, .4, .6, .85, 1.15, 1.45, 1.65, 1.85, 2.05, 2.3, 2.6, 3.0, 3.4, 3.8, 4.3, 4.9, 5.5, 6.1, 6.7, 7.3, 7.8, 8.15] : [0, .12, .4, .85, 1.45, 1.85, 2.3, 3.0, 3.8, 4.9, 6.1, 7.3, 8.15];
+  const fz = addFuselage(m, { xs, prof, n, e: 2.6, bias: fine ? .14 : .25, matFn: (c) => (c[0] < .16 ? 'spinner' : 0) });
+  for (const sd of [1, -1]) {
+    const th = (a) => (sd > 0 ? a : Math.PI - a);
+    fuseDecal(m, fz, 2.42, 3.02, th(.28), th(1.12), 'glass', 'fuse', 2, 2); // front side window (door)
+    fuseDecal(m, fz, 3.1, 3.62, th(.3), (x) => th(1.12 - (x - 3.1) * .55), 'glass', 'fuse', 2, 2); // rear side window
+    fuseDecal(m, fz, .55, 7.9, th(-.14), th(-.24), 'stripe1', 'fuse', 8, 1); // cheatlines
+    fuseDecal(m, fz, .55, 7.9, th(-.3), th(-.36), 'stripe2', 'fuse', 8, 1);
+  }
+  fuseDecal(m, fz, 1.68, 2.36, .3, Math.PI - .3, 'glass', 'fuse', 3, 4); // windshield
+  fuseDecal(m, fz, 3.62, 4.3, .75, Math.PI - .75, 'glass', 'fuse', 2, 2); // rear (omni-vision) window
+  addSurface(m, [{ s: .4, x: 2.0, c: 1.63, t: .2, o: 1.02 }, { s: 2.6, x: 2.0, c: 1.63, t: .2, o: 1.09 }, { s: 5.3, x: 2.07, c: 1.16, t: .14, o: 1.18 }, { s: 5.5, x: 2.16, c: .96, t: .1, o: 1.185 }], { cp, mat: 'skin', comp: 'wing' });
+  addSurface(m, [{ s: .1, x: 6.95, c: 1.15, t: .09, o: .38 }, { s: 1.72, x: 7.17, c: .82, t: .06, o: .38 }], { cp: 5, mat: 'skin', comp: 'stab' });
+  addSurface(m, [{ s: .52, x: 6.1, c: 2.1, t: .12, o: 0 }, { s: .82, x: 6.9, c: 1.3, t: .1, o: 0 }, { s: 1.72, x: 7.45, c: .8, t: .07, o: 0 }, { s: 1.78, x: 7.52, c: .7, t: .06, o: 0 }], { vertical: true, cp: 5, mat: 'tail', comp: 'fin' });
+  for (const sd of [1, -1]) {
+    const c = sd > 0 ? 'L' : 'R';
+    addTube(m, [2.62, sd * .5, -.36], [2.4, sd * 2.55, .97], .05, { comp: 'strut' + c, n: 6, su: 1.8, mat: 'skin' });
+    addTube(m, [3.0, sd * .42, -.5], [3.05, sd * 1.15, -.98], .045, { comp: 'mgear' + c, n: 6, su: 2.2, mat: 'skin' });
+    addRevolve(m, { o: [3.05, sd * 1.25 - .07, -1.0], ax: [0, 1, 0], u: [1, 0, 0], v: [0, 0, 1], prof: [[0, .25], [.14, .25]], n: 12, mat: 'tire', comp: 'mgear' + c, capA: 'tire', capB: 'tire' });
+    addRevolve(m, { o: [2.6, sd * 1.25, -.95], prof: [[0, 0], [.1, .11], [.35, .16], [.7, .15], [.95, .08], [1.08, 0]], n: 12, mat: 'skin', comp: 'mgear' + c, su: .62, sv: 1.6 });
+  }
+  addTube(m, [.95, 0, -.45], [.82, 0, -1.05], .04, { comp: 'ngear', n: 6, mat: 'strut' });
+  addRevolve(m, { o: [.8, -.06, -1.07], ax: [0, 1, 0], u: [1, 0, 0], v: [0, 0, 1], prof: [[0, .19], [.12, .19]], n: 12, mat: 'tire', comp: 'ngear', capA: 'tire', capB: 'tire' });
+  addRevolve(m, { o: [.45, 0, -1.02], prof: [[0, 0], [.08, .09], [.28, .13], [.55, .12], [.75, .06], [.85, 0]], n: 10, mat: 'skin', comp: 'ngear', su: .55, sv: 1.5 });
+  if (prop === 'disc') addDisc(m, [-.05, 0, .02], [0, 1, 0], [0, 0, 1], .95, { comp: 'prop' });
+  if (prop === 'blades') for (const a of [80, 260]) {
+    const ca = Math.cos(rad(a)), sa = Math.sin(rad(a));
+    addSurface(m, [{ s: .12, x: -.16, c: .17, t: .03, o: 0 }, { s: .6, x: -.15, c: .14, t: .02, o: 0 }, { s: .95, x: -.12, c: .08, t: .012, o: 0 }], { vertical: true, cp: 4, mat: 'dark', comp: 'prop', camber: 0, xf: ([x, y, z]) => [x, y * ca - z * sa, y * sa + z * ca] });
+  }
+  const lw = (pts, comp, k = 1, dash = 0) => m.lines.push({ pts, comp, k, dash });
+  for (const sd of [1, -1]) {
+    const c = 'wing' + (sd > 0 ? 'L' : 'R');
+    lw([[3.25, sd * .6, 1.0], [3.25, sd * 2.6, 1.05], [2.9, sd * 5.3, 1.14]], c, .7); lw([[3.25, sd * 2.6, 1.05], [3.63, sd * 2.6, 1.05]], c, .7);
+    lw([[1.69, sd * 1.0, 2.0], [1.69, sd * 1.0, 2.0]], c, .5);
+    lw([[7.75, sd * .15, .4], [7.8, sd * 1.7, .4]], 'stab' + (sd > 0 ? 'L' : 'R'), .6);
+  }
+  lw([[7.75, 0, .6], [7.95, 0, 1.75]], 'fin', .6);
+  return m;
+}
+
+// HELICOPTER: an AS350 / H125 class light single. 10.9 m fuselage, 10.7 m three-blade rotor, skids, a conventional tail rotor.
+function heliModel({ n = 22, rotor = 'disc', fine = true } = {}) {
+  const m = newModel();
+  const W = curve([[0, 0], [.1, .32], [.4, .56], [.9, .72], [1.6, .8], [3.0, .8], [3.7, .72], [4.3, .5], [4.9, .25], [6, .2], [9.8, .13], [10.15, .1]]);
+  const ZT = curve([[0, .15], [.1, .45], [.4, .85], [.9, 1.15], [1.5, 1.3], [2.0, 1.36], [2.35, 1.55], [3.6, 1.6], [4.3, 1.35], [4.9, 1.0], [6, .95], [9.8, .9], [10.15, .88]]);
+  const ZB = curve([[0, .15], [.1, -.15], [.4, -.38], [.9, -.52], [1.5, -.56], [3.4, -.56], [4.0, -.35], [4.6, .15], [5.2, .52], [9.8, .66], [10.15, .7]]);
+  const prof = (x) => ({ w: W(x), zt: ZT(x), zb: ZB(x), zm: (ZT(x) + ZB(x)) / 2 });
+  const xs = fine ? [0, .04, .1, .2, .35, .55, .8, 1.1, 1.4, 1.7, 2.0, 2.35, 2.8, 3.3, 3.7, 4.0, 4.3, 4.6, 4.9, 5.3, 6, 7, 8, 9, 9.8, 10.15] : [0, .1, .35, .8, 1.4, 2.0, 2.8, 3.7, 4.3, 4.9, 6, 8, 10.15];
+  const glass = (c) => (c[0] < 1.62 && c[2] > -.22 ? 'glass' : 0);
+  const fz = addFuselage(m, { xs, prof, n, e: 2.4, mat: 'body', bias: fine ? .16 : .3 });
+  const g0 = (x) => -.62 + .38 * smooth(.25, 1.5, x);
+  fuseDecal(m, fz, .015, 1.62, g0, (x) => Math.PI - g0(x), 'glass', 'fuse', 7, 14);
+  for (const sd of [1, -1]) {
+    const th = (a) => (sd > 0 ? a : Math.PI - a);
+    fuseDecal(m, fz, 1.72, 2.45, th(.12), th(1.05), 'glass', 'fuse', 2, 3); // front door window
+    fuseDecal(m, fz, 2.6, 3.35, th(.16), th(.95), 'glass', 'fuse', 2, 2); // rear door window
+    fuseDecal(m, fz, .9, 9.9, th(-.25), th(-.42), 'stripe2', 'fuse', 9, 1); // cream band
+  }
+  fuseDecal(m, fz, 2.7, 4.2, 1.2, 1.94, 'metal', 'fuse', 2, 2); // engine cowl top
+  fuseDecal(m, fz, 4.15, 4.45, 1.0, 1.25, 'exhaust', 'fuse', 1, 1, fz.bias * 1.5);
+  addSurface(m, [{ s: .12, x: 7.85, c: .58, t: .07, o: .75 }, { s: 1.15, x: 7.95, c: .48, t: .05, o: .75 }], { cp: 5, mat: 'body', comp: 'stab' });
+  for (const sd of [1, -1]) addSurface(m, [{ s: .5, x: 7.9, c: .5, t: .04, o: sd * 1.15 }, { s: 1.05, x: 8.02, c: .4, t: .04, o: sd * 1.15 }], { vertical: true, cp: 4, mat: 'body', comp: 'stab' + (sd > 0 ? 'L' : 'R') });
+  addSurface(m, [{ s: .05, x: 9.62, c: .55, t: .08, o: 0 }, { s: .75, x: 9.5, c: .78, t: .09, o: 0 }, { s: 1.75, x: 9.98, c: .45, t: .05, o: 0 }], { vertical: true, cp: 5, mat: 'body', comp: 'fin' });
+  // tail rotor on the right side, gearbox fairing
+  addRevolve(m, { o: [10.0, -.05, 1.2], ax: [0, -1, 0], u: [1, 0, 0], v: [0, 0, 1], prof: [[0, .12], [.18, .1], [.26, 0]], n: 8, mat: 'metal', comp: 'trotor' });
+  if (rotor === 'disc') addDisc(m, [10.0, -.3, 1.2], [1, 0, 0], [0, 0, 1], .93, { comp: 'trotor', n: 28 });
+  else for (const a of [20, 200]) addTube(m, [10.0 + .93 * Math.cos(rad(a)), -.3, 1.2 + .93 * Math.sin(rad(a))], [10.0 - .93 * Math.cos(rad(a)), -.3, 1.2 - .93 * Math.sin(rad(a))], .06, { comp: 'trotor', mat: 'rotor', n: 4, su: 2.5 });
+  // mast, hub, rotor
+  addTube(m, [2.7, 0, 1.5], [2.7, 0, 2.02], .13, { comp: 'mast', mat: 'metal', n: 10 });
+  addRevolve(m, { o: [2.7, 0, 1.95], ax: [0, 0, 1], u: [1, 0, 0], v: [0, 1, 0], prof: [[0, .3], [.12, .32], [.22, .2], [.3, 0]], n: 12, mat: 'metal', comp: 'mast' });
+  if (rotor === 'disc' || rotor === 'both') addDisc(m, [2.7, 0, 2.12], [1, 0, 0], [0, 1, 0], 5.35, { comp: 'rotor', n: 64 });
+  if (rotor === 'blades' || rotor === 'both') for (const a of [30, 150, 270]) {
+    const ca = Math.cos(rad(a)), sa = Math.sin(rad(a));
+    addSurface(m, [{ s: .3, x: -.17, c: .3, t: .04, o: 0 }, { s: 5.35, x: -.17, c: .35, t: .03, o: 0 }], { cp: 4, mirror: false, mat: 'rotor', comp: 'rotor', camber: 0, xf: ([x, y, z]) => [2.7 + x * ca - y * sa, x * sa + y * ca, 2.12 + z + y * 0] });
+  }
+  // skids and cross tubes
+  for (const sd of [1, -1]) {
+    const c = 'skid' + (sd > 0 ? 'L' : 'R');
+    addTube(m, [.1, sd * 1.05, -1.48], [4.3, sd * 1.05, -1.48], .045, { comp: c, mat: 'metal', n: 6 });
+    addTube(m, [-.35, sd * 1.05, -1.18], [.12, sd * 1.05, -1.48], .045, { comp: c, mat: 'metal', n: 6 });
+    for (const x of [1.05, 3.25]) { addTube(m, [x, sd * .5, -.55], [x, sd * .98, -.9], .05, { comp: c, mat: 'metal', n: 6 }); addTube(m, [x, sd * .98, -.9], [x, sd * 1.05, -1.48], .05, { comp: c, mat: 'metal', n: 6 }); }
+  }
+  const lw = (pts, comp, k = 1, dash = 0) => m.lines.push({ pts, comp, k, dash });
+  return m;
+}
+
+// =====================================================================================================================
+// 3. Materials and shaders
+// =====================================================================================================================
+const MC = {
+  skin: [.95, .955, .965], belly: [.86, .875, .89], wing: [.8, .82, .85], nacelle: [.93, .935, .94], lip: [.78, .8, .83], core: [.6, .61, .63],
+  exhaust: [.34, .34, .36], intake: [.06, .07, .09], tail: [.07, .16, .29], glass: [.1, .14, .2], win: [.16, .2, .27], tire: [.08, .08, .09],
+  strut: [.62, .64, .67], metal: [.52, .54, .57], rotor: [.16, .17, .19], dark: [.2, .21, .23], spinner: [.75, .2, .15],
+  stripe1: [.07, .16, .29], stripe2: [.71, .17, .13], body: [.74, .16, .12], disc: [.2, .22, .25],
+};
+const SPEC = { glass: [1.1, 90], win: [.5, 40], lip: [.8, 60], metal: [.6, 40], intake: [0, 1], tire: [.1, 10] };
+// Daylight shader: sun (key) + sky dome + warm ground bounce + Blinn spec + a cool fresnel rim, then air (haze) between.
+function shaderC(env) {
+  const H = nrm(add(env.L, [0, 0, 1])), sun = env.sun || [1, .97, .9], sky = env.sky || [.62, .74, .9], gnd = env.gnd || [.62, .6, .55], hz = env.hazeCol || [.72, .82, .93];
+  return (it, matOverride) => {
+    const mat = matOverride || it.p.mat, base = (env.mats && env.mats[mat]) || MC[mat] || MC.skin, [sp, sh] = SPEC[mat] || [.3, 32], n = it.n;
+    const sd = Math.max(0, dot(n, env.L)), up = dot(n, env.U), skyk = (.5 + .5 * up) * env.ka, gk = (.5 - .5 * up) * env.kg;
+    const spec = Math.pow(Math.max(0, dot(n, H)), sh) * sp * env.ks, fr = Math.pow(1 - Math.max(0, n[2]), 3) * (env.rim || 0);
+    let c = [0, 1, 2].map((i) => base[i] * (sun[i] * sd * env.ks + sky[i] * skyk + gnd[i] * gk) + sun[i] * spec + sky[i] * fr);
+    if (mat === 'glass' || mat === 'win') c = mix(c, sky.map((v) => v * .85), .18 + .55 * (1 - Math.abs(n[2])) ** 2);
+    c = c.map((v) => v / (1 + Math.max(0, v - .85) * .9));
+    return hex(mix(c, hz, env.haze || 0));
+  };
+}
+// Poster shader: three flat tones per material from the sun term.
+const RA = {
+  skin: ['#fffdf6', '#efe3c8', '#a7b6c8'], belly: ['#f6eedb', '#e2d3b2', '#98a9bd'], wing: ['#fbf6ea', '#e6d8b8', '#9cacbf'],
+  nacelle: ['#fffdf6', '#e9dcbf', '#a2b2c4'], lip: ['#cfd8e1', '#a3b3c5', '#6f84a0'], core: ['#8394aa', '#5d7089', '#3d5170'],
+  exhaust: ['#3d5170', '#2a3c58', '#18304d'], intake: ['#0d2238', '#0d2238', '#0d2238'], tail: ['#d2412f', '#b42a20', '#7d1d16'],
+  glass: ['#3e6b96', '#1f4166', '#0d2238'], win: ['#1f4166', '#0d2238', '#0d2238'], tire: ['#1b2a3d', '#0d2238', '#0d2238'],
+  strut: ['#cdd6df', '#93a3b6', '#5d7089'], metal: ['#b9c4cf', '#8394aa', '#566a84'], rotor: ['#3d5170', '#24384f', '#0d2238'],
+  dark: ['#3d5170', '#24384f', '#0d2238'], spinner: ['#d2412f', '#b42a20', '#7d1d16'], stripe1: ['#d2412f', '#b42a20', '#7d1d16'],
+  stripe2: ['#e2b555', '#b8892a', '#7f5d1b'], body: ['#d2412f', '#b42a20', '#7d1d16'],
+};
+const shaderA = (L, t1 = .5, t2 = .08, ramps = RA) => (it) => { const r = ramps[it.p.mat] || ramps.skin, I = dot(it.n, L); return I > t1 ? r[0] : I > t2 ? r[1] : r[2]; };
+
+// =====================================================================================================================
+// 4. Shared sky pieces (SVG strings). P = unique id prefix for one piece instance.
+// =====================================================================================================================
+// Soft volumetric cumulus: puffs lit from the sun side (soft rims so they melt into each other), a cool shadow side,
+// a flat grey base, and displaced, slightly blurred edges.
+function cumulus(P, id, { x, y, w, h, seed = 1, n = 30, sun = [.55, -.83], base = '#7f95b0', baseOp = .85, blur = .55, disp, freq, op = 1, lit = '#ffffff', mid = '#eef3f9', edge = '#d3dde9', shadow = '#9fb2c8', shadowOp = .45, flat = .12 }) {
+  const R = rng(seed), puffs = [];
+  const prof = (u) => Math.sin(Math.PI * Math.min(1, Math.max(0, u))) ** .9 * (1 - .25 * Math.cos(u * 9 + seed));
+  for (let i = 0; i < n; i++) {
+    const u = .03 + .94 * R(), hm = h * prof(u) * (.8 + .2 * R());
+    const r = h * (.1 + .17 * R()) * (.45 + .55 * prof(u));
+    puffs.push([x + u * w, y - r * .5 - R() ** .7 * Math.max(0, hm - r * 1.5), r]);
+  }
+  // cauliflower crown: small puffs sitting on the upper outline of the puffs already there
+  const main = puffs.slice();
+  for (let i = 0; i < n * .7; i++) {
+    const px = x + (.06 + .88 * R()) * w, r = h * (.05 + .07 * R());
+    let top = 1e9; for (const [cx, cy, rr] of main) { const dx = Math.abs(cx - px); if (dx < rr * .8) top = Math.min(top, cy - Math.sqrt(rr * rr - dx * dx)); }
+    if (top < 1e8) puffs.push([px, top + r * (.35 + .4 * R()), r]);
+  }
+  puffs.sort((a, b) => a[1] - b[1]);
+  const g = `${P}${id}`, sx = sun[0], sy = sun[1];
+  const circles = puffs.map(([cx, cy, r]) => `<circle cx="${F(cx)}" cy="${F(cy)}" r="${F(r)}"/>`).join('');
+  const defs = `<radialGradient id="${g}p" cx="${F(.5 + .1 * sx, 2)}" cy="${F(.5 + .1 * sy, 2)}" r=".6" fx="${F(.5 + .3 * sx, 2)}" fy="${F(.5 + .3 * sy, 2)}"><stop offset="0" stop-color="${lit}"/><stop offset=".38" stop-color="${lit}"/><stop offset=".66" stop-color="${mid}"/><stop offset=".86" stop-color="${edge}"/><stop offset="1" stop-color="${edge}" stop-opacity=".35"/></radialGradient>`
+    + `<linearGradient id="${g}s" gradientUnits="userSpaceOnUse" x1="${F(x + w / 2 + sx * w * .45)}" y1="${F(y - h / 2 + sy * h * .6)}" x2="${F(x + w / 2 - sx * w * .45)}" y2="${F(y - h / 2 - sy * h * .6)}"><stop offset=".25" stop-color="${shadow}" stop-opacity="0"/><stop offset="1" stop-color="${shadow}" stop-opacity="${shadowOp}"/></linearGradient>`
+    + `<linearGradient id="${g}b" gradientUnits="userSpaceOnUse" x1="0" y1="${F(y - h * .5)}" x2="0" y2="${F(y)}"><stop offset="0" stop-color="${base}" stop-opacity="0"/><stop offset=".65" stop-color="${base}" stop-opacity="${F(baseOp * .45, 2)}"/><stop offset="1" stop-color="${base}" stop-opacity="${baseOp}"/></linearGradient>`
+    + `<clipPath id="${g}k"><rect x="${F(x - h)}" y="${F(y - h * 2)}" width="${F(w + 2 * h)}" height="${F(h * 2 + h * flat)}"/></clipPath>`
+    + `<filter id="${g}f" x="-10%" y="-15%" width="120%" height="130%"><feTurbulence type="fractalNoise" baseFrequency="${F(freq || 1.9 / h, 4)}" numOctaves="4" seed="${seed}" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="${F(disp || h * .2)}" xChannelSelector="R" yChannelSelector="G"/><feGaussianBlur stdDeviation="${blur}"/></filter>`;
+  const body = `<g filter="url(#${g}f)" opacity="${op}"><g clip-path="url(#${g}k)"><g id="${g}u" fill="url(#${g}p)">${circles}</g><use href="#${g}u" fill="url(#${g}s)"/><use href="#${g}u" fill="url(#${g}b)"/></g></g>`;
+  return { defs, body };
+}
+// Cirrus streaks: stretched fractal noise, thresholded to soft white, masked to a band.
+function cirrus(P, id, { x, y, w, h, rot = -14, seed = 4, fx = .006, fy = .07, gain = 3.2, cut = .56, op = .7, blur = .5 }) {
+  const g = `${P}${id}`, cx = x + w / 2, cy = y + h / 2;
+  const defs = `<filter id="${g}f" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency="${fx} ${fy}" numOctaves="4" seed="${seed}"/><feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 ${gain} 0 0 0 ${F(-cut * gain, 2)}"/><feGaussianBlur stdDeviation="${blur}"/></filter>`
+    + `<radialGradient id="${g}m"><stop offset=".3" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient><mask id="${g}k" maskContentUnits="userSpaceOnUse"><ellipse cx="${F(cx)}" cy="${F(cy)}" rx="${F(w / 2)}" ry="${F(h / 2)}" fill="url(#${g}m)"/></mask>`;
+  const body = `<g mask="url(#${g}k)" opacity="${op}"><g transform="rotate(${rot} ${F(cx)} ${F(cy)})"><rect x="${F(x - w * .3)}" y="${F(y - h)}" width="${F(w * 1.6)}" height="${F(h * 3)}" filter="url(#${g}f)"/></g></g>`;
+  return { defs, body };
+}
+// Contrails from exhaust points E (screen), trailing along unit dir; core plus a wider spreading, wispier halo.
+function contrails(P, id, E, dir, { len, w0 = .6, w1 = 8, gap = 4, op = .95, drift = 0, seed = 7, haloK = 2.6, haloOp = .42, blurCore = .35, blurHalo = 1.6, disp = 6, freq = .05, fade = .22 }) {
+  const g = `${P}${id}`, pr = [-dir[1], dir[0]];
+  let defs = `<filter id="${g}c" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="${blurCore}"/></filter>`
+    + `<filter id="${g}h" x="-30%" y="-30%" width="160%" height="160%"><feTurbulence type="fractalNoise" baseFrequency="${freq}" numOctaves="3" seed="${seed}" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="${disp}" xChannelSelector="R" yChannelSelector="G"/><feGaussianBlur stdDeviation="${blurHalo}"/></filter>`;
+  let body = '';
+  E.forEach((S, k) => {
+    const c = (t) => { const d = gap + t * len, off = drift * t * t * len; return [S[0] + dir[0] * d + pr[0] * off, S[1] + dir[1] * d + pr[1] * off]; };
+    const strip = (wa, wb) => { const L = [], Rr = []; for (let i = 0; i <= 28; i++) { const t = i / 28, p = c(t), w = wa + (wb - wa) * t ** .75; L.push([p[0] + pr[0] * w, p[1] + pr[1] * w]); Rr.push([p[0] - pr[0] * w, p[1] - pr[1] * w]); } return pathD([...L, ...Rr.reverse()]); };
+    const a = c(0), b = c(1);
+    defs += `<linearGradient id="${g}g${k}" gradientUnits="userSpaceOnUse" x1="${F(a[0])}" y1="${F(a[1])}" x2="${F(b[0])}" y2="${F(b[1])}"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".03" stop-color="#fff" stop-opacity="${op}"/><stop offset="${fade}" stop-color="#fff" stop-opacity="${F(op * .7, 2)}"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>`;
+    body += `<path d="${strip(w1 * .2, w1 * haloK)}" fill="url(#${g}g${k})" opacity="${haloOp}" filter="url(#${g}h)"/>`;
+    body += `<path d="${strip(w0, w1)}" fill="url(#${g}g${k})" filter="url(#${g}c)"/>`;
+  });
+  return { defs, body };
+}
+const grain = (P, W, H, op = .05, freq = .9) => ({
+  defs: `<filter id="${P}gr" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency="${freq}" numOctaves="2" seed="9" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 .05 0 0 0 0 .13 0 0 0 0 .22 0 0 0 -1.4 1.05"/></filter>`,
+  body: `<rect width="${W}" height="${H}" filter="url(#${P}gr)" opacity="${op}"/>` });
+
+// =====================================================================================================================
+// 5. The pieces. Each returns { body, crop } where body is the inside of a 297 x 200 svg; crop is the mini window.
+// =====================================================================================================================
+const W = 297, H = 200;
+const L3 = (x, y, z) => nrm([x, y, z]);
+
+// ---------------- C: real sky ----------------
+function skyC(P, { top = '#2a68b0', mid = '#5d9bd6', low = '#a8cdec', horizon = '#dbe9f5', sunX = 280, sunY = -10, glare = 1, angle = .18 }) {
+  return {
+    defs: `<linearGradient id="${P}sk" x1="${F(.5 + angle, 2)}" y1="0" x2="${F(.5 - angle, 2)}" y2="1"><stop offset="0" stop-color="${top}"/><stop offset=".45" stop-color="${mid}"/><stop offset=".82" stop-color="${low}"/><stop offset="1" stop-color="${horizon}"/></linearGradient>`
+      + `<radialGradient id="${P}sun" gradientUnits="userSpaceOnUse" cx="${sunX}" cy="${sunY}" r="${F(230 * glare)}"><stop offset="0" stop-color="#fff"/><stop offset=".07" stop-color="#fffdf4" stop-opacity=".96"/><stop offset=".2" stop-color="#fff4d8" stop-opacity=".5"/><stop offset=".5" stop-color="#eaf3fb" stop-opacity=".16"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>`
+      + `<linearGradient id="${P}hz" x1="0" y1="0" x2="0" y2="1"><stop offset=".55" stop-color="#eef5fb" stop-opacity="0"/><stop offset="1" stop-color="#eef5fb" stop-opacity=".55"/></linearGradient>`
+      + `<radialGradient id="${P}vg" cx=".5" cy=".5" r=".75"><stop offset=".6" stop-color="#0d2238" stop-opacity="0"/><stop offset="1" stop-color="#0d2238" stop-opacity=".16"/></radialGradient>`,
+    back: `<rect width="${W}" height="${H}" fill="url(#${P}sk)"/>`,
+    glare: `<rect width="${W}" height="${H}" fill="url(#${P}sun)"/>`,
+    haze: `<rect width="${W}" height="${H}" fill="url(#${P}hz)"/>`,
+    vig: `<rect width="${W}" height="${H}" fill="url(#${P}vg)"/>`,
+  };
+}
+const exhaustPts = (cam, pts) => pts.map((q) => pt2(cam, q));
+const screenDir = (cam, a, b) => { const p = pt2(cam, a), q = pt2(cam, b), d = [q[0] - p[0], q[1] - p[1]], l = Math.hypot(...d); return [d[0] / l, d[1] / l]; };
+
+function cHeavy(P, near = false) {
+  const m = heavyModel({ n: near ? 24 : 16, cp: near ? 8 : 6, windows: near, fine: near });
+  const R = camR(near ? { rz: 31, ry: -14, rx: -58, roll: 4 } : { rz: 34, ry: -10, rx: -66, roll: 3 });
+  const cam = fit(m, R, near ? { x: 166, y: 86, w: 128 } : { x: 182, y: 62, w: 54 });
+  const env = near ? { L: L3(-.55, .68, .48), U: L3(0, .45, -.89), ks: 1.0, ka: .6, kg: .8, gnd: [.86, .83, .77], rim: .12, haze: .07 }
+    : { L: L3(.62, .7, -.35), U: L3(0, .45, -.89), ks: 1.05, ka: .6, kg: .72, gnd: [.8, .78, .74], rim: .3, haze: .2 };
+  const sky = skyC(P, near ? { sunX: -60, sunY: 230, glare: .9, top: '#2f70b8', mid: '#5f9dd8' } : { sunX: 292, sunY: -18, glare: 1.1 });
+  const ci = cirrus(P, 'ci', near ? { x: -20, y: 10, w: 340, h: 120, rot: -22, seed: 11, op: .55 } : { x: 0, y: 40, w: 300, h: 110, rot: -18, seed: 5, op: .65 });
+  const cu1 = cumulus(P, 'u1', near ? { x: -30, y: 214, w: 170, h: 54, seed: 21, n: 26, sun: [-.6, .2], baseOp: .55 } : { x: -20, y: 212, w: 190, h: 62, seed: 3, n: 28 });
+  const cu2 = cumulus(P, 'u2', near ? { x: 190, y: 222, w: 140, h: 40, seed: 8, n: 18, sun: [-.6, .2], baseOp: .5, op: .9 } : { x: 170, y: 216, w: 150, h: 46, seed: 12, n: 20, op: .92 });
+  const ex = [1, -1].map((sd) => [31.3, sd * 9.8, -2.9]);
+  const dir = screenDir(cam, [0, 0, 0], [60, 0, 0]);
+  const tr = contrails(P, 'tr', exhaustPts(cam, ex), dir, near ? { len: 260, w0: .9, w1: 7, gap: 10, drift: .05, seed: 31, disp: 7, haloK: 2.4, op: .95 } : { len: 230, w0: .45, w1: 5, gap: 2.5, drift: .06, seed: 17, disp: 6, op: .95 });
+  const items = project(m, cam);
+  const plane = paint(items, shaderC(env), { seam: near ? .3 : .22, prec: near ? 1 : 2 });
+  const gr = grain(P, W, H, .035);
+  const body = `<defs>${sky.defs}${ci.defs}${cu1.defs}${cu2.defs}${tr.defs}${gr.defs}${near ? '' : `<filter id="${P}air"><feGaussianBlur stdDeviation=".22"/></filter>`}</defs>`
+    + sky.back + ci.body + cu2.body + cu1.body + sky.haze + tr.body + (near ? plane : `<g filter="url(#${P}air)">${plane}</g>`) + sky.glare + sky.vig + gr.body;
+  const bb = cam.bb, cw = near ? 172 : 120, chh = cw * 106 / 92;
+  return { body, crop: [Math.max(0, Math.min(W - cw, bb[0] + bb[2] / 2 - cw * (near ? .5 : .55))), Math.max(0, Math.min(H - chh, bb[1] + bb[3] / 2 - chh * .4)), cw, chh] };
+}
+
+function cLight(P, near = false) {
+  const m = lightModel({ n: near ? 22 : 16, cp: near ? 7 : 5, fine: near });
+  const R = camR(near ? { rz: 18, ry: 22, rx: -55, roll: -8 } : { rz: 24, ry: 18, rx: -62, roll: -10 });
+  const cam = fit(m, R, near ? { x: 150, y: 92, w: 132 } : { x: 128, y: 74, w: 60 });
+  const env = near ? { L: L3(.3, .75, .58), U: L3(0, .5, -.87), ks: 1.0, ka: .7, kg: .95, gnd: [.86, .83, .77], rim: .12, haze: .05 }
+    : { L: L3(.55, .75, -.2), U: L3(0, .5, -.87), ks: 1.05, ka: .62, kg: .78, gnd: [.8, .78, .74], rim: .25, haze: .12 };
+  const sky = skyC(P, near ? { sunX: 150, sunY: -120, glare: 1.0, top: '#3474bb', mid: '#62a0da', low: '#b3d4ef' } : { sunX: 300, sunY: -25, glare: 1.05, top: '#2f70b8' });
+  const ci = cirrus(P, 'ci', { x: 20, y: 0, w: 280, h: 80, rot: -8, seed: 23, op: near ? .45 : .5, fy: .05 });
+  const cu1 = cumulus(P, 'u1', near ? { x: 150, y: 230, w: 190, h: 96, seed: 41, n: 60, sun: [.1, -1] } : { x: 150, y: 210, w: 170, h: 110, seed: 6, n: 56 });
+  const cu2 = cumulus(P, 'u2', near ? { x: -40, y: 225, w: 150, h: 50, seed: 44, n: 22, sun: [.1, -1], op: .95 } : { x: -30, y: 214, w: 160, h: 56, seed: 9, n: 24, op: .95 });
+  const cu3 = cumulus(P, 'u3', { x: near ? 40 : 60, y: near ? 206 : 196, w: 90, h: 26, seed: 15, n: 14, op: .8, blur: .9, baseOp: .5 });
+  const disc = (it) => `<path d="${pathD(it.S)}" fill="#59636f" fill-opacity="${near ? .2 : .26}" filter="url(#${P}pb)"/>`;
+  const items = project(m, cam);
+  const plane = paint(items, shaderC(env), { seam: near ? .3 : .22, prec: near ? 1 : 2, disc });
+  const gr = grain(P, W, H, .035);
+  const body = `<defs>${sky.defs}${ci.defs}${cu1.defs}${cu2.defs}${cu3.defs}${gr.defs}<filter id="${P}pb" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="${near ? 1.2 : .7}"/></filter>${near ? '' : `<filter id="${P}air"><feGaussianBlur stdDeviation=".2"/></filter>`}</defs>`
+    + sky.back + ci.body + cu3.body + cu2.body + cu1.body + sky.haze + (near ? plane : `<g filter="url(#${P}air)">${plane}</g>`) + sky.glare + sky.vig + gr.body;
+  const bb = cam.bb, cw = near ? 172 : 120, chh = cw * 106 / 92;
+  return { body, crop: [Math.max(0, Math.min(W - cw, bb[0] + bb[2] / 2 - cw / 2)), Math.max(0, Math.min(H - chh, bb[1] + bb[3] / 2 - chh * .45)), cw, chh] };
+}
+
+function cHeli(P, near = false) {
+  const m = heliModel({ n: near ? 22 : 16, fine: near });
+  const R = camR(near ? { rz: 2, ry: -28, rx: -16, pitch: -6, roll: 3 } : { rz: 3, ry: -24, rx: -22, pitch: -7, roll: 4 });
+  const cam = fit(m, R, near ? { x: 150, y: 96, w: 150, D: 60 } : { x: 160, y: 84, w: 66 });
+  const env = near ? { L: L3(.55, .6, .58), U: L3(0, .93, -.36), ks: 1.0, ka: .6, kg: .7, gnd: [.8, .78, .72], rim: .1, haze: .04 }
+    : { L: L3(.7, .55, .1), U: L3(0, .9, -.43), ks: 1.05, ka: .55, kg: .5, rim: .2, haze: .12 };
+  const sky = skyC(P, near ? { sunX: 320, sunY: -60, glare: .8, top: '#3b7cc2', mid: '#6aa6dc', low: '#b9d8f0', horizon: '#e3eef7' } : { sunX: 300, sunY: -15, glare: 1, top: '#3576bd', mid: '#66a3da', low: '#b6d6ef', horizon: '#e5f0f8' });
+  const ci = cirrus(P, 'ci', { x: 0, y: 0, w: 300, h: 70, rot: -6, seed: 33, op: .4, fy: .05 });
+  const cu1 = cumulus(P, 'u1', { x: -10, y: 182, w: 150, h: 64, seed: 52, n: 28, blur: .8 });
+  const cu2 = cumulus(P, 'u2', { x: 160, y: 188, w: 150, h: 52, seed: 55, n: 24, blur: .8, op: .95 });
+  const treeRow = (seed, base, hMin, hVar, step) => { const R2 = rng(seed); let d = `M-5,200L-5,${base}`; for (let x = -5; x <= W + 8; x += step * (.6 + R2() * .9)) { const h = hMin + R2() * hVar, w = h * (.22 + R2() * .08), b = base - 1 - Math.sin(x / 37 + seed) * 3; d += `L${F(x - w)},${F(b - h * .25)}L${F(x - w * .35)},${F(b - h * .55)}L${F(x)},${F(b - h)}L${F(x + w * .35)},${F(b - h * .55)}L${F(x + w)},${F(b - h * .25)}`; } return d + `L${W + 8},200Z`; };
+  const trees = treeRow(77, H - 6, 9, 9, 6), trees2 = treeRow(91, H - 12, 6, 6, 5);
+  const disc = (it) => it.p.comp === 'rotor'
+    ? `<path d="${pathD(it.S)}" fill="url(#${P}rd)" filter="url(#${P}rb)"/>`
+    : `<path d="${pathD(it.S)}" fill="#3c4450" fill-opacity=".28" filter="url(#${P}tb)"/>`;
+  const items = project(m, cam);
+  const rc = pt2(cam, [2.7, 0, 2.12]);
+  const plane = paint(items, shaderC({ ...env, mats: { body: [.74, .16, .12], stripe2: [.96, .94, .9] } }), { seam: near ? .3 : .22, prec: near ? 1 : 2, disc });
+  const gr = grain(P, W, H, .035);
+  const body = `<defs>${sky.defs}${ci.defs}${cu1.defs}${cu2.defs}${gr.defs}<filter id="${P}rb" x="-10%" y="-30%" width="120%" height="160%"><feGaussianBlur stdDeviation="${near ? 1.1 : .7}"/></filter><filter id="${P}tb" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="${near ? .9 : .5}"/></filter>`
+    + `<radialGradient id="${P}rd" gradientUnits="userSpaceOnUse" cx="${F(rc[0])}" cy="${F(rc[1])}" r="${F(5.35 * cam.s)}" gradientTransform="translate(${F(rc[0])} ${F(rc[1])}) scale(1 .3) translate(${F(-rc[0])} ${F(-rc[1])})"><stop offset="0" stop-color="#2e3540" stop-opacity=".1"/><stop offset=".75" stop-color="#2e3540" stop-opacity=".2"/><stop offset=".97" stop-color="#2e3540" stop-opacity=".34"/><stop offset="1" stop-color="#2e3540" stop-opacity=".1"/></radialGradient>`
+    + `<filter id="${P}tr"><feGaussianBlur stdDeviation="${near ? .9 : .5}"/></filter><linearGradient id="${P}tg" x1="0" y1="0" x2="0" y2="1"><stop offset=".8" stop-color="#4d6a6c"/><stop offset="1" stop-color="#2c4446"/></linearGradient>${near ? '' : `<filter id="${P}air"><feGaussianBlur stdDeviation=".18"/></filter>`}</defs>`
+    + sky.back + ci.body + cu1.body + cu2.body + sky.haze + `<path d="${trees2}" fill="#7d989c" filter="url(#${P}tr)"/><path d="${trees}" fill="url(#${P}tg)" filter="url(#${P}tr)"/>`
+    + (near ? plane : `<g filter="url(#${P}air)">${plane}</g>`) + sky.glare + sky.vig + gr.body;
+  const bb = cam.bb, cw = near ? 172 : 124, chh = Math.min(H, cw * 106 / 92);
+  return { body, crop: [Math.max(0, Math.min(W - cw, bb[0] + bb[2] / 2 - cw / 2)), Math.max(0, Math.min(H - chh, bb[1] + bb[3] / 2 - chh * .45)), cw, chh] };
+}
+
+// ---------------- A: travel poster ----------------
+const PA = { navy: '#0d2238', cream: '#fffdf6', red: '#b42a20', gold: '#b8892a' };
+function bandsA(stops, y0, y1) { let s = ''; const n = stops.length; stops.forEach((c, i) => { const a = y0 + (y1 - y0) * i / n; s += `<rect x="0" y="${F(a)}" width="${W}" height="${F((y1 - y0) / n + 1)}" fill="${c}"/>`; }); return s; }
+// a flat poster cloud: union of discs with a flat base, cream over a cool shadow
+function cloudA(x, y, w, h, seed, cream = '#fffdf6', shade = '#d6e3ee') {
+  const R = rng(seed); let c = '', sh = '';
+  const k = Math.round(w / (h * .55));
+  for (let i = 0; i < k; i++) { const u = (i + .5) / k, env = Math.sin(Math.PI * u) ** .6, r = h * (.28 + .2 * R()) * (.6 + .5 * env); const cx = x + u * w, cy = y - r * .55 - env * h * .3 * R(); c += `<circle cx="${F(cx)}" cy="${F(cy)}" r="${F(r)}"/>`; sh += `<circle cx="${F(cx - r * .14)}" cy="${F(cy + r * .16)}" r="${F(r)}"/>`; }
+  return `<g fill="${shade}">${sh}<rect x="${F(x - h * .1)}" y="${F(y - h * .25)}" width="${F(w + h * .2)}" height="${F(h * .25)}" rx="${F(h * .12)}"/></g><g fill="${cream}">${c}</g>`;
+}
+function sunA(x, y, r, rays = 0) {
+  let s = '';
+  if (rays) { for (let i = 0; i < rays; i++) { const a0 = i / rays * 2 * Math.PI, a1 = a0 + Math.PI / rays * .55, R2 = r * 5; s += `<path d="M${F(x)},${F(y)}L${F(x + Math.cos(a0) * R2)},${F(y + Math.sin(a0) * R2)}L${F(x + Math.cos(a1) * R2)},${F(y + Math.sin(a1) * R2)}Z"/>`; } s = `<g fill="#fff6dc" opacity=".22">${s}</g>`; }
+  return s + `<circle cx="${F(x)}" cy="${F(y)}" r="${F(r * 1.75)}" fill="#fff3d0" opacity=".28"/><circle cx="${F(x)}" cy="${F(y)}" r="${F(r * 1.35)}" fill="#fff0c4" opacity=".42"/><circle cx="${F(x)}" cy="${F(y)}" r="${F(r)}" fill="#ffe7a6"/>`;
+}
+function posterGrain(P) {
+  return { defs: `<filter id="${P}pg" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2" seed="3" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 .05 0 0 0 0 .13 0 0 0 0 .22 0 0 0 -2.2 1.3"/></filter>`,
+    body: `<rect width="${W}" height="${H}" filter="url(#${P}pg)" opacity=".07"/>` };
+}
+// a cloud bank: rows of flat discs, the lower row lighter (the base sits in front)
+function bankA(y, rows, seed) { const R = rng(seed); let s = ''; rows.forEach(([dy, rr, fill], k) => { let c = ''; for (let x = -10; x < W + 20; x += rr * (1 + R() * .8)) c += `<circle cx="${F(x)}" cy="${F(y + dy + R() * rr * .3)}" r="${F(rr * (.7 + R() * .5))}"/>`; s += `<g fill="${fill}">${c}</g>`; }); return s; }
+
+function aHeavy(P) {
+  const m = heavyModel({ n: 24, cp: 8, windows: true });
+  const R = camR({ rz: 9, ry: -32, rx: -20, roll: 17 });
+  const cam = fit(m, R, { x: 166, y: 90, h: 134 });
+  const L = L3(-.45, .5, .74);
+  const plane = paint(project(m, cam), shaderA(L, .55, .1), { seam: .35 });
+  const R2 = rng(5); let glint = ''; for (let i = 0; i < 14; i++) { const y = 166 + i * 2.6 + R2() * 2, x = 190 + (R2() - .5) * 60 * (1 + i * .1); glint += `<rect x="${F(x)}" y="${F(y)}" width="${F(14 + R2() * 24)}" height="1.1" rx=".5"/>`; }
+  const g = posterGrain(P);
+  const body = `<defs>${g.defs}</defs>`
+    + bandsA(['#3c78b9', '#4f88c6', '#6299d2', '#78aadc', '#8cc2ec', '#a8d0f0', '#c4def3', '#e2ebee', '#f5e6c6'], 0, 162)
+    + sunA(58, 44, 24, 18)
+    + cloudA(150, 158, 70, 16, 4, '#fffdf6', '#d9e5ef') + cloudA(232, 159, 60, 12, 9, '#fffdf6', '#d9e5ef') + cloudA(96, 159, 40, 9, 2, '#fffdf6', '#d9e5ef')
+    + `<rect y="160" width="${W}" height="40" fill="#24557f"/><rect y="160" width="${W}" height="3" fill="#3a6f9c"/><g fill="#7fb0d9" opacity=".8">${glint}</g>`
+    + `<path d="M0,160 L0,140 C14,136 24,128 40,130 C56,132 62,142 78,146 C92,150 104,154 118,160Z" fill="#4c7e72"/><path d="M0,160 L0,150 C20,146 36,146 52,150 C66,154 80,158 90,160Z" fill="#2f5e57"/>`
+    + `<g><rect x="36" y="121" width="4.4" height="13" fill="#fffdf6"/><rect x="36" y="125" width="4.4" height="2.4" fill="${PA.red}"/><rect x="35.2" y="119" width="6" height="2.4" fill="${PA.navy}"/><path d="M36,119 L38.2,115.5 L40.4,119Z" fill="${PA.red}"/></g>`
+    + `<g fill="none" stroke="#fffdf6" stroke-linecap="round" opacity=".7"><path d="M0,${F(cam.cy + 34)} Q60,${F(cam.cy + 22)} 70,${F(cam.cy + 16)}" stroke-width="1.2"/></g>`
+    + plane + g.body;
+  const bb = cam.bb, cw = 150, ch = cw * 106 / 92;
+  return { body, crop: [bb[0] + bb[2] * .5 - cw * .5, Math.max(0, bb[1] + bb[3] / 2 - ch / 2), cw, Math.min(ch, H)] };
+}
+
+function aLight(P) {
+  const m = lightModel({ n: 22, cp: 7, prop: 'disc' });
+  const R = camR({ rz: 6, ry: -36, rx: -14, roll: 10 });
+  const cam = fit(m, R, { x: 156, y: 80, w: 190 });
+  const L = L3(.45, .75, .5);
+  const disc = (it) => `<path d="${pathD(it.S)}" fill="#fffdf6" fill-opacity=".38"/><path d="${pathD(it.S)}" fill="none" stroke="#0d2238" stroke-opacity=".25" stroke-width=".6" stroke-dasharray="3 5"/>`;
+  const plane = paint(project(m, cam), shaderA(L, .5, .08), { seam: .35, disc });
+  const hills = (pts, fill) => `<path d="M0,200 L${pts} L${W},200Z" fill="${fill}"/>`;
+  const R2 = rng(12); let fields = '', trees = '';
+  const fc = ['#c9a64e', '#7fa47f', '#b8892a', '#93b48a', '#dcc173', '#6f966f', '#a9c08e', '#d4ad57'];
+  const vp = [150, 40], ys = [158, 163, 169, 177, 188, 202], xsB = [-260, -170, -95, -30, 30, 95, 160, 230, 300, 380, 470, 560];
+  const at = (xb, y) => [vp[0] + (xb - vp[0]) * (y - vp[1]) / (202 - vp[1]), y];
+  for (let i = 0; i < ys.length - 1; i++) for (let j = 0; j < xsB.length - 1; j++) {
+    const q = [at(xsB[j], ys[i]), at(xsB[j + 1], ys[i]), at(xsB[j + 1], ys[i + 1]), at(xsB[j], ys[i + 1])];
+    fields += `<path d="${pathD(q)}" fill="${fc[Math.floor(R2() * fc.length)]}"/>`;
+  }
+  let hedges = ''; for (const xb of xsB) { const a = at(xb, 156), b = at(xb, 202); hedges += `M${F(a[0])},${F(a[1])}L${F(b[0])},${F(b[1])}`; }
+  for (const y of ys) hedges += `M0,${y}H${W}`;
+  fields += `<path d="${hedges}" fill="none" stroke="#3f6b55" stroke-width="1.1" opacity=".75"/>`;
+  for (let i = 0; i < 30; i++) { const x = R2() * W, y = 158 + R2() * 4; trees += `<circle cx="${F(x)}" cy="${F(y)}" r="${F(1.6 + R2() * 1.6)}"/>`; }
+  const g = posterGrain(P);
+  const body = `<defs>${g.defs}<clipPath id="${P}fc"><path d="M0,200 L0,160 C60,156 120,160 180,157 C230,155 270,158 297,156 L297,200Z"/></clipPath></defs>`
+    + bandsA(['#4f88c6', '#6299d2', '#78aadc', '#8cc2ec', '#a3cdef', '#bcdcf3', '#d6e8f5', '#eef5fb'], 0, 150)
+    + sunA(58, 40, 18, 16)
+    + cloudA(186, 54, 96, 30, 3) + cloudA(14, 104, 70, 20, 8)
+    + hills('0,132 C40,124 80,120 120,128 C160,136 200,120 240,118 C266,117 284,122 297,126', '#9cbad0')
+    + hills('0,150 C30,140 70,138 110,146 C150,152 190,138 230,140 C262,141 284,148 297,150', '#7a9fa0')
+    + hills('0,160 C60,156 120,160 180,157 C230,155 270,158 297,156', '#6f966f')
+    + `<g clip-path="url(#${P}fc)">${fields}</g><g fill="#3f6b55">${trees}</g>`
+    + `<g transform="translate(-6,-10)"><path d="M226,176 h12 v-7 l-6,-5 l-6,5Z" fill="${PA.red}"/><path d="M226,169 l6,-5 l6,5" fill="none" stroke="${PA.navy}" stroke-width="1"/><rect x="230.5" y="171" width="3" height="5" fill="${PA.navy}"/><rect x="242" y="164" width="4" height="12" fill="#fffdf6"/><path d="M242,164 a2,2 0 0 1 4,0Z" fill="#a7b6c8"/></g>`
+    + `<path d="M118,202 C128,188 150,176 196,166 C214,162 228,161 240,160" fill="none" stroke="#efe3c8" stroke-width="2.2"/>`
+    + plane + g.body;
+  const bb = cam.bb, cw = 156, ch = Math.min(H, cw * 106 / 92);
+  return { body, crop: [Math.max(0, Math.min(W - cw, bb[0] + bb[2] / 2 - cw / 2)), Math.max(0, Math.min(H - ch, bb[1] + bb[3] / 2 - ch * .48)), cw, ch] };
+}
+
+function aHeli(P) {
+  const m = heliModel({ n: 22, rotor: 'disc' });
+  const R = camR({ rz: 3, ry: -26, rx: -10, pitch: -6, roll: 3 });
+  const cam = fit(m, R, { x: 160, y: 82, w: 200 });
+  const L = L3(.4, .75, .55);
+  const disc = (it) => it.p.comp === 'rotor'
+    ? `<path d="${pathD(it.S)}" fill="#fffdf6" fill-opacity=".34"/><path d="${pathD(it.S)}" fill="none" stroke="#0d2238" stroke-opacity=".3" stroke-width=".7" stroke-dasharray="10 7"/>`
+    : `<path d="${pathD(it.S)}" fill="#fffdf6" fill-opacity=".4" stroke="#0d2238" stroke-opacity=".3" stroke-width=".5"/>`;
+  const ramps = { ...RA, stripe2: ['#fffdf6', '#efe3c8', '#c9b99a'] };
+  const plane = paint(project(m, cam), shaderA(L, .5, .08, ramps), { seam: .35, disc });
+  const R2 = rng(31); let pines = '';
+  for (let x = -4; x < W + 8; x += 5 + R2() * 5) { const h = 16 + R2() * 16, y = 200 - R2() * 6; pines += `<path d="M${F(x)},${F(y - h)} L${F(x + h * .26)},${F(y)} L${F(x - h * .26)},${F(y)}Z"/>`; }
+  const g = posterGrain(P);
+  const body = `<defs>${g.defs}</defs>`
+    + bandsA(['#3c78b9', '#4f88c6', '#6299d2', '#78aadc', '#8cc2ec', '#a8d0f0', '#c4def3', '#e2eef8'], 0, 150)
+    + sunA(252, 34, 15, 0)
+    + cloudA(18, 46, 80, 22, 21)
+    + `<path d="M-5,160 L40,108 L58,120 L92,82 L118,110 L132,100 L176,150 L210,112 L236,128 L262,96 L302,140 L302,200 L-5,200Z" fill="#6f90b8"/>`
+    + `<path d="M40,108 L58,120 L66,114 L76,104 L92,82 L104,96 L98,100 L90,96 L82,108 L72,112 L62,122 L52,116Z M262,96 L276,111 L270,112 L264,106 L256,112 L250,106Z M210,112 L222,119 L214,120 L208,116 L202,120Z" fill="#fffdf6"/>`
+    + `<path d="M-5,176 C30,160 60,150 96,156 C130,162 150,140 190,146 C230,152 260,140 302,150 L302,200 L-5,200Z" fill="#3e6a8f"/>`
+    + `<path d="M120,186 C150,180 200,180 240,186 L240,192 C200,188 150,188 120,192Z" fill="#8cc2ec" opacity=".8"/>`
+    + `<g fill="#1f3f4f">${pines}</g>`
+    + plane + g.body;
+  const bb = cam.bb, cw = 160, ch = Math.min(H, cw * 106 / 92);
+  return { body, crop: [Math.max(0, Math.min(W - cw, bb[0] + bb[2] * .55 - cw / 2)), Math.max(0, Math.min(H - ch, bb[1] + bb[3] / 2 - ch * .5)), cw, ch] };
+}
+
+// ---------------- B: blueprint ----------------
+const BP = { paper: '#1d4f8c', line: '#eaf3fc' };
+function bpDefs(P) {
+  return `<pattern id="${P}grid" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="20" height="20" fill="${BP.paper}"/><path d="M20,0H0V20" fill="none" stroke="#eaf3fc" stroke-opacity=".17" stroke-width=".5"/><path d="M5,0V20M10,0V20M15,0V20M0,5H20M0,10H20M0,15H20" fill="none" stroke="#eaf3fc" stroke-opacity=".06" stroke-width=".4"/></pattern>`
+    + `<filter id="${P}mot" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency=".012 .02" numOctaves="3" seed="6"/><feColorMatrix values="0 0 0 0 .02 0 0 0 0 .1 0 0 0 0 .25 0 0 0 1.4 -.55"/></filter>`
+    + `<filter id="${P}fib" x="0" y="0" width="1" height="1"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 .92 0 0 0 0 .96 0 0 0 0 1 0 0 0 1.2 -.62"/></filter>`
+    + `<radialGradient id="${P}vg" cx=".5" cy=".46" r=".78"><stop offset=".55" stop-color="#0b2a52" stop-opacity="0"/><stop offset="1" stop-color="#0b2a52" stop-opacity=".55"/></radialGradient>`;
+}
+// Draw a view: each component as a filled silhouette with an outline, back to front, then its feature lines.
+function bpView(P, m, R, s, cx, cy, lw = .6) {
+  const cam = { R, s, cx, cy, D: 0 };
+  const items = project(m, cam), comps = new Map();
+  for (const it of items) { const c = it.p.comp || 'x'; if (!comps.has(c)) comps.set(c, { items: [], z: 0 }); const o = comps.get(c); o.items.push(it); o.z += it.z; }
+  const order = [...comps.entries()].map(([k, v]) => ({ k, z: v.z / v.items.length, items: v.items })).sort((a, b) => a.z - b.z);
+  let s2 = '', id = 0;
+  for (const c of order) {
+    const solid = c.items.filter((it) => !it.p.disc), discs = c.items.filter((it) => it.p.disc);
+    const gid = `${P}v${Math.round(cx)}${Math.round(cy)}c${id++}`;
+    if (solid.length) s2 += `<g id="${gid}">${solid.map((it) => `<path d="${pathD(it.S)}"/>`).join('')}</g><use href="#${gid}" fill="none" stroke="${BP.line}" stroke-width="${F(lw * 2, 2)}" stroke-linejoin="round"/><use href="#${gid}" fill="url(#${P}grid)" stroke="url(#${P}grid)" stroke-width=".5" stroke-linejoin="round"/>`;
+    for (const it of discs) s2 += `<path d="${pathD(it.S)}" fill="none" stroke="${BP.line}" stroke-width=".45" stroke-dasharray="7 2 1.4 2" opacity=".8"/>`;
+    for (const l of m.lines.filter((q) => q.comp === c.k)) s2 += `<path d="M${l.pts.map((q) => pt2(cam, q).map((v) => F(v)).join(',')).join(' ')}" fill="none" stroke="${BP.line}" stroke-width="${F(lw * l.k, 2)}" opacity=".85"${l.dash ? ' stroke-dasharray="2 1.6"' : ''}/>`;
+  }
+  return s2;
+}
+function bpBox(m, R, s) { let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9; for (const p of m.polys) for (const q of p.pts) { const c = mv(R, q); x0 = Math.min(x0, c[0]); x1 = Math.max(x1, c[0]); y0 = Math.min(y0, c[1]); y1 = Math.max(y1, c[1]); } return { w: (x1 - x0) * s, h: (y1 - y0) * s, mx: (x0 + x1) / 2 * s, my: (y0 + y1) / 2 * s }; }
+const lab = (x, y, t, sz = 7, a = 'middle', extra = '') => `<text x="${F(x)}" y="${F(y)}" text-anchor="${a}" font-family="SC Label,Barlow Condensed,sans-serif" font-size="${sz}" letter-spacing=".6" fill="${BP.line}"${extra}>${t}</text>`;
+function dimH(x0, x1, y, t, ext0, ext1) {
+  const m = (x0 + x1) / 2, tw = t.length * 3.3 + 5, a = 3.2;
+  return `<g stroke="${BP.line}" stroke-width=".45" fill="none" opacity=".9"><path d="M${F(x0)},${F(ext0)}V${F(y + 2.5)}M${F(x1)},${F(ext1)}V${F(y + 2.5)}M${F(x0)},${F(y)}H${F(m - tw / 2)}M${F(m + tw / 2)},${F(y)}H${F(x1)}"/></g><g fill="${BP.line}"><path d="M${F(x0)},${F(y)}l${a},-1.2v2.4Z M${F(x1)},${F(y)}l-${a},-1.2v2.4Z"/></g>` + lab(m, y + 2.4, t, 6.6);
+}
+function dimV(y0, y1, x, t, ext0, ext1) {
+  const m = (y0 + y1) / 2, a = 3.2;
+  return `<g stroke="${BP.line}" stroke-width=".45" fill="none" opacity=".9"><path d="M${F(ext0)},${F(y0)}H${F(x - 2.5)}M${F(ext1)},${F(y1)}H${F(x - 2.5)}M${F(x)},${F(y0)}V${F(y1)}"/></g><g fill="${BP.line}"><path d="M${F(x)},${F(y0)}l-1.2,${a}h2.4Z M${F(x)},${F(y1)}l-1.2,-${a}h2.4Z"/></g>` + lab(x - 3, m + 2.2, t, 6.6, 'end');
+}
+function bpSheet(P, m, { s, plan, side, front, title, cls, code, dims, cropOn = 'plan' }) {
+  const vBelow = camR({ rz: 90, rx: -90 }), vSide = camR({}), vFront = camR({ ry: -90 });
+  const bP = bpBox(m, vBelow, s), bS = bpBox(m, vSide, s), bF = bpBox(m, vFront, s);
+  const pc = [plan[0] - bP.mx, plan[1] + bP.my], sc = [side[0] - bS.mx, side[1] + bS.my], fc = [front[0] - bF.mx, front[1] + bF.my];
+  let s2 = `<defs>${bpDefs(P)}</defs><rect width="${W}" height="${H}" fill="url(#${P}grid)"/>`;
+  // centre lines
+  s2 += `<g stroke="${BP.line}" stroke-width=".35" stroke-dasharray="9 2 1.5 2" opacity=".55" fill="none"><path d="M${F(plan[0])},${F(plan[1] - bP.h / 2 - 7)}V${F(plan[1] + bP.h / 2 + 5)}M${F(side[0] - bS.w / 2 - 5)},${F(sc[1])}H${F(side[0] + bS.w / 2 + 5)}M${F(front[0])},${F(front[1] - bF.h / 2 - 4)}V${F(front[1] + bF.h / 2 + 3)}"/></g>`;
+  s2 += bpView(P, m, vBelow, s, pc[0], pc[1]) + bpView(P, m, vSide, s, sc[0], sc[1]) + bpView(P, m, vFront, s, fc[0], fc[1]);
+  // ground line under side and front views
+  const gS = side[1] + bS.h / 2, gF = front[1] + bF.h / 2;
+  if (dims.ground) s2 += `<g stroke="${BP.line}" stroke-width=".5" opacity=".6"><path d="M${F(side[0] - bS.w / 2 - 4)},${F(gS)}H${F(side[0] + bS.w / 2 + 4)}M${F(front[0] - bF.w / 2 - 4)},${F(gF)}H${F(front[0] + bF.w / 2 + 4)}"/></g>`;
+  s2 += lab(plan[0] - bP.w / 2, plan[1] - bP.h / 2 - 4, 'FROM BELOW', 6, 'start', ' opacity=".8"') + lab(side[0] - bS.w / 2, side[1] - bS.h / 2 - 4, 'SIDE', 6, 'start', ' opacity=".8"') + lab(front[0] - bF.w / 2, front[1] - bF.h / 2 - 4, 'FRONT', 6, 'start', ' opacity=".8"');
+  // dimensions
+  s2 += dimH(plan[0] - bP.w / 2, plan[0] + bP.w / 2, plan[1] + bP.h / 2 + 9, dims.span, plan[1], plan[1]);
+  s2 += dimH(side[0] - bS.w / 2, side[0] + bS.w / 2, gS + 8, dims.len, gS - 2, gS - 2);
+  s2 += dimV(side[1] - bS.h / 2, gS, side[0] - bS.w / 2 - 5, dims.ht, side[0] - bS.w / 2 + 10, side[0] - bS.w / 2 + 2);
+  // frame and title block
+  s2 += `<rect x="4.5" y="4.5" width="${W - 9}" height="${H - 9}" fill="none" stroke="${BP.line}" stroke-width=".8" opacity=".85"/>`;
+  let ticks = ''; for (let x = 4.5 + 24.25; x < W - 10; x += 24.25) ticks += `M${F(x)},4.5v3M${F(x)},${H - 4.5}v-3`; s2 += `<path d="${ticks}" stroke="${BP.line}" stroke-width=".5" opacity=".6"/>`;
+  const tw = 104, tx = W - 4.5 - tw, ty = H - 4.5 - 30;
+  s2 += `<rect x="${tx}" y="${ty}" width="${tw}" height="30" fill="url(#${P}grid)"/><g fill="none" stroke="${BP.line}" stroke-width=".6" opacity=".9"><rect x="${tx}" y="${ty}" width="${tw}" height="30"/><path d="M${tx},${ty + 17}H${tx + tw}M${tx + 64},${ty + 17}V${ty + 30}"/></g>`;
+  s2 += `<text x="${tx + 5}" y="${ty + 12.5}" font-family="SC Display,Russo One,sans-serif" font-size="10" letter-spacing=".8" fill="${BP.line}">${title}</text>`
+    + lab(tx + 5, ty + 26, cls, 6.2, 'start') + lab(tx + 68, ty + 26, code, 6.2, 'start');
+  s2 += `<rect width="${W}" height="${H}" filter="url(#${P}mot)" opacity=".7"/><rect width="${W}" height="${H}" filter="url(#${P}fib)" opacity=".18"/><rect width="${W}" height="${H}" fill="url(#${P}vg)"/>`;
+  const ch = 172, cw = ch * 92 / 106;
+  const crop = cropOn === 'plan' ? [Math.max(0, plan[0] - cw / 2), Math.max(0, Math.min(H - ch, plan[1] - ch / 2)), cw, ch] : cropOn;
+  return { body: s2, crop };
+}
+function bHeavy(P) { return bpSheet(P, heavyModel({ gear: true, n: 20, cp: 7, windows: false }), { s: 2.12, plan: [74, 99], side: [218, 50], front: [218, 113], title: 'HEAVY TWIN', cls: 'CLASS A5 · 136 t +', code: 'SC-A5-01', dims: { span: '60.1 m', len: '63.0 m', ht: '17.0 m', ground: true } }); }
+function bLight(P) { return bpSheet(P, lightModel({ prop: 'blades' }), { s: 11.6, plan: [74, 96], side: [222, 48], front: [218, 112], title: 'LIGHT SINGLE', cls: 'CLASS A1 · HIGH WING', code: 'SC-A1-01', dims: { span: '11.0 m', len: '8.3 m', ht: '2.7 m', ground: true } }); }
+function bHeli(P) { return bpSheet(P, heliModel({ rotor: 'both' }), { s: 9.8, plan: [72, 98], side: [222, 52], front: [218, 116], title: 'HELICOPTER', cls: 'ROTORCRAFT · SKIDS', code: 'SC-H-01', dims: { span: 'ROTOR Ø 10.7 m', len: '10.9 m', ht: '3.3 m', ground: true } }); }
+
+// =====================================================================================================================
+// 6. The page
+// =====================================================================================================================
+const PIECES = {
+  A: [
+    ['a-heavy', 'Heavy', 'A wide-body twin climbing out over the coast, lighthouse below, the sun behind it.', aHeavy],
+    ['a-light', 'Light', 'A Cessna-style high wing banking over farmland, spats, struts and the prop a blur.', aLight],
+    ['a-heli', 'Helicopter', 'A red utility helicopter over snowy peaks and pines, the rotor a translucent disc.', aHeli],
+  ],
+  B: [
+    ['b-heavy', 'Heavy', 'General arrangement of a 787-class twin: below, side and front, gear down, flaps and slats drawn.', bHeavy],
+    ['b-light', 'Light', 'A 172-class high wing: struts, spats, the two-blade prop and the omni-vision rear window.', bLight],
+    ['b-heli', 'Helicopter', 'An AS350-class single: three-blade rotor and disc, skids, tail rotor and fin.', bHeli],
+  ],
+  C: [
+    ['c-heavy', 'Heavy, far', 'High and small at cruise, backlit by the sun, two contrails spreading and fading behind.', (P) => cHeavy(P, false)],
+    ['c-light', 'Light, far', 'Overhead at a few thousand feet beside a towering cumulus, wing, struts and spats seen from under.', (P) => cLight(P, false)],
+    ['c-heli', 'Helicopter, far', 'Low over the treeline, side-on, the rotor a soft blur and the tail rotor a smudge.', (P) => cHeli(P, false)],
+    ['c-heavy-near', 'Heavy, near', 'The same twin through a long lens, front-lit: engines, flap fairings, fin and contrails starting.', (P) => cHeavy(P, true)],
+    ['c-light-near', 'Light, near', 'Closer, sun behind you: struts, spats, windows and the stripes read even on a mini.', (P) => cLight(P, true)],
+    ['c-heli-near', 'Helicopter, near', 'Close and side-on, a little perspective, doors and glazing and skids clear.', (P) => cHeli(P, true)],
+  ],
+};
+const svgWrap = (body, vb, extra = '') => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" preserveAspectRatio="xMidYMid slice"${extra}>${body}</svg>`;
+const gz = async (s) => (await new Response(new Blob([s]).stream().pipeThrough(new CompressionStream('gzip'))).arrayBuffer()).byteLength;
+window.SIZES = {};
+for (const [dir, list] of Object.entries(PIECES)) {
+  const sec = document.querySelector(`[data-dir="${dir}"]`);
+  for (const [id, name, cap, fn] of list) {
+    const P = id.replace(/-/g, '') + '_';
+    const big = fn(P), full = svgWrap(big.body, `0 0 ${W} ${H}`);
+    const mini = fn(P + 'm_'), cr = mini.crop.map((v) => F(v));
+    const raw = new Blob([full]).size, z = await gz(full);
+    window.SIZES[id] = { raw, gz: z };
+    const el = document.createElement('div'); el.className = 'piece'; el.id = 'p-' + id;
+    el.innerHTML = `<div class="win" data-shot="${id}">${full}</div><div class="row"><div class="mini">${svgWrap(mini.body, cr.join(' '))}</div><div class="cap"><b>${name}</b>${cap}<span class="kb">SVG ${(raw / 1024).toFixed(0)} KB · ${(z / 1024).toFixed(0)} KB gzipped</span></div></div>`;
+    sec.append(el);
+  }
+}
+await document.fonts.ready;
+window.READY = true;
+</script>
+</body>
+</html>

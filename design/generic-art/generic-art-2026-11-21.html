@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Generic Plane Art</title>
+<!-- Sky Collector design spike, 2026-11-21. Sevaan: "Need better generic image art": the plane card's picture when Sky doesn't
+     know the exact type (or has no photo for it). Three directions, each showing every size class in the photo window at its
+     real size on a 375 px phone, a full plane card, and the Collection minis. The cards are the app's own planeCardHtml /
+     miniCardHtml with only the sky panel swapped. Design only: nothing here is wired into the app. -->
+<link rel="stylesheet" href="../../css/sky-cards.css">
+<style>
+@font-face { font-family: 'SC Display'; src: url('../../fonts/RussoOne-Regular.woff2') format('woff2'); font-display: block; }
+@font-face { font-family: 'SC Label'; src: url('../../fonts/BarlowCondensed-Medium.woff2') format('woff2'); font-display: block; }
+:root { --ink: #0d2238; --ink2: #1b2a3d; --muted: #5b6878; --sky1: #8cc2ec; --sky2: #eef5fb; }
+* { box-sizing: border-box; }
+body { margin: 0; background: linear-gradient(180deg, var(--sky1) 0, #cfe4f5 340px, var(--sky2) 900px, var(--sky2)); color: var(--ink); font-family: Georgia, 'Times New Roman', serif; }
+.page { max-width: 760px; margin: 0 auto; padding: 22px 16px 48px; overflow-x: hidden; }
+h1 { font: 400 26px/1.1 'SC Display', sans-serif; margin: 0; }
+.lede { font-size: 15px; line-height: 1.45; margin: 8px 0 0; color: var(--ink2); }
+.take { margin-top: 34px; padding-top: 18px; border-top: 1px solid rgba(13,34,56,.18); }
+.take-h { display: flex; align-items: baseline; gap: 10px; }
+.take-l { font: 400 13px/1 'SC Display', sans-serif; color: #fff; background: var(--ink); border-radius: 6px; padding: 4px 8px 3px; }
+.take h2 { font: 400 20px/1.1 'SC Display', sans-serif; margin: 0; }
+.why { font-size: 15px; line-height: 1.45; margin: 6px 0 4px; color: var(--ink2); }
+.cap { font: 500 12px/1 'SC Label', sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 20px 0 8px; }
+.card-wrap { display: flex; justify-content: center; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, 297px); gap: 14px 16px; justify-content: center; }
+.tile { width: 297px; }
+.win { position: relative; width: 297px; height: 200px; border-radius: 3px; overflow: hidden; box-shadow: 0 0 0 1.2px #1f4f8f, 0 2px 6px rgba(13,34,56,.15); }
+.win .pill { position: absolute; left: 7px; top: 7px; padding: 3px 7px 3px 6px; border-radius: 5px; background: rgba(255,253,246,.95); border: 1px solid #7b8794; color: #4a5562; font: 600 10px/1 'SC Label', sans-serif; letter-spacing: .16em; }
+.tile-t { display: flex; justify-content: space-between; font: 500 13px/1 'SC Label', sans-serif; letter-spacing: .08em; margin-top: 6px; color: var(--ink2); }
+.tile-t em { font-style: normal; color: var(--muted); }
+.minis { display: grid; grid-template-columns: repeat(auto-fill, 105px); gap: 14px 14px; justify-content: center; }
+.mini-c { width: 105px; }
+.mini-c .sct-face.sct-mini { display: block; }
+.mini-c p { margin: 4px 0 0; font: 500 11px/1.1 'SC Label', sans-serif; letter-spacing: .06em; color: var(--muted); text-align: center; }
+.ga { position: absolute; inset: 0; display: block; }
+.ga svg, .win svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.fc-sky.ga-host { background: none; } .fc-sky.ga-host::before { display: none; }
+.now { display: flex; gap: 14px; justify-content: center; }
+.rec { margin-top: 34px; padding: 14px 16px; border-radius: 10px; background: #fffdf6; box-shadow: 0 1px 4px rgba(13,34,56,.15); font-size: 15px; line-height: 1.45; }
+.rec h2 { font: 400 18px/1.1 'SC Display', sans-serif; margin: 0 0 6px; }
+.rec p { margin: 8px 0 0; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Generic plane art</h1>
+  <p class="lede">The plane card's picture when Sky doesn't know the exact type, or has no photo for it. Today it's the flat jet glyph on a sky panel, the same jet for Heavy, Large, Small and Fast. Three directions below, every size class in each. The photo windows are drawn at their real size on a 375 px phone (297 × 200), and the cards are the app's own plane cards with only the picture swapped.</p>
+  <div class="cap">Today (the Collection minis)</div>
+  <div class="now" id="now"></div>
+
+  <section class="take" data-dir="A">
+    <div class="take-h"><span class="take-l">A</span><h2>Travel poster</h2></div>
+    <p class="why">Each class drawn side-on like an old airline poster: cream aircraft in navy line, red tail and cheatline, a low sun behind, flat cloud banks and a contrail. Heavy gets the four-wheel bogie and big engines, Large the winglets, Small a T-tailed bizjet. Unidentified ducks into a cloud.</p>
+  </section>
+  <section class="take" data-dir="B">
+    <div class="take-h"><span class="take-l">B</span><h2>Blueprint</h2></div>
+    <p class="why">A spotter's sheet on drafting-blue paper: the outline from below (what you see from the ground) and side-on, white line, the span and length dimensioned, and a title block with the class. It belongs with the plane card's spec-sheet face. Unidentified is drawn dashed with a question mark.</p>
+  </section>
+  <section class="take" data-dir="C">
+    <div class="take-h"><span class="take-l">C</span><h2>Real sky</h2></div>
+    <p class="why">A photo without a photo: a layered daytime sky with sun glare, cirrus and cumulus, and the aircraft small and high, seen from below the way you really see it, with contrails behind jets. Low things (helicopter, balloon, drone) come in side-on and nearer. Unidentified is just a distant speck and its contrail.</p>
+  </section>
+
+  <div class="rec" id="rec">
+    <h2>Recommendation</h2>
+    <p><b>A, travel poster.</b> It reads as art rather than an icon, it is the most distinct class to class at mini size (side-on shows gear, engines, tails, rotors, the basket), it stays in the app's daytime palette, and it sits well on the spec sheet. B is the closest match to the card's drafting face but the blue panel is heavy on a cream card and plan views of Heavy, Large and Small look alike when small. C is the most "true to life", but the subject is small by design, so at mini size it leans on the outline alone, and its blur filters cost the most to draw in a grid.</p>
+  </div>
+</div>
+
+<script type="module">
+import { planeCardHtml, miniCardHtml } from '../../js/flight-card.js';
+// ---- the art (all of it: three directions as SVG strings) ----
+// Sky Collector design spike, 2026-11-21: generic plane-card art for aircraft whose exact type (or photo) isn't known.
+// Three directions (A poster, B blueprint, C photographic sky), each a function (cls, W, H) -> inline SVG sized W x H px.
+// Design only: nothing here is wired into the app.
+
+const INK = '#0d2238', CREAM = '#fffdf6', RED = '#b42a20', GOLD = '#b8892a';
+let n = 0; const uid = () => `ga${++n}`;
+const r1 = (v) => (typeof v === 'number' ? +v.toFixed(1) : v);
+const d = (s, ...v) => s.reduce((a, str, i) => a + str + (i < v.length ? r1(v[i]) : ''), '');
+const P = (pts) => pts.map(([x, y], i) => `${i ? 'L' : 'M'}${r1(x)},${r1(y)}`).join('') + 'Z';
+const sym = (pts, cx = 80) => P([...pts, ...pts.slice().reverse().map(([x, y]) => [2 * cx - x, y])]);
+const path = (dd, a = '') => `<path d="${dd}"${a ? ' ' + a : ''}/>`;
+
+// ---------- the size classes (js/flights.js SIZE_CLASSES, plus HELI and NO_CLASS) ----------
+const CLASSES = [
+  { id: 'heavy', code: 'A5', key: 'P:UNKNOWN-A5', name: 'Heavy Aircraft', mark: 'HEAVY', span: '≈ 60 m', len: '≈ 64 m', note: 'OVER 136 t', jet: 2 },
+  { id: 'large', code: 'A3 · A4', key: 'P:UNKNOWN-A3', name: 'Large Aircraft', mark: 'LARGE', span: '≈ 35 m', len: '≈ 38 m', note: '34 – 136 t', jet: 2 },
+  { id: 'small', code: 'A2', key: 'P:UNKNOWN-A2', name: 'Small Aircraft', mark: 'SMALL', span: '≈ 20 m', len: '≈ 22 m', note: '7 – 34 t', jet: 1 },
+  { id: 'fast', code: 'A6', key: 'P:UNKNOWN-A6', name: 'Fast Jet', mark: 'FAST', span: '≈ 11 m', len: '≈ 16 m', note: 'OVER 740 km/h', jet: 1 },
+  { id: 'light', code: 'A1', key: 'P:UNKNOWN-A1', name: 'Light Aircraft', mark: 'LIGHT', span: '≈ 11 m', len: '≈ 8 m', note: 'UNDER 7 t' },
+  { id: 'ultra', code: 'B4', key: 'P:UNKNOWN-B4', name: 'Ultralight', mark: 'ULTRA', span: '≈ 10 m', len: '≈ 5 m', note: '1 – 2 SEATS' },
+  { id: 'glider', code: 'B1', key: 'P:UNKNOWN-B1', name: 'Glider', mark: 'GLIDER', span: '≈ 18 m', len: '≈ 7 m', note: 'NO ENGINE' },
+  { id: 'balloon', code: 'B2', key: 'P:UNKNOWN-B2', name: 'Balloon or Airship', mark: 'BALLOON', span: 'Ø ≈ 18 m', len: '≈ 18 m', note: 'LIGHTER THAN AIR' },
+  { id: 'heli', code: 'HELI', key: 'P:HELI', name: 'Helicopter', mark: 'HELI', span: 'ROTOR ≈ 11 m', len: '≈ 13 m', note: 'ROTORCRAFT' },
+  { id: 'drone', code: 'B6', key: 'P:UNKNOWN-B6', name: 'Drone', mark: 'DRONE', span: 'SPAN ?', len: 'LENGTH ?', note: 'NOBODY ON BOARD' },
+  { id: 'unknown', code: '—', key: 'P:UNKNOWN', name: 'Unidentified Aircraft', mark: '?', span: 'SPAN ?', len: 'LENGTH ?', note: 'NO SIZE CLASS', jet: 2 },
+];
+
+// ---------- side views: nose right, a 200-wide box, wheels on y = 84 ----------
+// st: { fill, ink, dark (filled details), tail, acc (cheatline, or ''), glass, win (window row) }
+function airSide({ L, H, fin, eng = 0, gear, wl, tt, rear, drop = .85 }) {
+  const x0 = (200 - L) / 2, x1 = x0 + L, c = 40, t = c - H / 2, b = c + H / 2, X = (f) => x0 + L * f;
+  const le = (s) => [X(.6 - .19 * s), b - H * .15 + s * H * (drop + .25)];
+  const [ex0, ey0] = le(.42), el = L * .15, ecx = ex0 + L * .035, ecy = ey0 + eng * .5;
+  const wr = H * .17, gy = 84;
+  const low = gear ? 86 : Math.max(b + H * (drop + .12), ecy + eng) + 2;
+  return {
+    bb: [x0 - 2, t - fin - 3, L + 4, low - (t - fin - 3)], tail: [X(.02), c - H * .1],
+    draw: (st) => {
+      let s = '';
+      const finD = tt ? d`M${X(.26)},${t}L${X(.1)},${t - fin}L${X(.035)},${t - fin}L${X(.04)},${t + 1}Z` : d`M${X(.23)},${t}L${X(.085)},${t - fin}L${X(.015)},${t - fin}L${X(.035)},${t + 1}Z`;
+      s += path(finD, `fill="${st.tail}"`);
+      if (tt) s += path(d`M${X(-.01)},${t - fin}L${X(.16)},${t - fin}L${X(.13)},${t - fin + H * .28}L${X(.03)},${t - fin + H * .28}Z`);
+      if (gear) {
+        const gx = X(.47), nx = X(.86);
+        s += path(d`M${gx},${b - 2}V${gy - wr}M${nx},${b - 2}V${gy - wr * .8}`, 'fill="none"');
+        if (gear === 'bogie') s += path(d`M${gx - wr * 1.2},${gy - wr}H${gx + wr * 1.2}`, 'fill="none"') + `<circle cx="${r1(gx - wr * 1.2)}" cy="${r1(gy - wr)}" r="${r1(wr)}" fill="${st.dark}"/><circle cx="${r1(gx + wr * 1.2)}" cy="${r1(gy - wr)}" r="${r1(wr)}" fill="${st.dark}"/>`;
+        else s += `<circle cx="${r1(gx)}" cy="${r1(gy - wr)}" r="${r1(wr)}" fill="${st.dark}"/>`;
+        s += `<circle cx="${r1(nx)}" cy="${r1(gy - wr * .8)}" r="${r1(wr * .8)}" fill="${st.dark}"/>`;
+      }
+      s += path(d`M${X(0)},${t + H * .2}L${X(.07)},${t}L${X(.86)},${t}C${X(.95)},${t} ${x1},${c - H * .08} ${x1},${c + H * .14}C${x1},${b - H * .06} ${X(.95)},${b} ${X(.87)},${b}L${X(.32)},${b}C${X(.2)},${b} ${X(.08)},${c + H * .1} ${X(0)},${t + H * .2}Z`);
+      if (st.acc) s += path(d`M${X(.13)},${c + H * .08}H${X(.87)}v${H * .11}H${X(.15)}Z`, `fill="${st.acc}" stroke="none"`);
+      if (st.win) s += path(d`M${X(.22)},${c - H * .1}H${X(.83)}`, `fill="none" stroke="${st.dark}" stroke-width="${r1(H * .12)}" stroke-dasharray="${r1(H * .12)} ${r1(H * .2)}" stroke-linecap="butt"`);
+      s += path(d`M${X(.925)},${c - H * .2}L${X(.965)},${c - H * .12}L${X(.955)},${c - H * .02}L${X(.918)},${c - H * .04}Z`, `fill="${st.dark}" stroke="none"`);
+      if (rear) { const ry = t + H * .1, rr = H * .34; s += path(d`M${X(.19)},${ry - rr}H${X(.37)}a${rr},${rr} 0 0 1 0,${rr * 2}H${X(.19)}Z`) + path(d`M${X(.37)},${ry - rr * .7}v${rr * 1.4}`, `fill="none" stroke="${st.dark}" stroke-width="${r1(rr * .5)}"`); }
+      if (!tt) s += path(d`M${X(.18)},${c}L${X(.07)},${c + H * .45}L${X(.025)},${c + H * .45}L${X(.06)},${c}Z`);
+      const [tx, ty] = le(1);
+      s += path(d`M${X(.6)},${b - H * .15}L${tx},${ty}L${tx - L * .055},${ty}L${X(.44)},${b - H * .05}Z`);
+      if (wl) s += path(d`M${tx - L * .015},${ty}L${tx - L * .045},${ty - H * .5}L${tx - L * .065},${ty - H * .5}L${tx - L * .05},${ty}Z`, `fill="${st.tail}"`);
+      if (eng) s += path(d`M${ecx - el / 2},${ecy - eng}H${ecx + el / 2 - eng * .3}a${eng * .3},${eng} 0 0 1 0,${eng * 2}H${ecx - el / 2}Z`) + `<ellipse cx="${r1(ecx + el / 2 - eng * .3)}" cy="${r1(ecy)}" rx="${r1(eng * .28)}" ry="${r1(eng * .78)}" fill="${st.dark}" stroke="none"/>`;
+      return s;
+    },
+  };
+}
+
+const SIDE = {
+  heavy: airSide({ L: 192, H: 30, fin: 27, eng: 8.4, gear: 'bogie' }),
+  large: airSide({ L: 158, H: 15, fin: 19, eng: 5.6, gear: 'single', wl: true }),
+  small: airSide({ L: 122, H: 12.5, fin: 17, tt: true, rear: true, gear: 'single', wl: true, drop: .7 }),
+  fast: { bb: [-6, 8, 200, 58], tail: [10, 40], draw: (st) =>
+    path('M18,34L6,9L20,9L54,33Z', `fill="${st.tail}"`)
+    + path('M10,35L30,33L118,31C150,31 176,36 194,40C176,43 150,45 118,46L30,47L10,45Z')
+    + path('M118,32C128,21 148,23 158,34Z', `fill="${st.glass}"`)
+    + path('M98,36L116,36L110,44L98,44Z', `fill="${st.dark}" stroke="none"`)
+    + path('M112,44L62,64L40,64L54,45Z') + path('M42,45L22,56L12,56L22,45Z')
+    + (st.acc ? path('M10,37L-6,40L10,43Z', `fill="${st.acc}"`) : '') },
+  light: { bb: [18, 10, 166, 76], tail: [30, 36], draw: (st) =>
+    path('M28,34L22,12L36,12L60,33Z', `fill="${st.tail}"`)
+    + path('M126,54L121,73M164,51V75', 'fill="none"')
+    + `<circle cx="121" cy="78" r="6" fill="${st.dark}"/><circle cx="164" cy="79.5" r="4.5" fill="${st.dark}"/>`
+    + path('M28,34L104,30L116,22L148,22L160,32L172,36L172,46L160,52L118,54L28,40Z')
+    + (st.acc ? path('M56,42L170,46.5V49L56,44.5Z', `fill="${st.acc}" stroke="none"`) : '')
+    + path('M119,24.5L146,24.5L155,33L119,33Z', `fill="${st.glass}"`) + path('M134,24.5V33', 'fill="none"')
+    + path('M100,18H166V22H100Z') + path('M150,22L127,50', 'fill="none"')
+    + path('M46,40L24,46L20,46L30,39Z')
+    + path('M172,37C178,38 180,41 178,45L172,46Z', `fill="${st.dark}"`)
+    + `<ellipse cx="179" cy="41" rx="2" ry="17" fill="${st.dark}" opacity=".45" stroke="none"/>` },
+  ultra: { bb: [26, 6, 156, 80], draw: (st) =>
+    path('M106,15L92,55H128Z', 'fill="none"') + path('M106,15L100,58', 'fill="none"')
+    + path('M28,25Q100,6 178,21L178,25Q100,13 28,29Z', `fill="${st.tail}"`)
+    + path('M100,66L90,77M136,64V77', 'fill="none"')
+    + `<circle cx="90" cy="79" r="6" fill="${st.dark}"/><circle cx="136" cy="80" r="5" fill="${st.dark}"/>`
+    + `<ellipse cx="74" cy="59" rx="2" ry="12" fill="${st.dark}" opacity=".45" stroke="none"/>`
+    + path('M80,56L130,52C141,52 147,58 141,64L86,66C78,66 76,58 80,56Z')
+    + (st.acc ? path('M86,60L140,58V61L86,63Z', `fill="${st.acc}" stroke="none"`) : '')
+    + `<circle cx="110" cy="47" r="5"/>` },
+  glider: { bb: [2, 6, 196, 66], tail: [20, 32], draw: (st) =>
+    path('M110,38L196,21L196,24.5L118,41Z')
+    + path('M24,30L16,8L28,8L44,32Z', `fill="${st.tail}"`) + path('M8,7H42V10H8Z')
+    + path('M20,30L30,28L130,34C150,34 168,38 180,42C168,46 150,47 130,47L60,44L22,36Z')
+    + path('M127,34.5C137,28 153,30 163,38.5L130,38.5Z', `fill="${st.glass}"`)
+    + `<circle cx="112" cy="49" r="3.6" fill="${st.dark}"/>`
+    + path('M114,42L2,66L2,70L122,45Z') },
+  heli: { bb: [2, 6, 196, 70], draw: (st) =>
+    path('M74,38L14,33L14,39L74,48Z') + path('M19,34L9,17L15,17L25,36Z', `fill="${st.tail}"`)
+    + `<circle cx="12" cy="31" r="9" fill="${st.dark}" opacity=".3"/>`
+    + path('M96,60L92,72M140,60L144,72M80,72H162C167,72 169,68 166,66', 'fill="none"')
+    + path('M90,22L93,15H124L129,22Z') + path('M108,8H113V15H108Z')
+    + path('M70,40C70,26 90,22 116,22C140,22 158,32 162,46C162,56 150,60 130,60L92,60C78,60 70,52 70,40Z')
+    + (st.acc ? path('M72,46H160C160,50 158,52 156,53H76Z', `fill="${st.acc}" stroke="none"`) : '')
+    + path('M127,24.5C145,26 156,36 159,45L129,45Z', `fill="${st.glass}"`)
+    + path('M18,10L196,8V11L18,13Z', `fill="${st.dark}"`) },
+  balloon: { bb: [48, -2, 104, 116], draw: (st) =>
+    path('M100,0C134,0 152,24 148,48C145,66 120,78 112,90L88,90C80,78 55,66 52,48C48,24 66,0 100,0Z')
+    + (st.acc ? path('M100,0C84,20 84,60 92,90H108C116,60 116,20 100,0Z', `fill="${st.acc}"`)
+      + path('M100,0C70,10 60,40 66,62C70,72 80,80 84,86C76,66 72,30 100,0ZM100,0C130,10 140,40 134,62C130,72 120,80 116,86C124,66 128,30 100,0Z', `fill="${st.glass}"`) : path('M100,0C84,20 84,60 92,90M100,0C116,20 116,60 108,90M100,0C72,12 66,50 80,84M100,0C128,12 134,50 120,84', 'fill="none"'))
+    + path('M90,90L92,100M110,90L108,100', 'fill="none"') + path('M90,100H110V112H90Z', `fill="${st.gold}"`) },
+  drone: { bb: [8, 26, 184, 52], draw: (st) => {
+    const rot = (x, y, rx) => `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${r1(rx * .2)}" fill="${st.glass}" opacity=".85"/>`;
+    return path('M100,48L46,36M100,48L154,36', 'fill="none"') + rot(46, 33, 26) + rot(154, 33, 26)
+      + path('M86,60L80,74M114,60L120,74M74,74H86M114,74H126', 'fill="none"')
+      + path('M80,44H120Q126,44 126,50V54Q126,60 120,60H80Q74,60 74,54V50Q74,44 80,44Z')
+      + `<circle cx="100" cy="64" r="5" fill="${st.dark}"/>`
+      + path('M96,54L38,62M104,54L162,62', 'fill="none"') + rot(38, 58, 32) + rot(162, 58, 32); } },
+};
+SIDE.unknown = SIDE.large;
+
+// ---------- plan views, seen from below: nose up, centred on (80, 80) ----------
+function planAir({ span, len, fw, sweep, engR = 0, engL = 0, engF = [.34], rear }) {
+  const cx = 80, top = 80 - len / 2, bot = 80 + len / 2, s = span / 2, wy = 80 - len * .1, rc = len * .24, tc = rc * .32;
+  const engX = rear ? [fw / 2 + engR * .9] : engF.map((f) => s * f);
+  return {
+    bb: [cx - s, top, span, len], engX, bot,
+    draw: (st) => {
+      let o = path(sym([[cx, wy], [cx + s, wy + sweep], [cx + s, wy + sweep + tc], [cx + fw * .5, wy + rc], [cx, wy + rc]]));
+      const ty = bot - len * .17, ts = span * .17;
+      o += path(sym([[cx, ty], [cx + ts, ty + len * .09], [cx + ts, ty + len * .13], [cx, ty + len * .1]]));
+      o += path(d`M${cx},${top}C${cx + fw / 2},${top} ${cx + fw / 2},${top + fw * .8} ${cx + fw / 2},${top + fw * 1.4}L${cx + fw / 2},${bot - len * .22}L${cx + fw * .12},${bot}L${cx - fw * .12},${bot}L${cx - fw / 2},${bot - len * .22}L${cx - fw / 2},${top + fw * 1.4}C${cx - fw / 2},${top + fw * .8} ${cx - fw / 2},${top} ${cx},${top}Z`);
+      if (engR) for (const ex of engX) for (const sg of [1, -1]) {
+        const x = cx + sg * ex, y = rear ? bot - len * .42 : wy + sweep * (ex / s) - engL * .55;
+        o += `<rect x="${r1(x - engR)}" y="${r1(y)}" width="${r1(engR * 2)}" height="${r1(engL)}" rx="${r1(engR)}"/>`;
+      }
+      return o;
+    },
+  };
+}
+const PLAN = {
+  heavy: planAir({ span: 150, len: 146, fw: 15, sweep: 34, engR: 6.2, engL: 19 }),
+  large: planAir({ span: 112, len: 112, fw: 11, sweep: 24, engR: 4.4, engL: 13 }),
+  small: planAir({ span: 80, len: 88, fw: 9, sweep: 12, engR: 4, engL: 13, rear: true }),
+  fast: { bb: [20, 8, 120, 142], engX: [0], bot: 150, draw: () => path(sym([[80, 8], [84, 22], [86, 48], [86, 66], [140, 112], [140, 120], [88, 112], [88, 126], [110, 142], [110, 148], [84, 144], [80, 150]])) },
+  light: { bb: [24, 24, 112, 96], draw: () => path(sym([[80, 30], [85, 34], [85, 52], [136, 52], [136, 66], [85, 66], [82, 108], [102, 110], [102, 120], [80, 120]])) + path('M62,27H98', 'fill="none" stroke-width="2.6"') },
+  ultra: { bb: [8, 40, 144, 66], draw: () => path(sym([[80, 40], [152, 100], [140, 103], [80, 86]])) + `<ellipse cx="80" cy="90" rx="5" ry="14"/>` },
+  glider: { bb: [4, 52, 152, 70], draw: () => path(sym([[80, 52], [83, 56], [83, 72], [156, 74], [156, 80], [83, 82], [81, 116], [95, 116], [95, 121], [80, 121]])) },
+  heli: { bb: [20, 10, 120, 132], draw: (st) => `<circle cx="80" cy="70" r="60" fill="${st.glass}" opacity=".35"/>` + path('M80,10V130M20,70H140', 'fill="none"') + `<ellipse cx="80" cy="74" rx="12" ry="22"/>` + path('M78,94H82V140H78Z') + path('M72,138H88', 'fill="none"') },
+  drone: { bb: [22, 22, 116, 116], draw: (st) => path('M44,44L116,116M116,44L44,116', 'fill="none" stroke-width="5"') + [44, 116].flatMap((x) => [44, 116].map((y) => `<circle cx="${x}" cy="${y}" r="21" fill="${st.glass}" opacity=".7"/>`)).join('') + '<rect x="68" y="64" width="24" height="32" rx="6"/>' },
+  balloon: { bb: [22, 22, 116, 116], draw: (st) => `<circle cx="80" cy="80" r="56"/>` + (st.acc ? path('M80,80L80,24A56,56 0 0 1 119.6,40.4ZM80,80L136,80A56,56 0 0 1 119.6,119.6ZM80,80L80,136A56,56 0 0 1 40.4,119.6ZM80,80L24,80A56,56 0 0 1 40.4,40.4Z', `fill="${st.acc}"`) : '') + path('M80,24V136M24,80H136M40.4,40.4L119.6,119.6M119.6,40.4L40.4,119.6', 'fill="none"') + `<circle cx="80" cy="80" r="13" fill="${st.dark}"/>` + `<rect x="74" y="74" width="12" height="12" fill="${st.gold}"/>` },
+};
+PLAN.unknown = PLAN.large;
+
+// Place a shape so its box fits `box` [x,y,w,h], rotated deg about its centre. Returns the transform and the scale.
+function place(sh, [x, y, w, h], deg = 0) {
+  const [bx, by, bw, bh] = sh.bb, s = Math.min(w / bw, h / bh);
+  return { s, tf: `translate(${r1(x + w / 2)},${r1(y + h / 2)}) rotate(${deg}) scale(${+s.toFixed(3)}) translate(${r1(-(bx + bw / 2))},${r1(-(by + bh / 2))})` };
+}
+const group = (sh, st, pl, sw, extra = '') => `<g transform="${pl.tf}" fill="${st.fill}" stroke="${st.ink}" stroke-width="${+(sw / pl.s).toFixed(2)}" stroke-linejoin="round" stroke-linecap="round"${extra}>${sh.draw(st)}</g>`;
+const svg = (W, H, body) => `<svg viewBox="0 0 ${Math.round(W)} ${Math.round(H)}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">${body}</svg>`;
+const byId = (id) => CLASSES.find((c) => c.id === id);
+
+// ===================== A: travel poster =====================
+// Side profile in cream with navy line work, a red tail and cheatline, a low sun behind, flat cream cloud banks, a contrail.
+function artA(id, W, H) {
+  const g = uid(), mini = W < 150, c = byId(id), st = { fill: CREAM, ink: INK, dark: INK, tail: RED, acc: RED, glass: '#8cc2ec', gold: GOLD, win: !mini };
+  const sh = SIDE[id], plane = !!c.jet || ['light', 'glider'].includes(id);
+  let s = `<defs><linearGradient id="${g}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#78b2e2"/><stop offset=".6" stop-color="#cfe4f5"/><stop offset="1" stop-color="#f8e9cf"/></linearGradient></defs>`;
+  s += `<rect width="${W}" height="${H}" fill="url(#${g})"/>`;
+  const sx = W * .6, sy = H * .44;
+  s += `<circle cx="${r1(sx)}" cy="${r1(sy)}" r="${r1(H * .34)}" fill="#fff6dc" opacity=".3"/><circle cx="${r1(sx)}" cy="${r1(sy)}" r="${r1(H * .24)}" fill="#fff3d0" opacity=".75"/>`;
+  if (!mini) s += `<rect x="${r1(W * .07)}" y="${r1(H * .2)}" width="${r1(W * .2)}" height="${r1(H * .05)}" rx="${r1(H * .025)}" fill="${CREAM}" opacity=".75"/><rect x="${r1(W * .13)}" y="${r1(H * .14)}" width="${r1(W * .1)}" height="${r1(H * .04)}" rx="${r1(H * .02)}" fill="${CREAM}" opacity=".6"/>`;
+  // cloud banks: a back row and a front row of overlapping discs
+  const bank = (y, k, fill) => { let o = ''; const m = 7; for (let i = 0; i <= m; i++) { const r = H * (.1 + .05 * ((i * k) % 3) / 2); o += `<circle cx="${r1(i * W / m)}" cy="${r1(y)}" r="${r1(r)}"/>`; } return `<g fill="${fill}">${o}</g>`; };
+  s += bank(H * .88, 2, '#e3eff9') + bank(H * 1.0, 1, CREAM);
+  const box = mini ? (id === 'balloon' ? [W * .15, H * .14, W * .7, H * .62] : [-W * .02, H * .14, W * 1.04, H * .66]) : (id === 'balloon' ? [W * .3, H * .08, W * .4, H * .74] : [W * .08, H * .16, W * .84, H * .6]);
+  const pl = place(sh, box, plane ? -7 : 0);
+  if (plane && sh.tail) { const [tx, ty] = sh.tail; s += `<g transform="${pl.tf}" fill="none" stroke="${CREAM}" stroke-linecap="round"><path d="M${tx},${ty}H${tx - 600}" stroke-width="${r1(8 / pl.s)}" opacity=".45"/><path d="M${tx},${ty + 3}H${tx - 600}" stroke-width="${r1(2.4 / pl.s)}"/></g>`; }
+  s += group(sh, st, pl, mini ? 1.1 : 1.6);
+  if (id === 'unknown') {
+    const cx = W * .52, cy = H * .5, k = mini ? .9 : 1;
+    const lw = mini ? 1.1 : 1.6, cl = (o) => [[-.22, .08, .12], [-.07, -.02, .17], [.1, .0, .14], [.24, .09, .1]].map(([dx, dy, r]) => `<circle cx="${r1(cx + dx * W * k)}" cy="${r1(cy + dy * H)}" r="${r1(r * H * (mini ? 1.35 : 1) + o)}"/>`).join('') + `<rect x="${r1(cx - W * .3 * k - o)}" y="${r1(cy + H * .04)}" width="${r1(W * .6 * k + 2 * o)}" height="${r1(H * .15 + o)}" rx="${r1(H * .075)}"/>`;
+    s += `<g fill="${INK}">${cl(lw)}</g><g fill="${CREAM}">${cl(0)}</g>`;
+    s += `<text x="${r1(cx)}" y="${r1(cy + H * .12)}" text-anchor="middle" font-family="SC Display,Russo One,sans-serif" font-size="${r1(H * (mini ? .26 : .22))}" fill="${RED}">?</text>`;
+  }
+  if (!mini && id !== 'unknown') s += `<text x="${r1(W - 14)}" y="28" text-anchor="end" font-family="SC Display,Russo One,sans-serif" font-size="15" letter-spacing="1.5" fill="${INK}">${c.mark}</text><rect x="${r1(W - 42)}" y="34" width="28" height="2.5" fill="${RED}"/>`;
+  return svg(W, H, s);
+}
+
+// ===================== B: blueprint / spotter's sketchbook =====================
+// Drafting-blue paper with a grid; plan view (from below) and side view in white line; span and length dimensions; a title block.
+const BL = '#eef5fb';
+function artB(id, W, H) {
+  const g = uid(), mini = W < 150, c = byId(id), st = { fill: 'rgba(238,245,251,.1)', ink: BL, dark: 'rgba(238,245,251,.6)', tail: 'rgba(238,245,251,.1)', acc: '', glass: 'rgba(238,245,251,.25)', gold: 'rgba(238,245,251,.4)' };
+  const dash = id === 'unknown' ? ' stroke-dasharray="3 2.5"' : '';
+  let s = `<defs><pattern id="${g}" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40,0H0V40" fill="none" stroke="rgba(238,245,251,.2)" stroke-width="1"/><path d="M10,0V40M20,0V40M30,0V40M0,10H40M0,20H40M0,30H40" fill="none" stroke="rgba(238,245,251,.08)" stroke-width=".6"/></pattern><radialGradient id="${g}v" cx=".5" cy=".45" r=".75"><stop offset=".55" stop-color="#244f8c" stop-opacity="0"/><stop offset="1" stop-color="#132f57" stop-opacity=".55"/></radialGradient></defs>`;
+  s += `<rect width="${W}" height="${H}" fill="#24569a"/><rect width="${W}" height="${H}" fill="url(#${g})"/><rect width="${W}" height="${H}" fill="url(#${g}v)"/>`;
+  const sh = PLAN[id], lab = (x, y, t, sz = 9, a = 'middle') => `<text x="${r1(x)}" y="${r1(y)}" text-anchor="${a}" font-family="SC Label,Barlow Condensed,sans-serif" font-size="${sz}" letter-spacing=".8" fill="${BL}">${t}</text>`;
+  const dim = (x0, x1, y, t) => { const m = (x0 + x1) / 2, tw = t.length * 4.6 + 6; return `<g stroke="${BL}" stroke-width=".8" fill="none" opacity=".85"><path d="M${r1(x0)},${r1(y - 4)}V${r1(y + 4)}M${r1(x1)},${r1(y - 4)}V${r1(y + 4)}M${r1(x0)},${r1(y)}H${r1(m - tw / 2)}M${r1(m + tw / 2)},${r1(y)}H${r1(x1)}"/><path d="M${r1(x0 + 5)},${r1(y - 2.5)}L${r1(x0)},${r1(y)}L${r1(x0 + 5)},${r1(y + 2.5)}M${r1(x1 - 5)},${r1(y - 2.5)}L${r1(x1)},${r1(y)}L${r1(x1 - 5)},${r1(y + 2.5)}"/></g>` + lab(m, y + 3.2, t); };
+  if (mini) {
+    const pl = place(sh, [W * .1, H * .1, W * .8, H * .72]);
+    s += `<path d="M${r1(W / 2)},${r1(H * .04)}V${r1(H * .88)}" stroke="${BL}" stroke-width=".6" stroke-dasharray="6 2 1.5 2" opacity=".6"/>`;
+    s += group(sh, st, pl, 1, dash);
+    if (id === 'unknown') s += `<text x="${r1(W / 2)}" y="${r1(H * .58)}" text-anchor="middle" font-family="SC Display,Russo One,sans-serif" font-size="${r1(H * .3)}" fill="${BL}">?</text>`;
+    return svg(W, H, s);
+  }
+  // plan view, left
+  const pb = [12, 34, W * .44, H * .52], pl = place(sh, pb);
+  const pw = sh.bb[2] * pl.s, pcx = pb[0] + pb[2] / 2, pBot = pb[1] + pb[3] / 2 + sh.bb[3] * pl.s / 2;
+  s += `<path d="M${r1(pcx)},8V${r1(pBot + 4)}" stroke="${BL}" stroke-width=".6" stroke-dasharray="8 2.5 1.5 2.5" opacity=".55"/>`;
+  s += group(sh, st, pl, 1.2, dash);
+  s += dim(pcx - pw / 2, pcx + pw / 2, Math.min(pBot + 11, H - 38), c.span);
+  s += lab(pcx, pb[1] - 4, 'FROM BELOW', 7.5);
+  // side view, right
+  const ss = SIDE[id], sb = [W * .54, H * .4, W * .42, H * .3], sp = place(ss, sb);
+  const sw = ss.bb[2] * sp.s, scx = sb[0] + sb[2] / 2, sBot = sb[1] + sb[3] / 2 + ss.bb[3] * sp.s / 2;
+  s += group(ss, st, sp, 1.2, dash);
+  if (!['balloon', 'drone', 'heli', 'ultra'].includes(id) || id === 'heli') s += `<path d="M${r1(sb[0] - 4)},${r1(sBot)}H${r1(sb[0] + sb[2] + 4)}" stroke="${BL}" stroke-width=".6" opacity=".45"/>`;
+  s += dim(scx - sw / 2, scx + sw / 2, Math.min(sBot + 11, H - 38), c.len);
+  s += lab(sb[0], sb[1] - 6, 'SIDE', 7.5, 'start');
+  if (id === 'unknown') s += `<text x="${r1(pcx)}" y="${r1(pb[1] + pb[3] * .62)}" text-anchor="middle" font-family="SC Display,Russo One,sans-serif" font-size="44" fill="${BL}">?</text>`;
+  // title block, top right
+  const tx = W - 124, ty = 12;
+  s += `<g fill="rgba(13,34,56,.25)" stroke="${BL}" stroke-width=".9"><rect x="${tx}" y="${ty}" width="112" height="40"/><path d="M${tx},${ty + 25}H${tx + 112}" fill="none"/></g>`;
+  s += `<text x="${tx + 7}" y="${ty + 19}" font-family="SC Display,Russo One,sans-serif" font-size="14" letter-spacing="1" fill="${BL}">${id === 'unknown' ? 'UNKNOWN' : c.mark}</text>` + lab(tx + 7, ty + 35, `CLASS ${c.code} · ${c.note}`, 8, 'start');
+  return svg(W, H, s);
+}
+
+// ===================== C: photographic sky =====================
+// A real-feeling daytime sky (gradient, sun glow, cirrus, cumulus) with the aircraft small and high, seen from below, a contrail
+// for jets; low things (helicopter, balloon, drone) side-on and nearer. The class word as a photo caption.
+function artC(id, W, H) {
+  const g = uid(), mini = W < 150, c = byId(id), sil = '#283543';
+  const st = { fill: sil, ink: 'none', dark: sil, tail: sil, acc: id === 'balloon' ? '#7c2f26' : '', glass: id === 'balloon' ? '#9a5a2a' : sil, gold: '#4a3a22' };
+  let s = `<defs><linearGradient id="${g}" x1="0" y1="0" x2=".25" y2="1"><stop offset="0" stop-color="#3a7fc2"/><stop offset=".55" stop-color="#86bce6"/><stop offset="1" stop-color="#e3eef8"/></linearGradient>`
+    + `<radialGradient id="${g}s" cx=".92" cy=".02" r=".7"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".25" stop-color="#fff6e0" stop-opacity=".45"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>`
+    + `<linearGradient id="${g}c" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>`
+    + `<filter id="${g}b" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="${r1(Math.max(1.2, H * .012))}"/></filter>`
+    + `<filter id="${g}t" x="-50%" y="-5%" width="200%" height="110%"><feGaussianBlur stdDeviation=".7"/></filter></defs>`;
+  s += `<rect width="${W}" height="${H}" fill="url(#${g})"/><rect width="${W}" height="${H}" fill="url(#${g}s)"/>`;
+  s += `<g fill="#fff" opacity=".5" filter="url(#${g}b)" transform="rotate(-10 ${r1(W / 2)} ${r1(H / 2)})"><ellipse cx="${r1(W * .22)}" cy="${r1(H * .3)}" rx="${r1(W * .28)}" ry="${r1(H * .018)}"/><ellipse cx="${r1(W * .5)}" cy="${r1(H * .38)}" rx="${r1(W * .2)}" ry="${r1(H * .012)}"/><ellipse cx="${r1(W * .12)}" cy="${r1(H * .44)}" rx="${r1(W * .16)}" ry="${r1(H * .01)}"/></g>`;
+  const cum = (dy, fill) => { let o = ''; [[.0, .1], [.14, .13], [.3, .09], [.5, .12], [.68, .15], [.86, .1], [1, .13]].forEach(([x, r], i) => { o += `<circle cx="${r1(x * W)}" cy="${r1(H * (.97 + (i % 2) * .03) + dy)}" r="${r1(r * W * (mini ? 1.6 : 1))}"/>`; }); return `<g fill="${fill}" filter="url(#${g}b)">${o}</g>`; };
+  s += cum(H * .05, '#b7cbe0') + cum(0, '#fbfdff');
+  const low = ['heli', 'balloon', 'drone'].includes(id), sh = low ? SIDE[id] : PLAN[id];
+  let box, deg;
+  if (id === 'unknown') { box = mini ? [W * .62, H * .14, W * .14, H * .14] : [W * .66, H * .16, W * .07, H * .07]; deg = 58; }
+  else if (low) { box = mini ? [W * .1, H * .2, W * .8, H * .5] : [W * .3, H * .18, W * .4, H * .5]; deg = id === 'heli' ? -4 : 0; }
+  else { box = mini ? [W * .18, H * .14, W * .64, H * .56] : [W * .44, H * .1, W * .26, H * .5]; deg = 52; }
+  const pl = place(sh, box, deg);
+  if (c.jet && sh.engX) {
+    const L = 900, w0 = .7 / pl.s, w1 = 9 / pl.s;
+    s += `<g transform="${pl.tf}" fill="url(#${g}c)" filter="url(#${g}t)">${[...new Set(sh.engX.flatMap((x) => [80 + x, 80 - x]))].map((x) => `<path d="M${r1(x - w0)},${r1(sh.bot + 8)}H${r1(x + w0)}L${r1(x + w1)},${r1(sh.bot + L)}H${r1(x - w1)}Z"/>`).join('')}</g>`;
+  }
+  s += group(sh, st, pl, 0, ' opacity=".92"');
+  if (!mini) {
+    const t = id === 'unknown' ? 'TYPE NOT KNOWN' : c.name.toUpperCase();
+    s += `<text x="${r1(W - 13)}" y="${r1(H - 40)}" text-anchor="end" font-family="SC Label,Barlow Condensed,sans-serif" font-size="12" letter-spacing="2.2" fill="#0d2238" opacity=".55">${t}</text>`;
+  }
+  return svg(W, H, s);
+}
+
+const ARTS = { A: artA, B: artB, C: artC };
+
+// ---- the page ----
+
+const card = (c) => ({ key: c.key, name: c.name, tier: 'common', glyph: c.id === 'heli' ? 'heli' : 'jet', set: 'Planes', type: '' });
+const sample = { caughtAt: new Date('2026-11-21T11:58:00'), heightFt: 36000, speedKmh: 880, awayKm: 12 };
+// Swap a rendered card's sky panel for an art at the panel's real pixel size.
+function swap(root, fn, id) {
+  const sky = root.querySelector('.fc-sky'); if (!sky) return;
+  const b = sky.getBoundingClientRect();
+  sky.className = 'fc-sky ga-host'; sky.innerHTML = fn(id, Math.round(b.width), Math.round(b.height));
+}
+const el = (h) => { const t = document.createElement('div'); t.innerHTML = h.trim(); return t.firstElementChild; };
+
+// Today: the real minis for a few classes, unmodified
+const now = document.getElementById('now');
+for (const id of ['heavy', 'light', 'balloon']) { const c = CLASSES.find((x) => x.id === id); now.append(el(`<div class="mini-c">${miniCardHtml({ kind: 'plane', card: card(c), last: sample.caughtAt.getTime() })}<p>${c.name}</p></div>`)); }
+
+for (const sec of document.querySelectorAll('.take')) {
+  const fn = ARTS[sec.dataset.dir];
+  sec.append(el('<div class="cap">Full card · Heavy Aircraft</div>'));
+  const wrap = el(`<div class="card-wrap">${planeCardHtml(card(CLASSES[0]), sample)}</div>`); sec.append(wrap); swap(wrap, fn, 'heavy');
+  sec.append(el('<div class="cap">Every class in the photo window · 297 × 200</div>'));
+  const tiles = el('<div class="tiles"></div>'); sec.append(tiles);
+  for (const c of CLASSES) {
+    const art = fn(c.id, 297, 200);
+    tiles.append(el(`<div class="tile"><div class="win">${art}<span class="pill">● COMMON</span></div><div class="tile-t"><span>${c.name}</span><em>${c.code} · ${(new Blob([art]).size / 1024).toFixed(1)} KB</em></div></div>`));
+  }
+  sec.append(el('<div class="cap">Collection minis</div>'));
+  const minis = el('<div class="minis"></div>'); sec.append(minis);
+  for (const c of CLASSES) {
+    const m = el(`<div class="mini-c">${miniCardHtml({ kind: 'plane', card: card(c), last: sample.caughtAt.getTime() })}<p>${c.name}</p></div>`);
+    minis.append(m); swap(m, fn, c.id);
+  }
+}
+window.READY = true;
+</script>
+</body>
+</html>
