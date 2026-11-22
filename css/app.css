@@ -3799,3 +3799,7 @@ body.night .kt-icons img { filter: grayscale(1) sepia(1) hue-rotate(-50deg) satu
 .kt-widget b { font-weight: 500; letter-spacing: .14em; color: #f3ead0; }
 .kt-widget i { font: 400 24px/1 'SC Display', 'Russo One', sans-serif; font-style: normal; color: #ff6b5e; margin-top: 4px; }
 .kt-widget small { font-size: 9px; color: #9fb3c6; white-space: nowrap; }
+/* The radar's column is the dial's width, so a longer line under it (it changes as the sky comes back after a catch) spills
+   evenly both sides instead of widening the column and pushing the dial, and the patch coin under it, to the right for a
+   moment (2026-11-21, Sevaan: "the patch and radar were more right for a second when I went back after dismissing"). */
+#radar { width:96px; } #radar-up { white-space:nowrap; }
