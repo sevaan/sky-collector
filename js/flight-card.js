@@ -9,22 +9,22 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { regularFor, clockText } from './sky-regulars.js?v=0.1.1892';
-import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js?v=0.1.1892';
-import { flightFact } from './flight-facts.js?v=0.1.1892';
-import { typePhoto } from './type-photos.js?v=0.1.1892';
-import { housePhoto } from './house-photos.js?v=0.1.1892';
-import { gapPhoto } from './gap-photos.js?v=0.1.1892'; /* the types that had no photo (2026-11-18) */
-import { airlinePhoto } from './airline-photos.js?v=0.1.1892';
-import { airlineLogo } from './airline-logos.js?v=0.1.1892';
-import { fitStyle } from './photo-fit.js?v=0.1.1892';
-import { dist, speed, useMiles } from './units.js?v=0.1.1892';
-import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1892';
-import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1892';
-import { typeFact } from './sky-facts.js?v=0.1.1892';
-import { localText } from './localize.js?v=0.1.1892';
-import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1892';
-import { qrEncode, qrSvg } from './qr.js?v=0.1.1892';
+import { regularFor, clockText } from './sky-regulars.js?v=0.1.1893';
+import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js?v=0.1.1893';
+import { flightFact } from './flight-facts.js?v=0.1.1893';
+import { typePhoto } from './type-photos.js?v=0.1.1893';
+import { housePhoto } from './house-photos.js?v=0.1.1893';
+import { gapPhoto } from './gap-photos.js?v=0.1.1893'; /* the types that had no photo (2026-11-18) */
+import { airlinePhoto } from './airline-photos.js?v=0.1.1893';
+import { airlineLogo } from './airline-logos.js?v=0.1.1893';
+import { fitStyle } from './photo-fit.js?v=0.1.1893';
+import { dist, speed, useMiles } from './units.js?v=0.1.1893';
+import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1893';
+import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1893';
+import { typeFact } from './sky-facts.js?v=0.1.1893';
+import { localText } from './localize.js?v=0.1.1893';
+import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1893';
+import { qrEncode, qrSvg } from './qr.js?v=0.1.1893';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // A type name escaped, with its hyphenated model codes kept on one line ('Boeing KC-135R Stratotanker' broke after 'KC-').
@@ -268,6 +268,26 @@ function specCells(p, si, last, type) {
     si?.liveryCount ? ['Operators', String(si.liveryCount)] : null, (si?.days ?? 0) > 1 ? ['Days seen', String(si.days)] : null].filter(Boolean);
 }
 
+// The maker split off a name for the nameplate: the type's verified maker (any case: 'de Havilland Canada'), else a known
+// maker the name starts with ('Bombardier CRJ200'). { maker, model } or { model: null } when there's nothing to split.
+const MAKERS = ['Airbus Helicopters', 'Airbus', 'Boeing', 'Bombardier', 'Embraer', 'de Havilland Canada', 'McDonnell Douglas', 'Douglas', 'Cessna', 'Beechcraft',
+  'Piper', 'Cirrus', 'Diamond', 'Mooney', 'Gulfstream', 'Dassault', 'Hawker', 'Learjet', 'Pilatus', 'ATR', 'Saab', 'Fokker', 'Antonov', 'Ilyushin', 'Tupolev',
+  'Sukhoi', 'Comac', 'Mitsubishi', 'Lockheed Martin', 'Lockheed', 'North American', 'Avro', 'Supermarine', 'Junkers', 'Robinson', 'Bell', 'Sikorsky',
+  'Eurocopter', 'Leonardo', 'AgustaWestland', 'Textron', 'Daher', 'Honda'].sort((a, b) => b.length - a.length);
+export function splitMaker(name, maker) {
+  const n = String(name ?? ''), lo = n.toLowerCase();
+  for (const m of maker ? [maker, ...MAKERS] : MAKERS) if (lo.startsWith(m.toLowerCase() + ' ') && n.length > m.length + 1) return { maker: n.slice(0, m.length), model: n.slice(m.length + 1) };
+  return { maker: null, model: null };
+}
+// Always four spec columns: the type's own cells (its own labels: a helicopter's Passengers and Rotor), then the usual
+// First flew / Seats / Engines / Span it doesn't have, with "—".
+const SPEC_SLOTS = [['First flew', /^First flew/], ['Seats', /^(Seats|Passengers)/], ['Engines', /^Engines?/], ['Span', /^(Span|Rotors?)/]];
+function fourSpecs(cells) {
+  const out = cells.slice(0, 4);
+  for (const [l, re] of SPEC_SLOTS) if (out.length < 4 && !out.some((c) => re.test(c[0]))) out.push([l, '—']);
+  return out;
+}
+
 // PLANE = the spec sheet (design/card-spike/combo-pass-spec.html, approved 2026-11-19): cream drafting paper with a blue grid,
 // an AIRCRAFT tab and the set, the TYPE plate, the photo (with a band saying what kind of thing a plane-only catch was), the
 // name, maker · country · kind, up to four checked spec cells, the operator (airline catches only), YOUR CATCH (the newest
@@ -291,42 +311,48 @@ export function planeCardHtml(p, opts = {}) {
       <div class="m-sp">${left && left[0] !== 'Aircraft' ? `<span>${esc(left[0])} <b>${esc(left[1])}</b></span>` : `<span>${esc(set)}</span>`}<span><b>${si?.count ?? 0}</b> aircraft</span></div>`;
     return shell('plane', p.tier, inner, label, si?.level, 'ss', true);
   }
-  const art = ph ? `${photoImg(ph, 'fc-photo', opts.eager, !!opts.shrunk)}${credit(ph)}` : skyArt(skyArtKind(un, p.key === 'P:HELI' ? 'heli' : un ? un.glyph : p.glyph), 'fc-sky fc-sky--big');
+  const art = ph ? photoImg(ph, 'fc-photo', opts.eager, !!opts.shrunk) : skyArt(skyArtKind(un, p.key === 'P:HELI' ? 'heli' : un ? un.glyph : p.glyph), 'fc-sky fc-sky--big');
   const band = classBand(k), specs = typeSpecs(type);
   const mk = specs ? makerLine(specs) : un ? 'Exact type not known' : ''  /* true of a plane with no type and of a code Sky can't name (2026-11-20) */;
-  const who = k?.airline && k.routed && (k.op || k.reg) ? `<div class="ss-who"><b>${k.cls === 'cargo' ? 'CARGO AIRLINE' : 'AIRLINE'}</b><span>${esc([k.op, k.reg].filter(Boolean).join(' · '))}</span></div>` : '';
   const when = last?.time ? new Date(last.time) : opts.caughtAt;
   const kmh = last?.gsKt > 30 ? Math.round(last.gsKt * 1.852) : last?.gsKt != null ? null : opts.speedKmh ?? null;
   const sp = speed(kmh), aw = dist(last?.rangeKm != null ? Math.round(last.rangeKm) : opts.awayKm ?? null);
-  /* Spine (2026-11-22, Sevaan picked variant 2 of design/plane-card-team/round2.html): a navy column down the left holds every
-     number (the type code, the specs, this catch's height, speed, distance and heading, the level medal); the rest is the
-     photo, the set, the name, what it is, when and from whom you caught it, your progress in plain words, and the fact. */
+  /* Contrail Chrome (2026-11-22, Sevaan picked it from design/fresh-chrome/): a premium sports card. A full-width 1.7:1 photo
+     with the type code on an ink plate and the rarity over it, an ink nameplate (maker over model, the set beside it), the
+     kind line, a stat block like the back of a baseball card (THE TYPE's four specs, then CAUGHT: when and who, and YOU: this
+     catch's height, speed, distance and heading), progress with the level medal and liveries, the fact, and the credit.
+     Every block sits at a fixed place on the card (css/sky-cards.css .fc-in--cc), so nothing moves with the content. */
   const T = THRESHOLDS.plane, n = si?.count ?? 0, nextT = T.find((x) => n < x), nextWord = nextT === T[1] ? 'Silver' : 'Gold';
-  const spec = specs?.maker ? { maker: specs.maker, desc: [specs.country, specs.desc].filter(Boolean).join(' · ') } : null;
-  const model = spec && name.toLowerCase().startsWith(spec.maker.toLowerCase() + ' ') ? name.slice(spec.maker.length + 1) : null; /* any case: 'de Havilland Canada' (Android playtest 2026-11-22: the full name took three lines and pushed the fact off) */
-  const caught = last || opts.caughtAt;
-  const st = (l, v, u) => `<div class="sp-st"><b>${esc(v)}${u && v !== '—' ? `<small>${esc(u)}</small>` : ''}</b><span>${esc(l)}</span></div>`;
-  const opLine = k?.airline && k.routed && (k.op || k.reg) ? /* as before: the operator and registration only with a route; without one the band's words */ `<p class="sp-op">${esc(k.op || '')}${k.reg ? `<small>${esc(k.reg)}</small>` : ''}</p>` : band ? `<p class="sp-op sp-op--band">${esc(band.head)}${band.tail ? `<small>${esc(band.tail)}</small>` : ''}</p>` : '';
-  const prog = n ? `<div class="sp-pr"><p>${n} of ${nextT ?? n} different aircraft</p><div class="sp-bar"><i style="width:${Math.min(100, Math.round(n / (nextT ?? n) * 100))}%"></i></div><p class="sp-sub">${si?.liveryCount ? `${si.liveryCount} airline liver${si.liveryCount === 1 ? 'y' : 'ies'} seen` : ''}</p></div>` : '';
+  const sm = splitMaker(name, specs?.maker);
+  const desc = specs ? [specs.country, specs.desc].filter(Boolean).join(' · ') : mk;
+  const caught = !!(last || opts.caughtAt);
+  const cell = (v, u) => `<b>${esc(v || '—')}${u && v && v !== '—' ? `<small>${esc(u)}</small>` : ''}</b>`;
+  const four = fourSpecs(cells);
+  const opLine = k?.airline && k.routed && (k.op || k.reg) ? /* the operator and registration only with a route; without one the band's words */ `<p class="cc-op">${esc(k.op || '')}${k.reg ? `<small>${esc(k.reg)}</small>` : ''}</p>` : band ? `<p class="cc-op cc-op--band">${esc(band.head)}${band.tail ? `<small>${esc(band.tail)}</small>` : ''}</p>` : '';
+  const whenText = caught ? (when ? `${when.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}, ${timeOf(when).toLowerCase()}` : 'Caught') : 'Not caught yet';
+  const fact = localText(planeFact(p, si?.count ?? 1)), fl = fact.replace(/\*\*/g, '').length;
+  const nmLen = (sm.model ?? name).length, nmCls = nmLen > 22 ? ' cc-md--xxl' : nmLen > 17 ? ' cc-md--xl' : nmLen > 12 ? ' cc-md--l' : '';
+  const credit = ph ? `Photo: ${esc(ph.credit)}, ${esc(ph.licence)}` : '';
   const inner = `
-    <div class="sp-side">
-      <span class="sp-l">TYPE</span><b class="sp-tp${plate.length > 4 ? ' sp-tp--long' : ''}">${esc(plate)}</b>
-      ${cells.length ? `<h3>THE TYPE</h3>${cells.slice(0, 4).map(([l, v, u]) => st(l, v, u)).join('')}` : ''}
-      ${caught ? `<h3>YOUR CATCH</h3>${st('Height', feet(last?.altFt ?? opts.heightFt), 'ft')}${st('Speed', sp.v, sp.u)}${st('Away', aw.v, aw.u)}${st('Heading', compass(last?.track), '')}` : ''}
-      ${lvl ? `<div class="sp-md"><span class="sp-medal sp-medal--${lvl}">${n}</span><p><b>${levelWord(lvl).toUpperCase()}</b>${nextT ? `${nextT - n} more<br>for ${nextWord}` : 'Top level'}</p></div>` : ''}
+    <div class="fc-pic cc-ph${ph ? '' : ' fc-pic--sky'}">${art}<span class="fc-holo" aria-hidden="true"></span>${tierPill(p.tier)}${opts.rareHere ? '<span class="fc-here" title="Unusual where you caught it">RARE HERE</span>' : ''}</div>
+    <div class="cc-code${plate.length > 4 ? ' cc-code--long' : ''}"><small>TYPE</small><b>${esc(plate)}</b></div>
+    <div class="cc-np"><h2 class="cc-nm">${sm.model ? `<small>${esc(sm.maker.toUpperCase())}</small>` : ''}<span class="cc-md${nmCls}">${escName(sm.model ?? name)}</span></h2><p class="cc-set"><small>SET</small>${esc(set)}</p></div>
+    <p class="cc-kind${desc.length > 44 ? ' cc-kind--s' : ''}"><span>${esc(String(desc).replace(/^./, (c) => c.toUpperCase()))}</span></p>
+    <div class="cc-st">
+      <div class="cc-r cc-h"><i></i>${four.map(([l]) => `<span>${esc(l)}</span>`).join('')}</div>
+      <div class="cc-r cc-v"><i>TYPE</i>${four.map(([, v, u]) => cell(v, u)).join('')}</div>
+      <div class="cc-ct"><span class="cc-tag">CAUGHT</span><div><p class="cc-when">${esc(whenText)}</p>${opLine}</div></div>
+      <div class="cc-r cc-h"><i></i><span>Height</span><span>Speed</span><span>Away</span><span>Heading</span></div>
+      <div class="cc-r cc-v"><i>YOU</i>${caught ? `${cell(feet(last?.altFt ?? opts.heightFt), 'ft')}${cell(sp.v, sp.u)}${cell(aw.v, aw.u)}${cell(compass(last?.track), '')}` : cell('') + cell('') + cell('') + cell('')}</div>
     </div>
-    <div class="sp-main">
-      <div class="fc-pic sp-ph${ph ? '' : ' fc-pic--sky'}">${art}<span class="fc-holo" aria-hidden="true"></span>${tierPill(p.tier)}${opts.rareHere ? '<span class="fc-here" title="Unusual where you caught it">RARE HERE</span>' : ''}</div>
-      <div class="sp-body">
-        <div class="sp-kick">${esc(set.toUpperCase())}</div>
-        <h2 class="sp-name${(model ?? name).length > 20 ? ' sp-name--xl' : (model ?? name).length > 13 ? ' sp-name--long' : ''}">${model ? `<small>${esc(spec.maker.toUpperCase())}</small>` : ''}<span>${escName(model ?? name)}</span></h2>
-        ${spec?.desc || mk ? `<p class="sp-kind">${esc(String(spec?.desc || mk).replace(/^./, (c) => c.toUpperCase()))}</p>` : ''}
-        ${caught ? `<div class="sp-ct"><span class="sp-l sp-red">CAUGHT</span><p class="sp-when">${when ? `${when.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}, ${timeOf(when).toLowerCase()}` : ''}</p>${opLine}</div>` : ''}
-        ${prog}
-        ${(() => { const f = localText(planeFact(p, si?.count ?? 1)), n = f.replace(/\*\*/g, '').length; return `<p class="fc-fact sp-fact${n > 210 ? ' sp-fact--s' : n > 150 ? ' sp-fact--m' : ''}">${rich(f)}</p>`; })() /* the whole fact, never cut off: longer ones a little smaller (2026-11-22, Sevaan) */}
-      </div>
-    </div>`;
-  return shell('plane', p.tier, inner, label, si?.level, 'sp');
+    <div class="cc-pr">
+      <span class="cc-medal${lvl ? ` cc-medal--${lvl}` : ''}"><b>${n}</b></span>
+      <div class="cc-pc"><p>${n ? `${n} of ${nextT ?? n} different aircraft` : 'Not collected yet'}</p><div class="cc-bar"><i style="width:${n ? Math.min(100, Math.round(n / (nextT ?? n) * 100)) : 0}%"></i></div><p class="cc-lv">${lvl ? `${esc(levelWord(lvl))} · ${nextT ? `${nextT - n} to ${nextWord}` : 'top level'}` : 'Catch one to start'}</p></div>
+      <div class="cc-liv"><b>${si?.liveryCount ?? 0}</b><span>${si?.liveryCount === 1 ? 'Livery' : 'Liveries'}<br>seen</span></div>
+    </div>
+    <div class="cc-fact-slot"><p class="fc-fact cc-fact${fl > 300 ? ' cc-fact--xs' : fl > 250 ? ' cc-fact--s' : fl > 200 ? ' cc-fact--m' : ''}">${rich(fact)}</p></div>
+    <div class="cc-foot"><span class="cc-credit">${credit}</span><span class="cc-mark">SKY COLLECTOR</span></div>`;
+  return shell('plane', p.tier, inner, label, si?.level, 'cc');
 }
 
 // A small card on its own (the catch panel's fallback when main.js gives no mini): the Collection's mini layout, the same

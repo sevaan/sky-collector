@@ -47,6 +47,10 @@ const S = {
   /* https://en.wikipedia.org/wiki/Bombardier_CRJ700_series (CRJ900): maiden flight February 21, 2001; 90 passengers;
      2 × CF34-8C5; range 2,871 km */
   CRJ9: { maker: 'Bombardier', country: 'Canada', desc: 'regional jet', cells: [['First flew', '2001'], ['Seats', '90'], E(2, 'jets'), ['Range', '2,871', 'km']] },
+  /* CRJ200 (2026-11-22, Contrail Chrome card; published figures, not yet re-read on Wikipedia like the rest of this file):
+     https://en.wikipedia.org/wiki/Bombardier_CRJ100/200: first flight May 10, 1991 (CRJ100); 50 passengers; 2 × CF34-3B1;
+     wingspan 21.21 m */
+  CRJ2: { maker: 'Bombardier', country: 'Canada', desc: 'regional jet', cells: [['First flew', '1991'], ['Seats', '50'], E(2, 'jets'), ['Span', '21.2', 'm']] },
   /* https://en.wikipedia.org/wiki/De_Havilland_Canada_Dash_8 (Q400): "passenger capacity of 68–90"; Engines (2×) PW150
      turboprop; range 1,100 nmi (2,040 km); wingspan 28.4 m. First flight left out (not on the page for the -400) */
   DH8D: { maker: 'De Havilland Canada', country: 'Canada', desc: 'turboprop regional airliner', cells: [['Seats', '68–90'], E(2, 'props'), ['Range', '2,040', 'km'], ['Span', '28.4', 'm']] },
@@ -59,6 +63,10 @@ const S = {
   /* https://en.wikipedia.org/wiki/Boeing_747-8: first flights 747-8F February 8, 2010 / 747-8I March 20, 2011; 4 × GEnx-2B67;
      wingspan 224 ft 5 in, length 250 ft 2 in. Seats and range left out: B748 is both the airliner and the freighter */
   B748: { maker: 'Boeing', country: 'USA', desc: 'four-engine wide-body airliner and freighter', cells: [['First flew', '2010'], E(4, 'jets'), ['Span', '68.4', 'm'], ['Length', '76.3', 'm']] },
+  /* 747-400 (2026-11-22, Contrail Chrome card; published figures, not yet re-read on Wikipedia like the rest of this file):
+     https://en.wikipedia.org/wiki/Boeing_747-400: first flight April 29, 1988; 416 seats (typical three-class); 4 turbofans;
+     wingspan 211 ft 5 in (64.4 m) */
+  B744: { maker: 'Boeing', country: 'USA', desc: 'four-engine wide-body airliner', cells: [['First flew', '1988'], ['Seats', '416'], E(4, 'jets'), ['Span', '64.4', 'm']] },
   /* https://en.wikipedia.org/wiki/Airbus_A380: first flight 27 April 2005; typical seating 525; Engines (4×); range 14,800 km */
   A388: { maker: 'Airbus', desc: 'double-deck wide-body airliner', cells: [['First flew', '2005'], ['Seats', '525'], E(4, 'jets'), ['Range', '14,800', 'km']] },
   /* https://en.wikipedia.org/wiki/Cessna_172: first flight June 12, 1955; four-seat; 1 × Lycoming piston; 36 ft 1 in. Range

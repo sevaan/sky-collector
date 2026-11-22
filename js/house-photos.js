@@ -44,17 +44,18 @@ export const HOUSE_PHOTOS = {
 ]
 },
 "A21N": {
+"file": "A21N-r3",
 "credit": "Ibex73",
 "licence": "CC BY-SA 4.0",
-"source": "https://commons.wikimedia.org/wiki/File:Airbus_A321_XLR_F-WWAB_at_Paris-Le_Bourget_Air_Show_2023_10.jpg",
-"title": "File:Airbus A321 XLR F-WWAB at Paris-Le Bourget Air Show 2023 10.jpg",
+"source": "https://commons.wikimedia.org/wiki/File:Airbus_A321_XLR_F-WWAB_at_Paris-Le_Bourget_Air_Show_2023_08.jpg",
+"title": "File:Airbus A321 XLR F-WWAB at Paris-Le Bourget Air Show 2023 08.jpg",
 "w": 1280,
-"h": 653,
+"h": 720,
 "box": [
--0.02,
-0.07,
-1.03,
-0.92
+0.06,
+0.08,
+0.92,
+0.95
 ]
 },
 "BCS1": {
@@ -352,17 +353,18 @@ export const HOUSE_PHOTOS = {
 ]
 },
 "CRJ2": {
-"credit": "Acroterion",
-"licence": "CC BY-SA 4.0",
-"source": "https://commons.wikimedia.org/wiki/File:Bombardier_CRJ200_N96AP_FDK_MD1.jpg",
-"title": "File:Bombardier CRJ200 N96AP FDK MD1.jpg",
+"file": "CRJ2-r3",
+"credit": "flybyeigenheer",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:D-AJOY_Bombardier_CL-600-2B19_CRJ200_CRJ2_(28592013961).jpg",
+"title": "File:D-AJOY Bombardier CL-600-2B19 CRJ200 CRJ2 (28592013961).jpg",
 "w": 1280,
-"h": 620,
+"h": 853,
 "box": [
-0.0,
+0.05,
 0.36,
-0.99,
-0.93
+0.95,
+0.72
 ]
 },
 "DH8C": {
@@ -1668,4 +1670,5 @@ export const HOUSE_PHOTOS = {
 ]
 }
 };
-export const housePhoto = (code) => (HOUSE_PHOTOS[code] ? { url: `assets/photos/house/${code}.webp`, ...HOUSE_PHOTOS[code] } : null);
+// file: a re-picked photo saved under its own name (CRJ2-r3, A21N-r3: design/plane-card-r3/, 2026-11-22); otherwise the code
+export const housePhoto = (code) => (HOUSE_PHOTOS[code] ? { url: `assets/photos/house/${HOUSE_PHOTOS[code].file ?? code}.webp`, ...HOUSE_PHOTOS[code] } : null);

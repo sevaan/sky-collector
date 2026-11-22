@@ -897,47 +897,6 @@ html.sky-cards #sat-card.rm-card .rm-sub { white-space:normal; overflow:visible;
 .lp-ph .sct-lvl, .mini-face .fc .lp-ph .sct-lvl { position:absolute; z-index:4; left:.6em; top:.6em; right:auto; bottom:auto; transform:rotate(90deg); }
 .lp-ph:has(.sct-lvl) :is(.fc-tier, .fc-set) { left:7.4em; } /* past the coin (4.4em in the Collection tile) */
 
-/* ===== Plane card: Spine (2026-11-22, Sevaan picked variant 2 of design/plane-card-team/round2.html; js/flight-card.js
-   planeCardHtml). A navy column down the left with every number, then photo, name, the catch, progress and the fact. ===== */
-.fc-in--sp { padding:0; flex-direction:row; background:#fffdf6; }
-.fc-in--sp::before { display:none; }
-.fc--lvl .fc-in--sp::before { display:block; z-index:4; }
-.sp-side { width:8.9em; flex:none; display:flex; flex-direction:column; padding:1em .95em 1em 1.05em; color:#fffdf6; background:linear-gradient(180deg, #17375b 0%, #0d2238 70%); min-height:0; }
-.sp-l { display:block; font:500 .7em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.2em; color:#8fbbe3; }
-.sp-tp { display:block; font:400 2.35em/1 'SC Display','Russo One',sans-serif; letter-spacing:.02em; margin:.14em 0 0; color:#fff; }
-.sp-side h3 { margin:1.05em 0 .1em; padding-top:.75em; border-top:.08em solid rgba(255,255,255,.16); font:500 .7em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.22em; color:#f2c66d; }
-.sp-st { margin-top:.58em; }
-.sp-st b { display:block; font:400 1.4em/1 'SC Display','Russo One',sans-serif; font-variant-numeric:tabular-nums; color:#fff; white-space:nowrap; letter-spacing:-.01em; overflow:hidden; text-overflow:ellipsis; }
-.sp-st b small { font:500 .52em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.06em; color:#8fbbe3; margin-left:.14em; }
-.sp-st span { display:block; margin-top:.28em; font:500 .68em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.16em; text-transform:uppercase; color:rgba(255,253,246,.62); }
-.sp-md { margin-top:auto; padding-top:.8em; display:flex; align-items:center; gap:.55em; }
-.sp-medal { flex:none; width:2.5em; height:2.5em; border-radius:50%; display:grid; place-items:center; font:400 1.15em/1 'SC Display','Russo One',sans-serif; color:#fff7ee; text-shadow:0 .05em .1em rgba(0,0,0,.35); box-shadow:inset 0 0 0 .12em rgba(255,255,255,.35), 0 .15em .35em rgba(0,0,0,.35); }
-.sp-medal--bronze { background:radial-gradient(circle at 35% 28%, #f3c9a0, #c17d45 45%, #7f4a22); }
-.sp-medal--silver { background:radial-gradient(circle at 35% 28%, #ffffff, #b8c2cc 45%, #6f7c88); color:#1b2a3d; text-shadow:none; }
-.sp-medal--gold { background:radial-gradient(circle at 35% 28%, #fff4c4, #e3ac2f 45%, #9c6a12); color:#3a2600; text-shadow:none; }
-.sp-md p { margin:0; font:500 .7em/1.25 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.14em; color:rgba(255,253,246,.8); }
-.sp-md p b { display:block; font-weight:500; color:#e8a974; letter-spacing:.2em; }
-.sp-main { flex:1; min-width:0; display:flex; flex-direction:column; }
-.sp-ph.fc-pic { flex:none; height:17.6em; margin:0; border-radius:0; }
-.sp-body { flex:1; display:flex; flex-direction:column; padding:.95em 1.15em .95em 1.2em; min-height:0; }
-.sp-kick { font:500 .84em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.26em; color:#b42a20; }
-.sp-name { margin:.3em 0 0; font:400 2.55em/.92 'SC Display','Russo One',sans-serif; letter-spacing:-.025em; color:#0d2238; }
-.sp-name--long { font-size:2.05em; }
-.sp-name small { display:block; font:500 .32em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.3em; color:#3d5266; margin-bottom:.42em; }
-.sp-kind { margin:.4em 0 0; font:italic 400 .9em/1.3 Georgia,serif; color:#5b6878; }
-.sp-ct { margin-top:auto; padding-top:.8em; }
-.sp-red { color:#b42a20; }
-.sp-when { margin:.4em 0 0; font:400 .98em/1.25 Georgia,serif; color:#0d2238; }
-.sp-op { margin:.25em 0 0; font:400 1.02em/1.15 'SC Display','Russo One',sans-serif; color:#0d2238; }
-.sp-op small { font:500 .72em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.14em; color:#5b6878; margin-left:.4em; }
-.sp-op--band { font:500 .9em/1.2 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.08em; color:#5b6878; }
-.sp-pr { margin-top:.8em; }
-.sp-pr p { margin:0; font:500 .92em/1.15 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.04em; color:#0d2238; }
-.sp-bar { position:relative; height:.28em; border-radius:1em; background:rgba(13,34,56,.1); overflow:hidden; margin:.45em 0 .4em; }
-.sp-bar i { position:absolute; left:0; top:0; bottom:0; border-radius:inherit; background:linear-gradient(90deg, #c17d45, #e3ac2f); }
-.sp-pr .sp-sub { font-size:.76em; letter-spacing:.16em; color:#5b6878; text-transform:uppercase; }
-.fc-in--sp .sp-fact { margin:.8em 0 0; font-size:.8em; line-height:1.4; border-left:.2em solid #d7362b; padding-left:.6em; overflow:hidden; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; flex:none; }
-.sp-tp--long { font-size:1.75em; margin-top:.3em; } /* HEAVY, LIGHT, ULTRA, BALLOON: inside the column */
 .fc-pic::after, .fc-in--bp .fc-pic::after, .fc-in--ss .fc-pic::after { box-shadow:none; } /* no inner shadow on card photos (2026-11-22, Sevaan) */
 
 /* the pass in front in the reveal casts its shadow only on the plane card, not the page (2026-11-21) */
@@ -950,18 +909,92 @@ html.sky-cards #sat-card.rm-card .rm-sub { white-space:normal; overflow:visible;
   animation:fc-glint-x 5.5s ease-in-out infinite; }
 @keyframes fc-glint-x { 0%, 30% { transform:translateX(27%); } 75%, 100% { transform:translateX(-27%); } }
 @media (prefers-reduced-motion: reduce) { .fc--legendary .fc-foil::before { animation:none; } }
-/* Spine fit (Android playtest 2026-11-22: the fact ran under the frame, and the photo past the inner frame on the right) */
-.sp-name--xl { font-size:1.75em; }
-.sp-main { overflow:hidden; border-radius:0 .95em .95em 0; }
-.sp-body { overflow:hidden; }
-.fc-in--sp .sp-fact { -webkit-line-clamp:3; flex:0 1 auto; min-height:0; }
-/* the photo sits inside the level's gold inner frame, not under its edge (Android re-check 2026-11-22: ~4px past it) */
-.fc--lvl .sp-ph.fc-pic { margin:.42em .42em 0 0; border-radius:0 .55em 0 0; }
-/* the Spine fact is shown whole (2026-11-22, Sevaan: "the fact text doesn't fit and runs off into ellipses"); the gap above
-   "Caught" gives way first, and long facts step down a size */
-.fc-in--sp .sp-fact { display:block; -webkit-line-clamp:unset; overflow:visible; flex:none; }
-.fc-in--sp .sp-fact--m { font-size:.74em; }
-.fc-in--sp .sp-fact--s { font-size:.68em; }
-.fc-in--sp .sp-ct { margin-top:auto; min-height:0; }
 /* the night pack: a boarding pass dealt face up, tilted like the reveal's */
 #gift .gp-dc.gp-pass .fc--land { transform:translateY(2%) rotate(6deg) scale(1.05); transform-origin:50% 50%; }
+
+/* ===== Plane card: Contrail Chrome (2026-11-22, Sevaan picked it from design/fresh-chrome/; js/flight-card.js planeCardHtml).
+   A premium sports card on one fixed grid: inside the frame the face is 26.76 x 40.76em and every block is placed at a fixed
+   top, so the photo (full width, 1.7:1), nameplate, kind line, stat block, progress, fact and credit sit at the same place on
+   every card whatever they say. Long names and facts step down a size inside their slots. ===== */
+.fc--plane.fc--common { --frame:linear-gradient(135deg,#f3f5f7 0%,#a9b2bd 22%,#fbfcfd 40%,#8c96a2 62%,#e6e9ee 80%,#9aa4b1 100%); --edge:#6f7a86; --cc-acc:#9aa4b1; }
+.fc--plane.fc--uncommon { --frame:linear-gradient(135deg,#dcf8e7 0%,#4fbf7b 20%,#f1fcf5 38%,#2f9a5c 58%,#c8f2d9 78%,#5fd08a 100%); --edge:#2a7d4b; --cc-acc:#5fd08a; }
+.fc--plane.fc--rare { --frame:conic-gradient(from 210deg at 50% 45%,#4aa8ff,#a6e4ff,#7c8cff,#e6f5ff,#3b8eea,#b8f1ff,#6fb5ff,#c9bcff,#4aa8ff); --edge:#2a6db8; --cc-acc:#4aa8ff; }
+.fc--plane.fc--epic { --cc-acc:#e46ad6; }
+.fc--plane.fc--legendary { --cc-acc:#ffc545; }
+.fc--plane.fc--rare .fc-rot { box-shadow:0 calc(.9em + var(--o,0) * .8em) calc(2.2em + var(--o,0) * 1.6em) rgba(13,34,56,.26), 0 .15em .4em rgba(13,34,56,.2), 0 0 2.2em rgba(74,168,255,.32); }
+.fc-in--cc { padding:0; display:block; background:#fffdf6; color:#0d2238; }
+.fc-in--cc::before { display:none; }
+.fc--lvl .fc-in--cc::before { display:block; z-index:6; }
+.fc-in--cc > * { position:absolute; }
+/* photo: full width, 1.7:1 (26.76 / 1.7 = 15.74em); inside the level's inner frame when there is one, bottom edge unchanged */
+.fc-in--cc .cc-ph.fc-pic { left:0; right:0; top:0; height:15.74em; min-height:0; margin:0; border-radius:0; }
+.fc--lvl .fc-in--cc .cc-ph.fc-pic { left:.42em; right:.42em; top:.42em; height:15.32em; border-radius:.55em .55em 0 0; }
+.fc-in--cc .cc-ph::after { box-shadow:none; background:linear-gradient(180deg, rgba(13,34,56,.32) 0%, rgba(13,34,56,0) 26%, rgba(13,34,56,0) 82%, rgba(13,34,56,.22) 100%); }
+.fc-in--cc .cc-ph .fc-tier { left:auto; right:.75em; top:.8em; }
+.fc--lvl .fc-in--cc .cc-ph .fc-tier { right:.5em; top:.5em; }
+.cc-code { z-index:4; left:.8em; top:.8em; padding:.38em .95em .32em .62em; background:#0d2238; color:#fff; box-shadow:inset .22em 0 0 var(--cc-acc, var(--tier));
+  clip-path:polygon(0 0, 100% 0, calc(100% - .6em) 100%, 0 100%); }
+.fc--lvl .cc-code { left:1.1em; top:1.1em; }
+.cc-code small { display:block; font:500 .56em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.24em; color:#cdbb8c; margin-bottom:.18em; }
+.cc-code b { display:block; font:400 1.5em/1 'SC Display','Russo One',sans-serif; letter-spacing:.04em; font-weight:400; }
+.cc-code--long b { font-size:1.15em; }
+/* nameplate */
+.cc-np { left:0; right:0; top:15.74em; height:3.9em; display:flex; align-items:center; gap:.6em; padding:0 .85em 0 1.75em; background:#0d2238; color:#fff; overflow:hidden; }
+.cc-np::before { content:''; position:absolute; left:0; top:0; bottom:0; width:1.1em; background:var(--frame); clip-path:polygon(0 0, 100% 0, 45% 100%, 0 100%); }
+.cc-np::after { content:''; position:absolute; left:0; right:0; bottom:0; height:.16em; background:var(--frame); }
+.fc--lvl .cc-np { left:.42em; right:.42em; }
+.cc-nm { flex:1; min-width:0; margin:0; font-size:1em; font-weight:400; }
+.cc-nm small { display:block; font:500 .74em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.2em; color:#cdbb8c; text-transform:uppercase; white-space:nowrap; margin-bottom:.2em; }
+.cc-md { display:block; font:400 2.1em/1.02 'SC Display','Russo One',sans-serif; letter-spacing:.005em; color:#fff; }
+.cc-md--l { font-size:1.7em; } .cc-md--xl { font-size:1.38em; } .cc-md--xxl { font-size:1.12em; line-height:1.1; }
+.cc-set { flex:none; max-width:7.6em; margin:0; padding-left:.65em; border-left:.07em solid rgba(205,187,140,.45); text-align:right;
+  font:500 .72em/1.12 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.14em; color:#c8d3df; text-transform:uppercase; }
+.cc-set small { display:block; font-size:.82em; letter-spacing:.26em; color:var(--cc-acc, var(--tier)); margin-bottom:.25em; }
+.cc-kind { left:.95em; right:.95em; top:20em; height:1.3em; margin:0; display:flex; align-items:center; white-space:nowrap; overflow:hidden; }
+.cc-kind span { font:500 .86em/1.2 Inter,'Helvetica Neue',Arial,sans-serif; color:#5a6878; }
+.cc-kind--s span { font-size:.74em; }
+/* the stat block: the back of a great baseball card */
+.cc-st { left:.8em; right:.8em; top:21.5em; height:8em; border-top:.12em solid #0d2238; border-bottom:.12em solid #0d2238; }
+.cc-st > * { position:relative; }
+.cc-r { display:grid; grid-template-columns:3em repeat(4, minmax(0, 1fr)); align-items:center; }
+.cc-r > :not(i) { padding-left:.4em; white-space:nowrap; overflow:hidden; }
+.cc-h { height:1.15em; }
+.cc-h > span { font:500 .66em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; color:#b42a20; text-transform:uppercase; padding-left:calc(.4em / .66); }
+.cc-v { height:1.8em; background:#f4efe0; border-top:.07em solid #cdbb8c; }
+.cc-v i { height:100%; display:flex; align-items:center; justify-content:center; background:#0d2238; color:#fff; font:500 .66em/1 'SC Label','Barlow Condensed',sans-serif; font-style:normal; letter-spacing:.16em; }
+.cc-v b { font:600 1em/1 'IBM Plex Mono',ui-monospace,monospace; color:#0d2238; letter-spacing:-.01em; }
+.cc-v b small { font:500 .66em/1 'IBM Plex Mono',ui-monospace,monospace; color:#5a6878; margin-left:.12em; letter-spacing:0; }
+.cc-ct { height:2.15em; display:flex; align-items:center; gap:.5em; border-top:.07em solid #cdbb8c; overflow:hidden; }
+.cc-tag { flex:none; padding:.3em .42em .26em; background:#b42a20; color:#fff; font:500 .64em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.18em; }
+.cc-ct > div { min-width:0; flex:1; }
+.cc-when { margin:0; font:600 .76em/1.2 Inter,'Helvetica Neue',Arial,sans-serif; color:#0d2238; white-space:nowrap; overflow:hidden; }
+.cc-op { margin:.1em 0 0; font:500 .72em/1.2 Inter,'Helvetica Neue',Arial,sans-serif; color:#3d5266; white-space:nowrap; overflow:hidden; }
+.cc-op small { font-size:1em; color:#5a6878; margin-left:.45em; }
+.cc-op small::before { content:'· '; }
+.cc-op--band { font-style:italic; padding-right:.2em; }
+/* progress: the medal, the count and bar, liveries seen */
+.cc-pr { left:.8em; right:.8em; top:29.85em; height:2.9em; display:grid; grid-template-columns:2.6em minmax(0, 1fr) 4.4em; gap:.65em; align-items:center; }
+.cc-pr > * { position:relative; }
+.cc-medal { width:2.6em; height:2.6em; border-radius:50%; display:grid; place-items:center; color:#9aa4b1; border:.12em dashed #cdbb8c; }
+.cc-medal b { font:600 .9em/1 'IBM Plex Mono',ui-monospace,monospace; }
+.cc-medal--bronze, .cc-medal--silver, .cc-medal--gold { border:0; color:#2a1a08; box-shadow:inset 0 0 0 .16em rgba(255,255,255,.55), 0 .08em .18em rgba(0,0,0,.3); }
+.cc-medal--bronze { background:radial-gradient(circle at 35% 30%, #f6c79b, #b8763d 55%, #7c4a1f); }
+.cc-medal--silver { background:radial-gradient(circle at 35% 30%, #ffffff, #b9c2cc 55%, #7d8792); }
+.cc-medal--gold { background:radial-gradient(circle at 35% 30%, #fff2b8, #e0aa2b 55%, #9c6c06); }
+.cc-pc p { margin:0; font:700 .8em/1.1 Inter,'Helvetica Neue',Arial,sans-serif; color:#0d2238; white-space:nowrap; overflow:hidden; }
+.cc-pc .cc-lv { margin-top:.4em; font:500 .7em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.14em; color:#b42a20; text-transform:uppercase; }
+.cc-bar { height:.45em; margin-top:.32em; border-radius:1em; background:#e3dccb; overflow:hidden; box-shadow:inset 0 0 0 .05em rgba(13,34,56,.15); }
+.cc-bar i { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg, #b42a20, #e0573f); }
+.cc-liv { height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; border-left:.07em solid #cdbb8c; }
+.cc-liv b { font:600 1.15em/1 'IBM Plex Mono',ui-monospace,monospace; color:#0d2238; }
+.cc-liv span { margin-top:.2em; font:500 .58em/1.1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.14em; color:#5a6878; text-transform:uppercase; text-align:center; }
+/* the fact: a fixed slot, centred in it; long ones step down a size (never cut off) */
+.cc-fact-slot { left:.95em; right:.95em; top:33.15em; bottom:1.7em; display:flex; align-items:center; }
+.fc-in--cc .cc-fact { position:relative; margin:0; padding:0 0 0 .7em; border-left:.18em solid #cdbb8c; font:italic 400 .98em/1.4 Georgia,'Times New Roman',serif; letter-spacing:0; color:#24384d; overflow:visible; }
+.fc-in--cc .cc-fact b { font-style:normal; font-weight:700; color:#0d2238; }
+.fc-in--cc .cc-fact--m { font-size:.9em; } .fc-in--cc .cc-fact--s { font-size:.82em; } .fc-in--cc .cc-fact--xs { font-size:.74em; }
+.fc--lvl .fc-fact.cc-fact { margin-top:0; }
+.cc-foot { left:.95em; right:.95em; bottom:.55em; height:1em; display:flex; justify-content:space-between; align-items:center; gap:.8em; }
+.cc-credit { min-width:0; font:400 .56em/1 Inter,'Helvetica Neue',Arial,sans-serif; color:#8a95a1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.cc-mark { flex:none; font:500 .58em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.22em; color:#9c8a57; }
+.fc--lvl .cc-foot { bottom:.7em; left:1.1em; right:1.1em; }

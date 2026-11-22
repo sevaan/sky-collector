@@ -9,7 +9,7 @@ const { parsePlanes, catchClass, CLASS_WORDS } = await import('../js/planes.js')
 const { cardsFor } = await import('../js/flights.js');
 const { catchSightings, skyStampInfo, skyModel } = await import('../js/sky-cards.js');
 const { typeSpecs, makerLine, TYPE_SPECS } = await import('../js/type-specs.js');
-const { flightCardHtml, planeCardHtml, miniCardHtml, compass } = await import('../js/flight-card.js');
+const { flightCardHtml, planeCardHtml, miniCardHtml, compass, splitMaker, photoFor } = await import('../js/flight-card.js');
 
 const T0 = Date.UTC(2026, 10, 19, 20, 18);
 const rec = (o) => ({ lat: 45, lon: -75, alt_baro: o.alt ?? 30000, alt_geom: o.alt ?? 30000, gs: o.gs ?? 400, track: o.track ?? 90, category: o.cat ?? '', hex: o.hex ?? 'abc123', flight: o.cs ?? '', r: o.r ?? '', t: o.t ?? '', dbFlags: o.db ?? 0 });
@@ -69,8 +69,8 @@ test('a catch carries its class, heading and route flag on the plane sighting, n
   const info = skyStampInfo(s.cardSnapshot, ss);
   assert.equal(info.last.cls, 'cargo'); assert.equal(info.last.track, 225);
   const html = planeCardHtml(s.cardSnapshot, { stampInfo: info, callsign: s.callsign });
-  assert.match(html, /Cargo airline<small>UPS · route not known<\/small>/); /* Spine (2026-11-22): the band's words under CAUGHT */
-  assert.match(html, /TYPE<\/span><b class="sp-tp">B763/); /* a long code (HEAVY) gets sp-tp--long */ assert.match(html, /<b>SW<\/b><span>Heading/);
+  assert.match(html, /<p class="cc-op cc-op--band">Cargo airline<small>UPS · route not known<\/small>/); /* Contrail Chrome (2026-11-22): the band's words under CAUGHT */
+  assert.match(html, /<div class="cc-code"><small>TYPE<\/small><b>B763<\/b>/); /* a long code (HEAVY) gets cc-code--long */ assert.match(html, /<span>Heading<\/span>/); assert.match(html, /<i>YOU<\/i>.*<b>SW<\/b><\/div>/);
   assert.match(html, /47\.6<small>m/);
   assert.doesNotMatch(html, /N312UP/); /* no route: the band, not the operator line */
 });
@@ -82,7 +82,7 @@ test('plane-only private catch: a band saying what it is (Light aircraft), type 
   const html = planeCardHtml(ss[0].cardSnapshot, { stampInfo: skyStampInfo(ss[0].cardSnapshot, ss) });
   assert.match(html, /Light aircraft/); assert.doesNotMatch(html, /Not an airline/i);
   assert.doesNotMatch(html, /N12345/); assert.doesNotMatch(html, /rivate/);
-  assert.match(html, /<small>CESSNA<\/small>/); assert.match(html, /USA · four-seat light aircraft/i); /* Spine: maker above the model, the rest as the kind line */
+  assert.match(html, /<small>CESSNA<\/small>/); assert.match(html, /USA · four-seat light aircraft/i); /* maker above the model, the rest as the kind line */
 });
 
 test('airline catch with a route: a boarding pass and an operator line on the plane card', () => {
@@ -95,11 +95,11 @@ test('airline catch with a route: a boarding pass and an operator line on the pl
   assert.match(fh, /BOARDING PASS<b>RPA3402/); assert.match(fh, /<b>ORD<\/b>/); assert.match(fh, /<b>YOW<\/b>/); assert.match(fh, /E75L/);
   assert.match(fh, /1,051<small>km/);
   const ph = planeCardHtml(pl.cardSnapshot, { stampInfo: skyStampInfo(pl.cardSnapshot, ss) });
-  assert.match(ph, /<p class="sp-op">Republic<small>N201JQ<\/small><\/p>/);
+  assert.match(ph, /<p class="cc-op">Republic<small>N201JQ<\/small><\/p>/);
   assert.doesNotMatch(ph, /ss-band/);
   /* minis */
   assert.match(flightCardHtml(f.cardSnapshot, { small: true, caughtAt: new Date(T0) }), /fc--mini/);
-  assert.match(miniCardHtml({ kind: 'plane', card: pl.cardSnapshot, last: T0 }), /sp-side/); /* the small card is the full Spine card shrunk (2026-11-22) */
+  assert.match(miniCardHtml({ kind: 'plane', card: pl.cardSnapshot, last: T0 }), /fc-in--cc/); /* the small card is the full plane card shrunk (2026-11-22) */
 });
 
 test('a type with no verified specs shows only what the feed and the catches say', () => {
@@ -107,7 +107,31 @@ test('a type with no verified specs shows only what the feed and the catches say
   const { plane } = cardsFor(p, null, '');
   const ss = catchSightings({ time: T0, hex: p.hex, callsign: p.callsign, type: p.type, altFt: 23000, gsKt: 380, rangeKm: 20, flight: null, plane });
   const html = planeCardHtml(ss[0].cardSnapshot, { stampInfo: skyStampInfo(ss[0].cardSnapshot, ss) });
-  assert.match(html, /<b>Large<\/b><span>Size/); assert.match(html, /<b>1<\/b><span>Aircraft/);
-  assert.doesNotMatch(html, /First flew/);
+  assert.match(html, /<i><\/i><span>Size<\/span><span>Aircraft<\/span>/);
+  assert.match(html, /<i>TYPE<\/i><b>Large<\/b><b>1<\/b><b>—<\/b><b>—<\/b><\/div>/); /* nothing invented: the columns it has no figure for say "—" */
   assert.equal(compass(359), 'N'); assert.equal(compass(225), 'SW'); assert.equal(compass(undefined), '—');
+});
+
+// Contrail Chrome (2026-11-22, design/fresh-chrome/): the nameplate splits the maker off the model, every card has four
+// spec columns ("—" for the ones the type has no figure for), and the blocks are always all there so nothing moves.
+test('Contrail Chrome: maker split, four spec columns, every block on every card', () => {
+  assert.deepEqual(splitMaker('de Havilland Canada Dash 8-400', 'De Havilland Canada'), { maker: 'de Havilland Canada', model: 'Dash 8-400' });
+  assert.deepEqual(splitMaker('Bombardier Global Express'), { maker: 'Bombardier', model: 'Global Express' }); /* no specs: from the list of makers */
+  assert.deepEqual(splitMaker('Airbus Helicopters H145'), { maker: 'Airbus Helicopters', model: 'H145' }); /* the longest maker wins */
+  assert.deepEqual(splitMaker('Balloon'), { maker: null, model: null });
+  const crj = planeCardHtml({ key: 'P:CRJ2', type: 'CRJ2', name: 'Bombardier CRJ200', tier: 'uncommon', setName: 'Regional Jets' }, {});
+  assert.match(crj, /<small>BOMBARDIER<\/small><span class="cc-md">CRJ200<\/span>/);
+  assert.match(crj, /<span>First flew<\/span><span>Seats<\/span><span>Engines<\/span><span>Span<\/span>/);
+  assert.match(crj, /<i>TYPE<\/i><b>1991<\/b><b>50<\/b><b>2<small>jets<\/small><\/b><b>21\.2<small>m<\/small><\/b>/);
+  assert.match(crj, /Not caught yet/); assert.match(crj, /Not collected yet/); /* an uncollected card keeps every block */
+  for (const cls of ['cc-ph', 'cc-code', 'cc-np', 'cc-kind', 'cc-st', 'cc-pr', 'cc-fact', 'cc-foot']) assert.match(crj, new RegExp(`class="[^"]*${cls}`), cls);
+  assert.match(crj, /Photo: flybyeigenheer, CC BY-SA 2\.0/);
+  const heli = planeCardHtml({ key: 'P:EC35', type: 'EC35', name: 'Airbus Helicopters EC135', tier: 'common', setName: 'Helicopters' }, {});
+  assert.match(heli, /<span>First flew<\/span><span>Passengers<\/span><span>Engines<\/span><span>Rotor<\/span>/); /* the helicopter's own labels */
+  const b744 = typeSpecs('B744'); assert.equal(b744.cells.length, 4); assert.equal(planeCardHtml({ key: 'P:B744', type: 'B744', name: 'Boeing 747-400', tier: 'epic' }, {}).includes('64.4'), true);
+});
+test('the re-picked CRJ2 and A321neo house photos', () => {
+  assert.equal(photoFor('CRJ2').url, 'assets/photos/house/CRJ2-r3.webp'); assert.equal(photoFor('CRJ2').credit, 'flybyeigenheer');
+  assert.equal(photoFor('A21N').url, 'assets/photos/house/A21N-r3.webp'); assert.equal(photoFor('A21N').h, 720);
+  assert.equal(photoFor('B789').url, 'assets/photos/house/B789.webp');
 });
