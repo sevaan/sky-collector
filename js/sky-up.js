@@ -10,5 +10,19 @@ export const planesUp = (positions) => (positions ?? []).filter(isUp);
 // The first catch's wait (main.js skyFirstWait): the plane to steer to once one is up. One with room to line up (8° to
 // 75°, the nearest) first, else the nearest that's up at all; null while nothing is up, so "No planes over you right now"
 // stays only while it's true (Sky Build playtest v0.1.1809: it stayed 9 s with a catchable plane overhead).
-export const firstUp = (positions) => { const up = planesUp(positions), byRange = (a, b) => (a.rangeKm ?? Infinity) - (b.rangeKm ?? Infinity);
+export const firstUp = (positions, night = false) => { const up = (positions ?? []).filter((a) => canCatch(a, night)) /* one you can actually catch (2026-11-21) */, byRange = (a, b) => (a.rangeKm ?? Infinity) - (b.rangeKm ?? Infinity);
   return up.filter((a) => a.el >= 8 && a.el <= 75).sort(byRange)[0] ?? up.slice().sort(byRange)[0] ?? null; };
+
+/* How far away a plane can be and still be caught (2026-11-21, Sevaan: a light aircraft 56 km off was collectable, and no
+   one could see it): roughly how far each size is visible to the eye from the ground, by the transponder's size category.
+   With no category (some feeds leave it out) an airliner's distance, as most planes the feed carries are airliners. */
+export const CATCH_KM = { A1: 15, A2: 30, A3: 60, A4: 60, A5: 80, A6: 40, A7: 12, B1: 15, B2: 20, B4: 12, B6: 5 };
+export const CATCH_KM_DEFAULT = 60;
+/* At night (properly dark where you are: the Sun more than 6 degrees below the horizon) a plane's lights carry further, so
+   half as far again (2026-11-21, Sevaan's yes via Boss). Not drones and balloons: many have no bright lights. The 5 degree
+   floor stays. */
+export const NIGHT_SUN_EL = -6, NIGHT_FACTOR = 1.5, NO_NIGHT_BOOST = new Set(['B2', 'B6']);
+export const isNight = (sunEl) => Number.isFinite(sunEl) && sunEl < NIGHT_SUN_EL;
+export const catchKm = (plane, night = false) => { const cat = String(plane?.category ?? '').toUpperCase(), km = CATCH_KM[cat] ?? CATCH_KM_DEFAULT; return night && !NO_NIGHT_BOOST.has(cat) ? km * NIGHT_FACTOR : km; };
+// Up, and near enough to see: what the circle may lock on to and collect. night: isNight(the Sun's height there).
+export const canCatch = (a, night = false) => isUp(a) && Number.isFinite(a.rangeKm) && a.rangeKm <= catchKm(a.plane, night);

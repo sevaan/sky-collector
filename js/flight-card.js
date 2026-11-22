@@ -9,22 +9,22 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { regularFor, clockText } from './sky-regulars.js?v=0.1.1850';
-import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js?v=0.1.1850';
-import { flightFact } from './flight-facts.js?v=0.1.1850';
-import { typePhoto } from './type-photos.js?v=0.1.1850';
-import { housePhoto } from './house-photos.js?v=0.1.1850';
-import { gapPhoto } from './gap-photos.js?v=0.1.1850'; /* the types that had no photo (2026-11-18) */
-import { airlinePhoto } from './airline-photos.js?v=0.1.1850';
-import { airlineLogo } from './airline-logos.js?v=0.1.1850';
-import { fitStyle } from './photo-fit.js?v=0.1.1850';
-import { dist, speed, useMiles } from './units.js?v=0.1.1850';
-import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1850';
-import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1850';
-import { typeFact } from './sky-facts.js?v=0.1.1850';
-import { localText } from './localize.js?v=0.1.1850';
-import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1850';
-import { qrEncode, qrSvg } from './qr.js?v=0.1.1850';
+import { regularFor, clockText } from './sky-regulars.js?v=0.1.1867';
+import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js?v=0.1.1867';
+import { flightFact } from './flight-facts.js?v=0.1.1867';
+import { typePhoto } from './type-photos.js?v=0.1.1867';
+import { housePhoto } from './house-photos.js?v=0.1.1867';
+import { gapPhoto } from './gap-photos.js?v=0.1.1867'; /* the types that had no photo (2026-11-18) */
+import { airlinePhoto } from './airline-photos.js?v=0.1.1867';
+import { airlineLogo } from './airline-logos.js?v=0.1.1867';
+import { fitStyle } from './photo-fit.js?v=0.1.1867';
+import { dist, speed, useMiles } from './units.js?v=0.1.1867';
+import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1867';
+import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1867';
+import { typeFact } from './sky-facts.js?v=0.1.1867';
+import { localText } from './localize.js?v=0.1.1867';
+import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1867';
+import { qrEncode, qrSvg } from './qr.js?v=0.1.1867';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // A type name escaped, with its hyphenated model codes kept on one line ('Boeing KC-135R Stratotanker' broke after 'KC-').
@@ -264,7 +264,7 @@ function specCells(p, si, last, type) {
   const s = typeSpecs(type);
   if (s) return s.cells.map(([l, v, u]) => (l === 'Range' && u === 'km' && useMiles() ? [l, dist(Number(v.replace(/,/g, ''))).v, 'mi'] : [l, v, u]));
   const cat = last?.cat || (/^P:UNKNOWN-(\w+)$/.exec(p.key ?? '') || [])[1] || '';
-  return [SIZE_WORD[cat] ? ['Size', SIZE_WORD[cat]] : null, si?.count ? ['Aircraft', String(si.count)] : null,
+  return [SIZE_WORD[cat] && cat !== 'A7' ? ['Size', SIZE_WORD[cat]] : null, /* not 'Rotorcraft' on a helicopter's card: it says so already, and the word ran out of its cell (playtest 2026-11-21) */ si?.count ? ['Aircraft', String(si.count)] : null,
     si?.liveryCount ? ['Operators', String(si.liveryCount)] : null, (si?.days ?? 0) > 1 ? ['Days seen', String(si.days)] : null].filter(Boolean);
 }
 

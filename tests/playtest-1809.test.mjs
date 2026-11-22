@@ -43,7 +43,7 @@ test('the first catch waits only while nothing is up by the shared rule (js/sky-
 
 test('skyFirstWait withdraws its toast with dropToast once firstUp finds a plane', () => {
   const main = read('js/main.js'), f = main.slice(main.indexOf('function skyFirstWait()'), main.indexOf('/* Rare visitors'));
-  assert.match(f, /firstUp\(state\.planes\.positions\(state\.observer\)\)/);
+  assert.match(f, /firstUp\(state\.planes\.positions\(state\.observer\), isNight\(state\.frame\?\.sunEl\)\)/);
   assert.match(f, /toast\('No planes over you right now\.[^;]*\{ id: W \}\)/);
   assert.match(f, /if \(a\) \{ clearInterval\(iv\); dropToast\(W\);/);
   assert.match(f, /\}, 1000\);/);

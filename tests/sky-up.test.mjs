@@ -35,3 +35,31 @@ test('Sky makes only its own notification channels and drops Space Collector\'s'
   assert.deepEqual(staleChannels(have, true), ['events']);
   assert.deepEqual(staleChannels(have, false), [], 'Space Collector keeps all four');
 });
+
+test('catching: up, and near enough for its size (2026-11-21: a light aircraft 56 km off was collectable)', async () => {
+  const { canCatch, catchKm, firstUp } = await import('../js/sky-up.js');
+  const P = (cat, el, km) => ({ plane: { hex: `${cat}-${km}`, category: cat }, az: 0, el, rangeKm: km });
+  assert.equal(canCatch(P('A1', 20, 56)), false, 'a light aircraft 56 km off');
+  assert.equal(canCatch(P('A1', 20, 10)), true);
+  assert.equal(canCatch(P('A3', 20, 56)), true, 'an airliner 56 km off');
+  assert.equal(canCatch(P('A5', 3, 20)), false, 'on the horizon');
+  assert.equal(canCatch(P('A7', 30, 15)), false, 'a helicopter 15 km off');
+  assert.equal(catchKm({}), 60, 'no category: an airliner');
+  assert.equal(firstUp([P('A1', 30, 40), P('A3', 30, 50)]).plane.category, 'A3', 'the first catch steers to one you can catch');
+  assert.equal(firstUp([P('A1', 30, 40)]), null);
+});
+
+test('night catch distances: half as far again when properly dark, not for balloons and drones', async () => {
+  const { canCatch, catchKm, isNight, firstUp } = await import('../js/sky-up.js');
+  const P = (cat, el, km) => ({ plane: { hex: `${cat}-${km}`, category: cat }, az: 0, el, rangeKm: km });
+  assert.equal(canCatch(P('A3', 20, 80), false), false, 'airliner 80 km by day');
+  assert.equal(canCatch(P('A3', 20, 80), true), true, 'airliner 80 km at night (90)');
+  assert.equal(canCatch(P('A1', 20, 20), false), false, 'light aircraft 20 km by day');
+  assert.equal(canCatch(P('A1', 20, 20), true), true, 'light aircraft 20 km at night (22.5)');
+  assert.equal(canCatch(P('B2', 20, 25), true), false, 'a balloon keeps 20 km at night');
+  assert.equal(catchKm({ category: 'B6' }, true), 5, 'a drone keeps 5 km');
+  assert.equal(catchKm({}, true), 90, 'no category: 90 at night');
+  assert.equal(canCatch(P('A3', 4, 10), true), false, 'the 5 degree floor stays at night');
+  assert.equal(isNight(-6), false, 'civil twilight\'s edge is not yet night'); assert.equal(isNight(-6.1), true); assert.equal(isNight(-2), false); assert.equal(isNight(undefined), false);
+  assert.equal(firstUp([P('A1', 30, 20)], true).plane.category, 'A1');
+});
