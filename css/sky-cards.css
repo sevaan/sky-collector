@@ -950,3 +950,5 @@ html.sky-cards #sat-card.rm-card .rm-sub { white-space:normal; overflow:visible;
 .sp-main { overflow:hidden; border-radius:0 .95em .95em 0; }
 .sp-body { overflow:hidden; }
 .fc-in--sp .sp-fact { -webkit-line-clamp:3; flex:0 1 auto; min-height:0; }
+/* the photo sits inside the level's gold inner frame, not under its edge (Android re-check 2026-11-22: ~4px past it) */
+.fc--lvl .sp-ph.fc-pic { margin:.42em .42em 0 0; border-radius:0 .55em 0 0; }
