@@ -6,9 +6,9 @@
 //         renderCard, attachTilt, artImage, applyBack, sfx, feel, tierColor }
 const wait = (ms, reduced) => new Promise((r) => setTimeout(r, reduced ? Math.min(ms, 120) : ms));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-import { TIERS, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1887';
-import { attachGyro } from './card.js?v=0.1.1887';
-import { cloudsHtml } from './weather-art.js?v=0.1.1887';
+import { TIERS, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1888';
+import { attachGyro } from './card.js?v=0.1.1888';
+import { cloudsHtml } from './weather-art.js?v=0.1.1888';
 // Cards turn with the catch reveal's own flip and rarity table (js/card-moment.js, 2026-11-11): one turn for a catch, a
 // gift and the morning pack.
 // A tap that answers on the finger lifting, like main.js tapOn: the pack animates every frame, and WebKit drops a click
@@ -30,7 +30,7 @@ export function playPack(o) {
   return new Promise((resolve) => {
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches, W = (ms) => wait(ms, reduced);
     const sfx = (n, v) => { try { o.sfx?.(n, typeof v === 'object' && v ? v : { gain: v ?? 1 }); } catch {} } /* a number is the gain; an object is passed through (2026-11-18: the tear's { gap, wait } arrived as the gain, so it was NaN and the tear never played, Sevaan: "didn't hear the pack opening sound"; Space Collector 925f6a71) */, feel = (k) => { try { o.feel?.(k); } catch {} };
-    const best = o.highlights.at(-1)?.card;
+    const best = o.highlights.reduce((a, b) => ((b.score ?? 0) >= (a?.score ?? 0) ? b : a), null)?.card; /* the best by score, not the last: the night pack deals its passes after the plane cards (2026-11-22) */
     const bare = !!o.bare; /* the first-run opener (2026-11-12, Sevaan): just the pack and the swipe cue, no words; o.emerge(packRect, dropPack) brings the welcome card out of it */
     const root = document.createElement('div'); root.id = 'gift'; root.className = bare ? 'in bare' : 'in'; root.setAttribute('role', 'dialog'); root.setAttribute('aria-label', bare ? 'A sealed pack. Swipe across the top to open it.' : `Cards from ${o.from || 'a friend'}`); if (bare) root.tabIndex = 0;
     root.style.setProperty('--fx', o.tierColor(best?.tier) ?? '#ffc93d');
