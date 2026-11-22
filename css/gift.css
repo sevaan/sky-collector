@@ -521,3 +521,10 @@ html.embedded .send-view, .send-view:focus, .send-view:focus-visible { outline: 
    the sides. */
 html.android #gift .gp-pk { --pd: 0px; }
 html.android #gift :is(.gp-back, .gp-wall) { display: none; }
+
+/* Boarding passes on the pack's last screen (js/gift-pack.js .pz, 2026-11-22): the landscape pass turned to read the right way
+   up, no card frame or glow behind it, only its own paper shadow */
+#gift .gp-haul .gp-fan .t.mini.pz { transform-origin:50% 50%; aspect-ratio:16 / 42; overflow:visible; background:none !important; border:0; border-radius:0; box-shadow:none !important; filter:drop-shadow(0 6px 10px rgba(13,34,56,.22)); }
+#gift .gp-haul .gp-fan .t.mini.pz > .mini-face { width:calc(160px * var(--mini-s)); height:calc(420px * var(--mini-s)); overflow:visible; border-radius:0; }
+#gift .gp-haul .gp-fan .t.mini.pz > .mini-face > .card { width:16em; background:none; box-shadow:none; }
+#gift .gp-haul .gp-fan .t.mini.pz > .mini-face > .card > .fc--land { margin:0; }

@@ -959,4 +959,4 @@ html.sky-cards #sat-card.rm-card .rm-sub { white-space:normal; overflow:visible;
 .fc-in--sp .sp-fact--s { font-size:.68em; }
 .fc-in--sp .sp-ct { margin-top:auto; min-height:0; }
 /* the night pack: a boarding pass dealt face up, tilted like the reveal's */
-#gift .gp-dc.gp-pass .fc--land { transform:translateY(5%) rotate(6deg) scale(1.12); transform-origin:50% 50%; }
+#gift .gp-dc.gp-pass .fc--land { transform:translateY(2%) rotate(6deg) scale(1.05); transform-origin:50% 50%; }
