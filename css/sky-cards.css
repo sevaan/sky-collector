@@ -933,3 +933,4 @@ html.sky-cards #sat-card.rm-card .rm-sub { white-space:normal; overflow:visible;
 .sp-pr .sp-sub { font-size:.76em; letter-spacing:.16em; color:#5b6878; text-transform:uppercase; }
 .fc-in--sp .sp-fact { margin:.8em 0 0; font-size:.8em; line-height:1.4; border-left:.2em solid #d7362b; padding-left:.6em; overflow:hidden; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; flex:none; }
 .sp-tp--long { font-size:1.75em; margin-top:.3em; } /* HEAVY, LIGHT, ULTRA, BALLOON: inside the column */
+.fc-pic::after, .fc-in--bp .fc-pic::after, .fc-in--ss .fc-pic::after { box-shadow:none; } /* no inner shadow on card photos (2026-11-22, Sevaan) */
