@@ -1,15 +1,15 @@
 // Player progress from the sighting log: XP and observer rank, tonight’s three missions, a weekly streak and
 // achievements. Everything is derived from the saved sightings (nothing extra is stored), so it can’t drift.
 // info(cardKey) -> { tier, type, owner, launch, natural, con } | null. No DOM.
-import { isProp } from './sky-props.js?v=0.1.1870';
-import { SKY_PATCHES_MORE, freshSky2, noteSky2 } from './sky-patches.js?v=0.1.1870';
-import { nightKey, useCalendarDays } from './observation.js?v=0.1.1870';
-import { fleetThresholds } from './card-model.js?v=0.1.1870';
-import { distRound as distText } from './units.js?v=0.1.1870';
-import { firstFlew, isNewType, isOldType, engines, makerOf, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1870';
-import { planeSet } from './sky-sets.js?v=0.1.1870';
-import { privateCatch, MIL_TYPES } from './plane-privacy.js?v=0.1.1870';
-import { localDay, THRESHOLDS } from './sky-stamps.js?v=0.1.1870';
+import { isProp } from './sky-props.js?v=0.1.1871';
+import { SKY_PATCHES_MORE, freshSky2, noteSky2 } from './sky-patches.js?v=0.1.1871';
+import { nightKey, useCalendarDays } from './observation.js?v=0.1.1871';
+import { fleetThresholds } from './card-model.js?v=0.1.1871';
+import { distRound as distText } from './units.js?v=0.1.1871';
+import { firstFlew, isNewType, isOldType, engines, makerOf, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1871';
+import { planeSet } from './sky-sets.js?v=0.1.1871';
+import { privateCatch, MIL_TYPES } from './plane-privacy.js?v=0.1.1871';
+import { localDay, THRESHOLDS } from './sky-stamps.js?v=0.1.1871';
 
 // A longer climb (2026-10-12, playtest room: three ranks on night 1, Mission Control in about two weeks), with two
 // prestige ranks past Mission Control. Nobody drops a rank they had on the old curve (rankFloor below).
