@@ -5,19 +5,19 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { isProp } from './sky-props.js?v=0.1.1889';
-import { planesUp } from './sky-up.js?v=0.1.1889';
-import { planeKey } from './flights.js?v=0.1.1889';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1889';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1889';
-import { airlineIcon } from './airline-icons.js?v=0.1.1889';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1889';
-import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1889';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1889';
-import { planeSet } from './sky-sets.js?v=0.1.1889';
-import { MIL_TYPES } from './plane-privacy.js?v=0.1.1889';
-import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1889';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1889';
+import { isProp } from './sky-props.js?v=0.1.1890';
+import { planesUp } from './sky-up.js?v=0.1.1890';
+import { planeKey } from './flights.js?v=0.1.1890';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1890';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1890';
+import { airlineIcon } from './airline-icons.js?v=0.1.1890';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1890';
+import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1890';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1890';
+import { planeSet } from './sky-sets.js?v=0.1.1890';
+import { MIL_TYPES } from './plane-privacy.js?v=0.1.1890';
+import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1890';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1890';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
