@@ -1008,3 +1008,7 @@ html.sky-cards #sat-card.rm-card .rm-sub { white-space:normal; overflow:visible;
 #discover.sky-plane .d-mini .dp-fan .sct-face { width:112px; height:157px; transform:scale(calc(72 / 112)); transform-origin:0 0; display:block; }
 #discover.sky-plane .d-mini .dp-n { position:absolute; left:2px; bottom:-14px; z-index:2; font:600 9px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.1em; text-transform:uppercase; background:#b42a20; color:#fff; padding:3px 6px; border-radius:9px; white-space:nowrap; }
 @media (max-height:720px) { #discover.sky-plane .d-mini .dp-fan .sct-face { transform:scale(calc(56 / 112)); } #discover.sky-plane .d-mini .dp-fan { width:56px; height:84px; } #discover.sky-plane .d-mini .dp-fan > .dp-pass { transform:translate(20px, 5px) rotate(10deg); } }
+/* The pack's rising card and the binder flight darken the card underneath with a card-sized layer (css/reveal.css). Under a
+   boarding pass, which is narrower, it showed as the old card's shadow around the pass (2026-11-22, Sevaan): the pass keeps its
+   own paper shadow (.pk-pass, .fc--flight::before) and no card-shaped layer. */
+#reveal .pk-under > .dk-slot.dk-pass::after, .binder-fly .bf-back:has(.fc--land)::after { display:none; }
