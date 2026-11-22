@@ -865,5 +865,11 @@ body.sky-only .tc .art .ob-moon { display:none; } /* When to look up: no Moon in
 html.sky-cards #sat-card.rm-card .rm-sub { white-space:normal; overflow:visible; }
 /* Only the airline and the date show behind the card (2026-11-21, Sevaan: "just have the Lufthansa and the date sticking
    out"), 2.25em (js/reveal.js LP_PEEK). In front the pass is lifted off the plane card, so it casts a deeper shadow on it. */
-#reveal .dk-track > .dk-front.dk-pass .fc--land { position:relative; }
-#reveal .dk-track > .dk-front.dk-pass .fc--land::before { content:''; position:absolute; inset:.8em .4em; z-index:-1; border-radius:1.2em; background:rgba(13,34,56,.5); box-shadow:0 0 1.8em 1.2em rgba(13,34,56,.42); transform:translate(2.6em, 2.8em); pointer-events:none; } /* the lifted pass's shadow on the plane card (2026-11-21, Sevaan) */
+/* The lifted pass's shadow falls only on the plane card behind it, never on the page (2026-11-21, Sevaan): it's drawn inside
+   the plane card's face, which clips it, as the pass's shape grown and tilted like the pass (--lpk, 7.5deg) and offset down
+   and right. The pass itself drops its outer shadow while it's in front. */
+#reveal .dk-track > .dk-front.dk-pass .fc--land { filter:none !important; }
+#reveal.two .dk-track > .dk-slot:not(.dk-pass) .card--plane .fc-face { overflow:hidden; }
+#reveal.two .dk-track > .dk-slot:not(.dk-pass) .card--plane .fc-face::after { content:''; position:absolute; z-index:6; left:6em; top:0; width:16em; height:42em; padding:0; border-radius:1.2em; pointer-events:none;
+  background:rgba(13,34,56,.34); box-shadow:0 0 1.6em 1.1em rgba(13,34,56,.3); transform:translate(1.6em, 2em) scale(var(--lpk, 1)) rotate(7.5deg); opacity:0; transition:opacity .34s ease; }
+#reveal.two .dk-track:has(> .dk-front.dk-pass) > .dk-back .card--plane .fc-face::after { opacity:1; }
