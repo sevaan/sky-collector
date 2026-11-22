@@ -1036,3 +1036,6 @@ html.sky-cards .lb-track > :is(#logbook, #sat-card).lb-back .lb-top { padding-to
 @keyframes ncTwinkle { 0%, 100% { opacity:.2; } 50% { opacity:1; } }
 @media (prefers-reduced-motion: reduce) { html.sky-cards.sky-night #logbook.lb-climb .lb-pic::before, html.sky-cards.sky-night #logbook.lb-climb .lb-pic::after { animation:none; opacity:.7; } }
 html.sky-cards .lb-track > #logbook.lb-back .lb-remind { display:none; } /* behind, the strip shows its title, not the Remind me button that pushed it down */
+/* the rank card's noise clouds (js/cloud-pic.js): by day a soft white with lit tops; at night faint and moonlit */
+html.sky-cards.sky-night #logbook.lb-climb .lbc-cloud-img { opacity:.2; }
+html.sky-cards.sky-night #logbook.lb-climb .lbc-cloud-lit { display:none; }

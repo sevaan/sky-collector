@@ -41,29 +41,22 @@ export function climbGeom(n, W = 358, H = 196) {
 }
 
 // The whole picture. ranks: [[xp, name], ...] (js/progress.js RANKS); index: your rank; into: 0..1 toward the next.
-/* Clouds (2026-11-22, Sevaan: "The clouds in the rank box need to be better. Up the fidelity"): small cumulus, each a cluster of
-   puffs on a flat base, lit white on top and shading to a cool grey base, with soft edges and a faint shadow beneath, plus a
-   thin wisp of high cloud. Deterministic, kept right of the rank names. Colours from CSS (--rc-cloud-top, --rc-cloud-base,
-   --rc-cloud-shade), so the night card can recolour them. */
+/* Clouds (2026-11-22, Sevaan: "could be better"; Space Collector's technique via Space Max): soft noise pictures made by
+   js/cloud-pic.js (the caller passes them, so this stays pure): a lighter copy nudged up for lit tops, then the cloud, faded
+   out towards the rank names on the left and towards the runway at the bottom. No pictures (tests, no canvas): no clouds. */
 let cloudId = 0;
-function cumulus(cx, base, w, seed, id) {
-  let s = seed; const r = () => (s = (s * 16807) % 2147483647) / 2147483647;
-  const puffs = [], n = 5 + Math.floor(r() * 3);
-  for (let i = 0; i < n; i++) { const t = (i + 0.5) / n, x = cx - w / 2 + t * w, mid = 1 - Math.abs(t - 0.5) * 1.7, rad = w * (0.11 + 0.13 * mid + r() * 0.05); puffs.push([x + (r() - 0.5) * w * 0.06, base - rad * (0.55 + mid * 0.5), rad]); }
-  const top = Math.min(...puffs.map(([, y, rr]) => y - rr)), k = `${id}k${seed}`;
-  const body = puffs.map(([x, y, rr]) => `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${rr.toFixed(1)}"/>`).join('') + `<rect x="${(cx - w / 2).toFixed(1)}" y="${(base - w * 0.12).toFixed(1)}" width="${w.toFixed(1)}" height="${(w * 0.12).toFixed(1)}" rx="${(w * 0.06).toFixed(1)}"/>`;
-  /* one gradient for the whole cloud, top to base, so the shading runs across it rather than puff by puff */
-  return `<linearGradient id="${k}" gradientUnits="userSpaceOnUse" x1="0" y1="${top.toFixed(1)}" x2="0" y2="${base.toFixed(1)}"><stop offset="0" style="stop-color:var(--rc-cloud-top,#fff)"/><stop offset=".5" style="stop-color:var(--rc-cloud-top,#fff)"/><stop offset="1" style="stop-color:var(--rc-cloud-base,#c9d7e6)"/></linearGradient>`
-    + `<clipPath id="${k}c"><rect x="${(cx - w).toFixed(1)}" y="${(top - 4).toFixed(1)}" width="${(w * 2).toFixed(1)}" height="${(base - top + 4).toFixed(1)}"/></clipPath>`
-    + `<g fill="url(#${k})" filter="url(#${id}f)" clip-path="url(#${k}c)">${body}</g>`;
-}
-function clouds(W, H) {
+function clouds(W, H, pics) {
+  if (!pics?.cloud) return '';
   const id = `lbcc${++cloudId}`;
-  return `<defs><filter id="${id}f" x="-10%" y="-20%" width="120%" height="140%"><feGaussianBlur stdDeviation=".55"/></filter></defs>`
-    + `<g class="lbc-clouds"><path d="M${(W * 0.55).toFixed(0)} ${(H * 0.2).toFixed(0)}q${(W * 0.08).toFixed(0)} -3 ${(W * 0.17).toFixed(0)} -1t${(W * 0.15).toFixed(0)} 1" class="lbc-wisp"/>`
-    + cumulus(W * 0.85, H * 0.5, 64, 7, id) + cumulus(W * 0.67, H * 0.79, 40, 3, id) + '</g>';
+  return `<defs><linearGradient id="${id}g" x1="0" y1="0" x2="1" y2="0"><stop offset=".22" stop-color="#fff" stop-opacity="0"/><stop offset=".55" stop-color="#fff" stop-opacity="1"/></linearGradient>`
+    + `<linearGradient id="${id}v" x1="0" y1="0" x2="0" y2="1"><stop offset=".05" stop-color="#000"/><stop offset=".2" stop-color="#fff"/><stop offset=".7" stop-color="#fff"/><stop offset=".95" stop-color="#000"/></linearGradient>`
+    + `<mask id="${id}m" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><rect width="${W}" height="${H}" fill="url(#${id}v)"/></mask>`
+    + `<mask id="${id}h" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><rect width="${W}" height="${H}" fill="url(#${id}g)"/></mask></defs>`
+    + `<g class="lbc-clouds" mask="url(#${id}h)"><g mask="url(#${id}m)">`
+    + (pics.lit ? `<image href="${pics.lit}" x="0" y="-4" width="${W}" height="${H}" preserveAspectRatio="none" class="lbc-cloud-lit"/>` : '')
+    + `<image href="${pics.cloud}" x="0" y="0" width="${W}" height="${H}" preserveAspectRatio="none" class="lbc-cloud-img"/></g></g>`;
 }
-export function climbSvg({ ranks, index, into, xp, W = 358, H = 196 }) {
+export function climbSvg({ ranks, index, into, xp, W = 358, H = 196, clouds: pics = null }) {
   const n = ranks.length, G = climbGeom(n, W, H), lv = climbLevel(index, into, n), pl = G.plane(lv), cur = Math.min(index, G.top);
   const next = ranks[cur + 1];
   const rows = ranks.map(([, name], i) => {
@@ -82,7 +75,7 @@ export function climbSvg({ ranks, index, into, xp, W = 358, H = 196 }) {
   } else tag = `<text x="${G.gx}" y="${(G.y(G.top) - 4).toFixed(1)}" class="lbc-tag">TOP RANK · CRUISING</text>`;
   const rw = G.gx - 22;
   return `<svg class="lb-ladder lbc" viewBox="0 0 ${W} ${H}" width="100%" height="${H}" data-n="${n}" data-w="${W}" data-h="${H}" data-lv="${lv.toFixed(4)}" aria-hidden="true">
-    ${clouds(W, H)}
+    ${clouds(W, H, pics)}
     ${rows}
     <rect x="${rw}" y="${(G.y(0) + 1).toFixed(1)}" width="62" height="6" rx="1" class="lbc-rwy"/><path d="M${rw + 4} ${(G.y(0) + 4).toFixed(1)}h54" class="lbc-rwy-c"/>
     <path d="${G.poly(pl.t, 1)}" class="lbc-ahead"/>
