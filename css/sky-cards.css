@@ -792,7 +792,12 @@ body.sky-only .tc .art .ob-moon { display:none; } /* When to look up: no Moon in
    plane card and narrower. Same paper as before (warm stock, grain and fibres, notches cut through, a red rule). */
 .fc.fc--land { width:16em; }
 .card.card--sky > .fc--land { width:16em; margin:0 auto; }
-.fc--land .fc-rot { -webkit-mask:none !important; mask:none !important; box-shadow:none !important; border-radius:0; }
+/* the notches cut the whole pass, not only its paper (2026-11-22, Sevaan: "the notches aren't fully cut out"): the gloss and
+   glare layers beside the pass in .fc-rot still lit the half-circles faintly when the card tilted. .lp is turned -90deg, so its
+   tear line (12em from its right end) is 12em down from the top here, and its long edges are this box's left and right. */
+.fc--land .fc-rot { box-shadow:none !important; border-radius:0;
+  -webkit-mask:radial-gradient(circle at 0 12em, #0000 .62em, #000 .67em) left / 51% 100% no-repeat, radial-gradient(circle at 100% 12em, #0000 .62em, #000 .67em) right / 51% 100% no-repeat !important;
+          mask:radial-gradient(circle at 0 12em, #0000 .62em, #000 .67em) left / 51% 100% no-repeat, radial-gradient(circle at 100% 12em, #0000 .62em, #000 .67em) right / 51% 100% no-repeat !important; }
 .fc--flight:not(.fc--mini)::before { content:''; position:absolute; inset:0; z-index:-1; border-radius:.7em; pointer-events:none; box-shadow:0 .1em .12em rgba(13,34,56,.16), 0 .6em .9em rgba(13,34,56,.12); } /* outside the pass only, so the notches stay clear */
 .lp-turn { position:relative; width:16em; height:42em; }
 .lp { --stub:12em; --band:4.6em; --cut:.62em; /* notches smaller (2026-11-21, Sevaan: "too big") */ --lk:#13283d; --lm:#4a6178; --lr:#b42a20; position:absolute; left:0; top:0; width:42em; height:16em; color:var(--lk); transform-origin:0 0; transform:translateY(42em) rotate(-90deg); }
