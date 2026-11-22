@@ -998,3 +998,13 @@ html.sky-cards #sat-card.rm-card .rm-sub { white-space:normal; overflow:visible;
 .cc-credit { min-width:0; font:400 .56em/1 Inter,'Helvetica Neue',Arial,sans-serif; color:#8a95a1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .cc-mark { flex:none; font:500 .58em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.22em; color:#9c8a57; }
 .fc--lvl .cc-foot { bottom:.7em; left:1.1em; right:1.1em; }
+
+/* The catch panel's two cards (js/sky-catch.js discoverPanel, 2026-11-22, Sevaan picked option 4): the plane card in front,
+   the boarding pass fanned behind it to the right, and "+2 cards" under them. Each is the panel's usual 72 px mini. */
+#discover.sky-plane .d-mini .dp-fan { position:relative; display:block; width:72px; height:108px; }
+#discover.sky-plane .d-mini .dp-fan > .dp-pass, #discover.sky-plane .d-mini .dp-fan > .dp-plane { position:absolute; left:0; top:0; width:72px; height:108px; }
+#discover.sky-plane .d-mini .dp-fan > .dp-pass { transform:translate(26px, 6px) rotate(10deg); }
+#discover.sky-plane .d-mini .dp-fan > .dp-plane { transform:translate(-8px, 0) rotate(-6deg); z-index:1; }
+#discover.sky-plane .d-mini .dp-fan .sct-face { width:112px; height:157px; transform:scale(calc(72 / 112)); transform-origin:0 0; display:block; }
+#discover.sky-plane .d-mini .dp-n { position:absolute; left:2px; bottom:-14px; z-index:2; font:600 9px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.1em; text-transform:uppercase; background:#b42a20; color:#fff; padding:3px 6px; border-radius:9px; white-space:nowrap; }
+@media (max-height:720px) { #discover.sky-plane .d-mini .dp-fan .sct-face { transform:scale(calc(56 / 112)); } #discover.sky-plane .d-mini .dp-fan { width:56px; height:84px; } #discover.sky-plane .d-mini .dp-fan > .dp-pass { transform:translate(20px, 5px) rotate(10deg); } }

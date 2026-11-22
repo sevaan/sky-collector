@@ -2,15 +2,15 @@
 // Collect does. Catches are kept in localStorage ('skyCatches') for now, apart from Space Collector's sightings, so the
 // old collection code never meets a flight. The Collection screen reads them in a later step.
 
-import { aircraftName, isHelicopter } from './planes.js?v=0.1.1893';
-import { lookupRoute } from './routes.js?v=0.1.1893';
-import { distText } from './units.js?v=0.1.1893';
-import { cardsFor, planeKey, unlisted, TIERS } from './flights.js?v=0.1.1893';
-import { glyphSvg, miniCardHtml } from './flight-card.js?v=0.1.1893';
-import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1893';
+import { aircraftName, isHelicopter } from './planes.js?v=0.1.1894';
+import { lookupRoute } from './routes.js?v=0.1.1894';
+import { distText } from './units.js?v=0.1.1894';
+import { cardsFor, planeKey, unlisted, TIERS } from './flights.js?v=0.1.1894';
+import { glyphSvg, miniCardHtml } from './flight-card.js?v=0.1.1894';
+import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1894';
 
-import { TIER_INFO } from './rarity.js?v=0.1.1893';
-import { allCatches, addCatch } from './catch-store.js?v=0.1.1893';
+import { TIER_INFO } from './rarity.js?v=0.1.1894';
+import { allCatches, addCatch } from './catch-store.js?v=0.1.1894';
 // Catches live in js/catch-store.js (IndexedDB, with a localStorage mirror the Collection page reads).
 // Where catches are read from: Space Collector's sightings once main.js says so (Milestone 1.5), the old store until then.
 let source = allCatches;
@@ -69,9 +69,18 @@ function discoverPanel(el, hit, route, opts = {}) {
   txt('d-name', full ? `To ${full.to.city}` : route?.airline ? `${route.airline} ${(p.callsign || '').replace(/^[A-Z]{3}/, '')}` : type);
   txt('d-dist', hit.rangeKm != null ? distText(hit.rangeKm) : `${ft(p)} ft`);
   try { globalThis.__fitDRow?.(); } catch {} /* the tier line never cuts its words (js/main.js fitDRow, Space Collector a9bb3aa1) */
-  const mk = `${card?.key}|${out.kind}|${catches().length}`, mini = $('d-mini');
-  /* Space Collector's ticket card (2026-11-19, review Part 1): main.js's miniCard via opts.mini, the same card as the Collection's, with its level medal */
-  if (mini && mini.dataset.k !== mk && opts.mini && card) { try { const m = opts.mini(card, flight ? 'flight' : 'plane'); if (m) { mini.dataset.k = mk; mini.replaceChildren(m); } } catch {} }
+  const mk = `${flight?.key}|${plane?.key}|${out.kind}|${catches().length}`, mini = $('d-mini');
+  /* Space Collector's ticket card (2026-11-19, review Part 1): main.js's miniCard via opts.mini, the same card as the Collection's, with its level medal.
+     A catch with a route gives two cards: the plane card in front and the boarding pass fanned behind it, "+2 cards"
+     (2026-11-22, Sevaan picked option 4, design: scratchpad catch-panel-web; the pass alone shrank to a strip you couldn't read). */
+  if (mini && mini.dataset.k !== mk && opts.mini && card) { try {
+    const two = flight && plane, m = two ? null : opts.mini(card, flight ? 'flight' : 'plane');
+    if (two) { const pm = opts.mini(plane, 'plane'), fm = opts.mini(flight, 'flight');
+      if (pm && fm) { const fan = document.createElement('span'); fan.className = 'dp-fan';
+        const a = document.createElement('span'); a.className = 'dp-pass'; a.append(fm); const b = document.createElement('span'); b.className = 'dp-plane'; b.append(pm);
+        fan.append(a, b); if (!stamped) { const n = document.createElement('span'); n.className = 'dp-n'; n.textContent = '+2 cards'; fan.append(n); }
+        mini.dataset.k = mk; mini.replaceChildren(fan); } }
+    else if (m) { mini.dataset.k = mk; mini.replaceChildren(m); } } catch {} }
   if (mini && mini.dataset.k !== mk) { mini.dataset.k = mk; try { mini.innerHTML = card ? miniCardHtml({ kind: flight ? 'flight' : 'plane', card, type: p.type, last: lastSeen(card.key), n: seenCount(catches(), card.key) || 1 }) : ''; } catch { mini.innerHTML = ''; } }
   /* Already stamped today: Space Collector's seen-before state, a View card button that opens your card (2026-11-15, Sevaan) */
   el.dataset.key = card?.key ?? '';

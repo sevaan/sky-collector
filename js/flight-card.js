@@ -9,22 +9,22 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { regularFor, clockText } from './sky-regulars.js?v=0.1.1893';
-import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js?v=0.1.1893';
-import { flightFact } from './flight-facts.js?v=0.1.1893';
-import { typePhoto } from './type-photos.js?v=0.1.1893';
-import { housePhoto } from './house-photos.js?v=0.1.1893';
-import { gapPhoto } from './gap-photos.js?v=0.1.1893'; /* the types that had no photo (2026-11-18) */
-import { airlinePhoto } from './airline-photos.js?v=0.1.1893';
-import { airlineLogo } from './airline-logos.js?v=0.1.1893';
-import { fitStyle } from './photo-fit.js?v=0.1.1893';
-import { dist, speed, useMiles } from './units.js?v=0.1.1893';
-import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1893';
-import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1893';
-import { typeFact } from './sky-facts.js?v=0.1.1893';
-import { localText } from './localize.js?v=0.1.1893';
-import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1893';
-import { qrEncode, qrSvg } from './qr.js?v=0.1.1893';
+import { regularFor, clockText } from './sky-regulars.js?v=0.1.1894';
+import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js?v=0.1.1894';
+import { flightFact } from './flight-facts.js?v=0.1.1894';
+import { typePhoto } from './type-photos.js?v=0.1.1894';
+import { housePhoto } from './house-photos.js?v=0.1.1894';
+import { gapPhoto } from './gap-photos.js?v=0.1.1894'; /* the types that had no photo (2026-11-18) */
+import { airlinePhoto } from './airline-photos.js?v=0.1.1894';
+import { airlineLogo } from './airline-logos.js?v=0.1.1894';
+import { fitStyle } from './photo-fit.js?v=0.1.1894';
+import { dist, speed, useMiles } from './units.js?v=0.1.1894';
+import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1894';
+import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1894';
+import { typeFact } from './sky-facts.js?v=0.1.1894';
+import { localText } from './localize.js?v=0.1.1894';
+import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1894';
+import { qrEncode, qrSvg } from './qr.js?v=0.1.1894';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // A type name escaped, with its hyphenated model codes kept on one line ('Boeing KC-135R Stratotanker' broke after 'KC-').
@@ -96,11 +96,16 @@ const credit = (ph) => `<span class="fc-credit">Photo: ${esc(ph.credit)}, ${esc(
 // tile art; the soft sides behind a contained photo are tiny/ (32 px) stretched, a blur with no live CSS filter.
 const sized = (url, size) => String(url).replace(/\/([^/]+)$/, `/${size}/$1`);
 const photoImg = (ph, cls, eager, small = false) => `${ph.box ? `<img class="ph-blur" src="${esc(sized(ph.url, 'tiny'))}" alt="" aria-hidden="true" decoding="async" draggable="false">` : ''}<img class="${cls}" src="${esc(small ? sized(ph.url, 'sm') : ph.url)}" alt="" ${eager ? '' : 'loading="lazy" '}decoding="async" draggable="false"${ph.box ? ` data-box="${ph.box.join(',')}" data-w="${ph.w}" data-h="${ph.h}"` : ''}>`;
+/* Photos where the card's fill crop, centred on the plane, cut the nose off (2026-11-22, Sevaan: "I don't mind wings or rotors
+   under the badges, just not noses"): the crop slides to the nose's end instead (0 = left, 100 = right), keyed by photo file. */
+const NOSE_X = { A319: 0, B78X: 0, B762: 100, B407: 0 };
 function fitPhoto(img) {
   const f = img.parentElement, fw = f?.offsetWidth, fh = f?.offsetHeight; if (!fw || !fh) return false;
-  const st = fitStyle(img.dataset.box.split(',').map(Number), +img.dataset.w, +img.dataset.h, fw, fh);
+  const st = fitStyle(img.dataset.box.split(',').map(Number), +img.dataset.w, +img.dataset.h, fw, fh, { fill: !!f.classList?.contains('cc-ph') }); /* the plane card's window always fills (2026-11-22) */
   const contain = st.mode === 'contain';
-  img.style.objectFit = contain ? 'contain' : 'cover'; img.style.objectPosition = contain ? '50% 50%' : st.objectPosition;
+  let pos = st.objectPosition; const px = f.classList?.contains('cc-ph') && NOSE_X[(img.getAttribute('src') || '').replace(/^.*\//, '').replace(/\.webp.*$/, '')];
+  if (px != null && pos) pos = `${px}% ${pos.split(' ')[1]}`; /* slide the crop toward the nose (NOSE_X) */
+  img.style.objectFit = contain ? 'contain' : 'cover'; img.style.objectPosition = contain ? '50% 50%' : pos;
   f.classList.toggle('ph-contain', contain); return true;
 }
 // Cards are built as HTML strings all over the app, so fit any photo that appears, and again when frames change size.

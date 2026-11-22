@@ -185,17 +185,18 @@ export const HOUSE_PHOTOS = {
 ]
 },
 "B38M": {
-"credit": "pjs2005 from Hampshire, UK, rotated by the uploader",
-"licence": "CC BY-SA 2.0",
-"source": "https://commons.wikimedia.org/wiki/File:Boeing_737-8_MAX_N8704Q_rotated.jpg",
-"title": "File:Boeing 737-8 MAX N8704Q rotated.jpg",
+"file": "B38M-r3",
+"credit": "Liam Thompson",
+"licence": "CC BY-SA 4.0",
+"source": "https://commons.wikimedia.org/wiki/File:N3E_Boeing_737_MAX_8_BBJ_@_LAX.jpg",
+"title": "File:N3E Boeing 737 MAX 8 BBJ @ LAX.jpg",
 "w": 1280,
 "h": 853,
 "box": [
--0.03,
--0.02,
-1.02,
-0.97
+0.035,
+0.19,
+0.955,
+0.67
 ]
 },
 "B39M": {
@@ -1668,7 +1669,22 @@ export const HOUSE_PHOTOS = {
 0.85,
 0.69
 ]
+},
+"B764": {
+"file": "B764-r3",
+"credit": "contri from Yonezawa-Shi Yamagata, Japan",
+"licence": "CC BY-SA 2.0",
+"source": "https://commons.wikimedia.org/wiki/File:Boeing_767-400ER_N76400_HND_082000.jpg",
+"title": "File:Boeing 767-400ER N76400 HND 082000.jpg",
+"w": 1280,
+"h": 861,
+"box": [
+0.05,
+0.21,
+0.93,
+0.61
+]
 }
 };
-// file: a re-picked photo saved under its own name (CRJ2-r3, A21N-r3: design/plane-card-r3/, 2026-11-22); otherwise the code
+// file: a re-picked photo saved under its own name (CRJ2-r3, A21N-r3, B38M-r3, B764-r3: design/plane-card-r3/, 2026-11-22); otherwise the code
 export const housePhoto = (code) => (HOUSE_PHOTOS[code] ? { url: `assets/photos/house/${HOUSE_PHOTOS[code].file ?? code}.webp`, ...HOUSE_PHOTOS[code] } : null);
