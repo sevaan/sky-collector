@@ -828,7 +828,11 @@ html.sky-cards #logbook.lb-climb .lb-remind { color:var(--rc-redink); border-col
 /* the climb picture */
 html.sky-cards #logbook.lb-climb .lb-pic { position:relative; height:auto; min-height:0; background:var(--rc-sky); border-bottom:1px solid var(--rc-rule); overflow:hidden; }
 html.sky-cards #logbook.lb-climb .lbc { display:block; width:100%; filter:none; font-family:'SC Label','Barlow Condensed','Arial Narrow',sans-serif; }
-#logbook.lb-climb .lbc-clouds { fill:var(--rc-cloud); }
+#logbook.lb-climb .lbc-clouds { fill:none; } /* real cumulus (js/rank-climb.js clouds) */
+#logbook.lb-climb { --rc-cloud-top:#ffffff; --rc-cloud-base:#c3d3e4; --rc-cloud-shade:rgba(64,98,140,.14); }
+html.sky-cards.sky-night #logbook.lb-climb { --rc-cloud-top:#f3ecdc; --rc-cloud-base:#b9b6ad; --rc-cloud-shade:rgba(0,0,0,.18); }
+#logbook.lb-climb .lbc-cloud-sh { fill:var(--rc-cloud-shade); }
+#logbook.lb-climb .lbc-wisp { fill:none; stroke:var(--rc-cloud-top); stroke-width:2.2; stroke-linecap:round; opacity:.7; filter:blur(.6px); }
 #logbook.lb-climb .lbc-line { stroke:var(--rc-ink); stroke-opacity:.1; stroke-width:1; }
 #logbook.lb-climb .lbc-next .lbc-line { stroke-opacity:.35; stroke-dasharray:4 3; }
 #logbook.lb-climb .lbc-fl { font:500 8px 'IBM Plex Mono',ui-monospace,monospace; fill:var(--rc-ink); }
