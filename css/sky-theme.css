@@ -1050,3 +1050,17 @@ body.sky-only.day:not(.night) #wake span { background-color:#fffffff5; backgroun
   box-shadow:0 10px 28px rgba(13,34,56,.22), 0 0 0 1px #c9d9e6; -webkit-backdrop-filter:none; backdrop-filter:none; }
 body.sky-only.day:not(.night) #wake span::before { color:#b42a20; }
 body.sky-only.day:not(.night) #wake small { color:#4a6178 !important; }
+/* Hard-to-see check (2026-11-22, Sevaan; scratchpad contrast.mjs: each text's colour against the pixels behind it, day and
+   night). The pack screen is light day and night, so its words get dark ink; Today's hero line and timer label are deepened. */
+body.sky-only #gift .gp-tags .tease { color:color-mix(in srgb, var(--t, #b42a20) 55%, #0d2238) !important; border-color:color-mix(in srgb, var(--t, #b42a20) 70%, #0d2238) !important; }
+body.sky-only #gift .gp-count2 b { color:#0d2238 !important; }
+body.sky-only #gift .gp-count2 button { color:#b42a20 !important; }
+body.sky-only #gift .gp-haul .gp-patch.more { color:#8a5a00 !important; }
+html:not(.sky-night) body.sky-only :is(#sky-today, .ht-upnow) .now-hero .nh-t small { color:#4a6178; }
+html:not(.sky-night) body.sky-only :is(#sky-today, .ht-upnow) .now-hero .nh-tier { color:color-mix(in srgb, var(--c) 40%, #0d2238); }
+html.sky-night body.sky-only :is(#sky-today, .ht-upnow) .now-hero .nh-t small { color:#b8c8d8; }
+html.sky-night body.sky-only :is(#sky-today, .ht-upnow) .now-hero .nh-tier { color:color-mix(in srgb, var(--c) 55%, #ffffff); }
+html:not(.sky-night) body.sky-only .now-hero small.nh-u { color:#3d5368 !important; }
+html.sky-night body.sky-only .now-hero small.nh-u { color:#c6d4e2 !important; }
+body.sky-only #gift .gp-sfoot span { color:#4a6178 !important; }
+body.sky-only #gift .gp-haul .go { background-color:#b42a20 !important; }

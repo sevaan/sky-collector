@@ -6,9 +6,9 @@
 //         renderCard, attachTilt, artImage, applyBack, sfx, feel, tierColor }
 const wait = (ms, reduced) => new Promise((r) => setTimeout(r, reduced ? Math.min(ms, 120) : ms));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-import { TIERS, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1899';
-import { attachGyro } from './card.js?v=0.1.1899';
-import { cloudsHtml } from './weather-art.js?v=0.1.1899';
+import { TIERS, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1900';
+import { attachGyro } from './card.js?v=0.1.1900';
+import { cloudsHtml } from './weather-art.js?v=0.1.1900';
 // Cards turn with the catch reveal's own flip and rarity table (js/card-moment.js, 2026-11-11): one turn for a catch, a
 // gift and the morning pack.
 // A tap that answers on the finger lifting, like main.js tapOn: the pack animates every frame, and WebKit drops a click
@@ -312,7 +312,7 @@ export function playPack(o) {
       if (extra > 0) { const m = document.createElement('div'); m.className = 'gp-more'; m.textContent = `+${extra.toLocaleString('en-US')} more`; g.appendChild(m); }
       const layoutFan = (animate) => { const W = g.clientWidth, H = g.clientHeight - (extra > 0 ? 34 : 0); if (!W || !H) return;
         const m = pzs.length, L = Math.min(W * (n ? .64 : .9), 420), T = L * 16 / 42, gap = T * (n ? .3 : .7), R = m ? T + (m - 1) * gap : 0; /* the passes' stack, at the foot of the fan */
-        const step = n > 1 ? Math.min(.42, 1.5 / (n - 1)) : 0, tilt = n > 1 ? .32 : 0, w = Math.min((W - 8) / (1 + tilt + step * (n - 1)), ((H - R * .4) * .86) / 1.5, 210), cy = -R * .3; /* mini cards are 2:3; with passes, a touch smaller and higher, the passes tucked across their lower part */ /* as big as the space allows, the outer cards' tilt included */
+        const step = n > 1 ? Math.min(.42, 1.5 / (n - 1)) : 0, tilt = n > 1 ? .32 : 0, nW = Math.max(n, 3), w = Math.min((W - 8) / (1.32 + Math.min(.42, 1.5 / (nW - 1)) * (nW - 1)), ((H - R * .4) * .86) / 1.5, 210), /* one or two cards are the size three would be (2026-11-22, Sevaan: a lone plane card looked huge beside the pass) */ cy = -R * .3; /* mini cards are 2:3; with passes, a touch smaller and higher, the passes tucked across their lower part */ /* as big as the space allows, the outer cards' tilt included */
         g.style.setProperty('--fw', `${w.toFixed(1)}px`);
         cards.forEach((t, i) => { const off = Number(t.dataset.off), x = off * step * w, y = cy + Math.abs(off) * w * .06, r = off * (n > 3 ? 8 : 9);
           const to = `translate(-50%, -50%) translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) rotate(${r}deg)`;

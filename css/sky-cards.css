@@ -1012,3 +1012,7 @@ html.sky-cards #sat-card.rm-card .rm-sub { white-space:normal; overflow:visible;
    boarding pass, which is narrower, it showed as the old card's shadow around the pass (2026-11-22, Sevaan): the pass keeps its
    own paper shadow (.pk-pass, .fc--flight::before) and no card-shaped layer. */
 #reveal .pk-under > .dk-slot.dk-pass::after, .binder-fly .bf-back:has(.fc--land)::after { display:none; }
+/* A boarding pass doesn't tilt in 3D (2026-11-22, Sevaan: tilting it showed its shadow's outline behind it and a line across
+   the notches): the shadow layer (.fc--flight::before) sits flat beside the face, so a turned face slid off it. The glare
+   still follows the finger. */
+.fc--land .fc-rot { transform:none !important; }
