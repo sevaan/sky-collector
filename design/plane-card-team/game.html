@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plane Card: Game-first</title>
+<!-- Sky Collector design spike, 2026-11-21, plane card team, direction "Game-first collectible". Sevaan: "This card front just
+     doesn't feel pro enough." Two variants of the PLANE card front where rarity and level are the first read, drawn at the
+     real full size (300 px wide, 28 x 42em) and as the ~110 px Collection tile, next to today's card (the app's own
+     planeCardHtml). Design only: nothing here is wired into the app. -->
+<link rel="stylesheet" href="../../css/sky-cards.css">
+<style>
+@font-face { font-family: 'SC Display'; src: url('../../fonts/RussoOne-Regular.woff2') format('woff2'); font-display: block; }
+@font-face { font-family: 'SC Label'; src: url('../../fonts/BarlowCondensed-Medium.woff2') format('woff2'); font-display: block; }
+:root { --navy:#0d2238; --ink2:#1b2a3d; --muted:#5b6878; --cream:#fffdf6; --red:#b42a20; --sky1:#8cc2ec; --sky2:#eef5fb; --blue:#1f4f8f; }
+* { box-sizing: border-box; }
+body { margin: 0; background: linear-gradient(180deg, var(--sky1) 0, #cfe4f5 340px, var(--sky2) 900px, var(--sky2)); color: var(--navy); font-family: Georgia, 'Times New Roman', serif; }
+.page { max-width: 760px; margin: 0 auto; padding: 22px 16px 48px; overflow-x: hidden; }
+h1 { font: 400 26px/1.1 'SC Display', sans-serif; margin: 0; }
+.lede { font-size: 15px; line-height: 1.45; margin: 8px 0 0; color: var(--ink2); }
+.take { margin-top: 34px; padding-top: 18px; border-top: 1px solid rgba(13,34,56,.18); }
+.take-h { display: flex; align-items: baseline; gap: 10px; }
+.take-l { font: 400 13px/1 'SC Display', sans-serif; color: #fff; background: var(--navy); border-radius: 6px; padding: 4px 8px 3px; }
+.take h2 { font: 400 20px/1.1 'SC Display', sans-serif; margin: 0; }
+.why { font-size: 15px; line-height: 1.45; margin: 6px 0 4px; color: var(--ink2); }
+.cap { font: 500 12px/1 'SC Label', sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 20px 0 8px; }
+.row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; align-items: flex-start; }
+.tiles { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.tile-c { width: 110px; } .tile-c p { margin: 5px 0 0; font: 500 11px/1.15 'SC Label', sans-serif; letter-spacing: .06em; color: var(--muted); text-align: center; }
+.today-full { --fc-u: calc(300px / 28); }
+.today-mini { width: 110px; } .today-mini .sct-face.sct-mini { display: block; }
+table { width: 100%; border-collapse: collapse; font: 500 14px/1.3 'SC Label', sans-serif; letter-spacing: .02em; background: var(--cream); border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(13,34,56,.15); }
+th, td { text-align: left; vertical-align: top; padding: 7px 8px; border-bottom: 1px solid rgba(13,34,56,.1); }
+th { font: 400 11px/1.2 'SC Display', sans-serif; letter-spacing: .06em; color: #fff; background: var(--navy); }
+td b { font-weight: 500; color: var(--navy); }
+td em { font-style: normal; color: var(--muted); }
+.v { display: inline-block; min-width: 4.6em; padding: 2px 6px 1px; border-radius: 4px; font: 400 10px/1.3 'SC Display', sans-serif; letter-spacing: .04em; color: #fff; text-align: center; }
+.v-keep { background: #1f7a50; } .v-merge { background: #1f5fbf; } .v-back { background: #8a6a2a; } .v-cut { background: var(--red); } .v-new { background: #7a3fc4; }
+.rec { margin-top: 30px; padding: 14px 16px; border-radius: 10px; background: var(--cream); box-shadow: 0 1px 4px rgba(13,34,56,.15); font-size: 15px; line-height: 1.45; }
+.rec h2 { font: 400 18px/1.1 'SC Display', sans-serif; margin: 0 0 6px; } .rec p { margin: 8px 0 0; } .rec ul { margin: 6px 0 0; padding-left: 20px; }
+
+/* ================= Shared card bits (both variants) ================= */
+.g { --u: calc(300px / 28); font-size: var(--u); width: 28em; height: 42em; position: relative; border-radius: 1.5em; padding: .75em; background: var(--frame); box-shadow: 0 .15em .5em rgba(13,34,56,.25), 0 1.2em 2.4em -1em rgba(13,34,56,.35), inset 0 0 0 .08em rgba(255,255,255,.7); color: var(--navy); }
+.g--common { --tier:#4a6178; --tier-d:#33475b; --frame:linear-gradient(150deg,#f4f7f9 0%,#aab7c3 18%,#e6ecf1 36%,#8495a6 55%,#d9e1e8 74%,#71839a 100%); }
+.g--uncommon { --tier:#1f7a50; --tier-d:#155c3b; --frame:linear-gradient(150deg,#f1f8f2 0%,#9dbca8 18%,#e0eee4 36%,#6f9a80 55%,#d2e5d8 74%,#5b8169 100%); }
+.g--rare { --tier:#1f5fbf; --tier-d:#174a96; --frame:linear-gradient(150deg,#eef5ff 0%,#8fb2e6 18%,#dce9fb 36%,#5d86c7 55%,#cddff7 74%,#456fb0 100%); }
+.g--epic { --tier:#7a3fc4; --tier-d:#5c2c99; --frame:linear-gradient(125deg,#ffc9ea 0%,#ac8cff 14%,#7fdfe6 28%,#ffe48a 42%,#f592c8 56%,#8fa6ff 70%,#9be8c4 84%,#e4b8ff 100%); }
+.g--legendary { --tier:#9a6a00; --tier-d:#7a5200; --frame:linear-gradient(150deg,#fff8d6 0%,#e9b53a 16%,#fff0b0 30%,#c48a1c 46%,#ffe07a 62%,#a87414 80%,#ffeaa0 100%); }
+.g-paper { position: relative; height: 100%; border-radius: .9em; overflow: hidden; display: flex; flex-direction: column;
+  background: linear-gradient(rgba(31,95,191,.07) 1px, transparent 1px) 0 0 / 1.2em 1.2em, linear-gradient(90deg, rgba(31,95,191,.07) 1px, transparent 1px) 0 0 / 1.2em 1.2em, var(--cream);
+  box-shadow: inset 0 0 0 .1em rgba(13,34,56,.18); }
+.g-ph { position: relative; overflow: hidden; background: linear-gradient(#7fb0dc, #c4dcf0); }
+.g-ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.g-cred { position: absolute; z-index: 2; font: 500 .8em/1 'SC Label', sans-serif; letter-spacing: .03em; color: rgba(255,255,255,.88); text-shadow: 0 0 .3em rgba(0,0,0,.6); }
+.g-rar { display: inline-flex; align-items: center; gap: .4em; padding: .35em .75em .3em .6em; border-radius: .45em; background: var(--tier); color: #fff; font: 400 1.15em/1 'SC Display', sans-serif; letter-spacing: .1em; box-shadow: inset 0 -.12em 0 var(--tier-d), 0 .1em .25em rgba(13,34,56,.25); }
+.g-rar i { font-style: normal; font-size: .9em; }
+.g-set { display: inline-flex; align-items: center; gap: .45em; font: 500 1.2em/1 'SC Label', sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--navy); }
+.g-set i { width: .7em; height: .7em; border-radius: 50%; background: var(--set); display: inline-block; }
+.g-kick { font: 500 1.25em/1 'SC Label', sans-serif; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+.g-model { font: 400 3.1em/1 'SC Display', sans-serif; letter-spacing: .01em; color: var(--navy); white-space: nowrap; }
+.g-sub { font: 500 1.2em/1.1 'SC Label', sans-serif; letter-spacing: .05em; color: var(--ink2); }
+.g-sub b { font-weight: 500; color: var(--blue); }
+/* Level medal: a disc of the level's metal with the count, a ring around it filling toward the next level */
+.medal { --m:#b8793e; --m2:#f0b884; --m3:#7d4c22; position: relative; width: 6.6em; height: 6.6em; flex: none; }
+.medal--silver { --m:#9aa6b2; --m2:#eef2f6; --m3:#66717d; } .medal--gold { --m:#d9a62a; --m2:#ffe78f; --m3:#946b0b; }
+.medal--none { --m:#c9d1da; --m2:#eef2f6; --m3:#8a96a3; }
+.medal svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+.medal .trk { fill: none; stroke: rgba(13,34,56,.14); }
+.medal .arc { fill: none; stroke: var(--m); stroke-linecap: round; }
+.medal .disc { position: absolute; inset: 15%; border-radius: 50%; background: radial-gradient(circle at 35% 30%, var(--m2), var(--m) 55%, var(--m3)); box-shadow: inset 0 0 0 .14em rgba(255,255,255,.55), inset 0 -.2em .3em rgba(0,0,0,.2), 0 .15em .3em rgba(13,34,56,.35); display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; text-shadow: 0 .06em .12em rgba(0,0,0,.45); }
+.medal .disc b { font: 400 2em/.9 'SC Display', sans-serif; }
+.medal .disc em { font: 500 .78em/1 'SC Label', sans-serif; font-style: normal; letter-spacing: .14em; margin-top: .12em; }
+.medal--none .disc { color: #7b8794; text-shadow: none; }
+.g-wrap { background: var(--cream); border-radius: 50%; padding: .35em; box-shadow: 0 .15em .4em rgba(13,34,56,.3); }
+/* Icon stats */
+.st-i { width: 2em; height: 2em; display: block; color: var(--blue); }
+.st b { display: block; font: 400 1.55em/1 'SC Display', sans-serif; color: var(--navy); white-space: nowrap; }
+.st b small { font: 500 .62em/1 'SC Label', sans-serif; letter-spacing: .04em; margin-left: .15em; color: var(--ink2); }
+.st span { display: block; font: 500 1.05em/1.05 'SC Label', sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-top: .25em; }
+/* Pips toward the next level */
+.pips { display: flex; gap: .32em; }
+.pips i { flex: 1; height: .95em; border-radius: .25em; background: rgba(13,34,56,.1); box-shadow: inset 0 .08em .12em rgba(13,34,56,.15); }
+.pips i.on { background: linear-gradient(#f0b884, #b8793e); box-shadow: inset 0 -.1em 0 #7d4c22; }
+.pips i.new { animation: pip 1.6s ease-in-out infinite; }
+@keyframes pip { 50% { filter: brightness(1.25); box-shadow: 0 0 .5em #f0b884, inset 0 -.1em 0 #7d4c22; } }
+.lg { height: 1.25em; width: auto; vertical-align: -.25em; }
+.ci { width: 1.15em; height: 1.15em; vertical-align: -.2em; color: var(--blue); }
+
+/* ================= Variant A: Medal & Ring ================= */
+.ga .g-paper { padding: .9em 1em .8em; }
+.ga-hd { display: flex; justify-content: space-between; align-items: center; height: 2.4em; }
+.ga .g-ph { flex: 1 1 auto; min-height: 12em; margin-top: .7em; border-radius: .7em; box-shadow: 0 0 0 .12em var(--tier), inset 0 0 0 .1em rgba(255,255,255,.25); }
+.ga .g-cred { left: .7em; bottom: .6em; }
+.ga-medal { position: absolute; right: .4em; z-index: 3; }
+.ga-name { position: relative; margin-top: .55em; padding-right: 7.4em; }
+.ga-name .g-sub { margin-top: .35em; }
+.ga-lvl { margin-top: .75em; padding: .65em .8em .7em; border-radius: .6em; background: #fff; box-shadow: inset 0 0 0 .1em rgba(184,121,62,.45); }
+.ga-lvl-t { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: .5em; }
+.ga-lvl-t b { font: 400 1.3em/1 'SC Display', sans-serif; color: var(--navy); }
+.ga-lvl-t b em { font-style: normal; color: #9a5d24; }
+.ga-lvl-t span { font: 500 1.05em/1 'SC Label', sans-serif; letter-spacing: .06em; color: var(--muted); }
+.ga-lvl .note { font: 500 1.05em/1.1 'SC Label', sans-serif; letter-spacing: .04em; color: var(--muted); margin-top: .45em; }
+.ga-st { display: grid; grid-template-columns: repeat(4, 1fr); gap: .4em; margin-top: .75em; }
+.ga-st .st { text-align: center; } .ga-st .st-i { margin: 0 auto .3em; }
+.ga-catch { margin-top: .75em; padding-top: .6em; border-top: .1em dashed rgba(31,79,143,.45); font: 500 1.15em/1.35 'SC Label', sans-serif; letter-spacing: .04em; color: var(--ink2); }
+.ga-catch .r1 { display: flex; justify-content: space-between; align-items: center; }
+.ga-catch .r1 b { font: 400 1em/1 'SC Display', sans-serif; letter-spacing: .06em; color: var(--red); }
+.ga-catch .r2 { display: flex; justify-content: space-between; margin-top: .2em; color: var(--navy); }
+.ga-catch .r2 span b { font: 400 1.05em/1 'SC Display', sans-serif; }
+
+/* ================= Variant B: Big photo + nameplate + level road ================= */
+.gb .g-ph { height: 19.5em; flex: none; }
+.gb .g-ph::after { content: ''; position: absolute; inset: auto 0 0 0; height: 5em; background: linear-gradient(transparent, rgba(13,34,56,.35)); }
+.gb-rib { position: absolute; z-index: 3; left: 0; top: .9em; padding: .45em 1em .4em .8em; background: var(--tier); color: #fff; font: 400 1.3em/1 'SC Display', sans-serif; letter-spacing: .12em; border-radius: 0 .5em .5em 0; box-shadow: inset 0 -.14em 0 var(--tier-d), .1em .15em .35em rgba(13,34,56,.35); }
+.gb-rib i { font-style: normal; margin-right: .35em; }
+.gb-set { position: absolute; z-index: 3; right: .8em; top: 1em; padding: .35em .6em .3em; border-radius: 1em; background: rgba(255,253,246,.92); }
+.gb .g-cred { right: .9em; bottom: 3.3em; }
+.gb-plate { position: relative; z-index: 3; margin: -2.9em .9em 0; padding: .8em .9em .75em 1em; background: var(--cream); border-radius: .7em; border-top: .32em solid var(--tier); box-shadow: 0 .2em .6em rgba(13,34,56,.28); display: flex; align-items: center; gap: .6em; }
+.gb-plate .nm { flex: 1; min-width: 0; } .gb-plate .g-sub { margin-top: .3em; }
+.gb-plate .medal { width: 6em; height: 6em; margin: -1.6em -.2em -.6em 0; }
+.gb-road { margin: .85em 1em 0; }
+.gb-road-t { font: 400 1.3em/1 'SC Display', sans-serif; margin-bottom: .45em; display: flex; justify-content: space-between; align-items: baseline; }
+.gb-road-t span { font: 500 .8em/1 'SC Label', sans-serif; letter-spacing: .06em; color: var(--muted); }
+.gb-road-r { display: flex; align-items: center; gap: .45em; }
+.gb-road-r .pips { flex: 1; }
+.mini-m { width: 2.2em; height: 2.2em; border-radius: 50%; flex: none; display: flex; align-items: center; justify-content: center; font: 400 .95em/1 'SC Display', sans-serif; color: #fff; background: radial-gradient(circle at 35% 30%, #f0b884, #b8793e 55%, #7d4c22); box-shadow: inset 0 0 0 .12em rgba(255,255,255,.5); }
+.mini-m--silver { background: radial-gradient(circle at 35% 30%, #eef2f6, #9aa6b2 55%, #66717d); }
+.mini-m--ghost { opacity: .45; filter: grayscale(.2); box-shadow: inset 0 0 0 .12em rgba(255,255,255,.5), 0 0 0 .12em rgba(13,34,56,.25); }
+.gb-road .note { font: 500 1.05em/1.1 'SC Label', sans-serif; letter-spacing: .04em; color: var(--muted); margin-top: .4em; }
+.gb-st { display: grid; grid-template-columns: 1fr 1fr; gap: .45em; margin: .8em 1em 0; }
+.gb-st .st { display: flex; align-items: center; gap: .55em; padding: .45em .6em; background: #fff; border-radius: .55em; box-shadow: inset 0 0 0 .08em rgba(31,79,143,.25); }
+.gb-st .st span { margin-top: .15em; }
+.gb-catch { margin: auto 0 0; padding: .65em 1em .7em; background: var(--navy); color: #eaf1f8; font: 500 1.15em/1.3 'SC Label', sans-serif; letter-spacing: .04em; }
+.gb-catch .r1 { display: flex; justify-content: space-between; align-items: center; }
+.gb-catch .r1 b { font: 400 .95em/1 'SC Display', sans-serif; letter-spacing: .08em; color: #ffd27a; }
+.gb-catch .r2 { display: flex; justify-content: space-between; margin-top: .25em; }
+.gb-catch .r2 b { font: 400 1.05em/1 'SC Display', sans-serif; color: #fff; }
+.gb-catch .lgw { background: #fff; border-radius: .3em; padding: .1em .3em; display: inline-flex; align-items: center; gap: .3em; color: var(--navy); }
+
+/* ================= Collection tiles (110 px) ================= */
+.t { width: 110px; height: 165px; position: relative; border-radius: 9px; padding: 4px; background: var(--frame); box-shadow: 0 1px 3px rgba(13,34,56,.3); }
+.t .g-paper { border-radius: 6px; }
+.t .g-ph { flex: none; }
+.ta .g-ph { height: 72px; border-radius: 4px; margin: 3px 3px 0; box-shadow: 0 0 0 1px var(--tier); }
+.ta-rar { height: 15px; background: var(--tier); color: #fff; font: 400 8px/15px 'SC Display', sans-serif; letter-spacing: .1em; padding: 0 6px; display: flex; justify-content: space-between; }
+.ta-rar i { font-style: normal; margin-right: 3px; }
+.t .medal { position: absolute; width: 34px; height: 34px; font-size: 6px; }
+.ta .medal { right: 3px; top: 70px; }
+.t .medal .disc b { font-size: 2.6em; }
+.t .g-wrap { padding: 2px; }
+.t-nm { padding: 4px 6px 0; }
+.t-k { font: 500 8px/1 'SC Label', sans-serif; letter-spacing: .14em; color: var(--muted); text-transform: uppercase; }
+.t-m { font: 400 13px/1.05 'SC Display', sans-serif; color: var(--navy); margin-top: 2px; white-space: nowrap; }
+.t-p { position: absolute; left: 10px; right: 10px; bottom: 9px; }
+.t-p .pips { gap: 2px; } .t-p .pips i { height: 5px; border-radius: 1.5px; }
+.t-p small { display: block; font: 500 8px/1 'SC Label', sans-serif; letter-spacing: .08em; color: var(--muted); margin-bottom: 3px; }
+.tb .g-ph { height: 92px; }
+.tb-rib { position: absolute; z-index: 3; left: 0; top: 6px; padding: 3px 6px 2px 4px; background: var(--tier); color: #fff; font: 400 7.5px/1 'SC Display', sans-serif; letter-spacing: .1em; border-radius: 0 4px 4px 0; }
+.tb .medal { right: 2px; top: 76px; }
+.tb .t-nm { padding: 7px 6px 0; }
+.t--none .g-ph img { filter: grayscale(1) brightness(1.15) contrast(.6); opacity: .55; }
+.t--none .t-m { color: #8a96a3; }
+.ph-holder { position: absolute; inset: 0; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Plane card: game-first</h1>
+  <p class="lede">Rarity and level first, the way a collection game card reads: a coloured rarity badge, a level medal with a ring that fills toward the next level, and the plain words "2 of 10 different A350s for Silver". A bigger photo, the model name huge, the specs as four icon stats, your catch squeezed into two lines. The fact, the airline's registration and the long numbers go to the back. Same card: the A350-900, Common, Bronze, caught Nov 21 from a Lufthansa flight.</p>
+
+  <section class="take">
+    <div class="take-h"><span class="take-l">Now</span><h2>Today's card</h2></div>
+    <p class="why">The app's own planeCardHtml. Twelve blocks, most the same size and weight, so nothing reads first. Rarity is a small grey pill, the level a chip at the bottom, and "2 AIRCRAFT · 2 LIVERIES" doesn't say what's being counted.</p>
+    <div class="row"><div class="today-full" id="today-full"></div><div class="today-mini" id="today-mini"></div></div>
+  </section>
+
+  <section class="take">
+    <div class="take-h"><span class="take-l">A</span><h2>Medal &amp; Ring</h2></div>
+    <p class="why">Rarity badge and set across the top, a big photo framed in the rarity colour, the level medal sitting on the photo's corner with its ring two-tenths full. The model name huge under the maker. A white "level" box spells it out with ten pips. Four icon stats, then your catch in two lines.</p>
+    <div class="row" id="a-full"></div>
+    <div class="cap">Collection tiles, one per rarity (the rarity strip carries the colour)</div>
+    <div class="tiles" id="a-tiles"></div>
+  </section>
+
+  <section class="take">
+    <div class="take-h"><span class="take-l">B</span><h2>Nameplate &amp; Road</h2></div>
+    <p class="why">The photo runs edge to edge, with the rarity on a ribbon. A cream nameplate overlaps it, holding the name and the level medal. Under it, the road to the next level: your bronze medal, ten pips, then the silver medal greyed out until you earn it, so you can see what's next. Stats in four tiles. Your catch sits on a navy ticket stub at the bottom.</p>
+    <div class="row" id="b-full"></div>
+    <div class="cap">Collection tiles through the levels: not caught yet, Bronze, Silver, Gold</div>
+    <div class="tiles" id="b-tiles"></div>
+  </section>
+
+  <section class="take">
+    <div class="take-h"><span class="take-l">1</span><h2>Info audit</h2></div>
+    <p class="why">Each field on today's front, and where it goes in both variants.</p>
+    <table>
+      <tr><th>Today</th><th>Call</th><th>Why</th></tr>
+      <tr><td><b>AIRCRAFT tab</b></td><td><span class="v v-cut">CUT</span></td><td>Every plane card is an aircraft. The flight card already looks completely different (a boarding pass).</td></tr>
+      <tr><td><b>Set "TWIN AISLES"</b></td><td><span class="v v-keep">KEEP</span></td><td>Sets are what you complete. It gets its set colour dot and moves top right (A) or onto the photo (B). Later it could show "3 of 12".</td></tr>
+      <tr><td><b>TYPE plate "A359"</b></td><td><span class="v v-merge">MERGE</span></td><td>A code a 10-year-old can't read. It moves into the small line under the name ("A359 · Wide-body jet"), for spotters.</td></tr>
+      <tr><td><b>Photo</b></td><td><span class="v v-keep">KEEP</span></td><td>Bigger: about 40% of the card in A, 46% in B (today it's 33%).</td></tr>
+      <tr><td><b>Rarity pill</b></td><td><span class="v v-keep">KEEP, BOLD</span></td><td>The first read: a solid badge (A) or ribbon (B) in the rarity colour, plus the photo frame and the metal. On the tile it's the coloured top strip or corner ribbon.</td></tr>
+      <tr><td><b>Photo credit</b></td><td><span class="v v-keep">KEEP</span></td><td>The licence asks for it. Smaller, inside the photo.</td></tr>
+      <tr><td><b>Name</b></td><td><span class="v v-keep">KEEP, SPLIT</span></td><td>The maker small on top ("AIRBUS"), the model huge ("A350-900"). Big and still fits beside the medal.</td></tr>
+      <tr><td><b>Maker · kind line</b></td><td><span class="v v-merge">MERGE</span></td><td>The maker joins the name. "Wide-body jet" joins the type code in the line under it. The country goes to the back.</td></tr>
+      <tr><td><b>Specs ×4</b></td><td><span class="v v-keep">KEEP, ICONS</span></td><td>Same four checked numbers, each with an icon and a label a kid gets. Rounded where it helps (64.8 m becomes 65 m).</td></tr>
+      <tr><td><b>AIRLINE operator</b></td><td><span class="v v-merge">MERGE</span></td><td>Joins your catch as the airline's logo and name ("Flying for Lufthansa"). It's about this catch, not the type.</td></tr>
+      <tr><td><b>Registration D-AIXT</b></td><td><span class="v v-back">BACK</span></td><td>It's the plane's own ID, which is exactly what makes "different A350s" count. The back lists every one you've caught ("Your A350s: D-AIXT, F-HTYA").</td></tr>
+      <tr><td><b>YOUR CATCH date/time</b></td><td><span class="v v-keep">KEEP</span></td><td>One line: "Caught Nov 21 · 6:22 PM". The year only on the back.</td></tr>
+      <tr><td><b>Height, speed, away</b></td><td><span class="v v-keep">KEEP</span></td><td>Fun numbers, but one row of three small values, not a boxed grid.</td></tr>
+      <tr><td><b>Heading</b></td><td><span class="v v-back">BACK</span></td><td>Often "—", and "NE" means little. The back can draw it as an arrow on a little compass.</td></tr>
+      <tr><td><b>"2 AIRCRAFT · 2 LIVERIES"</b></td><td><span class="v v-merge">REWRITE</span></td><td>The confusing one. It becomes "2 of 10 different A350s for Silver", with pips and a medal. Liveries go to the back ("Seen with 2 airlines").</td></tr>
+      <tr><td><b>BRONZE chip</b></td><td><span class="v v-keep">KEEP, MEDAL</span></td><td>Becomes the medal, with the count on it and a ring that fills up. The same medal is on the tile.</td></tr>
+      <tr><td><b>Bar + "8 MORE TO SILVER"</b></td><td><span class="v v-merge">MERGE</span></td><td>Ten pips you can count (one per different aircraft, up to Silver). After Silver, 40 is too many to draw, so pips each stand for 5, up to Gold.</td></tr>
+      <tr><td><b>Fact</b></td><td><span class="v v-back">BACK</span></td><td>Good, but it's reading. It's the reward when you flip the card, and a new one comes with each new aircraft.</td></tr>
+      <tr><td><b>Footer "AIRCRAFT · A359 / SKY COLLECTOR"</b></td><td><span class="v v-cut">CUT</span></td><td>It says the type code a third time. The brand can go on the back.</td></tr>
+      <tr><td><b>RARE HERE stamp (some cards)</b></td><td><span class="v v-keep">KEEP</span></td><td>A sticker on the photo next to the rarity, worded "Rare around here".</td></tr>
+      <tr><td><b>Class band (plane-only catches)</b></td><td><span class="v v-merge">MERGE</span></td><td>"Airline · route not known" goes into the catch line ("Flying for Lufthansa"). It doesn't need to sit on the photo.</td></tr>
+    </table>
+  </section>
+
+  <section class="take">
+    <div class="take-h"><span class="take-l">2</span><h2>Every label, reworded</h2></div>
+    <table>
+      <tr><th>Today</th><th>Proposed (front)</th><th>Notes</th></tr>
+      <tr><td>● COMMON</td><td><b>● COMMON</b> / <b>▲ UNCOMMON</b> / <b>◆ RARE</b> / <b>★ EPIC</b> / <b>✦ LEGENDARY</b></td><td><em>The words already work. The change is the solid colour.</em></td></tr>
+      <tr><td>TWIN AISLES</td><td><b>● TWIN AISLES</b> <em>(later: "Twin Aisles · 3 of 12")</em></td><td><em>The dot is the set colour.</em></td></tr>
+      <tr><td>Airbus A350-900</td><td><b>AIRBUS</b> / <b>A350-900</b></td><td><em>Maker small, model huge. When the name doesn't start with the maker, the whole name goes big.</em></td></tr>
+      <tr><td>TYPE A359 · Airbus · wide-body jet airliner</td><td><b>A359 · Wide-body jet · 2 aisles</b></td><td><em>The code stays for spotters, quietly.</em></td></tr>
+      <tr><td>FIRST FLEW 2013</td><td><b>2013</b> FIRST FLIGHT</td><td><em>Calendar icon.</em></td></tr>
+      <tr><td>ENGINES 2 jets</td><td><b>2</b> JET ENGINES</td><td><em>Engine icon.</em></td></tr>
+      <tr><td>RANGE 9,787 mi</td><td><b>9,787 mi</b> LONGEST TRIP</td><td><em>"Range" means nothing to a kid. Globe icon.</em></td></tr>
+      <tr><td>SPAN 64.8 m</td><td><b>65 m</b> WINGSPAN <em>(tile B: "WING TIP TO TIP")</em></td><td><em>Wingspan icon.</em></td></tr>
+      <tr><td>AIRLINE Lufthansa · D-AIXT</td><td><b>[logo] Flying for Lufthansa</b></td><td><em>Cargo: "Carrying cargo for FedEx". No airline: "Private flight".</em></td></tr>
+      <tr><td>YOUR CATCH · NOV 21, 2026 · 6:22 PM</td><td><b>✓ CAUGHT</b> Nov 21 · 6:22 PM</td><td></td></tr>
+      <tr><td>HEIGHT 40,000 ft</td><td><b>40,000 ft</b> up high</td><td></td></tr>
+      <tr><td>SPEED 477 mph</td><td><b>477 mph</b></td><td><em>The unit says it's a speed.</em></td></tr>
+      <tr><td>AWAY 47 mi</td><td><b>47 mi</b> from you</td><td></td></tr>
+      <tr><td>HEADING —</td><td><em>(back: a little compass arrow, "Heading north-east")</em></td><td></td></tr>
+      <tr><td>2 AIRCRAFT · 2 LIVERIES</td><td><b>2 of 10 different A350s for Silver</b></td><td><em>Short family name ("A350s", "737s"). Bronze: "1 of 10 for Silver". Silver: "12 of 50 for Gold". Gold: "Gold! 53 different A350s".</em></td></tr>
+      <tr><td>BRONZE (chip)</td><td>Medal: <b>2</b> / <b>BRONZE</b></td><td><em>Not caught yet: a grey medal with "?".</em></td></tr>
+      <tr><td>8 MORE TO SILVER</td><td><b>Same plane twice doesn't count. Find new ones!</b></td><td><em>The one-line rule under the pips. Variant B: "8 more for Silver".</em></td></tr>
+      <tr><td>Tile: FIRST FLEW 2013 · 2 AIRCRAFT</td><td>Tile: <b>AIRBUS / A350-900</b>, medal <b>2</b>, pips, <b>2/10 TO SILVER</b></td><td></td></tr>
+      <tr><td>RARE HERE</td><td><b>RARE AROUND HERE</b></td><td></td></tr>
+      <tr><td>Fact</td><td><em>(back) "Did you know?"</em></td><td></td></tr>
+    </table>
+  </section>
+
+  <div class="rec">
+    <h2>My pick: B, with A's level box wording</h2>
+    <p>B's road (your medal, the pips, the next medal greyed out) is the strongest "I want the next one" moment. It shows the reward instead of naming it. The edge-to-edge photo with the rarity ribbon and the nameplate looks most like a pro card. Take A's one-line rule ("Same plane twice doesn't count. Find new ones!") into B, because that line is what clears up "2 AIRCRAFT".</p>
+    <ul>
+      <li>For the reveal: the medal ring filling one pip, and the pip glowing (both variants already animate the newest pip).</li>
+      <li>Watch out: long names (Boeing KC-135R Stratotanker) need the model line to shrink, as today's fc-name--long does.</li>
+      <li>The back takes the fact, every registration you've caught, the airlines seen ("liveries"), the heading compass, the country and the year.</li>
+    </ul>
+  </div>
+</div>
+
+<script type="module">
+import { planeCardHtml, miniCardHtml, photoFor } from '../../js/flight-card.js';
+import { airlineLogo } from '../../js/airline-logos.js';
+
+const card = { key: 'P:A359', type: 'A359', name: 'Airbus A350-900', tier: 'common', setName: 'Twin Aisles', glyph: 'jet' };
+const opts = { caughtAt: new Date(2026, 10, 21, 18, 22), heightFt: 40000, speedKmh: 767, awayKm: 75, callsign: 'DLH2C', eager: true,
+  stampInfo: { kind: 'plane', count: 2, liveryCount: 2, level: 'bronze', last: { callsign: 'DLH2C', cls: 'airline', op: 'Lufthansa', reg: 'D-AIXT', routed: true, altFt: 40000 } } };
+const root = (html) => html.replace(/src="assets\//g, 'src="../../assets/');
+document.getElementById('today-full').innerHTML = root(planeCardHtml(card, opts));
+document.getElementById('today-mini').innerHTML = root(miniCardHtml({ kind: 'plane', card, type: 'A359', stampInfo: { kind: 'plane', count: 2, level: 'bronze' } }));
+
+const ICON = {
+  cal: '<svg class="st-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M8 14h2M12 14h2M8 17h2" stroke-width="2"/></svg>',
+  eng: '<svg class="st-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="12" rx="8.5" ry="8.5"/><circle cx="12" cy="12" r="2.2" fill="currentColor"/><path d="M12 9.8V4.5M14 12.7l4.4 2.6M10 12.7l-4.4 2.6M13.8 10.8l4.6-2.4M10.2 10.8 5.6 8.4M12 14.2v5.3" stroke-width="1.4"/></svg>',
+  globe: '<svg class="st-i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c-3 3-3 14 0 17M12 3.5c3 3 3 14 0 17" stroke-width="1.2"/><path d="M5 17c4-6 9-9 14-10" stroke="#b42a20" stroke-dasharray="2 2"/></svg>',
+  wing: '<svg class="st-i" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5c.8 0 1.2 1 1.2 2.2v3.6l7.8 4.1v1.6l-7.8-2.2v3.4l2.3 1.7v1.1L12 19.6l-3.5.9v-1.1l2.3-1.7v-3.4L3 16.5v-1.6l7.8-4.1V7.2C10.8 6 11.2 5 12 5z"/><path d="M2 3.5h20M2 2v3M22 2v3" stroke="currentColor" stroke-width="1.3" fill="none"/></svg>',
+  tick: '<svg class="ci" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg>',
+};
+const stats = [[ICON.cal, '2013', '', 'First flight'], [ICON.eng, '2', '', 'Jet engines'], [ICON.globe, '9,787', 'mi', 'Longest trip'], [ICON.wing, '65', 'm', 'Wingspan']];
+const stat = ([i, v, u, l]) => `<div class="st">${i}<div><b>${v}${u ? `<small>${u}</small>` : ''}</b><span>${l}</span></div></div>`;
+const statA = ([i, v, u, l]) => `<div class="st">${i}<b>${v}${u ? `<small>${u}</small>` : ''}</b><span>${l}</span></div>`;
+const MARK = { common: '●', uncommon: '▲', rare: '◆', epic: '★', legendary: '✦' };
+const LEVELS = { none: [0, 1], bronze: [1, 10], silver: [10, 50], gold: [50, 50] };
+// The medal: count n, ring from the last level to the next one.
+function medal(level, n, px = 6.6) {
+  const [from, to] = LEVELS[level], frac = level === 'gold' ? 1 : level === 'none' ? 0 : n / to;
+  const r = 45, c = 2 * Math.PI * r;
+  return `<span class="medal medal--${level}"><svg viewBox="0 0 100 100"><circle class="trk" cx="50" cy="50" r="${r}" stroke-width="7"/><circle class="arc" cx="50" cy="50" r="${r}" stroke-width="7" stroke-dasharray="${(c * frac).toFixed(1)} ${c.toFixed(1)}"/></svg><span class="disc"><b>${level === 'none' ? '?' : n}</b>${level === 'none' ? '' : `<em>${level.toUpperCase()}</em>`}</span></span>`;
+}
+const pips = (n, of = 10, newest = true) => `<div class="pips">${Array.from({ length: of }, (_, i) => `<i class="${i < n ? 'on' : ''}${newest && i === n - 1 ? ' new' : ''}"></i>`).join('')}</div>`;
+function photo(type, extra = '') {
+  const ph = photoFor(type); if (!ph) return '';
+  return `<img src="../../${ph.url}" alt="" decoding="async" draggable="false"${ph.box ? ` data-box="${ph.box.join(',')}" data-w="${ph.w}" data-h="${ph.h}"` : ''}>`;
+}
+const credit = (type) => { const ph = photoFor(type); return ph ? `<span class="g-cred">Photo: ${ph.credit}, ${ph.licence}</span>` : ''; };
+const lg = airlineLogo('DLH'), logo = lg ? `<img class="lg" src="${lg.url}" alt="">` : '';
+
+const A = `<article class="g ga g--common"><div class="g-paper">
+  <div class="ga-hd"><span class="g-rar"><i>●</i>COMMON</span><span class="g-set" style="--set:#3f58a8"><i></i>Twin Aisles</span></div>
+  <div class="g-ph">${photo('A359')}${credit('A359')}</div>
+  <div class="ga-name"><span class="ga-medal g-wrap" style="top:-4.1em">${medal('bronze', 2)}</span>
+    <div class="g-kick">Airbus</div><div class="g-model">A350-900</div><div class="g-sub"><b>A359</b> · Wide-body jet · 2 aisles</div></div>
+  <div class="ga-lvl"><div class="ga-lvl-t"><b>2 of 10 different A350s for <em>Silver</em></b></div>${pips(2)}
+    <div class="note">Same plane twice doesn't count. Find new ones!</div></div>
+  <div class="ga-st">${stats.map(statA).join('')}</div>
+  <div class="ga-catch"><div class="r1"><span><b>${ICON.tick} CAUGHT</b> &nbsp;Nov 21 · 6:22 PM</span><span>${logo} Flying for Lufthansa</span></div>
+    <div class="r2"><span><b>40,000</b> ft up high</span><span><b>477</b> mph</span><span><b>47</b> mi from you</span></div></div>
+</div></article>`;
+document.getElementById('a-full').innerHTML = A;
+
+const B = `<article class="g gb g--common"><div class="g-paper">
+  <div class="g-ph">${photo('A359')}<span class="gb-rib"><i>●</i>COMMON</span><span class="gb-set g-set" style="--set:#3f58a8"><i></i>Twin Aisles</span>${credit('A359')}</div>
+  <div class="gb-plate"><div class="nm"><div class="g-kick">Airbus</div><div class="g-model">A350-900</div><div class="g-sub"><b>A359</b> · Wide-body jet · 2 aisles</div></div>${medal('bronze', 2)}</div>
+  <div class="gb-road"><div class="gb-road-t">2 of 10 different A350s <span>8 more for Silver</span></div>
+    <div class="gb-road-r"><span class="mini-m">B</span>${pips(2)}<span class="mini-m mini-m--silver mini-m--ghost">S</span></div>
+    <div class="note">Same plane twice doesn't count. Find new ones!</div></div>
+  <div class="gb-st">${stats.map(stat).join('')}</div>
+  <div class="gb-catch"><div class="r1"><span><b>✓ CAUGHT</b> &nbsp;Nov 21 · 6:22 PM</span><span class="lgw">${logo}Lufthansa</span></div>
+    <div class="r2"><span><b>40,000</b> ft up</span><span><b>477</b> mph</span><span><b>47</b> mi away</span></div></div>
+</div></article>`;
+document.getElementById('b-full').innerHTML = B;
+
+// Tiles. A: one per rarity (real tiers from js/sky-tiers.js); B: the A350 through its levels.
+const T = [
+  ['A359', 'common', 'Airbus', 'A350-900', 'bronze', 2],
+  ['A35K', 'uncommon', 'Airbus', 'A350-1000', 'bronze', 1],
+  ['B764', 'rare', 'Boeing', '767-400', 'silver', 11],
+  ['A388', 'epic', 'Airbus', 'A380', 'bronze', 3],
+  ['A124', 'legendary', 'Antonov', 'An-124', 'bronze', 1],
+];
+const tierWord = (t) => t.toUpperCase();
+function tileA([type, tier, maker, model, level, n]) {
+  const to = level === 'silver' ? 50 : 10, shown = level === 'silver' ? Math.floor(n / 5) : n;
+  return `<div class="tile-c"><article class="t ta g--${tier}"><div class="g-paper"><div class="ta-rar"><span><i>${MARK[tier]}</i>${tierWord(tier)}</span></div>
+    <div class="g-ph">${photo(type)}</div><span class="g-wrap medal-w" style="position:absolute;right:5px;top:68px;padding:2px">${medal(level, n).replace('class="medal', 'style="position:relative;width:32px;height:32px;font-size:6px" class="medal')}</span>
+    <div class="t-nm"><div class="t-k">${maker}</div><div class="t-m">${model}</div></div>
+    <div class="t-p"><small>${n}/${to} TO ${level === 'silver' ? 'GOLD' : 'SILVER'}</small>${pips(shown, 10, false)}</div></div></article><p>${type} · ${tier}</p></div>`;
+}
+document.getElementById('a-tiles').innerHTML = T.map(tileA).join('');
+
+const LV = [['none', 0, 'Not caught yet'], ['bronze', 2, 'Bronze · 2'], ['silver', 12, 'Silver · 12'], ['gold', 53, 'Gold · 53']];
+function tileB([level, n, cap]) {
+  const head = level === 'none' ? 'NOT CAUGHT YET' : level === 'gold' ? 'TOP LEVEL!' : level === 'silver' ? `${n}/50 TO GOLD` : `${n}/10 TO SILVER`;
+  const shown = level === 'none' ? 0 : level === 'gold' ? 10 : level === 'silver' ? Math.floor(n / 5) : n;
+  return `<div class="tile-c"><article class="t tb g--common${level === 'none' ? ' t--none' : ''}"><div class="g-paper">
+    <div class="g-ph">${photo('A359')}<span class="tb-rib">● COMMON</span></div>
+    <span class="g-wrap" style="position:absolute;right:5px;top:80px;padding:2px">${medal(level, n).replace('class="medal', 'style="position:relative;width:32px;height:32px;font-size:6px" class="medal')}</span>
+    <div class="t-nm"><div class="t-k">Airbus</div><div class="t-m">A350-900</div></div>
+    <div class="t-p"><small>${head}</small>${pips(shown, 10, false).replace(/class="on/g, level === 'silver' ? 'style="background:linear-gradient(#eef2f6,#9aa6b2);box-shadow:inset 0 -1px 0 #66717d" class="on' : level === 'gold' ? 'style="background:linear-gradient(#ffe78f,#d9a62a);box-shadow:inset 0 -1px 0 #946b0b" class="on' : 'class="on')}</div></div></article><p>${cap}</p></div>`;
+}
+document.getElementById('b-tiles').innerHTML = LV.map(tileB).join('');
+</script>
+</body>
+</html>

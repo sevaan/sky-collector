@@ -69,8 +69,8 @@ test('a catch carries its class, heading and route flag on the plane sighting, n
   const info = skyStampInfo(s.cardSnapshot, ss);
   assert.equal(info.last.cls, 'cargo'); assert.equal(info.last.track, 225);
   const html = planeCardHtml(s.cardSnapshot, { stampInfo: info, callsign: s.callsign });
-  assert.match(html, /Cargo airline <small>· UPS · route not known<\/small>/);
-  assert.match(html, /TYPE<\/span><b>B763/); assert.match(html, /HEADING<\/span><b>SW/);
+  assert.match(html, /Cargo airline<small>UPS · route not known<\/small>/); /* Spine (2026-11-22): the band's words under CAUGHT */
+  assert.match(html, /TYPE<\/span><b class="sp-tp">B763/); /* a long code (HEAVY) gets sp-tp--long */ assert.match(html, /<b>SW<\/b><span>Heading/);
   assert.match(html, /47\.6<small>m/);
   assert.doesNotMatch(html, /N312UP/); /* no route: the band, not the operator line */
 });
@@ -82,7 +82,7 @@ test('plane-only private catch: a band saying what it is (Light aircraft), type 
   const html = planeCardHtml(ss[0].cardSnapshot, { stampInfo: skyStampInfo(ss[0].cardSnapshot, ss) });
   assert.match(html, /Light aircraft/); assert.doesNotMatch(html, /Not an airline/i);
   assert.doesNotMatch(html, /N12345/); assert.doesNotMatch(html, /rivate/);
-  assert.match(html, /Cessna · USA · four-seat light aircraft/);
+  assert.match(html, /<small>CESSNA<\/small>/); assert.match(html, /USA · four-seat light aircraft/i); /* Spine: maker above the model, the rest as the kind line */
 });
 
 test('airline catch with a route: a boarding pass and an operator line on the plane card', () => {
@@ -95,11 +95,11 @@ test('airline catch with a route: a boarding pass and an operator line on the pl
   assert.match(fh, /BOARDING PASS<b>RPA3402/); assert.match(fh, /<b>ORD<\/b>/); assert.match(fh, /<b>YOW<\/b>/); assert.match(fh, /E75L/);
   assert.match(fh, /1,051<small>km/);
   const ph = planeCardHtml(pl.cardSnapshot, { stampInfo: skyStampInfo(pl.cardSnapshot, ss) });
-  assert.match(ph, /<b>AIRLINE<\/b><span>Republic · N201JQ<\/span>/);
+  assert.match(ph, /<p class="sp-op">Republic<small>N201JQ<\/small><\/p>/);
   assert.doesNotMatch(ph, /ss-band/);
   /* minis */
   assert.match(flightCardHtml(f.cardSnapshot, { small: true, caughtAt: new Date(T0) }), /fc--mini/);
-  assert.match(miniCardHtml({ kind: 'plane', card: pl.cardSnapshot, last: T0 }), /m-plate/);
+  assert.match(miniCardHtml({ kind: 'plane', card: pl.cardSnapshot, last: T0 }), /sp-side/); /* the small card is the full Spine card shrunk (2026-11-22) */
 });
 
 test('a type with no verified specs shows only what the feed and the catches say', () => {
@@ -107,7 +107,7 @@ test('a type with no verified specs shows only what the feed and the catches say
   const { plane } = cardsFor(p, null, '');
   const ss = catchSightings({ time: T0, hex: p.hex, callsign: p.callsign, type: p.type, altFt: 23000, gsKt: 380, rangeKm: 20, flight: null, plane });
   const html = planeCardHtml(ss[0].cardSnapshot, { stampInfo: skyStampInfo(ss[0].cardSnapshot, ss) });
-  assert.match(html, /Size<\/span><b>Large/); assert.match(html, /Aircraft<\/span><b>1/);
+  assert.match(html, /<b>Large<\/b><span>Size/); assert.match(html, /<b>1<\/b><span>Aircraft/);
   assert.doesNotMatch(html, /First flew/);
   assert.equal(compass(359), 'N'); assert.equal(compass(225), 'SW'); assert.equal(compass(undefined), '—');
 });

@@ -9,22 +9,22 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { regularFor, clockText } from './sky-regulars.js?v=0.1.1878';
-import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js?v=0.1.1878';
-import { flightFact } from './flight-facts.js?v=0.1.1878';
-import { typePhoto } from './type-photos.js?v=0.1.1878';
-import { housePhoto } from './house-photos.js?v=0.1.1878';
-import { gapPhoto } from './gap-photos.js?v=0.1.1878'; /* the types that had no photo (2026-11-18) */
-import { airlinePhoto } from './airline-photos.js?v=0.1.1878';
-import { airlineLogo } from './airline-logos.js?v=0.1.1878';
-import { fitStyle } from './photo-fit.js?v=0.1.1878';
-import { dist, speed, useMiles } from './units.js?v=0.1.1878';
-import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1878';
-import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1878';
-import { typeFact } from './sky-facts.js?v=0.1.1878';
-import { localText } from './localize.js?v=0.1.1878';
-import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1878';
-import { qrEncode, qrSvg } from './qr.js?v=0.1.1878';
+import { regularFor, clockText } from './sky-regulars.js?v=0.1.1881';
+import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js?v=0.1.1881';
+import { flightFact } from './flight-facts.js?v=0.1.1881';
+import { typePhoto } from './type-photos.js?v=0.1.1881';
+import { housePhoto } from './house-photos.js?v=0.1.1881';
+import { gapPhoto } from './gap-photos.js?v=0.1.1881'; /* the types that had no photo (2026-11-18) */
+import { airlinePhoto } from './airline-photos.js?v=0.1.1881';
+import { airlineLogo } from './airline-logos.js?v=0.1.1881';
+import { fitStyle } from './photo-fit.js?v=0.1.1881';
+import { dist, speed, useMiles } from './units.js?v=0.1.1881';
+import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1881';
+import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1881';
+import { typeFact } from './sky-facts.js?v=0.1.1881';
+import { localText } from './localize.js?v=0.1.1881';
+import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1881';
+import { qrEncode, qrSvg } from './qr.js?v=0.1.1881';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // A type name escaped, with its hyphenated model codes kept on one line ('Boeing KC-135R Stratotanker' broke after 'KC-').
@@ -298,18 +298,35 @@ export function planeCardHtml(p, opts = {}) {
   const when = last?.time ? new Date(last.time) : opts.caughtAt;
   const kmh = last?.gsKt > 30 ? Math.round(last.gsKt * 1.852) : last?.gsKt != null ? null : opts.speedKmh ?? null;
   const sp = speed(kmh), aw = dist(last?.rangeKm != null ? Math.round(last.rangeKm) : opts.awayKm ?? null);
+  /* Spine (2026-11-22, Sevaan picked variant 2 of design/plane-card-team/round2.html): a navy column down the left holds every
+     number (the type code, the specs, this catch's height, speed, distance and heading, the level medal); the rest is the
+     photo, the set, the name, what it is, when and from whom you caught it, your progress in plain words, and the fact. */
+  const T = THRESHOLDS.plane, n = si?.count ?? 0, nextT = T.find((x) => n < x), nextWord = nextT === T[1] ? 'Silver' : 'Gold';
+  const spec = specs?.maker ? { maker: specs.maker, desc: [specs.country, specs.desc].filter(Boolean).join(' · ') } : null;
+  const model = spec && name.startsWith(spec.maker + ' ') ? name.slice(spec.maker.length + 1) : null;
+  const caught = last || opts.caughtAt;
+  const st = (l, v, u) => `<div class="sp-st"><b>${esc(v)}${u && v !== '—' ? `<small>${esc(u)}</small>` : ''}</b><span>${esc(l)}</span></div>`;
+  const opLine = k?.airline && k.routed && (k.op || k.reg) ? /* as before: the operator and registration only with a route; without one the band's words */ `<p class="sp-op">${esc(k.op || '')}${k.reg ? `<small>${esc(k.reg)}</small>` : ''}</p>` : band ? `<p class="sp-op sp-op--band">${esc(band.head)}${band.tail ? `<small>${esc(band.tail)}</small>` : ''}</p>` : '';
+  const prog = n ? `<div class="sp-pr"><p>${n} of ${nextT ?? n} different aircraft</p><div class="sp-bar"><i style="width:${Math.min(100, Math.round(n / (nextT ?? n) * 100))}%"></i></div><p class="sp-sub">${si?.liveryCount ? `${si.liveryCount} airline liver${si.liveryCount === 1 ? 'y' : 'ies'} seen` : ''}</p></div>` : '';
   const inner = `
-    <div class="ss-hd"><span class="ss-kind">${jet('fc-rot90')}AIRCRAFT</span><span class="ss-set">${esc(set.toUpperCase())}</span><span class="ss-plate"><span>TYPE</span><b>${esc(plate)}</b></span></div>
-    <div class="fc-pic ss-ph${band ? ' ss-ph--band' : ''}${ph ? '' : ' fc-pic--sky'}">${art}<span class="fc-holo" aria-hidden="true"></span><span class="ss-tick" aria-hidden="true"></span>${tierPill(p.tier)}${opts.shrunk ? miniMedal(lvl, si?.count ?? 0) : ''}${opts.rareHere ? '<span class="fc-here" title="Unusual where you caught it">RARE HERE</span>' : ''}${bandHtml(band)}</div>
-    <h2 class="fc-name ss-name${(name || '').length > 24 ? ' fc-name--xl' : (name || '').length > 16 ? ' fc-name--long' : ''}"><span>${escName(name)}</span></h2>${mk ? `<div class="ss-mk">${esc(mk)}</div>` : ''}
-    ${cells.length ? `<div class="ss-spec" style="--n:${cells.length}">${cells.map(([l, v, u]) => `<div><span>${esc(l)}</span><b>${esc(v)}${u ? `<small>${esc(u)}</small>` : ''}</b></div>`).join('')}</div>` : ''}
-    ${who}
-    ${last || opts.caughtAt ? `<div class="ss-catch"><div class="ss-catch-h"><span>YOUR CATCH</span><em>${when ? `${dateLong(when)} · ${timeOf(when)}` : ''}</em></div><div class="ss-catch-g">
-      ${field('HEIGHT', feet(last?.altFt ?? opts.heightFt), 'ft')}${field('SPEED', sp.v, sp.u)}${field('AWAY', aw.v, aw.u)}${field('HEADING', compass(last?.track))}</div></div>` : ''}
-    ${passport(si, { newest: opts.newStamp })}
-    <p class="fc-fact">${rich(localText(planeFact(p, si?.count ?? 1)))}</p>
-    <div class="ss-foot"><span>AIRCRAFT · ${esc(plate)}</span><b>SKY COLLECTOR</b></div>`;
-  return shell('plane', p.tier, inner, label, si?.level, 'ss');
+    <div class="sp-side">
+      <span class="sp-l">TYPE</span><b class="sp-tp${plate.length > 4 ? ' sp-tp--long' : ''}">${esc(plate)}</b>
+      ${cells.length ? `<h3>THE TYPE</h3>${cells.slice(0, 4).map(([l, v, u]) => st(l, v, u)).join('')}` : ''}
+      ${caught ? `<h3>YOUR CATCH</h3>${st('Height', feet(last?.altFt ?? opts.heightFt), 'ft')}${st('Speed', sp.v, sp.u)}${st('Away', aw.v, aw.u)}${st('Heading', compass(last?.track), '')}` : ''}
+      ${lvl ? `<div class="sp-md"><span class="sp-medal sp-medal--${lvl}">${n}</span><p><b>${levelWord(lvl).toUpperCase()}</b>${nextT ? `${nextT - n} more<br>for ${nextWord}` : 'Top level'}</p></div>` : ''}
+    </div>
+    <div class="sp-main">
+      <div class="fc-pic sp-ph${ph ? '' : ' fc-pic--sky'}">${art}<span class="fc-holo" aria-hidden="true"></span>${tierPill(p.tier)}${opts.rareHere ? '<span class="fc-here" title="Unusual where you caught it">RARE HERE</span>' : ''}</div>
+      <div class="sp-body">
+        <div class="sp-kick">${esc(set.toUpperCase())}</div>
+        <h2 class="sp-name${(model ?? name).length > 13 ? ' sp-name--long' : ''}">${model ? `<small>${esc(spec.maker.toUpperCase())}</small>` : ''}<span>${escName(model ?? name)}</span></h2>
+        ${spec?.desc || mk ? `<p class="sp-kind">${esc(String(spec?.desc || mk).replace(/^./, (c) => c.toUpperCase()))}</p>` : ''}
+        ${caught ? `<div class="sp-ct"><span class="sp-l sp-red">CAUGHT</span><p class="sp-when">${when ? `${when.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}, ${timeOf(when).toLowerCase()}` : ''}</p>${opLine}</div>` : ''}
+        ${prog}
+        <p class="fc-fact sp-fact">${rich(localText(planeFact(p, si?.count ?? 1)))}</p>
+      </div>
+    </div>`;
+  return shell('plane', p.tier, inner, label, si?.level, 'sp');
 }
 
 // A small card on its own (the catch panel's fallback when main.js gives no mini): the Collection's mini layout, the same
@@ -317,7 +334,7 @@ export function planeCardHtml(p, opts = {}) {
 // Returns the markup; the caller wraps it.
 export function miniCardHtml({ kind, card: c, type, last, n = 1, stamps = 0, stampInfo = null }) {
   const si = stampInfo ?? (stamps ? { kind, count: stamps, level: 'none' } : null);
-  const opts = { small: true, caughtAt: last ? new Date(last) : null, sightings: n, stampInfo: si, type };
+  const opts = { shrunk: true, caughtAt: last ? new Date(last) : null, sightings: n, stampInfo: si, type }; /* the full card shrunk (the Spine plane card, the landscape pass), as the Collection's tiles are (2026-11-22, Sevaan: "make sure the minicards are updated too") */
   const html = kind === 'flight' ? flightCardHtml({ ...c, type: c.type || type }, opts) : planeCardHtml({ ...c, type: c.type || type || '' }, opts);
   return `<span class="sct-face sct-mini">${html}</span>`;
 }

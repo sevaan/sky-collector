@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Editorial Plane Card</title>
+<!-- Sky Collector design spike, 2026-11-21. Plane card front, direction "Editorial / premium trading card" (one of three
+     designers). Sevaan: "This card front just doesn't feel pro enough". Two variants beside today's card (the app's own
+     planeCardHtml), each at full size (300 px) and as a Collection tile (110 px), plus the info audit. The variants are drawn
+     here from the app's real data (js/type-specs.js, js/sky-facts.js, the photo photoFor picks). Design only: nothing here is
+     wired into the app. -->
+<base href="../../"><!-- the app's photo URLs are relative to the repo root -->
+<link rel="stylesheet" href="css/sky-cards.css">
+<style>
+@font-face { font-family: 'SC Display'; src: url('fonts/RussoOne-Regular.woff2') format('woff2'); font-display: block; }
+@font-face { font-family: 'SC Label'; src: url('fonts/BarlowCondensed-Medium.woff2') format('woff2'); font-display: block; }
+:root { --ink: #0d2238; --ink2: #1b2a3d; --muted: #5b6878; --cream: #fffdf6; --red: #b42a20; --orange: #d7362b; --orange-ink: #b42a20; }
+* { box-sizing: border-box; }
+body { margin: 0; background: linear-gradient(180deg, #8cc2ec 0, #cfe4f5 340px, #eef5fb 900px, #eef5fb); color: var(--ink); font-family: Georgia, 'Times New Roman', serif; }
+.page { max-width: 1100px; margin: 0 auto; padding: 22px 16px 48px; overflow-x: hidden; }
+h1 { font: 400 26px/1.1 'SC Display', sans-serif; margin: 0; }
+.lede { font-size: 15px; line-height: 1.45; margin: 8px 0 0; color: var(--ink2); max-width: 680px; }
+.cols { display: flex; flex-wrap: wrap; gap: 30px 26px; justify-content: center; margin-top: 26px; }
+.col { width: 300px; }
+.col-h { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+.col-l { font: 400 13px/1 'SC Display', sans-serif; color: #fff; background: var(--ink); border-radius: 6px; padding: 4px 8px 3px; }
+.col-l--now { background: #7b8794; }
+.col-h h2 { font: 400 18px/1.1 'SC Display', sans-serif; margin: 0; }
+.why { font-size: 14px; line-height: 1.42; margin: 4px 0 12px; color: var(--ink2); min-height: 6em; }
+.cap { font: 500 12px/1 'SC Label', sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 16px 0 8px; }
+.tiles { display: flex; gap: 12px; align-items: flex-start; }
+.tiles figure { margin: 0; width: 110px; }
+.tiles figcaption { font: 500 11px/1.1 'SC Label', sans-serif; letter-spacing: .06em; color: var(--muted); text-align: center; margin-top: 5px; }
+.today-full .fc { --fc-u: calc(300px / 28); }
+.today-tile .sct-face.sct-mini { display: block; }
+.today-tile .sct-face.sct-mini > .fc { --fc-u: calc(110px / 28); }
+.audit { margin-top: 40px; background: var(--cream); border-radius: 12px; padding: 16px 16px 10px; box-shadow: 0 1px 4px rgba(13,34,56,.15); }
+.audit h2 { font: 400 20px/1.1 'SC Display', sans-serif; margin: 0 0 4px; }
+.audit p { font-size: 14px; line-height: 1.45; margin: 4px 0 10px; color: var(--ink2); }
+.audit table { width: 100%; border-collapse: collapse; font-size: 13.5px; line-height: 1.35; }
+.audit th { text-align: left; font: 500 11px/1 'SC Label', sans-serif; letter-spacing: .14em; color: var(--muted); padding: 6px 6px; border-bottom: 1px solid rgba(13,34,56,.2); }
+.audit td { padding: 7px 6px; border-bottom: 1px solid rgba(13,34,56,.08); vertical-align: top; }
+.audit td:first-child { font-weight: bold; white-space: nowrap; }
+.v { display: inline-block; font: 600 11px/1 'SC Label', sans-serif; letter-spacing: .12em; padding: 3px 6px 2px; border-radius: 4px; white-space: nowrap; }
+.v--keep { background: #dcefe3; color: #18693f; } .v--merge { background: #dfe9f7; color: #1a52a6; }
+.v--back { background: #f6ecd2; color: #7a5200; } .v--cut { background: #f6dcd9; color: #b42a20; }
+@media (max-width: 520px) { .audit td:first-child { white-space: normal; } }
+
+/* ============ Editorial card: shared ============ */
+.ed { --u: calc(300px / 28); font-size: var(--u); width: 28em; height: 42em; position: relative; border-radius: 1.3em; padding: .5em;
+  background: var(--frame); box-shadow: 0 .9em 2.2em rgba(13,34,56,.24), 0 .15em .4em rgba(13,34,56,.2); color: var(--ink); text-align: left; }
+.ed--tile { --u: calc(110px / 28); padding: .9em; border-radius: 2em; box-shadow: 0 .5em 1.4em rgba(13,34,56,.22), 0 .2em .5em rgba(13,34,56,.18); }
+.ed--common { --frame: linear-gradient(150deg,#f4f7f9 0%,#aab7c3 18%,#e6ecf1 36%,#8495a6 55%,#d9e1e8 74%,#71839a 100%); --tink: #3d5266; --tdot: #4a6178; }
+.ed--rare { --frame: linear-gradient(150deg,#fff4c4 0%,#e3ac2f 18%,#ffe594 36%,#b47d17 55%,#ffd866 74%,#9c6a12 100%); --tink: #1a52a6; --tdot: #1f5fbf; }
+.ed-in { position: relative; height: 100%; border-radius: .85em; overflow: hidden; background: var(--cream); display: flex; flex-direction: column; }
+.ed--tile .ed-in { border-radius: 1.2em; }
+.ed-ph { position: relative; flex: none; overflow: hidden; background: linear-gradient(180deg,#5f9fd6,#bcdaf2); }
+.ed-ph .fc-photo, .ed-ph .ph-blur { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.ed-ph .ph-blur { filter: none; transform: scale(1.1); }
+.ed-cr { position: absolute; z-index: 2; right: .7em; bottom: .55em; font: 500 .6em/1 'SC Label', sans-serif; letter-spacing: .06em; color: rgba(255,255,255,.88); text-shadow: 0 0 .4em rgba(13,34,56,.7); }
+.ed-rar { position: absolute; z-index: 2; left: .9em; top: .9em; display: flex; align-items: center; gap: .45em; padding: .34em .7em .3em .55em; border-radius: 2em;
+  background: rgba(255,253,246,.92); font: 600 .74em/1 'SC Label', sans-serif; letter-spacing: .2em; color: var(--tink); box-shadow: 0 .1em .4em rgba(13,34,56,.18); }
+.ed-rar i { width: .8em; height: .8em; border-radius: 50%; background: var(--tdot); }
+.ed--rare .ed-rar i { background: radial-gradient(circle at 35% 30%, #fff4c4, #e3ac2f 45%, #9c6a12); transform: rotate(45deg); border-radius: .12em; }
+.ed-kick { font: 500 .92em/1 'SC Label', sans-serif; letter-spacing: .26em; color: var(--muted); text-transform: uppercase; display: flex; align-items: center; gap: .6em; }
+.ed-kick b { font-weight: 500; color: var(--red); }
+.ed-kick .sp { flex: 1; }
+.ed-name { margin: .32em 0 0; font: 400 3.5em/.9 'SC Display', sans-serif; letter-spacing: -.025em; color: var(--ink); white-space: nowrap; }
+.ed-name small { display: block; font: 500 .3em/1 'SC Label', sans-serif; letter-spacing: .28em; color: var(--tink); margin-bottom: .45em; }
+.ed-desc { margin: .45em 0 0; font: italic 400 .98em/1.3 Georgia, serif; color: var(--muted); }
+.ed-stats { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 1.1em; padding-top: .85em; border-top: .08em solid rgba(13,34,56,.18); }
+.ed-stats > div { padding: 0 .5em; border-left: .08em solid rgba(13,34,56,.14); }
+.ed-stats > div:first-child { padding-left: 0; border-left: 0; }
+.ed-stats b { display: block; font: 400 1.45em/1 'SC Display', sans-serif; letter-spacing: -.01em; color: var(--ink); white-space: nowrap; }
+.ed-stats b small { font: 500 .5em/1 'SC Label', sans-serif; letter-spacing: .06em; color: var(--muted); margin-left: .15em; }
+.ed-stats span { display: block; margin-top: .4em; font: 500 .7em/1 'SC Label', sans-serif; letter-spacing: .18em; color: var(--muted); text-transform: uppercase; white-space: nowrap; }
+/* progress: one element, the level medal with the count, a sentence and a hairline bar with its next stop */
+.ed-prog { display: flex; align-items: center; gap: .8em; }
+.ed-medal { flex: none; width: 2.9em; height: 2.9em; border-radius: 50%; display: grid; place-items: center; font: 400 1.25em/1 'SC Display', sans-serif; color: #fff7ee;
+  box-shadow: inset 0 0 0 .14em rgba(255,255,255,.45), 0 .12em .3em rgba(13,34,56,.3); text-shadow: 0 .06em .1em rgba(0,0,0,.35); }
+.ed-medal--bronze { background: radial-gradient(circle at 35% 28%, #f3c9a0, #c17d45 45%, #7f4a22); }
+.ed-medal--silver { background: radial-gradient(circle at 35% 28%, #ffffff, #b8c2cc 45%, #6f7c88); color: #1b2a3d; text-shadow: none; }
+.ed-medal--gold { background: radial-gradient(circle at 35% 28%, #fff4c4, #e3ac2f 45%, #9c6a12); color: #2a1d00; text-shadow: none; }
+.ed-medal--none { background: none; box-shadow: inset 0 0 0 .12em rgba(13,34,56,.25); color: var(--muted); text-shadow: none; }
+.ed-pt { flex: 1; min-width: 0; }
+.ed-pt p { margin: 0; display: flex; justify-content: space-between; align-items: baseline; gap: .5em; font: 500 .92em/1.1 'SC Label', sans-serif; letter-spacing: .06em; color: var(--ink); }
+.ed-pt p em { font-style: normal; font-size: .82em; letter-spacing: .16em; color: var(--muted); white-space: nowrap; }
+.ed-pt p b { font-weight: 500; color: #8a5326; letter-spacing: .16em; }
+.ed-bar { position: relative; height: .26em; margin-top: .5em; border-radius: 1em; background: rgba(13,34,56,.1); overflow: hidden; }
+.ed-bar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: inherit; background: linear-gradient(90deg, #c17d45, #e3ac2f); }
+.ed-cap { font: 400 .8em/1.45 Georgia, serif; color: var(--muted); }
+.ed-cap b { font-weight: 400; color: var(--ink2); }
+
+/* ============ A · Placard ============ */
+/* The photo is the hero, edge to edge inside the metal; the catch sits under it as a magazine caption; then the name as a
+   headline, one stat strip, the fact as the placard text, and progress closing the card. */
+.edA .ed-ph { height: 17em; }
+.edA .ed-name { font-size: 3.2em; }
+.edA .ed-stats { margin-top: .9em; }
+.edA .ed-capline { flex: none; padding: .55em 1.1em .5em; border-bottom: .08em solid rgba(13,34,56,.12); font: 400 .78em/1.3 Georgia, serif; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.edA .ed-capline b { font: 500 1.06em/1 'SC Label', sans-serif; letter-spacing: .16em; color: var(--red); margin-right: .4em; }
+.edA .ed-body { flex: 1; display: flex; flex-direction: column; padding: 1em 1.3em 1.1em; }
+.edA .ed-fact { margin: .95em 0 0; font: 400 .86em/1.45 Georgia, serif; color: var(--ink2); }
+.edA .ed-fact b { color: var(--ink); }
+.edA .ed-prog { margin-top: auto; padding-top: .8em; }
+
+/* ============ B · Full bleed ============ */
+/* The photo runs the whole card; the information sits in a cream panel that rises over it on a shallow curve, edged by a
+   thin line of the rarity's metal. The fact moves to the back, so the panel breathes. */
+.edB .ed-ph { flex: 1; min-height: 0; }
+.edB .ed-panel { position: relative; z-index: 2; flex: none; padding: 1.7em 1.35em 1.15em; background: var(--cream); }
+.edB .ed-panel::before { content: ''; position: absolute; left: -10%; right: -10%; top: -1.6em; height: 3.4em; border-radius: 50% 50% 0 0 / 100% 100% 0 0; background: var(--cream);
+  box-shadow: 0 -.22em 0 0 rgba(255,255,255,.6); border-top: .22em solid transparent; background-clip: padding-box; }
+.edB .ed-panel::after { content: ''; position: absolute; left: -10%; right: -10%; top: -1.82em; height: 3.4em; border-radius: 50% 50% 0 0 / 100% 100% 0 0; background: var(--frame); z-index: -1; }
+.edB .ed-panel > * { position: relative; }
+.edB .ed-name { font-size: 3.7em; }
+.edB .ed-cap { margin-top: .95em; }
+.edB .ed-prog { margin-top: 1em; padding: .7em .8em; border-radius: .7em; background: rgba(13,34,56,.045); }
+.edB .ed-tc { position: absolute; z-index: 2; right: .9em; top: .9em; font: 400 1.05em/1 'SC Display', sans-serif; letter-spacing: .04em; color: #fff; text-shadow: 0 0 .5em rgba(13,34,56,.55); }
+.edB .ed-cr { bottom: auto; top: 2.6em; right: .9em; writing-mode: vertical-rl; }
+
+/* back of B (shown small, to say where things went) */
+.ed-back .ed-in { padding: 1.4em 1.35em; background: linear-gradient(rgba(31,95,191,.08) .06em, transparent .06em) 0 0 / 1.6em 1.6em, linear-gradient(90deg, rgba(31,95,191,.08) .06em, transparent .06em) 0 0 / 1.6em 1.6em, var(--cream); }
+.ed-back h3 { margin: 0; font: 500 .9em/1 'SC Label', sans-serif; letter-spacing: .26em; color: var(--red); }
+.ed-back .ed-fact { margin: .5em 0 1.2em; font: 400 1.05em/1.45 Georgia, serif; color: var(--ink2); }
+.ed-back .ed-fact b { color: var(--ink); }
+.ed-back dl { margin: .55em 0 1.2em; display: grid; grid-template-columns: auto 1fr; gap: .45em 1em; font: 400 .92em/1.25 Georgia, serif; }
+.ed-back dt { font: 500 .8em/1.5 'SC Label', sans-serif; letter-spacing: .18em; color: var(--muted); }
+.ed-back dd { margin: 0; color: var(--ink); }
+.ed-back .ed-foot { margin-top: auto; display: flex; justify-content: space-between; font: 500 .8em/1 'SC Label', sans-serif; letter-spacing: .2em; color: var(--muted); }
+
+/* ============ Tiles (110 px) ============ */
+/* Photo, the model as a headline, the medal. The metal frame says the rarity; nothing else. */
+.ed--tile .ed-ph { flex: 1; }
+.ed--tile .ed-tn { flex: none; padding: 1.5em 1.6em 1.7em; }
+.ed--tile .ed-tn small { display: block; font: 500 2.1em/1 'SC Label', sans-serif; letter-spacing: .2em; color: var(--muted); }
+.ed--tile .ed-tn b { display: block; margin-top: .25em; font: 400 3.6em/1 'SC Display', sans-serif; letter-spacing: -.02em; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ed--tile .ed-medal { position: absolute; z-index: 3; right: 1.4em; font-size: 3.4em; width: 2.2em; height: 2.2em; font-size: 3em; }
+.edA.ed--tile .ed-medal { top: calc(100% - 8.6em - 1.2em * 3 / 3); }
+.ed--tile .ed-rdot { position: absolute; z-index: 2; left: 1.8em; top: 1.8em; width: 2.6em; height: 2.6em; border-radius: 50%; background: var(--tdot); box-shadow: 0 0 0 .5em rgba(255,253,246,.9); }
+.ed--rare.ed--tile .ed-rdot { border-radius: .3em; transform: rotate(45deg); background: radial-gradient(circle at 35% 30%, #fff4c4, #e3ac2f 45%, #9c6a12); }
+.edB.ed--tile .ed-ph { flex: 1; }
+.edB.ed--tile .ed-tn { position: relative; z-index: 2; background: var(--cream); padding-top: 1.6em; }
+.edB.ed--tile .ed-tn::before { content: ''; position: absolute; left: -10%; right: -10%; top: -2.4em; height: 5em; border-radius: 50% 50% 0 0 / 100% 100% 0 0; background: var(--cream); }
+.edB.ed--tile .ed-tn::after { content: ''; position: absolute; left: -10%; right: -10%; top: -2.9em; height: 5em; border-radius: 50% 50% 0 0 / 100% 100% 0 0; background: var(--frame); z-index: -1; }
+.edB.ed--tile .ed-tn > * { position: relative; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Plane card front: editorial</h1>
+  <p class="lede">One hero (the photo, larger and edge to edge), the name as a headline, one stat strip, your catch as a quiet caption, progress as one element. No tab, no plate, no boxes, no grid paper, no footer. Rarity is the metal frame plus one small chip. The same A350-900 as today: 2 different aircraft caught, Bronze.</p>
+
+  <div class="cols">
+    <div class="col">
+      <div class="col-h"><span class="col-l col-l--now">NOW</span><h2>Today</h2></div>
+      <p class="why">The app's own planeCardHtml. Twelve blocks of nearly equal weight: tab, set, plate, pill, name, maker, four boxed specs, airline, a catch box of five fields, progress, fact, footer. Nothing leads.</p>
+      <div class="today-full" id="today"></div>
+      <div class="cap">Collection tile</div>
+      <div class="tiles"><figure class="today-tile" id="today-tile"></figure></div>
+    </div>
+    <div class="col">
+      <div class="col-h"><span class="col-l">A</span><h2>Placard</h2></div>
+      <p class="why">The photo fills the top half edge to edge; your catch is its caption. Then a museum placard: maker as a kicker, the model as the headline, one stat strip, the fact as the label text, and the medal with "2 of 10 different aircraft" closing the card.</p>
+      <div id="a"></div>
+      <div class="cap">Collection tile · common and rare</div>
+      <div class="tiles" id="a-tiles"></div>
+    </div>
+    <div class="col">
+      <div class="col-h"><span class="col-l">B</span><h2>Full bleed</h2></div>
+      <p class="why">The most "pro" take: the photo is the whole card, like a top-tier sports card. A cream panel rises over it on a curve edged in the rarity's metal, holding name, stats, catch caption and progress. The fact and the full catch log move to the back.</p>
+      <div id="b"></div>
+      <div class="cap">Collection tile · common and rare</div>
+      <div class="tiles" id="b-tiles"></div>
+      <div class="cap">B's back (where the fact and details go)</div>
+      <div id="b-back"></div>
+    </div>
+  </div>
+
+  <div class="audit">
+    <h2>Info audit</h2>
+    <p>Every field today's front can show, and what the editorial front does with it. The rule: the front answers "what is it, how rare, what did I do, how far along am I". Reference detail and anything repeated goes to the back or goes.</p>
+    <table>
+      <thead><tr><th>FIELD</th><th>CALL</th><th>WHY</th></tr></thead>
+      <tbody id="audit"></tbody>
+    </table>
+  </div>
+</div>
+
+<script type="module">
+import { planeCardHtml, miniCardHtml, photoFor } from './js/flight-card.js';
+import { typeSpecs } from './js/type-specs.js';
+import { typeFact } from './js/sky-facts.js';
+import { THRESHOLDS } from './js/sky-stamps.js';
+import { dist, speed, useMiles } from './js/units.js';
+
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+const $ = (id) => document.getElementById(id);
+
+const card = { key: 'P:A359', type: 'A359', name: 'Airbus A350-900', tier: 'common', setName: 'Twin Aisles', glyph: 'jet' };
+const opts = { caughtAt: new Date(2026, 10, 21, 18, 22), heightFt: 40000, speedKmh: 767, awayKm: 75, callsign: 'DLH2C', eager: true,
+  stampInfo: { kind: 'plane', count: 2, liveryCount: 2, level: 'bronze', last: { callsign: 'DLH2C', cls: 'airline', op: 'Lufthansa', reg: 'D-AIXT', routed: true, altFt: 40000 } } };
+
+// ---- today ----
+$('today').innerHTML = planeCardHtml(card, opts);
+$('today-tile').innerHTML = miniCardHtml({ kind: 'plane', card, type: 'A359', last: +opts.caughtAt, stampInfo: opts.stampInfo }) + '<figcaption>today</figcaption>';
+
+// ---- the data the editorial cards use ----
+const specs = typeSpecs(card.type), ph = photoFor(card.type), si = opts.stampInfo, last = si.last;
+const model = card.name.startsWith(specs.maker + ' ') ? card.name.slice(specs.maker.length + 1) : card.name;
+const desc = specs.desc[0].toUpperCase() + specs.desc.slice(1) + (specs.country ? `, ${specs.country}` : '');
+const sCells = specs.cells.map(([l, v, u]) => (l === "Range" && u === "km" && useMiles() ? [l, dist(Number(v.replace(/,/g, ""))).v, "mi"] : [l, v, u]));
+const aw = dist(opts.awayKm), spd = speed(opts.speedKmh), awT = `${aw.v} ${aw.u} away`, spT = `${spd.v} ${spd.u}`;
+const cells = sCells.map(([l, v, u]) => `<div><b>${esc(v)}${u ? `<small>${esc(u)}</small>` : ''}</b><span>${esc(l)}</span></div>`).join('');
+const T = THRESHOLDS.plane, n = si.count, next = T.find((x) => n < x), nextWord = next === T[1] ? 'SILVER' : 'GOLD';
+const pct = next ? Math.round(n / next * 100) : 100;
+const when = opts.caughtAt, dt = when.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+const tm = when.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).toLowerCase();
+const fact = rich(typeFact(card.type, n));
+const sized = (url, s) => String(url).replace(/\/([^/]+)$/, `/${s}/$1`);
+const photo = (small) => `${ph.box ? `<img class="ph-blur" src="${sized(ph.url, 'tiny')}" alt="" aria-hidden="true">` : ''}<img class="fc-photo" src="${small ? sized(ph.url, 'sm') : ph.url}" alt=""${ph.box ? ` data-box="${ph.box.join(',')}" data-w="${ph.w}" data-h="${ph.h}"` : ''}>`;
+const credit = `<span class="ed-cr">Photo ${esc(ph.credit)} · ${esc(ph.licence)}</span>`;
+const rar = (tier) => `<span class="ed-rar"><i></i>${tier.toUpperCase()}</span>`;
+const prog = `<div class="ed-prog"><span class="ed-medal ed-medal--${si.level}">${n}</span><div class="ed-pt">
+  <p><span>${n} of ${next} different aircraft</span><em><b>${si.level.toUpperCase()}</b> · ${next - n} TO ${nextWord}</em></p>
+  <div class="ed-bar"><i style="width:${pct}%"></i></div></div></div>`;
+const kicker = `<div class="ed-kick"><b>${esc(card.setName.toUpperCase())}</b><span class="sp"></span><span>${esc(card.type)}</span></div>`;
+const head = `<h2 class="ed-name"><small>${esc(specs.maker.toUpperCase())}</small>${esc(model)}</h2><p class="ed-desc">${esc(desc)}</p>`;
+
+// A · Placard
+const capA = `<div class="ed-capline"><b>CAUGHT</b>${dt.replace(/ \d{4}$/, "")}, ${tm} · ${esc(last.op)} ${esc(last.reg)} · 40,000 ft · ${awT}</div>`;
+$('a').innerHTML = `<div class="ed ed--common edA"><div class="ed-in">
+  <div class="ed-ph">${photo(false)}${rar('common')}${credit}</div>${capA}
+  <div class="ed-body">${kicker}${head}<div class="ed-stats">${cells}</div><p class="ed-fact">${fact}</p>${prog}</div>
+</div></div>`;
+
+// B · Full bleed
+const capB = `<p class="ed-cap">Caught <b>${dt}, ${tm}</b> · ${esc(last.op)} ${esc(last.reg)} · 40,000 ft, ${spT}, ${awT}</p>`;
+$('b').innerHTML = `<div class="ed ed--common edB"><div class="ed-in">
+  <div class="ed-ph">${photo(false)}${rar('common')}<span class="ed-tc">${esc(card.type)}</span>${credit}</div>
+  <div class="ed-panel">${kicker.replace(`<span>${esc(card.type)}</span>`, '')}${head}<div class="ed-stats">${cells}</div>${capB}${prog}</div>
+</div></div>`;
+$('b-back').innerHTML = `<div class="ed ed--common ed-back"><div class="ed-in">
+  <h3>DID YOU KNOW</h3><p class="ed-fact">${fact}</p>
+  <h3>YOUR NEWEST CATCH</h3><dl><dt>WHEN</dt><dd>${dt}, ${tm}</dd><dt>AIRLINE</dt><dd>${esc(last.op)} · ${esc(last.reg)}</dd><dt>HEIGHT</dt><dd>40,000 ft</dd><dt>SPEED</dt><dd>${spT}</dd><dt>AWAY</dt><dd>${aw.v} ${aw.u}</dd><dt>HEADING</dt><dd>—</dd></dl>
+  <h3>THIS TYPE</h3><dl><dt>MAKER</dt><dd>${esc(specs.maker)}</dd><dt>KIND</dt><dd>${esc(desc)}</dd><dt>LIVERIES</dt><dd>${si.liveryCount} airlines seen</dd></dl>
+  <div class="ed-foot"><span>AIRCRAFT · ${esc(card.type)}</span><span>SKY COLLECTOR</span></div>
+</div></div>`;
+
+// tiles
+const tile = (v, tier, lvl, count) => `<figure><div class="ed ed--tile ed--${tier} ${v}"><div class="ed-in">
+  <div class="ed-ph">${photo(true)}<span class="ed-rdot"></span></div>
+  <div class="ed-tn"><small>${esc(specs.maker.toUpperCase())}</small><b>${esc(model)}</b></div>
+  <span class="ed-medal ed-medal--${lvl}" style="bottom:${v === 'edA' ? '3.2em' : '3.3em'};font-size:2.6em">${count}</span>
+</div></div><figcaption>${tier}${lvl !== 'none' ? ` · ${lvl}` : ''}</figcaption></figure>`;
+$('a-tiles').innerHTML = tile('edA', 'common', 'bronze', 2) + tile('edA', 'rare', 'silver', 12);
+$('b-tiles').innerHTML = tile('edB', 'common', 'bronze', 2) + tile('edB', 'rare', 'silver', 12);
+
+// ---- the audit ----
+const A = [
+  ['AIRCRAFT tab', 'cut', 'Every plane card is an aircraft; the shape, photo and Collection already say so. A label on every card is noise.'],
+  ['Set ("TWIN AISLES")', 'keep', 'Small red kicker above the name. It is the collecting hook (which set am I filling), so it stays, but quietly.'],
+  ['TYPE plate (A359)', 'merge', 'Kept as a small code at the end of the kicker line (A) or on the photo corner (B). A boxed plate gave a 4-letter ICAO code more weight than the name.'],
+  ['Photo', 'keep', 'The hero. Edge to edge inside the metal, about half the card (A) or the whole card (B), instead of a recessed window.'],
+  ['Rarity pill', 'keep', 'One small chip on the photo. The metal frame already carries it; the chip names it for people who don\'t read metals.'],
+  ['Photo credit', 'keep', 'Required by the licence. Smaller, white, no box.'],
+  ['Class band (cargo, no flight number)', 'merge', 'When it applies, it becomes the first words of the catch caption ("Cargo airline · route not known") instead of a band across the photo.'],
+  ['Name', 'keep', 'Split into the maker as a kicker (AIRBUS) and the model as the headline (A350-900), so the headline is short, big and never wraps.'],
+  ['Maker · kind line', 'merge', 'Maker moves into the headline\'s kicker; the kind ("Wide-body jet airliner") stays as one italic line under it.'],
+  ['Spec cells (first flew, engines, range, span)', 'keep', 'One unboxed stat strip, numbers big, labels small. This is the "sports card stats" row: type facts that don\'t change.'],
+  ['AIRLINE operator + registration', 'merge', 'Into the catch caption ("Lufthansa D-AIXT"). It describes that one catch, not the type, so it belongs with the catch.'],
+  ['YOUR CATCH date / time', 'keep', 'Leads the caption line. The one catch detail everyone wants.'],
+  ['YOUR CATCH height, away', 'merge', 'Into the caption as plain words. The headline numbers of what you saw.'],
+  ['YOUR CATCH speed', 'merge', 'In B\'s caption; in A it moves to the back to keep the caption to one line.'],
+  ['YOUR CATCH heading', 'back', 'Usually "—", and a compass point is the least memorable thing on the card. Back only.'],
+  ['Progress count ("2 AIRCRAFT")', 'merge', 'Reworded "2 of 10 different aircraft": "of 10" gives the goal, "different" says the same plane again doesn\'t count. That answers Sevaan\'s confusion without a help line.'],
+  ['Liveries ("2 LIVERIES")', 'back', 'A second count beside the first is what made "2 AIRCRAFT" hard to read. It doesn\'t drive the level, so it moves to the back.'],
+  ['Level chip (BRONZE)', 'merge', 'Becomes the medal: a disc of the level\'s metal with the count in it, the same medal the Collection tile already uses, so the two read as one system.'],
+  ['Bar + "8 MORE TO SILVER"', 'keep', 'A hairline bar under the sentence, with "BRONZE · 8 TO SILVER" on the right. One element with the medal, not three.'],
+  ['Fact', 'keep', 'A: the placard text, it is what makes catching the type again rewarding. B: moves to the back so the photo can take the whole card.'],
+  ['Footer (AIRCRAFT · A359, SKY COLLECTOR)', 'cut', 'Repeats the tab and the plate; the brand is the frame and the type. On the back if anywhere.'],
+  ['Drafting paper grid', 'cut', 'Plain cream on the front reads premium; the grid and blue ink can live on the back (B\'s back keeps it, so the spec-sheet idea isn\'t lost).'],
+  ['Collection tile', 'keep', 'Photo, maker, model, medal. Tab, plate and "first flew" cut: at 110 px they were unreadable and the model name is what you scan for.'],
+];
+$('audit').innerHTML = A.map(([f, v, w]) => `<tr><td>${esc(f)}</td><td><span class="v v--${v}">${{ keep: 'KEEP', merge: 'MERGE', back: 'TO BACK', cut: 'CUT' }[v]}</span></td><td>${esc(w)}</td></tr>`).join('');
+</script>
+</body>
+</html>

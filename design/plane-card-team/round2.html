@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plane Card Round 2</title>
+<!-- Sky Collector design spike, 2026-11-22. Plane card FRONT, round 2. Sevaan on round 1 (editorial.html): "Need all the info
+     from your audit on one side of the card. Need more front of card design ideas." So every field is on the front of every
+     variant: four layouts beside today's card (the app's own planeCardHtml), each at full size (300 px) and as a Collection
+     tile (110 px), one Rare version of the favourite, and a checklist the page fills in itself by looking for each field on
+     each card. Drawn from the app's real data (js/type-specs.js, js/sky-facts.js, the photo photoFor picks). Design only:
+     nothing here is wired into the app. -->
+<base href="../../"><!-- the app's photo URLs are relative to the repo root -->
+<link rel="stylesheet" href="css/sky-cards.css">
+<style>
+@font-face { font-family: 'SC Display'; src: url('fonts/RussoOne-Regular.woff2') format('woff2'); font-display: block; }
+@font-face { font-family: 'SC Label'; src: url('fonts/BarlowCondensed-Medium.woff2') format('woff2'); font-display: block; }
+:root { --ink: #0d2238; --ink2: #1b2a3d; --muted: #5b6878; --cream: #fffdf6; --red: #b42a20; --gold: #b8892a; --sky: #8fbbe3; }
+* { box-sizing: border-box; }
+body { margin: 0; background: linear-gradient(180deg, #8cc2ec 0, #cfe4f5 340px, #eef5fb 900px, #eef5fb); color: var(--ink); font-family: Georgia, 'Times New Roman', serif; }
+.page { max-width: 1400px; margin: 0 auto; padding: 22px 16px 48px; overflow-x: hidden; }
+h1 { font: 400 26px/1.1 'SC Display', sans-serif; margin: 0; }
+.lede { font-size: 15px; line-height: 1.45; margin: 8px 0 0; color: var(--ink2); max-width: 720px; }
+.cols { display: flex; flex-wrap: wrap; gap: 34px 28px; justify-content: center; margin-top: 26px; }
+.col { width: 300px; }
+.col-h { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+.col-l { font: 400 13px/1 'SC Display', sans-serif; color: #fff; background: var(--ink); border-radius: 6px; padding: 4px 8px 3px; }
+.col-l--now { background: #7b8794; } .col-l--fav { background: var(--gold); }
+.col-h h2 { font: 400 18px/1.1 'SC Display', sans-serif; margin: 0; }
+.why { font-size: 14px; line-height: 1.42; margin: 4px 0 12px; color: var(--ink2); min-height: 7.2em; }
+.cap { font: 500 12px/1.25 'SC Label', sans-serif; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 18px 0 8px; }
+.tiles { display: flex; gap: 14px; align-items: flex-start; }
+.tiles figure { margin: 0; width: 110px; }
+.tiles figcaption { font: 500 11px/1.1 'SC Label', sans-serif; letter-spacing: .06em; color: var(--muted); text-align: center; margin-top: 6px; }
+.today-full .fc { --fc-u: calc(300px / 28); }
+.today-tile .sct-face.sct-mini { display: block; }
+.today-tile .sct-face.sct-mini > .fc { --fc-u: calc(110px / 28); }
+.panel { margin-top: 40px; background: var(--cream); border-radius: 12px; padding: 16px 16px 12px; box-shadow: 0 1px 4px rgba(13,34,56,.15); }
+.panel h2 { font: 400 20px/1.1 'SC Display', sans-serif; margin: 0 0 4px; }
+.panel p { font-size: 14px; line-height: 1.45; margin: 4px 0 10px; color: var(--ink2); max-width: 760px; }
+.chk { width: 100%; border-collapse: collapse; font-size: 13px; line-height: 1.3; }
+.chk th { text-align: center; font: 500 11px/1 'SC Label', sans-serif; letter-spacing: .12em; color: var(--muted); padding: 6px 4px; border-bottom: 1px solid rgba(13,34,56,.2); }
+.chk th:first-child, .chk td:first-child { text-align: left; }
+.chk { table-layout: fixed; } .chk th:first-child { width: 42%; }
+.chk td { padding: 5px 4px; border-bottom: 1px solid rgba(13,34,56,.07); text-align: center; }
+.chk td.ok { color: #18693f; font-weight: bold; } .chk td.no { color: var(--red); font-weight: bold; }
+.chk td:first-child { color: var(--ink2); }
+.chk tfoot td { font-weight: bold; border-bottom: 0; padding-top: 8px; font-size: 11px; letter-spacing: -.02em; }
+
+/* ================= Round 2 cards: shared ================= */
+.r2 { --u: calc(300px / 28); font-size: var(--u); width: 28em; height: 42em; position: relative; border-radius: 1.3em; padding: .5em;
+  background: var(--frame); box-shadow: 0 .9em 2.2em rgba(13,34,56,.24), 0 .15em .4em rgba(13,34,56,.2); color: var(--ink); text-align: left; }
+.r2--tile { --u: calc(110px / 28); padding: .9em; border-radius: 2em; box-shadow: 0 .5em 1.4em rgba(13,34,56,.22), 0 .2em .5em rgba(13,34,56,.18); }
+.r2--common { --frame: linear-gradient(150deg,#f4f7f9 0%,#aab7c3 18%,#e6ecf1 36%,#8495a6 55%,#d9e1e8 74%,#71839a 100%); --tink: #3d5266; --tdot: #4a6178; --notch: #a3b1be; }
+.r2--rare { --frame: linear-gradient(150deg,#fff4c4 0%,#e3ac2f 18%,#ffe594 36%,#b47d17 55%,#ffd866 74%,#9c6a12 100%); --tink: #1a52a6; --tdot: #1f5fbf; --notch: #d2a33c; }
+.r2-in { position: relative; height: 100%; border-radius: .85em; overflow: hidden; background: var(--cream); display: flex; flex-direction: column; }
+.r2--tile .r2-in { border-radius: 1.2em; }
+.ph { position: relative; flex: none; overflow: hidden; background: linear-gradient(180deg,#5f9fd6,#bcdaf2); }
+.ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 46% 52%; display: block; }
+/* Rare: a slow foil streak over the photo and a gold hairline under it, on top of the gold frame */
+.r2--rare .ph::after { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; mix-blend-mode: screen; opacity: .45;
+  background: linear-gradient(115deg, transparent 30%, rgba(255,236,170,.0) 38%, rgba(255,240,190,.75) 46%, rgba(170,220,255,.55) 52%, transparent 62%); }
+.r2--rare .ph { box-shadow: inset 0 -.2em 0 #d9a83a; }
+.cr { position: absolute; z-index: 2; right: .7em; bottom: .5em; font: 500 .62em/1 'SC Label', sans-serif; letter-spacing: .06em; color: rgba(255,255,255,.9); text-shadow: 0 0 .4em rgba(13,34,56,.75); }
+.chip { position: absolute; z-index: 2; left: .85em; top: .85em; display: flex; align-items: center; gap: .45em; padding: .34em .7em .3em .55em; border-radius: 2em;
+  background: rgba(255,253,246,.93); font: 600 .74em/1 'SC Label', sans-serif; letter-spacing: .2em; color: var(--tink); box-shadow: 0 .1em .4em rgba(13,34,56,.18); }
+.chip i { width: .8em; height: .8em; border-radius: 50%; background: var(--tdot); }
+.r2--rare .chip i { background: radial-gradient(circle at 35% 30%, #fff4c4, #e3ac2f 45%, #9c6a12); transform: rotate(45deg); border-radius: .12em; }
+.tc { position: absolute; z-index: 2; right: .8em; top: .75em; font: 400 1.15em/1 'SC Display', sans-serif; letter-spacing: .05em; color: #fff; text-shadow: 0 0 .5em rgba(13,34,56,.6); }
+.tc small { display: block; font: 500 .5em/1 'SC Label', sans-serif; letter-spacing: .24em; text-align: right; margin-bottom: .2em; opacity: .9; }
+.lab { font: 500 .74em/1 'SC Label', sans-serif; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin: 0; }
+.red { color: var(--red); }
+.num { font-family: 'SC Display', sans-serif; font-weight: 400; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+.un { font: 500 .52em/1 'SC Label', sans-serif; letter-spacing: .06em; color: var(--muted); margin-left: .16em; }
+.kick { display: flex; align-items: center; gap: .6em; font: 500 .9em/1 'SC Label', sans-serif; letter-spacing: .26em; color: var(--muted); text-transform: uppercase; }
+.kick b { font-weight: 500; color: var(--red); } .kick .sp { flex: 1; }
+.name { margin: .3em 0 0; font: 400 3em/.92 'SC Display', sans-serif; letter-spacing: -.025em; color: var(--ink); white-space: nowrap; }
+.name small { display: block; font: 500 .3em/1 'SC Label', sans-serif; letter-spacing: .3em; color: var(--tink); margin-bottom: .42em; }
+.kind { margin: .4em 0 0; font: italic 400 .95em/1.3 Georgia, serif; color: var(--muted); }
+.fact { margin: 0; font: 400 .84em/1.42 Georgia, serif; color: var(--ink2); }
+.fact b { color: var(--ink); }
+.medal { flex: none; width: 2.7em; height: 2.7em; border-radius: 50%; display: grid; place-items: center; font: 400 1.2em/1 'SC Display', sans-serif; color: #fff7ee;
+  box-shadow: inset 0 0 0 .14em rgba(255,255,255,.45), 0 .12em .3em rgba(13,34,56,.3); text-shadow: 0 .06em .1em rgba(0,0,0,.35); }
+.medal--bronze { background: radial-gradient(circle at 35% 28%, #f3c9a0, #c17d45 45%, #7f4a22); }
+.medal--silver { background: radial-gradient(circle at 35% 28%, #ffffff, #b8c2cc 45%, #6f7c88); color: #1b2a3d; text-shadow: none; }
+.bar { position: relative; height: .28em; border-radius: 1em; background: rgba(13,34,56,.1); overflow: hidden; }
+.bar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: inherit; background: linear-gradient(90deg, #c17d45, #e3ac2f); }
+.lvl { font: 500 .78em/1 'SC Label', sans-serif; letter-spacing: .16em; color: var(--muted); white-space: nowrap; }
+.lvl b { font-weight: 500; color: #8a5326; }
+
+/* ================= 1 · Gallery ================= */
+/* Photo top, then the name, then a two-column ledger: the type on the left, your catch on the right, each a quiet header,
+   one italic line and four rows with no rules. Progress is one tinted strip, the fact closes the card under a hairline. */
+.v1 .ph { height: 14.6em; }
+.v1 .body { flex: 1; display: flex; flex-direction: column; padding: .95em 1.35em .95em; min-height: 0; }
+.v1 .name { font-size: 2.9em; }
+.v1 .led { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1.6em; margin-top: .95em; }
+.v1 .led > div + div { position: relative; }
+.v1 .led > div + div::before { content: ''; position: absolute; left: -.8em; top: .1em; bottom: .2em; width: .08em; background: rgba(13,34,56,.13); }
+.v1 .led .sub { margin: .32em 0 .35em; font: italic 400 .84em/1.3 Georgia, serif; color: var(--muted); min-height: 2.6em; }
+.v1 .led .sub b { font-style: normal; font-weight: 400; color: var(--ink2); }
+.v1 .row { display: flex; justify-content: space-between; align-items: baseline; padding: .26em 0; }
+.v1 .row span { font: 500 .8em/1 'SC Label', sans-serif; letter-spacing: .1em; color: var(--muted); }
+.v1 .row b { font: 400 1.08em/1 'SC Display', sans-serif; font-variant-numeric: tabular-nums; color: var(--ink); white-space: nowrap; }
+.v1 .row b small { font: 500 .58em/1 'SC Label', sans-serif; letter-spacing: .06em; color: var(--muted); margin-left: .15em; }
+.v1 .prog { display: flex; align-items: center; gap: .75em; margin-top: .8em; padding: .55em .75em; border-radius: .7em; background: rgba(13,34,56,.045); }
+.v1 .pt { flex: 1; min-width: 0; }
+.v1 .pt p { margin: 0; display: flex; justify-content: space-between; align-items: baseline; gap: .4em; font: 500 .92em/1.1 'SC Label', sans-serif; letter-spacing: .05em; color: var(--ink); }
+.v1 .pt .bar { margin: .42em 0 .38em; }
+.v1 .pt .p2 { font-size: .8em; color: var(--muted); letter-spacing: .06em; } .v1 .pt .p2 .lvl { font-size: 1em; }
+.v1 .fact { margin-top: auto; padding-top: .6em; border-top: .08em solid rgba(13,34,56,.12); font-size: .8em; }
+
+/* ================= 2 · Spine ================= */
+/* A navy spine down the left holds every number, like the stat column on the back of a sports card brought to the front;
+   the right is photo, name and the story of this catch, with the fact at the foot. */
+.v2 .r2-in { flex-direction: row; }
+.v2 .side { width: 8.9em; flex: none; display: flex; flex-direction: column; padding: 1em .95em 1em 1.05em; color: var(--cream);
+  background: linear-gradient(180deg, #17375b 0%, #0d2238 70%); }
+.v2 .side .lab { color: var(--sky); font-size: .7em; }
+.v2 .side .tp { font: 400 2.35em/1 'SC Display', sans-serif; letter-spacing: .02em; margin: .14em 0 0; color: #fff; }
+.v2 .side h3 { margin: 1.15em 0 .1em; padding-top: .8em; border-top: .08em solid rgba(255,255,255,.16); font: 500 .7em/1 'SC Label', sans-serif; letter-spacing: .22em; color: #f2c66d; }
+.v2 .st { margin-top: .62em; }
+.v2 .st b { display: block; font: 400 1.4em/1 'SC Display', sans-serif; font-variant-numeric: tabular-nums; color: #fff; white-space: nowrap; letter-spacing: -.01em; }
+.v2 .st b small { font: 500 .52em/1 'SC Label', sans-serif; letter-spacing: .06em; color: var(--sky); margin-left: .14em; }
+.v2 .st span { display: block; margin-top: .28em; font: 500 .68em/1 'SC Label', sans-serif; letter-spacing: .16em; text-transform: uppercase; color: rgba(255,253,246,.62); }
+.v2 .side .md { margin-top: auto; display: flex; align-items: center; gap: .55em; }
+.v2 .side .md .medal { width: 2.5em; height: 2.5em; font-size: 1.15em; }
+.v2 .side .md p { margin: 0; font: 500 .7em/1.25 'SC Label', sans-serif; letter-spacing: .14em; color: rgba(255,253,246,.8); }
+.v2 .side .md p b { display: block; font-weight: 500; color: #e8a974; letter-spacing: .2em; }
+.v2 .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.v2 .ph { height: 17.6em; }
+.v2 .body { flex: 1; display: flex; flex-direction: column; padding: .95em 1.15em .95em 1.2em; min-height: 0; }
+.v2 .kick { font-size: .84em; }
+.v2 .name { font-size: 2.55em; }
+.v2 .kind { font-size: .9em; }
+.v2 .ct, .v2 .pr { margin-top: auto; padding-top: .9em; }
+.v2 .ct .when { margin: .4em 0 0; font: 400 .98em/1.25 Georgia, serif; color: var(--ink); }
+.v2 .ct .op { margin: .25em 0 0; font: 400 1.02em/1.15 'SC Display', sans-serif; color: var(--ink); }
+.v2 .ct .op small { font: 500 .72em/1 'SC Label', sans-serif; letter-spacing: .14em; color: var(--muted); margin-left: .3em; }
+
+.v2 .pr p { margin: 0; font: 500 .92em/1.15 'SC Label', sans-serif; letter-spacing: .04em; color: var(--ink); }
+.v2 .pr .bar { margin: .45em 0 .4em; }
+.v2 .fact { margin-top: auto; padding-top: .9em; font-size: .8em; }
+
+/* ================= 3 · Ticket ================= */
+/* The card is the type; the tear-off stub is your catch. Above the perforation: photo, name, the stat strip and the fact.
+   Below it, on pale sky paper: when, who, the four numbers of what you saw, and your progress. It echoes the boarding
+   pass's stub on the flight card, so the two read as a pair. */
+.v3 .ph { height: 13.2em; }
+.v3 .body { flex: 1; display: flex; flex-direction: column; padding: .85em 1.35em .95em; min-height: 0; }
+.v3 .name { font-size: 2.7em; }
+.v3 .kind { margin-top: .3em; }
+.v3 .spec { display: grid; grid-template-columns: repeat(4, auto); justify-content: space-between; margin-top: .75em; }
+.v3 .spec b { display: block; font: 400 1.38em/1 'SC Display', sans-serif; font-variant-numeric: tabular-nums; color: var(--ink); white-space: nowrap; letter-spacing: -.01em; }
+.v3 .spec > div > span { display: block; margin-top: .38em; font: 500 .7em/1 'SC Label', sans-serif; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+.v3 .fact { margin-top: auto; font-size: .8em; }
+.v3 .perf { position: relative; flex: none; height: 0; }
+.v3 .perf::before { content: ''; position: absolute; left: 1.2em; right: 1.2em; top: -.07em; border-top: .16em dotted rgba(13,34,56,.3); }
+.v3 .perf i { position: absolute; top: -.85em; width: 1.7em; height: 1.7em; border-radius: 50%; background: var(--notch); box-shadow: inset 0 .1em .25em rgba(13,34,56,.3); z-index: 3; }
+.v3 .perf i:first-child { left: -.85em; } .v3 .perf i:last-child { right: -.85em; }
+.v3 .stub { flex: none; padding: .9em 1.35em .85em; background:
+  repeating-linear-gradient(135deg, rgba(31,95,191,.035) 0 .35em, transparent .35em .7em), linear-gradient(180deg, #e6f0fa, #dbe9f7); }
+.r2--rare.v3 .stub { background: repeating-linear-gradient(135deg, rgba(184,137,42,.06) 0 .35em, transparent .35em .7em), linear-gradient(180deg, #fbf3dc, #f5e7c2); }
+.v3 .s1 { display: flex; justify-content: space-between; align-items: flex-end; gap: .6em; }
+.v3 .s1 .dt { margin: .35em 0 0; font: 400 1.3em/1 'SC Display', sans-serif; color: var(--ink); white-space: nowrap; }
+.v3 .s1 .dt small { font: 500 .62em/1 'SC Label', sans-serif; letter-spacing: .12em; color: var(--muted); margin-left: .3em; }
+.v3 .s1 .who { text-align: right; }
+.v3 .s1 .who b { display: block; font: 400 1.02em/1 'SC Display', sans-serif; color: var(--ink); }
+.v3 .s1 .who span { display: inline-block; margin-top: .3em; font: 600 .74em/1 'SC Label', sans-serif; letter-spacing: .16em; color: var(--ink2); padding: .22em .45em .18em; border: .09em solid rgba(13,34,56,.45); border-radius: .25em; }
+.v3 .s2 { display: grid; grid-template-columns: repeat(4, auto); justify-content: space-between; margin-top: .85em; }
+.v3 .s2 b { display: block; font: 400 1.2em/1 'SC Display', sans-serif; font-variant-numeric: tabular-nums; color: var(--ink); white-space: nowrap; }
+.v3 .s2 > div > span { display: block; margin-top: .32em; font: 500 .68em/1 'SC Label', sans-serif; letter-spacing: .16em; color: var(--muted); }
+.v3 .s3 { display: flex; align-items: center; gap: .7em; margin-top: .85em; padding-top: .75em; border-top: .08em solid rgba(13,34,56,.12); }
+.v3 .s3 .pt { flex: 1; min-width: 0; }
+.v3 .s3 p { margin: 0; display: flex; justify-content: space-between; align-items: baseline; gap: .4em; font: 500 .9em/1.1 'SC Label', sans-serif; letter-spacing: .04em; color: var(--ink); }
+.v3 .s3 .bar { margin: .4em 0 .36em; background: rgba(13,34,56,.12); }
+
+/* ================= 4 · Instrument panel ================= */
+/* Every number drawn: the type's four specs as small diagrams (a timeline, two engine fans, the range as a trip toward the
+   far side of the Earth, the wingspan measured), your catch as four instruments (altimeter, speed arc, radar rings,
+   compass), progress as ten pips. Ink-line drawings, no boxes. */
+.v4 .ph { height: 12.8em; }
+.v4 .body { flex: 1; display: flex; flex-direction: column; padding: .85em 1.3em .85em; min-height: 0; }
+.v4 .hd { display: flex; align-items: flex-end; justify-content: space-between; gap: .6em; }
+.v4 .name { font-size: 2.6em; margin-top: .28em; }
+.v4 .kind { margin-top: .32em; font-size: .88em; }
+.v4 .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0 .5em; text-align: center; }
+.v4 .gl { display: flex; align-items: center; gap: .6em; margin: .85em 0 .5em; }
+.v4 .gl::after { content: ''; flex: 1; height: .08em; background: rgba(13,34,56,.12); }
+.v4 .gl em { font: italic 400 1.12em/1 Georgia, serif; letter-spacing: 0; text-transform: none; color: var(--ink2); white-space: nowrap; }
+.v4 svg { display: block; margin: 0 auto; overflow: visible; }
+.v4 .ic { height: 2.5em; width: 5em; }
+.v4 .ga { height: 3.4em; width: 3.6em; }
+.v4 .grid4 b { display: block; margin-top: .3em; font: 400 1.08em/1 'SC Display', sans-serif; font-variant-numeric: tabular-nums; color: var(--ink); white-space: nowrap; }
+.v4 .grid4 b small { font: 500 .6em/1 'SC Label', sans-serif; letter-spacing: .06em; color: var(--muted); margin-left: .12em; }
+.v4 .grid4 span { display: block; margin-top: .26em; font: 500 .66em/1 'SC Label', sans-serif; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.v4 .pips { display: flex; align-items: center; gap: .32em; margin-top: .3em; }
+.v4 .pips i { width: 1.02em; height: 1.02em; border-radius: 50%; box-shadow: inset 0 0 0 .1em rgba(13,34,56,.28); }
+.v4 .pips i.on { box-shadow: none; background: radial-gradient(circle at 35% 28%, #f3c9a0, #c17d45 45%, #7f4a22); }
+.v4 .pips i.goal { width: 1.3em; height: 1.3em; box-shadow: inset 0 0 0 .14em #9aa6b1; background: radial-gradient(circle at 35% 28%, #fff, #dfe5ea); }
+.v4 .pips .sp { flex: 1; }
+.v4 .prow { display: flex; justify-content: space-between; align-items: baseline; margin-top: .45em; font: 500 .88em/1.1 'SC Label', sans-serif; letter-spacing: .04em; color: var(--ink); gap: .4em; }
+.v4 .fact { margin-top: auto; padding-top: .55em; font-size: .78em; }
+.v4 .ink { stroke: var(--ink); } .v4 .soft { stroke: rgba(13,34,56,.22); }
+
+/* ================= Tiles (110 px) ================= */
+.r2--tile .ph { flex: 1; }
+.r2--tile .tn { flex: none; padding: 1.4em 1.6em 1.7em; }
+.r2--tile .tn small { display: block; font: 500 2.2em/1 'SC Label', sans-serif; letter-spacing: .2em; color: var(--muted); }
+.r2--tile .tn b { display: block; margin-top: .22em; font: 400 3.6em/1 'SC Display', sans-serif; letter-spacing: -.02em; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.r2--tile .rdot { position: absolute; z-index: 2; left: 1.8em; top: 1.8em; width: 2.6em; height: 2.6em; border-radius: 50%; background: var(--tdot); box-shadow: 0 0 0 .5em rgba(255,253,246,.9); }
+.r2--rare.r2--tile .rdot { border-radius: .3em; transform: rotate(45deg); background: radial-gradient(circle at 35% 30%, #fff4c4, #e3ac2f 45%, #9c6a12); }
+.r2--tile .medal { position: absolute; z-index: 3; font-size: 2.6em; width: 2.3em; height: 2.3em; }
+.t1 .medal { right: .55em; bottom: 2.6em; }
+.t2 .r2-in { flex-direction: row; }
+.t2 .tsp { width: 6.4em; flex: none; background: linear-gradient(180deg, #17375b, #0d2238); position: relative; }
+.t2 .tsp b { position: absolute; left: 50%; top: 2em; transform: translateX(-50%) rotate(180deg); writing-mode: vertical-rl; font: 400 3.3em/1 'SC Display', sans-serif; color: #fff; letter-spacing: .06em; }
+.t2 .tm { flex: 1; min-width: 0; display: flex; flex-direction: column; position: relative; }
+.t2 .tn { padding: 1.4em 1.4em 1.7em; }
+.t2 .tn b { font-size: 3.3em; }
+.t2 .medal { left: .45em; bottom: .6em; font-size: 2.3em; width: 2.2em; height: 2.2em; }
+.t3 .tn { padding-bottom: 1.4em; }
+.t3 .tst { flex: none; position: relative; padding: 1.4em 1.6em 1.5em; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(180deg, #e6f0fa, #dbe9f7); }
+.r2--rare.t3 .tst { background: linear-gradient(180deg, #fbf3dc, #f5e7c2); }
+.t3 .tst::before { content: ''; position: absolute; left: 1.6em; right: 1.6em; top: -.2em; border-top: .5em dotted rgba(13,34,56,.3); }
+.t3 .tst span { font: 400 2.6em/1 'SC Display', sans-serif; color: var(--ink); }
+.t3 .medal { position: static; font-size: 2.3em; width: 2em; height: 2em; }
+.t4 .tn { padding-bottom: 1em; }
+.t4 .tpips { flex: none; display: flex; gap: .7em; padding: 0 1.6em 1.8em; }
+.t4 .tpips i { width: 1.6em; height: 1.6em; border-radius: 50%; box-shadow: inset 0 0 0 .3em rgba(13,34,56,.28); }
+.t4 .tpips i.on { box-shadow: none; background: radial-gradient(circle at 35% 28%, #f3c9a0, #c17d45 45%, #7f4a22); }
+.t4 .tpips i.goal { box-shadow: inset 0 0 0 .4em #9aa6b1; }
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>Plane card front: round 2</h1>
+  <p class="lede">Sevaan: "Need all the info from your audit on one side of the card. Need more front of card design ideas." Four new layouts, each holding every field on the front: set, type code, rarity, photo and credit, maker and model, kind, four specs, the airline and registration of this catch, your catch (when, height, speed, distance, heading), progress (2 of 10 different aircraft for Silver, Bronze, 2 liveries) and the fact. The same A350-900 as today. The checklist at the bottom is filled in by the page itself: it looks for each field on each card and checks it sits fully inside the card.</p>
+
+  <div class="cols">
+    <div class="col">
+      <div class="col-h"><span class="col-l col-l--now">NOW</span><h2>Today</h2></div>
+      <p class="why">The app's own planeCardHtml, for comparison. Twelve blocks of nearly equal weight: tab, set, plate, pill, name, maker line, four boxed specs, airline, a catch box, progress, fact and footer, on grid paper.</p>
+      <div class="today-full" id="today"></div>
+      <div class="cap">Collection tile</div>
+      <div class="tiles"><figure class="today-tile" id="today-tile"></figure></div>
+    </div>
+    <div class="col">
+      <div class="col-h"><span class="col-l">1</span><h2>Gallery</h2></div>
+      <p class="why">Photo on top, the name, then a two-column ledger: <b>the type</b> on the left, <b>your catch</b> on the right, each four plain rows with no boxes. Progress is one tinted strip with the medal; the fact closes the card under a hairline. The calmest, most "museum" of the four.</p>
+      <div id="v1"></div>
+      <div class="cap">Collection tile · photo, maker, model, rarity, medal</div>
+      <div class="tiles" id="t1"></div>
+    </div>
+    <div class="col">
+      <div class="col-h"><span class="col-l">2</span><h2>Spine</h2></div>
+      <p class="why">A navy spine down the left holds every number: the type code at the top, the four specs, the four catch numbers, the medal at the foot. The rest is photo, name and the story of this catch (when, the airline, how far along you are), then the fact. Strongest shape at a glance.</p>
+      <div id="v2"></div>
+      <div class="cap">Collection tile · type code on the spine, photo, maker, model, rarity, medal</div>
+      <div class="tiles" id="t2"></div>
+    </div>
+    <div class="col">
+      <div class="col-h"><span class="col-l col-l--fav">3 ★</span><h2>Ticket</h2></div>
+      <p class="why">The card is the type; a tear-off stub is your catch. Above the perforation: photo, name, the stat strip, the fact. Below, on pale sky paper: when, the airline and its registration as a plate, the four numbers of what you saw, and your progress. It pairs with the boarding pass's stub on the flight card.</p>
+      <div id="v3"></div>
+      <div class="cap">Collection tile · photo, maker, model, rarity, and the stub: catch date and medal</div>
+      <div class="tiles" id="t3"></div>
+    </div>
+    <div class="col">
+      <div class="col-h"><span class="col-l">4</span><h2>Instruments</h2></div>
+      <p class="why">Every number drawn. The specs as small diagrams (a timeline, two engine fans, the range as a trip toward the far side of the Earth, the wingspan measured); your catch as an altimeter, a speed arc, radar rings and a compass; progress as ten pips. The most game-like and fun to read, the busiest.</p>
+      <div id="v4"></div>
+      <div class="cap">Collection tile · photo, maker, model, rarity, the ten pips</div>
+      <div class="tiles" id="t4"></div>
+    </div>
+    <div class="col">
+      <div class="col-h"><span class="col-l col-l--fav">3 ★</span><h2>Ticket, Rare</h2></div>
+      <p class="why">The favourite as a Rare. The frame turns to gold, the chip gets the gold diamond and Rare's blue ink, a foil streak crosses the photo over a gold hairline, and the stub's paper warms from sky blue to gold. Nothing else moves, so the rarity reads instantly without changing the layout.</p>
+      <div id="v3r"></div>
+      <div class="cap">Collection tiles · Rare, Silver (12 of 50)</div>
+      <div class="tiles" id="t3r"></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Every field, every front</h2>
+    <p>Filled in by this page when it loads: for each card it finds the element carrying each field and checks it has content and sits wholly inside the card (nothing clipped or spilling). Columns: 1 Gallery, 2 Spine, 3 Ticket, 4 Instruments, 3 Rare. The tiles are not counted: they show the subset named under each.</p>
+    <table class="chk"><thead id="chk-h"></thead><tbody id="chk"></tbody><tfoot id="chk-f"></tfoot></table>
+  </div>
+</div>
+
+<script type="module">
+import { planeCardHtml, miniCardHtml, photoFor, compass } from './js/flight-card.js';
+import { typeSpecs } from './js/type-specs.js';
+import { typeFact } from './js/sky-facts.js';
+import { THRESHOLDS } from './js/sky-stamps.js';
+import { dist, speed } from './js/units.js';
+
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const rich = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+const $ = (id) => document.getElementById(id);
+
+const card = { key: 'P:A359', type: 'A359', name: 'Airbus A350-900', tier: 'common', setName: 'Twin Aisles', glyph: 'jet' };
+const opts = { caughtAt: new Date(2026, 10, 21, 18, 22), heightFt: 40000, speedKmh: 767, awayKm: 75, callsign: 'DLH2C', eager: true,
+  stampInfo: { kind: 'plane', count: 2, liveryCount: 2, level: 'bronze', last: { callsign: 'DLH2C', cls: 'airline', op: 'Lufthansa', reg: 'D-AIXT', routed: true, altFt: 40000, track: 225 } } };
+
+// ---- today ----
+$('today').innerHTML = planeCardHtml(card, opts);
+$('today-tile').innerHTML = miniCardHtml({ kind: 'plane', card, type: 'A359', last: +opts.caughtAt, stampInfo: opts.stampInfo }) + '<figcaption>today</figcaption>';
+
+// ---- the data every variant draws from ----
+const specs = typeSpecs(card.type), ph = photoFor(card.type), si = opts.stampInfo, last = si.last;
+const maker = specs.maker, model = card.name.startsWith(maker + ' ') ? card.name.slice(maker.length + 1) : card.name;
+const kind = specs.desc[0].toUpperCase() + specs.desc.slice(1) + (specs.country ? `, ${specs.country}` : '');
+const S = Object.fromEntries(specs.cells.map(([l, v, u]) => [l, { v, u: u || '' }]));
+const ENG = S.Engines || Object.values(S)[1];
+const aw = dist(opts.awayKm), spd = speed(opts.speedKmh), head = compass(last.track);
+const ft = Number(opts.heightFt).toLocaleString('en-US');
+const T = THRESHOLDS.plane, n = si.count, next = T.find((x) => n < x), nextWord = next === T[1] ? 'Silver' : 'Gold';
+const pct = Math.round(n / next * 100), lvlWord = si.level[0].toUpperCase() + si.level.slice(1);
+const when = opts.caughtAt;
+const dt = when.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+const tm = when.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }).toLowerCase();
+const fact = rich(typeFact(card.type, n));
+const sized = (url, s) => String(url).replace(/\/([^/]+)$/, `/${s}/$1`);
+const img = (small) => `<img data-f="photo" src="${small ? sized(ph.url, 'sm') : ph.url}" alt="${esc(card.name)}">`;
+const credit = `<span class="cr" data-f="credit">Photo ${esc(ph.credit)} · ${esc(ph.licence)}</span>`;
+const chip = (tier) => `<span class="chip" data-f="rarity"><i></i>${tier.toUpperCase()}</span>`;
+const nameH = (cls = 'name') => `<h2 class="${cls}"><small data-f="maker">${esc(maker.toUpperCase())}</small><span data-f="model">${esc(model)}</span></h2>`;
+const u = (x) => (x ? `<small>${esc(x)}</small>` : '');
+const SP = [['First flew', 'flew'], ['Engines', 'engines'], ['Range', 'range'], ['Span', 'span']];
+const opReg = `<span data-f="op">${esc(last.op)}</span> · <span data-f="reg">${esc(last.reg)}</span>`;
+const countTxt = `<span data-f="count">${n} of ${next} different aircraft</span>`;
+const lvlTxt = `<span class="lvl"><b data-f="level">${si.level.toUpperCase()}</b> · ${next - n} MORE FOR ${nextWord.toUpperCase()}</span>`;
+const livTxt = `<span data-f="liveries">${si.liveryCount} airline liveries seen</span>`;
+const CATCH = [['Height', 'height', ft, 'ft'], ['Speed', 'speed', spd.v, spd.u], ['Away', 'away', aw.v, aw.u], ['Heading', 'heading', head, '']];
+
+// ================= 1 · Gallery =================
+const v1 = (tier) => `<div class="r2 r2--${tier} v1"><div class="r2-in">
+  <div class="ph">${img(false)}${chip(tier)}<span class="tc" data-f="type"><small>TYPE</small>${esc(card.type)}</span>${credit}</div>
+  <div class="body">
+    <div class="kick"><b data-f="set">${esc(card.setName)}</b></div>
+    ${nameH()}
+    <div class="led">
+      <div><p class="lab red">The type</p><p class="sub" data-f="kind">${esc(kind)}</p>
+        ${SP.map(([l, f]) => `<div class="row"><span>${l}</span><b data-f="${f}">${esc(S[l].v)}${u(S[l].u)}</b></div>`).join('')}</div>
+      <div><p class="lab red">Your catch</p><p class="sub"><b data-f="when">${dt}, ${tm}</b><br>${opReg}</p>
+        ${CATCH.map(([l, f, v, un]) => `<div class="row"><span>${l}</span><b data-f="${f}">${esc(v)}${u(un)}</b></div>`).join('')}</div>
+    </div>
+    <div class="prog"><span class="medal medal--${si.level}">${n}</span><div class="pt">
+      <p>${countTxt}<span class="lvl"><b data-f="level">${si.level.toUpperCase()}</b></span></p><div class="bar"><i style="width:${pct}%"></i></div>
+      <p class="p2">${livTxt}<span class="lvl">${next - n} MORE FOR ${nextWord.toUpperCase()}</span></p></div></div>
+    <p class="fact" data-f="fact">${fact}</p>
+  </div>
+</div></div>`;
+
+// ================= 2 · Spine =================
+const v2 = (tier) => `<div class="r2 r2--${tier} v2"><div class="r2-in">
+  <div class="side">
+    <p class="lab">Type</p><p class="tp" data-f="type">${esc(card.type)}</p>
+    <h3>THE TYPE</h3>
+    ${SP.map(([l, f]) => `<div class="st"><b data-f="${f}">${esc(S[l].v)}${u(S[l].u)}</b><span>${l}</span></div>`).join('')}
+    <h3>YOUR CATCH</h3>
+    ${CATCH.map(([l, f, v, un]) => `<div class="st"><b data-f="${f}">${esc(v)}${u(un)}</b><span>${l}</span></div>`).join('')}
+    <div class="md"><span class="medal medal--${si.level}">${n}</span><p><b data-f="level">${si.level.toUpperCase()}</b>${next - n} more<br>for ${nextWord}</p></div>
+  </div>
+  <div class="main">
+    <div class="ph">${img(false)}${chip(tier)}${credit}</div>
+    <div class="body">
+      <div class="kick"><b data-f="set">${esc(card.setName)}</b></div>
+      ${nameH()}
+      <p class="kind" data-f="kind">${esc(kind)}</p>
+      <div class="ct"><p class="lab red">Caught</p><p class="when" data-f="when">${dt}, ${tm}</p><p class="op"><span data-f="op">${esc(last.op)}</span><small data-f="reg">${esc(last.reg)}</small></p></div>
+      <div class="pr"><p>${countTxt}</p><div class="bar"><i style="width:${pct}%"></i></div><p class="lvl" style="font-size:.76em">${livTxt.replace('airline liveries seen', 'LIVERIES SEEN')}</p></div>
+      <p class="fact" data-f="fact">${fact}</p>
+    </div>
+  </div>
+</div></div>`;
+
+// ================= 3 · Ticket =================
+const v3 = (tier) => `<div class="r2 r2--${tier} v3"><div class="r2-in">
+  <div class="ph">${img(false)}${chip(tier)}<span class="tc" data-f="type"><small>TYPE</small>${esc(card.type)}</span>${credit}</div>
+  <div class="body">
+    <div class="kick"><b data-f="set">${esc(card.setName)}</b></div>
+    ${nameH()}
+    <p class="kind" data-f="kind">${esc(kind)}</p>
+    <div class="spec">${SP.map(([l, f]) => `<div><b data-f="${f}">${esc(S[l].v)}<span class="un">${esc(S[l].u)}</span></b><span>${l}</span></div>`).join('')}</div>
+    <p class="fact" data-f="fact">${fact}</p>
+  </div>
+  <div class="perf"><i></i><i></i></div>
+  <div class="stub">
+    <div class="s1"><div><p class="lab red">Your catch</p><p class="dt" data-f="when">${dt.toUpperCase()}<small>${tm.toUpperCase()}</small></p></div>
+      <div class="who"><b data-f="op">${esc(last.op)}</b><span data-f="reg">${esc(last.reg)}</span></div></div>
+    <div class="s2">${CATCH.map(([l, f, v, un]) => `<div><b data-f="${f}">${esc(v)}<span class="un">${esc(un)}</span></b><span>${l.toUpperCase()}</span></div>`).join('')}</div>
+    <div class="s3"><span class="medal medal--${si.level}">${n}</span><div class="pt"><p>${countTxt}${lvlTxt.replace(' MORE FOR', ' TO')}</p><div class="bar"><i style="width:${pct}%"></i></div>
+      <p style="font-size:.78em;color:var(--muted);letter-spacing:.06em">${livTxt}</p></div></div>
+  </div>
+</div></div>`;
+
+// ================= 4 · Instruments =================
+const yrX = (y) => 6 + (y - 1950) / (2026 - 1950) * 88;
+const fan = (cx) => `<circle cx="${cx}" cy="25" r="19" fill="none" class="ink" stroke-width="3"/><circle cx="${cx}" cy="25" r="5" fill="var(--ink)"/>${[0, 45, 90, 135, 180, 225, 270, 315].map((a) => `<line x1="${cx}" y1="25" x2="${cx + 15 * Math.cos(a * Math.PI / 180)}" y2="${25 + 15 * Math.sin(a * Math.PI / 180)}" class="ink" stroke-width="2.2"/>`).join('')}`;
+const engN = Number(String(ENG.v).match(/\d+/)?.[0] ?? 2);
+const ICON = {
+  flew: `<svg class="ic" viewBox="0 0 100 50"><line x1="6" y1="30" x2="94" y2="30" class="soft" stroke-width="3" stroke-linecap="round"/>${[1950, 1960, 1970, 1980, 1990, 2000, 2010, 2020].map((y) => `<line x1="${yrX(y)}" y1="25" x2="${yrX(y)}" y2="35" class="soft" stroke-width="2"/>`).join('')}<line x1="6" y1="30" x2="${yrX(+S['First flew'].v)}" y2="30" class="ink" stroke-width="3" stroke-linecap="round"/><circle cx="${yrX(+S['First flew'].v)}" cy="30" r="7" fill="var(--red)"/></svg>`,
+  engines: `<svg class="ic" viewBox="0 0 100 50">${engN === 2 ? fan(28) + fan(72) : Array.from({ length: engN }, (_, i) => fan(14 + i * (72 / Math.max(1, engN - 1)))).join('')}</svg>`,
+  range: `<svg class="ic" viewBox="0 0 100 50"><path d="M8 42 Q50 -6 92 42" fill="none" class="soft" stroke-width="3" stroke-dasharray="4 4"/><path d="M8 42 Q50 -6 92 42" fill="none" class="ink" stroke-width="3" pathLength="100" stroke-dasharray="${Math.round(Number(S.Range.v.replace(/,/g, '')) / 20037 * 100)} 100"/><circle cx="8" cy="42" r="5" fill="var(--ink)"/><circle cx="92" cy="42" r="4.5" fill="none" class="soft" stroke-width="2.5"/></svg>`,
+  span: `<svg class="ic" viewBox="0 0 100 50"><path d="M50 2 C52.5 2 53.5 5 53.5 9 L53.5 18 L94 30 L94 33.5 L53.5 27 L53 36 L63 41 L63 43.5 L50 41.5 L37 43.5 L37 41 L47 36 L46.5 27 L6 33.5 L6 30 L46.5 18 L46.5 9 C46.5 5 47.5 2 50 2 Z" fill="var(--ink)"/><path d="M6 48 L94 48 M6 44.5 L6 50 M94 44.5 L94 50" class="ink" stroke-width="2" fill="none" opacity=".55"/></svg>`,
+};
+const hFrac = Math.min(1, opts.heightFt / 45000), sFrac = Math.min(1, opts.speedKmh / 1000), aFrac = Math.min(1, opts.awayKm / 100);
+const GAUGE = {
+  height: `<svg class="ga" viewBox="0 0 60 60"><rect x="25" y="4" width="10" height="52" rx="5" fill="none" class="soft" stroke-width="2.5"/><rect x="27.5" y="${4 + 52 * (1 - hFrac) + 2.5}" width="5" height="${52 * hFrac - 5}" rx="2.5" fill="var(--sky)"/>${[0, 1, 2, 3, 4].map((i) => `<line x1="14" x2="21" y1="${56 - i * 52 / 4.5}" y2="${56 - i * 52 / 4.5}" class="soft" stroke-width="2"/>`).join('')}<path d="M40 ${4 + 52 * (1 - hFrac)} l9 -5 v10 z" fill="var(--red)"/></svg>`,
+  speed: `<svg class="ga" viewBox="0 0 60 60"><path d="M8 44 A22 22 0 0 1 52 44" fill="none" class="soft" stroke-width="5" stroke-linecap="round"/><path d="M8 44 A22 22 0 0 1 52 44" fill="none" stroke="var(--sky)" stroke-width="5" stroke-linecap="round" pathLength="100" stroke-dasharray="${Math.round(sFrac * 100)} 100"/><line x1="30" y1="44" x2="${30 - 18 * Math.cos(sFrac * Math.PI)}" y2="${44 - 18 * Math.sin(sFrac * Math.PI)}" stroke="var(--red)" stroke-width="2.6" stroke-linecap="round"/><circle cx="30" cy="44" r="3.2" fill="var(--ink)"/></svg>`,
+  away: `<svg class="ga" viewBox="0 0 60 60">${[8, 16, 24].map((r) => `<circle cx="30" cy="32" r="${r}" fill="none" class="soft" stroke-width="2"/>`).join('')}<circle cx="30" cy="32" r="2.6" fill="var(--ink)"/><line x1="30" y1="32" x2="${30 + 24 * aFrac * Math.cos(-0.9)}" y2="${32 + 24 * aFrac * Math.sin(-0.9)}" class="ink" stroke-width="1.6" stroke-dasharray="2 2"/><circle cx="${30 + 24 * aFrac * Math.cos(-0.9)}" cy="${32 + 24 * aFrac * Math.sin(-0.9)}" r="3.6" fill="var(--red)"/></svg>`,
+  heading: `<svg class="ga" viewBox="0 0 60 60"><circle cx="30" cy="32" r="22" fill="none" class="soft" stroke-width="2.5"/><text x="30" y="7.5" text-anchor="middle" font-family="SC Label" font-size="9" fill="var(--muted)" letter-spacing="1">N</text>${[0, 90, 180, 270].map((a) => `<line x1="30" y1="12" x2="30" y2="16" class="soft" stroke-width="2" transform="rotate(${a} 30 32)"/>`).join('')}<g transform="rotate(${last.track} 30 32)"><path d="M30 14 L35.5 33 L30 30 L24.5 33 Z" fill="var(--red)"/><path d="M30 50 L34 33 L30 35 L26 33 Z" fill="rgba(13,34,56,.3)"/></g></svg>`,
+};
+const v4 = (tier) => `<div class="r2 r2--${tier} v4"><div class="r2-in">
+  <div class="ph">${img(false)}${chip(tier)}<span class="tc" data-f="type"><small>TYPE</small>${esc(card.type)}</span>${credit}</div>
+  <div class="body">
+    <div class="kick"><b data-f="set">${esc(card.setName)}</b></div>
+    ${nameH()}
+    <p class="kind" data-f="kind">${esc(kind)}</p>
+    <div class="grid4" style="margin-top:.85em">${SP.map(([l, f]) => `<div>${ICON[f]}<b data-f="${f}">${esc(S[l].v)}${u(S[l].u)}</b><span>${l}</span></div>`).join('')}</div>
+    <p class="lab red gl">Your catch <em><span data-f="when">${dt.replace(/ \d{4}$/, ' ' + when.getFullYear())}, ${tm}</span> · ${opReg}</em></p>
+    <div class="grid4">${CATCH.map(([l, f, v, un]) => `<div>${GAUGE[f]}<b data-f="${f}">${esc(v)}${u(un)}</b><span>${l}</span></div>`).join('')}</div>
+    <div class="prow" style="margin-top:.85em">${countTxt}${lvlTxt.replace(' MORE FOR', ' TO')}</div>
+    <div class="pips">${Array.from({ length: next }, (_, i) => `<i class="${i < n ? 'on' : ''}${i === next - 1 ? ' goal' : ''}"></i>`).join('')}<span class="sp"></span><span class="lvl" style="font-size:.74em">${livTxt.replace('airline liveries seen', 'LIVERIES SEEN')}</span></div>
+    <p class="fact" data-f="fact">${fact}</p>
+  </div>
+</div></div>`;
+
+$('v1').innerHTML = v1('common'); $('v2').innerHTML = v2('common'); $('v3').innerHTML = v3('common'); $('v4').innerHTML = v4('common'); $('v3r').innerHTML = v3('rare');
+
+// ================= tiles =================
+const tn = `<div class="tn"><small>${esc(maker.toUpperCase())}</small><b>${esc(model)}</b></div>`;
+const fig = (inner, tier, cap) => `<figure><div class="r2 r2--tile r2--${tier} ${inner[0]}"><div class="r2-in">${inner[1]}</div></div><figcaption>${cap}</figcaption></figure>`;
+const T1 = (tier, lvl, c) => fig(['t1', `<div class="ph">${img(true)}<span class="rdot"></span></div>${tn}<span class="medal medal--${lvl}">${c}</span>`], tier, `${tier} · ${lvl}`);
+const T2 = (tier, lvl, c) => fig(['t2', `<div class="tsp"><b>${esc(card.type)}</b><span class="medal medal--${lvl}">${c}</span></div><div class="tm"><div class="ph">${img(true)}<span class="rdot"></span></div>${tn}</div>`], tier, `${tier} · ${lvl}`);
+const T3 = (tier, lvl, c) => fig(['t3', `<div class="ph">${img(true)}<span class="rdot"></span></div>${tn}<div class="tst"><span>${when.getDate()} ${when.toLocaleDateString('en-GB', { month: 'short' }).toUpperCase()}</span><span class="medal medal--${lvl}">${c}</span></div>`], tier, `${tier} · ${lvl}`);
+const T4 = (tier, on, goal) => fig(['t4', `<div class="ph">${img(true)}<span class="rdot"></span></div>${tn}<div class="tpips">${Array.from({ length: 5 }, (_, i) => `<i class="${i < on ? 'on' : ''}${i === 4 ? ' goal' : ''}"></i>`).join('')}</div>`], tier, `${tier} · ${goal}`);
+$('t1').innerHTML = T1('common', 'bronze', 2);
+$('t2').innerHTML = T2('common', 'bronze', 2);
+$('t3').innerHTML = T3('common', 'bronze', 2);
+$('t4').innerHTML = T4('common', 1, '2 of 10');
+$('t3r').innerHTML = T3('rare', 'bronze', 2) + T3('rare', 'silver', 12);
+
+// ================= the checklist =================
+const FIELDS = [['set', 'Set name'], ['type', 'Type code'], ['rarity', 'Rarity (chip + metal)'], ['photo', 'Photo'], ['credit', 'Photo credit'], ['maker', 'Maker'], ['model', 'Model'],
+  ['kind', 'Kind'], ['flew', 'First flew'], ['engines', 'Engines'], ['range', 'Range'], ['span', 'Span'], ['op', 'Operator'], ['reg', 'Registration'], ['when', 'Caught: date and time'],
+  ['height', 'Height'], ['speed', 'Speed'], ['away', 'Distance away'], ['heading', 'Heading'], ['count', 'Different aircraft (of 10)'], ['level', 'Level'], ['liveries', 'Liveries seen'], ['fact', 'Fact']];
+const CARDS = [['1', 'v1'], ['2', 'v2'], ['3', 'v3'], ['4', 'v4'], ['3 RARE', 'v3r']];
+async function check() {
+  await document.fonts.ready;
+  await Promise.all([...document.images].map((i) => (i.complete ? 0 : new Promise((r) => { i.onload = i.onerror = r; }))));
+  const res = {};
+  for (const [, id] of CARDS) {
+    const c = $(id).querySelector('.r2-in'), box = c.getBoundingClientRect();
+    for (const [f] of FIELDS) {
+      const els = [...c.querySelectorAll(`[data-f="${f}"]`)];
+      const ok = els.length > 0 && els.every((e) => {
+        const r = e.getBoundingClientRect(), filled = e.tagName === 'IMG' ? e.naturalWidth > 0 : e.textContent.trim().length > 0;
+        const inside = r.left >= box.left - .5 && r.right <= box.right + .5 && r.top >= box.top - .5 && r.bottom <= box.bottom + .5;
+        const notCut = e.scrollWidth <= e.clientWidth + 1 || e.tagName === 'IMG' || getComputedStyle(e).display === 'inline';
+        return filled && inside && notCut && r.width > 0;
+      });
+      (res[id] ??= {})[f] = ok;
+    }
+  }
+  for (const [, id] of CARDS) { const fits = [...$(id).querySelectorAll('.body, .side, .stub')].every((e) => e.scrollHeight <= e.clientHeight + 1 && [...e.children].every((k) => k.getBoundingClientRect().bottom <= e.getBoundingClientRect().bottom + .5));
+    const kids = [...$(id).querySelectorAll('.body > *')]; let clash = false; for (let i = 1; i < kids.length; i++) if (kids[i].getBoundingClientRect().top < kids[i - 1].getBoundingClientRect().bottom - .5) clash = true;
+    res[id].fits = fits && !clash; }
+  FIELDS.push(['fits', 'Nothing overflows or overlaps']);
+  $('chk-h').innerHTML = `<tr><th>FIELD</th>${CARDS.map(([l]) => `<th>${l.toUpperCase()}</th>`).join('')}</tr>`;
+  $('chk').innerHTML = FIELDS.map(([f, l]) => `<tr><td>${l}</td>${CARDS.map(([, id]) => `<td class="${res[id][f] ? 'ok' : 'no'}">${res[id][f] ? '✓' : '✗'}</td>`).join('')}</tr>`).join('');
+  $('chk-f').innerHTML = `<tr><td>On the front</td>${CARDS.map(([, id]) => { const k = Object.values(res[id]).filter(Boolean).length; return `<td class="${k === FIELDS.length ? 'ok' : 'no'}">${k}/${FIELDS.length}</td>`; }).join('')}</tr>`;
+  document.body.dataset.checked = JSON.stringify(res);
+}
+check();
+</script>
+</body>
+</html>
