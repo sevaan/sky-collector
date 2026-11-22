@@ -781,7 +781,7 @@ body.sky-only .tc .art .ob-moon { display:none; } /* When to look up: no Moon in
 .fc--flight:not(.fc--mini) .fc-rot { box-shadow:none;
   -webkit-mask:radial-gradient(circle at 0 calc(100% - var(--stub)), #0000 1em, #000 1.05em) left / 51% 100% no-repeat, radial-gradient(circle at 100% calc(100% - var(--stub)), #0000 1em, #000 1.05em) right / 51% 100% no-repeat;
           mask:radial-gradient(circle at 0 calc(100% - var(--stub)), #0000 1em, #000 1.05em) left / 51% 100% no-repeat, radial-gradient(circle at 100% calc(100% - var(--stub)), #0000 1em, #000 1.05em) right / 51% 100% no-repeat; }
-.fc--flight:not(.fc--mini) { filter:drop-shadow(0 .1em .12em rgba(13,34,56,.16)) drop-shadow(0 .6em .9em rgba(13,34,56,.12)); }
+.fc--flight:not(.fc--mini) { position:relative; } /* the pass's shadow is a box-shadow layer behind it (below), not two drop-shadow filters: the filters were re-recorded on every repaint and janked the pass viewer and the Passes grid (perf scan 2026-11-22) */
 /* Real-sky art (js/flight-card.js skyArt, 2026-11-21): the picture fills the window like a photo; the sky gradient behind it
    shows only until it loads, with no grid lines, clouds or drawn plane. */
 .fc-sky--art::before { display:none; }
@@ -793,7 +793,7 @@ body.sky-only .tc .art .ob-moon { display:none; } /* When to look up: no Moon in
 .fc.fc--land { width:16em; }
 .card.card--sky > .fc--land { width:16em; margin:0 auto; }
 .fc--land .fc-rot { -webkit-mask:none !important; mask:none !important; box-shadow:none !important; border-radius:0; }
-.fc--land.fc--flight:not(.fc--mini) { filter:drop-shadow(0 .1em .12em rgba(13,34,56,.18)) drop-shadow(0 .6em .9em rgba(13,34,56,.13)); }
+.fc--flight:not(.fc--mini)::before { content:''; position:absolute; inset:0; z-index:-1; border-radius:.7em; pointer-events:none; box-shadow:0 .1em .12em rgba(13,34,56,.16), 0 .6em .9em rgba(13,34,56,.12); } /* outside the pass only, so the notches stay clear */
 .lp-turn { position:relative; width:16em; height:42em; }
 .lp { --stub:12em; --band:4.6em; --cut:.62em; /* notches smaller (2026-11-21, Sevaan: "too big") */ --lk:#13283d; --lm:#4a6178; --lr:#b42a20; position:absolute; left:0; top:0; width:42em; height:16em; color:var(--lk); transform-origin:0 0; transform:translateY(42em) rotate(-90deg); }
 .lp-paper { position:absolute; inset:0; border-radius:.7em; overflow:hidden;
@@ -934,3 +934,14 @@ html.sky-cards #sat-card.rm-card .rm-sub { white-space:normal; overflow:visible;
 .fc-in--sp .sp-fact { margin:.8em 0 0; font-size:.8em; line-height:1.4; border-left:.2em solid #d7362b; padding-left:.6em; overflow:hidden; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; flex:none; }
 .sp-tp--long { font-size:1.75em; margin-top:.3em; } /* HEAVY, LIGHT, ULTRA, BALLOON: inside the column */
 .fc-pic::after, .fc-in--bp .fc-pic::after, .fc-in--ss .fc-pic::after { box-shadow:none; } /* no inner shadow on card photos (2026-11-22, Sevaan) */
+
+/* the pass in front in the reveal casts its shadow only on the plane card, not the page (2026-11-21) */
+#reveal .dk-track > .dk-front.dk-pass .fc--land::before { display:none; }
+/* Legendary's glint moves a strip with transform instead of animating background-position under a blend, which re-rasterised
+   a card-sized layer every frame (perf scan 2026-11-22) */
+.fc--legendary .fc-foil { background:none !important; animation:none !important; overflow:hidden; }
+.fc--legendary .fc-foil::before { content:''; position:absolute; top:0; bottom:0; left:-100%; width:300%; will-change:transform;
+  background:linear-gradient(115deg, transparent 40%, rgba(255,205,90,.55) 47%, rgba(255,236,170,.7) 50%, rgba(255,205,90,.55) 53%, transparent 60%);
+  animation:fc-glint-x 5.5s ease-in-out infinite; }
+@keyframes fc-glint-x { 0%, 30% { transform:translateX(27%); } 75%, 100% { transform:translateX(-27%); } }
+@media (prefers-reduced-motion: reduce) { .fc--legendary .fc-foil::before { animation:none; } }

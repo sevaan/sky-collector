@@ -5,15 +5,15 @@
 //  Everything scales with rarity (Legendary dims the sky, shockwave, held breath, slow flip, fanfare).
 // Waits use timers, not animation.finished, so a paused tab can never freeze the sequence.
 
-import { sfx, loadSfx } from './sfx.js?v=0.1.1882';
-import { audioCtx } from './audio-ctx.js?v=0.1.1882';
-import { TIER_INFO } from './rarity.js?v=0.1.1882';
-import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1882';
-import { applyBack } from './card-backs.js?v=0.1.1882';
-import { addStarfield } from './starfield.js?v=0.1.1882';
-import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1882';
-import { packPlan, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1882'; /* the two-card pack opening (prototype, 2026-11-20) */
-import { tearJag } from './gift-pack.js?v=0.1.1882';
+import { sfx, loadSfx } from './sfx.js?v=0.1.1883';
+import { audioCtx } from './audio-ctx.js?v=0.1.1883';
+import { TIER_INFO } from './rarity.js?v=0.1.1883';
+import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1883';
+import { applyBack } from './card-backs.js?v=0.1.1883';
+import { addStarfield } from './starfield.js?v=0.1.1883';
+import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1883';
+import { packPlan, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1883'; /* the two-card pack opening (prototype, 2026-11-20) */
+import { tearJag } from './gift-pack.js?v=0.1.1883';
 
 const FX = TIER_FX; /* one rarity table for every card moment (js/card-moment.js, 2026-11-11) */
 const NIGHT_MILESTONES = [3, 5, 10, 25, 50, 100, 200, 365], STAMP_MILESTONES = [5, 10, 25, 50, 100, 200, 300, 400];
@@ -30,12 +30,14 @@ const reduced = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').ma
 // Call from inside the tap handler, before any await, so iOS lets the sound play. The sounds themselves are the
 // designed set (js/sfx.js, 2026-10-11); the old oscillator tones are gone.
 export function primeReveal() { audioCtx(); loadSfx(); }
+/* the audio context is made on the first touch anywhere, not inside the catch's first frame (perf scan 2026-11-22: ~110 ms there) */
+if (typeof addEventListener !== 'undefined') addEventListener('pointerdown', () => { try { audioCtx(); } catch {} }, { once: true, capture: true, passive: true });
 
 // ---------- particles ----------
 let parts = [], loopOn = false;
 function fxLoop() {
   const cv = $('rv-fx'), ctx = cv.getContext('2d');
-  const d = devicePixelRatio || 1;
+  const d = Math.min(2, devicePixelRatio || 1); /* capped like the sky (js/sky.js): at 3x the full-screen particle canvas was 12 MB a frame (perf scan 2026-11-22) */
   if (cv.width !== innerWidth * d) { cv.width = innerWidth * d; cv.height = innerHeight * d; }
   ctx.setTransform(d, 0, 0, d, 0, 0);
   ctx.clearRect(0, 0, innerWidth, innerHeight);

@@ -1019,7 +1019,7 @@ html.sky-cards.sky-night #logbook.lb-climb .lb-pic::after { box-shadow:208px 6px
 html.sky-cards.sky-night #logbook.lb-climb.lb-back .lb-pic::before, html.sky-cards.sky-night #logbook.lb-climb.lb-back .lb-pic::after { animation:none; opacity:.6; }
 html.sky-cards.sky-night #sat-card.rm-card .rm-pic { background:radial-gradient(ellipse at 50% 40%, #11233c, #0b182b 70%, #08121f); }
 html.sky-cards.sky-night #sat-card .rm-land { fill:#1b2f4c; stroke:#3d5a80; stroke-width:.6; }
-html.sky-cards.sky-night #sat-card .rm-svg > g { filter:drop-shadow(0 0 2.5px rgba(255,180,90,.5)); }
+html.sky-cards.sky-night #sat-card .rm-arc.rm-top { filter:drop-shadow(0 0 2.5px rgba(255,180,90,.5)); } /* glow on the longest route only, not every arc (perf scan 2026-11-22) */
 html.sky-cards.sky-night #sat-card .rm-arc.rm-top { stroke:var(--rc-red); stroke-width:2.6; }
 html.sky-cards.sky-night #sat-card .rm-apt { fill:#fff1cc; stroke:rgba(255,206,120,.35); stroke-width:3.4; }
 html.sky-cards.sky-night #sat-card .rm-apt.rm-hub { fill:var(--rc-ocean); stroke:#ffe2a8; stroke-width:1.6; }
