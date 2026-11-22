@@ -6,9 +6,9 @@
 //         renderCard, attachTilt, artImage, applyBack, sfx, feel, tierColor }
 const wait = (ms, reduced) => new Promise((r) => setTimeout(r, reduced ? Math.min(ms, 120) : ms));
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-import { TIERS, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1885';
-import { attachGyro } from './card.js?v=0.1.1885';
-import { cloudsHtml } from './weather-art.js?v=0.1.1885';
+import { TIERS, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1887';
+import { attachGyro } from './card.js?v=0.1.1887';
+import { cloudsHtml } from './weather-art.js?v=0.1.1887';
 // Cards turn with the catch reveal's own flip and rarity table (js/card-moment.js, 2026-11-11): one turn for a catch, a
 // gift and the morning pack.
 // A tap that answers on the finger lifting, like main.js tapOn: the pack animates every frame, and WebKit drops a click
@@ -198,6 +198,9 @@ export function playPack(o) {
       const fr = document.createElement('div'); fr.className = 'gp-fr';
       const card = o.renderCard(h.card, { sightings: h.sightings }); fr.appendChild(card);
       const fl = document.createElement('div'); fl.className = 'gp-flip'; fl.append(bk, fr); d.append(fl); d._fl = fl; d._card = card; d._h = h; d._rare = TIERS.indexOf(h.card.tier) >= 2;
+      /* a boarding pass isn't a card: it's dealt face up, never turned over (2026-11-22, Sevaan: in the night pack it flipped as
+         a card and then became a skinny pass), as in the two-card reveal */
+      if (card.querySelector?.('.fc--land')) { d._pass = true; d._rare = false; d.classList.add('face', 'settled', 'gp-pass'); }
       tap(d, () => d._tap?.());
       d.style.transform = `translateY(${i * -1.5}px) rotate(${((i * 37) % 5 - 2) * 0.5}deg)`; d.style.zIndex = String(100 - i);
       return d;
@@ -220,10 +223,10 @@ export function playPack(o) {
       } else setTimeout(() => flip(d, i), reduced ? 0 : 160);
     }
     async function flip(d, i) {
-      if (d._busy || d.classList.contains('face') || phase !== 'dealing' || closed) return; d._busy = true; d._tap = null;
+      if (d._busy || (d.classList.contains('face') && !d._pass) || d._landed || phase !== 'dealing' || closed) return; d._busy = true; d._tap = null; d._landed = true;
       d.classList.remove('shake'); /* the glow stays through the held breath, like the reveal */
       const fl = d._fl; d._beats?.();
-      await flipCard(fl, { tier: d._h.card.tier, faces: [fl.firstElementChild, fl.lastElementChild], perspective: '1600px', settle: true, alive: () => !closed && phase === 'dealing', onTurn: () => d.classList.remove('aura'), showFace: (f) => d.classList.toggle('face', f) });
+      if (!d._pass) await flipCard(fl, { tier: d._h.card.tier, faces: [fl.firstElementChild, fl.lastElementChild], perspective: '1600px', settle: true, alive: () => !closed && phase === 'dealing', onTurn: () => d.classList.remove('aura'), showFace: (f) => d.classList.toggle('face', f) });
       if (phase !== 'dealing' || closed) return; /* Skip or ✕ mid-turn: no sounds, tags or buttons over the summary (the deep review, 2026-11-12) */
       d.classList.add('face', 'settled'); /* settled: the front's 180° and the flipper's 180° become none, no visible change */
       const tier = d._h.card.tier;

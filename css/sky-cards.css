@@ -952,3 +952,11 @@ html.sky-cards #sat-card.rm-card .rm-sub { white-space:normal; overflow:visible;
 .fc-in--sp .sp-fact { -webkit-line-clamp:3; flex:0 1 auto; min-height:0; }
 /* the photo sits inside the level's gold inner frame, not under its edge (Android re-check 2026-11-22: ~4px past it) */
 .fc--lvl .sp-ph.fc-pic { margin:.42em .42em 0 0; border-radius:0 .55em 0 0; }
+/* the Spine fact is shown whole (2026-11-22, Sevaan: "the fact text doesn't fit and runs off into ellipses"); the gap above
+   "Caught" gives way first, and long facts step down a size */
+.fc-in--sp .sp-fact { display:block; -webkit-line-clamp:unset; overflow:visible; flex:none; }
+.fc-in--sp .sp-fact--m { font-size:.74em; }
+.fc-in--sp .sp-fact--s { font-size:.68em; }
+.fc-in--sp .sp-ct { margin-top:auto; min-height:0; }
+/* the night pack: a boarding pass dealt face up, tilted like the reveal's */
+#gift .gp-dc.gp-pass .fc--land { transform:translateY(5%) rotate(6deg) scale(1.12); transform-origin:50% 50%; }
