@@ -4,9 +4,9 @@
 // the route map fill up), repeats of a few types and routes (so levels and stamps show), and plane-only catches (private,
 // business, military, a helicopter, a type the feed can't name). Each sighting is marked via: 'test-load'.
 
-import { cardsFor } from './flights.js?v=0.1.1891';
-import { catchSightings } from './sky-cards.js?v=0.1.1891';
-import { airport } from './routes.js?v=0.1.1891';
+import { cardsFor } from './flights.js?v=0.1.1892';
+import { catchSightings } from './sky-cards.js?v=0.1.1892';
+import { airport } from './routes.js?v=0.1.1892';
 
 // [callsign, type, from ICAO, to ICAO, airline, category, days ago]
 const FLIGHTS = [
