@@ -1039,3 +1039,14 @@ html.sky-cards .lb-track > #logbook.lb-back .lb-remind { display:none; } /* behi
 /* the rank card's noise clouds (js/cloud-pic.js): by day a soft white with lit tops; at night faint and moonlit */
 html.sky-cards.sky-night #logbook.lb-climb .lbc-cloud-img { opacity:.2; }
 html.sky-cards.sky-night #logbook.lb-climb .lbc-cloud-lit { display:none; }
+/* Tap to turn on motion (#wake, 2026-11-22, Sevaan: "should be light mode like notifications and have the airmail strip
+   across the top instead of the colour strip"): the notification ticket's light paper by day, and the same airmail band
+   along the top day and night (as #toasts .ticket above), in place of the gold or red border. */
+body.sky-only #wake span { position:absolute; border-top:0 !important; }
+body.sky-only #wake span::after { content:''; position:absolute; inset:0; z-index:2; border-radius:inherit; padding:3px 0 0; pointer-events:none;
+  background:repeating-linear-gradient(-45deg, #c8312a 0 6px, #fffdf6 6px 9px, #24508c 9px 15px, #fffdf6 15px 18px);
+  -webkit-mask:linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); mask:linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); -webkit-mask-composite:xor; }
+body.sky-only.day:not(.night) #wake span { background-color:#fffffff5; background-image:repeating-linear-gradient(0deg, #0d223805 0 1px, transparent 1px 3px); color:#0d2238 !important;
+  box-shadow:0 10px 28px rgba(13,34,56,.22), 0 0 0 1px #c9d9e6; -webkit-backdrop-filter:none; backdrop-filter:none; }
+body.sky-only.day:not(.night) #wake span::before { color:#b42a20; }
+body.sky-only.day:not(.night) #wake small { color:#4a6178 !important; }

@@ -9,22 +9,22 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { regularFor, clockText } from './sky-regulars.js?v=0.1.1898';
-import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js?v=0.1.1898';
-import { flightFact } from './flight-facts.js?v=0.1.1898';
-import { typePhoto } from './type-photos.js?v=0.1.1898';
-import { housePhoto } from './house-photos.js?v=0.1.1898';
-import { gapPhoto } from './gap-photos.js?v=0.1.1898'; /* the types that had no photo (2026-11-18) */
-import { airlinePhoto } from './airline-photos.js?v=0.1.1898';
-import { airlineLogo } from './airline-logos.js?v=0.1.1898';
-import { fitStyle } from './photo-fit.js?v=0.1.1898';
-import { dist, speed, useMiles } from './units.js?v=0.1.1898';
-import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1898';
-import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1898';
-import { typeFact } from './sky-facts.js?v=0.1.1898';
-import { localText } from './localize.js?v=0.1.1898';
-import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1898';
-import { qrEncode, qrSvg } from './qr.js?v=0.1.1898';
+import { regularFor, clockText } from './sky-regulars.js?v=0.1.1899';
+import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js?v=0.1.1899';
+import { flightFact } from './flight-facts.js?v=0.1.1899';
+import { typePhoto } from './type-photos.js?v=0.1.1899';
+import { housePhoto } from './house-photos.js?v=0.1.1899';
+import { gapPhoto } from './gap-photos.js?v=0.1.1899'; /* the types that had no photo (2026-11-18) */
+import { airlinePhoto } from './airline-photos.js?v=0.1.1899';
+import { airlineLogo } from './airline-logos.js?v=0.1.1899';
+import { fitStyle } from './photo-fit.js?v=0.1.1899';
+import { dist, speed, useMiles } from './units.js?v=0.1.1899';
+import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1899';
+import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1899';
+import { typeFact } from './sky-facts.js?v=0.1.1899';
+import { localText } from './localize.js?v=0.1.1899';
+import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1899';
+import { qrEncode, qrSvg } from './qr.js?v=0.1.1899';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // A type name escaped, with its hyphenated model codes kept on one line ('Boeing KC-135R Stratotanker' broke after 'KC-').
