@@ -5,15 +5,15 @@
 //  Everything scales with rarity (Legendary dims the sky, shockwave, held breath, slow flip, fanfare).
 // Waits use timers, not animation.finished, so a paused tab can never freeze the sequence.
 
-import { sfx, loadSfx } from './sfx.js?v=0.1.1897';
-import { audioCtx } from './audio-ctx.js?v=0.1.1897';
-import { TIER_INFO } from './rarity.js?v=0.1.1897';
-import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1897';
-import { applyBack } from './card-backs.js?v=0.1.1897';
-import { addStarfield } from './starfield.js?v=0.1.1897';
-import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1897';
-import { packPlan, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1897'; /* the two-card pack opening (prototype, 2026-11-20) */
-import { tearJag } from './gift-pack.js?v=0.1.1897';
+import { sfx, loadSfx } from './sfx.js?v=0.1.1898';
+import { audioCtx } from './audio-ctx.js?v=0.1.1898';
+import { TIER_INFO } from './rarity.js?v=0.1.1898';
+import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1898';
+import { applyBack } from './card-backs.js?v=0.1.1898';
+import { addStarfield } from './starfield.js?v=0.1.1898';
+import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1898';
+import { packPlan, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1898'; /* the two-card pack opening (prototype, 2026-11-20) */
+import { tearJag } from './gift-pack.js?v=0.1.1898';
 
 const FX = TIER_FX; /* one rarity table for every card moment (js/card-moment.js, 2026-11-11) */
 const NIGHT_MILESTONES = [3, 5, 10, 25, 50, 100, 200, 365], STAMP_MILESTONES = [5, 10, 25, 50, 100, 200, 300, 400];
@@ -621,6 +621,7 @@ function setDeck(items) {
   tr.replaceChildren(...items.map((it, i) => { const s = document.createElement('div'); s.className = `dk-slot ${i ? 'dk-back' : 'dk-front'}${it.card.querySelector?.('.fc--land') ? ' dk-pass' : ''}`; /* the landscape boarding pass (css/sky-cards.css #reveal .dk-pass) */ if (i) s.setAttribute('aria-hidden', 'true'); s.append(it.card); return s; }));
   $('reveal').classList.toggle('two', items.length > 1);
   deck = items.length ? { items, front: 0, busy: false, ready: false } : null;
+  tr.classList.toggle('pass-front', !!tr.firstElementChild?.classList.contains('dk-pass')); /* see deckFront */
 }
 const isPass = (it) => it?.o?.sky === 'flight'; // a boarding pass (the flight card): paper, face up, never turned over
 function seal(it) { // face down behind: its real card back, turned over when it first comes forward
@@ -645,6 +646,7 @@ function armDeck(alive) {
 function deckFront(i) {
   const d = deck; d.front = i;
   slots().forEach((c, k) => { c.classList.toggle('dk-front', k === i); c.classList.toggle('dk-back', k !== i); c.setAttribute('aria-hidden', String(k !== i)); c.style.transform = ''; c.style.filter = ''; });
+  { const ss = slots(); ss[0]?.parentElement?.classList.toggle('pass-front', !!ss[i]?.classList.contains('dk-pass')); } /* a plain class for the pass's shadow on the card behind (css/sky-cards.css): Safari didn't redraw the old :has() rule's layer once the pass went back (2026-11-22, Sevaan: the shadow stayed) */
   syncPager();
 }
 function deckSwap(dir, dx = 0) { // the front card flies off to that side (dir 0: up, a flick up with the other card unseen) and settles behind; the back one comes forward

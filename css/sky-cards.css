@@ -876,7 +876,7 @@ html.sky-cards #sat-card.rm-card .rm-sub { white-space:normal; overflow:visible;
 #reveal.two .dk-track > .dk-slot:not(.dk-pass) .card--plane .fc-face { overflow:hidden; }
 #reveal.two .dk-track > .dk-slot:not(.dk-pass) .card--plane .fc-face::after { content:''; position:absolute; z-index:6; left:6em; top:0; width:16em; height:42em; padding:0; border-radius:1.2em; pointer-events:none;
   background:rgba(13,34,56,.34); box-shadow:0 0 1.6em 1.1em rgba(13,34,56,.3); transform:translate(1.6em, 2em) scale(var(--lpk, 1)) rotate(7.5deg); display:none; }
-#reveal.two.rv-done .dk-track:has(> .dk-front.dk-pass) > .dk-back .card--plane .fc-face::after { display:block; animation:lpShadowIn .34s ease; } /* drawn only while it shows, never during the reveal's turns */
+#reveal.two.rv-done .dk-track.pass-front > .dk-back .card--plane .fc-face::after { display:block; animation:lpShadowIn .34s ease; } /* drawn only while it shows, never during the reveal's turns */
 @keyframes lpShadowIn { from { opacity:0; } }
 /* While the reveal is still turning (rare cards turn several times), the pass behind drops its grain and shadow: on the
    iPhone they made the turns janky (playtest 2026-11-21). They return once the card has landed. */

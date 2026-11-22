@@ -3,12 +3,12 @@
 // sky's own model, satellite.js), around a blueprint Earth (design/earth-styles.html C) that turns slowly, you marked.
 // Dots are in the card's rarity colour; the rarest few in view are named. Tap a dot to open its card. Draws only while
 // it's on screen. Fleet cards (Starlink and co.) aren't on it yet.
-import * as sat from './lib/satellite.js?v=0.1.1897';
-import { satrecFor } from './orbit.js?v=0.1.1897';
-import { COAST } from './coast.js?v=0.1.1897';
-import { TIER_INFO } from './rarity.js?v=0.1.1897';
-import { earthMap } from './orbit-view.js?v=0.1.1897';
-import { placeName } from './geo.js?v=0.1.1897';
+import * as sat from './lib/satellite.js?v=0.1.1898';
+import { satrecFor } from './orbit.js?v=0.1.1898';
+import { COAST } from './coast.js?v=0.1.1898';
+import { TIER_INFO } from './rarity.js?v=0.1.1898';
+import { earthMap } from './orbit-view.js?v=0.1.1898';
+import { placeName } from './geo.js?v=0.1.1898';
 
 const RAD = Math.PI / 180, RE = 6371, TILT = 20 * RAD;
 // A dot's name: whole words up to about 18 letters ("THOR AGENA D", not "THOR AGENA D ROCKET ST").
