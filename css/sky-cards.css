@@ -945,3 +945,8 @@ html.sky-cards #sat-card.rm-card .rm-sub { white-space:normal; overflow:visible;
   animation:fc-glint-x 5.5s ease-in-out infinite; }
 @keyframes fc-glint-x { 0%, 30% { transform:translateX(27%); } 75%, 100% { transform:translateX(-27%); } }
 @media (prefers-reduced-motion: reduce) { .fc--legendary .fc-foil::before { animation:none; } }
+/* Spine fit (Android playtest 2026-11-22: the fact ran under the frame, and the photo past the inner frame on the right) */
+.sp-name--xl { font-size:1.75em; }
+.sp-main { overflow:hidden; border-radius:0 .95em .95em 0; }
+.sp-body { overflow:hidden; }
+.fc-in--sp .sp-fact { -webkit-line-clamp:3; flex:0 1 auto; min-height:0; }

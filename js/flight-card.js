@@ -9,22 +9,22 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { regularFor, clockText } from './sky-regulars.js?v=0.1.1883';
-import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js?v=0.1.1883';
-import { flightFact } from './flight-facts.js?v=0.1.1883';
-import { typePhoto } from './type-photos.js?v=0.1.1883';
-import { housePhoto } from './house-photos.js?v=0.1.1883';
-import { gapPhoto } from './gap-photos.js?v=0.1.1883'; /* the types that had no photo (2026-11-18) */
-import { airlinePhoto } from './airline-photos.js?v=0.1.1883';
-import { airlineLogo } from './airline-logos.js?v=0.1.1883';
-import { fitStyle } from './photo-fit.js?v=0.1.1883';
-import { dist, speed, useMiles } from './units.js?v=0.1.1883';
-import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1883';
-import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1883';
-import { typeFact } from './sky-facts.js?v=0.1.1883';
-import { localText } from './localize.js?v=0.1.1883';
-import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1883';
-import { qrEncode, qrSvg } from './qr.js?v=0.1.1883';
+import { regularFor, clockText } from './sky-regulars.js?v=0.1.1884';
+import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js?v=0.1.1884';
+import { flightFact } from './flight-facts.js?v=0.1.1884';
+import { typePhoto } from './type-photos.js?v=0.1.1884';
+import { housePhoto } from './house-photos.js?v=0.1.1884';
+import { gapPhoto } from './gap-photos.js?v=0.1.1884'; /* the types that had no photo (2026-11-18) */
+import { airlinePhoto } from './airline-photos.js?v=0.1.1884';
+import { airlineLogo } from './airline-logos.js?v=0.1.1884';
+import { fitStyle } from './photo-fit.js?v=0.1.1884';
+import { dist, speed, useMiles } from './units.js?v=0.1.1884';
+import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1884';
+import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1884';
+import { typeFact } from './sky-facts.js?v=0.1.1884';
+import { localText } from './localize.js?v=0.1.1884';
+import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1884';
+import { qrEncode, qrSvg } from './qr.js?v=0.1.1884';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // A type name escaped, with its hyphenated model codes kept on one line ('Boeing KC-135R Stratotanker' broke after 'KC-').
@@ -303,7 +303,7 @@ export function planeCardHtml(p, opts = {}) {
      photo, the set, the name, what it is, when and from whom you caught it, your progress in plain words, and the fact. */
   const T = THRESHOLDS.plane, n = si?.count ?? 0, nextT = T.find((x) => n < x), nextWord = nextT === T[1] ? 'Silver' : 'Gold';
   const spec = specs?.maker ? { maker: specs.maker, desc: [specs.country, specs.desc].filter(Boolean).join(' · ') } : null;
-  const model = spec && name.startsWith(spec.maker + ' ') ? name.slice(spec.maker.length + 1) : null;
+  const model = spec && name.toLowerCase().startsWith(spec.maker.toLowerCase() + ' ') ? name.slice(spec.maker.length + 1) : null; /* any case: 'de Havilland Canada' (Android playtest 2026-11-22: the full name took three lines and pushed the fact off) */
   const caught = last || opts.caughtAt;
   const st = (l, v, u) => `<div class="sp-st"><b>${esc(v)}${u && v !== '—' ? `<small>${esc(u)}</small>` : ''}</b><span>${esc(l)}</span></div>`;
   const opLine = k?.airline && k.routed && (k.op || k.reg) ? /* as before: the operator and registration only with a route; without one the band's words */ `<p class="sp-op">${esc(k.op || '')}${k.reg ? `<small>${esc(k.reg)}</small>` : ''}</p>` : band ? `<p class="sp-op sp-op--band">${esc(band.head)}${band.tail ? `<small>${esc(band.tail)}</small>` : ''}</p>` : '';
@@ -319,7 +319,7 @@ export function planeCardHtml(p, opts = {}) {
       <div class="fc-pic sp-ph${ph ? '' : ' fc-pic--sky'}">${art}<span class="fc-holo" aria-hidden="true"></span>${tierPill(p.tier)}${opts.rareHere ? '<span class="fc-here" title="Unusual where you caught it">RARE HERE</span>' : ''}</div>
       <div class="sp-body">
         <div class="sp-kick">${esc(set.toUpperCase())}</div>
-        <h2 class="sp-name${(model ?? name).length > 13 ? ' sp-name--long' : ''}">${model ? `<small>${esc(spec.maker.toUpperCase())}</small>` : ''}<span>${escName(model ?? name)}</span></h2>
+        <h2 class="sp-name${(model ?? name).length > 20 ? ' sp-name--xl' : (model ?? name).length > 13 ? ' sp-name--long' : ''}">${model ? `<small>${esc(spec.maker.toUpperCase())}</small>` : ''}<span>${escName(model ?? name)}</span></h2>
         ${spec?.desc || mk ? `<p class="sp-kind">${esc(String(spec?.desc || mk).replace(/^./, (c) => c.toUpperCase()))}</p>` : ''}
         ${caught ? `<div class="sp-ct"><span class="sp-l sp-red">CAUGHT</span><p class="sp-when">${when ? `${when.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}, ${timeOf(when).toLowerCase()}` : ''}</p>${opLine}</div>` : ''}
         ${prog}
