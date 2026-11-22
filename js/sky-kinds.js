@@ -1,9 +1,9 @@
 // What a plane IS, for Sky's missions, milestones and week themes (2026-11-20, design/missions-draft.md, Sevaan: "Build
 // it with the 7 cuts"): the year its model first flew, how many engines it has, who made it, and which continent a flight
 // is heading to. Every answer is either known for sure or null: a type with no answer never counts (no guessing). No DOM.
-import { typeSpecs } from './type-specs.js?v=0.1.1871';
-import { continentOf } from './sky-secrets.js?v=0.1.1871';
-import { QUAD } from './sky-patches.js?v=0.1.1871';
+import { typeSpecs } from './type-specs.js?v=0.1.1872';
+import { continentOf } from './sky-secrets.js?v=0.1.1872';
+import { QUAD } from './sky-patches.js?v=0.1.1872';
 
 const up = (t) => String(t ?? '').trim().toUpperCase();
 const cell = (s, label) => s?.cells?.find((c) => c[0] === label) ?? null;

@@ -3803,3 +3803,6 @@ body.night .kt-icons img { filter: grayscale(1) sepia(1) hue-rotate(-50deg) satu
    evenly both sides instead of widening the column and pushing the dial, and the patch coin under it, to the right for a
    moment (2026-11-21, Sevaan: "the patch and radar were more right for a second when I went back after dismissing"). */
 #radar { width:96px; } #radar-up { white-space:nowrap; }
+/* The why-line under the radar ("None up high enough yet", "No plane tracking reaches here yet") starts at the dial's left
+   edge and wraps, so with the column pinned to the dial it never runs off the screen's left edge. */
+#radar-why { align-self:flex-start; width:max-content; max-width:170px; white-space:normal; text-align:left; }
