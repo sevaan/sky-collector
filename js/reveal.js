@@ -5,15 +5,15 @@
 //  Everything scales with rarity (Legendary dims the sky, shockwave, held breath, slow flip, fanfare).
 // Waits use timers, not animation.finished, so a paused tab can never freeze the sequence.
 
-import { sfx, loadSfx } from './sfx.js?v=0.1.1867';
-import { audioCtx } from './audio-ctx.js?v=0.1.1867';
-import { TIER_INFO } from './rarity.js?v=0.1.1867';
-import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1867';
-import { applyBack } from './card-backs.js?v=0.1.1867';
-import { addStarfield } from './starfield.js?v=0.1.1867';
-import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1867';
-import { packPlan, packFoil, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1867'; /* the two-card pack opening (prototype, 2026-11-20) */
-import { tearJag } from './gift-pack.js?v=0.1.1867';
+import { sfx, loadSfx } from './sfx.js?v=0.1.1882';
+import { audioCtx } from './audio-ctx.js?v=0.1.1882';
+import { TIER_INFO } from './rarity.js?v=0.1.1882';
+import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1882';
+import { applyBack } from './card-backs.js?v=0.1.1882';
+import { addStarfield } from './starfield.js?v=0.1.1882';
+import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1882';
+import { packPlan, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1882'; /* the two-card pack opening (prototype, 2026-11-20) */
+import { tearJag } from './gift-pack.js?v=0.1.1882';
 
 const FX = TIER_FX; /* one rarity table for every card moment (js/card-moment.js, 2026-11-11) */
 const NIGHT_MILESTONES = [3, 5, 10, 25, 50, 100, 200, 365], STAMP_MILESTONES = [5, 10, 25, 50, 100, 200, 300, 400];
@@ -244,7 +244,7 @@ export async function playReveal({ card, o, seen, origin, fleet = null, progress
       const m = /url\(["']?([^"')]+)/.exec(e.style?.backgroundImage || ''); if (m) srcs.add(m[1]); }
     /* built and drawn under the rush, in a task of its own: inside the catch's own long task it made that frame ~110 ms
        longer at 4x CPU (Chromium, 2026-11-20) */
-    const built = new Promise((res) => setTimeout(() => { if (alive()) { const foil = packFoil(items); packRun = packIntro({ root, holder: $('rv-holder'), under, plan, tier: foil.tier, shiny: foil.shiny, jag: tearJag(), sfx, flash: $('rv-flash'), reduced: reduced() }); } res(); }, 0));
+    const built = new Promise((res) => setTimeout(() => { if (alive()) { packRun = packIntro({ root, holder: $('rv-holder'), under, plan, tier: 'common', shiny: false, /* every pack looks like the welcome pack, whatever is inside (2026-11-21, Sevaan) */ jag: tearJag(), sfx, flash: $('rv-flash'), reduced: reduced() }); } res(); }, 0));
     decoded = Promise.race([Promise.all([...[...srcs].map((src) => { const im = new Image(); im.src = src; return im.decode().catch(() => {}); }), primePack()]), sleep(150)]).then(() => built);
   }
   const x = rushed?.x ?? origin?.x ?? innerWidth / 2, y = rushed?.y ?? origin?.y ?? innerHeight * .4;
@@ -442,7 +442,7 @@ function wireAct(c, n) {
 }
 function showNews(news, alive) {
   const box = $('rv-news'); box.style.flexWrap = '';
-  const pager = buildPager(); if (pager) { if (deck.pack) { const of = document.createElement('span'); of.className = 'rv-of'; of.textContent = `${deck.front + 1} of 2`; box.append(of); } box.append(pager); } /* two cards: their tabs come first (which one is in front); out of a pack, "1 of 2" before them */
+  const pager = SKY_NO_PAGER ? null : buildPager(); if (pager) { if (deck.pack) { const of = document.createElement('span'); of.className = 'rv-of'; of.textContent = `${deck.front + 1} of 2`; box.append(of); } box.append(pager); } /* two cards: their tabs come first (which one is in front); out of a pack, "1 of 2" before them */
   if (!news?.length) return;
   // One row: the two biggest pieces of news, then "+N" (a second row covered the card on small phones).
   const ORDER = { ghost: -1, rank: 0, back: 1, backs: 1.5, reunion: 2, peak: 2.5, train: 2.6, birthday: 0.5, event: 3, patch: 4, mission: 5 }; // a new card back is rare news: up front (2026-10-24)
@@ -672,6 +672,9 @@ async function forward(i, initial = false) {
   if (it.levelUp && !initial) (it.card.querySelector('.card__face, .fc') ?? it.card).animate([{ boxShadow: '0 0 0 transparent' }, { boxShadow: `0 0 34px ${LEVEL_COLOR[it.level]}` }, { boxShadow: '0 0 0 transparent' }], { duration: 1300 });
 }
 // The two cards as tabs in the chips row: which one is in front; tap the other to bring it forward.
+/* No Plane / Flight switcher or "1 of 2" in Sky (2026-11-21, Sevaan: "We don't need this plane and flight tab switcher"): the
+   pass peeking out above the card, the swipes and the nudge already say there are two. */
+const SKY_NO_PAGER = true;
 function buildPager() {
   if (!deck || deck.items.length < 2) return null;
   const pg = document.createElement('span'); pg.className = 'rv-pager'; pg.setAttribute('role', 'tablist'); pg.setAttribute('aria-label', 'Cards from this catch');

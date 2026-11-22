@@ -2,9 +2,9 @@
 // of a patch, as Space Collector's story secrets do (js/stories.js). Registered as natural story cards; the art is in
 // assets/art/cards/story-sky-* (public domain or CC0, js/art-credits.js and js/art-sources.js). Every fact checked
 // against the source in docs/FACTS-SOURCES-STORIES.md.
-import { NATURAL, NATURAL_BY_KEY } from './natural.js?v=0.1.1867';
-import { STORY_BY_SECRET } from './stories.js?v=0.1.1867';
-import { STORY_SECRETS } from './secrets.js?v=0.1.1867';
+import { NATURAL, NATURAL_BY_KEY } from './natural.js?v=0.1.1882';
+import { STORY_BY_SECRET } from './stories.js?v=0.1.1882';
+import { STORY_SECRETS } from './secrets.js?v=0.1.1882';
 
 const S = (id, secret, name, when, stats, fact) => ({ key: `story:${id}`, id: `story:${id}`, card: `story:${id}`, natural: 'story', type: 'story', story: true, secret, name, when, code: 'STORY', tier: 'epic', stats, fact, art: id });
 export const SKY_STORIES = [

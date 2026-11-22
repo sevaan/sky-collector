@@ -41,7 +41,22 @@ export function climbGeom(n, W = 358, H = 196) {
 }
 
 // The whole picture. ranks: [[xp, name], ...] (js/progress.js RANKS); index: your rank; into: 0..1 toward the next.
-export function climbSvg({ ranks, index, into, xp, W = 358, H = 196 }) {
+/* Clouds (2026-11-22, Sevaan: "could be better"; Space Collector's technique via Space Max): soft noise pictures made by
+   js/cloud-pic.js (the caller passes them, so this stays pure): a lighter copy nudged up for lit tops, then the cloud, faded
+   out towards the rank names on the left and towards the runway at the bottom. No pictures (tests, no canvas): no clouds. */
+let cloudId = 0;
+function clouds(W, H, pics) {
+  if (!pics?.cloud) return '';
+  const id = `lbcc${++cloudId}`;
+  return `<defs><linearGradient id="${id}g" x1="0" y1="0" x2="1" y2="0"><stop offset=".22" stop-color="#fff" stop-opacity="0"/><stop offset=".55" stop-color="#fff" stop-opacity="1"/></linearGradient>`
+    + `<linearGradient id="${id}v" x1="0" y1="0" x2="0" y2="1"><stop offset=".05" stop-color="#000"/><stop offset=".2" stop-color="#fff"/><stop offset=".7" stop-color="#fff"/><stop offset=".95" stop-color="#000"/></linearGradient>`
+    + `<mask id="${id}m" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><rect width="${W}" height="${H}" fill="url(#${id}v)"/></mask>`
+    + `<mask id="${id}h" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><rect width="${W}" height="${H}" fill="url(#${id}g)"/></mask></defs>`
+    + `<g class="lbc-clouds" mask="url(#${id}h)"><g mask="url(#${id}m)">`
+    + (pics.lit ? `<image href="${pics.lit}" x="0" y="-4" width="${W}" height="${H}" preserveAspectRatio="none" class="lbc-cloud-lit"/>` : '')
+    + `<image href="${pics.cloud}" x="0" y="0" width="${W}" height="${H}" preserveAspectRatio="none" class="lbc-cloud-img"/></g></g>`;
+}
+export function climbSvg({ ranks, index, into, xp, W = 358, H = 196, clouds: pics = null }) {
   const n = ranks.length, G = climbGeom(n, W, H), lv = climbLevel(index, into, n), pl = G.plane(lv), cur = Math.min(index, G.top);
   const next = ranks[cur + 1];
   const rows = ranks.map(([, name], i) => {
@@ -60,7 +75,7 @@ export function climbSvg({ ranks, index, into, xp, W = 358, H = 196 }) {
   } else tag = `<text x="${G.gx}" y="${(G.y(G.top) - 4).toFixed(1)}" class="lbc-tag">TOP RANK · CRUISING</text>`;
   const rw = G.gx - 22;
   return `<svg class="lb-ladder lbc" viewBox="0 0 ${W} ${H}" width="100%" height="${H}" data-n="${n}" data-w="${W}" data-h="${H}" data-lv="${lv.toFixed(4)}" aria-hidden="true">
-    <g class="lbc-clouds"><ellipse cx="${(W * 0.84).toFixed(0)}" cy="${(H * 0.49).toFixed(0)}" rx="26" ry="6"/><ellipse cx="${(W * 0.88).toFixed(0)}" cy="${(H * 0.465).toFixed(0)}" rx="15" ry="7"/><ellipse cx="${(W * 0.66).toFixed(0)}" cy="${(H * 0.765).toFixed(0)}" rx="20" ry="5"/></g>
+    ${clouds(W, H, pics)}
     ${rows}
     <rect x="${rw}" y="${(G.y(0) + 1).toFixed(1)}" width="62" height="6" rx="1" class="lbc-rwy"/><path d="M${rw + 4} ${(G.y(0) + 4).toFixed(1)}h54" class="lbc-rwy-c"/>
     <path d="${G.poly(pl.t, 1)}" class="lbc-ahead"/>
