@@ -861,7 +861,6 @@ body.sky-only .tc .art .ob-moon { display:none; } /* When to look up: no Moon in
 /* playtest 2026-11-21: the pass's photo credit wraps instead of being cut off; the Collection tile's count coin sits on the
    stub, not on the photo; the route map's line under the distance wraps on narrow screens instead of cutting off */
 .lp-ph .fc-credit { white-space:normal; overflow:visible; text-overflow:clip; max-width:calc(100% - 1em); line-height:1.2; }
-.lp-in .sct-lvl { position:absolute; top:.7em; right:.7em; left:auto; }
 html.sky-cards #sat-card.rm-card .rm-sub { white-space:normal; overflow:visible; }
 /* Only the airline and the date show behind the card (2026-11-21, Sevaan: "just have the Lufthansa and the date sticking
    out"), 2.25em (js/reveal.js LP_PEEK). In front the pass is lifted off the plane card, so it casts a deeper shadow on it. */
@@ -871,5 +870,24 @@ html.sky-cards #sat-card.rm-card .rm-sub { white-space:normal; overflow:visible;
 #reveal .dk-track > .dk-front.dk-pass .fc--land { filter:none !important; }
 #reveal.two .dk-track > .dk-slot:not(.dk-pass) .card--plane .fc-face { overflow:hidden; }
 #reveal.two .dk-track > .dk-slot:not(.dk-pass) .card--plane .fc-face::after { content:''; position:absolute; z-index:6; left:6em; top:0; width:16em; height:42em; padding:0; border-radius:1.2em; pointer-events:none;
-  background:rgba(13,34,56,.34); box-shadow:0 0 1.6em 1.1em rgba(13,34,56,.3); transform:translate(1.6em, 2em) scale(var(--lpk, 1)) rotate(7.5deg); opacity:0; transition:opacity .34s ease; }
-#reveal.two .dk-track:has(> .dk-front.dk-pass) > .dk-back .card--plane .fc-face::after { opacity:1; }
+  background:rgba(13,34,56,.34); box-shadow:0 0 1.6em 1.1em rgba(13,34,56,.3); transform:translate(1.6em, 2em) scale(var(--lpk, 1)) rotate(7.5deg); display:none; }
+#reveal.two.rv-done .dk-track:has(> .dk-front.dk-pass) > .dk-back .card--plane .fc-face::after { display:block; animation:lpShadowIn .34s ease; } /* drawn only while it shows, never during the reveal's turns */
+@keyframes lpShadowIn { from { opacity:0; } }
+/* While the reveal is still turning (rare cards turn several times), the pass behind drops its grain and shadow: on the
+   iPhone they made the turns janky (playtest 2026-11-21). They return once the card has landed. */
+#reveal:not(.rv-done) .fc--land .lp-paper::after { display:none; }
+#reveal:not(.rv-done) .fc--land.fc--flight { filter:none !important; }
+/* the plain stand-in for the pass that rises out of the pack under the top card (js/reveal.js pk-under) */
+.pk-pass { width:calc(var(--cf, 12px) * 16); height:calc(var(--cf, 12px) * 42); margin:0 auto; border-radius:calc(var(--cf, 12px) * .7); background:#fbf9f2; box-shadow:0 2px 8px rgba(13,34,56,.18); }
+/* The Passes tab (js/cards-page.js #grid.passes, 2026-11-21, Sevaan: "we don't need the card container behind these and can
+   maybe fit four boarding passes to a row"): each tile is just the pass, 16 x 42, with no card frame around it. */
+#grid.passes .tile-slot:has(.card-tile--mini), #grid.passes .tile-slot > .card-tile.card-tile--mini, #grid.passes .card-tile.card-tile--mini { aspect-ratio:16 / 42; }
+#grid.passes .card-tile--mini::after { display:none; }
+#grid.passes .mini-face { width:calc(160px * var(--mini-s, .4)); height:calc(420px * var(--mini-s, .4)); overflow:visible; border-radius:0; }
+#grid.passes .mini-face > .card { width:16em; }
+#grid.passes .mini-face > .card > .fc--land { margin:0; }
+#grid.passes .tile-slot { background:transparent; }
+/* the count coin, upright and in the bottom left of the photo as you hold the phone (2026-11-21, Sevaan): the photo's top-left
+   corner before the pass is turned, turned back 90 degrees; the rarity tag moves along to make room */
+.lp-ph .sct-lvl, .mini-face .fc .lp-ph .sct-lvl { position:absolute; z-index:4; left:.6em; top:.6em; right:auto; bottom:auto; transform:rotate(90deg); }
+.lp-ph:has(.sct-lvl) :is(.fc-tier, .fc-set) { left:7.4em; } /* past the coin (4.4em in the Collection tile) */

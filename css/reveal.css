@@ -211,7 +211,7 @@ body.night #reveal.rv-tour #reveal-view { background: #ff6a55; color: #120606; }
 .dk-track > .dk-back * { pointer-events: none; }
 .dk-track > .dk-drag { transition: none; }
 .dk-track > .dk-leaving { transition: transform .2s ease-in; z-index: 3; }
-#reveal-card.dk-wait > .dk-back { opacity: 0; } /* a new front card turns over first; then the other one appears behind it */
+#reveal-card.dk-wait > .dk-back { opacity: 0; visibility: hidden; } /* hidden, not just transparent: Safari kept drawing it through the turn (Sky playtest 2026-11-21: a rare card's multi-flip was janky) */ /* a new front card turns over first; then the other one appears behind it */
 @media (prefers-reduced-motion: reduce) { .dk-track > .dk-slot { transition: opacity .2s ease; } }
 /* a sealed card behind glows in its rarity, so the peek already says "another new card" */
 .dk-slot.sealed .card__back { box-shadow: inset 0 0 0 .25em color-mix(in srgb, var(--glow) 70%, #0000), 0 0 calc(1.4 * var(--cf)) color-mix(in srgb, var(--glow) 85%, transparent); }

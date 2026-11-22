@@ -5,15 +5,15 @@
 //  Everything scales with rarity (Legendary dims the sky, shockwave, held breath, slow flip, fanfare).
 // Waits use timers, not animation.finished, so a paused tab can never freeze the sequence.
 
-import { sfx, loadSfx } from './sfx.js?v=0.1.1862';
-import { audioCtx } from './audio-ctx.js?v=0.1.1862';
-import { TIER_INFO } from './rarity.js?v=0.1.1862';
-import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1862';
-import { applyBack } from './card-backs.js?v=0.1.1862';
-import { addStarfield } from './starfield.js?v=0.1.1862';
-import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1862';
-import { packPlan, packFoil, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1862'; /* the two-card pack opening (prototype, 2026-11-20) */
-import { tearJag } from './gift-pack.js?v=0.1.1862';
+import { sfx, loadSfx } from './sfx.js?v=0.1.1867';
+import { audioCtx } from './audio-ctx.js?v=0.1.1867';
+import { TIER_INFO } from './rarity.js?v=0.1.1867';
+import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1867';
+import { applyBack } from './card-backs.js?v=0.1.1867';
+import { addStarfield } from './starfield.js?v=0.1.1867';
+import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1867';
+import { packPlan, packFoil, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1867'; /* the two-card pack opening (prototype, 2026-11-20) */
+import { tearJag } from './gift-pack.js?v=0.1.1867';
 
 const FX = TIER_FX; /* one rarity table for every card moment (js/card-moment.js, 2026-11-11) */
 const NIGHT_MILESTONES = [3, 5, 10, 25, 50, 100, 200, 365], STAMP_MILESTONES = [5, 10, 25, 50, 100, 200, 300, 400];
@@ -235,8 +235,8 @@ export async function playReveal({ card, o, seen, origin, fleet = null, progress
     under = document.createElement('div'); under.className = 'pk-under'; under.setAttribute('aria-hidden', 'true');
     /* only its back, not the whole card: a full card copy (face, photo) under a scaling rise cost ~170 frames over 20 ms in
        ten catches at 4x CPU in Chromium (its raster went from 163 to 644 ms a catch) */
-    { const sl = slots()[1], w = document.createElement('div'), pass = isPass(items[1]), bk = (pass ? items[1].card : sl.querySelector('.card__back'))?.cloneNode(true); w.className = pass ? 'dk-slot' : 'dk-slot sealed'; w.style.cssText = sl.style.cssText;
-      if (bk) { bk.removeAttribute('id'); bk.style.transform = 'none'; w.append(bk); } under.append(w); } $('rv-holder').before(under); /* a boarding pass rises face up */
+    { const sl = slots()[1], w = document.createElement('div'), pass = isPass(items[1]), bk = pass ? Object.assign(document.createElement('div'), { className: 'pk-pass' }) : sl.querySelector('.card__back')?.cloneNode(true); w.className = pass ? 'dk-slot dk-pass' : 'dk-slot sealed'; w.style.cssText = sl.style.cssText;
+      if (bk) { bk.removeAttribute('id'); bk.style.transform = 'none'; w.append(bk); } under.append(w); } $('rv-holder').before(under); /* a boarding pass rises as a plain paper stand-in: a full copy (photo, grain, cut-outs) under the scaling rise was what a whole card copy cost before */
     for (const it of items) it.card.dataset.swiping = '1';
     const srcs = new Set();
     for (const el of [$('rv-back'), under, ...items.map((it) => it.card)]) for (const e of [el, ...el.querySelectorAll('img, [style*="url("]')]) {

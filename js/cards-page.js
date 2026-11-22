@@ -1,48 +1,48 @@
-import { pullToClose } from './pull-close.js?v=0.1.1862';
-import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1862';
-import { computeStats, statsHtml } from './stats.js?v=0.1.1862';
-import { nightKey } from './observation.js?v=0.1.1862';
-import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1862';
-import { sfx } from './sfx.js?v=0.1.1862';
-import { expandFacts } from './catalog-facts.js?v=0.1.1862';
-import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned, addSecretArt } from './patches.js?v=0.1.1862';
-import { registerSkySecrets } from './sky-secrets.js?v=0.1.1862';
-import { SKY_PATCH_ART } from './sky-patches.js?v=0.1.1862';
-import { registerSkyStories } from './sky-stories.js?v=0.1.1862';
-import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1862';
-import { ticket } from './toast.js?v=0.1.1862';
-import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1862';
-import { satGlobe } from './sat-globe.js?v=0.1.1862';
-import { routeMap } from './route-map.js?v=0.1.1862';
-import { dist } from './units.js?v=0.1.1862';
-import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1862';
-import { cardArt } from './art.js?v=0.1.1862';
-import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1862';
-import { applyBack } from './card-backs.js?v=0.1.1862';
-import { localStats, seenLine } from './sky-local.js?v=0.1.1862';
-import { retier, rekeyUnlisted } from './flights.js?v=0.1.1862';
-import { SETS, assignSets, albumGoals, albumList, useSets, goalsOf } from './sets.js?v=0.1.1862';
-import { SKY_ALBUM_SETS, FLIGHT_SETS, PLANE_SETS } from './sky-sets.js?v=0.1.1862';
+import { pullToClose } from './pull-close.js?v=0.1.1867';
+import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1867';
+import { computeStats, statsHtml } from './stats.js?v=0.1.1867';
+import { nightKey } from './observation.js?v=0.1.1867';
+import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1867';
+import { sfx } from './sfx.js?v=0.1.1867';
+import { expandFacts } from './catalog-facts.js?v=0.1.1867';
+import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned, addSecretArt } from './patches.js?v=0.1.1867';
+import { registerSkySecrets } from './sky-secrets.js?v=0.1.1867';
+import { SKY_PATCH_ART } from './sky-patches.js?v=0.1.1867';
+import { registerSkyStories } from './sky-stories.js?v=0.1.1867';
+import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1867';
+import { ticket } from './toast.js?v=0.1.1867';
+import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1867';
+import { satGlobe } from './sat-globe.js?v=0.1.1867';
+import { routeMap } from './route-map.js?v=0.1.1867';
+import { dist } from './units.js?v=0.1.1867';
+import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1867';
+import { cardArt } from './art.js?v=0.1.1867';
+import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1867';
+import { applyBack } from './card-backs.js?v=0.1.1867';
+import { localStats, seenLine } from './sky-local.js?v=0.1.1867';
+import { retier, rekeyUnlisted } from './flights.js?v=0.1.1867';
+import { SETS, assignSets, albumGoals, albumList, useSets, goalsOf } from './sets.js?v=0.1.1867';
+import { SKY_ALBUM_SETS, FLIGHT_SETS, PLANE_SETS } from './sky-sets.js?v=0.1.1867';
 const FLIGHT_SET_IDS = new Set(FLIGHT_SETS.map((s) => s.id));
 /* plane albums too (playtest 2026-11-20 #13: Helicopters read "0 / 1", only the listed types counted): any helicopter is a card */
 const OPEN_SET_IDS = new Set([...FLIGHT_SET_IDS, ...PLANE_SETS.map((s) => s.id)]);
-import { skyCatalogue } from './sky-catalogue.js?v=0.1.1862';
-import { skyCardPhotoUrl, glyphSvg } from './flight-card.js?v=0.1.1862';
-import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1862';
-import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1862';
-import { STORIES } from './stories.js?v=0.1.1862';
-import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1862';
-import { conArt } from './con-art.js?v=0.1.1862';
-import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1862';
-import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1862';
-import { climbSvg, climbGeom, xpLevel } from './rank-climb.js?v=0.1.1862';
-import { shareCardEl } from './share-card.js?v=0.1.1862';
-import { forgetSighting } from './cloud-backup.js?v=0.1.1862';
-import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1862';
-import { allSightings, deleteSighting } from './store.js?v=0.1.1862';
-import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1862';
-import { SECRET_PATCHES, NOT_SECRET, hasPatch } from './secrets.js?v=0.1.1862';
-import { localText } from './localize.js?v=0.1.1862';
+import { skyCatalogue } from './sky-catalogue.js?v=0.1.1867';
+import { skyCardPhotoUrl, glyphSvg } from './flight-card.js?v=0.1.1867';
+import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1867';
+import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1867';
+import { STORIES } from './stories.js?v=0.1.1867';
+import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1867';
+import { conArt } from './con-art.js?v=0.1.1867';
+import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1867';
+import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1867';
+import { climbSvg, climbGeom, xpLevel } from './rank-climb.js?v=0.1.1867';
+import { shareCardEl } from './share-card.js?v=0.1.1867';
+import { forgetSighting } from './cloud-backup.js?v=0.1.1867';
+import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1867';
+import { allSightings, deleteSighting } from './store.js?v=0.1.1867';
+import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1867';
+import { SECRET_PATCHES, NOT_SECRET, hasPatch } from './secrets.js?v=0.1.1867';
+import { localText } from './localize.js?v=0.1.1867';
 // Sky Collector (Milestone 1.5): the same Collection, with plane cards from your catches and no satellite catalogue.
 const SKY = (() => { try { return !!window.parent?.__skyOnly; } catch { return false; } })() || /[?&]sky\b/.test(location.search);
 if (SKY) { /* night follows the game's own switch (html.sky-night, set where Explore decides day and night) */
@@ -206,8 +206,8 @@ function fitTileName(tile) {
 // level badge and label; its face becomes renderCard(…, { mini }) sized by container units, and the status line
 // ("✓ Collected Oct 13, 2026" / "Not yet collected" / "3 of 7 stars") sits over the card’s footer.
 // One scale for every tile: tile width / the card’s natural 280 px, kept on the grid as --mini-s.
-let miniS = '', miniRaf = 0;
-const miniScale = () => { miniRaf = 0; const t = document.querySelector('.card-tile--mini, #grid .card-slot'); const w = t?.offsetWidth; if (!w) return; const v = (w / 280).toFixed(4); if (v !== miniS) { miniS = v; document.getElementById('grid')?.style.setProperty('--mini-s', v); } };
+let miniS = '', miniRaf = 0, applyGridSize = null;
+const miniScale = () => { miniRaf = 0; const t = document.querySelector('.card-tile--mini, #grid .card-slot'); const w = t?.offsetWidth; if (!w) return; const v = (w / (document.getElementById('grid')?.classList.contains('passes') ? 160 : 280)).toFixed(4); /* a pass is 160 px wide at its natural size */ if (v !== miniS) { miniS = v; document.getElementById('grid')?.style.setProperty('--mini-s', v); } };
 const queueMiniScale = () => { if (miniS) return; miniRaf ||= requestAnimationFrame(miniScale); }; /* measured once per width (resize clears miniS), not after every tile: each read laid the grid out mid-scroll (perf budget 2026-11-10) */ // once a frame, however many tiles were built (jank playtest 2026-10-17)
 addEventListener('resize', () => { miniS = ''; queueMiniScale(); });
 // Wide screens (iPhone Duo unfolded, iPads; 2026-10-22, design/duo-layouts.html Collection A; Sevaan: "go with your
@@ -797,6 +797,7 @@ function render() {
 { let lastS = 0; addEventListener('scroll', () => { const t = performance.now(); if (t - lastS > 400) { try { window.parent.__pm?.mark('scroll Collection'); } catch {} } lastS = t; }, { passive: true }); } /* the phone meter's scroll mark */
 let skipLbOnce = false; /* the background rebuild draws the rank card as its own task first (perf budget 2026-11-10) */
 function renderView() {
+  { const g = $('grid'), pz = SKY && state.view === 'owned' && state.kind === 'flight'; if (g.classList.contains('passes') !== pz) { g.classList.toggle('passes', pz); miniS = ''; applyGridSize?.(); queueMiniScale(); } } /* the Passes tab: landscape passes, four a row, no card frame (2026-11-21, Sevaan) */
   if (upHold) { upHold = 'again'; return; } // the viewer is showing Up tonight’s own list: redraw once it closes (QA 2026-10-16)
   if (skipLbOnce) skipLbOnce = false; else renderLogbook(); markFilters(); // every tab, Find too (iPhone 14 playtest 2026-10-30: the dot stayed on after an album)
   { const n = (SKY ? ownedOf('plane') : state.cards.filter(hasSightings)).length.toLocaleString(); if ($('owned-count').textContent !== n) $('owned-count').textContent = n; if (SKY) $('flights-count').textContent = ownedOf('flight').length.toLocaleString(); } // on every tab (round-2 playtest 2026-10-30: Mine said 20 under a 21-card header on Patches)
@@ -1313,13 +1314,13 @@ boot().catch(() => {
   const grid = $('grid');
   const applySize = () => {
     const page = matchMedia('(orientation: landscape)').matches ? innerWidth / 2 - 60 : innerWidth - 48; /* the grid's page, from the window (clientWidth could be read before the book layout applied: 5 tiny tiles on the Duo) */
-    const cols = DOCK_Q.matches ? Math.max(3, Math.min(5, Math.floor(page / 100))) : innerWidth >= 700 ? 5 : 3; // a page of a wide screen: as many as fit at 100px, 3 to 5 (4 on the Duo)
+    const cols0 = DOCK_Q.matches ? Math.max(3, Math.min(5, Math.floor(page / 100))) : innerWidth >= 700 ? 5 : 3, cols = grid.classList.contains('passes') ? Math.round(cols0 * 4 / 3) : cols0; /* passes are narrow: four a row on a phone */ // a page of a wide screen: as many as fit at 100px, 3 to 5 (4 on the Duo)
     grid.dataset.cols = cols; grid.style.setProperty('--cols', cols);
     const w = (grid.clientWidth || innerWidth - 40) / cols;
     grid.classList.toggle('single', false); grid.classList.toggle('dense', w < 140); grid.classList.toggle('tiny', w < 92); grid.classList.toggle('micro', w < 66);
   };
   addEventListener('resize', applySize);
-  applySize();
+  applySize(); applyGridSize = applySize;
 }
 
 try { sessionStorage.setItem('scBooted', '1'); } catch {} // the app is open: going to Explore skips the loader
