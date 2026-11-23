@@ -10,7 +10,7 @@ import { readFileSync, writeFileSync, mkdirSync, copyFileSync, rmSync, readdirSy
 import { join, dirname, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..'), OUT = join(ROOT, 'site/public/pack'), SRC = join(ROOT, 'site/pack-src');
-const ENTRIES = ['gift-pack.js', 'card.js', 'card-backs.js', 'rarity.js', 'sfx.js', 'audio-ctx.js', 'flights.js', 'sky-cards.js', 'flight-card.js', 'pack-flight.js', 'pack-flights.js', 'airline-photos.js', 'airline-logos.js', 'routes.js', 'planes.js', 'card-moment.js'];
+const ENTRIES = ['music.js', 'gift-pack.js', 'card.js', 'card-backs.js', 'rarity.js', 'sfx.js', 'audio-ctx.js', 'flights.js', 'sky-cards.js', 'flight-card.js', 'pack-flight.js', 'pack-flights.js', 'airline-photos.js', 'airline-logos.js', 'routes.js', 'planes.js', 'card-moment.js'];
 export const PLANES = ['A388', 'DC3']; // the Airbus A380 and the Douglas DC-3, after a live flight card (js/pack-flight.js); keep in step with site/pack-src/pack.js
 
 rmSync(OUT, { recursive: true, force: true });
@@ -61,5 +61,8 @@ let flightFiles = 0;
 for (const a of lines) { if (copy(`data/routes/r/${a}.json`)) flightFiles++; if (copy(`assets/logos/${a}.webp`)) flightFiles++; }
 for (const k of Object.keys(AIRLINE_PHOTOS)) if (lines.has(k.slice(0, 3))) for (const d of ['', 'sm/', 'tiny/']) if (copy(`assets/photos/airlines/${d}${k}.webp`)) flightFiles++;
 copy('data/routes/airports.json');
+// The game's music (2026-11-23, Sevaan; Space Collector e45a77ff): js/music.js plays its SRC relative to the page, so the
+// track ships beside it (Sky's homepage has no copy to share). Stop if that line changes, so the page never plays nothing.
+{ const m = /const SRC = '([^']+\.m4a)'/.exec(readFileSync(join(ROOT, 'js/music.js'), 'utf8')); if (!m || !copy(m[1])) throw new Error('js/music.js SRC changed or its track is missing: update the pack build'); }
 for (const f of ['index.html', 'pack.js', 'og.jpg']) copyFileSync(join(SRC, f), join(OUT, f));
 console.log('pack page: modules', seen.size, '· css pictures and fonts', cssFiles, '· plane photos', photos, '· backs', backs, '· sounds', sfx, '· flight card files', flightFiles, 'for', lines.size, 'airlines');

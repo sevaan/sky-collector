@@ -9,7 +9,7 @@
 const EPS = 1e-3;
 const TRIM = 0.035; // of the 0.04 padding, leaving a sliver of air round the plane
 const pct = (v) => `${Math.round(v * 1000) / 10}%`;
-export function fitStyle(box, imgW, imgH, frameW, frameH) {
+export function fitStyle(box, imgW, imgH, frameW, frameH, { fill = false } = {}) {
   const ok = [imgW, imgH, frameW, frameH].every((n) => Number.isFinite(n) && n > 0);
   const b = Array.isArray(box) && box.length === 4 && box.every(Number.isFinite) ? box : [0, 0, 1, 1];
   // A side at exactly 0 or 1 is a detected box clamped at the photo edge (the plane may run right to it): no trim there.
@@ -23,7 +23,9 @@ export function fitStyle(box, imgW, imgH, frameW, frameH) {
   x0 = Math.max(0, x0); x1 = Math.min(1, x1); y0 = Math.max(0, y0); y1 = Math.min(1, y1);
   const ia = imgW / imgH, fa = frameW / frameH;
   const vx = fa > ia ? 1 : fa / ia, vy = fa > ia ? ia / fa : 1; // visible fraction of the photo under cover
-  if (x1 - x0 > vx + EPS || y1 - y0 > vy + EPS) return { mode: 'contain' };
+  /* fill (the plane card's photo window, 2026-11-22, Sevaan: "make the image just slightly bigger so that it takes up 100%
+     height"): always a cover crop, centred on the plane, even when a wingtip or tail runs past the edge, never the blurred view */
+  if (!fill && (x1 - x0 > vx + EPS || y1 - y0 > vy + EPS)) return { mode: 'contain' };
   const pos = (lo, hi, v) => {
     if (v >= 1 - EPS) return 0.5;
     const start = Math.max(0, Math.min(1 - v, (lo + hi) / 2 - v / 2));

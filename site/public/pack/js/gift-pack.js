@@ -30,7 +30,7 @@ export function playPack(o) {
   return new Promise((resolve) => {
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches, W = (ms) => wait(ms, reduced);
     const sfx = (n, v) => { try { o.sfx?.(n, typeof v === 'object' && v ? v : { gain: v ?? 1 }); } catch {} } /* a number is the gain; an object is passed through (2026-11-18: the tear's { gap, wait } arrived as the gain, so it was NaN and the tear never played, Sevaan: "didn't hear the pack opening sound"; Space Collector 925f6a71) */, feel = (k) => { try { o.feel?.(k); } catch {} };
-    const best = o.highlights.at(-1)?.card;
+    const best = o.highlights.reduce((a, b) => ((b.score ?? 0) >= (a?.score ?? 0) ? b : a), null)?.card; /* the best by score, not the last: the night pack deals its passes after the plane cards (2026-11-22) */
     const bare = !!o.bare; /* the first-run opener (2026-11-12, Sevaan): just the pack and the swipe cue, no words; o.emerge(packRect, dropPack) brings the welcome card out of it */
     const root = document.createElement('div'); root.id = 'gift'; root.className = bare ? 'in bare' : 'in'; root.setAttribute('role', 'dialog'); root.setAttribute('aria-label', bare ? 'A sealed pack. Swipe across the top to open it.' : `Cards from ${o.from || 'a friend'}`); if (bare) root.tabIndex = 0;
     root.style.setProperty('--fx', o.tierColor(best?.tier) ?? '#ffc93d');
@@ -198,6 +198,9 @@ export function playPack(o) {
       const fr = document.createElement('div'); fr.className = 'gp-fr';
       const card = o.renderCard(h.card, { sightings: h.sightings }); fr.appendChild(card);
       const fl = document.createElement('div'); fl.className = 'gp-flip'; fl.append(bk, fr); d.append(fl); d._fl = fl; d._card = card; d._h = h; d._rare = TIERS.indexOf(h.card.tier) >= 2;
+      /* a boarding pass isn't a card: it's dealt face up, never turned over (2026-11-22, Sevaan: in the night pack it flipped as
+         a card and then became a skinny pass), as in the two-card reveal */
+      if (card.querySelector?.('.fc--land')) { d._pass = true; d._rare = false; d.classList.add('face', 'settled', 'gp-pass'); }
       tap(d, () => d._tap?.());
       d.style.transform = `translateY(${i * -1.5}px) rotate(${((i * 37) % 5 - 2) * 0.5}deg)`; d.style.zIndex = String(100 - i);
       return d;
@@ -220,10 +223,10 @@ export function playPack(o) {
       } else setTimeout(() => flip(d, i), reduced ? 0 : 160);
     }
     async function flip(d, i) {
-      if (d._busy || d.classList.contains('face') || phase !== 'dealing' || closed) return; d._busy = true; d._tap = null;
+      if (d._busy || (d.classList.contains('face') && !d._pass) || d._landed || phase !== 'dealing' || closed) return; d._busy = true; d._tap = null; d._landed = true;
       d.classList.remove('shake'); /* the glow stays through the held breath, like the reveal */
       const fl = d._fl; d._beats?.();
-      await flipCard(fl, { tier: d._h.card.tier, faces: [fl.firstElementChild, fl.lastElementChild], perspective: '1600px', settle: true, alive: () => !closed && phase === 'dealing', onTurn: () => d.classList.remove('aura'), showFace: (f) => d.classList.toggle('face', f) });
+      if (!d._pass) await flipCard(fl, { tier: d._h.card.tier, faces: [fl.firstElementChild, fl.lastElementChild], perspective: '1600px', settle: true, alive: () => !closed && phase === 'dealing', onTurn: () => d.classList.remove('aura'), showFace: (f) => d.classList.toggle('face', f) });
       if (phase !== 'dealing' || closed) return; /* Skip or ✕ mid-turn: no sounds, tags or buttons over the summary (the deep review, 2026-11-12) */
       d.classList.add('face', 'settled'); /* settled: the front's 180° and the flipper's 180° become none, no visible change */
       const tier = d._h.card.tier;
@@ -297,22 +300,32 @@ export function playPack(o) {
       root.appendChild(el); sfx('complete', 0.9);
       /* The night's best five as a fan in the middle (2026-11-11, Sevaan), best in front and centre, "+N more" under it when
          there were more; 1 to 5 cards all fan evenly. o.tiles comes rarest first. */
-      const g = el.querySelector('.gp-fan'), best = o.tiles.slice(0, 5), extra = o.tiles.length - best.length;
+      const isPass = (c) => c?.sky === 'flight' || c?.kind === 'flight';
+      const g = el.querySelector('.gp-fan'), best = o.tiles.filter((x) => !isPass(x.card)).slice(0, 5), passes = o.tiles.filter((x) => isPass(x.card)).slice(0, best.length ? 2 : 4), extra = o.tiles.length - best.length - passes.length; /* the boarding passes aren't cards: each lies across the front of the fan, the right way up, with no card frame (2026-11-22, Sevaan: "only see one" of two) */
       const slots = best.map((x, k) => ({ x, k })), order = []; /* best in the middle, the rest out to either side */
       for (const sl of slots) { if (sl.k === 0) order.push(sl); else if (sl.k % 2) order.unshift(sl); else order.push(sl); }
       const n = order.length, mid = (n - 1) / 2;
       /* mini cards, like the Collection (2026-11-11, Sevaan); the footer says New card */
-      const make = (x) => { const t = document.createElement('div'); t.className = 't mini'; t.style.setProperty('--c', o.tierColor(x.card.tier) ?? '#556'); try { t.appendChild(o.mini(x.card, x.isNew ? 'New card' : '', x.sightings)); } catch { const a = o.artImage(x.card); if (a) t.style.backgroundImage = `url('${a}')`; } return t; };
+      const make = (x) => { const t = document.createElement('div'); t.className = isPass(x.card) ? 't mini pz' : 't mini'; t.style.setProperty('--c', o.tierColor(x.card.tier) ?? '#556'); try { t.appendChild(o.mini(x.card, x.isNew ? (isPass(x.card) ? 'New pass' : 'New card') : '', x.sightings)); } catch { const a = o.artImage(x.card); if (a) t.style.backgroundImage = `url('${a}')`; } return t; };
       const cards = order.map(({ x, k }, i) => { const t = make(x), off = i - mid; t.dataset.off = String(off); t.style.zIndex = String(10 - k); g.appendChild(t); return t; });
+      const pzs = passes.map((x, k) => { const t = make(x); t.style.zIndex = String(20 + k); g.appendChild(t); return t; });
       if (extra > 0) { const m = document.createElement('div'); m.className = 'gp-more'; m.textContent = `+${extra.toLocaleString('en-US')} more`; g.appendChild(m); }
       const layoutFan = (animate) => { const W = g.clientWidth, H = g.clientHeight - (extra > 0 ? 34 : 0); if (!W || !H) return;
-        const step = n > 1 ? Math.min(.42, 1.5 / (n - 1)) : 0, tilt = n > 1 ? .32 : 0, w = Math.min((W - 8) / (1 + tilt + step * (n - 1)), (H * .86) / 1.5, 210); /* mini cards are 2:3 */ /* as big as the space allows, the outer cards' tilt included */
+        const m = pzs.length, L = Math.min(W * (n ? .64 : .9), 420), T = L * 16 / 42, gap = T * (n ? .3 : .7), R = m ? T + (m - 1) * gap : 0; /* the passes' stack, at the foot of the fan */
+        const step = n > 1 ? Math.min(.42, 1.5 / (n - 1)) : 0, tilt = n > 1 ? .32 : 0, nW = Math.max(n, 3), w = Math.min((W - 8) / (1.32 + Math.min(.42, 1.5 / (nW - 1)) * (nW - 1)), ((H - R * .4) * .86) / 1.5, 210), /* one or two cards are the size three would be (2026-11-22, Sevaan: a lone plane card looked huge beside the pass) */ cy = -R * .3; /* mini cards are 2:3; with passes, a touch smaller and higher, the passes tucked across their lower part */ /* as big as the space allows, the outer cards' tilt included */
         g.style.setProperty('--fw', `${w.toFixed(1)}px`);
-        cards.forEach((t, i) => { const off = Number(t.dataset.off), x = off * step * w, y = Math.abs(off) * w * .06, r = off * (n > 3 ? 8 : 9);
+        cards.forEach((t, i) => { const off = Number(t.dataset.off), x = off * step * w, y = cy + Math.abs(off) * w * .06, r = off * (n > 3 ? 8 : 9);
           const to = `translate(-50%, -50%) translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) rotate(${r}deg)`;
           t.style.transform = to;
           if (animate && !reduced) t.animate([{ transform: 'translate(-50%, -50%) translateY(18px) rotate(0deg) scale(.92)', opacity: 0 }, { transform: to, opacity: 1 }], { duration: 460, delay: 60 + i * 50, easing: 'cubic-bezier(.2,.9,.3,1.15)', fill: 'backwards' }); });
-        { const w0 = cards[0]?.offsetWidth; if (w0) g.style.setProperty('--mini-s', (w0 / 280).toFixed(4)); } };
+        { const w0 = cards[0]?.offsetWidth; if (w0) g.style.setProperty('--mini-s', (w0 / 280).toFixed(4)); }
+        /* the passes: as long as most of the fan is wide, stacked a little apart across its lower half (or its middle, with no cards) */
+        const y0 = n ? H / 2 - T / 2 + 4 - (m - 1) * gap : -(m - 1) * gap / 2;
+        pzs.forEach((t, k) => { t.style.setProperty('--mini-s', (L / 420).toFixed(4)); t.style.width = `${T.toFixed(1)}px`;
+          const x = (k % 2 ? 1 : -1) * W * .03 * (m > 1 ? 1 : 0), y = y0 + k * gap, r = 90 + (m > 1 ? (k % 2 ? 3.5 : -4) : -3);
+          const to = `translate(-50%, -50%) translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) rotate(${r}deg)`;
+          t.style.transform = to;
+          if (animate && !reduced) t.animate([{ transform: `translate(-50%, -50%) translate(0px, ${(y + 30).toFixed(1)}px) rotate(90deg) scale(.92)`, opacity: 0 }, { transform: to, opacity: 1 }], { duration: 480, delay: 120 + (n + k) * 50, easing: 'cubic-bezier(.2,.9,.3,1.15)', fill: 'backwards' }); }); };
       layoutFan(true); new ResizeObserver(() => layoutFan(false)).observe(g);
       swipeAway(el.querySelector('.gp-sum'), g);
       Promise.resolve(o.summary?.()).then((res) => { if (!res || typeof res === 'string') return;

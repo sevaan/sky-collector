@@ -13,6 +13,7 @@ import { applyBack } from './js/card-backs.js';
 import { TIER_INFO } from './js/rarity.js';
 import { sfx as appSfx, loadSfx, sfxOnly } from './js/sfx.js';
 import { audioCtx } from './js/audio-ctx.js';
+import { startMusic } from './js/music.js'; /* the game's own music, from the first touch (2026-11-23, Sevaan; Space Collector e45a77ff) */
 import { TIERS } from './js/card-moment.js';
 import { lookupRoute } from './js/routes.js';
 import { airlineName, loadAirlines } from './js/planes.js';
@@ -20,6 +21,10 @@ import { airlinePhoto } from './js/airline-photos.js';
 import { airlineLogo } from './js/airline-logos.js';
 import { cityForZone, visitorZone, findLiveFlight, nearestCanned, liveTag, seenTag, seenWhen, km } from './js/pack-flight.js';
 import { PACK_FLIGHTS } from './js/pack-flights.js';
+/* The game's music (2026-11-23, Sevaan; Space Collector e45a77ff): started by the first touch, click or key, once; iPhone only
+   lets sound start from a touchend or click. Volume, fade-in and pausing when the page is hidden are js/music.js's own. */
+{ let on = false; const go = () => { if (on) return; on = true; try { startMusic(); } catch {} for (const t of ['pointerdown', 'touchend', 'click', 'keydown']) removeEventListener(t, go, true); };
+  for (const t of ['pointerdown', 'touchend', 'click', 'keydown']) addEventListener(t, go, { capture: true, passive: true }); }
 
 const $ = (id) => document.getElementById(id);
 const SITE = 'https://skycollector.app/';
@@ -130,7 +135,7 @@ async function play() {
       { card: dc3, sightings: [], tags: [['new', 'Flying since 1935']] },
     ],
     tiles: [{ card: a380, isNew: false }, { card: dc3, isNew: false }],
-    tail: { card: last, label: 'Your turn', tags: [], stays: true, onLand: claimLast, button: { label: 'Visit SkyCollector.app', fn: () => { location.href = SITE; return null; } } }, /* something to do under the last card (2026-11-18, Sevaan): the game's page */
+    tail: { card: last, label: 'Your turn', tags: [], stays: true, onLand: claimLast, button: { label: 'Visit SkyCollector.app ›', fn: () => { location.href = SITE; return null; } } }, /* something to do under the last card (2026-11-18, Sevaan): the game's page */
     onOpen: async () => { /* a live flight that's nearly here gets what's left of its 2.5 s, at most 0.7 s after the tear; then the cards are what they are */
       await Promise.race([swapped, new Promise((ok) => setTimeout(ok, Math.min(700, Math.max(0, LIVE_MS - (performance.now() - T0)))))]); sealedDone = true; return true; },
     renderCard: render, attachTilt, artImage: (c) => skyCardPhotoUrl(c, c.type) ?? '', mini: (c) => sample(miniCard(c, { status: 'Sample pack', preview: true, sightings: seen(c) })), applyBack, sfx, feel: () => {}, tierColor,
@@ -174,3 +179,4 @@ $('again').addEventListener('click', () => { if (models && !$('gift')) play(); }
   window.__packReady = true; /* index.html's 3 s fallback: a tap on Open the pack reloads only if this never happened (Space's) */
   play(); /* straight into the sealed pack; the start screen (hidden in the HTML) shows only if something fails or stalls */
 })();
+
