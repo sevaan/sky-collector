@@ -734,3 +734,285 @@ html.sky-cards .collection-tabs { gap:16px; }
 .mini-face .fc { --fc-u:10px; }
 .mini-face .fc .sct-lvl { min-width:4.4em; height:4.4em; border-radius:2.2em; top:.9em; right:.9em; padding:0 .7em; border-width:.25em; }
 .mini-face .fc .sct-lvl i { font-size:2.7em; }
+body.sky-only .tc .art .ob-moon { display:none; } /* When to look up: no Moon in Sky's picture (2026-11-21, Sevaan) */
+
+/* ---- The boarding pass as paper (2026-11-21, Sevaan picked take A of design/card-takes/card-takes-2026-11-21.html:
+   "Keep our current plane card design but use the boarding pass design from A"). The flight card loses the metal frame,
+   the foil and the gloss: thin white paper with a red airline rule under the header, a dashed tear line with two
+   half-circle notches cut out of the edges, and the barcode stub below it. The rarity is its pill on the photo. The plane
+   card keeps the frame, so the two read as different things in the reveal's deck. The stub has a fixed height, so the
+   notches (a mask on the face) always sit on the tear line. ---- */
+.fc--flight { --pass:#fcfcf8; --stub:5.6em; }
+.fc--flight .fc-rot { border-radius:.7em; }
+.fc--flight .fc-face { padding:0; border-radius:.7em; background:var(--pass); box-shadow:none; animation:none;
+  -webkit-mask:radial-gradient(circle at 0 calc(100% - var(--stub)), #0000 1em, #000 1.05em) left / 51% 100% no-repeat, radial-gradient(circle at 100% calc(100% - var(--stub)), #0000 1em, #000 1.05em) right / 51% 100% no-repeat;
+          mask:radial-gradient(circle at 0 calc(100% - var(--stub)), #0000 1em, #000 1.05em) left / 51% 100% no-repeat, radial-gradient(circle at 100% calc(100% - var(--stub)), #0000 1em, #000 1.05em) right / 51% 100% no-repeat; }
+.fc--flight .fc-face::before, .fc--flight .fc-face::after { display:none; }
+.fc--flight :is(.fc-foil, .fc-coat) { display:none; }
+.fc--flight .fc-glare { border-radius:.7em; }
+.fc--flight .fc-in { border-radius:.7em; background:var(--pass); box-shadow:none; }
+.fc--flight .bp-hd { border-bottom:.22em solid #b42a20; }
+.fc--flight .bp-perf { border-top-color:rgba(13,34,56,.35); margin:0 1.4em; }
+.fc--flight .bp-perf::before, .fc--flight .bp-perf::after { display:none; }
+.fc--flight:not(.fc--mini) .bp-stub { height:var(--stub); margin-top:0; }
+.fc--flight .fc-holo { display:none; }
+/* the Collection's mini pass: the same paper, no frame; too small for the notches */
+.fc--mini.fc--flight .fc-face { padding:0; -webkit-mask:none; mask:none; }
+.fc--mini.fc--flight .m-lg { border-bottom-color:#b42a20; }
+
+/* ---- The pass as real paper (2026-11-21, Sevaan: "The boarding passes need to look and feel more like paper"): a warm
+   off-white stock with a printed grain over everything (ink and photo sit in the paper, not on glass), a soft fold crease
+   across the middle, edges that tone slightly darker the way handled paper does, a faint lift at the bottom-right corner,
+   and the low, soft shadow of something thin rather than a thick card. ---- */
+.fc--flight { --pass:#fbf9f2; }
+.fc--flight .fc-rot { box-shadow:0 .1em .15em rgba(13,34,56,.14), 0 .7em 1.4em rgba(13,34,56,.13); }
+.fc--flight .fc-in { background:
+  linear-gradient(176deg, transparent 47%, rgba(13,34,56,.045) 49.6%, rgba(255,255,255,.65) 50.4%, transparent 53%),
+  radial-gradient(70% 40% at 100% 100%, rgba(255,255,255,.55), transparent 70%),
+  radial-gradient(130% 95% at 50% 45%, transparent 62%, rgba(140,112,60,.09) 100%),
+  var(--pass); }
+.fc--flight .fc-face::after { display:block; content:''; position:absolute; inset:0; z-index:5; pointer-events:none; border-radius:inherit; padding:0;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .28 0 0 0 0 .2 0 0 0 .42 -.12'/%3E%3C/filter%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .55' numOctaves='2' seed='9'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .4 0 0 0 0 .3 0 0 0 .5 -.22'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23f%29'/%3E%3Crect width='100%25' height='100%25' filter='url%28%23g%29'/%3E%3C/svg%3E") 0 0 / 16em 16em; mix-blend-mode:multiply; opacity:.7; } /* grain and faint fibres */
+.fc--flight .fc-in :is(.bp-codes b, .bp-fields b, .bp-k b, .m-cd) { color:#13283d; } /* printed ink, a touch softer than pure navy */
+/* The notches cut right through (2026-11-21, Sevaan: "still show a slight transparency behind them"): the cut-out was on
+   the face, so the gloss and glare layers and the box shadow, which sit beside it in .fc-rot, still filled the half-circles
+   faintly. The mask is on the whole pass now, and its shadow is a drop-shadow on the article, which follows the cut shape. */
+.fc--flight:not(.fc--mini) .fc-face { -webkit-mask:none; mask:none; }
+.fc--flight:not(.fc--mini) .fc-rot { box-shadow:none;
+  -webkit-mask:radial-gradient(circle at 0 calc(100% - var(--stub)), #0000 1em, #000 1.05em) left / 51% 100% no-repeat, radial-gradient(circle at 100% calc(100% - var(--stub)), #0000 1em, #000 1.05em) right / 51% 100% no-repeat;
+          mask:radial-gradient(circle at 0 calc(100% - var(--stub)), #0000 1em, #000 1.05em) left / 51% 100% no-repeat, radial-gradient(circle at 100% calc(100% - var(--stub)), #0000 1em, #000 1.05em) right / 51% 100% no-repeat; }
+.fc--flight:not(.fc--mini) { position:relative; } /* the pass's shadow is a box-shadow layer behind it (below), not two drop-shadow filters: the filters were re-recorded on every repaint and janked the pass viewer and the Passes grid (perf scan 2026-11-22) */
+/* Real-sky art (js/flight-card.js skyArt, 2026-11-21): the picture fills the window like a photo; the sky gradient behind it
+   shows only until it loads, with no grid lines, clouds or drawn plane. */
+.fc-sky--art::before { display:none; }
+.fc-skyart { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 50%; display:block; }
+
+/* ===== The landscape boarding pass (2026-11-21, Sevaan, design/pass-landscape/ round 3b; js/flight-card.js flightCardHtml) =====
+   The pass is 42 x 16em, turned -90deg (read from the right side of the screen), so the element is 16 x 42em: as tall as the
+   plane card and narrower. Same paper as before (warm stock, grain and fibres, notches cut through, a red rule). */
+.fc.fc--land { width:16em; }
+.card.card--sky > .fc--land { width:16em; margin:0 auto; }
+/* the notches cut the whole pass, not only its paper (2026-11-22, Sevaan: "the notches aren't fully cut out"): the gloss and
+   glare layers beside the pass in .fc-rot still lit the half-circles faintly when the card tilted. .lp is turned -90deg, so its
+   tear line (12em from its right end) is 12em down from the top here, and its long edges are this box's left and right. */
+.fc--land .fc-rot { box-shadow:none !important; border-radius:0;
+  -webkit-mask:radial-gradient(circle at 0 12em, #0000 .62em, #000 .67em) left / 51% 100% no-repeat, radial-gradient(circle at 100% 12em, #0000 .62em, #000 .67em) right / 51% 100% no-repeat !important;
+          mask:radial-gradient(circle at 0 12em, #0000 .62em, #000 .67em) left / 51% 100% no-repeat, radial-gradient(circle at 100% 12em, #0000 .62em, #000 .67em) right / 51% 100% no-repeat !important; }
+.fc--flight:not(.fc--mini)::before { content:''; position:absolute; inset:0; z-index:-1; border-radius:.7em; pointer-events:none; box-shadow:0 .1em .12em rgba(13,34,56,.16), 0 .6em .9em rgba(13,34,56,.12); } /* outside the pass only, so the notches stay clear */
+.lp-turn { position:relative; width:16em; height:42em; }
+.lp { --stub:12em; --band:4.6em; --cut:.62em; /* notches smaller (2026-11-21, Sevaan: "too big") */ --lk:#13283d; --lm:#4a6178; --lr:#b42a20; position:absolute; left:0; top:0; width:42em; height:16em; color:var(--lk); transform-origin:0 0; transform:translateY(42em) rotate(-90deg); }
+.lp-paper { position:absolute; inset:0; border-radius:.7em; overflow:hidden;
+  background:linear-gradient(94deg, transparent 47%, rgba(13,34,56,.04) 49.6%, rgba(255,255,255,.6) 50.4%, transparent 53%), radial-gradient(95% 130% at 45% 50%, transparent 62%, rgba(140,112,60,.1) 100%), #fbf9f2;
+  -webkit-mask:radial-gradient(circle at calc(100% - var(--stub)) 0, #0000 var(--cut), #000 calc(var(--cut) + .05em)) top / 100% 51% no-repeat, radial-gradient(circle at calc(100% - var(--stub)) 100%, #0000 var(--cut), #000 calc(var(--cut) + .05em)) bottom / 100% 51% no-repeat;
+          mask:radial-gradient(circle at calc(100% - var(--stub)) 0, #0000 var(--cut), #000 calc(var(--cut) + .05em)) top / 100% 51% no-repeat, radial-gradient(circle at calc(100% - var(--stub)) 100%, #0000 var(--cut), #000 calc(var(--cut) + .05em)) bottom / 100% 51% no-repeat; }
+.lp-paper::after { content:''; position:absolute; inset:0; z-index:5; pointer-events:none; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' seed='3'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .28 0 0 0 0 .2 0 0 0 .42 -.12'/%3E%3C/filter%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012 .55' numOctaves='2' seed='9'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .4 0 0 0 0 .3 0 0 0 .5 -.22'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23f%29'/%3E%3Crect width='100%25' height='100%25' filter='url%28%23g%29'/%3E%3C/svg%3E") 0 0 / 16em 16em; mix-blend-mode:multiply; opacity:.7; }
+.lp-perf { position:absolute; top:var(--cut); bottom:var(--cut); right:var(--stub); width:0; border-left:.14em dashed rgba(13,34,56,.35); z-index:2; }
+.lp-main { position:absolute; left:0; top:0; bottom:0; right:var(--stub); }
+.lp-stub { position:absolute; right:0; top:0; bottom:0; width:var(--stub); }
+.lp-hd { position:absolute; left:0; right:0; top:0; height:3.3em; display:flex; align-items:center; justify-content:space-between; gap:.8em; padding:0 1em 0 1.05em; border-bottom:.22em solid var(--lr); }
+.lp-logo { display:block; height:2em; width:auto; max-width:16em; object-fit:contain; object-position:left center; }
+.lp-wm { font:400 1.7em/1 'SC Display','Russo One',sans-serif; color:var(--lk); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
+.lp-k { flex:none; text-align:right; font:500 .74em/1.1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.18em; color:var(--lm); }
+.lp-k b { display:block; font:400 1.75em/1.05 'SC Display','Russo One',sans-serif; letter-spacing:.02em; color:var(--lk); }
+.lp-ph.fc-pic { position:absolute; left:.85em; top:4.05em; bottom:.85em; width:12.4em; margin:0; border-radius:.4em; }
+.lp-ph .fc-tier { font-size:.7em; } .lp-ph .fc-set { font-size:.7em; top:3em; right:auto; left:.85em; } /* under the rarity: the photo is too narrow for both along the top, and the credit is along the bottom */
+.lp-ph .fc-credit { font-size:.8em; }
+.lp-info { position:absolute; left:14.05em; right:1em; top:3.85em; bottom:.75em; display:flex; flex-direction:column; }
+.lp-codes { display:grid; grid-template-columns:auto 1fr auto; align-items:end; column-gap:.35em; }
+.lp-codes b { display:block; font:400 2.8em/.95 'SC Display','Russo One',sans-serif; letter-spacing:-.02em; color:var(--lk); }
+.lp-codes small { display:block; font:500 .76em/1.1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.14em; text-transform:uppercase; color:var(--lm); margin-top:.15em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.lp-to { text-align:right; }
+.lp-mid { align-self:center; display:flex; align-items:center; gap:.25em; padding-bottom:1em; }
+.lp-mid::before, .lp-mid::after { content:''; flex:1; border-top:.12em dashed rgba(180,42,32,.55); }
+.lp-jet { display:block; width:1.5em; height:1.5em; fill:var(--lr); transform:rotate(90deg); flex:none; }
+.lp-fields { display:grid; grid-template-columns:repeat(3,auto); justify-content:space-between; margin-top:.55em; padding-top:.45em; border-top:.08em solid rgba(13,34,56,.18); }
+.lp-fields span { display:block; font:500 .74em/1.1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.16em; color:var(--lm); white-space:nowrap; }
+.lp-fields b { display:block; font:400 1.08em/1.15 'SC Display','Russo One',sans-serif; color:var(--lk); white-space:nowrap; }
+.lp-fields b small { font:500 .62em 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.06em; color:var(--lm); margin-left:.1em; }
+.lp-fact { margin:auto 0 0; border-left:.2em solid var(--lr); padding:.05em 0 .05em .6em; font:400 .72em/1.35 Georgia,'Times New Roman',serif; color:#1b3047; overflow:hidden; display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; }
+.lp-fact b { color:var(--lk); }
+/* the stub: the inner part (when, the QR code, the type) and the band at the very end, whose words run along the edge so
+   they read upright in the strip that shows above the plane card */
+.lp-in { position:absolute; left:0; top:0; bottom:0; width:calc(var(--stub) - var(--band)); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:.5em; padding:0 .4em; }
+.lp-l { display:block; font:500 .62em/1.1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.16em; color:var(--lm); }
+.lp-v { display:block; font:400 1em/1.15 'SC Display','Russo One',sans-serif; color:var(--lk); white-space:nowrap; }
+.lp-qr { display:block; width:6.3em; height:6.3em; position:relative; z-index:6; }
+.lp-qr path { fill:var(--lk); }
+.lp-lv { font:500 .62em/1.3 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.13em; color:var(--lm); }
+.lp-lv b { display:block; font:400 1.45em/1.15 'SC Display','Russo One',sans-serif; letter-spacing:.02em; color:var(--lk); }
+.lp-band { position:absolute; right:0; top:0; bottom:0; width:var(--band); }
+.lp-band-in { position:absolute; left:0; top:0; width:16em; height:var(--band); transform-origin:0 0; transform:translateX(var(--band)) rotate(90deg); padding:.7em .9em .62em; display:flex; flex-direction:column; justify-content:space-between; border-bottom:.2em solid var(--lr); }
+.lp-r1, .lp-r2 { display:flex; align-items:center; justify-content:space-between; gap:.6em; }
+.lp-blogo { display:block; height:1.08em; width:auto; max-width:9em; object-fit:contain; object-position:left center; flex:none; }
+.lp-bwm { font:400 .9em/1 'SC Display','Russo One',sans-serif; color:var(--lk); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
+.lp-dt { font:400 .85em/1 'SC Display','Russo One',sans-serif; color:var(--lr); letter-spacing:.03em; white-space:nowrap; }
+.lp-rt { white-space:nowrap; flex:none; font:400 1.15em/1 'SC Display','Russo One',sans-serif; color:var(--lk); display:flex; align-items:center; gap:.25em; letter-spacing:.01em; }
+.lp-rt .lp-jet { width:.8em; height:.8em; }
+.lp-fl { font:500 .66em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.14em; color:var(--lm); white-space:nowrap; min-width:0; overflow:hidden; text-overflow:clip; text-align:right; }
+.lp-fl b { font:400 1.6em/1 'SC Display','Russo One',sans-serif; letter-spacing:.03em; color:var(--lk); margin-left:.3em; vertical-align:-.06em; }
+
+/* In the reveal's two-card deck (js/reveal.js): behind the plane card the pass stands centred with only its end showing
+   above the card (no scaling or turning); in front it grows to the room there is (--lpk, js/reveal.js sizeCard) and tilts. */
+#reveal.two .dk-track > .dk-back.dk-pass { transform:translateY(calc(var(--cf) * -2.25)); filter:none; }
+#reveal.two .dk-track > .dk-back.dk-pass::after { display:none; }
+#reveal .dk-track > .dk-front.dk-pass { transform:translateY(var(--lp-dy, 0px)) scale(var(--lpk, 1)) rotate(7.5deg); }
+/* The Collection's card view (cards-page.js #slot): the pass a little bigger and tilted, as when it comes forward in the reveal */
+#slot .card--flight > .fc--land { transform:rotate(7.5deg) scale(1.12); transform-origin:50% 50%; }
+/* the swipe-teaching nudge for a pass behind the card keeps its end showing (playtest 2026-11-21: Space's dkPeek replaced
+   the pass's lift, so it sank behind the card for a second and snapped back) */
+@keyframes dkPeekPass { 0%, 100% { transform:translateY(calc(var(--cf) * -2.25)); } 35% { transform:translate(10px, calc(var(--cf) * -2.25 - 10px)) rotate(1.5deg); } }
+#reveal.two .dk-track > .dk-back.dk-pass.nudge { animation:dkPeekPass .9s cubic-bezier(.3,.7,.3,1); }
+#reveal .dk-track > .dk-front.dk-pass.nudge { animation:none; }
+/* playtest 2026-11-21: the pass's photo credit wraps instead of being cut off; the Collection tile's count coin sits on the
+   stub, not on the photo; the route map's line under the distance wraps on narrow screens instead of cutting off */
+.lp-ph .fc-credit { white-space:normal; overflow:visible; text-overflow:clip; max-width:calc(100% - 1em); line-height:1.2; }
+html.sky-cards #sat-card.rm-card .rm-sub { white-space:normal; overflow:visible; }
+/* Only the airline and the date show behind the card (2026-11-21, Sevaan: "just have the Lufthansa and the date sticking
+   out"), 2.25em (js/reveal.js LP_PEEK). In front the pass is lifted off the plane card, so it casts a deeper shadow on it. */
+/* The lifted pass's shadow falls only on the plane card behind it, never on the page (2026-11-21, Sevaan): it's drawn inside
+   the plane card's face, which clips it, as the pass's shape grown and tilted like the pass (--lpk, 7.5deg) and offset down
+   and right. The pass itself drops its outer shadow while it's in front. */
+#reveal .dk-track > .dk-front.dk-pass .fc--land { filter:none !important; }
+#reveal.two .dk-track > .dk-slot:not(.dk-pass) .card--plane .fc-face { overflow:hidden; }
+#reveal.two .dk-track > .dk-slot:not(.dk-pass) .card--plane .fc-face::after { content:''; position:absolute; z-index:6; left:6em; top:0; width:16em; height:42em; padding:0; border-radius:1.2em; pointer-events:none;
+  background:rgba(13,34,56,.34); box-shadow:0 0 1.6em 1.1em rgba(13,34,56,.3); transform:translate(1.6em, 2em) scale(var(--lpk, 1)) rotate(7.5deg); display:none; }
+#reveal.two.rv-done .dk-track.pass-front > .dk-back .card--plane .fc-face::after { display:block; animation:lpShadowIn .34s ease; } /* drawn only while it shows, never during the reveal's turns */
+@keyframes lpShadowIn { from { opacity:0; } }
+/* While the reveal is still turning (rare cards turn several times), the pass behind drops its grain and shadow: on the
+   iPhone they made the turns janky (playtest 2026-11-21). They return once the card has landed. */
+#reveal:not(.rv-done) .fc--land .lp-paper::after { display:none; }
+#reveal:not(.rv-done) .fc--land.fc--flight { filter:none !important; }
+/* the plain stand-in for the pass that rises out of the pack under the top card (js/reveal.js pk-under) */
+.pk-pass { width:calc(var(--cf, 12px) * 16); height:calc(var(--cf, 12px) * 42); margin:0 auto; border-radius:calc(var(--cf, 12px) * .7); background:#fbf9f2; box-shadow:0 2px 8px rgba(13,34,56,.18); }
+/* The Passes tab (js/cards-page.js #grid.passes, 2026-11-21, Sevaan: "we don't need the card container behind these and can
+   maybe fit four boarding passes to a row"): each tile is just the pass, 16 x 42, with no card frame around it. */
+#grid.passes .tile-slot:has(.card-tile--mini), #grid.passes .tile-slot > .card-tile.card-tile--mini, #grid.passes .card-tile.card-tile--mini { aspect-ratio:16 / 42; }
+#grid.passes .card-tile--mini::after { display:none; }
+#grid.passes .mini-face { width:calc(160px * var(--mini-s, .4)); height:calc(420px * var(--mini-s, .4)); overflow:visible; border-radius:0; }
+#grid.passes .mini-face > .card { width:16em; }
+#grid.passes .mini-face > .card > .fc--land { margin:0; }
+#grid.passes .tile-slot { background:transparent; }
+/* the count coin, upright and in the bottom left of the photo as you hold the phone (2026-11-21, Sevaan): the photo's top-left
+   corner before the pass is turned, turned back 90 degrees; the rarity tag moves along to make room */
+.lp-ph .sct-lvl, .mini-face .fc .lp-ph .sct-lvl { position:absolute; z-index:4; left:.6em; top:.6em; right:auto; bottom:auto; transform:rotate(90deg); }
+.lp-ph:has(.sct-lvl) :is(.fc-tier, .fc-set) { left:7.4em; } /* past the coin (4.4em in the Collection tile) */
+
+.fc-pic::after, .fc-in--bp .fc-pic::after, .fc-in--ss .fc-pic::after { box-shadow:none; } /* no inner shadow on card photos (2026-11-22, Sevaan) */
+
+/* the pass in front in the reveal casts its shadow only on the plane card, not the page (2026-11-21) */
+#reveal .dk-track > .dk-front.dk-pass .fc--land::before { display:none; }
+/* Legendary's glint moves a strip with transform instead of animating background-position under a blend, which re-rasterised
+   a card-sized layer every frame (perf scan 2026-11-22) */
+.fc--legendary .fc-foil { background:none !important; animation:none !important; overflow:hidden; }
+.fc--legendary .fc-foil::before { content:''; position:absolute; top:0; bottom:0; left:-100%; width:300%; will-change:transform;
+  background:linear-gradient(115deg, transparent 40%, rgba(255,205,90,.55) 47%, rgba(255,236,170,.7) 50%, rgba(255,205,90,.55) 53%, transparent 60%);
+  animation:fc-glint-x 5.5s ease-in-out infinite; }
+@keyframes fc-glint-x { 0%, 30% { transform:translateX(27%); } 75%, 100% { transform:translateX(-27%); } }
+@media (prefers-reduced-motion: reduce) { .fc--legendary .fc-foil::before { animation:none; } }
+/* the night pack: a boarding pass dealt face up, tilted like the reveal's */
+#gift .gp-dc.gp-pass .fc--land { transform:translateY(2%) rotate(6deg) scale(1.05); transform-origin:50% 50%; }
+
+/* ===== Plane card: Contrail Chrome (2026-11-22, Sevaan picked it from design/fresh-chrome/; js/flight-card.js planeCardHtml).
+   A premium sports card on one fixed grid: inside the frame the face is 26.76 x 40.76em and every block is placed at a fixed
+   top, so the photo (full width, 1.7:1), nameplate, kind line, stat block, progress, fact and credit sit at the same place on
+   every card whatever they say. Long names and facts step down a size inside their slots. ===== */
+.fc--plane.fc--common { --frame:linear-gradient(135deg,#f3f5f7 0%,#a9b2bd 22%,#fbfcfd 40%,#8c96a2 62%,#e6e9ee 80%,#9aa4b1 100%); --edge:#6f7a86; --cc-acc:#9aa4b1; }
+.fc--plane.fc--uncommon { --frame:linear-gradient(135deg,#dcf8e7 0%,#4fbf7b 20%,#f1fcf5 38%,#2f9a5c 58%,#c8f2d9 78%,#5fd08a 100%); --edge:#2a7d4b; --cc-acc:#5fd08a; }
+.fc--plane.fc--rare { --frame:conic-gradient(from 210deg at 50% 45%,#4aa8ff,#a6e4ff,#7c8cff,#e6f5ff,#3b8eea,#b8f1ff,#6fb5ff,#c9bcff,#4aa8ff); --edge:#2a6db8; --cc-acc:#4aa8ff; }
+.fc--plane.fc--epic { --cc-acc:#e46ad6; }
+.fc--plane.fc--legendary { --cc-acc:#ffc545; }
+.fc--plane.fc--rare .fc-rot { box-shadow:0 calc(.9em + var(--o,0) * .8em) calc(2.2em + var(--o,0) * 1.6em) rgba(13,34,56,.26), 0 .15em .4em rgba(13,34,56,.2), 0 0 2.2em rgba(74,168,255,.32); }
+.fc-in--cc { padding:0; display:block; background:#fffdf6; color:#0d2238; }
+.fc-in--cc::before { display:none; }
+.fc--lvl .fc-in--cc::before { display:block; z-index:6; }
+.fc-in--cc > * { position:absolute; }
+/* photo: full width, 1.7:1 (26.76 / 1.7 = 15.74em); inside the level's inner frame when there is one, bottom edge unchanged */
+.fc-in--cc .cc-ph.fc-pic { left:0; right:0; top:0; height:15.74em; min-height:0; margin:0; border-radius:0; }
+.fc--lvl .fc-in--cc .cc-ph.fc-pic { left:.42em; right:.42em; top:.42em; height:15.32em; border-radius:.55em .55em 0 0; }
+.fc-in--cc .cc-ph::after { box-shadow:none; background:linear-gradient(180deg, rgba(13,34,56,.32) 0%, rgba(13,34,56,0) 26%, rgba(13,34,56,0) 82%, rgba(13,34,56,.22) 100%); }
+.fc-in--cc .cc-ph .fc-tier { left:auto; right:.75em; top:.8em; }
+.fc--lvl .fc-in--cc .cc-ph .fc-tier { right:.5em; top:.5em; }
+.cc-code { z-index:4; left:.8em; top:.8em; padding:.38em .95em .32em .62em; background:#0d2238; color:#fff; box-shadow:inset .22em 0 0 var(--cc-acc, var(--tier));
+  clip-path:polygon(0 0, 100% 0, calc(100% - .6em) 100%, 0 100%); }
+.fc--lvl .cc-code { left:1.1em; top:1.1em; }
+.cc-code small { display:block; font:500 .56em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.24em; color:#cdbb8c; margin-bottom:.18em; }
+.cc-code b { display:block; font:400 1.5em/1 'SC Display','Russo One',sans-serif; letter-spacing:.04em; font-weight:400; }
+.cc-code--long b { font-size:1.15em; }
+/* nameplate */
+.cc-np { left:0; right:0; top:15.74em; height:3.9em; display:flex; align-items:center; gap:.6em; padding:0 .85em 0 1.75em; background:#0d2238; color:#fff; overflow:hidden; }
+.cc-np::before { content:''; position:absolute; left:0; top:0; bottom:0; width:1.1em; background:var(--frame); clip-path:polygon(0 0, 100% 0, 45% 100%, 0 100%); }
+.cc-np::after { content:''; position:absolute; left:0; right:0; bottom:0; height:.16em; background:var(--frame); }
+.fc--lvl .cc-np { left:.42em; right:.42em; }
+.cc-nm { flex:1; min-width:0; margin:0; font-size:1em; font-weight:400; }
+.cc-nm small { display:block; font:500 .74em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.2em; color:#cdbb8c; text-transform:uppercase; white-space:nowrap; margin-bottom:.2em; }
+.cc-md { display:block; font:400 2.1em/1.02 'SC Display','Russo One',sans-serif; letter-spacing:.005em; color:#fff; }
+.cc-md--l { font-size:1.7em; } .cc-md--xl { font-size:1.38em; } .cc-md--xxl { font-size:1.12em; line-height:1.1; }
+.cc-set { flex:none; max-width:7.6em; margin:0; padding-left:.65em; border-left:.07em solid rgba(205,187,140,.45); text-align:right;
+  font:500 .72em/1.12 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.14em; color:#c8d3df; text-transform:uppercase; }
+.cc-set small { display:block; font-size:.82em; letter-spacing:.26em; color:var(--cc-acc, var(--tier)); margin-bottom:.25em; }
+.cc-kind { left:.95em; right:.95em; top:20em; height:1.3em; margin:0; display:flex; align-items:center; white-space:nowrap; overflow:hidden; }
+.cc-kind span { font:500 .86em/1.2 Inter,'Helvetica Neue',Arial,sans-serif; color:#5a6878; }
+.cc-kind--s span { font-size:.74em; }
+/* the stat block: the back of a great baseball card */
+.cc-st { left:.8em; right:.8em; top:21.5em; height:8em; border-top:.12em solid #0d2238; border-bottom:.12em solid #0d2238; }
+.cc-st > * { position:relative; }
+.cc-r { display:grid; grid-template-columns:3em repeat(4, minmax(0, 1fr)); align-items:center; }
+.cc-r > :not(i) { padding-left:.4em; white-space:nowrap; overflow:hidden; }
+.cc-h { height:1.15em; }
+.cc-h > span { font:500 .66em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.12em; color:#b42a20; text-transform:uppercase; padding-left:calc(.4em / .66); }
+.cc-v { height:1.8em; background:#f4efe0; border-top:.07em solid #cdbb8c; }
+.cc-v i { height:100%; display:flex; align-items:center; justify-content:center; background:#0d2238; color:#fff; font:500 .66em/1 'SC Label','Barlow Condensed',sans-serif; font-style:normal; letter-spacing:.16em; }
+.cc-v b { font:600 1em/1 'IBM Plex Mono',ui-monospace,monospace; color:#0d2238; letter-spacing:-.01em; }
+.cc-v b small { font:500 .66em/1 'IBM Plex Mono',ui-monospace,monospace; color:#5a6878; margin-left:.12em; letter-spacing:0; }
+.cc-ct { height:2.15em; display:flex; align-items:center; gap:.5em; border-top:.07em solid #cdbb8c; overflow:hidden; }
+.cc-tag { flex:none; padding:.3em .42em .26em; background:#b42a20; color:#fff; font:500 .64em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.18em; }
+.cc-ct > div { min-width:0; flex:1; }
+.cc-when { margin:0; font:600 .76em/1.2 Inter,'Helvetica Neue',Arial,sans-serif; color:#0d2238; white-space:nowrap; overflow:hidden; }
+.cc-op { margin:.1em 0 0; font:500 .72em/1.2 Inter,'Helvetica Neue',Arial,sans-serif; color:#3d5266; white-space:nowrap; overflow:hidden; }
+.cc-op small { font-size:1em; color:#5a6878; margin-left:.45em; }
+.cc-op small::before { content:'· '; }
+.cc-op--band { font-style:italic; padding-right:.2em; }
+/* progress: the medal, the count and bar, liveries seen */
+.cc-pr { left:.8em; right:.8em; top:29.85em; height:2.9em; display:grid; grid-template-columns:2.6em minmax(0, 1fr) 4.4em; gap:.65em; align-items:center; }
+.cc-pr > * { position:relative; }
+.cc-medal { width:2.6em; height:2.6em; border-radius:50%; display:grid; place-items:center; color:#9aa4b1; border:.12em dashed #cdbb8c; }
+.cc-medal b { font:600 .9em/1 'IBM Plex Mono',ui-monospace,monospace; }
+.cc-medal--bronze, .cc-medal--silver, .cc-medal--gold { border:0; color:#2a1a08; box-shadow:inset 0 0 0 .16em rgba(255,255,255,.55), 0 .08em .18em rgba(0,0,0,.3); }
+.cc-medal--bronze { background:radial-gradient(circle at 35% 30%, #f6c79b, #b8763d 55%, #7c4a1f); }
+.cc-medal--silver { background:radial-gradient(circle at 35% 30%, #ffffff, #b9c2cc 55%, #7d8792); }
+.cc-medal--gold { background:radial-gradient(circle at 35% 30%, #fff2b8, #e0aa2b 55%, #9c6c06); }
+.cc-pc p { margin:0; font:700 .8em/1.1 Inter,'Helvetica Neue',Arial,sans-serif; color:#0d2238; white-space:nowrap; overflow:hidden; }
+.cc-pc .cc-lv { margin-top:.4em; font:500 .7em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.14em; color:#b42a20; text-transform:uppercase; }
+.cc-bar { height:.45em; margin-top:.32em; border-radius:1em; background:#e3dccb; overflow:hidden; box-shadow:inset 0 0 0 .05em rgba(13,34,56,.15); }
+.cc-bar i { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg, #b42a20, #e0573f); }
+.cc-liv { height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; border-left:.07em solid #cdbb8c; }
+.cc-liv b { font:600 1.15em/1 'IBM Plex Mono',ui-monospace,monospace; color:#0d2238; }
+.cc-liv span { margin-top:.2em; font:500 .58em/1.1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.14em; color:#5a6878; text-transform:uppercase; text-align:center; }
+/* the fact: a fixed slot, centred in it; long ones step down a size (never cut off) */
+.cc-fact-slot { left:.95em; right:.95em; top:33.15em; bottom:1.7em; display:flex; align-items:center; }
+.fc-in--cc .cc-fact { position:relative; margin:0; padding:0 0 0 .7em; border-left:.18em solid #cdbb8c; font:italic 400 .98em/1.4 Georgia,'Times New Roman',serif; letter-spacing:0; color:#24384d; overflow:visible; }
+.fc-in--cc .cc-fact b { font-style:normal; font-weight:700; color:#0d2238; }
+.fc-in--cc .cc-fact--m { font-size:.9em; } .fc-in--cc .cc-fact--s { font-size:.82em; } .fc-in--cc .cc-fact--xs { font-size:.74em; }
+.fc--lvl .fc-fact.cc-fact { margin-top:0; }
+.cc-foot { left:.95em; right:.95em; bottom:.55em; height:1em; display:flex; justify-content:space-between; align-items:center; gap:.8em; }
+.cc-credit { min-width:0; font:400 .56em/1 Inter,'Helvetica Neue',Arial,sans-serif; color:#8a95a1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.cc-mark { flex:none; font:500 .58em/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.22em; color:#9c8a57; }
+.fc--lvl .cc-foot { bottom:.7em; left:1.1em; right:1.1em; }
+
+/* The catch panel's two cards (js/sky-catch.js discoverPanel, 2026-11-22, Sevaan picked option 4): the plane card in front,
+   the boarding pass fanned behind it to the right, and "+2 cards" under them. Each is the panel's usual 72 px mini. */
+#discover.sky-plane .d-mini .dp-fan { position:relative; display:block; width:72px; height:108px; }
+#discover.sky-plane .d-mini .dp-fan > .dp-pass, #discover.sky-plane .d-mini .dp-fan > .dp-plane { position:absolute; left:0; top:0; width:72px; height:108px; }
+#discover.sky-plane .d-mini .dp-fan > .dp-pass { transform:translate(26px, 6px) rotate(10deg); }
+#discover.sky-plane .d-mini .dp-fan > .dp-plane { transform:translate(-8px, 0) rotate(-6deg); z-index:1; }
+#discover.sky-plane .d-mini .dp-fan .sct-face { width:112px; height:157px; transform:scale(calc(72 / 112)); transform-origin:0 0; display:block; }
+#discover.sky-plane .d-mini .dp-n { position:absolute; left:2px; bottom:-14px; z-index:2; font:600 9px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.1em; text-transform:uppercase; background:#b42a20; color:#fff; padding:3px 6px; border-radius:9px; white-space:nowrap; }
+@media (max-height:720px) { #discover.sky-plane .d-mini .dp-fan .sct-face { transform:scale(calc(56 / 112)); } #discover.sky-plane .d-mini .dp-fan { width:56px; height:84px; } #discover.sky-plane .d-mini .dp-fan > .dp-pass { transform:translate(20px, 5px) rotate(10deg); } }
+/* The pack's rising card and the binder flight darken the card underneath with a card-sized layer (css/reveal.css). Under a
+   boarding pass, which is narrower, it showed as the old card's shadow around the pass (2026-11-22, Sevaan): the pass keeps its
+   own paper shadow (.pk-pass, .fc--flight::before) and no card-shaped layer. */
+#reveal .pk-under > .dk-slot.dk-pass::after, .binder-fly .bf-back:has(.fc--land)::after { display:none; }
+/* A boarding pass doesn't tilt in 3D (2026-11-22, Sevaan: tilting it showed its shadow's outline behind it and a line across
+   the notches): the shadow layer (.fc--flight::before) sits flat beside the face, so a turned face slid off it. The glare
+   still follows the finger. */
+.fc--land .fc-rot { transform:none !important; }
