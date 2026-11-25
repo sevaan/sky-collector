@@ -947,21 +947,21 @@ html.sky-cards #sat-card.rm-card .lb-top { padding:12px 16px 10px; border-bottom
 html.sky-cards #sat-card.rm-card .rm-count { color:var(--rc-redink); text-align:right; }
 html.sky-cards #sat-card.rm-card .rm-pic { flex:none; height:196px; min-height:0; border-bottom:1px solid var(--rc-rule); background:radial-gradient(ellipse at 50% 40%, #eef5fb, #dcecf8 70%, #cfe5f6); }
 html.sky-cards.sky-night #sat-card.rm-card .rm-pic { background:radial-gradient(ellipse at 50% 40%, #dfe3dd, #cfd6d6 70%, #c4cccd); }
-#sat-card .rm-svg { position:absolute; inset:0; width:100%; height:100%; display:block; }
-#sat-card .rm-land { fill:var(--rc-paper); stroke:#a9c3da; stroke-width:.7; stroke-linejoin:round; }
-#sat-card .rm-arc { fill:none; stroke:var(--rc-accent); stroke-width:1.4; stroke-linecap:round; opacity:.75; }
-#sat-card .rm-arc.gold { stroke:var(--rc-gold); stroke-width:2; opacity:.95; }
-#sat-card .rm-arc.rm-top { stroke:var(--rc-redink); stroke-width:2.4; opacity:1; }
-#sat-card .rm-arc.rm-rep { stroke-width:2; opacity:.9; }
-#sat-card .rm-busy .rm-arc:not(.rm-top) { stroke-width:.8; opacity:.4; }
-#sat-card .rm-busy .rm-arc.rm-rep:not(.rm-top) { stroke-width:1.3; opacity:.65; }
-#sat-card .rm-draw .rm-arc:not(.rm-still) { animation:rmDraw 1.1s cubic-bezier(.4,.1,.3,1) forwards; } /* js/cards-page.js sets each arc's dash to its length */
+:is(#sat-card, .td2-map) .rm-svg { position:absolute; inset:0; width:100%; height:100%; display:block; }
+:is(#sat-card, .td2-map) .rm-land { fill:var(--rc-paper); stroke:#a9c3da; stroke-width:.7; stroke-linejoin:round; }
+:is(#sat-card, .td2-map) .rm-arc { fill:none; stroke:var(--rc-accent); stroke-width:1.4; stroke-linecap:round; opacity:.75; }
+:is(#sat-card, .td2-map) .rm-arc.gold { stroke:var(--rc-gold); stroke-width:2; opacity:.95; }
+:is(#sat-card, .td2-map) .rm-arc.rm-top { stroke:var(--rc-redink); stroke-width:2.4; opacity:1; }
+:is(#sat-card, .td2-map) .rm-arc.rm-rep { stroke-width:2; opacity:.9; }
+:is(#sat-card, .td2-map) .rm-busy .rm-arc:not(.rm-top) { stroke-width:.8; opacity:.4; }
+:is(#sat-card, .td2-map) .rm-busy .rm-arc.rm-rep:not(.rm-top) { stroke-width:1.3; opacity:.65; }
+:is(#sat-card, .td2-map) .rm-draw .rm-arc:not(.rm-still) { animation:rmDraw 1.1s cubic-bezier(.4,.1,.3,1) forwards; } /* js/cards-page.js sets each arc's dash to its length */
 @keyframes rmDraw { to { stroke-dashoffset:0; } }
-#sat-card .rm-apt { fill:var(--rc-ink); stroke:var(--rc-paper); stroke-width:1; }
-#sat-card .rm-apt.rm-hub { fill:var(--rc-paper); stroke:var(--rc-ink); stroke-width:1.6; }
-#sat-card .rm-lab { font:500 8.5px 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.8px; fill:var(--rc-ink); paint-order:stroke; stroke:var(--rc-paper); stroke-width:2.4px; stroke-linejoin:round; }
-#sat-card .rm-lab--top { fill:var(--rc-redink); font-size:9.5px; }
-#sat-card .rm-jet path { fill:var(--rc-redink); stroke:var(--rc-paper); stroke-width:1; paint-order:stroke; }
+:is(#sat-card, .td2-map) .rm-apt { fill:var(--rc-ink); stroke:var(--rc-paper); stroke-width:1; }
+:is(#sat-card, .td2-map) .rm-apt.rm-hub { fill:var(--rc-paper); stroke:var(--rc-ink); stroke-width:1.6; }
+:is(#sat-card, .td2-map) .rm-lab { font:500 8.5px 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.8px; fill:var(--rc-ink); paint-order:stroke; stroke:var(--rc-paper); stroke-width:2.4px; stroke-linejoin:round; }
+:is(#sat-card, .td2-map) .rm-lab--top { fill:var(--rc-redink); font-size:9.5px; }
+:is(#sat-card, .td2-map) .rm-jet path { fill:var(--rc-redink); stroke:var(--rc-paper); stroke-width:1; paint-order:stroke; }
 html.sky-cards #sat-card.rm-card .rm-row { display:flex; justify-content:space-between; align-items:baseline; margin:0; padding:12px 16px 0; gap:8px; }
 html.sky-cards #sat-card.rm-card .rm-km { margin:0; font:400 25px/1 'SC Display','Russo One',Impact,sans-serif; letter-spacing:.01em; text-transform:none; background:none; color:var(--rc-ink); -webkit-text-fill-color:var(--rc-ink); animation:none; white-space:nowrap; }
 html.sky-cards #sat-card.rm-card .rm-km b { font-weight:400; color:var(--rc-redink); -webkit-text-fill-color:var(--rc-redink); }
@@ -1018,18 +1018,18 @@ html.sky-cards.sky-night #logbook.lb-climb .lb-pic::before { box-shadow:270px 12
 html.sky-cards.sky-night #logbook.lb-climb .lb-pic::after { box-shadow:208px 6px 1.5px 0.6px #e6eeff,214px 17px 1.5px 0px #e6eeff,377px 38px 1.5px 0px #e6eeff,306px 101px 1.5px 0px #e6eeff,382px 111px 1.5px 0px #e6eeff,367px 39px 1.5px 0.6px #e6eeff,162px 93px 1.5px 0px #e6eeff; animation-duration:6.2s; animation-delay:-2.7s; }
 html.sky-cards.sky-night #logbook.lb-climb.lb-back .lb-pic::before, html.sky-cards.sky-night #logbook.lb-climb.lb-back .lb-pic::after { animation:none; opacity:.6; }
 html.sky-cards.sky-night #sat-card.rm-card .rm-pic { background:radial-gradient(ellipse at 50% 40%, #11233c, #0b182b 70%, #08121f); }
-html.sky-cards.sky-night #sat-card .rm-land { fill:#1b2f4c; stroke:#3d5a80; stroke-width:.6; }
-html.sky-cards.sky-night #sat-card .rm-arc.rm-top { filter:drop-shadow(0 0 2.5px rgba(255,180,90,.5)); } /* glow on the longest route only, not every arc (perf scan 2026-11-22) */
-html.sky-cards.sky-night #sat-card .rm-arc.rm-top { stroke:var(--rc-red); stroke-width:2.6; }
-html.sky-cards.sky-night #sat-card .rm-apt { fill:#fff1cc; stroke:rgba(255,206,120,.35); stroke-width:3.4; }
-html.sky-cards.sky-night #sat-card .rm-apt.rm-hub { fill:var(--rc-ocean); stroke:#ffe2a8; stroke-width:1.6; }
-html.sky-cards.sky-night #sat-card .rm-lab { fill:var(--rc-ink); stroke:var(--rc-ocean); }
-html.sky-cards.sky-night #sat-card .rm-lab--top { fill:var(--rc-redink); }
-html.sky-cards.sky-night #sat-card .rm-jet path { fill:var(--rc-red); stroke:var(--rc-ocean); filter:drop-shadow(0 0 3px rgba(255,130,90,.8)); }
+:is(html.sky-cards.sky-night #sat-card, html.sky-night .td2-map) .rm-land { fill:#1b2f4c; stroke:#3d5a80; stroke-width:.6; }
+:is(html.sky-cards.sky-night #sat-card, html.sky-night .td2-map) .rm-arc.rm-top { filter:drop-shadow(0 0 2.5px rgba(255,180,90,.5)); } /* glow on the longest route only, not every arc (perf scan 2026-11-22) */
+:is(html.sky-cards.sky-night #sat-card, html.sky-night .td2-map) .rm-arc.rm-top { stroke:var(--rc-red); stroke-width:2.6; }
+:is(html.sky-cards.sky-night #sat-card, html.sky-night .td2-map) .rm-apt { fill:#fff1cc; stroke:rgba(255,206,120,.35); stroke-width:3.4; }
+:is(html.sky-cards.sky-night #sat-card, html.sky-night .td2-map) .rm-apt.rm-hub { fill:var(--rc-ocean); stroke:#ffe2a8; stroke-width:1.6; }
+:is(html.sky-cards.sky-night #sat-card, html.sky-night .td2-map) .rm-lab { fill:var(--rc-ink); stroke:var(--rc-ocean); }
+:is(html.sky-cards.sky-night #sat-card, html.sky-night .td2-map) .rm-lab--top { fill:var(--rc-redink); }
+:is(html.sky-cards.sky-night #sat-card, html.sky-night .td2-map) .rm-jet path { fill:var(--rc-red); stroke:var(--rc-ocean); filter:drop-shadow(0 0 3px rgba(255,130,90,.8)); }
 html.sky-cards.sky-night .lb-track > .lb-back { filter:brightness(.8) saturate(.9); }
 html.sky-cards.sky-night .lb-track > .lb-back > .lb-rot { box-shadow:0 3px 10px rgba(0,0,0,.4), 0 0 0 1px rgba(150,180,220,.14); }
 html.sky-cards.sky-night #logbook.lb-climb { --rc-cloud-top:rgba(176,196,228,.26); --rc-cloud-base:rgba(120,142,180,.1); } /* the cumulus as faint moonlit cloud */
-html.sky-cards.sky-night #sat-card .rm-busy > g { filter:none; } /* no glow filter on a map with dozens of routes */
+:is(html.sky-cards.sky-night #sat-card, html.sky-night .td2-map) .rm-busy > g { filter:none; } /* no glow filter on a map with dozens of routes */
 /* the card behind's strip sits in the 14px that peeks above the front card (it sat 12px down, so only the tops of the
    letters showed), day and night */
 html.sky-cards .lb-track > :is(#logbook, #sat-card).lb-back .lb-top { padding-top:3px; padding-bottom:19px; }
@@ -1077,3 +1077,14 @@ body.sky-only #sky-today .td-hold-dot { width:10px; height:10px; border-radius:5
 @media (prefers-reduced-motion: reduce) { body.sky-only #sky-today .td-hold-dot { animation:none; } }
 /* less air above the day's note (2026-11-24, Sevaan: "too much of a gap above the top speech bubble") */
 body.sky-only #sky-today > .n2-chat:first-child { margin-top:0; }
+
+/* Today's "Where they're going" (2026-11-24, Sevaan: "should use the same map style as the route map on the collection
+   page"): js/route-map.js draws it, arcs from you to where the planes up now are going; the route card's paper and inks. */
+body.sky-only .td2-map { --rc-paper:#fffdf6; --rc-ink:#0d2238; --rc-muted:#55697d; --rc-redink:#b42a20; --rc-accent:#c8513f; --rc-gold:#b8892a;
+  background:radial-gradient(ellipse at 50% 40%, #eef5fb, #dcecf8 70%, #cfe5f6); border-color:#c9d9e6; }
+html.sky-night body.sky-only .td2-map { --rc-paper:#13233a; --rc-ink:#efe6d2; --rc-muted:#a7b3c3; --rc-red:#ff7457; --rc-redink:#ff9277; --rc-accent:#f0aa5c; --rc-gold:#ffd37c; --rc-ocean:#0b182b;
+  background:radial-gradient(ellipse at 50% 40%, #11233c, #0b182b 70%, #08121f); border-color:#24384f; }
+body.sky-only .td2-map .td2-rm { position:relative; height:210px; }
+body.sky-only .td2-map .td2-rm .rm-svg { position:absolute; inset:0; width:100%; height:100%; display:block; margin:0; }
+body.sky-only .td2-map .td2-cap { position:static; padding:10px 12px 12px; border-top:1px solid color-mix(in srgb, var(--rc-ink) 14%, transparent); color:var(--rc-ink); }
+html.sky-night body.sky-only .td2-map .td2-cap { color:var(--rc-ink); }

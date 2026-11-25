@@ -5,19 +5,20 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { isProp } from './sky-props.js?v=0.1.1906';
-import { planesUp } from './sky-up.js?v=0.1.1906';
-import { planeKey } from './flights.js?v=0.1.1906';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1906';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1906';
-import { airlineIcon } from './airline-icons.js?v=0.1.1906';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1906';
-import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1906';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1906';
-import { planeSet } from './sky-sets.js?v=0.1.1906';
-import { MIL_TYPES } from './plane-privacy.js?v=0.1.1906';
-import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1906';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1906';
+import { isProp } from './sky-props.js?v=0.1.1907';
+import { routeMap } from './route-map.js?v=0.1.1907';
+import { planesUp } from './sky-up.js?v=0.1.1907';
+import { planeKey } from './flights.js?v=0.1.1907';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1907';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1907';
+import { airlineIcon } from './airline-icons.js?v=0.1.1907';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1907';
+import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1907';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1907';
+import { planeSet } from './sky-sets.js?v=0.1.1907';
+import { MIL_TYPES } from './plane-privacy.js?v=0.1.1907';
+import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1907';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1907';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -364,12 +365,16 @@ export function renderToday(el, ctx) {
 
   // 6 · where they're going
   const dests = new Map(); for (const c of ups) { const to = c.full?.to; if (to?.lat == null || !obs) continue; const k = to.city; if (!dests.has(k)) dests.set(k, { to, n: 0 }); dests.get(k).n++; }
-  const map = dests.size >= 2 ? (() => { const W = 340, H = 230, cx = 170, cy = 112, R = 98; const kmTo = (d) => hav(obs.lat, obs.lon, d.to.lat, d.to.lon), maxKm = Math.max(800, ...[...dests.values()].map(kmTo)); /* scaled to the farthest one up there, so a sky of short hops still fills the map */
-    const dl = [...dests.values()].slice(0, 14).map((d) => { const km = kmTo(d), b = brg(obs.lat, obs.lon, d.to.lat, d.to.lon), r = 20 + (R - 20) * Math.sqrt(km / maxKm); return { ...d, x: cx + r * Math.sin(b * Math.PI / 180), y: cy - r * Math.cos(b * Math.PI / 180) * .92, b }; });
-    const arcs = dl.map((d, i) => { const mx = (cx + d.x) / 2, my = (cy + d.y) / 2, dx = d.x - cx, dy = d.y - cy, k = .22; return `<path style="animation-delay:${(i * .15).toFixed(2)}s" d="M${cx} ${cy} Q${(mx - dy * k).toFixed(1)} ${(my + dx * k).toFixed(1)} ${d.x.toFixed(1)} ${d.y.toFixed(1)}"/>`; }).join('');
-    const placed = []; const labels = dl.map((d) => { const right = d.x > cx, w = d.to.city.length * 5.6, lx = Math.max(3, Math.min(W - 3 - w, right ? d.x + 5 : d.x - 5 - w)) /* kept inside the card (visual playtest 2026-11-19: "an Francisco") */, ly = d.y - 6; if (placed.some((q) => Math.abs(q.y - ly) < 11 && lx < q.x + q.w && lx + w > q.x)) return `<circle cx="${d.x.toFixed(1)}" cy="${d.y.toFixed(1)}" r="2.6" fill="#d7362b"/>`; placed.push({ x: lx, y: ly, w }); return `<circle cx="${d.x.toFixed(1)}" cy="${d.y.toFixed(1)}" r="3" fill="#d7362b"/><text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}">${esc(d.to.city)}</text>`; }).join('');
-    const nC = new Set(dl.map((d) => d.to.cc).filter(Boolean)).size;
-    return `${sec('Where they’re going', 'Right now')}<div class="td2-map"><svg viewBox="0 0 ${W} ${H}" aria-hidden="true"><circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="#c9d9e6" stroke-dasharray="2 4"/><circle cx="${cx}" cy="${cy}" r="${R / 2}" fill="none" stroke="#c9d9e6" stroke-dasharray="2 4"/><g class="td2-arcs" fill="none" stroke="#d7362b" stroke-width="1.6" stroke-linecap="round">${arcs}</g><circle cx="${cx}" cy="${cy}" r="16" fill="#d7362b22"/><circle cx="${cx}" cy="${cy}" r="5" fill="#0d2238"/><g font-family="SC Label, sans-serif" font-size="11" fill="#0d2238">${labels}<text x="${cx + 8}" y="${cy - 6}" font-size="10" fill="#4a6178">YOU</text></g></svg><div class="td2-cap"><b>Flights to ${dests.size} ${dests.size === 1 ? 'city' : 'cities'}</b> in ${nC} ${nC === 1 ? 'country' : 'countries'} are over you</div></div>`; })() : '';
+  /* the Collection's route map (js/route-map.js; 2026-11-24, Sevaan: "should use the same map style as the route map on the
+     collection page"): coastlines, an arc from you to each place the planes up now are going, the farthest one bold with the
+     little jet. Drawn here on the phone only; "you" is your town, to a tenth of a degree, and goes nowhere. */
+  const map = dests.size >= 2 ? (() => {
+    const you = { lat: Math.round(obs.lat * 10) / 10, lon: Math.round(obs.lon * 10) / 10, iata: 'YOU', icao: 'YOU' };
+    const tierRank = (c) => ['common', 'uncommon', 'rare', 'epic', 'legendary'].indexOf(c.tier?.id ?? 'common');
+    const passes = []; for (const c of ups) { const to = c.full?.to; if (to?.lat == null) continue; passes.push({ from: you, to: { lat: to.lat, lon: to.lon, iata: to.iata || to.icao || '', icao: to.icao || to.iata || to.city, city: to.city }, tier: c.tier?.id ?? 'common', _r: tierRank(c) }); }
+    const m = routeMap(passes, { W: 340, H: 210, anim: false, uid: 'td-rm' }); if (!m) return '';
+    const nC = new Set([...dests.values()].map((d) => d.to.cc).filter(Boolean)).size;
+    return `${sec('Where they’re going', 'Right now')}<div class="td2-map"><div class="td2-rm">${m.svg}</div><div class="td2-cap"><b>Flights to ${dests.size} ${dests.size === 1 ? 'city' : 'cities'}</b> in ${nC} ${nC === 1 ? 'country' : 'countries'} are over you</div></div>`; })() : '';
 
   // 7 · today so far
   const far = T.far, farPh = far ? picOf({ type: far.type, callsign: far.callsign }) : null;
