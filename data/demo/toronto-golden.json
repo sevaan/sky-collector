@@ -1,13 +1,13 @@
 {
-  "about": "Demo scene for store filming (js/demo-boot.js), staged to content/sky-store-media-script-2026-11-25.md section C. Toronto at golden hour on a clear late-November afternoon. Swap planes, the hero, regulars or the collection here; no code changes needed. Planes are placed by bearing (az, degrees from north) and ground distance (km) from the observer at the start time, then fly on their own track, speed and climb (ft per minute). A plane with a route and no track heads for its destination; \"toward\": true points it at the observer instead (the Coming over next rows). Only airline flights carry a callsign; the helicopter has none and is named by kind only. The hero is one line: change \"hero\" to another plane's flight.",
-  "start": "2026-11-24T16:32:00-05:00",
+  "about": "Demo scene for store filming (js/demo-boot.js), staged to content/sky-store-media-script-2026-11-25.md section C. Toronto just before golden hour on a clear late-November afternoon: the Sun is 2.3 degrees up at load, so a catch in the first 90 seconds is an ordinary card; the shiny window (Sun 2 to -1 degrees) runs about 4:27 to 4:46 PM, and the 747-8F comes over in it about 4 minutes after load. Swap planes, the hero, regulars or the collection here; no code changes needed. Planes are placed by bearing (az, degrees from north) and ground distance (km) from the observer at the start time, then fly on their own track, speed and climb (ft per minute). A plane with a route and no track heads for its destination; \"toward\": true points it at the observer instead (the Coming over next rows). Only airline flights carry a callsign; the helicopter has none and is named by kind only. The hero is one line: change \"hero\" to another plane's flight.",
+  "start": "2026-11-24T16:25:00-05:00",
   "timeZone": "America/Toronto",
   "observer": { "lat": 43.6532, "lon": -79.3832, "place": "Toronto" },
   "weather": { "cloud": 8, "code": 1 },
   "hero": "ACA848",
   "planes": [
     { "flight": "ACA848", "t": "B789", "desc": "BOEING 787-9 Dreamliner", "category": "A5", "az": 305, "km": 7, "ft": 11500, "kt": 290, "climb": 1800, "route": "CYYZ-EGLL" },
-    { "flight": "CPA096", "t": "B748", "desc": "BOEING 747-8F", "category": "A5", "az": 15, "km": 8, "ft": 7500, "kt": 230, "climb": -700, "route": "VHHH-CYYZ" },
+    { "flight": "CPA3195", "t": "B748", "desc": "BOEING 747-8F", "category": "A5", "az": 140, "km": 40, "ft": 6500, "kt": 230, "climb": -250, "track": 316, "route": "KJFK-CYYZ-PANC-VHHH", "about": "Cathay Pacific Cargo 3195, B-LJH: Sky's own Toronto samples (data/research/samples-2026-11-15.jsonl.gz) saw it leave JFK and land at Pearson on 15 Nov; the route is the app's own (data/routes/r/CPA.json). Comes over about 4 minutes after load, inside the golden-hour window." },
     { "flight": "JZA8091", "t": "DH8D", "desc": "DE HAVILLAND CANADA DHC-8-400", "category": "A2", "az": 20, "km": 14, "ft": 9000, "kt": 250, "climb": 1200, "route": "CYYZ-CYOW" },
     { "flight": "POE213", "t": "E295", "desc": "EMBRAER E-195-E2", "category": "A3", "az": 120, "km": 9, "ft": 7000, "kt": 260, "climb": 2000, "route": "CYTZ-CYUL" },
     { "flight": "AAL1307", "t": "B738", "desc": "BOEING 737-800", "category": "A3", "az": 200, "km": 38, "ft": 34000, "kt": 450, "route": "KORD-KBOS" },
@@ -19,8 +19,8 @@
     { "flight": "FDX1702", "t": "B763", "desc": "BOEING 767-300F", "category": "A5", "az": 230, "km": 170, "ft": 28000, "kt": 450, "route": "KMEM-CYYZ", "toward": true }
   ],
   "regulars": [
-    { "flight": "ACA856", "t": "A320", "route": "CYYZ-CYOW", "usual": "17:10", "days": [1, 2, 3, 5, 6] },
-    { "flight": "WJA657", "t": "B38M", "route": "CYYZ-CYYC", "usual": "18:05", "days": [1, 2, 4, 5, 6] }
+    { "flight": "ACA856", "t": "A320", "route": "CYYZ-CYOW", "usual": "19:40", "days": [1, 2, 3, 5, 6] },
+    { "flight": "WJA657", "t": "B38M", "route": "CYYZ-CYYC", "usual": "20:15", "days": [1, 2, 4, 5, 6] }
   ],
   "collection": {
     "about": "Seeded on every load (js/test-load.js demoCatches), spread over the last three weeks. flights: [callsign, type, from ICAO, to ICAO, size category, days ago]; a flight makes a pass and a plane card. planes: [type, size category, days ago], plane cards only, no callsign kept. shiny: the card that came out shiny ('golden' or 'moon'). yesterday: caught yesterday afternoon, for the night pack. Leave the hero's type and route (and the 747-8F) out, so catching them is new.",

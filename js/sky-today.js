@@ -5,23 +5,23 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { distText, speed, distIn } from './units.js?v=0.1.1917';
+import { distText, speed, distIn } from './units.js?v=0.1.1918';
 const speedText = (kmh) => { const v = speed(kmh); return `${v.v} ${v.u}`; }; /* the units setting (bug pass 2026-11-25: Today said km with miles on) */
-import { later } from './save-later.js?v=0.1.1917';
-import { isProp } from './sky-props.js?v=0.1.1917';
-import { routeMap } from './route-map.js?v=0.1.1917';
-import { planesUp, canCatch, isNight } from './sky-up.js?v=0.1.1917';
-import { planeKey } from './flights.js?v=0.1.1917';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1917';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1917';
-import { airlineIcon } from './airline-icons.js?v=0.1.1917';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1917';
-import { regulars, noteRegulars, clockText, regularAllowed } from './sky-regulars.js?v=0.1.1917';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1917';
-import { planeSet } from './sky-sets.js?v=0.1.1917';
-import { MIL_TYPES } from './plane-privacy.js?v=0.1.1917';
-import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1917';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1917';
+import { later } from './save-later.js?v=0.1.1918';
+import { isProp } from './sky-props.js?v=0.1.1918';
+import { routeMap } from './route-map.js?v=0.1.1918';
+import { planesUp, canCatch, isNight } from './sky-up.js?v=0.1.1918';
+import { planeKey } from './flights.js?v=0.1.1918';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1918';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1918';
+import { airlineIcon } from './airline-icons.js?v=0.1.1918';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1918';
+import { regulars, noteRegulars, clockText, regularAllowed } from './sky-regulars.js?v=0.1.1918';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1918';
+import { planeSet } from './sky-sets.js?v=0.1.1918';
+import { MIL_TYPES } from './plane-privacy.js?v=0.1.1918';
+import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1918';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1918';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
