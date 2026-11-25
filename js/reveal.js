@@ -5,15 +5,15 @@
 //  Everything scales with rarity (Legendary dims the sky, shockwave, held breath, slow flip, fanfare).
 // Waits use timers, not animation.finished, so a paused tab can never freeze the sequence.
 
-import { sfx, loadSfx } from './sfx.js?v=0.1.1901';
-import { audioCtx } from './audio-ctx.js?v=0.1.1901';
-import { TIER_INFO } from './rarity.js?v=0.1.1901';
-import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1901';
-import { applyBack } from './card-backs.js?v=0.1.1901';
-import { addStarfield } from './starfield.js?v=0.1.1901';
-import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1901';
-import { packPlan, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1901'; /* the two-card pack opening (prototype, 2026-11-20) */
-import { tearJag } from './gift-pack.js?v=0.1.1901';
+import { sfx, loadSfx } from './sfx.js?v=0.1.1902';
+import { audioCtx } from './audio-ctx.js?v=0.1.1902';
+import { TIER_INFO } from './rarity.js?v=0.1.1902';
+import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1902';
+import { applyBack } from './card-backs.js?v=0.1.1902';
+import { addStarfield } from './starfield.js?v=0.1.1902';
+import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1902';
+import { packPlan, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1902'; /* the two-card pack opening (prototype, 2026-11-20) */
+import { tearJag } from './gift-pack.js?v=0.1.1902';
 
 const FX = TIER_FX; /* one rarity table for every card moment (js/card-moment.js, 2026-11-11) */
 const NIGHT_MILESTONES = [3, 5, 10, 25, 50, 100, 200, 365], STAMP_MILESTONES = [5, 10, 25, 50, 100, 200, 300, 400];
@@ -616,7 +616,28 @@ function orderDeck(items) {
   const rank = (it) => (it.o?.sky === 'plane' ? 0 : 8) + (it.fresh ? 0 : 4) + (it.levelUp ? 0 : 2);
   return items.slice(0, 2).sort((a, b) => rank(a) - rank(b));
 }
+/* +1 aircraft on a plane card (2026-11-24, Sevaan on Sky Tester 1901: "Don't need the stamp on the card art. Instead just add
+   one to the medal and aircraft count and make the progress bar move up one when the card loads"): the card is shown one
+   aircraft back, then the medal, the count and the "N to Silver" tick up and the bar slides along when it comes forward. A
+   level-up (new medal) and a new livery keep their stamps. */
+function prepTick(it) {
+  if (it.fresh || !it.newStamp || it.levelUp || it.livery || it.o?.sky !== 'plane') return;
+  const c = it.card, medal = c.querySelector('.cc-medal b'), cnt = c.querySelector('.cc-pc p:not(.cc-lv)'), bar = c.querySelector('.cc-bar i'), lv = c.querySelector('.cc-pc .cc-lv');
+  const m = /^(\d+) of (\d+)/.exec(cnt?.textContent ?? ''); if (!medal || !bar || !m || +m[1] < 2) return;
+  const n = +m[1], T = +m[2], was = { medal: medal.textContent, cnt: cnt.textContent, bar: bar.style.width, lv: lv?.textContent ?? '' };
+  medal.textContent = String(n - 1); cnt.textContent = cnt.textContent.replace(/^\d+/, String(n - 1));
+  bar.style.width = `${Math.min(100, Math.round((n - 1) / T * 100))}%`;
+  if (lv) lv.textContent = lv.textContent.replace(/(\d+)( to )/, (_, k, to) => `${+k + 1}${to}`);
+  it.stamp = null; it.tick = { medal, cnt, bar, lv, was };
+}
+function tickUp({ medal, cnt, bar, lv, was }) {
+  bar.style.transition = reduced() ? 'none' : 'width .7s cubic-bezier(.2,.8,.2,1)'; bar.style.width = was.bar;
+  medal.textContent = was.medal; cnt.textContent = was.cnt; if (lv) lv.textContent = was.lv;
+  if (!reduced()) { medal.parentElement.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.3)' }, { transform: 'scale(1)' }], { duration: 520, easing: 'cubic-bezier(.3,1.6,.5,1)' });
+    cnt.animate([{ color: '#b42a20' }, { color: '' }], { duration: 1200 }); }
+}
 function setDeck(items) {
+  items.forEach(prepTick);
   const tr = $('reveal-card'); tr.classList.add('dk-track'); tr.classList.remove('dk-wait', 'instant');
   tr.replaceChildren(...items.map((it, i) => { const s = document.createElement('div'); s.className = `dk-slot ${i ? 'dk-back' : 'dk-front'}${it.card.querySelector?.('.fc--land') ? ' dk-pass' : ''}`; /* the landscape boarding pass (css/sky-cards.css #reveal .dk-pass) */ if (i) s.setAttribute('aria-hidden', 'true'); s.append(it.card); return s; }));
   $('reveal').classList.toggle('two', items.length > 1);
@@ -635,7 +656,7 @@ function armDeck(alive) {
   d.items.forEach((it) => { it.tilt = attachTilt(it.card); it.flip = isPass(it) ? null : attachFlip(it.card, { onBack: applyBack }); }); /* no double-tap flip on a boarding pass: it has no back */
   tilt = d.items[d.front].tilt; stopGyro = attachGyro(d.items[d.front].card, tilt);
   d.ready = true;
-  if (d.items.length < 2) return;
+  if (d.items.length < 2) { const it = d.items[0], my = run; if (it?.tick) { const t = it.tick; it.tick = null; setTimeout(() => { if (my === run) tickUp(t); }, reduced() ? 0 : 420); } return; }
   $('reveal-card').classList.remove('dk-wait');
   forward(d.front, true);
   // A nudge that says "there's another one" (the first three two-card catches)
@@ -671,7 +692,8 @@ async function forward(i, initial = false) {
     dispatchEvent(new CustomEvent('sc:feel', { detail: 'success' }));
   }
   if (it.seenFront) return; it.seenFront = true;
-  if (it.stamp && !it.fresh) { it.card.insertAdjacentHTML('beforeend', `<span class="dk-stamp" aria-hidden="true">${esc(it.stamp[0])}<small>${esc(it.stamp[1])}</small></span>`); requestAnimationFrame(() => it.card.querySelector('.dk-stamp')?.classList.add('in'));
+  if (it.tick) { const t = it.tick; it.tick = null; setTimeout(() => { if (my !== run) return; tickUp(t); if (!initial) sfx('stamp', { gain: 0.45 }); }, reduced() ? 0 : 420); }
+  else if (it.stamp && !it.fresh) { it.card.insertAdjacentHTML('beforeend', `<span class="dk-stamp" aria-hidden="true">${esc(it.stamp[0])}<small>${esc(it.stamp[1])}</small></span>`); requestAnimationFrame(() => it.card.querySelector('.dk-stamp')?.classList.add('in'));
     if (!initial) setTimeout(() => { if (my === run) sfx('stamp', { gain: 0.6 }); }, reduced() ? 0 : 300); } // the front card's payoff already sounded its stamp
   if (it.levelUp && !initial) (it.card.querySelector('.card__face, .fc') ?? it.card).animate([{ boxShadow: '0 0 0 transparent' }, { boxShadow: `0 0 34px ${LEVEL_COLOR[it.level]}` }, { boxShadow: '0 0 0 transparent' }], { duration: 1300 });
 }
@@ -696,14 +718,15 @@ function syncPager() { const of = $('rv-news').querySelector('.rv-of'); if (of &
   d.addEventListener('pointerdown', (e) => { if (!live()) return; slot = e.target.closest('.dk-front'); if (!slot) return; k = slots().indexOf(slot); on = true; dragging = false; x0 = e.clientX; y0 = e.clientY; dx = 0; t0 = performance.now(); });
   d.addEventListener('pointermove', (e) => { if (!on) return; dx = e.clientX - x0; const dy = e.clientY - y0;
     if (!dragging) { if (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy)) { if (Math.abs(dy) > 12) on = false; return; } // vertical: the card's tilt and the flick up keep it
-      dragging = true; deckTook = true; slot.classList.add('dk-drag'); try { d.setPointerCapture(e.pointerId); } catch {}
+      dragging = true; deckTook = true; slot.classList.add('dk-drag'); d.classList.add('dk-drag-on'); try { d.setPointerCapture(e.pointerId); } catch {}
       deck.items[k].card.dataset.swiping = '1'; deck.items[k].tilt?.reset(true); } /* at rest at once (2026-11-20): a settling tilt repainted the card face every frame of the drag */ // while the deck has the finger the card stops tilting and can't count a tap (js/card.js reads data-swiping)
     slot.style.transform = `translateX(${dx}px) rotate(${dx / 40}deg)`;
+    d.style.setProperty('--dkx', `${dx}px`); d.style.setProperty('--dkr', `${dx / 40}deg`); /* the pass's shadow on the plane card follows it (Sky Tester 1901, Sevaan: "Shadow doesn't move when I move the boarding pass") */
   }); /* the card behind no longer brightens as you pull: it is barely shaded now, and a filter written each move repainted the whole card (2026-11-20) */
-  const end = () => { if (!on) return; on = false; if (!dragging) return; slot.classList.remove('dk-drag'); const back = slots()[1 - k]; if (back) back.style.filter = '';
+  const end = () => { if (!on) return; on = false; if (!dragging) return; slot.classList.remove('dk-drag'); d.classList.remove('dk-drag-on'); const back = slots()[1 - k]; if (back) back.style.filter = '';
     const el = deck?.items[k]?.card; setTimeout(() => { if (el) delete el.dataset.swiping; deckTook = false; }, 0);
     const fast = Math.abs(dx) / Math.max(1, performance.now() - t0) > 0.5;
-    if (Math.abs(dx) > 70 || (fast && Math.abs(dx) > 24)) deckSwap(Math.sign(dx)); else slot.style.transform = '';
+    if (Math.abs(dx) > 70 || (fast && Math.abs(dx) > 24)) { d.classList.add('dk-off'); deckSwap(Math.sign(dx)); setTimeout(() => { d.classList.remove('dk-off'); d.style.removeProperty('--dkx'); d.style.removeProperty('--dkr'); }, 260); } else { slot.style.transform = ''; d.style.removeProperty('--dkx'); d.style.removeProperty('--dkr'); }
     d.dataset.dragged = '1'; setTimeout(() => delete d.dataset.dragged, 0); };
   d.addEventListener('pointerup', end); d.addEventListener('pointercancel', end);
   d.addEventListener('click', (e) => { if (d.dataset.dragged) { e.stopPropagation(); e.preventDefault(); } }, true); // a swipe isn't a tap

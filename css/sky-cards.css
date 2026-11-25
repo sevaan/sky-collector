@@ -875,7 +875,9 @@ html.sky-cards #sat-card.rm-card .rm-sub { white-space:normal; overflow:visible;
 #reveal .dk-track > .dk-front.dk-pass .fc--land { filter:none !important; }
 #reveal.two .dk-track > .dk-slot:not(.dk-pass) .card--plane .fc-face { overflow:hidden; }
 #reveal.two .dk-track > .dk-slot:not(.dk-pass) .card--plane .fc-face::after { content:''; position:absolute; z-index:6; left:6em; top:0; width:16em; height:42em; padding:0; border-radius:1.2em; pointer-events:none;
-  background:rgba(13,34,56,.34); box-shadow:0 0 1.6em 1.1em rgba(13,34,56,.3); transform:translate(1.6em, 2em) scale(var(--lpk, 1)) rotate(7.5deg); display:none; }
+  background:rgba(13,34,56,.34); box-shadow:0 0 1.6em 1.1em rgba(13,34,56,.3); transform:translate(calc(1.6em + var(--dkx, 0px)), 2em) scale(var(--lpk, 1)) rotate(calc(7.5deg + var(--dkr, 0deg))); display:none; transition:transform .2s ease, opacity .2s ease; }
+#reveal.two .dk-track.dk-drag-on > .dk-slot:not(.dk-pass) .card--plane .fc-face::after { transition:none; } /* follows the finger exactly while dragging */
+#reveal.two .dk-track.dk-off > .dk-slot:not(.dk-pass) .card--plane .fc-face::after { opacity:0; } /* the pass swiped away takes its shadow with it */
 #reveal.two.rv-done .dk-track.pass-front > .dk-back .card--plane .fc-face::after { display:block; animation:lpShadowIn .34s ease; } /* drawn only while it shows, never during the reveal's turns */
 @keyframes lpShadowIn { from { opacity:0; } }
 /* While the reveal is still turning (rare cards turn several times), the pass behind drops its grain and shadow: on the
