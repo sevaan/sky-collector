@@ -8,7 +8,7 @@ export const SHINY = {
   fresh: { label: 'Fresh from launch', line: 'Caught within a month of its launch.' },
   fullmoon: { label: 'Full Moon', line: 'Collected under a full Moon.' },
   /* Sky Collector's plane moments (2026-11-19, review Part 2 E): real, rare, decided at the catch */
-  golden: { label: 'Golden hour', line: 'Caught with the sun right on the horizon.' },
+  golden: { label: 'Golden hour', line: 'Your first catch with the sun right on the horizon.' },
   colours: { label: 'New colours', line: 'Your first of this rare type in this airline’s colours.' },
 };
 const angle = (a, b) => Math.acos(Math.max(-1, Math.min(1, a[0] * b[0] + a[1] * b[1] + a[2] * b[2]))) * 180 / Math.PI;
@@ -33,9 +33,13 @@ export function shinyFor(obj, look, later, moon, at) {
 // tier: the plane card's tier; newColours: the first of this type in this airline's colours (js/sky-stamps.js newLivery).
 // The Moon first (within 1°, Space's own rule), then the sun on the horizon (between 1° below and 2° above: about ten
 // minutes at dusk and dawn), then new colours on a Rare or rarer type only (on an A320 that's every other airline).
-export function shinyForPlane({ planeEnu = null, moon = null, sunEl = null, tier = 'common', newColours = false } = {}) {
+/* Golden hour is the first catch of the window only (2026-11-25, Sevaan: "Rarer"): every catch in a daily 20-minute window
+   came out shiny, so a shiny was routine. goldenDone: a golden shiny already caught in this window (js/main.js goldenDone). */
+export const GOLDEN_GAP_MS = 3 * 3600e3; /* dawn and dusk windows are far more than 3 hours apart */
+export const goldenDone = (sightings, now = Date.now()) => (sightings ?? []).some((s) => s.shiny === 'golden' && !s.sim && now - (s.time ?? 0) < GOLDEN_GAP_MS);
+export function shinyForPlane({ planeEnu = null, moon = null, sunEl = null, tier = 'common', newColours = false, goldenDone = false } = {}) {
   if (moon?.enu && planeEnu && angle(planeEnu, moon.enu) < 1) return 'moon';
-  if (Number.isFinite(sunEl) && sunEl >= -1 && sunEl <= 2) return 'golden';
+  if (!goldenDone && Number.isFinite(sunEl) && sunEl >= -1 && sunEl <= 2) return 'golden';
   if (newColours && ['rare', 'epic', 'legendary'].includes(tier)) return 'colours';
   return null;
 }

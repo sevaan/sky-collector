@@ -124,3 +124,15 @@ test('Hopper patch: the 300 km rule, written in the player\'s units (km by defau
 });
 function activeHop() { setSkyProgress(true); return () => progressMod.activeAchievements().find((x) => x.id === 'sky-hopper'); }
 const progressMod = await import('../js/progress.js');
+
+test('golden hour shines on the first catch of the window only (2026-11-25, Sevaan: "Rarer")', async () => {
+  const { shinyForPlane: sh, goldenDone } = await import('../js/shiny.js');
+  const now = Date.parse('2026-11-24T16:35:00-05:00');
+  assert.equal(sh({ sunEl: 1.2 }), 'golden');
+  assert.equal(goldenDone([], now), false);
+  assert.equal(goldenDone([{ shiny: 'golden', time: now - 10 * 60e3 }], now), true, 'one already caught this window');
+  assert.equal(sh({ sunEl: 1.2, goldenDone: true }), null, 'the second catch of the window is ordinary');
+  assert.equal(goldenDone([{ shiny: 'golden', time: now - 9 * 3600e3 }], now), false, "this morning's doesn't count tonight");
+  assert.equal(goldenDone([{ shiny: 'moon', time: now - 60e3 }, { shiny: 'golden', time: now - 60e3, sim: true }], now), false, 'other shinies and sims don\'t count');
+  assert.equal(sh({ sunEl: 1.2, goldenDone: true, tier: 'rare', newColours: true }), 'colours', 'new colours still shine');
+});

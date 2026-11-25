@@ -3,10 +3,10 @@
 // Airline flights only: private and other anonymous aircraft have no callsign here (js/planes.js isAnonymous), so a
 // person's plane can never become a "regular". The plane version of a satellite's pass. No DOM.
 // localStorage 'skyRegulars' = { CALLSIGN: { 'yyyy-m-d': minuteOfDay first seen } }, 14 days, at most 600 callsigns.
-import { later } from './save-later.js?v=0.1.1919';
-import { privateCatch, GOV_OPS, BIZ_OPS } from './plane-privacy.js?v=0.1.1919';
-import { AIRLINE_ICONS } from './airline-icons.js?v=0.1.1919';
-import { AIRLINE_FACTS } from './airline-facts.js?v=0.1.1919';
+import { later } from './save-later.js?v=0.1.1920';
+import { privateCatch, GOV_OPS, BIZ_OPS } from './plane-privacy.js?v=0.1.1920';
+import { AIRLINE_ICONS } from './airline-icons.js?v=0.1.1920';
+import { AIRLINE_FACTS } from './airline-facts.js?v=0.1.1920';
 const KEY = 'skyRegulars', KEEP_DAYS = 14, MAX = 600, WINDOW = 45, MIN_DAYS = 3, LOOK_DAYS = 7;
 const AIRLINE = /^[A-Z]{3}\d/;
 /* Only airlines on Sky's own list (2026-11-24, Content Writing's review via Boss: any callsign shaped like an airline's was

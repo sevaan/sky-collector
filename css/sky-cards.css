@@ -1058,3 +1058,15 @@ html.sky-cards #sat-card.rm-card .rm-sub { white-space:normal; overflow:visible;
 .bd-legend { display:flex; gap:12px; margin-top:7px; font:500 13px/1 'SC Label','Barlow Condensed',sans-serif; color:#9aa6b6; }
 .bd-legend span::before { content:''; display:inline-block; width:10px; height:8px; margin-right:5px; border-radius:2px; background:#e6eef7; }
 .bd-legend span.now::before { background:#ff7457; } .bd-legend span.off::before { background:#232d3c; }
+
+/* A shiny boarding pass (2026-11-25, Sevaan: "Shiny effect not working on the boarding pass"): the card's light sweep (.fc-shine,
+   screen blend) vanished on cream paper. The pass gets its own foil instead: a gold-stamped inner edge, and a holographic
+   tint laid over the paper with multiply, so it shows on cream and leaves the dark print readable, drifting slowly. */
+.card--sky.card--flight.shiny .fc-shine { display:none; }
+.card--sky.card--flight.shiny .lp-paper { box-shadow:inset 0 0 0 .2em #d4a23a, inset 0 0 0 .3em #fff1c2, inset 0 0 0 .38em rgba(180,128,30,.55); }
+.card--sky.card--flight.shiny .lp-paper::before { content:''; position:absolute; inset:0; z-index:4; pointer-events:none; mix-blend-mode:multiply;
+  background:linear-gradient(115deg, rgba(255,214,120,.42), rgba(255,170,214,.36) 22%, rgba(150,206,255,.36) 44%, rgba(180,255,200,.3) 60%, rgba(255,214,120,.42) 80%, rgba(255,170,214,.36)) 0 0 / 300% 100%;
+  animation:lpFoil 7s linear infinite; }
+.card--sky.card--flight.shiny .lp-paper::after { mix-blend-mode:normal; }
+@keyframes lpFoil { to { background-position:-300% 0; } }
+@media (prefers-reduced-motion: reduce) { .card--sky.card--flight.shiny .lp-paper::before { animation:none; } }
