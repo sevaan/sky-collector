@@ -1016,3 +1016,11 @@ html.sky-cards #sat-card.rm-card .rm-sub { white-space:normal; overflow:visible;
    the notches): the shadow layer (.fc--flight::before) sits flat beside the face, so a turned face slid off it. The glare
    still follows the finger. */
 .fc--land .fc-rot { transform:none !important; }
+
+/* Weekly recap's rarest find (2026-11-24, Sevaan: "art is getting cut off"): the whole plane, fitted like the cards'
+   photos, in the window above the caption; a soft blurred copy of the photo fills the rest behind the caption. */
+#recap .rc-win--ph .rc-bg { position:absolute; inset:-8%; width:116%; height:116%; object-fit:cover; }
+#recap .rc-win--ph .rc-ph { position:absolute; left:0; right:0; top:0; bottom:30%; overflow:hidden; }
+#recap .rc-win--ph .rc-ph .rc-img { position:absolute; inset:0; width:100%; height:100%; }
+#recap .rc-win--ph .rc-ph { -webkit-mask-image:linear-gradient(#000 72%, transparent); mask-image:linear-gradient(#000 72%, transparent); } /* fades into the blurred copy, no seam */
+#recap .rc-win--ph::after { height:42%; }

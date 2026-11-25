@@ -9,22 +9,22 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { regularFor, clockText } from './sky-regulars.js?v=0.1.1900';
-import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js?v=0.1.1900';
-import { flightFact } from './flight-facts.js?v=0.1.1900';
-import { typePhoto } from './type-photos.js?v=0.1.1900';
-import { housePhoto } from './house-photos.js?v=0.1.1900';
-import { gapPhoto } from './gap-photos.js?v=0.1.1900'; /* the types that had no photo (2026-11-18) */
-import { airlinePhoto } from './airline-photos.js?v=0.1.1900';
-import { airlineLogo } from './airline-logos.js?v=0.1.1900';
-import { fitStyle } from './photo-fit.js?v=0.1.1900';
-import { dist, speed, useMiles } from './units.js?v=0.1.1900';
-import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1900';
-import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1900';
-import { typeFact } from './sky-facts.js?v=0.1.1900';
-import { localText } from './localize.js?v=0.1.1900';
-import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1900';
-import { qrEncode, qrSvg } from './qr.js?v=0.1.1900';
+import { regularFor, clockText } from './sky-regulars.js?v=0.1.1901';
+import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js?v=0.1.1901';
+import { flightFact } from './flight-facts.js?v=0.1.1901';
+import { typePhoto } from './type-photos.js?v=0.1.1901';
+import { housePhoto } from './house-photos.js?v=0.1.1901';
+import { gapPhoto } from './gap-photos.js?v=0.1.1901'; /* the types that had no photo (2026-11-18) */
+import { airlinePhoto } from './airline-photos.js?v=0.1.1901';
+import { airlineLogo } from './airline-logos.js?v=0.1.1901';
+import { fitStyle } from './photo-fit.js?v=0.1.1901';
+import { dist, speed, useMiles } from './units.js?v=0.1.1901';
+import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1901';
+import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1901';
+import { typeFact } from './sky-facts.js?v=0.1.1901';
+import { localText } from './localize.js?v=0.1.1901';
+import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1901';
+import { qrEncode, qrSvg } from './qr.js?v=0.1.1901';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // A type name escaped, with its hyphenated model codes kept on one line ('Boeing KC-135R Stratotanker' broke after 'KC-').
@@ -87,6 +87,13 @@ export function flightPhotoFor(f, type) {
 export function skyCardPhotoUrl(o, type, size = 'sm') {
   const ph = o?.sky === 'flight' ? flightPhotoFor(o, type || o.type) : photoFor(type || o?.type); if (!ph) return null;
   return size === 'full' ? ph.url : String(ph.url).replace(/\/([^/]+)$/, `/${size}/$1`);
+}
+// The weekly recap's rarest find as fitted markup (2026-11-24, Sevaan: the A340's nose and tail were cut off by a plain
+// cover crop): a soft blurred copy fills the window, the photo sits above the caption in .rc-ph and fitPhoto keeps the
+// whole plane in it. '' when the card has no photo.
+export function skyCardPhotoHtml(o, type) {
+  const ph = o?.sky === 'flight' ? flightPhotoFor(o, type || o.type) : photoFor(type || o?.type); if (!ph) return '';
+  return `<img class="rc-bg" src="${esc(sized(ph.url, 'tiny'))}" alt="" aria-hidden="true" decoding="async"><div class="rc-ph">${photoImg(ph, 'rc-img', true)}</div>`;
 }
 const credit = (ph) => `<span class="fc-credit">Photo: ${esc(ph.credit)}, ${esc(ph.licence)}</span>`;
 // The whole aircraft always shows (2026-11-15, Sevaan: "planes can't be cropped"). Each photo carries the box the plane
