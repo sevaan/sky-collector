@@ -5,23 +5,23 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { distText, speed, distIn } from './units.js?v=0.1.1923';
+import { distText, speed, distIn } from './units.js?v=0.1.1924';
 const speedText = (kmh) => { const v = speed(kmh); return `${v.v} ${v.u}`; }; /* the units setting (bug pass 2026-11-25: Today said km with miles on) */
-import { later } from './save-later.js?v=0.1.1923';
-import { isProp } from './sky-props.js?v=0.1.1923';
-import { routeMap } from './route-map.js?v=0.1.1923';
-import { planesUp, canCatch, isNight } from './sky-up.js?v=0.1.1923';
-import { planeKey } from './flights.js?v=0.1.1923';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1923';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1923';
-import { airlineIcon } from './airline-icons.js?v=0.1.1923';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1923';
-import { regulars, noteRegulars, clockText, regularAllowed } from './sky-regulars.js?v=0.1.1923';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1923';
-import { planeSet } from './sky-sets.js?v=0.1.1923';
-import { MIL_TYPES } from './plane-privacy.js?v=0.1.1923';
-import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1923';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1923';
+import { later } from './save-later.js?v=0.1.1924';
+import { isProp } from './sky-props.js?v=0.1.1924';
+import { routeMap } from './route-map.js?v=0.1.1924';
+import { planesUp, canCatch, isNight } from './sky-up.js?v=0.1.1924';
+import { planeKey } from './flights.js?v=0.1.1924';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1924';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1924';
+import { airlineIcon } from './airline-icons.js?v=0.1.1924';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1924';
+import { regulars, noteRegulars, clockText, regularAllowed } from './sky-regulars.js?v=0.1.1924';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1924';
+import { planeSet } from './sky-sets.js?v=0.1.1924';
+import { MIL_TYPES } from './plane-privacy.js?v=0.1.1924';
+import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1924';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1924';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -92,8 +92,8 @@ function worth(a, route, owned) {
   /* what Collect would give now (js/sky-catch.js previewFor): a plane caught today gives nothing and goes to the bottom, a
      stamp (a new day on a flight, a new aircraft on a plane card) sits between those and a new card (QA 2026-11-19: Today's
      top pick was a plane already caught today) */
-  let gain = 'new'; try { const k = previewFor(a, route).out?.kind; gain = k === 'none' ? 'none' : k === 'stamp' ? 'stamp' : (newFlight || newPlane) ? 'new' : 'stamp'; } catch {}
-  const tag = gain === 'none' ? 'CAUGHT TODAY' : newFlight ? 'NEW FLIGHT' : newPlane ? (isHelicopter(p) ? 'NEW HELICOPTER' : 'NEW PLANE') : gain === 'stamp' ? 'NEW STAMP' : fkey ? 'IN YOUR COLLECTION' : 'SEEN BEFORE';
+  let gain = 'new', on = ''; try { const o = previewFor(a, route).out, k = o?.kind; on = o?.stampOn ?? ''; gain = k === 'none' ? 'none' : k === 'stamp' ? 'stamp' : (newFlight || newPlane) ? 'new' : 'stamp'; } catch {}
+  const tag = gain === 'none' ? 'CAUGHT TODAY' : newFlight ? 'NEW FLIGHT' : newPlane ? (isHelicopter(p) ? 'NEW HELICOPTER' : 'NEW PLANE') : gain === 'stamp' ? (on === 'flight' ? 'ANOTHER DAY' : 'ANOTHER AIRCRAFT') /* the reveal notice's words (Content, 2026-11-25: no stamps) */ : fkey ? 'IN YOUR COLLECTION' : 'SEEN BEFORE';
   const score = gain === 'none' ? a.el / 100 - 1000 : (newFlight ? 100 : 0) + (newPlane ? 60 : 0) + (gain === 'stamp' && !newFlight && !newPlane ? 30 : 0) + (isHelicopter(p) ? 25 : 0) + (full ? 10 : 0) + a.el / 10;
   return { name, sub, tag, score, gain, isNew: newFlight || newPlane, glyph: isHelicopter(p) ? 'heli' : 'jet' };
 }
