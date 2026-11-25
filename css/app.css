@@ -2098,7 +2098,7 @@ body.night .binder-plus { background: #ff6a55; color: #120606; }
 /* The hero's card and words sit together as one centred block (2026-10-21, Sevaan). */
 .nh-top { justify-content: center; }
 .nh-side { flex: 0 1 auto; width: fit-content; max-width: 190px; }
-.nh-side .nh-name, .nh-side .nh-what { text-wrap: balance; }
+.nh-side .nh-name, .nh-side .nh-what, .nh-side .nh-tier { text-wrap: balance; } /* the tier line too: a two-line one splits evenly, and fitHeroSide (js/sky-today.js) then centres card and text as a pair */
 
 .pr-fold-time.under { transform: translateX(-50%); font-size: 11px; }
 .binder-plus { font-size: 15px; padding: 2px 9px; }

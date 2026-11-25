@@ -4,11 +4,11 @@
 // small batches to our server (Sky: server/index.js, POST /t); its /stats page shows the first-day catch rate and how many come
 // back. Settings → Help → "Share anonymous usage" (pref 'share', on by default) stops them. File named to stay clear of
 // content blockers' lists (see CLAUDE.md: avoid push / ads / track / analytics / beacon in js/ file names).
-import { VERSION } from './version.js?v=0.1.1918';
-import { isNative, plugin } from './native.js?v=0.1.1918';
-import { TESTER } from './build-flavor.js?v=0.1.1918';
+import { VERSION } from './version.js?v=0.1.1919';
+import { isNative, plugin } from './native.js?v=0.1.1919';
+import { TESTER } from './build-flavor.js?v=0.1.1919';
 
-import { SKY_API } from './server.js?v=0.1.1918';
+import { SKY_API } from './server.js?v=0.1.1919';
 const URL_ = `${SKY_API}/t`; /* Sky's own server (2026-11-19), never Space Collector's (js/server.js SKY_API) */
 const ls = { get: (k) => { try { return localStorage.getItem(k); } catch { return null; } }, set: (k, v) => { try { localStorage.setItem(k, v); } catch {} } };
 const on = () => !TESTER && ls.get('share') !== '0'; /* SC Tester never sends anything (2026-10-31, Sevaan: "Don't include SC Tester in those stats ever") */

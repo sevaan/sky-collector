@@ -5,23 +5,23 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { distText, speed, distIn } from './units.js?v=0.1.1918';
+import { distText, speed, distIn } from './units.js?v=0.1.1919';
 const speedText = (kmh) => { const v = speed(kmh); return `${v.v} ${v.u}`; }; /* the units setting (bug pass 2026-11-25: Today said km with miles on) */
-import { later } from './save-later.js?v=0.1.1918';
-import { isProp } from './sky-props.js?v=0.1.1918';
-import { routeMap } from './route-map.js?v=0.1.1918';
-import { planesUp, canCatch, isNight } from './sky-up.js?v=0.1.1918';
-import { planeKey } from './flights.js?v=0.1.1918';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1918';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1918';
-import { airlineIcon } from './airline-icons.js?v=0.1.1918';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1918';
-import { regulars, noteRegulars, clockText, regularAllowed } from './sky-regulars.js?v=0.1.1918';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1918';
-import { planeSet } from './sky-sets.js?v=0.1.1918';
-import { MIL_TYPES } from './plane-privacy.js?v=0.1.1918';
-import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1918';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1918';
+import { later } from './save-later.js?v=0.1.1919';
+import { isProp } from './sky-props.js?v=0.1.1919';
+import { routeMap } from './route-map.js?v=0.1.1919';
+import { planesUp, canCatch, isNight } from './sky-up.js?v=0.1.1919';
+import { planeKey } from './flights.js?v=0.1.1919';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1919';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1919';
+import { airlineIcon } from './airline-icons.js?v=0.1.1919';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1919';
+import { regulars, noteRegulars, clockText, regularAllowed } from './sky-regulars.js?v=0.1.1919';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1919';
+import { planeSet } from './sky-sets.js?v=0.1.1919';
+import { MIL_TYPES } from './plane-privacy.js?v=0.1.1919';
+import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1919';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1919';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -316,6 +316,19 @@ export function heroHtml({ hex, color, kick, left = null, until = null, tierLine
       <div class="nh-acts"><button type="button" class="pill-o nh-go" data-show="${esc(hex)}"><span class="ico-svg">${TARGET}</span> Show me</button></div></div>`;
 }
 
+/* The hero's text column shrinks to its widest wrapped line (2026-11-25, Sevaan: "card and text need to be centred more,
+   look how Space Collector does it"). The column is fit-content up to 190 px, but a long tier line that wraps ("Rare · New
+   flight · Finishes a mission") leaves it at the full 190 with its lines far shorter, so the card and text sat left of
+   centre with an empty strip on the right. Measured from the text itself after layout; Space's lines are short enough to
+   fill theirs. */
+export function fitHeroSide(root) {
+  for (const side of root?.querySelectorAll?.('.now-hero .nh-side') ?? []) {
+    side.style.width = ''; const left = side.getBoundingClientRect().left; let w = 0;
+    const tw = document.createTreeWalker(side, NodeFilter.SHOW_TEXT), rg = document.createRange();
+    for (let n = tw.nextNode(); n; n = tw.nextNode()) { if (!n.textContent.trim()) continue; rg.selectNodeContents(n); for (const r of rg.getClientRects()) w = Math.max(w, r.right - left); }
+    if (w > 0) side.style.width = `${Math.ceil(w) + 2}px`;
+  }
+}
 let lastFacts = null;
 export const todayFacts = () => lastFacts;
 // ---------- the page ----------
@@ -442,6 +455,7 @@ export function renderToday(el, ctx) {
   el.innerHTML = live + missions + regs + tl + board + map + story;
   mapIo?.disconnect(); mapIo = null; { const sv = el.querySelector('.td2-map .rm-svg'); if (sv?.pauseAnimations && 'IntersectionObserver' in window) { sv.pauseAnimations(); mapIo = new IntersectionObserver((es) => { if (es[es.length - 1].isIntersecting) sv.unpauseAnimations(); else sv.pauseAnimations(); }); mapIo.observe(sv); } } /* the map's jet flies only on screen: off screen it re-laid out the page 120 times a second (animation pass 2026-11-25) */
   try { ctx.fillMinis?.(el); } catch {} /* the real mini cards in the hero and the tiles (js/main.js skyFillMinis) */
+  try { fitHeroSide(el); document.fonts?.ready.then(() => fitHeroSide(el)); } catch {} /* centred as a pair, as Space's */
   try { const n2 = ctx.note?.(); if (n2) el.prepend(n2); } catch {} /* Space's daily note, the app talking (js/main.js skyDailyNote) */
   { const box = el.querySelector('#sky-missions'); if (box) try { ctx.missionCards?.(box, mcItems); } catch {} }
 
