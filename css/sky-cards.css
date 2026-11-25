@@ -1026,3 +1026,7 @@ html.sky-cards #sat-card.rm-card .rm-sub { white-space:normal; overflow:visible;
 #recap .rc-win--ph .rc-ph .rc-img { position:absolute; inset:0; width:100%; height:100%; }
 #recap .rc-win--ph .rc-ph { -webkit-mask-image:linear-gradient(#000 72%, transparent); mask-image:linear-gradient(#000 72%, transparent); } /* fades into the blurred copy, no seam */
 #recap .rc-win--ph::after { height:42%; }
+/* A plane card inside a page (Today's "Over you now" minis, 2026-11-24, Sevaan: "Mini card titles are borked"): app.css's
+   ".panel h2" (27 px, capitals, tight spacing) outranked .cc-nm and blew the model name up past the card's edges. The
+   card's title keeps its own size inside any page. */
+.fc h2.cc-nm { font-size:1em; font-weight:400; line-height:normal; font-family:inherit; text-transform:none; letter-spacing:normal; }
