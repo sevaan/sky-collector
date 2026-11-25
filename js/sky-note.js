@@ -20,7 +20,8 @@ export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&a
 /* names keep a model designation on one line, as card titles do (js/flight-card.js escName; QA round 4: never "747-" / "8") */
 export const escName = (s) => esc(s).replace(/\S+-\S+/g, (w) => `<span style="white-space:nowrap">${w}</span>`);
 const em = (s) => `<em>${escName(s)}</em>`;
-export const aAn = (w) => (/^[AEIOU]/i.test(String(w ?? '').trim()) && !/^(U[a-z]|Eu|One)/.test(String(w ?? '').trim()) ? 'an' : 'a');
+export const aAn = (w) => { const s = String(w ?? '').trim(); return (/^[AEIOU]/i.test(s) && !/^(Uni|Use|Usu|Ura|Uti|Eu|One)/.test(s)) || /^[FHLMNRSX][A-Z]?[-\d]/.test(s) ? 'an' : 'a'; }; /* 'an F-16', 'an MD-11', 'an Ultralight'; 'a United' (bug pass 2026-11-25) */
+const kmWords = (ctx, km) => (ctx.distText ? ctx.distText(km) : `${Math.round(km).toLocaleString('en-US')} km`); /* the phone's units, from main.js (bug pass 2026-11-25) */
 const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
 const numWord = (n) => (n === 0 ? 'None' : n === 1 ? 'One' : String(n));
 /* a card fact without its bold markers (the note has its own emphasis) */
@@ -46,7 +47,7 @@ function caughtCand(c, ctx) {
 
 function momentCand(ctx, mem) {
   const today = dayKey(ctx.now), y = mem.hist?.[prevDay(ctx.now)];
-  if (mem.hist?.[today]?.moment) return mem.hist[today].moment; /* today's, kept */
+  { const k = mem.hist?.[today]?.moment; if (k) return k.sub === 'stranger' && ctx.stranger?.hex !== k.key ? null : k; } /* today's, kept; a stranger only while it's still over you (bug pass 2026-11-25: it stayed all day), and no second moment the same day */
   if (y?.moment) return null; /* none two days running */
   /* 1 · your anniversary: a year or a month since the first card */
   const f = ctx.firstCatch;
@@ -64,7 +65,7 @@ function momentCand(ctx, mem) {
   if (st && (ctx.logDays ?? 0) >= 5) return { kind: 'moment', sub: 'stranger', key: st.hex, show: st.hex, bubbles: [`${aAn(st.typeName).replace(/^a/, 'A')} ${em(st.typeName)} is over you.`, ['Your sky hasn’t had one all week.', 'dim']] };
   /* 5 · a record: today's farthest beats the best kept, after a week of play */
   const far = ctx.tally?.far, best = ctx.bestFar;
-  if (far && far.city && (ctx.daysPlayed ?? 0) >= 7 && best && far.km > best.km) return { kind: 'moment', sub: 'record', key: `rec-${today}`, bubbles: [`The farthest traveller your sky has shown you: ${aAn(far.typeName)} ${em(far.typeName)} to ${em(far.city)}, ${far.km.toLocaleString('en-US')} km.`] };
+  if (far && far.city && (ctx.daysPlayed ?? 0) >= 7 && best && far.km > best.km) return { kind: 'moment', sub: 'record', key: `rec-${today}`, bubbles: [`The farthest traveller your sky has shown you: ${aAn(far.typeName)} ${em(far.typeName)} to ${em(far.city)}, ${kmWords(ctx, far.km)}.`] };
   return null;
 }
 
@@ -96,7 +97,7 @@ function poolLine(kind, ctx, mem) {
     case 'pace': { const p = ctx.pace; if (!p || (p.days ?? 0) < 3 || !(p.perHour > 0)) return null; return { bubbles: [`About ${Math.max(1, Math.round(p.perHour))} plane${Math.round(p.perHour) === 1 ? '' : 's'} an hour come over you at this time of day.`, `Your busiest hour is around ${esc(p.busiest)}.`] }; }
     case 'records': { if (h < 12) return null; const hi = ctx.tally?.high, far = ctx.tally?.far, turn = mem.recordTurn === 'high' ? 'far' : 'high';
       const lineHi = hi ? `The highest plane over you today was at ${hi.ft.toLocaleString('en-US')} ft: ${aAn(hi.typeName)} ${em(hi.typeName)}${hi.city ? ` to ${esc(hi.city)}` : ''}.` : null;
-      const lineFar = far?.city ? `The farthest traveller over you today is going to ${em(far.city)}, ${far.km.toLocaleString('en-US')} km away.` : null;
+      const lineFar = far?.city ? `The farthest traveller over you today is going to ${em(far.city)}, ${kmWords(ctx, far.km)} away.` : null;
       const pick = turn === 'high' ? lineHi ?? lineFar : lineFar ?? lineHi; if (!pick) return null;
       return { bubbles: [pick], mark: { recordTurn: pick === lineHi ? 'high' : 'far' } }; }
     case 'yesterday': { const y = ctx.yesterday; if (h >= 12 || !y || !(y.planes > 0)) return null; return { bubbles: [`Yesterday ${y.planes} plane${y.planes === 1 ? '' : 's'} crossed your sky.`].concat(y.far?.city ? [`The farthest was going to ${em(y.far.city)}.`] : []) }; }

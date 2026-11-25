@@ -2,15 +2,15 @@
 // Collect does. Catches are kept in localStorage ('skyCatches') for now, apart from Space Collector's sightings, so the
 // old collection code never meets a flight. The Collection screen reads them in a later step.
 
-import { aircraftName, isHelicopter } from './planes.js?v=0.1.1914';
-import { lookupRoute } from './routes.js?v=0.1.1914';
-import { distText } from './units.js?v=0.1.1914';
-import { cardsFor, planeKey, unlisted, TIERS } from './flights.js?v=0.1.1914';
-import { glyphSvg, miniCardHtml } from './flight-card.js?v=0.1.1914';
-import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1914';
+import { aircraftName, isHelicopter } from './planes.js?v=0.1.1915';
+import { lookupRoute } from './routes.js?v=0.1.1915';
+import { distText } from './units.js?v=0.1.1915';
+import { cardsFor, planeKey, unlisted, TIERS } from './flights.js?v=0.1.1915';
+import { glyphSvg, miniCardHtml } from './flight-card.js?v=0.1.1915';
+import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1915';
 
-import { TIER_INFO } from './rarity.js?v=0.1.1914';
-import { allCatches, addCatch } from './catch-store.js?v=0.1.1914';
+import { TIER_INFO } from './rarity.js?v=0.1.1915';
+import { allCatches, addCatch } from './catch-store.js?v=0.1.1915';
 // Catches live in js/catch-store.js (IndexedDB, with a localStorage mirror the Collection page reads).
 // Where catches are read from: Space Collector's sightings once main.js says so (Milestone 1.5), the old store until then.
 let source = allCatches;
@@ -103,7 +103,7 @@ export async function preparePlaneCatch(el, now = Date.now()) {
   const p = hit.plane, route = el._route;
   const full = route?.full ?? (route?.none ? null : await lookupRoute(p.callsign, p).catch(() => null)) /* the plane goes along: an implausible route is no route (2026-11-17) */;
   const { flight, plane } = cardsFor(p, full, route?.airline || '');
-  const out = assess([...catches()], { time: now, hex: p.hex, callsign: p.callsign, flight, plane });
+  const out = assess([...catches()], { time: now, hex: p.hex, callsign: p.callsign, flight, plane: plane && { ...plane, daily: !!(p.anon || isHelicopter(p)) } }); /* as the panel's previewFor: a 'New day' helicopter or private plane said Collect and saved nothing (bug pass 2026-11-25) */
   const c = { time: now, hex: p.hex, callsign: p.callsign, ...(hasAirlineCallsign(p.callsign) && p.reg ? { reg: p.reg } : {}), type: p.type,
     altFt: Math.round(p.altBaro ?? p.hKm * 3280.84), gsKt: p.gs, rangeKm: Math.round(hit.rangeKm * 10) / 10, airline: route?.airline || '', flight, plane };
   return { out, c };

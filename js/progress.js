@@ -1,15 +1,15 @@
 // Player progress from the sighting log: XP and observer rank, tonight’s three missions, a weekly streak and
 // achievements. Everything is derived from the saved sightings (nothing extra is stored), so it can’t drift.
 // info(cardKey) -> { tier, type, owner, launch, natural, con } | null. No DOM.
-import { isProp } from './sky-props.js?v=0.1.1914';
-import { SKY_PATCHES_MORE, freshSky2, noteSky2 } from './sky-patches.js?v=0.1.1914';
-import { nightKey, useCalendarDays } from './observation.js?v=0.1.1914';
-import { fleetThresholds } from './card-model.js?v=0.1.1914';
-import { distRound as distText } from './units.js?v=0.1.1914';
-import { firstFlew, isNewType, isOldType, engines, makerOf, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1914';
-import { planeSet } from './sky-sets.js?v=0.1.1914';
-import { privateCatch, MIL_TYPES } from './plane-privacy.js?v=0.1.1914';
-import { localDay, THRESHOLDS } from './sky-stamps.js?v=0.1.1914';
+import { isProp } from './sky-props.js?v=0.1.1915';
+import { SKY_PATCHES_MORE, freshSky2, noteSky2 } from './sky-patches.js?v=0.1.1915';
+import { nightKey, useCalendarDays } from './observation.js?v=0.1.1915';
+import { fleetThresholds } from './card-model.js?v=0.1.1915';
+import { distRound as distText } from './units.js?v=0.1.1915';
+import { firstFlew, isNewType, isOldType, engines, makerOf, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1915';
+import { planeSet } from './sky-sets.js?v=0.1.1915';
+import { privateCatch, MIL_TYPES } from './plane-privacy.js?v=0.1.1915';
+import { localDay, THRESHOLDS } from './sky-stamps.js?v=0.1.1915';
 
 // A longer climb (2026-10-12, playtest room: three ranks on night 1, Mission Control in about two weeks), with two
 // prestige ranks past Mission Control. Nobody drops a rank they had on the old curve (rankFloor below).
@@ -865,7 +865,8 @@ export function progress(sightings, info, { constellations = [], albums = [], no
   const tonightKey = nightKey(now, lon ?? list[list.length - 1]?.lon ?? 0) /* where you are now, as the deal was made (bug hunt 2026-10-22: travel split them) */, tonight = nights.get(tonightKey) ?? [];
   // Which catch finished each mission (the first point in tonight's order where it's done), for its picture (QA 2026-10-30: every done card showed the latest catch).
   const tonightAsc = [...tonight].sort((x, y) => x.time - y.time), finisher = (m) => { let lo = 1, hi = tonightAsc.length; if (!hi || !m.done(tonightAsc, now)) return null; while (lo < hi) { const mid = (lo + hi) >> 1; if (m.done(tonightAsc.slice(0, mid), now)) hi = mid; else lo = mid + 1; } return tonightAsc[lo - 1]; }; // a binary search: a mission, once done, stays done as catches are added
-  const missions = missionsOf(tonightKey, { first: !nights.size || firstNights.has(tonightKey), deals }).map((m) => { const done = m.done(tonight, now), f = done ? finisher(m) : null; return { id: m.id, text: m.id === 'firstcard' && list.some((x) => x.time < (tonightAsc[0]?.time ?? now) && nightKey(x.time, x.lon ?? 0) !== tonightKey) ? 'Collect a new card' : m.text, done, by: f ? { cardKey: f.cardKey, objectId: f.objectId } : null }; });
+  const firstTonight = !nights.size || firstNights.has(tonightKey), mXp = SKY && firstTonight ? SKY_STARTER_XP : MISSION_XP; /* what the screens print (bug pass 2026-11-25: day one said +50 and paid 20) */
+  const missions = missionsOf(tonightKey, { first: firstTonight, deals }).map((m) => { const done = m.done(tonight, now), f = done ? finisher(m) : null; return { id: m.id, text: m.id === 'firstcard' && list.some((x) => x.time < (tonightAsc[0]?.time ?? now) && nightKey(x.time, x.lon ?? 0) !== tonightKey) ? 'Collect a new card' : m.text, done, xp: mXp, by: f ? { cardKey: f.cardKey, objectId: f.objectId } : null }; });
   xp += carry;
   let ri = 0; for (let k = 0; k < RANKS.length; k++) if (xp >= RANKS[k][0]) ri = k;
   ri = Math.max(ri, rankFloor(xp));

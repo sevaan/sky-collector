@@ -5,20 +5,23 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { isProp } from './sky-props.js?v=0.1.1914';
-import { routeMap } from './route-map.js?v=0.1.1914';
-import { planesUp } from './sky-up.js?v=0.1.1914';
-import { planeKey } from './flights.js?v=0.1.1914';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1914';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1914';
-import { airlineIcon } from './airline-icons.js?v=0.1.1914';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1914';
-import { regulars, noteRegulars, clockText, regularAllowed } from './sky-regulars.js?v=0.1.1914';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1914';
-import { planeSet } from './sky-sets.js?v=0.1.1914';
-import { MIL_TYPES } from './plane-privacy.js?v=0.1.1914';
-import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1914';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1914';
+import { distText, speed, distIn } from './units.js?v=0.1.1915';
+const speedText = (kmh) => { const v = speed(kmh); return `${v.v} ${v.u}`; }; /* the units setting (bug pass 2026-11-25: Today said km with miles on) */
+import { later } from './save-later.js?v=0.1.1915';
+import { isProp } from './sky-props.js?v=0.1.1915';
+import { routeMap } from './route-map.js?v=0.1.1915';
+import { planesUp, canCatch, isNight } from './sky-up.js?v=0.1.1915';
+import { planeKey } from './flights.js?v=0.1.1915';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1915';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1915';
+import { airlineIcon } from './airline-icons.js?v=0.1.1915';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1915';
+import { regulars, noteRegulars, clockText, regularAllowed } from './sky-regulars.js?v=0.1.1915';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1915';
+import { planeSet } from './sky-sets.js?v=0.1.1915';
+import { MIL_TYPES } from './plane-privacy.js?v=0.1.1915';
+import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1915';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1915';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -74,8 +77,9 @@ export function logSeen(list, ctx = null) {
   /* every couple of seconds: what each plane up has shown since it was first counted (each flag once a plane a day) */
   if (now - flagsAt > 2000) { flagsAt = now; for (const a of list ?? []) { const x = a.plane?.hex; if (!x || a.el <= 5) continue; const n = noted.get(x) ?? noted.set(x, new Set()).get(x), add = moreFlags(a, ctx, now).filter((f) => !n.has(f)); if (add.length) { add.forEach((f) => n.add(f)); late.push({ flags: add }); } } }
   noteLocal(fresh, newHour, h, late); /* the 30-day tally behind "Rare here" and mission sizing (js/sky-local.js) */
-  if (Date.now() - seenSaved > 15000) { seenSaved = Date.now(); try { localStorage.setItem(SEEN, JSON.stringify(s)); } catch {} }
+  seenLast = s; if (Date.now() - seenSaved > 15000) writeSeen(); else seenLater();
 }
+let seenLast = null; const writeSeen = () => { seenSaved = Date.now(); try { if (seenLast) localStorage.setItem(SEEN, JSON.stringify(seenLast)); } catch {} }, seenLater = later(writeSeen);
 
 // ---------- what each plane is worth to you ----------
 function worth(a, route, owned) {
@@ -208,8 +212,9 @@ export const yesterdayTally = () => { try { const y = JSON.parse(localStorage.ge
 export const bestFar = () => { try { return JSON.parse(localStorage.getItem(BEST) || 'null'); } catch { return null; } };
 function readTally() { let s = null; try { s = JSON.parse(localStorage.getItem(TALLY) || 'null'); } catch {} if (s && s.day !== dayKey()) rollTally(s); return s && s.day === dayKey() ? s : { day: dayKey(), airlines: [], countries: [], far: null }; }
 let tally = null, tallySaved = 0;
+const writeTally = () => { tallySaved = Date.now(); try { if (tally && tally.day === dayKey()) localStorage.setItem(TALLY, JSON.stringify(tally)); } catch {} }, tallyLater = later(writeTally);
 function noteTally(up, route) {
-  if (tally && tally.day !== dayKey()) rollTally(tally); /* open past midnight: the day in memory is the newest */
+  if (tally && tally.day !== dayKey()) { rollTally(tally); try { localStorage.removeItem(TALLY); } catch {} } /* open past midnight: the day in memory is the newest, and the stale stored copy must not roll again over it (bug pass 2026-11-25) */
   tally = tally && tally.day === dayKey() ? tally : readTally(); const A = new Set(tally.airlines), C = new Set(tally.countries);
   for (const u of up) { const p = u.a.plane, listed = regularAllowed(p.callsign), r = listed ? route(p.callsign) : null, full = r?.full; if (r?.airline) A.add(r.airline); /* names and places only for airlines on Sky's list (content/sky-today-note-copy-2026-11-24.md G) */
     if (full) { if (full.to?.cc) C.add(full.to.cc); if (full.from?.cc) C.add(full.from.cc); const km = kmOf(full);
@@ -221,7 +226,7 @@ function noteTally(up, route) {
     if (ft > 1000 && ft < 60000 && (!tally.high || ft > tally.high.ft + 50)) tally.high = { ft: Math.round(ft / 100) * 100, ...who() };
     if (kmh > 150 && kmh < 1300 && (!tally.fast || kmh > tally.fast.kmh + 2)) tally.fast = { kmh: Math.round(kmh), ...who() }; }
   tally.airlines = [...A]; tally.countries = [...C];
-  if (Date.now() - tallySaved > 15000) { tallySaved = Date.now(); try { localStorage.setItem(TALLY, JSON.stringify(tally)); } catch {} }
+  if (Date.now() - tallySaved > 15000) writeTally(); else tallyLater();
   return tally;
 }
 
@@ -314,19 +319,20 @@ export function heroHtml({ hex, color, kick, left = null, until = null, tierLine
 let lastFacts = null;
 export const todayFacts = () => lastFacts;
 // ---------- the page ----------
-let tick = 0, expanded = false, dealIo = null;
+let tick = 0, expanded = false, dealIo = null, mapIo = null;
 export function renderToday(el, ctx) {
   const owned = ownedKeys(), t = Date.now(), obs = ctx.obs;
-  const up = planesUp(ctx.positions).map((a) => ({ a, w: worth(a, ctx.route(a.plane.callsign), owned) })).sort((x, y) => y.w.score - x.w.score);
+  const night = isNight(ctx.sunEl), reach = (a) => (canCatch(a, night) ? 1 : 0); /* near enough for the circle first: Today offered planes 50 mi off, and Show me ended at TOO FAR (bug pass 2026-11-25) */
+  const up = planesUp(ctx.positions).map((a) => ({ a, w: worth(a, ctx.route(a.plane.callsign), owned), ok: reach(a) })).sort((x, y) => y.ok - x.ok || y.w.score - x.w.score);
   const next = obs ? forecast(ctx.planes.planes ?? [], obs, t, new Set(up.map((u) => u.a.plane.hex))) : [];
   const seen = readSeen(), maxH = Math.max(1, ...seen.hours), nowH = new Date().getHours(), sky = heroSky(ctx.wx);
   const T = noteTally(up, ctx.route); try { T.planes = readSeen().hexes.length; } catch {} /* kept with the tally, for tomorrow's "Yesterday" line */
   const tierOf = (p) => { try { return ctx.tierOf?.(p) ?? null; } catch { return null; } };
   // every plane once, with what the sections need
   const cand = (p, extra) => { const r = ctx.route(p.callsign), full = r?.full ?? null; return { p, r, full, km: kmOf(full), tier: tierOf(p), ...extra }; };
-  const ups = up.map((u) => cand(u.a.plane, { a: u.a, w: u.w, isNew: u.w.isNew, left: obs ? skyLeft(u.a.plane, obs, t) : null }));
+  const ups = up.map((u) => cand(u.a.plane, { a: u.a, w: u.w, ok: u.ok, isNew: u.w.isNew, left: obs ? skyLeft(u.a.plane, obs, t) : null }));
   const nexts = next.map((n) => { const r = ctx.route(n.p.callsign), full = r?.full; return cand(n.p, { n, isNew: !owned.has(planeKey(n.p)), name: full ? `To ${full.to.city}` : r?.airline || aircraftName(n.p) || 'Aircraft' }); });
-  const best = ups[0];
+  const best = ups[0]; /* a catchable one when there is one (sorted above) */
   const RANK = { common: 0, uncommon: 1, rare: 2, epic: 3, legendary: 4 };
 
   // Space Collector's own pieces (2026-11-19, review Part 1, Sevaan: "keep things matching"): section heads are .tn-sec,
@@ -357,7 +363,7 @@ export function renderToday(el, ctx) {
 
   // 3 · mission cards
   const ms = (() => { try { return ctx.missions?.() ?? []; } catch { return []; } })();
-  const pool = [...ups, ...nexts];
+  const pool = [...ups.filter((u) => u.ok), ...nexts];
   /* Space Collector's mission cards (2026-11-19, Sevaan: "They should look like real cards in space collector and let me
      tap and shuffle them like space collector"): this works out each card's words and picture; js/main.js skyMissionCards
      draws them with Space's deck (main.js mcTap: tap to turn one over, all face down and they shuffle; dealt face down
@@ -367,10 +373,10 @@ export function renderToday(el, ctx) {
   const SPARE = ['B789', 'A359', 'AT76', 'E190', 'B38M', 'A21N', 'DH8D', 'B77W', 'CRJ9', 'A320', 'B738', 'A388'];
   const used = new Set(), smOf = (ph) => (ph ? (ph.sm ?? String(ph.url).replace(/\/([^/]+)$/, '/sm/$1')) : null), take = (u) => (u && !used.has(u) ? (used.add(u), u) : null);
   const mcItems = ms.map((m) => {
-    if (m.done) { const cp = m.by?.cardKey ? ctx.cardPhoto?.(m.by.cardKey) : null; return { id: m.id, text: m.text, done: true, sub: 'Done', art: take(cp?.url) }; }
+    if (m.done) { const cp = m.by?.cardKey ? ctx.cardPhoto?.(m.by.cardKey) : null; return { id: m.id, text: m.text, xp: m.xp, done: true, sub: 'Done', art: take(cp?.url) }; }
     const f = finisherFor(m, pool, ctx.route), p = f?.p;
     const sub = f ? `${f.w?.name ?? f.name} · ${f.n ? `in ${mins(f.n.inS)} min` : 'up now'}` : 'Watch for one';
-    return { id: m.id, text: m.text, done: false, sub, art: p ? take(smOf(picOf(p))) : null };
+    return { id: m.id, text: m.text, xp: m.xp, done: false, sub, art: p ? take(smOf(picOf(p))) : null };
   });
   for (const it of mcItems) if (!it.art) for (const ty of [FIT[it.id], ...SPARE].filter(Boolean)) { const u = take(smOf(photoFor(ty))); if (u) { it.art = u; break; } }
   const nDone = ms.filter((m) => m.done).length;
@@ -416,13 +422,13 @@ export function renderToday(el, ctx) {
   const rec = (lab, v, sr, left, right) => `<div class="bd-rec"><div class="bd-row"><span class="bd-lab gold">${lab}</span>${flaps(v, ' gold')}<span class="sr">${esc(sr)}</span></div><div class="bd-line"><span>${left}</span><span class="tnum">${esc(right)}</span></div></div>`;
   const far = T.far, high = T.high, fast = T.fast;
   const recs = [
-    far ? rec('Farthest', String(far.code || (() => { try { return ctx.route(far.callsign)?.full?.to?.iata; } catch { return ''; } })() || String(far.city).normalize('NFD').replace(/[^A-Za-z]/g, '')).slice(0, 3).toUpperCase() /* a record saved before codes were kept: its city's letters */, `Farthest: ${far.city}`, `<b>To ${esc(far.city)}</b>${far.airline ? ` · ${esc(far.airline)}` : ''}`, `${far.km.toLocaleString('en-US')} km · ${ago(far.t)}`) : '',
+    far ? rec('Farthest', String(far.code || (() => { try { return ctx.route(far.callsign)?.full?.to?.iata; } catch { return ''; } })() || String(far.city).normalize('NFD').replace(/[^A-Za-z]/g, '')).slice(0, 3).toUpperCase() /* a record saved before codes were kept: its city's letters */, `Farthest: ${far.city}`, `<b>To ${esc(far.city)}</b>${far.airline ? ` · ${esc(far.airline)}` : ''}`, `${distText(far.km)} · ${ago(far.t)}`) : '',
     high ? rec('Highest · ft', high.ft, `Highest: ${high.ft} feet`, `<b>${esc(high.name)}</b>${toWords(high) ? ` · ${esc(toWords(high))}` : ''}`, `${high.ft.toLocaleString('en-US')} ft · ${ago(high.t)}`) : '',
-    fast ? rec('Fastest · km/h', fast.kmh, `Fastest: ${fast.kmh} km/h`, `<b>${esc(fast.name)}</b>${toWords(fast) ? ` · ${esc(toWords(fast))}` : ''}`, `${fast.kmh.toLocaleString('en-US')} km/h · ${ago(fast.t)}`) : '',
+    fast ? rec(`Fastest · ${speed(1).u}`, Math.round(distIn(fast.kmh)), `Fastest: ${speedText(fast.kmh)}`, `<b>${esc(fast.name)}</b>${toWords(fast) ? ` · ${esc(toWords(fast))}` : ''}`, `${speedText(fast.kmh)} · ${ago(fast.t)}`) : '',
   ].join('');
   const story = `${sec('Today so far', `since ${(() => { const h = seen.open.findIndex(Boolean); return h < 0 ? 'now' : new Date(new Date().setHours(h, 0, 0, 0)).toLocaleTimeString([], { hour: 'numeric' }); })()}`)}<div class="td2-board">
     <div class="bd-top"><span>Your sky · today</span><span class="tnum">${esc(new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }))}</span></div>
-    ${row('Planes', pad3(seen.hexes.length), `${seen.hexes.length} planes`)}${row('Airlines', pad3(T.airlines.length), `${T.airlines.length} airlines`)}${row('Countries', pad3(T.countries.length), `${T.countries.length} countries`)}
+    ${row('Planes', pad3(seen.hexes.length), `${seen.hexes.length} plane${seen.hexes.length === 1 ? '' : 's'}`)}${row('Airlines', pad3(T.airlines.length), `${T.airlines.length} airline${T.airlines.length === 1 ? '' : 's'}`)}${row('Countries', pad3(T.countries.length), `${T.countries.length} ${T.countries.length === 1 ? 'country' : 'countries'}`)}
     ${recs ? `<div class="bd-recs">${recs}</div>` : ''}
     <div class="bd-strip"><div class="bd-bars" aria-label="Planes seen by hour">${seen.hours.map((n, h) => `<i class="${h === nowH ? 'now' : ''}${seen.open[h] ? '' : ' off'}" style="height:${seen.open[h] ? Math.max(12, Math.round(n / maxH * 100)) : 10}%" title="${h}:00 · ${seen.open[h] ? n : 'app closed'}"></i>`).join('')}</div>
     <div class="bd-axis"><span>12 AM</span><span>6</span><span>NOON</span><span>6</span><span>11 PM</span></div>
@@ -434,6 +440,7 @@ export function renderToday(el, ctx) {
       const name = full ? `${rt.airline || a3} ${r.callsign.replace(/^[A-Z]{3}/, '')} to ${full.to.city}` : `${rt?.airline || a3} ${r.callsign.replace(/^[A-Z]{3}/, '')}`;
       return `<div class="td2-reg"><b>${esc(name)}</b><span>Usually ${esc(clockText(r.minute))} · seen ${r.days} of the last ${r.of} days${mins <= 2 ? ' · due now' : mins < 60 ? ` · in ${mins} min` : ''}${mine ? ' · <em>in your collection</em>' : ''}</span></div>`; }).join('')}</div>`; } catch {}
   el.innerHTML = live + missions + regs + tl + board + map + story;
+  mapIo?.disconnect(); mapIo = null; { const sv = el.querySelector('.td2-map .rm-svg'); if (sv?.pauseAnimations && 'IntersectionObserver' in window) { sv.pauseAnimations(); mapIo = new IntersectionObserver((es) => { if (es[es.length - 1].isIntersecting) sv.unpauseAnimations(); else sv.pauseAnimations(); }); mapIo.observe(sv); } } /* the map's jet flies only on screen: off screen it re-laid out the page 120 times a second (animation pass 2026-11-25) */
   try { ctx.fillMinis?.(el); } catch {} /* the real mini cards in the hero and the tiles (js/main.js skyFillMinis) */
   try { const n2 = ctx.note?.(); if (n2) el.prepend(n2); } catch {} /* Space's daily note, the app talking (js/main.js skyDailyNote) */
   { const box = el.querySelector('#sky-missions'); if (box) try { ctx.missionCards?.(box, mcItems); } catch {} }

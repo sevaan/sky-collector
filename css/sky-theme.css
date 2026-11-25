@@ -969,7 +969,7 @@ html.sky-cards #sat-card.rm-card .rm-k { color:var(--rc-muted); font:500 14px/1 
 html.sky-cards #sat-card.rm-card .rm-sub { padding:9px 16px 14px; font:500 15px/1.2 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.03em; color:var(--rc-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 html.sky-cards #sat-card.rm-card .rm-sub b { color:var(--rc-ink); font-weight:500; }
 .turning #sat-card .rm-jet, .lb-back .rm-jet { display:none; } /* the jet rests while the card is behind */
-@media (prefers-reduced-motion: reduce) { #sat-card .rm-draw .rm-arc:not(.rm-still) { animation:none; stroke-dashoffset:0 !important; } #sat-card .rm-jet { display:none; } }
+@media (prefers-reduced-motion: reduce) { #sat-card .rm-draw .rm-arc:not(.rm-still) { animation:none; stroke-dashoffset:0 !important; } :is(#sat-card, .td2-map) .rm-jet { display:none; } }
 /* With the route map beside it, the rank card keeps its climbing-plane picture even on day one (2026-11-21, Sevaan: "where'd
    our plane ascending rank card go?"). Under 5 cards the rank card slims to a dial (body.few-cards); alone that was right,
    but in the two-card deck both share one height, so the slim card was stretched to the map's height with an empty middle.

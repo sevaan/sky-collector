@@ -28,6 +28,9 @@ test('who is anonymous', () => {
   assert.equal(isAnonymous({ flight: 'XYZ1', dbFlags: 4 }), true, 'PIA');
   assert.equal(isAnonymous({ flight: 'RCH123', dbFlags: 1 }), true, 'military');
   assert.equal(isAnonymous({ flight: 'ACA1', dbFlags: 2 }), false, '"interesting" alone is not private');
+  assert.equal(isAnonymous({ flight: 'TWY412', t: 'GLF6' }), true, 'a business-jet type under an airline-shaped callsign (bug pass 2026-11-25)');
+  assert.equal(isAnonymous({ flight: 'WUP88', t: 'PC12' }), true, 'Wheels Up');
+  assert.equal(isAnonymous({ flight: 'ACA856', t: 'A333' }), false);
 });
 
 test('the anonymous id is stable on one phone, different on another, and never the hex', () => {

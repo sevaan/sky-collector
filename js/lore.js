@@ -4,8 +4,8 @@
 // facts only state what the catalogue says today (orbit, launch date and site) or simple date
 // comparisons. No extrapolating today’s orbit back over decades (lifetime laps or distance).
 
-import { orbitStats, titleCase, siteName, ownerName } from './facts.js?v=0.1.1914';
-import { localText } from './localize.js?v=0.1.1914';
+import { orbitStats, titleCase, siteName, ownerName } from './facts.js?v=0.1.1915';
+import { localText } from './localize.js?v=0.1.1915';
 
 const FAMILY = [
   [/^IRIDIUM 33 DEB/, 'A piece of the **first accidental collision between two intact satellites**: Iridium 33 hit the dead Kosmos 2251 in 2009.'],
@@ -39,7 +39,8 @@ const IPHONE = '2007-06-29';   // first iPhone on sale
 let loreCache = null, seriesCache = null, purposeCache = null, debrisCache = null, factsCache = null, rocketFacts = [];
 let srcCache = {};
 export async function loadLore(url = 'data/lore.json', seriesUrl = url.replace('lore.json', 'series.json'), purposeUrl = url.replace('lore.json', 'purpose.json')) {
-  const get = async (u) => { try { return await (await fetch(u)).json(); } catch { return {}; } };
+  const sky = (() => { try { return !!(globalThis.__skyOnly || window.parent?.__skyOnly); } catch { return false; } })(); /* Sky: the satellite-keyed files aren't read (perf pass 2026-11-25, 826 KB) */
+  const get = async (u) => { if (sky && /(series|purpose|debris|facts|roles)\.json/.test(u)) return {}; try { return await (await fetch(u)).json(); } catch { return {}; } };
   /* The Collection frame borrows Explore's copies (perf audit 2026-10-29: it fetched and parsed all seven again). Read only. */
   let sh = null; try { sh = window.parent !== window ? window.parent.__loreShare : null; } catch {}
   [loreCache, seriesCache, purposeCache, debrisCache, factsCache, srcCache, rolesCache] = await (sh ?? (globalThis.__loreShare = Promise.all([get(url), get(seriesUrl), get(purposeUrl), get(url.replace('lore.json', 'debris.json')), get(url.replace('lore.json', 'facts.json')), get(url.replace('lore.json', 'fact-sources.json')), get(url.replace('lore.json', 'roles.json'))]))) /* all at once (perf audit 2026-10-29: three rounds before) */;

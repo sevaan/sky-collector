@@ -3,9 +3,10 @@
 // Airline flights only: private and other anonymous aircraft have no callsign here (js/planes.js isAnonymous), so a
 // person's plane can never become a "regular". The plane version of a satellite's pass. No DOM.
 // localStorage 'skyRegulars' = { CALLSIGN: { 'yyyy-m-d': minuteOfDay first seen } }, 14 days, at most 600 callsigns.
-import { privateCatch, GOV_OPS, BIZ_OPS } from './plane-privacy.js?v=0.1.1914';
-import { AIRLINE_ICONS } from './airline-icons.js?v=0.1.1914';
-import { AIRLINE_FACTS } from './airline-facts.js?v=0.1.1914';
+import { later } from './save-later.js?v=0.1.1915';
+import { privateCatch, GOV_OPS, BIZ_OPS } from './plane-privacy.js?v=0.1.1915';
+import { AIRLINE_ICONS } from './airline-icons.js?v=0.1.1915';
+import { AIRLINE_FACTS } from './airline-facts.js?v=0.1.1915';
 const KEY = 'skyRegulars', KEEP_DAYS = 14, MAX = 600, WINDOW = 45, MIN_DAYS = 3, LOOK_DAYS = 7;
 const AIRLINE = /^[A-Z]{3}\d/;
 /* Only airlines on Sky's own list (2026-11-24, Content Writing's review via Boss: any callsign shaped like an airline's was
@@ -18,7 +19,8 @@ const dayStart = (k) => { const [y, m, d] = k.split('-').map(Number); return new
 const minuteOf = (t) => { const d = new Date(t); return d.getHours() * 60 + d.getMinutes(); };
 let cache = null, savedAt = 0;
 const load = () => { if (cache) return cache; try { cache = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch { cache = {}; } { let cut = false; for (const cs of Object.keys(cache)) if (!regularAllowed(cs)) { delete cache[cs]; cut = true; } if (cut) try { localStorage.setItem(KEY, JSON.stringify(cache)); } catch {} } /* gone from the phone too, not just hidden */ /* never a business, military or government callsign, even one saved before the rule (QA 2026-11-19) */ return cache; };
-const save = () => { if (Date.now() - savedAt < 15000) return; savedAt = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(cache)); } catch {} };
+const write = () => { savedAt = Date.now(); try { localStorage.setItem(KEY, JSON.stringify(cache)); } catch {} }, writeLater = later(write);
+const save = () => { if (Date.now() - savedAt < 15000) { writeLater(); return; } write(); };
 // Callsigns seen now ([{ callsign }]); each callsign's first sighting of the day is kept.
 export function noteRegulars(planes, now = Date.now()) {
   const c = load(), k = dayKey(now), m = minuteOf(now), ty = loadTypes(); let changed = false, typed = false;
@@ -36,7 +38,8 @@ export function noteRegulars(planes, now = Date.now()) {
    'skyRegulars' (pruned with it) */
 const TYPES = 'skyRegularTypes'; let types = null, typesAt = 0;
 const loadTypes = () => { if (types) return types; try { types = JSON.parse(localStorage.getItem(TYPES) || '{}') || {}; } catch { types = {}; } return types; };
-function saveTypes(c) { if (Date.now() - typesAt < 15000) return; typesAt = Date.now(); for (const cs of Object.keys(types)) if (!c[cs]) delete types[cs]; try { localStorage.setItem(TYPES, JSON.stringify(types)); } catch {} }
+let typesC = null; const typesLater = later(() => { typesAt = 0; if (typesC) saveTypes(typesC); });
+function saveTypes(c) { typesC = c; if (Date.now() - typesAt < 15000) { typesLater(); return; } typesAt = Date.now(); for (const cs of Object.keys(types)) if (!c[cs]) delete types[cs]; try { localStorage.setItem(TYPES, JSON.stringify(types)); } catch {} }
 export const regularType = (callsign) => loadTypes()[String(callsign ?? '').toUpperCase()] || '';
 // Minutes apart on a clock face (23:50 and 00:10 are 20 apart)
 const apart = (a, b) => { const d = Math.abs(a - b) % 1440; return Math.min(d, 1440 - d); };

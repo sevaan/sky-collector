@@ -13,7 +13,7 @@ test('an airline catch is left alone', () => {
   const l = [flight('ACA856', 'A333'), plane('ACA856', 'A333')];
   const r = scrubSightings(l); assert.equal(r.changed, 0); assert.deepEqual(r.dropped, []); assert.equal(r.list[1].callsign, 'ACA856');
 });
-for (const [cs, type, why] of [['ASP473', 'C25B', 'business-jet operator'], ['AFR123', 'C130', 'military type'], ['XYZ123', 'KC10', 'military type'], ['ACA856', 'C17', 'military type'], ['N123AB', 'C172', 'registration as callsign']]) {
+for (const [cs, type, why] of [['ASP473', 'C25B', 'business-jet operator'], ['AFR123', 'C130', 'military type'], ['XYZ123', 'KC10', 'military type'], ['ACA856', 'C17', 'military type'], ['N123AB', 'C172', 'registration as callsign'], ['TWY412', 'GLF6', 'business-jet type under an airline-shaped callsign'], ['WUP88', 'PC24', 'Wheels Up']]) {
   test(`${cs} on a ${type} (${why}): flight card dropped, plane catch keeps the type only`, () => {
     assert.equal(privateCatch(plane(cs, type)), true);
     const { list, dropped } = scrubSightings([flight(cs, type), plane(cs, type)]);

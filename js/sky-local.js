@@ -6,6 +6,7 @@
 //                and which missions a plane seen here in the last 7 days could complete.
 // localStorage 'skyLocal' = { d: { 'yyyy-m-d': { h: openHours, t: { TYPE: n }, f: { flag: n }, oh: [clock hours open],
 // fh: { hour: { flag: n } } } } }: oh and fh (2026-11-20) say WHEN things fly here, so missions fit the hour. No DOM.
+import { later } from './save-later.js?v=0.1.1915';
 const KEY = 'skyLocal', DAYS = 30, MIN_SEEN = 200, RARE_SHARE = 0.01;
 const dayKey = (t = Date.now()) => { const d = new Date(t); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
 const dayTime = (k) => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d).getTime(); };
@@ -21,7 +22,8 @@ function load(fresh = false) {
   const cut = Date.now() - DAYS * 86400e3; for (const k of Object.keys(cache.d)) if (!(dayTime(k) >= cut)) delete cache.d[k];
   return cache;
 }
-const save = (now = false) => { dirty = true; if (!now && Date.now() - saved < 15000) return; saved = Date.now(); dirty = false; try { localStorage.setItem(KEY, JSON.stringify(cache)); } catch {} };
+const write = () => { saved = Date.now(); dirty = false; try { localStorage.setItem(KEY, JSON.stringify(cache)); } catch {} }, writeLater = later(() => { if (dirty) write(); });
+const save = (now = false) => { dirty = true; if (!now && Date.now() - saved < 15000) { writeLater(); return; } write(); };
 // Newly seen aircraft (each once a day): [{ type, flags: ['heli', 'wide', 'prop', 'low', 'high', ...] }]; newHour: this
 // clock hour hadn't been counted as open yet today.
 /* late: [{ flags }] for aircraft already counted today that showed something new (its route came in, it climbed past 70°…):
