@@ -26,6 +26,9 @@ const numWord = (n) => (n === 0 ? 'None' : n === 1 ? 'One' : String(n));
 /* a card fact without its bold markers (the note has its own emphasis) */
 export const plainFact = (f) => String(f ?? '').replace(/\*\*/g, '').trim();
 /* "Air Canada 856 to Ottawa" from a flight ctx entry { airline, number, city } */
+/* a card named inside a sentence (Content, 2026-11-24: "To Halifax" doesn't read as a name): a flight card is "Air Canada 856
+   to Halifax", or "the flight to Halifax" without an airline on Sky's list; a plane card is its name. cap: it starts a sentence */
+const cardPhrase = (name, fc, cap = false) => (fc?.city ? (fc.airline && fc.number ? em(`${fc.airline} ${fc.number} to ${fc.city}`) : `${cap ? 'The' : 'the'} flight ${em(`to ${fc.city}`)}`) : em(name));
 const flightName = (f, city = true) => `${f.airline} ${f.number}${city && f.city ? ` to ${f.city}` : ''}`;
 
 // ---------- the candidates ----------
@@ -34,7 +37,7 @@ function caughtCand(c, ctx) {
   const left = ctx.missionsLeft, dim = left == null ? null : [left > 0 ? `${plural(left, 'mission')} left today.` : 'All three of today’s missions are done.', 'dim'];
   let first = null;
   if (c.newCard && c.fact) first = `${aAn(c.typeName).replace(/^a/, 'A')} ${em(c.typeName)}. ${esc(plainFact(c.fact))}`;
-  else if (c.newCard) first = `Got it. ${em(c.cardName)} is card ${c.cardCount}.`;
+  else if (c.newCard) first = `Got it. ${cardPhrase(c.cardName, c.cardFlight, true)} is card ${c.cardCount}.`;
   else if (c.flightDays >= 2 && c.flight) first = `${em(flightName(c.flight, false))} again. That’s ${c.flightDays} days.`;
   else if (c.typeCount >= 2) first = `Another ${em(c.typeName)}. That’s ${c.typeCount} different ones.`;
   if (!first) return null;
@@ -49,7 +52,7 @@ function momentCand(ctx, mem) {
   const f = ctx.firstCatch;
   if (f) { const d0 = new Date(f.at), d1 = new Date(ctx.now), year = d1.getFullYear() - d0.getFullYear() >= 1 && d0.getMonth() === d1.getMonth() && d0.getDate() === d1.getDate();
     const month = !year && d0.getDate() === d1.getDate() && (d1.getFullYear() * 12 + d1.getMonth()) - (d0.getFullYear() * 12 + d0.getMonth()) === 1;
-    if (year || month) return { kind: 'moment', sub: 'anniversary', key: `ann-${today}`, bubbles: [`${year ? 'A year' : 'A month'} ago today you caught your first card: ${em(f.cardName)}.`, [`You have ${ctx.cardCount} now.`, 'dim']], modelKey: f.modelKey }; }
+    if (year || month) return { kind: 'moment', sub: 'anniversary', key: `ann-${today}`, bubbles: [`${year ? 'A year' : 'A month'} ago today you caught your first card: ${cardPhrase(f.cardName, f.cardFlight)}.`, [`You have ${ctx.cardCount} now.`, 'dim']], modelKey: f.modelKey }; }
   /* 2 · a regular's round number */
   const rr = (ctx.roundDays ?? []).find((r) => !(mem.rounds ?? []).includes(`${r.key}@${r.days}`));
   if (rr) return { kind: 'moment', sub: 'round', key: `${rr.key}@${rr.days}`, bubbles: [`That’s ${rr.days} days you’ve caught ${em(flightName(rr.flight, false))}.`], modelKey: rr.key, mark: { rounds: `${rr.key}@${rr.days}` } };

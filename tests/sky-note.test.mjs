@@ -106,3 +106,13 @@ test('privacy: no pool line or moment carries a callsign, a registration or a pr
     for (let d = 0; d < POOL.length; d++) { const r = skyNote({ ...ctx, now: at(16 + d, 14) }, m); m = r.mem; lines.push(plain(text(r.pick))); }
     for (const l of lines) { assert.doesNotMatch(l, /\b[A-Z]{3}\d{1,4}[A-Z]?\b/, l); assert.doesNotMatch(l, /\b[A-Z]-[A-Z]{4}\b|\bN\d{1,5}[A-Z]{0,2}\b/, l); } }
 });
+
+test('a flight card inside a sentence is "Airline number to City", or "the flight to City" without a listed airline', () => {
+  const now = at(12, 15), c = (o) => full(now, { caught: { at: now - 60e3, newCard: true, cardCount: 42, ...o } });
+  assert.match(plain(text(skyNote(c({ cardName: 'To Halifax', cardFlight: { airline: 'Air Canada', number: '604', city: 'Halifax' } }), {}).pick)), /^Got it\. Air Canada 604 to Halifax is card 42\./);
+  assert.match(plain(text(skyNote(c({ cardName: 'To Halifax', cardFlight: { city: 'Halifax' } }), {}).pick)), /^Got it\. The flight to Halifax is card 42\./);
+  assert.match(plain(text(skyNote(c({ cardName: 'Boeing 747-8' }), {}).pick)), /^Got it\. Boeing 747-8 is card 42\./);
+  const ann = (cf) => plain(text(skyNote(full(at(20, 9), { firstCatch: { at: new Date(2025, 10, 20, 18).getTime(), cardName: 'To Ottawa', cardFlight: cf } }), {}).pick));
+  assert.match(ann({ airline: 'Air Canada', number: '856', city: 'Ottawa' }), /your first card: Air Canada 856 to Ottawa\./);
+  assert.match(ann({ city: 'Ottawa' }), /your first card: the flight to Ottawa\./);
+});
