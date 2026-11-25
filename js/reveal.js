@@ -5,15 +5,15 @@
 //  Everything scales with rarity (Legendary dims the sky, shockwave, held breath, slow flip, fanfare).
 // Waits use timers, not animation.finished, so a paused tab can never freeze the sequence.
 
-import { sfx, loadSfx } from './sfx.js?v=0.1.1922';
-import { audioCtx } from './audio-ctx.js?v=0.1.1922';
-import { TIER_INFO } from './rarity.js?v=0.1.1922';
-import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1922';
-import { applyBack } from './card-backs.js?v=0.1.1922';
-import { addStarfield } from './starfield.js?v=0.1.1922';
-import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1922';
-import { packPlan, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1922'; /* the two-card pack opening (prototype, 2026-11-20) */
-import { tearJag } from './gift-pack.js?v=0.1.1922';
+import { sfx, loadSfx } from './sfx.js?v=0.1.1923';
+import { audioCtx } from './audio-ctx.js?v=0.1.1923';
+import { TIER_INFO } from './rarity.js?v=0.1.1923';
+import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1923';
+import { applyBack } from './card-backs.js?v=0.1.1923';
+import { addStarfield } from './starfield.js?v=0.1.1923';
+import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1923';
+import { packPlan, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1923'; /* the two-card pack opening (prototype, 2026-11-20) */
+import { tearJag } from './gift-pack.js?v=0.1.1923';
 
 const FX = TIER_FX; /* one rarity table for every card moment (js/card-moment.js, 2026-11-11) */
 const NIGHT_MILESTONES = [3, 5, 10, 25, 50, 100, 200, 365], STAMP_MILESTONES = [5, 10, 25, 50, 100, 200, 300, 400];
@@ -209,7 +209,7 @@ export async function playReveal({ card, o, seen, origin, fleet = null, progress
   root.style.setProperty('--fx', color);
   root.classList.remove('rv-done');
   /* a plane or flight card (Sky Collector, playtest 2026-11-18: a repeat plane read "NEW PHASE STAMP"): a stamp is another aircraft of the type, or the flight on another day */
-  $('reveal-eyebrow').textContent = fresh && items.length > 1 && items.every((it) => it.fresh) ? '2 NEW CARDS' : fresh ? 'NEW CARD' : newStamp ? (o.sky === 'plane' ? 'NEW AIRCRAFT STAMP' : o.sky === 'flight' ? 'NEW FLIGHT STAMP' : fleet?.line ? 'NEW PHASE STAMP' : 'NEW LAUNCH STAMP') : NIGHT_MILESTONES.includes(nights) ? `SEEN ON ${nights} ${o.sky ? 'DAYS' : 'NIGHTS'}` : 'SEEN AGAIN';
+  $('reveal-eyebrow').textContent = fresh && items.length > 1 && items.every((it) => it.fresh) ? '2 NEW CARDS' : fresh ? 'NEW CARD' : o.sky && !fresh && levelUp && LEVEL_WORD[level] ? `NOW ${LEVEL_WORD[level].toUpperCase()}` : newStamp ? (o.sky === 'plane' ? (lead.livery ? 'NEW LIVERY' : 'ANOTHER AIRCRAFT') : o.sky === 'flight' ? `CAUGHT ON ${fleet?.stamps ?? nights} DAYS` : fleet?.line ? 'NEW PHASE STAMP' : 'NEW LAUNCH STAMP') /* Sky: no stamps, so no "stamp" in the words (2026-11-25) */ : NIGHT_MILESTONES.includes(nights) ? `SEEN ON ${nights} ${o.sky ? 'DAYS' : 'NIGHTS'}` : 'SEEN AGAIN';
   /* what a screen reader says as the reveal opens: the news, the card and its rarity (accessibility pass 2026-11-09) */
   { const nm = card?.querySelector?.('.card__name')?.textContent?.trim() || o?.name || ''; const rv = $('reveal'); rv.removeAttribute('aria-labelledby'); rv.setAttribute('aria-label', `${$('reveal-eyebrow').textContent.trim().toLowerCase().replace(/^./, (c) => c.toUpperCase())}${nm ? `: ${nm}` : ''}, ${(TIER_INFO[tierKey] ?? TIER_INFO.common).label}${xp > 0 ? `, plus ${xp} XP` : ''}`); }
   if (xp > 0) $('reveal-eyebrow').insertAdjacentHTML('beforeend', `<span class="rv-xp"><span class="rv-roll"><span><i class="rv-dot">·</i>+${xp} XP</span></span></span>`); // rolls in when the card lands
@@ -416,7 +416,7 @@ async function finish({ fx, color, fresh, seen, level, levelUp, card, alive, fle
   const news = shiny && !conDone ? { kind: 'shiny', eyebrow: `SHINY · ${shiny.label.toUpperCase()}`, line: label, sub: shiny.line, ms: 5000 } // say why it’s shiny (2026-10-08)
     : fresh && con ? (conDone ? { kind: 'event', eyebrow: con.unit === 'worlds' ? 'SET COMPLETE' : 'CONSTELLATION COMPLETE', line: con.name, sub: `All ${con.total} ${con.unit ?? 'stars'} · patch earned`, art: con.art } : (con.have === Math.ceil(con.total / 2) && con.total >= 4 ? { kind: 'xp', id: 'con-progress', eyebrow: con.name.toUpperCase(), line: `Halfway · ${con.have} of ${con.total} ${con.unit ?? 'stars'}`, sub: left === 1 ? 'One to go' : `${left} to go`, art: con.art } : milestone && MILESTONES.includes(collected) && !PATCHED.includes(collected) ? { kind: 'event', icon: 'calendar', eyebrow: 'MILESTONE', line: `${collected.toLocaleString('en-US')} cards collected` } : null)) /* a card-count milestone that happens to be a star still says so */ /* only at halfway and complete (2026-10-25, design/catch-feel.html 06 rule 4) */
     : fresh ? (milestone ? { kind: 'event', icon: 'calendar', eyebrow: 'MILESTONE', line: collected === 1 ? 'Your first card' : `${collected.toLocaleString('en-US')} cards collected` } : null)
-    : newStamp ? (fleet?.milestone ? { kind: 'event', eyebrow: 'NEW STAMP', line: fleet.milestone } : !fleet?.line && STAMP_MILESTONES.includes(fleet?.stamps) ? { kind: 'event', icon: 'stamp', eyebrow: 'NEW STAMP', line: `${fleet.stamps} launches stamped` } : { kind: 'xp', eyebrow: 'NEW STAMP', line: stampLine })
+    : newStamp ? (fleet?.milestone ? { kind: 'event', eyebrow: 'NEW STAMP', line: fleet.milestone } : !fleet?.line && STAMP_MILESTONES.includes(fleet?.stamps) ? { kind: 'event', icon: 'stamp', eyebrow: 'NEW STAMP', line: `${fleet.stamps} launches stamped` } : { kind: 'xp', eyebrow: o.sky === 'plane' ? 'ANOTHER AIRCRAFT' : o.sky === 'flight' ? 'ANOTHER DAY' : 'NEW STAMP', line: stampLine }) /* Sky: no stamps (2026-11-25) */
     : NIGHT_MILESTONES.includes(nights) ? { kind: 'event', icon: 'calendar', eyebrow: 'MILESTONE', line: `Seen on ${nights} different nights`, sub: label }
     : null; // a plain repeat: no toast (2026-10-07)
   if (news) announce?.({ ms: 3200, ...news, delay: 900 }); // its sound plays as it appears (main.js onTicketShown)
@@ -621,7 +621,7 @@ function orderDeck(items) {
    aircraft back, then the medal, the count and the "N to Silver" tick up and the bar slides along when it comes forward. A
    level-up (new medal) and a new livery keep their stamps. */
 function prepTick(it) {
-  if (it.fresh || !it.newStamp || it.levelUp || it.livery || it.o?.sky !== 'plane') return;
+  if (it.fresh || !it.newStamp || it.o?.sky !== 'plane') return; /* a level-up and a new livery tick up too now: no stamp on a photo at all (2026-11-25, Sevaan: "I don't want any stamps on any photos") */
   const c = it.card, medal = c.querySelector('.cc-medal b'), cnt = c.querySelector('.cc-pc p:not(.cc-lv)'), bar = c.querySelector('.cc-bar i'), lv = c.querySelector('.cc-pc .cc-lv');
   const m = /^(\d+) of (\d+)/.exec(cnt?.textContent ?? ''); if (!medal || !bar || !m || +m[1] < 2) return;
   const n = +m[1], T = +m[2], was = { medal: medal.textContent, cnt: cnt.textContent, bar: bar.style.width, lv: lv?.textContent ?? '' };
@@ -693,7 +693,7 @@ async function forward(i, initial = false) {
   }
   if (it.seenFront) return; it.seenFront = true;
   if (it.tick) { const t = it.tick; it.tick = null; setTimeout(() => { if (my !== run) return; tickUp(t); if (!initial) sfx('stamp', { gain: 0.45 }); }, reduced() ? 0 : 420); }
-  else if (it.stamp && !it.fresh) { it.card.insertAdjacentHTML('beforeend', `<span class="dk-stamp" aria-hidden="true">${esc(it.stamp[0])}<small>${esc(it.stamp[1])}</small></span>`); requestAnimationFrame(() => it.card.querySelector('.dk-stamp')?.classList.add('in'));
+  else if (it.stamp && !it.fresh && !it.o?.sky /* Sky's plane cards and passes never get a stamp over the photo (2026-11-25, Sevaan); Space's cards keep theirs */) { it.card.insertAdjacentHTML('beforeend', `<span class="dk-stamp" aria-hidden="true">${esc(it.stamp[0])}<small>${esc(it.stamp[1])}</small></span>`); requestAnimationFrame(() => it.card.querySelector('.dk-stamp')?.classList.add('in'));
     if (!initial) setTimeout(() => { if (my === run) sfx('stamp', { gain: 0.6 }); }, reduced() ? 0 : 300); } // the front card's payoff already sounded its stamp
   if (it.levelUp && !initial) (it.card.querySelector('.card__face, .fc') ?? it.card).animate([{ boxShadow: '0 0 0 transparent' }, { boxShadow: `0 0 34px ${LEVEL_COLOR[it.level]}` }, { boxShadow: '0 0 0 transparent' }], { duration: 1300 });
 }
