@@ -66,6 +66,13 @@ export function localStats(now = Date.now()) {
    you in the last 30 days" after 2 minutes, 8 different aircraft of one type in the first feed, as if it were a month's
    history). A visit is a day, as for Regulars (js/sky-regulars.js): the days this type was seen here, out of the days
    Sky was open. Until there are HISTORY_DAYS of them, only what's true today, or nothing. */
+/* The types seen here on the 7 days before today, and how many days the log has (the daily note's "stranger to your sky",
+   js/sky-note.js): types only, as the log keeps them */
+export function typesWeek(now = Date.now()) {
+  const c = load(true), today = dayKey(now), from = dayTime(today) - 7 * 86400e3, types = new Set(); let days = 0;
+  for (const [k, d] of Object.entries(c.d)) { if (d.h) days++; if (k === today || dayTime(k) < from) continue; for (const [t, n] of Object.entries(d.t ?? {})) if (n > 0) types.add(t); }
+  return { types, days };
+}
 export const HISTORY_DAYS = 3;
 export function seenLine(type, stats) {
   const t = String(type || '').toUpperCase(), n = stats?.typeDays?.get(t) ?? 0, of = stats?.days ?? 0;

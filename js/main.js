@@ -1,87 +1,89 @@
-import { pullToClose } from './pull-close.js?v=0.1.1910';
-import { TESTER } from './build-flavor.js?v=0.1.1910';
-import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1910';
-import * as Secrets from './secrets.js?v=0.1.1910';
-import { STORY_BY_SECRET } from './stories.js?v=0.1.1910';
-import { cloudsHtml, rainHtml, warmClouds } from './weather-art.js?v=0.1.1910';
-import * as Ufo from './ufo.js?v=0.1.1910';
-import * as Fossil from './fossil.js?v=0.1.1910';
-import { patchHtml, patchSvg, addSecretArt } from './patches.js?v=0.1.1910';
-import { registerSkySecrets, secretsForCatch, sixContinents, lighterThanAir, isGlider, SKY_DATED } from './sky-secrets.js?v=0.1.1910';
-import { SKY_PATCH_ART, SKY_PATCHES_MORE } from './sky-patches.js?v=0.1.1910';
-import { registerSkyStories } from './sky-stories.js?v=0.1.1910';
-import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1910';
-import { pmOn, pmTime, pmStart, pmStop, pmLast, pmMark, pmSpan } from './perf-meter.js?v=0.1.1910';
-import { toast, ticket, dropToast, toastPending, onTicketShown, iconSvg, dropPageNotices } from './toast.js?v=0.1.1910';
-import { VERSION } from './version.js?v=0.1.1910';
-import { loadCatalog, frame, look, track, motion, compassPoint, enuFromAzEl, DARK_SUN_ELEVATION, SkyModel, BelowModel, overEarth, RisingSoon, setBinocularMode, setSkyLimit, toWorker } from './orbit.js?v=0.1.1910';
-import { placeName } from './geo.js?v=0.1.1910';
-import { skyLimit, SKIES, DEFAULT_SKY, SB_MIN, SB_MAX, SLIDER_MAX, sbOfSky, skyNameFor } from './sky-limit.js?v=0.1.1910';
-import { fitCards } from './fit-text.js?v=0.1.1910';
-import { conArt } from './con-art.js?v=0.1.1910';
-import { fetchWeather, keptWeather, tonightSky, skyClearAt, goodSkyAt } from './weather.js?v=0.1.1910';
-import { CON_FIGURES } from './con-figures.js?v=0.1.1910';
-import { loadConstellations, CON_STARS, CON_BY_ID, conProgress, starDistance, conList } from './constellations.js?v=0.1.1910';
-import { shinyFor, SHINY, shinyForPlane } from './shiny.js?v=0.1.1910';
-import { setSkyProgress, setSkySize, progress as progressOf, missionsFor, skyPossible, skyDeal, nearLevelUp, chooseSkyWeek, readDeals, readWeekThemes, WEEK_THEMES, countryOf, weekStartOf, weekThemeFor, xpCarry } from './progress.js?v=0.1.1910';
-import { eventOf, activeEvent, nextEvent, activeShower, nextShower, eventLine, setEventsOff } from './events.js?v=0.1.1910';
-import { localText, oneStop } from './localize.js?v=0.1.1910';
-import { searchCities, preloadCities } from './cities.js?v=0.1.1910';
-import { catalogUrl, refreshCatalog, dropCatalog } from './fresh-data.js?v=0.1.1910';
-import { compassSettling, startSensors, trySensorsQuietly, hasLiveSensors, trueBasis, basisFromAzEl, rotateAz, pointing, nudgeHeading, getNudge, lockHeading, setCompassPlace, getDeclination, hasSensorView, resumeSensors, needsPermission, fuseSwitch, fuseInfo, setFuseDial } from './sensors.js?v=0.1.1910';
-import { SkyView, shortName, stripLandscape } from './sky.js?v=0.1.1910';
-import { loadSky, eqToEnu, solarSystem, milkyWayModel, galAxes, roadster, starVector } from './celestial.js?v=0.1.1910';
-import { ICONS, iconById, iconAllowed, iconToUse } from './app-icons.js?v=0.1.1910';
-import { isPlus, setPlusForTesting, onPlus, PLUS_PRICES, initStore, storePlans, buyPlus, restorePlus, redeemCode, rcTestStore, storeOpen } from './plus.js?v=0.1.1910';
-import { isNative, getPosition, locationPrecision, saveFile, notifyAt, cancelNotify, haptic, onNative, nativeChrome, plugin, tidyChannels } from './native.js?v=0.1.1910';
-import { initBackup, onBackupChange, backupSoon, clearBackup, backupStatus, rememberSightings, backupBid } from './cloud-backup.js?v=0.1.1910';
-import { SERVER, SKY_API } from './server.js?v=0.1.1910';
-import { codeFrom, packIdFrom, readGiftCode, planImport, summarizeImport, giftTags, pickHighlights, looksReceived, asGift } from './gift.js?v=0.1.1910';
-import { playPack, packMessage } from './gift-pack.js?v=0.1.1910';
-import { addSighting, addSightings, allSightings, deleteSighting, deleteSightings, putSighting, warmStore } from './store.js?v=0.1.1910';
-import { scrubSightings, privateCatch } from './plane-privacy.js?v=0.1.1910';
-import { tourOnLaunch } from './tour-rule.js?v=0.1.1910';
-import { cardArt } from './art.js?v=0.1.1910';
-import { renderCard, miniCard, cardLevel, artImage, lockedArt, attachTilt, attachGyro, throwOff, attachFlip, turnCard, phasePath } from './card.js?v=0.1.1910';
-import { applyBack, CARD_BACKS, backUnlocked, chosenBack, chooseBack, backEarned, showBackNext } from './card-backs.js?v=0.1.1910';
-import { sfx, loadSfx, sfxVolume, heartbeat } from './sfx.js?v=0.1.1910';
-import { audioCtx, audioMade, audioIfAny } from './audio-ctx.js?v=0.1.1910';
-import { musicOn, startMusic, setMusic, duckMusic, musicVolume, setMusicVolume, musicAway } from './music.js?v=0.1.1910';
-import { onRevealNews, playReveal, playView, primeReveal, stopReveal, onRevealDismiss, onRevealSwipeIntoBinder, rushReveal, cancelRush, onRevealFront, revealFrontCard, revealDeckClone } from './reveal.js?v=0.1.1910';
-import { packSetting, packSeen, packChoice, PACK_VARIANTS, PACK_SHORT_AFTER, PACK_SEEN_KEY } from './pack-reveal.js?v=0.1.1910'; /* the two-card pack opening (prototype, Testing tools) */
-import { buildCards, cardKeyFor, stampKeyFor, normalizeSighting, stampsIn, fleetLevel, moonPhaseOf, moonPhaseAt, MOON_PHASES } from './card-model.js?v=0.1.1910';
-import { collectedDuringPass, collectedTonight, canCapture, nightsIn, nightKey } from './observation.js?v=0.1.1910';
-import { naturalTargets, SOLAR_SYSTEM, DEEP_SKY, NATURAL, NATURAL_BY_KEY } from './natural.js?v=0.1.1910';
-import { placeFromTimeZone } from './tz-places.js?v=0.1.1910';
-import { TIER_INFO } from './rarity.js?v=0.1.1910';
-import { SETS, albumList, useSets } from './sets.js?v=0.1.1910';
-import { SKY_ALBUM_SETS, setHomeCountry } from './sky-sets.js?v=0.1.1910';
-import { countryNear } from './routes.js?v=0.1.1910';
-import { TYPE_LABEL, ownerName, orbitStats } from './facts.js?v=0.1.1910';
-import { note, send as sendNotes, noteError, daysSinceInstall } from './field-notes.js?v=0.1.1910';
-import { dist } from './units.js?v=0.1.1910';
-const shareCardEl = (...a) => import('./share-card.js?v=0.1.1910').then((m) => m.shareCardEl(...a)); /* loaded when first shared (perf audit 2026-10-29) */
-import { loadLore, titleFor, factFor, richText } from './lore.js?v=0.1.1910';
-import { PlaneTracker, planesAvailable, aircraftName, isHelicopter, planePath, anonId } from './planes.js?v=0.1.1910';
-import { dayKey, maxAgeS } from './plane-feed.js?v=0.1.1910';
-import { initCatches, clearCatches } from './catch-store.js?v=0.1.1910';
-import { cardsFor, retier, planeKey, rekeyUnlisted, glyphFor } from './flights.js?v=0.1.1910';
-import { rareHere, localStats, noCoverage } from './sky-local.js?v=0.1.1910';
-import { makerOf as skyMakerOf } from './sky-kinds.js?v=0.1.1910';
-import { skyCardPhotoUrl, skyCardPhotoHtml, glyphSvg, FAMILY as AIRLINE_FAMILY, escName } from './flight-card.js?v=0.1.1910';
-import { airlineIcon } from './airline-icons.js?v=0.1.1910'; /* the radar strip shows each plane's airline as a tail fin (2026-11-18) */
-import { catchSightings, isSkyCard, skyStampInfo, skyModel, skyTypeCode } from './sky-cards.js?v=0.1.1910';
-import { THRESHOLDS as SKY_THRESHOLDS, levelFor as skyLevelFor, hasAirlineCallsign } from './sky-stamps.js?v=0.1.1910';
-import { renderToday, heroHtml as todayHero, logSeen, upForOf, dirWord as todayDir, aroundPlanes, planePhoto, upcoming } from './sky-today.js?v=0.1.1910';
-import { feetPlanes, feetName, stripSpot } from './sky-feet.js?v=0.1.1910';
-import { planesUp, isUp, firstUp, canCatch, isNight, UP_MIN_EL } from './sky-up.js?v=0.1.1910';
-import { letGoAfterCatch, keepWhileUp } from './plane-guide.js?v=0.1.1910';
-import { showMeVerdict, goneWords, NOFEED_WORDS, FIND_MS } from './sky-find.js?v=0.1.1910';
-import { catchPanel, catches as skyCatches, previewFor as skyPreview, highlightFor as skyHighlightFor, preparePlaneCatch, setCatchSource } from './sky-catch.js?v=0.1.1910';
-import { addStarfield } from './starfield.js?v=0.1.1910';
-import { pickAlert, pickRegular, sure as alertSure } from './sky-alerts.js?v=0.1.1910';
-import { regulars, clockText, airlinesAt, regularType } from './sky-regulars.js?v=0.1.1910';
-import { noteTime } from './note-time.js?v=0.1.1910';
+import { pullToClose } from './pull-close.js?v=0.1.1911';
+import { TESTER } from './build-flavor.js?v=0.1.1911';
+import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1911';
+import * as Secrets from './secrets.js?v=0.1.1911';
+import { STORY_BY_SECRET } from './stories.js?v=0.1.1911';
+import { cloudsHtml, rainHtml, warmClouds } from './weather-art.js?v=0.1.1911';
+import * as Ufo from './ufo.js?v=0.1.1911';
+import * as Fossil from './fossil.js?v=0.1.1911';
+import { patchHtml, patchSvg, addSecretArt } from './patches.js?v=0.1.1911';
+import { registerSkySecrets, secretsForCatch, sixContinents, lighterThanAir, isGlider, SKY_DATED } from './sky-secrets.js?v=0.1.1911';
+import { SKY_PATCH_ART, SKY_PATCHES_MORE } from './sky-patches.js?v=0.1.1911';
+import { registerSkyStories } from './sky-stories.js?v=0.1.1911';
+import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1911';
+import { pmOn, pmTime, pmStart, pmStop, pmLast, pmMark, pmSpan } from './perf-meter.js?v=0.1.1911';
+import { toast, ticket, dropToast, toastPending, onTicketShown, iconSvg, dropPageNotices } from './toast.js?v=0.1.1911';
+import { VERSION } from './version.js?v=0.1.1911';
+import { loadCatalog, frame, look, track, motion, compassPoint, enuFromAzEl, DARK_SUN_ELEVATION, SkyModel, BelowModel, overEarth, RisingSoon, setBinocularMode, setSkyLimit, toWorker } from './orbit.js?v=0.1.1911';
+import { placeName } from './geo.js?v=0.1.1911';
+import { skyLimit, SKIES, DEFAULT_SKY, SB_MIN, SB_MAX, SLIDER_MAX, sbOfSky, skyNameFor } from './sky-limit.js?v=0.1.1911';
+import { fitCards } from './fit-text.js?v=0.1.1911';
+import { conArt } from './con-art.js?v=0.1.1911';
+import { fetchWeather, keptWeather, tonightSky, skyClearAt, goodSkyAt } from './weather.js?v=0.1.1911';
+import { CON_FIGURES } from './con-figures.js?v=0.1.1911';
+import { loadConstellations, CON_STARS, CON_BY_ID, conProgress, starDistance, conList } from './constellations.js?v=0.1.1911';
+import { shinyFor, SHINY, shinyForPlane } from './shiny.js?v=0.1.1911';
+import { setSkyProgress, setSkySize, progress as progressOf, missionsFor, skyPossible, skyDeal, nearLevelUp, chooseSkyWeek, readDeals, readWeekThemes, WEEK_THEMES, countryOf, weekStartOf, weekThemeFor, xpCarry } from './progress.js?v=0.1.1911';
+import { eventOf, activeEvent, nextEvent, activeShower, nextShower, eventLine, setEventsOff } from './events.js?v=0.1.1911';
+import { localText, oneStop } from './localize.js?v=0.1.1911';
+import { searchCities, preloadCities } from './cities.js?v=0.1.1911';
+import { catalogUrl, refreshCatalog, dropCatalog } from './fresh-data.js?v=0.1.1911';
+import { compassSettling, startSensors, trySensorsQuietly, hasLiveSensors, trueBasis, basisFromAzEl, rotateAz, pointing, nudgeHeading, getNudge, lockHeading, setCompassPlace, getDeclination, hasSensorView, resumeSensors, needsPermission, fuseSwitch, fuseInfo, setFuseDial } from './sensors.js?v=0.1.1911';
+import { SkyView, shortName, stripLandscape } from './sky.js?v=0.1.1911';
+import { loadSky, eqToEnu, solarSystem, milkyWayModel, galAxes, roadster, starVector } from './celestial.js?v=0.1.1911';
+import { ICONS, iconById, iconAllowed, iconToUse } from './app-icons.js?v=0.1.1911';
+import { isPlus, setPlusForTesting, onPlus, PLUS_PRICES, initStore, storePlans, buyPlus, restorePlus, redeemCode, rcTestStore, storeOpen } from './plus.js?v=0.1.1911';
+import { isNative, getPosition, locationPrecision, saveFile, notifyAt, cancelNotify, haptic, onNative, nativeChrome, plugin, tidyChannels } from './native.js?v=0.1.1911';
+import { initBackup, onBackupChange, backupSoon, clearBackup, backupStatus, rememberSightings, backupBid } from './cloud-backup.js?v=0.1.1911';
+import { SERVER, SKY_API } from './server.js?v=0.1.1911';
+import { codeFrom, packIdFrom, readGiftCode, planImport, summarizeImport, giftTags, pickHighlights, looksReceived, asGift } from './gift.js?v=0.1.1911';
+import { playPack, packMessage } from './gift-pack.js?v=0.1.1911';
+import { addSighting, addSightings, allSightings, deleteSighting, deleteSightings, putSighting, warmStore } from './store.js?v=0.1.1911';
+import { scrubSightings, privateCatch } from './plane-privacy.js?v=0.1.1911';
+import { tourOnLaunch } from './tour-rule.js?v=0.1.1911';
+import { cardArt } from './art.js?v=0.1.1911';
+import { renderCard, miniCard, cardLevel, artImage, lockedArt, attachTilt, attachGyro, throwOff, attachFlip, turnCard, phasePath } from './card.js?v=0.1.1911';
+import { applyBack, CARD_BACKS, backUnlocked, chosenBack, chooseBack, backEarned, showBackNext } from './card-backs.js?v=0.1.1911';
+import { sfx, loadSfx, sfxVolume, heartbeat } from './sfx.js?v=0.1.1911';
+import { audioCtx, audioMade, audioIfAny } from './audio-ctx.js?v=0.1.1911';
+import { musicOn, startMusic, setMusic, duckMusic, musicVolume, setMusicVolume, musicAway } from './music.js?v=0.1.1911';
+import { onRevealNews, playReveal, playView, primeReveal, stopReveal, onRevealDismiss, onRevealSwipeIntoBinder, rushReveal, cancelRush, onRevealFront, revealFrontCard, revealDeckClone } from './reveal.js?v=0.1.1911';
+import { packSetting, packSeen, packChoice, PACK_VARIANTS, PACK_SHORT_AFTER, PACK_SEEN_KEY } from './pack-reveal.js?v=0.1.1911'; /* the two-card pack opening (prototype, Testing tools) */
+import { buildCards, cardKeyFor, stampKeyFor, normalizeSighting, stampsIn, fleetLevel, moonPhaseOf, moonPhaseAt, MOON_PHASES } from './card-model.js?v=0.1.1911';
+import { collectedDuringPass, collectedTonight, canCapture, nightsIn, nightKey } from './observation.js?v=0.1.1911';
+import { naturalTargets, SOLAR_SYSTEM, DEEP_SKY, NATURAL, NATURAL_BY_KEY } from './natural.js?v=0.1.1911';
+import { placeFromTimeZone } from './tz-places.js?v=0.1.1911';
+import { TIER_INFO } from './rarity.js?v=0.1.1911';
+import { SETS, albumList, useSets } from './sets.js?v=0.1.1911';
+import { SKY_ALBUM_SETS, setHomeCountry, SKY_SETS, setLevel } from './sky-sets.js?v=0.1.1911';
+import { skyNote } from './sky-note.js?v=0.1.1911';
+import { typeFacts, typeFact } from './sky-facts.js?v=0.1.1911';
+import { countryNear } from './routes.js?v=0.1.1911';
+import { TYPE_LABEL, ownerName, orbitStats } from './facts.js?v=0.1.1911';
+import { note, send as sendNotes, noteError, daysSinceInstall } from './field-notes.js?v=0.1.1911';
+import { dist } from './units.js?v=0.1.1911';
+const shareCardEl = (...a) => import('./share-card.js?v=0.1.1911').then((m) => m.shareCardEl(...a)); /* loaded when first shared (perf audit 2026-10-29) */
+import { loadLore, titleFor, factFor, richText } from './lore.js?v=0.1.1911';
+import { PlaneTracker, planesAvailable, aircraftName, isHelicopter, planePath, anonId, airlineName } from './planes.js?v=0.1.1911';
+import { dayKey, maxAgeS } from './plane-feed.js?v=0.1.1911';
+import { initCatches, clearCatches } from './catch-store.js?v=0.1.1911';
+import { cardsFor, retier, planeKey, rekeyUnlisted, glyphFor } from './flights.js?v=0.1.1911';
+import { rareHere, localStats, noCoverage, typesWeek } from './sky-local.js?v=0.1.1911';
+import { makerOf as skyMakerOf } from './sky-kinds.js?v=0.1.1911';
+import { skyCardPhotoUrl, skyCardPhotoHtml, glyphSvg, FAMILY as AIRLINE_FAMILY, escName } from './flight-card.js?v=0.1.1911';
+import { airlineIcon } from './airline-icons.js?v=0.1.1911'; /* the radar strip shows each plane's airline as a tail fin (2026-11-18) */
+import { catchSightings, isSkyCard, skyStampInfo, skyModel, skyTypeCode } from './sky-cards.js?v=0.1.1911';
+import { THRESHOLDS as SKY_THRESHOLDS, levelFor as skyLevelFor, hasAirlineCallsign } from './sky-stamps.js?v=0.1.1911';
+import { renderToday, heroHtml as todayHero, logSeen, upForOf, dirWord as todayDir, aroundPlanes, planePhoto, upcoming, todayFacts } from './sky-today.js?v=0.1.1911';
+import { feetPlanes, feetName, stripSpot } from './sky-feet.js?v=0.1.1911';
+import { planesUp, isUp, firstUp, canCatch, isNight, UP_MIN_EL } from './sky-up.js?v=0.1.1911';
+import { letGoAfterCatch, keepWhileUp } from './plane-guide.js?v=0.1.1911';
+import { showMeVerdict, goneWords, NOFEED_WORDS, FIND_MS } from './sky-find.js?v=0.1.1911';
+import { catchPanel, catches as skyCatches, previewFor as skyPreview, highlightFor as skyHighlightFor, preparePlaneCatch, setCatchSource } from './sky-catch.js?v=0.1.1911';
+import { addStarfield } from './starfield.js?v=0.1.1911';
+import { pickAlert, pickRegular, sure as alertSure } from './sky-alerts.js?v=0.1.1911';
+import { regulars, clockText, airlinesAt, regularType, regularAllowed, seenTodayMinute } from './sky-regulars.js?v=0.1.1911';
+import { noteTime } from './note-time.js?v=0.1.1911';
 
 /* Startup timings (2026-11-11, Sevaan: "measure"): marks from the page's start to the sky being ready, kept in localStorage
    'bootTimes' and shown in Testing tools → Startup timings. */
@@ -2624,42 +2626,73 @@ function skyDailyNote() { /* plane names through escName (js/flight-card.js, as 
     const t0 = Date.now(), dk = (t) => new Date(t).toDateString(), today = dk(t0), mine = state.sightings.filter((x) => !x.sim && x.via !== 'gift');
     const before = new Set(mine.map((x) => dk(x.time)).filter((k) => k !== today)); if (!before.size) return null;
     const first = Math.min(...mine.map((x) => x.time)); if (t0 - first < 16 * 3600e3) return null;
-    const dayN = before.size + 1, cands = [], RANK = { common: 0, uncommon: 1, rare: 2, epic: 3, legendary: 4 }, clock = (t) => fmtTime(t);
+    const dayN = before.size + 1, RANK = { common: 0, uncommon: 1, rare: 2, epic: 3, legendary: 4 };
     const obs = state.observer, ups = obs ? planesUp(state.planes.positions(obs)) : [], vis = new Set(ups.map((a) => a.plane.hex));
     const nexts = obs ? upcoming(state.planes.planes ?? [], obs, t0, vis) : [];
-    /* 1 · a rare plane (Epic or rarer) up now or on its way */
+    const ctx = { now: t0, dayN, minuteNow: new Date(t0).getHours() * 60 + new Date(t0).getMinutes() };
+    /* rare: an Epic or rarer plane up now or on its way (as before) */
     const rare = [...ups.map((a) => ({ p: a.plane, a })), ...nexts.map((n) => ({ p: n.p, n }))].map((x) => ({ ...x, sm: arSkyModel(x.p) })).filter((x) => x.sm?.model && (RANK[x.sm.model.tier] ?? 0) >= 3 && !x.sm.owned).sort((x, y) => RANK[y.sm.model.tier] - RANK[x.sm.model.tier])[0];
-    if (rare) { const m = rare.sm.model, tier = TIER_INFO[m.tier] ?? TIER_INFO.rare, type = escapeHtml(m.typeName ?? m.name);
-      cands.push({ kind: 'rare', key: rare.p.hex, model: m, att: { meta: `${tier.gem} ${escapeHtml(tier.label)}` }, show: () => skyShowMe(rare.p.hex, null, rare.n ? { az: rare.n.az, el: 15, at: t0 + rare.n.inS * 1000, name: m.name } : null),
-        bubbles: [rare.a ? `Something rare is up: <em>${escName(m.name)}</em>, ${escapeHtml(todayDir(rare.a.az))} of you.` : `Something rare is on its way: <em>${escName(m.name)}</em>, over you in about ${Math.max(1, Math.round(rare.n.inS / 60))} min.`, [`A ${tier.label} card you don’t have yet.`, 'dim']] }); }
-    /* 2 · a regular due in the next 3 hours */
-    const reg = regulars(t0).find((r) => r.next > t0 && r.next - t0 < 3 * 3600e3);
-    if (reg) { const rt = state.planes.route(reg.callsign), full = rt?.full, type = skyTypeOf(reg.callsign), fl = full ? cardsFor({ callsign: reg.callsign, type }, full, rt.airline || '').flight : null, m = fl ? state.cardModels.get(fl.key) ?? skyModel(fl, 'flight') : null;
-      const name = `${rt?.airline || reg.callsign.slice(0, 3)} ${reg.callsign.replace(/^[A-Z]{3}/, '')}${full ? ` to ${full.to.city}` : ''}`;
-      cands.push({ kind: 'regular', key: reg.callsign, model: m ?? undefined, att: m ? { owned: true, meta: `Usually ${escapeHtml(clockText(reg.minute))}`, time: reg.next, type } : undefined, /* its type, for the photo: a regular's flight card has none of its own (simulator check 2026-11-20: a black square) */
-        bubbles: [`Your regular, <em>${escapeHtml(name)}</em>, usually comes over about ${escapeHtml(clockText(reg.minute))}.`, [`Seen ${reg.days} of the last ${reg.of} days.`, 'dim']] }); }
-    /* 3 · one day (a flight) or one aircraft (a plane type) from Silver or Gold */
-    const byKey = new Map(); for (const x of mine) { if (!x.cardKey || !x.cardSnapshot?.sky) continue; const e = byKey.get(x.cardKey) ?? byKey.set(x.cardKey, { m: x.cardSnapshot, days: new Set(), hexes: new Set() }).get(x.cardKey); e.days.add(dk(x.time)); if (x.hex) e.hexes.add(x.hex); }
+    if (rare) { const m = rare.sm.model, tier = TIER_INFO[m.tier] ?? TIER_INFO.rare;
+      ctx.rare = { kind: 'rare', key: rare.p.hex, model: m, att: { meta: `${tier.gem} ${escapeHtml(tier.label)}` }, show: () => skyShowMe(rare.p.hex, null, rare.n ? { az: rare.n.az, el: 15, at: t0 + rare.n.inS * 1000, name: m.name } : null),
+        bubbles: [rare.a ? `Something rare is up: <em>${escName(m.name)}</em>, ${escapeHtml(todayDir(rare.a.az))} of you.` : `Something rare is on its way: <em>${escName(m.name)}</em>, over you in about ${Math.max(1, Math.round(rare.n.inS / 60))} min.`, [`A ${tier.label} card you don’t have yet.`, 'dim']] }; }
+    /* your cards: days per flight card, aircraft per plane card */
+    const byKey = new Map(); for (const x of mine) { if (!x.cardKey || !x.cardSnapshot?.sky) continue; const e = byKey.get(x.cardKey) ?? byKey.set(x.cardKey, { m: x.cardSnapshot, days: new Set(), hexes: new Set(), first: x.time, last: x.time }).get(x.cardKey); e.days.add(dk(x.time)); if (x.hex) e.hexes.add(x.hex); e.first = Math.min(e.first, x.time); e.last = Math.max(e.last, x.time); }
+    const modelOf = (k) => state.cardModels.get(k) ?? byKey.get(k)?.m;
+    ctx.cardCount = byKey.size;
+    /* level: one day (a flight) or one aircraft (a plane type) from Silver or Gold (as before) */
     let lv = null; for (const [k, e] of byKey) { const fl = e.m.sky === 'flight', n = fl ? e.days.size : e.hexes.size, step = fl ? (n === 4 ? ['Silver', 5] : n === 14 ? ['Gold', 15] : null) : (n === 9 ? ['Silver', 10] : n === 49 ? ['Gold', 50] : null); if (step && !(fl && e.days.has(today))) { lv = { k, e, fl, n, step }; break; } }
-    if (lv) { const m = state.cardModels.get(lv.k) ?? lv.e.m;
-      cands.push({ kind: 'level', key: lv.k, model: m, att: { owned: true, meta: lv.fl ? `${lv.n} of ${lv.step[1]} days` : `${lv.n} of ${lv.step[1]} aircraft` },
-        bubbles: [lv.fl ? `<em>${escName(m.name)}</em> is one day away from ${lv.step[0]}.` : `Your <em>${escName(m.name)}</em> card is one more aircraft away from ${lv.step[0]}.`, [lv.fl ? 'Catch it again today.' : 'Any other one of that type counts.', 'dim']] }); }
-    /* 4 · quiet: today's first mission */
+    if (lv) { const m = modelOf(lv.k);
+      ctx.level = { kind: 'level', key: lv.k, model: m, att: { owned: true, meta: lv.fl ? `${lv.n} of ${lv.step[1]} days` : `${lv.n} of ${lv.step[1]} aircraft` },
+        bubbles: [lv.fl ? `<em>${escName(m.name)}</em> is one day away from ${lv.step[0]}.` : `Your <em>${escName(m.name)}</em> card is one more aircraft away from ${lv.step[0]}.`, [lv.fl ? 'Catch it again today.' : 'Any other one of that type counts.', 'dim']] }; }
+    /* a flight card's airline and number, only for airlines on Sky's list (content/sky-today-note-copy-2026-11-24.md G) */
+    const flightOf = (m) => { const cs = String(m?.callsign ?? ''); return m?.sky === 'flight' && regularAllowed(cs) ? { airline: m.airline || cs.slice(0, 3), number: cs.replace(/^[A-Z]{3}/, ''), city: m.to?.city ?? '' } : null; };
+    /* regulars */
+    ctx.regulars = regulars(t0).filter((r) => regularAllowed(r.callsign)).map((r) => { const rt = state.planes.route(r.callsign), full = rt?.full, a3 = r.callsign.slice(0, 3), key = full ? `F:${a3}:${full.from.icao}-${full.to.icao}` : null, e = key ? byKey.get(key) : null, seen = seenTodayMinute(r.callsign, t0);
+      return { callsign: r.callsign, airline: rt?.airline || airlineName(r.callsign) || a3, number: r.callsign.replace(/^[A-Z]{3}/, ''), city: full?.to?.city ?? '', minute: r.minute, clock: clockText(r.minute), days: r.days, of: r.of, next: r.next,
+        cardKey: key && e ? key : null, ownedDays: e ? e.days.size : 0, caughtToday: !!e?.days.has(today), seenToday: seen, seenClock: seen == null ? '' : clockText(seen) }; });
+    /* moments */
+    const firstS = mine.reduce((a, b) => (a && a.time <= b.time ? a : b), null);
+    if (firstS?.cardKey) ctx.firstCatch = { at: firstS.time, cardName: modelOf(firstS.cardKey)?.name ?? 'your first card', modelKey: firstS.cardKey };
+    const yday = dk(t0 - 86400e3);
+    ctx.roundDays = [...byKey].filter(([, e]) => e.m.sky === 'flight' && [10, 25, 50].includes(e.days.size) && (e.days.has(today) || e.days.has(yday))).map(([k, e]) => ({ key: k, days: e.days.size, flight: flightOf(modelOf(k)) })).filter((x) => x.flight);
+    ctx.firstsYesterday = [...byKey].filter(([k, e]) => e.m.sky === 'plane' && dk(e.first) === yday && (RANK[modelOf(k)?.tier ?? e.m.tier] ?? 0) >= 2).map(([k, e]) => ({ key: k, typeName: modelOf(k)?.name ?? e.m.name }));
+    try { const tw = typesWeek(t0); ctx.logDays = tw.days;
+      const st = ups.find((a) => regularAllowed(a.plane.callsign) && a.plane.type && !tw.types.has(String(a.plane.type).toUpperCase()) && aircraftName(a.plane));
+      if (st) ctx.stranger = { hex: st.plane.hex, typeName: aircraftName(st.plane) }; } catch {}
+    ctx.daysPlayed = before.size + (mine.some((x) => dk(x.time) === today) ? 1 : 0);
+    /* the pool: from Today's own facts (js/sky-today.js todayFacts), the hours log, your sets, the week, a mission */
+    const tf = todayFacts();
+    if (tf && t0 - tf.at < 60e3) {
+      if (tf.hero?.type) { const own = [...byKey.values()].find((e) => e.m.sky === 'plane' && String(e.m.type ?? '').toUpperCase() === tf.hero.type), n = own ? own.hexes.size : 0, fs = typeFacts(tf.hero.type);
+        if (fs.length && tf.hero.typeName) ctx.hero = { hex: tf.hero.hex, typeName: tf.hero.typeName, fact: n > 0 && n < fs.length ? typeFact(tf.hero.type, n + 1) : typeFact(tf.hero.type, 1) }; }
+      ctx.going = tf.going; ctx.tally = tf.tally; }
+    try { const ls = localStats(t0), h = new Date(t0).getHours(), rate = (k) => (ls.openByHour?.[k] >= 2 ? ls.byHour[k] / ls.openByHour[k] : null);
+      let bh = null; for (let k = 0; k < 24; k++) { const r = rate(k); if (r != null && (bh == null || r > rate(bh))) bh = k; }
+      const r = rate(h); if (r != null && bh != null) ctx.pace = { days: ls.days, perHour: r, busiest: new Date(2000, 0, 1, bh).toLocaleTimeString([], { hour: 'numeric' }) }; } catch {}
+    try { const per = new Map(); for (const [k, e] of byKey) { const id = e.m.setId; if (id) per.set(id, (per.get(id) ?? 0) + 1); }
+      const words = ['bronze', 'silver', 'gold'];
+      for (const set of SKY_SETS) { const have = per.get(set.id) ?? 0, lvl = setLevel(set, have), goal = set.goals?.[lvl]; if (goal == null || have === 0) continue; const left = goal - have; if (left >= 1 && left <= 2) { ctx.setNear = { name: set.name, left, level: words[lvl] }; break; } } } catch {}
     let pr = null; try { pr = progressNow(state.sightings); } catch {}
-    const ms = (pr?.missions ?? []).find((x) => !x.done);
-    cands.push({ kind: 'quiet', key: today, bubbles: ms ? ['Planes come and go all day.', `Here’s one to try: <em>${escName(ms.text.replace(/\.$/, '').replace(/^./, (c) => c.toLowerCase()))}</em>.`] : ['Planes come and go all day. Look up when you hear one.'] });
-    return n2Build(cands, { pk: today, tk: today, night2: false, welcome: dayN <= 7 ? `Welcome back. Day ${dayN}!` : '' });
-  } catch { return null; }
+    if (pr?.week?.name) ctx.theme = { name: pr.week.name, text: pr.week.text, have: pr.week.have };
+    const ms = (pr?.missions ?? []).filter((x) => !x.done); ctx.mission = ms[0]?.text ?? null; ctx.missionsLeft = pr?.missions ? ms.length : null;
+    /* decide (js/sky-note.js), remember, draw with Space's note */
+    let mem = {}; try { mem = JSON.parse(localStorage.getItem('skyNote') || '{}') || {}; } catch {}
+    const out = skyNote(ctx, mem); if (!out.pick) return null;
+    try { localStorage.setItem('skyNote', JSON.stringify(out.mem)); } catch {}
+    const pk = out.pick, model = pk.model ?? (pk.modelKey ? modelOf(pk.modelKey) : undefined);
+    const card = { ...pk, model, att: pk.att ?? (model ? { owned: true } : undefined), show: pk.show && typeof pk.show !== 'function' ? () => skyShowMe(pk.show) : pk.show };
+    return n2Build([card], { pk: today, tk: today, night2: false, welcome: out.welcome, decided: true });
+  } catch (e) { console.warn('sky note', e?.message); return null; }
 }
-function n2Build(cands, { pk, tk, night2, welcome = night2 ? 'Welcome back. Night 2!' : '' }) {
+function n2Build(cands, { pk, tk, night2, welcome = night2 ? 'Welcome back. Night 2!' : '', decided = false }) {
   /* pick: kept for the night; the rotating kinds skip last night's kind when another is true */
   let kept = null, hist = {}; try { kept = JSON.parse(localStorage.getItem('notePick') ?? 'null'); hist = JSON.parse(localStorage.getItem('noteHist') ?? '{}') ?? {}; } catch {}
   const ROT = ['shiny', 'level', 'best', 'quiet'];
-  let pick = cands[0].kind === 'caught' ? cands[0] : (kept?.night === pk ? cands.find((c) => c.kind === kept.kind && c.key === kept.key) : null);
+  let pick = decided || cands[0].kind === 'caught' ? cands[0] : (kept?.night === pk ? cands.find((c) => c.kind === kept.kind && c.key === kept.key) : null); /* decided: Sky's note picks for itself (js/sky-note.js) */
   if (pick && ROT.includes(pick.kind) && cands[0] !== pick && !ROT.includes(cands[0].kind)) pick = null; /* a last chance, event or weather note that turned up later wins */
   if (!pick) { const prev = hist[Object.keys(hist).filter((k) => k < pk).sort().at(-1)];
     pick = cands[0]; if (ROT.includes(pick.kind) && pick.kind === prev) pick = cands.find((c) => c !== pick && ROT.includes(c.kind) && c.kind !== 'quiet') ?? pick; }
-  if (pick.kind !== 'caught' && state.weather) try { localStorage.setItem('notePick', JSON.stringify({ night: pk, kind: pick.kind, key: pick.key })); hist[pk] = pick.kind; /* not before the forecast is in: it can change the pick */ localStorage.setItem('noteHist', JSON.stringify(Object.fromEntries(Object.entries(hist).sort().slice(-7)))); } catch {}
+  if (!decided && pick.kind !== 'caught' && state.weather) try { localStorage.setItem('notePick', JSON.stringify({ night: pk, kind: pick.kind, key: pick.key })); hist[pk] = pick.kind; /* not before the forecast is in: it can change the pick */ localStorage.setItem('noteHist', JSON.stringify(Object.fromEntries(Object.entries(hist).sort().slice(-7)))); } catch {}
   /* build */
   const el = document.createElement('div'); el.className = 'n2-chat'; el.dataset.kind = pick.kind;
   const B = (x) => { const [html, cls] = Array.isArray(x) ? x : [x, '']; return `<div class="n2-b${cls ? ` ${cls}` : ''}">${oneStop(html)}</div>`; };
@@ -6581,7 +6614,7 @@ async function openCredits() {
     $('credits-body').innerHTML = html; openSheet('set-credits-sheet'); creditsHeader(true); $('set-credits-sheet').querySelector('.set-sheet-card').scrollTop = 0;
     return;
   }
-  const { ART_SOURCES } = await import('./art-sources.js?v=0.1.1910');
+  const { ART_SOURCES } = await import('./art-sources.js?v=0.1.1911');
   const a = (t, href) => (href ? `<a href="${escapeHtml(href)}" target="_blank" rel="noopener">${t}</a>` : t);
   const card = (title, n, rows) => `<div class="set-group set-card"><div class="set-bar"><h3>${title}</h3><b aria-hidden="true">${String(n).padStart(2, '0')}</b></div>${rows}</div>`;
   const row = (b, sub, href) => `<div class="cr-row"><b>${escapeHtml(b)}</b><span>${a(escapeHtml(sub), href)}</span></div>`;
@@ -7817,7 +7850,7 @@ async function openNightPack(K, { force = false, sample = false } = {}) {
 }
 // Share my night: the night's cards as a pack link (js/pack-share.js, the same link Send cards makes), no picking.
 async function shareNight(d) {
-  const { packLinkFor, shareLink } = await import('./pack-share.js?v=0.1.1910');
+  const { packLinkFor, shareLink } = await import('./pack-share.js?v=0.1.1911');
   const link = await packLinkFor(d.night, { kind: d.what });
   if (!link) return { ok: false, text: 'No connection. Try again online.' };
   const r = await shareLink(link, `My ${d.what} · ${d.items.length} card${d.items.length === 1 ? '' : 's'} · Sky Collector`);
@@ -7829,7 +7862,7 @@ async function shareNight(d) {
 // picture as a shared card, drawn from the card on screen.
 async function shareNightPicture(el, d) {
   if (!el) return null;
-  const { shareElementPicture } = await import('./share-card.js?v=0.1.1910');
+  const { shareElementPicture } = await import('./share-card.js?v=0.1.1911');
   const day = new Date(d.start - (new Date(d.start).getHours() < 12 ? 86400e3 : 0)).toLocaleDateString([], { day: 'numeric', month: 'short' });
   const how = await shareElementPicture(el, `My ${d.what} · ${day}`, { rootExtra: 'position:relative;left:0;top:0;bottom:auto;translate:none;transform:none;margin:0;opacity:1;', extra: (n) => (n.parentElement?.classList.contains('gp-fan') ? 'box-shadow:none;' : '') }); /* the tilted cards' glow and shadow drew as bands and wedges in the picture */
   if (how === 'cancelled') return null;
@@ -8939,7 +8972,7 @@ $('ufo-cta').addEventListener('click', () => {
 $('btn-load-cards')?.addEventListener('click', async () => {
   const b = $('btn-load-cards'); if (b.dataset.busy) return; b.dataset.busy = '1';
   try {
-    const { testCatches } = await import('./test-load.js?v=0.1.1910');
+    const { testCatches } = await import('./test-load.js?v=0.1.1911');
     const list = await testCatches(Date.now(), state.observer ? { lat: state.observer.lat, lon: state.observer.lon } : undefined);
     await addSightings(list);
     toast(`Loaded ${list.length} cards`); setTimeout(() => location.reload(), 700);
@@ -8949,7 +8982,7 @@ $('btn-load-cards')?.addEventListener('click', async () => {
    in memory only while the pack is open: nothing saved, no real night marked opened, no sharing, no ticket left behind. */
 $('btn-samplepack')?.addEventListener('click', async () => {
   if (giftBusy) return;
-  const { testCatches } = await import('./test-load.js?v=0.1.1910');
+  const { testCatches } = await import('./test-load.js?v=0.1.1911');
   const base = new Date(now().getTime() - 86400e3); base.setHours(14, 30, 0, 0);
   const raw = await testCatches(base.getTime(), state.observer ? { lat: state.observer.lat, lon: state.observer.lon } : undefined);
   const slot = new Map(); /* a catch's flight and plane cards share one moment, as a real catch saves them */

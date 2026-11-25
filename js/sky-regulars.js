@@ -3,9 +3,9 @@
 // Airline flights only: private and other anonymous aircraft have no callsign here (js/planes.js isAnonymous), so a
 // person's plane can never become a "regular". The plane version of a satellite's pass. No DOM.
 // localStorage 'skyRegulars' = { CALLSIGN: { 'yyyy-m-d': minuteOfDay first seen } }, 14 days, at most 600 callsigns.
-import { privateCatch, GOV_OPS, BIZ_OPS } from './plane-privacy.js?v=0.1.1910';
-import { AIRLINE_ICONS } from './airline-icons.js?v=0.1.1910';
-import { AIRLINE_FACTS } from './airline-facts.js?v=0.1.1910';
+import { privateCatch, GOV_OPS, BIZ_OPS } from './plane-privacy.js?v=0.1.1911';
+import { AIRLINE_ICONS } from './airline-icons.js?v=0.1.1911';
+import { AIRLINE_FACTS } from './airline-facts.js?v=0.1.1911';
 const KEY = 'skyRegulars', KEEP_DAYS = 14, MAX = 600, WINDOW = 45, MIN_DAYS = 3, LOOK_DAYS = 7;
 const AIRLINE = /^[A-Z]{3}\d/;
 /* Only airlines on Sky's own list (2026-11-24, Content Writing's review via Boss: any callsign shaped like an airline's was
@@ -64,6 +64,8 @@ export function regulars(now = Date.now(), store = load()) {
   }
   return out.sort((a, b) => a.next - b.next);
 }
+/* the minute of the day a flight was first seen today, or null (the daily note's "came over at", js/sky-note.js) */
+export const seenTodayMinute = (callsign, now = Date.now()) => { const d = load()[String(callsign ?? '').toUpperCase()]; const m = d?.[dayKey(now)]; return m == null ? null : m; };
 export const regularFor = (callsign, now = Date.now()) => { const d = load()[String(callsign ?? '').toUpperCase()]; return d ? regularOf(d, now) : null; };
 export const clockText = (minute) => new Date(2000, 0, 1, Math.floor(minute / 60), minute % 60).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 /* Airlines (3-letter prefixes) seen here in the last `days` days at these clock hours (2026-11-20: "Catch an airline you've

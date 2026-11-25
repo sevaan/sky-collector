@@ -24,7 +24,9 @@ test('the daily note keeps model designations on one line, with the card titles\
   assert.equal(escName('Boeing 747-8'), 'Boeing <span style="white-space:nowrap">747-8</span>');
   const main = read('js/main.js'), note = main.slice(main.indexOf('function skyDailyNote()'), main.indexOf('function n2Build('));
   assert.doesNotMatch(note, /escapeHtml\(m\.name\)/);
-  assert.match(note, /escName\(ms\.text/);
+  const sn = await import('../js/sky-note.js'); /* the Sky note's words moved to js/sky-note.js (2026-11-24): its names go through the same escName */
+  assert.equal(sn.escName('Boeing 747-8'), escName('Boeing 747-8'));
+  assert.match(read('js/sky-note.js'), /const em = \(s\) => `<em>\$\{escName\(s\)\}<\/em>`/);
   assert.match(main, /<b>\$\{o \? escapeHtml\(widgetName\(o\)\) : escName\(md\.name\)\}<\/b>/);
 });
 

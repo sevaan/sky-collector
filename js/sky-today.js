@@ -5,20 +5,20 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { isProp } from './sky-props.js?v=0.1.1910';
-import { routeMap } from './route-map.js?v=0.1.1910';
-import { planesUp } from './sky-up.js?v=0.1.1910';
-import { planeKey } from './flights.js?v=0.1.1910';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1910';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1910';
-import { airlineIcon } from './airline-icons.js?v=0.1.1910';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1910';
-import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1910';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1910';
-import { planeSet } from './sky-sets.js?v=0.1.1910';
-import { MIL_TYPES } from './plane-privacy.js?v=0.1.1910';
-import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1910';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1910';
+import { isProp } from './sky-props.js?v=0.1.1911';
+import { routeMap } from './route-map.js?v=0.1.1911';
+import { planesUp } from './sky-up.js?v=0.1.1911';
+import { planeKey } from './flights.js?v=0.1.1911';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1911';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1911';
+import { airlineIcon } from './airline-icons.js?v=0.1.1911';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1911';
+import { regulars, noteRegulars, clockText, regularAllowed } from './sky-regulars.js?v=0.1.1911';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1911';
+import { planeSet } from './sky-sets.js?v=0.1.1911';
+import { MIL_TYPES } from './plane-privacy.js?v=0.1.1911';
+import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1911';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1911';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -196,13 +196,13 @@ function readTally() { let s = null; try { s = JSON.parse(localStorage.getItem(T
 let tally = null, tallySaved = 0;
 function noteTally(up, route) {
   tally = tally && tally.day === dayKey() ? tally : readTally(); const A = new Set(tally.airlines), C = new Set(tally.countries);
-  for (const u of up) { const p = u.a.plane, r = route(p.callsign), full = r?.full; if (r?.airline) A.add(r.airline);
+  for (const u of up) { const p = u.a.plane, listed = regularAllowed(p.callsign), r = listed ? route(p.callsign) : null, full = r?.full; if (r?.airline) A.add(r.airline); /* names and places only for airlines on Sky's list (content/sky-today-note-copy-2026-11-24.md G) */
     if (full) { if (full.to?.cc) C.add(full.to.cc); if (full.from?.cc) C.add(full.from.cc); const km = kmOf(full);
       if (km && (!tally.far || km > tally.far.km)) tally.far = { km: Math.round(km), city: full.to.city, code: full.to.iata || '', from: full.from.city, airline: r.airline || '', callsign: p.callsign, type: p.type, t: Date.now() }; } }
   /* today's highest and fastest (2026-11-24, Sevaan picked the departures board "with highest and fastest"): airborne
      planes only, with the odd bad reading (over 60,000 ft, over 1,300 km/h) left out. By type and route only, like Farthest. */
-  for (const u of up) { const p = u.a.plane, r = route(p.callsign), full = r?.full, ft = altFt(p), kmh = (Number(p.gs) || 0) * 1.852;
-    const who = () => ({ name: aircraftName(p) || 'Aircraft', airline: r?.airline || '', to: full?.to?.city || '', callsign: p.callsign, type: p.type, t: Date.now() });
+  for (const u of up) { const p = u.a.plane, listed = regularAllowed(p.callsign), r = listed ? route(p.callsign) : null, full = r?.full, ft = altFt(p), kmh = (Number(p.gs) || 0) * 1.852;
+    const who = () => ({ name: aircraftName(p) || 'Aircraft', airline: r?.airline || '', to: full?.to?.city || '', callsign: listed ? p.callsign : '', type: p.type, t: Date.now() }); /* an unlisted operator: its kind only */
     if (ft > 1000 && ft < 60000 && (!tally.high || ft > tally.high.ft + 50)) tally.high = { ft: Math.round(ft / 100) * 100, ...who() };
     if (kmh > 150 && kmh < 1300 && (!tally.fast || kmh > tally.fast.kmh + 2)) tally.fast = { kmh: Math.round(kmh), ...who() }; }
   tally.airlines = [...A]; tally.countries = [...C];
@@ -296,6 +296,8 @@ export function heroHtml({ hex, color, kick, left = null, until = null, tierLine
       <div class="nh-acts"><button type="button" class="pill-o nh-go" data-show="${esc(hex)}"><span class="ico-svg">${TARGET}</span> Show me</button></div></div>`;
 }
 
+let lastFacts = null;
+export const todayFacts = () => lastFacts;
 // ---------- the page ----------
 let tick = 0, expanded = false, dealIo = null;
 export function renderToday(el, ctx) {
@@ -369,6 +371,12 @@ export function renderToday(el, ctx) {
   const tiles = ups.filter((c) => c !== best || best.w?.gain === 'none'), shownT = expanded ? tiles : tiles.slice(0, 10), nNewUp = ups.filter((c) => c.isNew).length;
   const board = tiles.length ? `${sec(`Over you now${nNewUp ? ` · ${nNewUp} new` : ''}`, `${up.length} up${sky.word ? ` · ${esc(sky.word)}` : ''}`)}<div class="tn-up">${shownT.map((c) => `<button type="button" class="tn-chip tile${c.isNew ? ' new' : ' seen'}" style="--c:${c.tier?.color ?? '#9aa4b1'}" data-show="${esc(c.p.hex)}"><span class="tn-chip-mini" data-mini="${esc(c.p.hex)}" aria-hidden="true">${c.isNew ? '<em>New</em>' : ''}</span><span><b>${esc(c.w.name)}</b><small><i class="gm" aria-hidden="true">${esc(c.tier?.gem ?? '')}</i> ${esc(`${c.isNew ? '' : 'Yours · '}${where(c.a)}`)}</small></span></button>`).join('')}</div>${tiles.length > 10 ? `<button type="button" class="tn-more" data-more><span>${expanded ? 'Show fewer' : `All ${tiles.length}`}</span><b>›</b></button>` : ''}` : '';
 
+  /* what the daily note reads (js/main.js skyDailyNote, js/sky-note.js): the hero plane, where the airline flights up now are
+     going, today's records. Airline flights on Sky's list only, by name; the rest by kind. */
+  try { const going = new Map(); let farG = null; for (const c of ups) { if (!regularAllowed(c.p.callsign)) continue; const to = c.full?.to; if (!to?.city) continue; going.set(to.city, to.cc); const km = obs && to.lat != null ? hav(obs.lat, obs.lon, to.lat, to.lon) : 0; if (!farG || km > farG.km) farG = { km, city: to.city }; }
+    lastFacts = { at: t, hero: best && best.w?.gain !== 'none' ? { hex: best.p.hex, type: String(best.p.type ?? '').toUpperCase(), typeName: aircraftName(best.p) || '' } : null,
+      going: { cities: going.size, countries: new Set([...going.values()].filter(Boolean)).size, farthest: farG?.city ?? '' }, planes: seen.hexes.length,
+      tally: { high: T.high ? { ft: T.high.ft, typeName: T.high.name, city: T.high.to } : null, far: T.far ? { km: T.far.km, city: T.far.city, typeName: aircraftName({ type: T.far.type }) || 'plane' } : null } }; } catch {}
   // 6 · where they're going
   const dests = new Map(); for (const c of ups) { const to = c.full?.to; if (to?.lat == null || !obs) continue; const k = to.city; if (!dests.has(k)) dests.set(k, { to, n: 0 }); dests.get(k).n++; }
   /* the Collection's route map (js/route-map.js; 2026-11-24, Sevaan: "should use the same map style as the route map on the
