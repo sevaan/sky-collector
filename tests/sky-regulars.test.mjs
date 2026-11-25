@@ -20,3 +20,16 @@ test('only airline flights, never an anonymous aircraft; two days are not enough
   assert.equal(regularOf({ '2026-11-10': 600, '2026-11-11': 610 }, at(11, 12, 0)), null);
   const r = regularOf({ '2026-11-10': 1435, '2026-11-11': 5, '2026-11-12': 1430 }, at(12, 12, 0)); assert.ok(r && (r.minute >= 1420 || r.minute <= 10));
 });
+test('only airlines on Sky\'s list become regulars; an unlisted charter or air ambulance, NetJets and old saved ones are dropped', async () => {
+  const { regularAllowed } = await import('../js/sky-regulars.js');
+  assert.ok(regularAllowed('ACA856')); assert.ok(regularAllowed('wja1'));
+  for (const cs of ['ZZQ123', 'LIF201', 'EJA514', 'RCH421', 'CGJLN', '']) assert.equal(regularAllowed(cs), false, cs);
+  /* seen at the same time four days running, but not an airline on the list: never kept, never named */
+  _resetRegulars({}); for (const d of [10, 11, 12, 13]) noteRegulars([{ callsign: 'ZZQ123' }, { callsign: 'ACA856' }], at(d, 18, 40));
+  assert.deepEqual(regulars(at(13, 20, 0)).map((x) => x.callsign), ['ACA856']);
+  /* one saved before this rule is pruned from the phone on load */
+  const days = { '2026-11-10': 1120, '2026-11-11': 1121, '2026-11-12': 1119 };
+  store.skyRegulars = JSON.stringify({ ZZQ123: days, ACA856: days }); _resetRegulars(null);
+  assert.deepEqual(regulars(at(12, 20, 0)).map((x) => x.callsign), ['ACA856']);
+  assert.deepEqual(Object.keys(JSON.parse(store.skyRegulars)), ['ACA856']);
+});
