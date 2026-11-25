@@ -1,0 +1,19 @@
+{
+  "about": "Demo scene for store filming (js/demo-boot.js). Toronto at golden hour on a clear late-November afternoon. Swap planes or routes here; no code changes needed. Planes are placed by bearing (az, degrees from north) and ground distance (km) from the observer at the start time, then fly on their own track and speed. A plane with a route and no track heads for its destination. Private and other non-airline aircraft carry no callsign (the app names them by kind only).",
+  "start": "2026-11-24T16:32:00-05:00",
+  "timeZone": "America/Toronto",
+  "observer": { "lat": 43.6532, "lon": -79.3832, "place": "Toronto" },
+  "weather": { "cloud": 8, "code": 1 },
+  "hero": "ACA848",
+  "planes": [
+    { "flight": "ACA848", "t": "B789", "desc": "BOEING 787-9 Dreamliner", "category": "A5", "az": 305, "km": 7, "ft": 11500, "kt": 290, "climb": 1800, "route": "CYYZ-EGLL" },
+    { "flight": "UAE242", "t": "A388", "desc": "AIRBUS A-380-800", "category": "A5", "az": 275, "km": 24, "ft": 15000, "kt": 320, "climb": 1500, "route": "CYYZ-OMDB" },
+    { "flight": "POE213", "t": "E295", "desc": "EMBRAER E-195-E2", "category": "A3", "az": 120, "km": 9, "ft": 7000, "kt": 260, "climb": 2000, "route": "CYTZ-CYUL" },
+    { "flight": "JZA8091", "t": "DH8D", "desc": "DE HAVILLAND CANADA DHC-8-400", "category": "A2", "az": 20, "km": 14, "ft": 9000, "kt": 250, "climb": 1200, "route": "CYYZ-CYOW" },
+    { "flight": "WJA657", "t": "B38M", "desc": "BOEING 737 MAX 8", "category": "A3", "az": 250, "km": 30, "ft": 21000, "kt": 380, "climb": 1500, "route": "CYYZ-CYYC" },
+    { "flight": "AAL1307", "t": "B738", "desc": "BOEING 737-800", "category": "A3", "az": 200, "km": 38, "ft": 34000, "kt": 450, "route": "KORD-KBOS" },
+    { "flight": "DLH471", "t": "A359", "desc": "AIRBUS A-350-900", "category": "A5", "az": 70, "km": 45, "ft": 33000, "kt": 470, "route": "CYYZ-EDDF" },
+    { "t": "AS50", "desc": "AIRBUS HELICOPTERS AS-350", "category": "A7", "az": 160, "km": 2.5, "ft": 1500, "kt": 95, "track": 80 },
+    { "t": "C172", "desc": "CESSNA 172", "category": "A1", "az": 230, "km": 5, "ft": 3500, "kt": 105, "track": 40 }
+  ]
+}

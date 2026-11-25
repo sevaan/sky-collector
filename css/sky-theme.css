@@ -1091,3 +1091,8 @@ html.sky-night body.sky-only .td2-map .td2-cap { color:var(--rc-ink); }
 /* the weather or time-of-day line under the top card's "where" (js/main.js skyHeroLine) */
 body.sky-only .now-hero .nh-line { display:block; margin-top:5px; font:500 14px/1.3 var(--label); color:var(--muted, #55697d); text-wrap:pretty; }
 html.sky-night body.sky-only .now-hero .nh-line { color:#a7b8ca; }
+
+/* The demo scene's filming mode (js/demo-boot.js, store filming 2026-11-25): what never belongs in a store shot. The version
+   footer and Settings' version line, the testing tools, the rating prompts, and the desktop's drag hint and catch tips.
+   Notices stay (they're the game); window.__demo.clearNotices() clears them for a clean frame. */
+html.sky-film :is(#version, #set-version, #test-tools, #set-rate, .rc-rate, #ar-hint, #fade-tip) { display: none !important; }

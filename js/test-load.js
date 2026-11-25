@@ -4,9 +4,9 @@
 // the route map fill up), repeats of a few types and routes (so levels and stamps show), and plane-only catches (private,
 // business, military, a helicopter, a type the feed can't name). Each sighting is marked via: 'test-load'.
 
-import { cardsFor } from './flights.js?v=0.1.1915';
-import { catchSightings } from './sky-cards.js?v=0.1.1915';
-import { airport } from './routes.js?v=0.1.1915';
+import { cardsFor } from './flights.js?v=0.1.1916';
+import { catchSightings } from './sky-cards.js?v=0.1.1916';
+import { airport } from './routes.js?v=0.1.1916';
 
 // [callsign, type, from ICAO, to ICAO, airline, category, days ago]
 const FLIGHTS = [
@@ -46,6 +46,35 @@ export async function testCatches(now = Date.now(), where = { lat: 43.7, lon: -7
     const p = { hex: hex(), callsign: cs, type, category, altFt: 4500, gs: 140, ...extra };
     const c = cardsFor(p, null, '');
     out.push(...catchSightings({ time: at(days), hex: p.hex, callsign: cs, type, altFt: 4500, gsKt: 140, rangeKm: 6, lat, lon, flight: c.flight, plane: c.plane, via: 'test-load' }));
+  }
+  return out;
+}
+
+/* The demo scene's collection (js/demo-boot.js, store filming, 2026-11-25): Load cards' three weeks, plus a Legendary (an
+   An-124), a shiny (golden hour, the 787 to London), more patches' worth of variety, and yesterday afternoon's catches, so
+   the morning's night pack is waiting to be opened. Everything is marked via: 'demo'. Nothing here is a real aircraft's address. */
+const DEMO_YESTERDAY = [
+  ['ACA856', 'A320', 'CYYZ', 'CYOW', 'Air Canada', 'A3'], ['BAW92', 'B788', 'CYYZ', 'EGLL', 'British Airways', 'A5'],
+  ['KLM692', 'B77W', 'CYYZ', 'EHAM', 'KLM', 'A5'], ['FDX1702', 'B763', 'KMEM', 'CYYZ', 'FedEx', 'A5'],
+  ['POE145', 'DH8D', 'CYTZ', 'CYOW', 'Porter', 'A2'], ['WJA1210', 'B38M', 'CYYZ', 'KMCO', 'WestJet', 'A3'],
+];
+export async function demoCatches(now = Date.now(), where = { lat: 43.65, lon: -79.38 }) {
+  n = 0;
+  const out = (await testCatches(now, where)).map((s) => ({ ...s, via: 'demo' }));
+  const lat = where?.lat ?? null, lon = where?.lon ?? null;
+  /* a Legendary: an Antonov An-124 into Toronto, caught 4 days ago (a plane card: no callsign kept) */
+  { const p = { hex: hex(), callsign: '', type: 'A124', category: 'A5', altFt: 6500, gs: 210 }, c = cardsFor(p, null, '');
+    out.push(...catchSightings({ time: now - 4 * 86400e3 - 95 * 60e3, hex: p.hex, callsign: '', type: 'A124', altFt: 6500, gsKt: 210, rangeKm: 9, lat, lon, flight: c.flight, plane: c.plane, via: 'demo' })); }
+  /* a shiny: Air Canada's 787 to London at golden hour, 2 days ago */
+  { const [from, to] = await Promise.all([airport('CYYZ'), airport('EGLL')]), p = { hex: hex(), callsign: 'ACA858', type: 'B789', category: 'A5', altFt: 12000, gs: 300 };
+    const c = cardsFor(p, { callsign: 'ACA858', from, to }, 'Air Canada'), t = now - 2 * 86400e3 - 20 * 60e3;
+    out.push(...catchSightings({ time: t, hex: p.hex, callsign: 'ACA858', type: 'B789', altFt: 12000, gsKt: 300, rangeKm: 11, lat, lon, flight: c.flight, plane: c.plane, via: 'demo' }).map((s) => ({ ...s, shiny: 'golden' }))); }
+  /* yesterday afternoon, one catch every 20 minutes from 2:10 PM: today's night pack */
+  const y = new Date(now - 86400e3); y.setHours(14, 10, 0, 0);
+  for (const [i, [cs, type, a, b, airline, category]] of DEMO_YESTERDAY.entries()) {
+    const [from, to] = await Promise.all([airport(a), airport(b)]), p = { hex: hex(), callsign: cs, type, category, altFt: 24000, gs: 420 };
+    const c = cardsFor(p, { callsign: cs, from, to }, airline);
+    out.push(...catchSightings({ time: y.getTime() + i * 20 * 60e3, hex: p.hex, callsign: cs, type, altFt: 24000, gsKt: 420, rangeKm: 22, lat, lon, flight: c.flight, plane: c.plane, via: 'demo' }));
   }
   return out;
 }

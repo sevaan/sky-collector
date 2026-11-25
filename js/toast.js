@@ -73,6 +73,8 @@ export function dropToast(id) {
   for (let i = queue.length - 1; i >= 0; i--) if (queue[i].id === id) queue.splice(i, 1);
   live.get(id)?.();
 }
+// Every notice, waiting or shown (the demo scene's clearNotices, js/main.js: a clean frame for store filming).
+export function dropAllNotices() { queue.length = 0; for (const off of [...live.values()]) off?.(); }
 // A small burst belongs to the achievement ticket, so it follows the queue and survives a closed reveal.
 function confetti(el) {
   if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return () => {};

@@ -44,8 +44,10 @@ function tx(mode, fn) {
   });
 }
 
+/* the demo scene (js/demo-boot.js): every catch made in it is marked as the demo's, so the next load can tell it from a real one */
+const demo = (s) => (globalThis.__skyDemo && s && s.via == null ? { ...s, via: 'demo' } : s);
 export function addSighting(s) {
-  return tx('readwrite', (store) => store.add(s));
+  return tx('readwrite', (store) => store.add(demo(s)));
 }
 
 /* open the database now, so iOS's slow first answer (~440 ms on an iPhone 14) overlaps the catalogue work at launch
@@ -61,12 +63,12 @@ export function deleteSighting(key) {
 
 // Many at once, in one transaction: all or nothing (a received pack, an undone Move; 2026-11-07).
 export function addSightings(list) {
-  return tx('readwrite', (store) => { for (const s of list) store.add(s); return null; });
+  return tx('readwrite', (store) => { for (const s of list) store.add(demo(s)); return null; });
 }
 export function deleteSightings(keys) {
   return tx('readwrite', (store) => { for (const k of keys) store.delete(k); return null; });
 }
 // Replace a stored sighting (by its key): (kept for tools; the old account sync used it).
 export function putSighting(s) {
-  return tx('readwrite', (store) => store.put(s));
+  return tx('readwrite', (store) => store.put(demo(s)));
 }

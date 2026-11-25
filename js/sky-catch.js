@@ -2,15 +2,15 @@
 // Collect does. Catches are kept in localStorage ('skyCatches') for now, apart from Space Collector's sightings, so the
 // old collection code never meets a flight. The Collection screen reads them in a later step.
 
-import { aircraftName, isHelicopter } from './planes.js?v=0.1.1915';
-import { lookupRoute } from './routes.js?v=0.1.1915';
-import { distText } from './units.js?v=0.1.1915';
-import { cardsFor, planeKey, unlisted, TIERS } from './flights.js?v=0.1.1915';
-import { glyphSvg, miniCardHtml } from './flight-card.js?v=0.1.1915';
-import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1915';
+import { aircraftName, isHelicopter } from './planes.js?v=0.1.1916';
+import { lookupRoute } from './routes.js?v=0.1.1916';
+import { distText } from './units.js?v=0.1.1916';
+import { cardsFor, planeKey, unlisted, TIERS } from './flights.js?v=0.1.1916';
+import { glyphSvg, miniCardHtml } from './flight-card.js?v=0.1.1916';
+import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1916';
 
-import { TIER_INFO } from './rarity.js?v=0.1.1915';
-import { allCatches, addCatch } from './catch-store.js?v=0.1.1915';
+import { TIER_INFO } from './rarity.js?v=0.1.1916';
+import { allCatches, addCatch } from './catch-store.js?v=0.1.1916';
 // Catches live in js/catch-store.js (IndexedDB, with a localStorage mirror the Collection page reads).
 // Where catches are read from: Space Collector's sightings once main.js says so (Milestone 1.5), the old store until then.
 let source = allCatches;
