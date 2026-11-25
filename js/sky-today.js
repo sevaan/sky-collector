@@ -5,23 +5,23 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { distText, speed, distIn } from './units.js?v=0.1.1921';
+import { distText, speed, distIn } from './units.js?v=0.1.1922';
 const speedText = (kmh) => { const v = speed(kmh); return `${v.v} ${v.u}`; }; /* the units setting (bug pass 2026-11-25: Today said km with miles on) */
-import { later } from './save-later.js?v=0.1.1921';
-import { isProp } from './sky-props.js?v=0.1.1921';
-import { routeMap } from './route-map.js?v=0.1.1921';
-import { planesUp, canCatch, isNight } from './sky-up.js?v=0.1.1921';
-import { planeKey } from './flights.js?v=0.1.1921';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1921';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1921';
-import { airlineIcon } from './airline-icons.js?v=0.1.1921';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1921';
-import { regulars, noteRegulars, clockText, regularAllowed } from './sky-regulars.js?v=0.1.1921';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1921';
-import { planeSet } from './sky-sets.js?v=0.1.1921';
-import { MIL_TYPES } from './plane-privacy.js?v=0.1.1921';
-import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1921';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1921';
+import { later } from './save-later.js?v=0.1.1922';
+import { isProp } from './sky-props.js?v=0.1.1922';
+import { routeMap } from './route-map.js?v=0.1.1922';
+import { planesUp, canCatch, isNight } from './sky-up.js?v=0.1.1922';
+import { planeKey } from './flights.js?v=0.1.1922';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1922';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1922';
+import { airlineIcon } from './airline-icons.js?v=0.1.1922';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1922';
+import { regulars, noteRegulars, clockText, regularAllowed } from './sky-regulars.js?v=0.1.1922';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1922';
+import { planeSet } from './sky-sets.js?v=0.1.1922';
+import { MIL_TYPES } from './plane-privacy.js?v=0.1.1922';
+import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1922';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1922';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -432,12 +432,15 @@ export function renderToday(el, ctx) {
   const pad3 = (n) => String(n).padStart(3, '0');
   const row = (lab, v, sr) => `<div class="bd-row"><span class="bd-lab">${lab}</span>${flaps(v)}<span class="sr">${esc(sr)}</span></div>`;
   const toWords = (x) => [x.airline, x.to ? `to ${x.to}` : ''].filter(Boolean).join(' ');
-  const rec = (lab, v, sr, left, right) => `<div class="bd-rec"><div class="bd-row"><span class="bd-lab gold">${lab}</span>${flaps(v, ' gold')}<span class="sr">${esc(sr)}</span></div><div class="bd-line"><span>${left}</span><span class="tnum">${esc(right)}</span></div></div>`;
+  /* the feed's speed is over the ground (2026-11-25, Sevaan: a CRJ900 at 1,069 km/h "can't be right", its top airspeed is about
+     880): no airliner flies faster than about 1,000 km/h through the air, so above that the wind is carrying it, and it says so */
+  const JET_KMH = 1000;
+  const rec = (lab, v, sr, left, right, note = '') => `<div class="bd-rec"><div class="bd-row"><span class="bd-lab gold">${lab}</span>${flaps(v, ' gold')}<span class="sr">${esc(sr)}</span></div><div class="bd-line"><span>${left}</span><span class="tnum">${esc(right)}</span></div>${note ? `<div class="bd-note">${esc(note)}</div>` : ''}</div>`;
   const far = T.far, high = T.high, fast = T.fast;
   const recs = [
     far ? rec('Farthest', String(far.code || (() => { try { return ctx.route(far.callsign)?.full?.to?.iata; } catch { return ''; } })() || String(far.city).normalize('NFD').replace(/[^A-Za-z]/g, '')).slice(0, 3).toUpperCase() /* a record saved before codes were kept: its city's letters */, `Farthest: ${far.city}`, `<b>To ${esc(far.city)}</b>${far.airline ? ` · ${esc(far.airline)}` : ''}`, `${distText(far.km)} · ${ago(far.t)}`) : '',
-    high ? rec('Highest · ft', high.ft, `Highest: ${high.ft} feet`, `<b>${esc(high.name)}</b>${toWords(high) ? ` · ${esc(toWords(high))}` : ''}`, `${high.ft.toLocaleString('en-US')} ft · ${ago(high.t)}`) : '',
-    fast ? rec(`Fastest · ${speed(1).u}`, Math.round(distIn(fast.kmh)), `Fastest: ${speedText(fast.kmh)}`, `<b>${esc(fast.name)}</b>${toWords(fast) ? ` · ${esc(toWords(fast))}` : ''}`, `${speedText(fast.kmh)} · ${ago(fast.t)}`) : '',
+    high ? rec('Highest · ft', high.ft, `Highest: ${high.ft} feet`, `<b>${esc(high.name)}</b>${toWords(high) ? ` · ${esc(toWords(high))}` : ''}`, ago(high.t)) : '', /* the flaps carry the number; the line says only when (2026-11-25, Sevaan: "don't like the two 37000s right on top of each other") */
+    fast ? rec(`Fastest · ${speed(1).u}`, Math.round(distIn(fast.kmh)), `Fastest: ${speedText(fast.kmh)}`, `<b>${esc(fast.name)}</b>${toWords(fast) ? ` · ${esc(toWords(fast))}` : ''}`, ago(fast.t), fast.kmh > JET_KMH ? 'Speed over the ground, with a strong tailwind.' /* Content's words: the app can't know the wind was the jet stream */ : '') : '',
   ].join('');
   const story = `${sec('Today so far', `since ${(() => { const h = seen.open.findIndex(Boolean); return h < 0 ? 'now' : new Date(new Date().setHours(h, 0, 0, 0)).toLocaleTimeString([], { hour: 'numeric' }); })()}`)}<div class="td2-board">
     <div class="bd-top"><span>Your sky · today</span><span class="tnum">${esc(new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }))}</span></div>

@@ -1049,6 +1049,7 @@ html.sky-cards #sat-card.rm-card .rm-sub { white-space:normal; overflow:visible;
 .bd-rec { padding:6px 0 8px; border-top:1px solid #1d2531; } .bd-rec:first-child { border-top:0; }
 .bd-rec .bd-row { border:0; padding:0; }
 .bd-line { display:flex; justify-content:space-between; gap:10px; margin-top:6px; font:500 14.5px/1.25 'SC Label','Barlow Condensed',sans-serif; color:#c9d2de; }
+.bd-note { margin-top:3px; font:500 13px/1.25 'SC Label','Barlow Condensed',sans-serif; color:#8f9bab; } /* the fastest's "over the ground" line */
 .bd-line > span:first-child { min-width:0; } .bd-line > span:last-child { flex:none; text-align:right; color:#9aa6b6; } .bd-line b { color:#f7f1e2; font-weight:600; }
 .bd-strip { margin-top:10px; padding-top:10px; border-top:1px solid #2b3340; }
 .bd-bars { display:flex; align-items:flex-end; gap:2px; height:30px; }
