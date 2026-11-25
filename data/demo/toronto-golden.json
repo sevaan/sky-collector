@@ -703,5 +703,11 @@
         "A5"
       ]
     ]
+  },
+  "noteMem": {
+    "about": "Today's note memory at load (localStorage skyNote): the A380 caught yesterday has had its 'Yesterday you caught your first...' moment, so 'Up now' leads at load.",
+    "firsts": [
+      "P:A388"
+    ]
   }
 }

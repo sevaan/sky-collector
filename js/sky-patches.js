@@ -2,9 +2,9 @@
 // earned in plain sight, read off the sightings like every patch (js/progress.js), nothing stored. Each catch's own
 // context (the sun's height, the weather, where you stood) is kept on its sighting when it is caught (main.js
 // capturePlane: sunEl, wx), so older catches count only for what they already carry. No DOM here.
-import { greatCircle } from './flight-facts.js?v=0.1.1924';
-import { isProp } from './sky-props.js?v=0.1.1924';
-import { distRound as distText, distIn, distGoal } from './units.js?v=0.1.1924'; /* distances in the player's units (QA round 5) */
+import { greatCircle } from './flight-facts.js?v=0.1.1925';
+import { isProp } from './sky-props.js?v=0.1.1925';
+import { distRound as distText, distIn, distGoal } from './units.js?v=0.1.1925'; /* distances in the player's units (QA round 5) */
 
 const R = 6371, RAD = Math.PI / 180;
 const km = (a, b) => { const s = Math.sin((b.lat - a.lat) * RAD / 2) ** 2 + Math.cos(a.lat * RAD) * Math.cos(b.lat * RAD) * Math.sin((b.lon - a.lon) * RAD / 2) ** 2; return 2 * R * Math.asin(Math.min(1, Math.sqrt(s))); };

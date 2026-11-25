@@ -88,7 +88,7 @@
   if (!up && ls('skyDemoClean') === '1') try { var hold = {}; ['skyDemo', 'skyFilm', 'skyDemoBackup', 'skyDemoClean'].forEach(function (k) { hold[k] = localStorage.getItem(k); }); localStorage.clear(); sessionStorage.clear(); Object.keys(hold).forEach(function (k) { if (hold[k] != null) localStorage.setItem(k, hold[k]); }); } catch (e) {}
   if (!up) try {
     /* what's overwritten is kept, so js/main.js can put it back if this browser turns out to have real catches */
-    if (localStorage.getItem('skyDemoBackup') == null) { var keep = {}; ['observer', 'started', 'tourDone', 'wcSeen', 'radarTip', 'shinyExplained', 'share', 'planeRelay', 'skyServer', 'skyRegulars', 'skyRegularTypes'].forEach(function (k) { keep[k] = localStorage.getItem(k); }); localStorage.setItem('skyDemoBackup', JSON.stringify(keep)); }
+    if (localStorage.getItem('skyDemoBackup') == null) { var keep = {}; ['observer', 'started', 'tourDone', 'wcSeen', 'radarTip', 'shinyExplained', 'share', 'planeRelay', 'skyServer', 'skyRegulars', 'skyRegularTypes', 'skyNote'].forEach(function (k) { keep[k] = localStorage.getItem(k); }); localStorage.setItem('skyDemoBackup', JSON.stringify(keep)); }
     localStorage.setItem('observer', JSON.stringify({ lat: obs.lat, lon: obs.lon, manual: true, place: obs.place || '' }));
     ['started', 'tourDone', 'wcSeen', 'radarTip', 'shinyExplained'].forEach(function (k) { localStorage.setItem(k, '1'); });
     /* the regulars this phone has learned: each flight's first sighting on the given days ago, at its usual time */
@@ -97,6 +97,7 @@
       (r.days || []).forEach(function (ago, i) { var t = new RealDate(start - ago * 86400e3); d[t.getFullYear() + '-' + (t.getMonth() + 1) + '-' + t.getDate()] = m + ((i * 7) % 9) - 4; });
       regs[r.flight] = d; if (r.t) regTypes[r.flight] = r.t; });
     localStorage.setItem('skyRegulars', JSON.stringify(regs)); localStorage.setItem('skyRegularTypes', JSON.stringify(regTypes));
+    if (scene.noteMem) { var nm = {}; Object.keys(scene.noteMem).forEach(function (k) { if (k !== 'about') nm[k] = scene.noteMem[k]; }); localStorage.setItem('skyNote', JSON.stringify(nm)); } /* the note's memory at load (js/sky-note.js) */
     localStorage.setItem('share', '0'); /* usage notes off (js/field-notes.js) */
     localStorage.removeItem('planeRelay'); localStorage.removeItem('skyServer');
   } catch (e) {}
