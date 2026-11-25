@@ -4,8 +4,8 @@
 // facts only state what the catalogue says today (orbit, launch date and site) or simple date
 // comparisons. No extrapolating today’s orbit back over decades (lifetime laps or distance).
 
-import { orbitStats, titleCase, siteName, ownerName } from './facts.js?v=0.1.1913';
-import { localText } from './localize.js?v=0.1.1913';
+import { orbitStats, titleCase, siteName, ownerName } from './facts.js?v=0.1.1914';
+import { localText } from './localize.js?v=0.1.1914';
 
 const FAMILY = [
   [/^IRIDIUM 33 DEB/, 'A piece of the **first accidental collision between two intact satellites**: Iridium 33 hit the dead Kosmos 2251 in 2009.'],
@@ -60,6 +60,7 @@ const shortDate = (iso) => new Date(`${iso}T12:00:00Z`).toLocaleDateString(undef
 
 export function titleFor(o) {
   if (o.natural) return o.name;
+  if (o.sky) return o.name; /* a plane or pass card keeps its own name: the satellite title-casing made "Globemaster Iii" and "Toronto To Tokyo" (playtest 2026-11-25) */
   if (o.launches) return o.familyName;
   if (o.members) return `${o.familyName} train, ${o.launch ? shortDate(o.launch) : 'unknown date'}`;
   // A fleet member is named like its card: "Amazon Leo 00100", not "Kuiper-00100" (collectors 2026-10-11).

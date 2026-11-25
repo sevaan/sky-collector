@@ -3,16 +3,16 @@
 // know who sent it; 2026-11-07, Sevaan).
 // Sharing only copies: the cards stay on this phone too (2026-11-07, Sevaan: "we don't need Move as a concept... I don't
 // see anyone getting rid of cards they've collected"). Built by cards-page.js, which hands in what it knows (ctx).
-import { plural, ownSightings } from './gift.js?v=0.1.1913';
-import { nightKey } from './observation.js?v=0.1.1913';
-import { TIER_INFO } from './rarity.js?v=0.1.1913';
-import { packLinkFor, shareLink } from './pack-share.js?v=0.1.1913';
-import { createPicks, toggle, allPicked, countPicked, pickShown, pickedSightings, countLine, filtersOn } from './send-pick.js?v=0.1.1913';
+import { plural, ownSightings } from './gift.js?v=0.1.1914';
+import { nightKey, calendarDaysOn } from './observation.js?v=0.1.1914';
+import { TIER_INFO } from './rarity.js?v=0.1.1914';
+import { packLinkFor, shareLink } from './pack-share.js?v=0.1.1914';
+import { createPicks, toggle, allPicked, countPicked, pickShown, pickedSightings, countLine, filtersOn } from './send-pick.js?v=0.1.1914';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const day = (t) => new Date(t).toLocaleDateString([], { weekday: 'short', day: 'numeric', month: 'short' });
 // The evening a night belongs to (a 1 AM catch is the evening before).
-const eveningOf = (s) => new Date(s.time - (new Date(s.time).getHours() < 12 ? 86400e3 : 0));
+const eveningOf = (s) => new Date(s.time - (!calendarDaysOn() && new Date(s.time).getHours() < 12 ? 86400e3 : 0)); /* Sky's days are calendar days (playtest 2026-11-25: a morning's catches were labelled the day before) */
 
 let ctx = null, view = null, sel = null;
 const $ = (id) => document.getElementById(id);

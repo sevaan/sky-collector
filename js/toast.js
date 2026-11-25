@@ -155,14 +155,15 @@ function show(t) {
   const dismiss = () => { if (gone) return; gone = true; clearInterval(timer); stopConfetti(); if (t.id) live.delete(t.id); stickies.delete(dismiss); if (t.sticky) { clearInterval(tuckT); const i = shelf.indexOf(el); if (i >= 0) shelf.splice(i, 1); } el.classList.add('out'); el.classList.remove('in'); setTimeout(() => { el.remove(); if (!t.sticky && holding) { holding = false; busy = false; } pump(); }, 200); };
   // Swipe up to send it away, like the phone’s own notifications (2026-10-18).
   let y0 = null, dy = 0, swiped = false;
-  el.addEventListener('pointerdown', (e) => { y0 = e.clientY; dy = 0; try { el.setPointerCapture(e.pointerId); } catch {} });
+  let downX = false; // the ✕ pressed: with the pointer captured, the click lands on the ticket, not the ✕ (playtest 2026-11-25: ✕ on YOUR WEEK opened the recap)
+  el.addEventListener('pointerdown', (e) => { y0 = e.clientY; dy = 0; downX = !!e.target.closest?.('.ticket__x'); try { el.setPointerCapture(e.pointerId); } catch {} });
   el.addEventListener('pointermove', (e) => { if (y0 == null) return; dy = Math.min(0, e.clientY - y0); if (dy < -4) { el.classList.add('dragging'); el.style.transform = `translateY(${dy}px)`; } });
   const up = () => { if (y0 == null) return; y0 = null; el.classList.remove('dragging'); el.style.transform = ''; if (dy < -28) { swiped = true; dismiss(); } };
   el.addEventListener('pointerup', up); el.addEventListener('pointercancel', up);
   el.addEventListener('click', (e) => {
     if (swiped) { swiped = false; return; }
     if (el.classList.contains('tucked')) { untuck(); return; } // the chip opens back into the banner
-    if (e.target.closest('.ticket__x')) { dismiss(); return; }
+    if (downX || e.target.closest('.ticket__x')) { downX = false; dismiss(); return; }
     if (t.action) { dismiss(); try { t.action(); } catch {} return; }
     if (t.href) { if (!window.scNavigate?.(t.href)) location.href = t.href; dismiss(); } else dismiss();
   });

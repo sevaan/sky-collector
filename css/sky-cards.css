@@ -360,7 +360,8 @@ body.sky-only #visible-sub { color:var(--sc-muted); }
 /* Satellite sweep (2026-11-15): Settings rows that only made sense for satellites */
 body.sky-only #row-tonight, html:not(.native-app) body.sky-only #row-alerts, body.sky-only #row-live, html:not(.native-app) body.sky-only #row-quiet /* Plane alerts and Quiet hours: in the apps only, where notifications work (2026-11-19, Part 2 H) */,
 body.sky-only .set-row:has(#chk-daysats), body.sky-only .set-row:has(#chk-meteor),
-body.sky-only #sky-plus-line { display:none !important; } /* Observer stats is back (2026-11-17): the page has a plane version */
+body.sky-only #sky-plus-line { display:none !important; }
+/* the Notifications card has no rows on the website (playtest 2026-11-25: a heading over nothing) */ html:not(.native-app) body.sky-only .set-group:has(#row-alerts) { display:none !important; } /* Observer stats is back (2026-11-17): the page has a plane version */
 /* Settings sweep (2026-11-15): gifting has no planes yet; circle highlights only sort satellites, stars and UFOs; the test tools below are satellite-only */
 /* Send cards is back (2026-11-19, review Part 2 A: plane snapshots travel in the link; short links on Sky's server); Circle highlights too (G) */ body.sky-only #btn-next-pass, body.sky-only #btn-nightpack,
 /* UFO and Santa's test buttons are back with them (2026-11-19) */ body.sky-only #btn-meteor, body.sky-only #set-hl-sheet .set-chips:not(.sky-hl), body.sky-only #btn-live-test { display:none !important; }
