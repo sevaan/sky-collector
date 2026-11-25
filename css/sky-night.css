@@ -61,3 +61,6 @@ html.sky-night body.sky-only .n2-pips i:not(.on, .now) { background:#2f4a68; }
 /* The pack screen keeps its daylight sky at night, so it keeps the day's ink too (2026-11-22, Sevaan: "to open", "Tap to
    open" and the night's date were pale cream on the light clouds in the evening) */
 html.sky-night body.sky-only #gift { --sc-ink:#0d2238; --sc-muted:#4a6178; --sc-rule:#c9b98a; --sc-paper:#fffdf6; --sc-orange-ink:#b42a20; --sc-line:#c9d9e6; --text:#0d2238; --muted:#4a6178; }
+/* The card viewer's share icon in the ✕'s cream-yellow at night (2026-11-24, Sevaan picked cream-yellow): the two buttons
+   side by side are one colour (it was the Settings icon's pale blue-white beside a cream ✕) */
+html.sky-cards.sky-night #viewer .v-share { color:#fff2b3 !important; }
