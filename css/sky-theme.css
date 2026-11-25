@@ -1088,3 +1088,6 @@ body.sky-only .td2-map .td2-rm { position:relative; height:210px; }
 body.sky-only .td2-map .td2-rm .rm-svg { position:absolute; inset:0; width:100%; height:100%; display:block; margin:0; }
 body.sky-only .td2-map .td2-cap { position:static; padding:10px 12px 12px; border-top:1px solid color-mix(in srgb, var(--rc-ink) 14%, transparent); color:var(--rc-ink); }
 html.sky-night body.sky-only .td2-map .td2-cap { color:var(--rc-ink); }
+/* the weather or time-of-day line under the top card's "where" (js/main.js skyHeroLine) */
+body.sky-only .now-hero .nh-line { display:block; margin-top:5px; font:500 14px/1.3 var(--label); color:var(--muted, #55697d); text-wrap:pretty; }
+html.sky-night body.sky-only .now-hero .nh-line { color:#a7b8ca; }

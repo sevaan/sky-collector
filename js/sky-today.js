@@ -5,20 +5,20 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { isProp } from './sky-props.js?v=0.1.1911';
-import { routeMap } from './route-map.js?v=0.1.1911';
-import { planesUp } from './sky-up.js?v=0.1.1911';
-import { planeKey } from './flights.js?v=0.1.1911';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1911';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1911';
-import { airlineIcon } from './airline-icons.js?v=0.1.1911';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1911';
-import { regulars, noteRegulars, clockText, regularAllowed } from './sky-regulars.js?v=0.1.1911';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1911';
-import { planeSet } from './sky-sets.js?v=0.1.1911';
-import { MIL_TYPES } from './plane-privacy.js?v=0.1.1911';
-import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1911';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1911';
+import { isProp } from './sky-props.js?v=0.1.1912';
+import { routeMap } from './route-map.js?v=0.1.1912';
+import { planesUp } from './sky-up.js?v=0.1.1912';
+import { planeKey } from './flights.js?v=0.1.1912';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1912';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1912';
+import { airlineIcon } from './airline-icons.js?v=0.1.1912';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1912';
+import { regulars, noteRegulars, clockText, regularAllowed } from './sky-regulars.js?v=0.1.1912';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1912';
+import { planeSet } from './sky-sets.js?v=0.1.1912';
+import { MIL_TYPES } from './plane-privacy.js?v=0.1.1912';
+import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1912';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1912';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -192,9 +192,24 @@ function justUp(p, obs, t) { try { const q = planePath(p, obs, t, -120, -120, 1)
 
 // ---------- today's tally (planes, airlines, countries, the farthest flight), kept with the seen log ----------
 const TALLY = 'skyTally';
-function readTally() { let s = null; try { s = JSON.parse(localStorage.getItem(TALLY) || 'null'); } catch {} return s && s.day === dayKey() ? s : { day: dayKey(), airlines: [], countries: [], far: null }; }
+/* Yesterday's tally and the best-ever farthest (2026-11-24, content/sky-today-note-copy-2026-11-24.md F): when the day rolls
+   over, the old day's counts and farthest are kept for one day ('skyTallyY'), and its farthest goes into the best kept until
+   beaten ('skyBest'). On the phone only, never in usage notes; names and places only for airlines on Sky's list, as the
+   tally keeps them. */
+const TALLY_Y = 'skyTallyY', BEST = 'skyBest';
+const prevDayKey = (t = Date.now()) => dayKey(new Date(new Date(t).setHours(12, 0, 0, 0)).getTime() - 86400e3);
+function rollTally(old) {
+  if (!old?.day || old.day === dayKey()) return;
+  try { if (old.day === prevDayKey()) localStorage.setItem(TALLY_Y, JSON.stringify({ day: old.day, planes: old.planes ?? 0, airlines: (old.airlines ?? []).length, countries: (old.countries ?? []).length, far: old.far ? { km: old.far.km, city: old.far.city } : null })); } catch {}
+  try { const b = JSON.parse(localStorage.getItem(BEST) || 'null'); if (old.far?.city && (!b || old.far.km > b.km)) localStorage.setItem(BEST, JSON.stringify({ km: old.far.km, city: old.far.city, type: old.far.type ?? '', day: old.day })); } catch {}
+}
+export const _rollTally = (old) => rollTally(old); // tests
+export const yesterdayTally = () => { try { const y = JSON.parse(localStorage.getItem(TALLY_Y) || 'null'); return y && y.day === prevDayKey() ? y : null; } catch { return null; } };
+export const bestFar = () => { try { return JSON.parse(localStorage.getItem(BEST) || 'null'); } catch { return null; } };
+function readTally() { let s = null; try { s = JSON.parse(localStorage.getItem(TALLY) || 'null'); } catch {} if (s && s.day !== dayKey()) rollTally(s); return s && s.day === dayKey() ? s : { day: dayKey(), airlines: [], countries: [], far: null }; }
 let tally = null, tallySaved = 0;
 function noteTally(up, route) {
+  if (tally && tally.day !== dayKey()) rollTally(tally); /* open past midnight: the day in memory is the newest */
   tally = tally && tally.day === dayKey() ? tally : readTally(); const A = new Set(tally.airlines), C = new Set(tally.countries);
   for (const u of up) { const p = u.a.plane, listed = regularAllowed(p.callsign), r = listed ? route(p.callsign) : null, full = r?.full; if (r?.airline) A.add(r.airline); /* names and places only for airlines on Sky's list (content/sky-today-note-copy-2026-11-24.md G) */
     if (full) { if (full.to?.cc) C.add(full.to.cc); if (full.from?.cc) C.add(full.from.cc); const km = kmOf(full);
@@ -287,11 +302,11 @@ let boardShown = new Set(), boardIo = null, lastRender = 0, boardSpun = false;
 
 // The top card: Space Collector's Tonight hero (.now-hero) for a plane, its .nh-card slot filled with the real mini card
 // by js/main.js (skyFillMinis). One renderer for Today and How to play's last slide (main.js htUpNow).
-export function heroHtml({ hex, color, kick, left = null, until = null, tierLine = '', name, what = '', where = '', az = 0, hint = '' }) {
+export function heroHtml({ hex, color, kick, left = null, until = null, tierLine = '', name, what = '', where = '', az = 0, hint = '', line = '' }) {
   return `<div class="now-hero" style="--c:${color ?? '#9aa4b1'}" data-hex="${esc(hex)}"><span class="nh-k">${esc(kick)}</span>
       <div class="nh-top"><button type="button" class="nh-card" data-show="${esc(hex)}" data-mini="${esc(hex)}" aria-label="Show me ${esc(name)}"></button>
         <div class="nh-side"><div class="nh-t">${left != null ? `<b${until ? ` data-until="${until}"` : ''}>${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}</b><small class="nh-u">left in your sky</small>` : '<b>Up now</b>'}</div>
-          <span class="nh-tier">${esc(tierLine)}</span><span class="nh-name">${esc(name)}</span><span class="nh-what">${esc(what)}</span><span class="nh-where">${esc(where)}</span></div></div>
+          <span class="nh-tier">${esc(tierLine)}</span><span class="nh-name">${esc(name)}</span><span class="nh-what">${esc(what)}</span><span class="nh-where">${esc(where)}</span>${line ? `<span class="nh-line">${esc(line)}</span>` : ''}</div></div>
       <span class="nh-dir"><i class="nh-arrow" data-az="${Number(az).toFixed(1)}" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 2.5 L19 10 H14.5 V21 H9.5 V10 H5 Z" fill="currentColor"/></svg></i><span class="nh-turn" data-hint>${esc(hint)}</span></span>
       <div class="nh-acts"><button type="button" class="pill-o nh-go" data-show="${esc(hex)}"><span class="ico-svg">${TARGET}</span> Show me</button></div></div>`;
 }
@@ -305,7 +320,7 @@ export function renderToday(el, ctx) {
   const up = planesUp(ctx.positions).map((a) => ({ a, w: worth(a, ctx.route(a.plane.callsign), owned) })).sort((x, y) => y.w.score - x.w.score);
   const next = obs ? forecast(ctx.planes.planes ?? [], obs, t, new Set(up.map((u) => u.a.plane.hex))) : [];
   const seen = readSeen(), maxH = Math.max(1, ...seen.hours), nowH = new Date().getHours(), sky = heroSky(ctx.wx);
-  const T = noteTally(up, ctx.route);
+  const T = noteTally(up, ctx.route); try { T.planes = readSeen().hexes.length; } catch {} /* kept with the tally, for tomorrow's "Yesterday" line */
   const tierOf = (p) => { try { return ctx.tierOf?.(p) ?? null; } catch { return null; } };
   // every plane once, with what the sections need
   const cand = (p, extra) => { const r = ctx.route(p.callsign), full = r?.full ?? null; return { p, r, full, km: kmOf(full), tier: tierOf(p), ...extra }; };
@@ -329,7 +344,7 @@ export function renderToday(el, ctx) {
     live = heroHtml({ hex: p.hex, color: tier?.color, kick: `Up now${up.length > 1 ? ` · best of ${up.length}` : ''}${sky.word ? ` · ${sky.word}` : ''}`, left: best.left, until: best.left != null ? t + best.left * 1000 : null,
       tierLine: `${tier ? `${tier.gem ?? ''} ${tier.label}` : ''}${newWord ? ` · ${newWord}` : ''}${fin ? ' · finishes a mission' : ''}`, name: best.w.name,
       what: [best.r?.airline && best.full ? best.r.airline : null, type !== best.w.name ? type : null].filter(Boolean).join(' · ') /* never the title again */, where: [ft ? `${ft.toLocaleString('en-US')} ft` : null, where(best.a)].filter(Boolean).join(' · '),
-      az: best.a.az, hint: ctx.hint?.({ az: best.a.az, el: best.a.el }) || `Look ${where(best.a)}` });
+      az: best.a.az, hint: ctx.hint?.({ az: best.a.az, el: best.a.el }) || `Look ${where(best.a)}`, line: (() => { try { return ctx.heroLine?.() ?? ''; } catch { return ''; } })() /* the weather or time of day, one line (js/main.js skyHeroLine) */ });
   } else live = `<section class="tn-wx td-wx${sky.cls}">${sky.html}<span class="k">Up now${sky.word ? `<em>${esc(sky.word)}</em>` : ''}</span>${best ? allCaught(nexts) : skyState(ctx)}</section>`;
 
   // 2 · rare alert: the rarest Epic or Legendary up (not the live card) or coming over
