@@ -5,15 +5,15 @@
 //  Everything scales with rarity (Legendary dims the sky, shockwave, held breath, slow flip, fanfare).
 // Waits use timers, not animation.finished, so a paused tab can never freeze the sequence.
 
-import { sfx, loadSfx } from './sfx.js?v=0.1.1907';
-import { audioCtx } from './audio-ctx.js?v=0.1.1907';
-import { TIER_INFO } from './rarity.js?v=0.1.1907';
-import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1907';
-import { applyBack } from './card-backs.js?v=0.1.1907';
-import { addStarfield } from './starfield.js?v=0.1.1907';
-import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1907';
-import { packPlan, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1907'; /* the two-card pack opening (prototype, 2026-11-20) */
-import { tearJag } from './gift-pack.js?v=0.1.1907';
+import { sfx, loadSfx } from './sfx.js?v=0.1.1908';
+import { audioCtx } from './audio-ctx.js?v=0.1.1908';
+import { TIER_INFO } from './rarity.js?v=0.1.1908';
+import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1908';
+import { applyBack } from './card-backs.js?v=0.1.1908';
+import { addStarfield } from './starfield.js?v=0.1.1908';
+import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1908';
+import { packPlan, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1908'; /* the two-card pack opening (prototype, 2026-11-20) */
+import { tearJag } from './gift-pack.js?v=0.1.1908';
 
 const FX = TIER_FX; /* one rarity table for every card moment (js/card-moment.js, 2026-11-11) */
 const NIGHT_MILESTONES = [3, 5, 10, 25, 50, 100, 200, 365], STAMP_MILESTONES = [5, 10, 25, 50, 100, 200, 300, 400];

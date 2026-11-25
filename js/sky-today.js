@@ -5,20 +5,20 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { isProp } from './sky-props.js?v=0.1.1907';
-import { routeMap } from './route-map.js?v=0.1.1907';
-import { planesUp } from './sky-up.js?v=0.1.1907';
-import { planeKey } from './flights.js?v=0.1.1907';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1907';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1907';
-import { airlineIcon } from './airline-icons.js?v=0.1.1907';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1907';
-import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1907';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1907';
-import { planeSet } from './sky-sets.js?v=0.1.1907';
-import { MIL_TYPES } from './plane-privacy.js?v=0.1.1907';
-import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1907';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1907';
+import { isProp } from './sky-props.js?v=0.1.1908';
+import { routeMap } from './route-map.js?v=0.1.1908';
+import { planesUp } from './sky-up.js?v=0.1.1908';
+import { planeKey } from './flights.js?v=0.1.1908';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1908';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1908';
+import { airlineIcon } from './airline-icons.js?v=0.1.1908';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1908';
+import { regulars, noteRegulars, clockText } from './sky-regulars.js?v=0.1.1908';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1908';
+import { planeSet } from './sky-sets.js?v=0.1.1908';
+import { MIL_TYPES } from './plane-privacy.js?v=0.1.1908';
+import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1908';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1908';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -198,7 +198,13 @@ function noteTally(up, route) {
   tally = tally && tally.day === dayKey() ? tally : readTally(); const A = new Set(tally.airlines), C = new Set(tally.countries);
   for (const u of up) { const p = u.a.plane, r = route(p.callsign), full = r?.full; if (r?.airline) A.add(r.airline);
     if (full) { if (full.to?.cc) C.add(full.to.cc); if (full.from?.cc) C.add(full.from.cc); const km = kmOf(full);
-      if (km && (!tally.far || km > tally.far.km)) tally.far = { km: Math.round(km), city: full.to.city, from: full.from.city, airline: r.airline || '', callsign: p.callsign, type: p.type, t: Date.now() }; } }
+      if (km && (!tally.far || km > tally.far.km)) tally.far = { km: Math.round(km), city: full.to.city, code: full.to.iata || '', from: full.from.city, airline: r.airline || '', callsign: p.callsign, type: p.type, t: Date.now() }; } }
+  /* today's highest and fastest (2026-11-24, Sevaan picked the departures board "with highest and fastest"): airborne
+     planes only, with the odd bad reading (over 60,000 ft, over 1,300 km/h) left out. By type and route only, like Farthest. */
+  for (const u of up) { const p = u.a.plane, r = route(p.callsign), full = r?.full, ft = altFt(p), kmh = (Number(p.gs) || 0) * 1.852;
+    const who = () => ({ name: aircraftName(p) || 'Aircraft', airline: r?.airline || '', to: full?.to?.city || '', callsign: p.callsign, type: p.type, t: Date.now() });
+    if (ft > 1000 && ft < 60000 && (!tally.high || ft > tally.high.ft + 50)) tally.high = { ft: Math.round(ft / 100) * 100, ...who() };
+    if (kmh > 150 && kmh < 1300 && (!tally.fast || kmh > tally.fast.kmh + 2)) tally.fast = { kmh: Math.round(kmh), ...who() }; }
   tally.airlines = [...A]; tally.countries = [...C];
   if (Date.now() - tallySaved > 15000) { tallySaved = Date.now(); try { localStorage.setItem(TALLY, JSON.stringify(tally)); } catch {} }
   return tally;
@@ -376,14 +382,28 @@ export function renderToday(el, ctx) {
     const nC = new Set([...dests.values()].map((d) => d.to.cc).filter(Boolean)).size;
     return `${sec('Where they’re going', 'Right now')}<div class="td2-map"><div class="td2-rm">${m.svg}</div><div class="td2-cap"><b>Flights to ${dests.size} ${dests.size === 1 ? 'city' : 'cities'}</b> in ${nC} ${nC === 1 ? 'country' : 'countries'} are over you</div></div>`; })() : '';
 
-  // 7 · today so far
-  const far = T.far, farPh = far ? picOf({ type: far.type, callsign: far.callsign }) : null;
-  const story = `${sec('Today so far', `${seen.hexes.length.toLocaleString()} plane${seen.hexes.length === 1 ? '' : 's'} seen`)}<div class="td2-story">
-    <div class="td2-big"><div><b>${seen.hexes.length.toLocaleString()}</b><span>planes</span></div><div><b>${T.airlines.length}</b><span>airlines</span></div><div><b>${T.countries.length}</b><span>countries</span></div></div>
-    ${far ? `<div class="td2-far"><span class="td2-farpic" style="${bg(farPh)}"></span><div><b>Farthest: to ${esc(far.city)}</b><span>${esc([far.airline, `${far.km.toLocaleString('en-US')} km from ${far.from}`].filter(Boolean).join(' · '))}, over you at ${new Date(far.t).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</span></div></div>` : ''}
-    <div class="td-chart" aria-label="Planes seen by hour">${seen.hours.map((n, h) => `<i class="${h === nowH ? 'now' : ''}${seen.open[h] ? '' : ' gap'}" style="height:${seen.open[h] ? Math.max(4, Math.round(n / maxH * 54)) : 4}px" title="${h}:00 · ${seen.open[h] ? n : 'app closed'}"></i>`).join('')}</div>
-    <div class="td-axis"><span>12 AM</span><span>6</span><span>NOON</span><span>6</span><span>11 PM</span></div></div>
-    <p class="td-note">Counts only the hours Sky Collector was open. Grey bars are hours it wasn’t.</p>`;
+  // 7 · today so far: a departures board (2026-11-24, Sevaan picked B of the Today so far redesign, "with highest and
+  // fastest"): split-flap counts, then today's records (farthest, highest, fastest), each saying when it passed so none
+  // reads like a plane up now, and the hours as a thin strip with a legend.
+  const ago = (at) => { const m = Math.round((Date.now() - at) / 60000); return m < 1 ? 'just now' : m < 60 ? `${m} min ago` : `at ${new Date(at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`; };
+  const flaps = (v, cls = '') => `<span class="bd-flap${cls}" aria-hidden="true">${[...String(v)].map((ch) => `<span>${esc(ch)}</span>`).join('')}</span>`;
+  const pad3 = (n) => String(n).padStart(3, '0');
+  const row = (lab, v, sr) => `<div class="bd-row"><span class="bd-lab">${lab}</span>${flaps(v)}<span class="sr">${esc(sr)}</span></div>`;
+  const toWords = (x) => [x.airline, x.to ? `to ${x.to}` : ''].filter(Boolean).join(' ');
+  const rec = (lab, v, sr, left, right) => `<div class="bd-rec"><div class="bd-row"><span class="bd-lab gold">${lab}</span>${flaps(v, ' gold')}<span class="sr">${esc(sr)}</span></div><div class="bd-line"><span>${left}</span><span class="tnum">${esc(right)}</span></div></div>`;
+  const far = T.far, high = T.high, fast = T.fast;
+  const recs = [
+    far ? rec('Farthest', String(far.code || (() => { try { return ctx.route(far.callsign)?.full?.to?.iata; } catch { return ''; } })() || String(far.city).normalize('NFD').replace(/[^A-Za-z]/g, '')).slice(0, 3).toUpperCase() /* a record saved before codes were kept: its city's letters */, `Farthest: ${far.city}`, `<b>To ${esc(far.city)}</b>${far.airline ? ` · ${esc(far.airline)}` : ''}`, `${far.km.toLocaleString('en-US')} km · ${ago(far.t)}`) : '',
+    high ? rec('Highest · ft', high.ft, `Highest: ${high.ft} feet`, `<b>${esc(high.name)}</b>${toWords(high) ? ` · ${esc(toWords(high))}` : ''}`, `${high.ft.toLocaleString('en-US')} ft · ${ago(high.t)}`) : '',
+    fast ? rec('Fastest · km/h', fast.kmh, `Fastest: ${fast.kmh} km/h`, `<b>${esc(fast.name)}</b>${toWords(fast) ? ` · ${esc(toWords(fast))}` : ''}`, `${fast.kmh.toLocaleString('en-US')} km/h · ${ago(fast.t)}`) : '',
+  ].join('');
+  const story = `${sec('Today so far', `since ${(() => { const h = seen.open.findIndex(Boolean); return h < 0 ? 'now' : new Date(new Date().setHours(h, 0, 0, 0)).toLocaleTimeString([], { hour: 'numeric' }); })()}`)}<div class="td2-board">
+    <div class="bd-top"><span>Your sky · today</span><span class="tnum">${esc(new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }))}</span></div>
+    ${row('Planes', pad3(seen.hexes.length), `${seen.hexes.length} planes`)}${row('Airlines', pad3(T.airlines.length), `${T.airlines.length} airlines`)}${row('Countries', pad3(T.countries.length), `${T.countries.length} countries`)}
+    ${recs ? `<div class="bd-recs">${recs}</div>` : ''}
+    <div class="bd-strip"><div class="bd-bars" aria-label="Planes seen by hour">${seen.hours.map((n, h) => `<i class="${h === nowH ? 'now' : ''}${seen.open[h] ? '' : ' off'}" style="height:${seen.open[h] ? Math.max(12, Math.round(n / maxH * 100)) : 10}%" title="${h}:00 · ${seen.open[h] ? n : 'app closed'}"></i>`).join('')}</div>
+    <div class="bd-axis"><span>12 AM</span><span>6</span><span>NOON</span><span>6</span><span>11 PM</span></div>
+    <div class="bd-legend"><span>planes seen</span><span class="now">this hour</span><span class="off">app closed</span></div></div></div>`;
 
   /* Your regulars (js/sky-regulars.js): flights that pass at about the same time most days, the next three due today */
   let regs = ''; try { const now = Date.now(), rl = regulars(now).filter((r) => r.next - now < 12 * 3600e3).slice(0, 3);
