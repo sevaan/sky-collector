@@ -1,5 +1,5 @@
 {
-  "about": "Demo scene for store filming (js/demo-boot.js). Toronto at golden hour on a clear late-November afternoon. Swap planes or routes here; no code changes needed. Planes are placed by bearing (az, degrees from north) and ground distance (km) from the observer at the start time, then fly on their own track and speed. A plane with a route and no track heads for its destination. Private and other non-airline aircraft carry no callsign (the app names them by kind only).",
+  "about": "Demo scene for store filming (js/demo-boot.js), staged to content/sky-store-media-script-2026-11-25.md section C. Toronto at golden hour on a clear late-November afternoon. Swap planes, the hero, regulars or the collection here; no code changes needed. Planes are placed by bearing (az, degrees from north) and ground distance (km) from the observer at the start time, then fly on their own track, speed and climb (ft per minute). A plane with a route and no track heads for its destination; \"toward\": true points it at the observer instead (the Coming over next rows). Only airline flights carry a callsign; the helicopter has none and is named by kind only. The hero is one line: change \"hero\" to another plane's flight.",
   "start": "2026-11-24T16:32:00-05:00",
   "timeZone": "America/Toronto",
   "observer": { "lat": 43.6532, "lon": -79.3832, "place": "Toronto" },
@@ -7,13 +7,52 @@
   "hero": "ACA848",
   "planes": [
     { "flight": "ACA848", "t": "B789", "desc": "BOEING 787-9 Dreamliner", "category": "A5", "az": 305, "km": 7, "ft": 11500, "kt": 290, "climb": 1800, "route": "CYYZ-EGLL" },
-    { "flight": "UAE242", "t": "A388", "desc": "AIRBUS A-380-800", "category": "A5", "az": 275, "km": 24, "ft": 15000, "kt": 320, "climb": 1500, "route": "CYYZ-OMDB" },
-    { "flight": "POE213", "t": "E295", "desc": "EMBRAER E-195-E2", "category": "A3", "az": 120, "km": 9, "ft": 7000, "kt": 260, "climb": 2000, "route": "CYTZ-CYUL" },
+    { "flight": "CPA096", "t": "B748", "desc": "BOEING 747-8F", "category": "A5", "az": 15, "km": 8, "ft": 7500, "kt": 230, "climb": -700, "route": "VHHH-CYYZ" },
     { "flight": "JZA8091", "t": "DH8D", "desc": "DE HAVILLAND CANADA DHC-8-400", "category": "A2", "az": 20, "km": 14, "ft": 9000, "kt": 250, "climb": 1200, "route": "CYYZ-CYOW" },
-    { "flight": "WJA657", "t": "B38M", "desc": "BOEING 737 MAX 8", "category": "A3", "az": 250, "km": 30, "ft": 21000, "kt": 380, "climb": 1500, "route": "CYYZ-CYYC" },
+    { "flight": "POE213", "t": "E295", "desc": "EMBRAER E-195-E2", "category": "A3", "az": 120, "km": 9, "ft": 7000, "kt": 260, "climb": 2000, "route": "CYTZ-CYUL" },
     { "flight": "AAL1307", "t": "B738", "desc": "BOEING 737-800", "category": "A3", "az": 200, "km": 38, "ft": 34000, "kt": 450, "route": "KORD-KBOS" },
     { "flight": "DLH471", "t": "A359", "desc": "AIRBUS A-350-900", "category": "A5", "az": 70, "km": 45, "ft": 33000, "kt": 470, "route": "CYYZ-EDDF" },
     { "t": "AS50", "desc": "AIRBUS HELICOPTERS AS-350", "category": "A7", "az": 160, "km": 2.5, "ft": 1500, "kt": 95, "track": 80 },
-    { "t": "C172", "desc": "CESSNA 172", "category": "A1", "az": 230, "km": 5, "ft": 3500, "kt": 105, "track": 40 }
-  ]
+    { "flight": "AFR356", "t": "A359", "desc": "AIRBUS A-350-900", "category": "A5", "az": 75, "km": 115, "ft": 24000, "kt": 430, "route": "LFPG-CYYZ", "toward": true, "new": true },
+    { "flight": "UAL3802", "t": "E75L", "desc": "EMBRAER ERJ-175", "category": "A3", "az": 250, "km": 95, "ft": 19000, "kt": 380, "route": "KORD-CYYZ", "toward": true },
+    { "flight": "AMX693", "t": "B39M", "desc": "BOEING 737 MAX 9", "category": "A3", "az": 215, "km": 140, "ft": 26000, "kt": 440, "route": "MMMX-CYYZ", "toward": true },
+    { "flight": "FDX1702", "t": "B763", "desc": "BOEING 767-300F", "category": "A5", "az": 230, "km": 170, "ft": 28000, "kt": 450, "route": "KMEM-CYYZ", "toward": true }
+  ],
+  "regulars": [
+    { "flight": "ACA856", "t": "A320", "route": "CYYZ-CYOW", "usual": "17:10", "days": [1, 2, 3, 5, 6] },
+    { "flight": "WJA657", "t": "B38M", "route": "CYYZ-CYYC", "usual": "18:05", "days": [1, 2, 4, 5, 6] }
+  ],
+  "collection": {
+    "about": "Seeded on every load (js/test-load.js demoCatches), spread over the last three weeks. flights: [callsign, type, from ICAO, to ICAO, size category, days ago]; a flight makes a pass and a plane card. planes: [type, size category, days ago], plane cards only, no callsign kept. shiny: the card that came out shiny ('golden' or 'moon'). yesterday: caught yesterday afternoon, for the night pack. Leave the hero's type and route (and the 747-8F) out, so catching them is new.",
+    "flights": [
+      ["ACA1", "B77W", "CYYZ", "RJTT", "A5", 20], ["ACA115", "A321", "CYYZ", "CYVR", "A3", 19], ["ACA856", "A320", "CYYZ", "CYOW", "A3", 6],
+      ["ACA894", "A333", "CYYZ", "LIRF", "A5", 18], ["ACA604", "BCS3", "CYYZ", "CYHZ", "A3", 17], ["ROU1608", "A319", "CYYZ", "MKJS", "A3", 16],
+      ["JZA8091", "DH8D", "CYYZ", "CYOW", "A2", 15], ["JZA7631", "CRJ9", "CYYZ", "KLGA", "A3", 14], ["WJA657", "B38M", "CYYZ", "CYYC", "A3", 5],
+      ["WJA1210", "B737", "CYYZ", "KMCO", "A3", 13], ["POE213", "E295", "CYTZ", "CYUL", "A3", 12], ["POE1531", "E295", "CYYZ", "KLAS", "A3", 11],
+      ["FLE512", "B38M", "CYYZ", "CYEG", "A3", 10], ["TSC572", "A321", "CYYZ", "LPPT", "A3", 9], ["AAL1046", "B738", "CYYZ", "KCLT", "A3", 8],
+      ["DAL1520", "A21N", "CYYZ", "KATL", "A3", 7], ["UAL3802", "E75L", "KORD", "CYYZ", "A3", 4], ["KLM692", "B772", "CYYZ", "EHAM", "A5", 20],
+      ["AFR351", "A359", "CYYZ", "LFPG", "A5", 19], ["SWR41", "A333", "CYYZ", "LSZH", "A5", 18], ["LOT46", "B788", "CYYZ", "EPWA", "A5", 17],
+      ["THY18", "B77W", "CYYZ", "LTFM", "A5", 16], ["UAE242", "A388", "CYYZ", "OMDB", "A5", 15], ["ETD141", "B78X", "CYYZ", "OMAA", "A5", 14],
+      ["CPA825", "A35K", "CYYZ", "VHHH", "A5", 13], ["KAL74", "B772", "CYYZ", "RKSI", "A5", 12], ["EVA35", "B77W", "CYYZ", "RCTP", "A5", 11],
+      ["PAL117", "B77W", "CYYZ", "RPLL", "A5", 10], ["AIC188", "B77L", "CYYZ", "VIDP", "A5", 9], ["ETH551", "B788", "CYYZ", "HAAB", "A5", 8],
+      ["AMX693", "B39M", "MMMX", "CYYZ", "A3", 7], ["AVA245", "A20N", "CYYZ", "SKBO", "A3", 6], ["CMP491", "B39M", "CYYZ", "MPTO", "A3", 5],
+      ["FDX1702", "B763", "KMEM", "CYYZ", "A5", 4], ["UPS2948", "B752", "CYYZ", "KSDF", "A4", 3], ["GEC8212", "B77L", "EDDF", "CYYZ", "A5", 3],
+      ["ICE602", "B752", "CYYZ", "BIKF", "A4", 2], ["EIN124", "A21N", "CYYZ", "EIDW", "A3", 2], ["TAP260", "A339", "CYYZ", "LPPT", "A5", 1],
+      ["ACA856", "A320", "CYYZ", "CYOW", "A3", 2], ["ACA856", "A320", "CYYZ", "CYOW", "A3", 3], ["WJA657", "B38M", "CYYZ", "CYYC", "A3", 1],
+      ["JZA8091", "DH8D", "CYYZ", "CYOW", "A2", 4]
+    ],
+    "planes": [
+      ["A124", "A5", 4], ["A139", "A7", 18], ["A19N", "A3", 17], ["A306", "A5", 16], ["A332", "A5", 15], ["AT72", "A2", 14],
+      ["AT76", "A2", 13], ["B407", "A7", 12], ["B744", "A5", 11], ["B762", "A5", 10], ["BCS1", "A3", 9], ["BE20", "A1", 8],
+      ["BLCF", "A5", 7], ["C172", "A1", 6], ["C208", "A1", 5], ["CRJ2", "A2", 20], ["DH8A", "A2", 19], ["DH8C", "A2", 18],
+      ["DHC6", "A1", 17], ["E170", "A3", 16], ["E190", "A3", 15], ["E195", "A3", 14], ["E290", "A3", 13], ["EC35", "A7", 12],
+      ["MD11", "A5", 11], ["P28A", "A1", 10], ["PC12", "A1", 9], ["R44", "A7", 8], ["S76", "A7", 7], ["SR22", "A1", 6],
+      ["PA31", "A1", 5], ["C182", "A1", 4], ["T206", "A1", 3], ["AT8T", "A2", 2]
+    ],
+    "shiny": [["UAE242", "golden"], ["A124", "moon"]],
+    "yesterday": [
+      ["EWG148", "A333", "CYYZ", "EDDF", "A5"], ["SAS904", "A333", "CYYZ", "EKCH", "A5"], ["ACA1290", "BCS3", "CYYZ", "CYWG", "A3"],
+      ["POE145", "DH8D", "CYTZ", "CYOW", "A2"], ["ENY3615", "E75L", "CYYZ", "KORD", "A3"], ["AAL1307", "B738", "KORD", "KBOS", "A3"]
+    ]
+  }
 }

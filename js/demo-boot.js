@@ -8,6 +8,7 @@
      ?demo=<scene>             on localhost / 127.0.0.1 only (a link to the real site can't turn it on)
      localStorage skyDemo=<scene>   anywhere but the native apps (a player can't set it by accident)
      ?film=0 or localStorage skyFilm='0'  keeps the testing tools, tips and footer (filming mode is on by default in a demo)
+     ?qr=1 or localStorage skyFilmQr='1'  keeps the boarding pass's code scannable while filming
    Off: localStorage.removeItem('skyDemo') and reload, or load without ?demo. */
 (function () {
   'use strict';
@@ -19,7 +20,8 @@
   var scene = null;
   try { var x = new XMLHttpRequest(); x.open('GET', 'data/demo/' + name + '.json', false); x.send(); if (x.status === 200) scene = JSON.parse(x.responseText); } catch (e) {}
   if (!scene) { console.warn('[demo] no scene "' + name + '"'); return; }
-  var film = (q.get('film') || ls('skyFilm') || '1') !== '0';
+  var film = up ? up.film : (q.get('film') || ls('skyFilm') || '1') !== '0';
+  var qr = up ? up.qr : (q.get('qr') || ls('skyFilmQr') || '0') === '1'; /* filming: the boarding pass's code can't be scanned unless ?qr=1 (js/flight-card.js) */
   var RealDate = Date, start = RealDate.parse(scene.start), off = up ? up.off : start - RealDate.now();
 
   // ---- the clock: starts at the scene's time on every load, then runs on ----
@@ -42,6 +44,7 @@
   function airportsSync() { if (airports) return airports; try { var x = new XMLHttpRequest(); x.open('GET', 'data/routes/airports.json', false); x.send(); airports = JSON.parse(x.responseText); } catch (e) { airports = {}; } return airports; }
   var planes = (scene.planes || []).map(function (p, i) {
     var at = p.lat != null ? { lat: p.lat, lon: p.lon } : move(obs.lat, obs.lon, p.az, p.km), track = p.track;
+    if (track == null && p.toward) track = bearing(at, obs); /* coming over: straight at you */
     if (track == null && p.route) { var to = airportsSync()[p.route.split('-').pop()]; if (to) track = bearing(at, { lat: to[4], lon: to[5] }); }
     return { p: p, lat: at.lat, lon: at.lon, track: track == null ? 0 : track, hex: 'd3e0' + (i + 16).toString(16).padStart(2, '0') };
   });
@@ -56,7 +59,7 @@
 
   // ---- routes from the scene: merged into the bundled per-airline files (data/routes/r/<AAA>.json) ----
   var routes = {};
-  (scene.planes || []).forEach(function (p) { if (p.flight && p.route) { var a = p.flight.slice(0, 3); (routes[a] = routes[a] || {})[p.flight.slice(3)] = p.route; } });
+  (scene.planes || []).concat(scene.regulars || []).forEach(function (p) { if (p.flight && p.route) { var a = p.flight.slice(0, 3); (routes[a] = routes[a] || {})[p.flight.slice(3)] = p.route; } });
 
   // ---- the weather: the scene's, every hour ----
   function wx() { var w = scene.weather || { cloud: 0, code: 0 }, h0 = Math.floor(DemoDate.now() / 3600e3) * 3600e3, hours = [];
@@ -85,14 +88,20 @@
   if (!up && ls('skyDemoClean') === '1') try { var hold = {}; ['skyDemo', 'skyFilm', 'skyDemoBackup', 'skyDemoClean'].forEach(function (k) { hold[k] = localStorage.getItem(k); }); localStorage.clear(); sessionStorage.clear(); Object.keys(hold).forEach(function (k) { if (hold[k] != null) localStorage.setItem(k, hold[k]); }); } catch (e) {}
   if (!up) try {
     /* what's overwritten is kept, so js/main.js can put it back if this browser turns out to have real catches */
-    if (localStorage.getItem('skyDemoBackup') == null) { var keep = {}; ['observer', 'started', 'tourDone', 'wcSeen', 'radarTip', 'shinyExplained', 'share', 'planeRelay', 'skyServer'].forEach(function (k) { keep[k] = localStorage.getItem(k); }); localStorage.setItem('skyDemoBackup', JSON.stringify(keep)); }
+    if (localStorage.getItem('skyDemoBackup') == null) { var keep = {}; ['observer', 'started', 'tourDone', 'wcSeen', 'radarTip', 'shinyExplained', 'share', 'planeRelay', 'skyServer', 'skyRegulars', 'skyRegularTypes'].forEach(function (k) { keep[k] = localStorage.getItem(k); }); localStorage.setItem('skyDemoBackup', JSON.stringify(keep)); }
     localStorage.setItem('observer', JSON.stringify({ lat: obs.lat, lon: obs.lon, manual: true, place: obs.place || '' }));
     ['started', 'tourDone', 'wcSeen', 'radarTip', 'shinyExplained'].forEach(function (k) { localStorage.setItem(k, '1'); });
+    /* the regulars this phone has learned: each flight's first sighting on the given days ago, at its usual time */
+    var regs = {}, regTypes = {};
+    (scene.regulars || []).forEach(function (r) { var hm = String(r.usual || '12:00').split(':'), m = (+hm[0]) * 60 + (+hm[1]), d = {};
+      (r.days || []).forEach(function (ago, i) { var t = new RealDate(start - ago * 86400e3); d[t.getFullYear() + '-' + (t.getMonth() + 1) + '-' + t.getDate()] = m + ((i * 7) % 9) - 4; });
+      regs[r.flight] = d; if (r.t) regTypes[r.flight] = r.t; });
+    localStorage.setItem('skyRegulars', JSON.stringify(regs)); localStorage.setItem('skyRegularTypes', JSON.stringify(regTypes));
     localStorage.setItem('share', '0'); /* usage notes off (js/field-notes.js) */
     localStorage.removeItem('planeRelay'); localStorage.removeItem('skyServer');
   } catch (e) {}
 
-  globalThis.__skyDemo = { name: name, scene: scene, start: start, off: off, film: film, hero: scene.hero || '' };
+  globalThis.__skyDemo = { name: name, scene: scene, start: start, off: off, film: film, qr: qr, hero: scene.hero || '' };
   document.documentElement.classList.add('sky-demo');
   if (film) document.documentElement.classList.add('sky-film');
 })();

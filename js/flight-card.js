@@ -9,22 +9,22 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { regularFor, clockText } from './sky-regulars.js?v=0.1.1916';
-import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js?v=0.1.1916';
-import { flightFact } from './flight-facts.js?v=0.1.1916';
-import { typePhoto } from './type-photos.js?v=0.1.1916';
-import { housePhoto } from './house-photos.js?v=0.1.1916';
-import { gapPhoto } from './gap-photos.js?v=0.1.1916'; /* the types that had no photo (2026-11-18) */
-import { airlinePhoto } from './airline-photos.js?v=0.1.1916';
-import { airlineLogo } from './airline-logos.js?v=0.1.1916';
-import { fitStyle } from './photo-fit.js?v=0.1.1916';
-import { dist, speed, useMiles } from './units.js?v=0.1.1916';
-import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1916';
-import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1916';
-import { typeFact } from './sky-facts.js?v=0.1.1916';
-import { localText } from './localize.js?v=0.1.1916';
-import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1916';
-import { qrEncode, qrSvg } from './qr.js?v=0.1.1916';
+import { regularFor, clockText } from './sky-regulars.js?v=0.1.1917';
+import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js?v=0.1.1917';
+import { flightFact } from './flight-facts.js?v=0.1.1917';
+import { typePhoto } from './type-photos.js?v=0.1.1917';
+import { housePhoto } from './house-photos.js?v=0.1.1917';
+import { gapPhoto } from './gap-photos.js?v=0.1.1917'; /* the types that had no photo (2026-11-18) */
+import { airlinePhoto } from './airline-photos.js?v=0.1.1917';
+import { airlineLogo } from './airline-logos.js?v=0.1.1917';
+import { fitStyle } from './photo-fit.js?v=0.1.1917';
+import { dist, speed, useMiles } from './units.js?v=0.1.1917';
+import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1917';
+import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1917';
+import { typeFact } from './sky-facts.js?v=0.1.1917';
+import { localText } from './localize.js?v=0.1.1917';
+import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1917';
+import { qrEncode, qrSvg } from './qr.js?v=0.1.1917';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // A type name escaped, with its hyphenated model codes kept on one line ('Boeing KC-135R Stratotanker' broke after 'KC-').
@@ -234,7 +234,11 @@ export function flightCardHtml(f, opts = {}) {
 /* The stub's code is a real QR code (js/qr.js), the same on every pass: it opens a well-known music video (2026-11-21,
    Sevaan). Made once. */
 let QR_SVG = '';
-function passQr() { if (!QR_SVG) { try { QR_SVG = qrSvg(qrEncode('https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'L'), { quiet: 3, cls: 'lp-qr' }); } catch { QR_SVG = ''; } } return QR_SVG; }
+/* Filming the store media (js/demo-boot.js, 2026-11-25, Content's pick pending Sevaan): the code looks the same but a third of
+   its data squares are flipped, past what a scanner can mend, so nothing in a screenshot opens anything. ?qr=1 keeps it real. */
+const unscannable = (q) => { const k = (x, y) => (x < 9 && y < 9) || (x >= q.size - 8 && y < 9) || (x < 9 && y >= q.size - 8);
+  return { ...q, modules: q.modules.map((row, y) => row.map((on, x) => (!k(x, y) && (x * 7 + y * 13) % 3 === 0 ? !on : on))) }; };
+function passQr() { if (!QR_SVG) { try { const q = qrEncode('https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'L'), D = globalThis.__skyDemo; QR_SVG = qrSvg(D?.film && !D.qr ? unscannable(q) : q, { quiet: 3, cls: 'lp-qr' }); } catch { QR_SVG = ''; } } return QR_SVG; }
 
 /* A checked fact for the type first (js/sky-facts.js, 2026-11-17: 131 types, sources in docs/FACTS-SOURCES.md) */
 /* Several facts per type (2026-11-18, Sevaan: "there may be multiple facts too"): the card shows the one for how many
