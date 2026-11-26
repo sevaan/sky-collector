@@ -5,15 +5,15 @@
 //  Everything scales with rarity (Legendary dims the sky, shockwave, held breath, slow flip, fanfare).
 // Waits use timers, not animation.finished, so a paused tab can never freeze the sequence.
 
-import { sfx, loadSfx } from './sfx.js?v=0.1.1925';
-import { audioCtx } from './audio-ctx.js?v=0.1.1925';
-import { TIER_INFO } from './rarity.js?v=0.1.1925';
-import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1925';
-import { applyBack } from './card-backs.js?v=0.1.1925';
-import { addStarfield } from './starfield.js?v=0.1.1925';
-import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1925';
-import { packPlan, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1925'; /* the two-card pack opening (prototype, 2026-11-20) */
-import { tearJag } from './gift-pack.js?v=0.1.1925';
+import { sfx, loadSfx } from './sfx.js?v=0.1.1926';
+import { audioCtx } from './audio-ctx.js?v=0.1.1926';
+import { TIER_INFO } from './rarity.js?v=0.1.1926';
+import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1926';
+import { applyBack } from './card-backs.js?v=0.1.1926';
+import { addStarfield } from './starfield.js?v=0.1.1926';
+import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1926';
+import { packPlan, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1926'; /* the two-card pack opening (prototype, 2026-11-20) */
+import { tearJag } from './gift-pack.js?v=0.1.1926';
 
 const FX = TIER_FX; /* one rarity table for every card moment (js/card-moment.js, 2026-11-11) */
 const NIGHT_MILESTONES = [3, 5, 10, 25, 50, 100, 200, 365], STAMP_MILESTONES = [5, 10, 25, 50, 100, 200, 300, 400];
@@ -203,6 +203,7 @@ export async function playReveal({ card, o, seen, origin, fleet = null, progress
   const items = orderDeck((cards?.length ? cards : [{ card, o, seen, fleet, progress, shiny }]).map(cardNews)), lead = items[0];
   const plan = items.length > 1 ? packPlan(pack, packShort == null ? packSeen() : packShort ? 99 : 0) : null; /* only a catch that gives two cards */
   ({ card, o, seen, fleet, progress, shiny } = lead);
+  finO = o; finLivery = !!lead.livery; /* finish() runs apart from this scope: it reads the lead card from these (bug pass 2026-11-26: it read `o` there and threw on every repeat catch) */
   const { fresh, tierKey, level, levelUp, nights, newStamp } = lead; // progress (other cards): { level, before, nights }. Levels count observing nights.
   const fx = FX[tierKey], color = (TIER_INFO[tierKey] ?? TIER_INFO.common).color;
   const root = $('reveal');
@@ -392,6 +393,7 @@ export async function playView({ card, o, from, sighting = null, eyebrow = null 
 
 // 4. Light sweeps the card, sparks fly, the stamp lands, and the card is yours to tilt.
 const STAMP_INK = '#8fb8ff';
+let finO = null, finLivery = false; // the lead card and whether it's a new livery, for finish() (set by playReveal)
 async function finish({ fx, color, fresh, seen, level, levelUp, card, alive, fleet = null, newStamp = false, nights = 0, collected = 0, con = null, shiny = null }) {
   const r = $('rv-holder').getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
   // The haptic lands with the payoff, not when the sealed card arrives (UX room 2026-10-12): main.js listens.
@@ -416,8 +418,8 @@ async function finish({ fx, color, fresh, seen, level, levelUp, card, alive, fle
   const news = shiny && !conDone ? { kind: 'shiny', eyebrow: `SHINY · ${shiny.label.toUpperCase()}`, line: label, sub: shiny.line, ms: 5000 } // say why it’s shiny (2026-10-08)
     : fresh && con ? (conDone ? { kind: 'event', eyebrow: con.unit === 'worlds' ? 'SET COMPLETE' : 'CONSTELLATION COMPLETE', line: con.name, sub: `All ${con.total} ${con.unit ?? 'stars'} · patch earned`, art: con.art } : (con.have === Math.ceil(con.total / 2) && con.total >= 4 ? { kind: 'xp', id: 'con-progress', eyebrow: con.name.toUpperCase(), line: `Halfway · ${con.have} of ${con.total} ${con.unit ?? 'stars'}`, sub: left === 1 ? 'One to go' : `${left} to go`, art: con.art } : milestone && MILESTONES.includes(collected) && !PATCHED.includes(collected) ? { kind: 'event', icon: 'calendar', eyebrow: 'MILESTONE', line: `${collected.toLocaleString('en-US')} cards collected` } : null)) /* a card-count milestone that happens to be a star still says so */ /* only at halfway and complete (2026-10-25, design/catch-feel.html 06 rule 4) */
     : fresh ? (milestone ? { kind: 'event', icon: 'calendar', eyebrow: 'MILESTONE', line: collected === 1 ? 'Your first card' : `${collected.toLocaleString('en-US')} cards collected` } : null)
-    : newStamp ? (fleet?.milestone ? { kind: 'event', eyebrow: 'NEW STAMP', line: fleet.milestone } : !fleet?.line && STAMP_MILESTONES.includes(fleet?.stamps) ? { kind: 'event', icon: 'stamp', eyebrow: 'NEW STAMP', line: `${fleet.stamps} launches stamped` } : { kind: 'xp', eyebrow: o.sky === 'plane' ? 'ANOTHER AIRCRAFT' : o.sky === 'flight' ? 'ANOTHER DAY' : 'NEW STAMP', line: stampLine }) /* Sky: no stamps (2026-11-25) */
-    : NIGHT_MILESTONES.includes(nights) ? { kind: 'event', icon: 'calendar', eyebrow: 'MILESTONE', line: `Seen on ${nights} different nights`, sub: label }
+    : newStamp ? (fleet?.milestone ? { kind: 'event', eyebrow: 'NEW STAMP', line: fleet.milestone } : !fleet?.line && STAMP_MILESTONES.includes(fleet?.stamps) ? { kind: 'event', icon: 'stamp', eyebrow: 'NEW STAMP', line: `${fleet.stamps} launches stamped` } : finO?.sky ? (levelUp && LEVEL_WORD[level] ? { kind: 'event', eyebrow: `NOW ${LEVEL_WORD[level].toUpperCase()}`, line: label } : finLivery ? { kind: 'xp', eyebrow: 'NEW LIVERY', line: label } : null) /* Sky (2026-11-26, Sevaan: "1 plane 2 liveries… not a very useful notification"): a repeat catch says nothing, the card has ticked up on screen; only a new livery or a new level gets a notice */ : { kind: 'xp', eyebrow: 'NEW STAMP', line: stampLine })
+    : NIGHT_MILESTONES.includes(nights) ? { kind: 'event', icon: 'calendar', eyebrow: 'MILESTONE', line: finO?.sky ? `Caught on ${nights} different days` : `Seen on ${nights} different nights`, sub: label } /* Sky counts days (2026-11-26) */
     : null; // a plain repeat: no toast (2026-10-07)
   if (news) announce?.({ ms: 3200, ...news, delay: 900 }); // its sound plays as it appears (main.js onTicketShown)
   // A second (third…) night on an old friend: a little "+1 NIGHT" stamp drops onto the card (2026-10-08 polish).
