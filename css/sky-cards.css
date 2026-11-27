@@ -1059,6 +1059,21 @@ html.sky-cards #sat-card.rm-card .rm-sub { white-space:normal; overflow:visible;
 .bd-legend { display:flex; gap:12px; margin-top:7px; font:500 13px/1 'SC Label','Barlow Condensed',sans-serif; color:#9aa6b6; }
 .bd-legend span::before { content:''; display:inline-block; width:10px; height:8px; margin-right:5px; border-radius:2px; background:#e6eef7; }
 .bd-legend span.now::before { background:#ff7457; } .bd-legend span.off::before { background:#232d3c; }
+/* By day the board is light (2026-11-27, Sevaan: "Need a light version of this board for daytime"): paper like the other
+   Today cards, pale split-flap tiles with navy figures, the records in the app's red. The dark board stays for night
+   (html.sky-night, css/sky-night.css). */
+html:not(.sky-night) .td2-board { background:#fffdf6; border-color:var(--sc-rule, #c9b98a); color:var(--sc-ink, #0d2238); box-shadow:0 4px 14px rgba(13,34,56,.10); }
+html:not(.sky-night) .bd-top, html:not(.sky-night) .bd-lab.gold, html:not(.sky-night) .bd-flap.gold > span { color:var(--sc-orange-ink, #b42a20); }
+html:not(.sky-night) .bd-lab { color:#5b6a7d; }
+html:not(.sky-night) :is(.bd-row, .bd-rec) { border-top-color:#e8e3cf; }
+html:not(.sky-night) :is(.bd-recs, .bd-strip) { border-top-color:#ddd6bb; }
+html:not(.sky-night) .bd-flap > span { background:linear-gradient(#f1f4f8 50%, #e6ebf1 50%); color:#13213a; box-shadow:inset 0 0 0 1px #d5dde7, inset 0 -1px 0 #0000000d; }
+html:not(.sky-night) .bd-flap > span::after { background:#c9d2dd; }
+html:not(.sky-night) .bd-line { color:#3d4b5e; } html:not(.sky-night) .bd-line b { color:#13213a; } html:not(.sky-night) .bd-line > span:last-child { color:#5b6a7d; }
+html:not(.sky-night) :is(.bd-note, .bd-axis, .bd-legend) { color:#6a788a; }
+html:not(.sky-night) .bd-bars i, html:not(.sky-night) .bd-legend span::before { background:#2a3b57; }
+html:not(.sky-night) .bd-bars i.off, html:not(.sky-night) .bd-legend span.off::before { background:#e3e8ee; }
+html:not(.sky-night) .bd-bars i.now, html:not(.sky-night) .bd-legend span.now::before { background:#ff7457; }
 
 /* A shiny boarding pass (2026-11-25, Sevaan: "Shiny effect not working on the boarding pass"): the card's light sweep (.fc-shine,
    screen blend) vanished on cream paper. The pass gets its own foil instead: a gold-stamped inner edge, and a holographic

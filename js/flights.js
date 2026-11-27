@@ -2,14 +2,14 @@
 // e.g. Icelandair Toronto → Reykjavík), and every catch also counts toward PLANES (the aircraft type). Anything with no
 // route (helicopters, light planes, balloons, private jets) is a Planes card only. No DOM here.
 
-import { isProp } from './sky-props.js?v=0.1.1927';
-import { aircraftName, isHelicopter, catchClass, isGovOrMil } from './planes.js?v=0.1.1927';
-import { routeKm } from './routes.js?v=0.1.1927';
-import { hasAirlineCallsign } from './sky-stamps.js?v=0.1.1927';
-import { typeTier } from './sky-tiers.js?v=0.1.1927';
-import { planeSet, flightSet, homeCountry } from './sky-sets.js?v=0.1.1927';
-import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1927';
-import { typeName } from './sky-type-names.js?v=0.1.1927';
+import { isProp } from './sky-props.js?v=0.1.1928';
+import { aircraftName, isHelicopter, catchClass, isGovOrMil } from './planes.js?v=0.1.1928';
+import { routeKm } from './routes.js?v=0.1.1928';
+import { hasAirlineCallsign } from './sky-stamps.js?v=0.1.1928';
+import { typeTier } from './sky-tiers.js?v=0.1.1928';
+import { planeSet, flightSet, homeCountry } from './sky-sets.js?v=0.1.1928';
+import { CARGO_AIRLINES } from './sky-cargo.js?v=0.1.1928';
+import { typeName } from './sky-type-names.js?v=0.1.1928';
 
 export const TIERS = {
   common: { label: 'Common', mark: '●', color: '#4a6178' },

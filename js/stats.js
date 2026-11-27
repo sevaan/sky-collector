@@ -2,8 +2,8 @@
 // badges"). Your history under the sky, from the sighting log plus what the Collection page already knows (rank,
 // patches, constellations, stories, albums). computeStats(sightings, byKey, nightKey, year, ctx) -> numbers;
 // statsHtml(st) -> the panel. No network; the map uses js/geo.js’s coarse outlines.
-import { LAND } from './geo.js?v=0.1.1927';
-import { TIER_INFO, TIERS } from './rarity.js?v=0.1.1927';
+import { LAND } from './geo.js?v=0.1.1928';
+import { TIER_INFO, TIERS } from './rarity.js?v=0.1.1928';
 
 const RANK = { common: 0, uncommon: 1, rare: 2, epic: 3, legendary: 4 };
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -99,5 +99,5 @@ export function statsHtml(st) {
   const map = `<section class="st-sec"><div class="st-head"><span>Where you’ve looked up</span><span class="st-since">${plural(st.places.length, 'place')}</span></div>${mapSvg(st.places)}</section>`;
   const rare = st.rarest.length > 1 ? `<section class="st-sec"><div class="st-head"><span>Rarest finds</span></div><div class="st-rare">${st.rarest.map(({ s, c }) => { const t = tierOf(c); return `<div>${thumb(c)}<span class="st-rt" style="color:${t.color}">${t.gem} ${esc(t.label)}</span><b>${esc(title(c))}</b><small>${day(s.time, { month: 'short', day: 'numeric' })}</small></div>`; }).join('')}</div></section>` : '';
   if (!st.sightings) return `${rank}<p class="st-empty">${x.sky ? 'Your stats start with your first card. Head outside and catch the first plane you see.' : 'Your stats start with your first card. Head outside on a clear night and collect something.'}</p>`;
-  return `${rank}${coll}${goals}${highlights}${tiles}${map}${rare}`;
+  return `${rank}${coll}${goals}${highlights}${tiles}${x.sky ? '' /* no "Where you’ve looked up" map in Sky (2026-11-27, Sevaan: "Remove where youve looked up") */ : map}${rare}`;
 }
