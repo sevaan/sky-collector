@@ -9,7 +9,10 @@ export const isGovOrMil = (a) => (Number(a?.dbFlags) & 1) !== 0 || GOV_OPS.has(o
 /* Callsigns that look like an airline's (three letters and a number) */
 export const AIRLINE_CS = /^[A-Z]{3}\d/;
 /* fractional / charter business-jet operators: anonymous like any private plane (js/planes.js) */
-export const BIZ_OPS = new Set(['EJA', 'NJE', 'EJM', 'LXJ', 'XOJ', 'JRE', 'ASP', 'VJT']);
+export const BIZ_OPS = new Set(['EJA', 'NJE', 'EJM', 'LXJ', 'XOJ', 'JRE', 'ASP', 'VJT', 'WUP', 'JTL', 'TWY', 'DCM', 'FFL']);
+/* business-jet types are anonymous whatever callsign they file under (bug pass 2026-11-25: Wheels Up and owners' own
+   three-letter callsigns kept their callsign, registration and route); the same codes as js/sky-sets.js Business Jets */
+export const BIZ_TYPES = /^(C25[0-9ABCM]|C5[0-9]{2}|C56X|C68[0A]|C700|C750|CL3[05]|CL60|GL[567E][TX]|GLF[2-6]|GA[5-8]C|G[12]50|G280|E5[05]P|E545|E550|F2TH|F900|FA[5-8]X|FA[0-9]{2}|LJ[2-7][0-9]|H25[A-C]|HDJT|PC24|PRM1|BE40|ASTR|GALX|HA4T|E35L|SF50|EA50)/;
 /* A hidden aircraft's id: a salted hash of its hex, kept on this phone, so the same aircraft still counts once */
 let anonSalt = null;
 export function anonId(hex) {
@@ -27,7 +30,7 @@ export function privateCatch(s) {
   if (!s) return false;
   const cs = String(s.callsign ?? s.cardSnapshot?.callsign ?? '').trim().toUpperCase(), type = String(s.typeCode ?? s.cardSnapshot?.type ?? '').toUpperCase();
   const op = flightOp(s.cardKey) || cs.slice(0, 3);
-  if (isGovOrMil({ flight: cs, t: type }) || GOV_OPS.has(op) || BIZ_OPS.has(op)) return true;
+  if (isGovOrMil({ flight: cs, t: type }) || GOV_OPS.has(op) || BIZ_OPS.has(op) || BIZ_TYPES.test(type)) return true;
   if (/^F:/.test(String(s.cardKey ?? ''))) return !!cs && !AIRLINE_CS.test(cs); /* a flight card is an airline's by nature; one kept with another callsign isn't */
   return !!cs && !AIRLINE_CS.test(cs); /* a plane catch with a non-airline callsign (a registration, N123AB) */
 }
@@ -38,6 +41,8 @@ const hidHex = (h) => (!h || String(h).startsWith('~') ? h : anonId(h));
 export function scrubSighting(s) {
   if (!privateCatch(s)) return s;
   if (/^F:/.test(String(s.cardKey ?? '')) || s.type === 'flight') return null;
+  const hid = (h) => !h || String(h).startsWith('~'), snap = s.cardSnapshot;
+  if (!s.callsign && !s.reg && !('op' in s) && s.cls !== 'airline' && s.cls !== 'cargo' && hid(s.hex) && (!/^HEX:/.test(String(s.stampKey ?? '')) || hid(s.stampKey.slice(4))) && !s.flight && (!snap || typeof snap !== 'object' || (!snap.reg && !snap.callsign && !snap.stamp))) return s; /* already safe: a business-jet type stays private after its scrub, so a second pass must change nothing */
   const t = { ...s, callsign: '', reg: '' }; delete t.op; if (t.cls === 'airline' || t.cls === 'cargo') delete t.cls;
   if (t.hex) t.hex = hidHex(t.hex);
   if (/^HEX:/.test(String(t.stampKey ?? ''))) t.stampKey = `HEX:${hidHex(t.stampKey.slice(4))}`;

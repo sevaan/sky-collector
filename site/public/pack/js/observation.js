@@ -40,6 +40,7 @@ export function canCapture({ visible = false, aligned = false, practice = false,
 // the calendar day, js/sky-stamps.js localDay). Switched on with Sky's rules (js/progress.js setSkyProgress).
 let calendarDays = false;
 export function useCalendarDays(on) { calendarDays = !!on; }
+export const calendarDaysOn = () => calendarDays; /* Sky: days are dated as they are, not as "the evening before" */
 export function nightKey(time, lon = 0) {
   if (calendarDays) { const t = Number(time); return Math.floor((t - new Date(t).getTimezoneOffset() * 60e3) / 86400e3); }
   return Math.floor((Number(time) + (Number(lon) || 0) / 15 * 3600e3 - 12 * 3600e3) / 86400e3);

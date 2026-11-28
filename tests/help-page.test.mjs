@@ -19,7 +19,7 @@ test('help.html is built into the site and links to /privacy and the support ema
   assert.match(page, /<h1>Help<\/h1>/);
   assert.match(page, /<a href="privacy\.html">skycollector\.app\/privacy<\/a>/);
   assert.match(page, /<a href="mailto:hello@skycollector\.app">hello@skycollector\.app<\/a>/);
-  assert.match(build, /sitePage\('help\.html'\)/);
-  assert.match(build, /'\/help'\]/); // in the sitemap
+  assert.match(build, /sitePage\('help\.html'[,)]/);
+  assert.match(build, /\['\/help', changed\('help\.html'\)\]/); // in the sitemap, with its date
   assert.match(build, /replaceAll\('href="privacy\.html"', 'href="\/privacy"'\)/);
 });

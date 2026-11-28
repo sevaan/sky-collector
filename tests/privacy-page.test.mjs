@@ -45,5 +45,5 @@ test('privacy.html: true-today sentences, and notes for the swaps to come', () =
 
 test('the apps open the site\'s page, with no bundled copy', () => {
   assert.match(src('js/native.js'), /else if \(\/\^privacy\\\.html\/i\.test\(href\)\) url = 'https:\/\/skycollector\.app\/privacy';/);
-  assert.match(src('scripts/build-site.mjs'), /sitePage\('privacy\.html'\)/);
+  assert.match(src('scripts/build-site.mjs'), /sitePage\('privacy\.html'[,)]/);
 });

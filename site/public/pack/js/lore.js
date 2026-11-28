@@ -39,7 +39,8 @@ const IPHONE = '2007-06-29';   // first iPhone on sale
 let loreCache = null, seriesCache = null, purposeCache = null, debrisCache = null, factsCache = null, rocketFacts = [];
 let srcCache = {};
 export async function loadLore(url = 'data/lore.json', seriesUrl = url.replace('lore.json', 'series.json'), purposeUrl = url.replace('lore.json', 'purpose.json')) {
-  const get = async (u) => { try { return await (await fetch(u)).json(); } catch { return {}; } };
+  const sky = (() => { try { return !!(globalThis.__skyOnly || window.parent?.__skyOnly); } catch { return false; } })(); /* Sky: the satellite-keyed files aren't read (perf pass 2026-11-25, 826 KB) */
+  const get = async (u) => { if (sky && /(series|purpose|debris|facts|roles)\.json/.test(u)) return {}; try { return await (await fetch(u)).json(); } catch { return {}; } };
   /* The Collection frame borrows Explore's copies (perf audit 2026-10-29: it fetched and parsed all seven again). Read only. */
   let sh = null; try { sh = window.parent !== window ? window.parent.__loreShare : null; } catch {}
   [loreCache, seriesCache, purposeCache, debrisCache, factsCache, srcCache, rolesCache] = await (sh ?? (globalThis.__loreShare = Promise.all([get(url), get(seriesUrl), get(purposeUrl), get(url.replace('lore.json', 'debris.json')), get(url.replace('lore.json', 'facts.json')), get(url.replace('lore.json', 'fact-sources.json')), get(url.replace('lore.json', 'roles.json'))]))) /* all at once (perf audit 2026-10-29: three rounds before) */;
@@ -60,6 +61,7 @@ const shortDate = (iso) => new Date(`${iso}T12:00:00Z`).toLocaleDateString(undef
 
 export function titleFor(o) {
   if (o.natural) return o.name;
+  if (o.sky) return o.name; /* a plane or pass card keeps its own name: the satellite title-casing made "Globemaster Iii" and "Toronto To Tokyo" (playtest 2026-11-25) */
   if (o.launches) return o.familyName;
   if (o.members) return `${o.familyName} train, ${o.launch ? shortDate(o.launch) : 'unknown date'}`;
   // A fleet member is named like its card: "Amazon Leo 00100", not "Kuiper-00100" (collectors 2026-10-11).

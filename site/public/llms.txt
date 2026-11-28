@@ -1,0 +1,17 @@
+# Sky Collector
+
+> Sky Collector is a collecting game for the planes that fly over you, coming soon to iPhone and Android. You point your phone at a plane, line it up in the circle, and collect it as a card.
+
+Key facts:
+- It is a collecting game, not a flight tracker. It can't follow a particular plane or person.
+- Private, business, military, police and government aircraft show only the kind of aircraft.
+- Free to play, with no ads. No account is needed.
+- Plane positions come from volunteers with receivers. Coverage is best in North America and Europe.
+- Contact: hello@skycollector.app
+
+## Pages
+
+- [Home](https://skycollector.app/)
+- [Help](https://skycollector.app/help): how to play, fixing common problems, cards, alerts and your collection
+- [Privacy](https://skycollector.app/privacy): what the app does with your location and your collection
+- [A sample pack](https://skycollector.app/pack): real cards to open in a browser

@@ -88,6 +88,13 @@ export function skyCardPhotoUrl(o, type, size = 'sm') {
   const ph = o?.sky === 'flight' ? flightPhotoFor(o, type || o.type) : photoFor(type || o?.type); if (!ph) return null;
   return size === 'full' ? ph.url : String(ph.url).replace(/\/([^/]+)$/, `/${size}/$1`);
 }
+// The weekly recap's rarest find as fitted markup (2026-11-24, Sevaan: the A340's nose and tail were cut off by a plain
+// cover crop): a soft blurred copy fills the window, the photo sits above the caption in .rc-ph and fitPhoto keeps the
+// whole plane in it. '' when the card has no photo.
+export function skyCardPhotoHtml(o, type) {
+  const ph = o?.sky === 'flight' ? flightPhotoFor(o, type || o.type) : photoFor(type || o?.type); if (!ph) return '';
+  return `<img class="rc-bg" src="${esc(sized(ph.url, 'tiny'))}" alt="" aria-hidden="true" decoding="async"><div class="rc-ph">${photoImg(ph, 'rc-img', true)}</div>`;
+}
 const credit = (ph) => `<span class="fc-credit">Photo: ${esc(ph.credit)}, ${esc(ph.licence)}</span>`;
 // The whole aircraft always shows (2026-11-15, Sevaan: "planes can't be cropped"). Each photo carries the box the plane
 // sits in (scripts/photos/photo_common.py); once the frame has a size, fitPhoto picks a cover crop that keeps the box, or shows
@@ -227,7 +234,11 @@ export function flightCardHtml(f, opts = {}) {
 /* The stub's code is a real QR code (js/qr.js), the same on every pass: it opens a well-known music video (2026-11-21,
    Sevaan). Made once. */
 let QR_SVG = '';
-function passQr() { if (!QR_SVG) { try { QR_SVG = qrSvg(qrEncode('https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'L'), { quiet: 3, cls: 'lp-qr' }); } catch { QR_SVG = ''; } } return QR_SVG; }
+/* Filming the store media (js/demo-boot.js, 2026-11-25, Content's pick pending Sevaan): the code looks the same but a third of
+   its data squares are flipped, past what a scanner can mend, so nothing in a screenshot opens anything. ?qr=1 keeps it real. */
+const unscannable = (q) => { const k = (x, y) => (x < 9 && y < 9) || (x >= q.size - 8 && y < 9) || (x < 9 && y >= q.size - 8);
+  return { ...q, modules: q.modules.map((row, y) => row.map((on, x) => (!k(x, y) && (x * 7 + y * 13) % 3 === 0 ? !on : on))) }; };
+function passQr() { if (!QR_SVG) { try { const q = qrEncode('https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'L'), D = globalThis.__skyDemo; QR_SVG = qrSvg(D?.film && !D.qr ? unscannable(q) : q, { quiet: 3, cls: 'lp-qr' }); } catch { QR_SVG = ''; } } return QR_SVG; }
 
 /* A checked fact for the type first (js/sky-facts.js, 2026-11-17: 131 types, sources in docs/FACTS-SOURCES.md) */
 /* Several facts per type (2026-11-18, Sevaan: "there may be multiple facts too"): the card shows the one for how many

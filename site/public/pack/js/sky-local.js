@@ -6,6 +6,7 @@
 //                and which missions a plane seen here in the last 7 days could complete.
 // localStorage 'skyLocal' = { d: { 'yyyy-m-d': { h: openHours, t: { TYPE: n }, f: { flag: n }, oh: [clock hours open],
 // fh: { hour: { flag: n } } } } }: oh and fh (2026-11-20) say WHEN things fly here, so missions fit the hour. No DOM.
+import { later } from './save-later.js';
 const KEY = 'skyLocal', DAYS = 30, MIN_SEEN = 200, RARE_SHARE = 0.01;
 const dayKey = (t = Date.now()) => { const d = new Date(t); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
 const dayTime = (k) => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d).getTime(); };
@@ -21,7 +22,8 @@ function load(fresh = false) {
   const cut = Date.now() - DAYS * 86400e3; for (const k of Object.keys(cache.d)) if (!(dayTime(k) >= cut)) delete cache.d[k];
   return cache;
 }
-const save = (now = false) => { dirty = true; if (!now && Date.now() - saved < 15000) return; saved = Date.now(); dirty = false; try { localStorage.setItem(KEY, JSON.stringify(cache)); } catch {} };
+const write = () => { saved = Date.now(); dirty = false; try { localStorage.setItem(KEY, JSON.stringify(cache)); } catch {} }, writeLater = later(() => { if (dirty) write(); });
+const save = (now = false) => { dirty = true; if (!now && Date.now() - saved < 15000) { writeLater(); return; } write(); };
 // Newly seen aircraft (each once a day): [{ type, flags: ['heli', 'wide', 'prop', 'low', 'high', ...] }]; newHour: this
 // clock hour hadn't been counted as open yet today.
 /* late: [{ flags }] for aircraft already counted today that showed something new (its route came in, it climbed past 70°…):
@@ -66,6 +68,13 @@ export function localStats(now = Date.now()) {
    you in the last 30 days" after 2 minutes, 8 different aircraft of one type in the first feed, as if it were a month's
    history). A visit is a day, as for Regulars (js/sky-regulars.js): the days this type was seen here, out of the days
    Sky was open. Until there are HISTORY_DAYS of them, only what's true today, or nothing. */
+/* The types seen here on the 7 days before today, and how many days the log has (the daily note's "stranger to your sky",
+   js/sky-note.js): types only, as the log keeps them */
+export function typesWeek(now = Date.now()) {
+  const c = load(true), today = dayKey(now), from = dayTime(today) - 7 * 86400e3, types = new Set(); let days = 0;
+  for (const [k, d] of Object.entries(c.d)) { if (d.h) days++; if (k === today || dayTime(k) < from) continue; for (const [t, n] of Object.entries(d.t ?? {})) if (n > 0) types.add(t); }
+  return { types, days };
+}
 export const HISTORY_DAYS = 3;
 export function seenLine(type, stats) {
   const t = String(type || '').toUpperCase(), n = stats?.typeDays?.get(t) ?? 0, of = stats?.days ?? 0;

@@ -24,8 +24,16 @@ cp('css/fonts.css'); cp('css/sky-cards.css'); cp('js/weather-art.js'); cpSync(RO
 mkdirSync(OUT + 'c', { recursive: true }); cp('site/c.html', 'c/index.html');
 /* privacy.html and help.html (skycollector.app/help, 2026-11-20) are kept at the repo root for the test build; here their
    fonts, icons and the help page's privacy link point at the site's own paths */
-const sitePage = (f) => writeFileSync(OUT + f, readFileSync(ROOT + f, 'utf8').replaceAll("url('fonts/", "url('/fonts/").replaceAll('href="icons/favicon', 'href="/favicon').replace('href="icons/icon-180.png"', 'href="/apple-touch-icon.png"').replaceAll('href="privacy.html"', 'href="/privacy"'));
-sitePage('privacy.html'); sitePage('help.html');
+/* 2026-11-27 (scripts/site-meta.mjs): canonical and social tags on both, and the help page's FAQPage JSON-LD, built from
+   the page's own questions and answers so the two can't disagree */
+const { SITE, homeJsonLd, helpJsonLd, pageTags, intoHead, LLMS_TXT } = await import('./site-meta.mjs');
+const { execFileSync } = await import('node:child_process');
+const today = new Date().toLocaleDateString('en-CA'); /* local date, YYYY-MM-DD */
+/* a page's last-changed date: today if its sources have uncommitted changes, else their last commit's date */
+const changed = (...files) => { try { const git = (...a) => execFileSync('git', ['-C', ROOT, ...a, '--', ...files], { encoding: 'utf8' }).trim(); return git('status', '--porcelain') ? today : (git('log', '-1', '--format=%cs') || today); } catch { return today; } };
+const sitePage = (f, extra) => { const html = readFileSync(ROOT + f, 'utf8').replaceAll("url('fonts/", "url('/fonts/").replaceAll('href="icons/favicon', 'href="/favicon').replace('href="icons/icon-180.png"', 'href="/apple-touch-icon.png"').replaceAll('href="privacy.html"', 'href="/privacy"'); writeFileSync(OUT + f, intoHead(html, extra(html))); };
+sitePage('privacy.html', (h) => pageTags(h, '/privacy'));
+sitePage('help.html', (h) => `${pageTags(h, '/help')}\n${helpJsonLd(h, changed('help.html'))}`);
 const html = `<!doctype html>
 <html lang="en">
 <head>
@@ -36,6 +44,7 @@ const html = `<!doctype html>
 <meta property="og:type" content="website"><meta property="og:site_name" content="Sky Collector"><meta property="og:title" content="Sky Collector"><meta property="og:description" content="Collect what flies over you. Coming soon to iPhone and Android."><meta property="og:url" content="https://skycollector.app/"><meta property="og:image" content="https://skycollector.app/icon-512.png"><meta name="twitter:card" content="summary">
 <meta name="theme-color" content="#5d97cf">
 <link rel="canonical" href="https://skycollector.app/">
+${homeJsonLd()}
 <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/css/fonts.css"><link rel="stylesheet" href="/css/sky-cards.css">
 <style>
@@ -118,9 +127,11 @@ const html = `<!doctype html>
 `;
 writeFileSync(OUT + 'index.html', html);
 // robots.txt and sitemap.xml (2026-11-18): every page may be indexed; the sitemap lists the pages people land on.
-const SITE = 'https://skycollector.app', PAGES = ['/', '/pack', '/privacy', '/help'];
+// lastmod (2026-11-27): each page's sources' last change. llms.txt: a plain summary with links (Content's text).
+const PAGES = [['/', changed('scripts/build-site.mjs', 'scripts/site-meta.mjs')], ['/pack', changed('scripts/build-site-pack.mjs', 'site/pack-src')], ['/privacy', changed('privacy.html')], ['/help', changed('help.html')]];
+writeFileSync(OUT + 'llms.txt', LLMS_TXT);
 writeFileSync(OUT + 'robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${SITE}/sitemap.xml\n`);
-writeFileSync(OUT + 'sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${PAGES.map((u) => `  <url><loc>${SITE}${u}</loc></url>`).join('\n')}\n</urlset>\n`);
+writeFileSync(OUT + 'sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${PAGES.map(([u, d]) => `  <url><loc>${SITE}${u}</loc><lastmod>${d}</lastmod></url>`).join('\n')}\n</urlset>\n`);
 // The dials (2026-11-19, as Space Collector's spacecollector.app/dial/*): settings the apps read at start, changed here
 // without an app release. compass.json: androidFuse true = Android draws the sky from the gyro and learns north from the
 // compass (js/sensors.js setFuseDial), false = the old direct compass. planes.json: the plane feed's pacing

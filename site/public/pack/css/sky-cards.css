@@ -360,7 +360,8 @@ body.sky-only #visible-sub { color:var(--sc-muted); }
 /* Satellite sweep (2026-11-15): Settings rows that only made sense for satellites */
 body.sky-only #row-tonight, html:not(.native-app) body.sky-only #row-alerts, body.sky-only #row-live, html:not(.native-app) body.sky-only #row-quiet /* Plane alerts and Quiet hours: in the apps only, where notifications work (2026-11-19, Part 2 H) */,
 body.sky-only .set-row:has(#chk-daysats), body.sky-only .set-row:has(#chk-meteor),
-body.sky-only #sky-plus-line { display:none !important; } /* Observer stats is back (2026-11-17): the page has a plane version */
+body.sky-only #sky-plus-line { display:none !important; }
+/* the Notifications card has no rows on the website (playtest 2026-11-25: a heading over nothing) */ html:not(.native-app) body.sky-only .set-group:has(#row-alerts) { display:none !important; } /* Observer stats is back (2026-11-17): the page has a plane version */
 /* Settings sweep (2026-11-15): gifting has no planes yet; circle highlights only sort satellites, stars and UFOs; the test tools below are satellite-only */
 /* Send cards is back (2026-11-19, review Part 2 A: plane snapshots travel in the link; short links on Sky's server); Circle highlights too (G) */ body.sky-only #btn-next-pass, body.sky-only #btn-nightpack,
 /* UFO and Santa's test buttons are back with them (2026-11-19) */ body.sky-only #btn-meteor, body.sky-only #set-hl-sheet .set-chips:not(.sky-hl), body.sky-only #btn-live-test { display:none !important; }
@@ -875,7 +876,9 @@ html.sky-cards #sat-card.rm-card .rm-sub { white-space:normal; overflow:visible;
 #reveal .dk-track > .dk-front.dk-pass .fc--land { filter:none !important; }
 #reveal.two .dk-track > .dk-slot:not(.dk-pass) .card--plane .fc-face { overflow:hidden; }
 #reveal.two .dk-track > .dk-slot:not(.dk-pass) .card--plane .fc-face::after { content:''; position:absolute; z-index:6; left:6em; top:0; width:16em; height:42em; padding:0; border-radius:1.2em; pointer-events:none;
-  background:rgba(13,34,56,.34); box-shadow:0 0 1.6em 1.1em rgba(13,34,56,.3); transform:translate(1.6em, 2em) scale(var(--lpk, 1)) rotate(7.5deg); display:none; }
+  background:rgba(13,34,56,.34); box-shadow:0 0 1.6em 1.1em rgba(13,34,56,.3); transform:translate(calc(1.6em + var(--dkx, 0px)), 2em) scale(var(--lpk, 1)) rotate(calc(7.5deg + var(--dkr, 0deg))); display:none; transition:transform .2s ease, opacity .2s ease; }
+#reveal.two .dk-track.dk-drag-on > .dk-slot:not(.dk-pass) .card--plane .fc-face::after { transition:none; } /* follows the finger exactly while dragging */
+#reveal.two .dk-track.dk-off > .dk-slot:not(.dk-pass) .card--plane .fc-face::after { opacity:0; } /* the pass swiped away takes its shadow with it */
 #reveal.two.rv-done .dk-track.pass-front > .dk-back .card--plane .fc-face::after { display:block; animation:lpShadowIn .34s ease; } /* drawn only while it shows, never during the reveal's turns */
 @keyframes lpShadowIn { from { opacity:0; } }
 /* While the reveal is still turning (rare cards turn several times), the pass behind drops its grain and shadow: on the
@@ -1016,3 +1019,70 @@ html.sky-cards #sat-card.rm-card .rm-sub { white-space:normal; overflow:visible;
    the notches): the shadow layer (.fc--flight::before) sits flat beside the face, so a turned face slid off it. The glare
    still follows the finger. */
 .fc--land .fc-rot { transform:none !important; }
+
+/* Weekly recap's rarest find (2026-11-24, Sevaan: "art is getting cut off"): the whole plane, fitted like the cards'
+   photos, in the window above the caption; a soft blurred copy of the photo fills the rest behind the caption. */
+#recap .rc-win--ph .rc-bg { position:absolute; inset:-8%; width:116%; height:116%; object-fit:cover; }
+#recap .rc-win--ph .rc-ph { position:absolute; left:0; right:0; top:0; bottom:30%; overflow:hidden; }
+#recap .rc-win--ph .rc-ph .rc-img { position:absolute; inset:0; width:100%; height:100%; }
+#recap .rc-win--ph .rc-ph { -webkit-mask-image:linear-gradient(#000 72%, transparent); mask-image:linear-gradient(#000 72%, transparent); } /* fades into the blurred copy, no seam */
+#recap .rc-win--ph::after { height:42%; }
+/* A plane card inside a page (Today's "Over you now" minis, 2026-11-24, Sevaan: "Mini card titles are borked"): app.css's
+   ".panel h2" (27 px, capitals, tight spacing) outranked .cc-nm and blew the model name up past the card's edges. The
+   card's title keeps its own size inside any page. */
+.fc h2.cc-nm { font-size:1em; font-weight:400; line-height:normal; font-family:inherit; text-transform:none; letter-spacing:normal; }
+
+/* Today so far as a departures board (2026-11-24, Sevaan picked B of the Today so far redesign): split-flap counts, today's
+   records in gold, the hours as a thin strip with a legend. A dark board by day and by night, like the one at the gate. */
+.td2-board { background:#0a0f17; border:1px solid #2b3340; border-radius:12px; padding:12px 12px 10px; color:#f7f1e2; box-shadow:inset 0 2px 0 #ffffff08, 0 4px 14px rgba(13,34,56,.18); }
+.td2-board .sr { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+.bd-top { display:flex; justify-content:space-between; font:600 12.5px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.2em; text-transform:uppercase; color:#f4c35a; margin-bottom:8px; }
+.bd-row { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:6px 0; border-top:1px solid #1d2531; position:relative; }
+.bd-top + .bd-row { border-top:0; }
+.bd-lab { font:600 14px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.16em; text-transform:uppercase; color:#9aa6b6; }
+.bd-lab.gold { color:#f4c35a; }
+.bd-flap { display:flex; gap:2px; flex:none; }
+.bd-flap > span { width:19px; height:26px; display:grid; place-items:center; position:relative; background:linear-gradient(#232b38 50%, #1b222d 50%); border-radius:3px; font:500 16px/1 'IBM Plex Mono',ui-monospace,monospace; color:#f7f1e2; box-shadow:inset 0 -1px 0 #0006; }
+.bd-flap > span::after { content:''; position:absolute; left:0; right:0; top:50%; height:1px; background:#0a0f17; }
+.bd-flap.gold > span { color:#f4c35a; }
+.bd-recs { margin-top:6px; border-top:1px solid #2b3340; }
+.bd-rec { padding:6px 0 8px; border-top:1px solid #1d2531; } .bd-rec:first-child { border-top:0; }
+.bd-rec .bd-row { border:0; padding:0; }
+.bd-line { display:flex; justify-content:space-between; gap:10px; margin-top:6px; font:500 14.5px/1.25 'SC Label','Barlow Condensed',sans-serif; color:#c9d2de; }
+.bd-note { margin-top:3px; font:500 13px/1.25 'SC Label','Barlow Condensed',sans-serif; color:#8f9bab; } /* the fastest's "over the ground" line */
+.bd-line > span:first-child { min-width:0; } .bd-line > span:last-child { flex:none; text-align:right; color:#9aa6b6; } .bd-line b { color:#f7f1e2; font-weight:600; }
+.bd-strip { margin-top:10px; padding-top:10px; border-top:1px solid #2b3340; }
+.bd-bars { display:flex; align-items:flex-end; gap:2px; height:30px; }
+.bd-bars i { flex:1; background:#e6eef7; border-radius:2px 2px 0 0; min-height:2px; }
+.bd-bars i.off { background:#232d3c; } .bd-bars i.now { background:#ff7457; }
+.bd-axis { display:flex; justify-content:space-between; margin-top:5px; font:500 12px/1 'SC Label','Barlow Condensed',sans-serif; letter-spacing:.08em; color:#8692a3; }
+.bd-legend { display:flex; gap:12px; margin-top:7px; font:500 13px/1 'SC Label','Barlow Condensed',sans-serif; color:#9aa6b6; }
+.bd-legend span::before { content:''; display:inline-block; width:10px; height:8px; margin-right:5px; border-radius:2px; background:#e6eef7; }
+.bd-legend span.now::before { background:#ff7457; } .bd-legend span.off::before { background:#232d3c; }
+/* By day the board is light (2026-11-27, Sevaan: "Need a light version of this board for daytime"): paper like the other
+   Today cards, pale split-flap tiles with navy figures, the records in the app's red. The dark board stays for night
+   (html.sky-night, css/sky-night.css). */
+html:not(.sky-night) .td2-board { background:#fffdf6; border-color:var(--sc-rule, #c9b98a); color:var(--sc-ink, #0d2238); box-shadow:0 4px 14px rgba(13,34,56,.10); }
+html:not(.sky-night) .bd-top, html:not(.sky-night) .bd-lab.gold, html:not(.sky-night) .bd-flap.gold > span { color:var(--sc-orange-ink, #b42a20); }
+html:not(.sky-night) .bd-lab { color:#5b6a7d; }
+html:not(.sky-night) :is(.bd-row, .bd-rec) { border-top-color:#e8e3cf; }
+html:not(.sky-night) :is(.bd-recs, .bd-strip) { border-top-color:#ddd6bb; }
+html:not(.sky-night) .bd-flap > span { background:linear-gradient(#f1f4f8 50%, #e6ebf1 50%); color:#13213a; box-shadow:inset 0 0 0 1px #d5dde7, inset 0 -1px 0 #0000000d; }
+html:not(.sky-night) .bd-flap > span::after { background:#c9d2dd; }
+html:not(.sky-night) .bd-line { color:#3d4b5e; } html:not(.sky-night) .bd-line b { color:#13213a; } html:not(.sky-night) .bd-line > span:last-child { color:#5b6a7d; }
+html:not(.sky-night) :is(.bd-note, .bd-axis, .bd-legend) { color:#6a788a; }
+html:not(.sky-night) .bd-bars i, html:not(.sky-night) .bd-legend span::before { background:#2a3b57; }
+html:not(.sky-night) .bd-bars i.off, html:not(.sky-night) .bd-legend span.off::before { background:#e3e8ee; }
+html:not(.sky-night) .bd-bars i.now, html:not(.sky-night) .bd-legend span.now::before { background:#ff7457; }
+
+/* A shiny boarding pass (2026-11-25, Sevaan: "Shiny effect not working on the boarding pass"): the card's light sweep (.fc-shine,
+   screen blend) vanished on cream paper. The pass gets its own foil instead: a gold-stamped inner edge, and a holographic
+   tint laid over the paper with multiply, so it shows on cream and leaves the dark print readable, drifting slowly. */
+.card--sky.card--flight.shiny .fc-shine { display:none; }
+.card--sky.card--flight.shiny .lp-paper { box-shadow:inset 0 0 0 .2em #d4a23a, inset 0 0 0 .3em #fff1c2, inset 0 0 0 .38em rgba(180,128,30,.55); }
+.card--sky.card--flight.shiny .lp-paper::before { content:''; position:absolute; inset:0; z-index:4; pointer-events:none; mix-blend-mode:multiply;
+  background:linear-gradient(115deg, rgba(255,214,120,.42), rgba(255,170,214,.36) 22%, rgba(150,206,255,.36) 44%, rgba(180,255,200,.3) 60%, rgba(255,214,120,.42) 80%, rgba(255,170,214,.36)) 0 0 / 300% 100%;
+  animation:lpFoil 7s linear infinite; }
+.card--sky.card--flight.shiny .lp-paper::after { mix-blend-mode:normal; }
+@keyframes lpFoil { to { background-position:-300% 0; } }
+@media (prefers-reduced-motion: reduce) { .card--sky.card--flight.shiny .lp-paper::before { animation:none; } }

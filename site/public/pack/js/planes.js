@@ -4,7 +4,7 @@
 // No DOM here. Positions are extrapolated between fetches using ground speed, track and climb rate.
 
 import { tagOf } from './sky-secrets.js';
-import { GOV_OPS, BIZ_OPS, AIRLINE_CS, MIL_TYPES, isGovOrMil, opOf, anonId } from './plane-privacy.js';
+import { GOV_OPS, BIZ_OPS, BIZ_TYPES, AIRLINE_CS, MIL_TYPES, isGovOrMil, opOf, anonId } from './plane-privacy.js';
 export { GOV_OPS, isGovOrMil, anonId };
 import { SERVER } from './server.js';
 import { plugin } from './native.js';
@@ -119,7 +119,7 @@ export function planePath(p, obs, nowMs = Date.now(), from = -60, to = 120, step
 /* military types (whatever the operator says) are anonymous; not the P-3, which NOAA's civil hurricane hunters fly */
 /* any gov or military aircraft is anonymous, whatever its callsign looks like (QA 2026-11-19: 'AFR123' on a C130 and 'XYZ123'
    on a KC10 kept their callsign and real hex): isGovOrMil covers the flags, the operators and the military types */
-export const isAnonymous = (a) => isGovOrMil(a) || (Number(a?.dbFlags) & 13) !== 0 || !AIRLINE_CS.test(String(a?.flight ?? a?.callsign ?? '').trim().toUpperCase()) || GOV_OPS.has(opOf(a)) || BIZ_OPS.has(opOf(a));
+export const isAnonymous = (a) => isGovOrMil(a) || (Number(a?.dbFlags) & 13) !== 0 || !AIRLINE_CS.test(String(a?.flight ?? a?.callsign ?? '').trim().toUpperCase()) || GOV_OPS.has(opOf(a)) || BIZ_OPS.has(opOf(a)) || BIZ_TYPES.test(String(a?.t ?? a?.type ?? '').toUpperCase());
 /* What kind of thing it was, per CATCH (2026-11-19, card spike, design/card-spike/team-c-information.html §2): one B763 card
    can be caught as a UPS freighter one day and a charter the next, so the class belongs to the catch, not the type. Decided
    here while the raw callsign is in hand; only the class word is kept (plus the airline's name for an airline callsign,
@@ -184,7 +184,7 @@ function parse(json) {
     });
     const q = out[out.length - 1]; q.heli = isHelicopter(q); if (gov) q.gov = true; /* never a flight card (js/flights.js cardsFor) */
     /* the class of this catch, from the raw callsign; the airline's name only for an airline callsign (public) */
-    q.cls = catchClass({ callsign: cs0, category: a.category, type: q.type, heli: q.heli, anon, gov, mil: gov && ((Number(a.dbFlags) & 1) !== 0 || MIL_TYPES.test(t0)), biz: BIZ_OPS.has(opOf(a)) });
+    q.cls = catchClass({ callsign: cs0, category: a.category, type: q.type, heli: q.heli, anon, gov, mil: gov && ((Number(a.dbFlags) & 1) !== 0 || MIL_TYPES.test(t0)), biz: BIZ_OPS.has(opOf(a)) || BIZ_TYPES.test(t0) });
     if (q.cls === 'cargo' || q.cls === 'airline') { const n = airlineName(cs0.toUpperCase()); if (n) q.clsOp = n; }
   }
   return out;
