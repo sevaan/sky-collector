@@ -42,5 +42,13 @@ export const TYPE_NAMES = {
   SHIP: 'Airship', BALL: 'Balloon',
   /* the feed's generic codes (playtest 2026-11-20: a glider or an ultralight was an "Aircraft" card) */
   GLID: 'Glider', ULAC: 'Ultralight', GYRO: 'Gyroplane', TEX2: 'Beechcraft T-6 Texan II',
+  /* gaps the Fable playtest's coverage check found (2026-11-27): military types the privacy list knew but Sky couldn't
+     name (they fell to a Common "Fast Jet" or "Heavy Aircraft" card), unnamed helicopters, and a few others seen live */
+  F22: 'Lockheed Martin F-22 Raptor', KC46: 'Boeing KC-46 Pegasus', F18: 'F/A-18 Hornet', H53S: 'Sikorsky CH-53E Super Stallion', T38: 'Northrop T-38 Talon', T6: 'North American T-6 Texan',
+  HAWK: 'BAE Systems Hawk', TOR: 'Panavia Tornado', RFAL: 'Dassault Rafale', GRIF: 'Saab JAS 39 Gripen', SB39: 'Saab JAS 39 Gripen', MRF1: 'Dassault Mirage F1', C160: 'Transall C-160',
+  CN35: 'CASA CN-235', E2: 'Northrop Grumman E-2 Hawkeye', R135: 'Boeing RC-135', C40: 'Boeing C-40 Clipper', C32: 'Boeing C-32', C37A: 'Gulfstream C-37A', C37B: 'Gulfstream C-37B',
+  VC25: 'Boeing VC-25', Q9: 'General Atomics MQ-9 Reaper', Q4: 'Northrop Grumman RQ-4 Global Hawk', C5: 'Lockheed C-5 Galaxy', SR71: 'Lockheed SR-71 Blackbird',
+  H500: 'MD Helicopters MD 500', A189: 'Leonardo AW189', AS65: 'Airbus AS365 Dauphin', EC20: 'Airbus H120 Colibri', BK17: 'Kawasaki BK 117',
+  BE30: 'Beechcraft King Air 300/350', PA30: 'Piper Twin Comanche', D228: 'Dornier 228', RV12: 'Van’s RV-12', TOBA: 'Socata TB-10 Tobago', C72R: 'Cessna 172RG Cutlass', T204: 'Tupolev Tu-204', A148: 'Antonov An-148',
 };
 export const typeName = (code) => TYPE_NAMES[String(code || '').toUpperCase()] ?? null;

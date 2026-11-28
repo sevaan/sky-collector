@@ -9,22 +9,22 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { regularFor, clockText } from './sky-regulars.js?v=0.1.1936';
-import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js?v=0.1.1936';
-import { flightFact } from './flight-facts.js?v=0.1.1936';
-import { typePhoto } from './type-photos.js?v=0.1.1936';
-import { housePhoto } from './house-photos.js?v=0.1.1936';
-import { gapPhoto } from './gap-photos.js?v=0.1.1936'; /* the types that had no photo (2026-11-18) */
-import { airlinePhoto } from './airline-photos.js?v=0.1.1936';
-import { airlineLogo } from './airline-logos.js?v=0.1.1936';
-import { fitStyle } from './photo-fit.js?v=0.1.1936';
-import { dist, speed, useMiles } from './units.js?v=0.1.1936';
-import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1936';
-import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1936';
-import { typeFact } from './sky-facts.js?v=0.1.1936';
-import { localText } from './localize.js?v=0.1.1936';
-import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1936';
-import { qrEncode, qrSvg } from './qr.js?v=0.1.1936';
+import { regularFor, clockText } from './sky-regulars.js?v=0.1.1937';
+import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js?v=0.1.1937';
+import { flightFact } from './flight-facts.js?v=0.1.1937';
+import { typePhoto } from './type-photos.js?v=0.1.1937';
+import { housePhoto } from './house-photos.js?v=0.1.1937';
+import { gapPhoto } from './gap-photos.js?v=0.1.1937'; /* the types that had no photo (2026-11-18) */
+import { airlinePhoto } from './airline-photos.js?v=0.1.1937';
+import { airlineLogo } from './airline-logos.js?v=0.1.1937';
+import { fitStyle } from './photo-fit.js?v=0.1.1937';
+import { dist, speed, useMiles } from './units.js?v=0.1.1937';
+import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1937';
+import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1937';
+import { typeFact } from './sky-facts.js?v=0.1.1937';
+import { localText } from './localize.js?v=0.1.1937';
+import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1937';
+import { qrEncode, qrSvg } from './qr.js?v=0.1.1937';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // A type name escaped, with its hyphenated model codes kept on one line ('Boeing KC-135R Stratotanker' broke after 'KC-').
@@ -106,8 +106,8 @@ const photoImg = (ph, cls, eager, small = false) => `${ph.box ? `<img class="ph-
 /* Photos where the card's fill crop, centred on the plane, cut the nose off (2026-11-22, Sevaan: "I don't mind wings or rotors
    under the badges, just not noses"): the crop slides to the nose's end instead (0 = left, 100 = right), keyed by photo file. */
 const NOSE_X = { A319: 0, B78X: 0, B762: 100, B407: 0 };
-function fitPhoto(img) {
-  const f = img.parentElement, fw = f?.offsetWidth, fh = f?.offsetHeight; if (!fw || !fh) return false;
+function fitPhoto(img, size) {
+  const f = img.parentElement, [fw, fh] = size ?? [f?.offsetWidth, f?.offsetHeight]; if (!fw || !fh) return false;
   const st = fitStyle(img.dataset.box.split(',').map(Number), +img.dataset.w, +img.dataset.h, fw, fh, { fill: !!f.classList?.contains('cc-ph') }); /* the plane card's window always fills (2026-11-22) */
   const contain = st.mode === 'contain';
   let pos = st.objectPosition; const px = f.classList?.contains('cc-ph') && NOSE_X[(img.getAttribute('src') || '').replace(/^.*\//, '').replace(/\.webp.*$/, '')];
@@ -118,7 +118,11 @@ function fitPhoto(img) {
 // Cards are built as HTML strings all over the app, so fit any photo that appears, and again when frames change size.
 if (typeof document !== 'undefined' && typeof MutationObserver !== 'undefined') {
   const pending = new Set(); let raf = 0;
-  const flush = () => { raf = 0; for (const img of pending) if (!img.isConnected || fitPhoto(img)) pending.delete(img); if (pending.size) raf = requestAnimationFrame(flush); };
+  /* every frame's size read first, then every style written (perf playtest 2026-11-27: read, write, read... forced a
+     layout per photo while the Collection scrolled, about 91 ms) */
+  const flush = () => { raf = 0; const list = []; for (const img of pending) { if (img.isConnected) list.push(img); else pending.delete(img); }
+    const sizes = list.map((img) => [img.parentElement?.offsetWidth, img.parentElement?.offsetHeight]);
+    list.forEach((img, i) => { if (fitPhoto(img, sizes[i])) pending.delete(img); }); if (pending.size) raf = requestAnimationFrame(flush); };
   const queue = (img) => { pending.add(img); raf ||= requestAnimationFrame(flush); };
   const scan = (n) => { if (n.nodeType !== 1) return; if (n.matches?.('img[data-box]')) queue(n); n.querySelectorAll?.('img[data-box]').forEach(queue); };
   const start = () => { new MutationObserver((ms) => { for (const m of ms) m.addedNodes.forEach(scan); }).observe(document.body, { childList: true, subtree: true }); scan(document.body); };

@@ -5,15 +5,15 @@
 //  Everything scales with rarity (Legendary dims the sky, shockwave, held breath, slow flip, fanfare).
 // Waits use timers, not animation.finished, so a paused tab can never freeze the sequence.
 
-import { sfx, loadSfx } from './sfx.js?v=0.1.1936';
-import { audioCtx } from './audio-ctx.js?v=0.1.1936';
-import { TIER_INFO } from './rarity.js?v=0.1.1936';
-import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1936';
-import { applyBack } from './card-backs.js?v=0.1.1936';
-import { addStarfield } from './starfield.js?v=0.1.1936';
-import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1936';
-import { packPlan, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1936'; /* the two-card pack opening (prototype, 2026-11-20) */
-import { tearJag } from './gift-pack.js?v=0.1.1936';
+import { sfx, loadSfx } from './sfx.js?v=0.1.1937';
+import { audioCtx } from './audio-ctx.js?v=0.1.1937';
+import { TIER_INFO } from './rarity.js?v=0.1.1937';
+import { levelFor, attachTilt, attachGyro, attachFlip, throwOff, retype, turnCard } from './card.js?v=0.1.1937';
+import { applyBack } from './card-backs.js?v=0.1.1937';
+import { addStarfield } from './starfield.js?v=0.1.1937';
+import { TIER_FX, flipCard, heartbeats, payoffSound } from './card-moment.js?v=0.1.1937';
+import { packPlan, packIntro, packSeen, primePack } from './pack-reveal.js?v=0.1.1937'; /* the two-card pack opening (prototype, 2026-11-20) */
+import { tearJag } from './gift-pack.js?v=0.1.1937';
 
 const FX = TIER_FX; /* one rarity table for every card moment (js/card-moment.js, 2026-11-11) */
 const NIGHT_MILESTONES = [3, 5, 10, 25, 50, 100, 200, 365], STAMP_MILESTONES = [5, 10, 25, 50, 100, 200, 300, 400];
@@ -94,6 +94,9 @@ function unzoom() {
 }
 // Fold, unfold or rotate with a card up: size it again for the new window (big-screen playtest 2026-10-22: it kept the
 // old size, a small card in the middle of an iPad).
+/* Read every element's animations first, then cancel them: a cancel between reads made each getAnimations() flush style
+   again (perf playtest 2026-11-27: about 51 ms of the Collect tap) */
+const cancelAll = (ids) => { const an = ids.flatMap((id) => document.getElementById(id)?.getAnimations() ?? []); for (const a of an) a.cancel(); };
 let sizedCard = null;
 const LP_PEEK = 2.25; // em of the pass that shows above the plane card (css/sky-cards.css --lp-peek)
 addEventListener('resize', () => { if (sizedCard && !$('reveal').hidden) requestAnimationFrame(() => sizeCard(sizedCard)); });
@@ -176,7 +179,7 @@ export function rushReveal({ origin, tier }) {
   const tk = FX[tier] ? tier : 'common', fx = FX[tk], root = $('reveal');
   root.style.setProperty('--fx', (TIER_INFO[tk] ?? TIER_INFO.common).color); root.classList.remove('rv-done');
   $('reveal-eyebrow').textContent = ''; $('rv-news').replaceChildren(); setRank(null); setDeck([]); $('rv-holder').style.opacity = 0;
-  for (const id of ['rv-dot', 'rv-dim']) $(id).getAnimations().forEach((a) => a.cancel());
+  cancelAll(['rv-dot', 'rv-dim']);
   $('rv-dim').style.opacity = 0;
   const x = origin?.x ?? innerWidth / 2, y = origin?.y ?? innerHeight * .4, ms = reduced() ? 1 : 400;
   $('rv-dot').style.left = `${x}px`; $('rv-dot').style.top = `${y}px`;
@@ -189,7 +192,7 @@ export function rushReveal({ origin, tier }) {
   ], { duration: ms, fill: 'forwards' });
   rush = { t0: performance.now(), x, y, ms };
 }
-export function cancelRush() { rush = null; for (const id of ['rv-dot', 'rv-dim']) $(id).getAnimations().forEach((a) => a.cancel()); $('rv-dim').style.opacity = 0; }
+export function cancelRush() { rush = null; cancelAll(['rv-dot', 'rv-dim']); $('rv-dim').style.opacity = 0; }
 // cards (Sky Collector, 2026-11-19, Sevaan approved design/card-spike/team-d-reveal.html): one catch can give two cards,
 // a flight card and a plane card, each { card, o, seen, fleet, progress, shiny, livery }. Both show, as a two-card deck:
 // the front one plays the reveal, the other peeks out above it; swipe sideways (or tap it, or its tab) to swap. Without
@@ -219,7 +222,7 @@ export async function playReveal({ card, o, seen, origin, fleet = null, progress
   setDeck(items);
   if ((items[1]?.fresh || plan) && !isPass(items[1])) seal(items[1]); /* a new card behind waits face down, glowing in its rarity (out of a pack, any card); a boarding pass is paper, not a card, so it's always face up (2026-11-21, Sevaan) */
   $('reveal-card').classList.toggle('dk-wait', (fresh || plan) && items.length > 1); /* and shows once the front one has turned over */
-  for (const id of ['rv-holder', 'rv-flipper', ...(rushed ? [] : ['rv-dot', 'rv-dim']), 'rv-flash', 'rv-shock']) $(id).getAnimations().forEach((a) => a.cancel());
+  cancelAll(['rv-holder', 'rv-flipper', ...(rushed ? [] : ['rv-dot', 'rv-dim']), 'rv-flash', 'rv-shock']);
   $('rv-holder').style.opacity = 0; $('rv-holder').classList.remove('live');
   $('rv-flipper').style.transform = '';
   $('rv-back').classList.remove('glow');
@@ -355,7 +358,7 @@ export async function playView({ card, o, from, sighting = null, eyebrow = null 
   setRank(null);
   $('reveal-eyebrow').textContent = eyebrow ?? (!sighting ? 'IN YOUR COLLECTION' : NIGHT_MILESTONES.includes(sighting.nights) ? `SEEN ON ${sighting.nights} NIGHTS` : 'SEEN AGAIN');
   setDeck([cardNews({ card, o, seen: 2 })]);
-  for (const id of ['rv-holder', 'rv-flipper', 'rv-dot', 'rv-dim', 'rv-flash', 'rv-shock']) $(id).getAnimations().forEach((a) => a.cancel());
+  cancelAll(['rv-holder', 'rv-flipper', 'rv-dot', 'rv-dim', 'rv-flash', 'rv-shock']);
   $('rv-holder').classList.remove('live');
   $('rv-back').classList.remove('glow');
   $('rv-dim').style.opacity = 0;
@@ -508,7 +511,7 @@ function fillRank(alive) {
   }
   const from = Math.max(r.at, r.from), ms = reduced() ? 1 : 900, t0 = performance.now() + (reduced() ? 0 : 200);
   setTimeout(() => { if (!alive()) return; const f = $('rv-rank-fill'); f.style.transition = `width ${ms}ms cubic-bezier(.3,.8,.3,1)`; f.style.width = `${r.pct(r.to)}%`; }, reduced() ? 0 : 200);
-  const step = (t) => { if (!alive()) return; const k = Math.max(0, Math.min(1, (t - t0) / ms)), e = 1 - (1 - k) ** 3; { const v = Math.round(from + (r.to - from) * e); if ($('rv-rank-xp').textContent !== String(v)) { $('rv-rank-xp').textContent = fmtXp(v); sfx('xp', { gain: 0.6, gap: 75 }); } } if (k < 1) requestAnimationFrame(step); };
+  const step = (t) => { if (!alive()) return; const k = Math.max(0, Math.min(1, (t - t0) / ms)), e = 1 - (1 - k) ** 3; { const v = Math.round(from + (r.to - from) * e); const tv = fmtXp(v); if ($('rv-rank-xp').textContent !== tv) { $('rv-rank-xp').textContent = tv; /* compared as written: "1,234" never equalled "1234", so it was rewritten every frame (perf playtest 2026-11-27) */ sfx('xp', { gain: 0.6, gap: 75 }); } } if (k < 1) requestAnimationFrame(step); };
   requestAnimationFrame(step);
 }
 

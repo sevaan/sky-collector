@@ -6,7 +6,8 @@
 // military or police aircraft; no emergencies. Every fact in the texts is checked (sources in the doc).
 
 // The patches. The text is what the patch's card says once found.
-import { speed } from './units.js'; /* Jet Stream's speed in the player's units (QA round 5) */
+import { speed } from './units.js';
+import { typeName } from './sky-type-names.js'; /* Jet Stream's speed in the player's units (QA round 5) */
 export const SKY_SECRET_PATCHES = {
   overhead: { id: 'overhead', name: 'Straight Up', /* was 'Zenith' (wording pass 2026-11-20); the id stays 'overhead' (not 'zenith': that's a Space Collector patch id) */ text: 'You caught a plane flying almost straight over your head.' },
   balloon: { id: 'balloon', name: 'Up, Up and Away', text: 'You caught a hot-air balloon.' },
@@ -43,7 +44,7 @@ const AIRLINE = /^[A-Z]{3}\d/;
 export function lighterThanAir(p) {
   const t = typeOf(p), gs = Number(p?.gs) || 0;
   if (t === 'SHIP' || /^(ZEPL|ZNT)$/.test(t)) return 'airship';
-  if (t === 'BALL' || (up(p?.category) === 'B2' && t !== 'SHIP')) return gs < 40 ? 'balloon' : (t === 'BALL' ? null : 'airship');
+  if (t === 'BALL' || (up(p?.category) === 'B2' && t !== 'SHIP' && !typeName(t))) return gs < 40 ? 'balloon' : (t === 'BALL' ? null : 'airship'); /* a type Sky names (a Cessna sending B2) is no balloon (playtest 2026-11-27) */
   return null;
 }
 export function isGlider(p) {

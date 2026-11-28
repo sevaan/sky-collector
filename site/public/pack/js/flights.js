@@ -51,7 +51,7 @@ export const knownType = (p) => !!p?.type && (!!aircraftName(p) || isHelicopter(
 export const planeKey = (p) => `P:${knownType(p) ? p.type : isHelicopter(p) ? 'HELI' : SIZE_CLASSES[p.category] ? `UNKNOWN-${p.category}` : 'UNKNOWN'}`;
 /* The drawn plane when there is no photo. Straight wings for light and propeller types only (it read C2 as propeller, so a
    Citation CJ3, C25B, was drawn as one, 2026-11-18). */
-export const glyphFor = (type, heli = false, cat = '') => { const t = String(type ?? '').toUpperCase(), c = String(cat ?? '').toUpperCase(); return t === 'BALL' || (c === 'B2' && t !== 'SHIP') ? 'balloon' : t === 'SHIP' ? 'airship' : t === 'GLID' || c === 'B1' ? 'glider' : heli ? 'heli' : isProp(t) ? 'prop' : 'jet'; }; /* js/sky-props.js since 2026-11-19 (QA: the DC-3, C-130J, A400M, C295 and An-12 were drawn as jets, the Beechjet as a prop) */
+export const glyphFor = (type, heli = false, cat = '') => { const t = String(type ?? '').toUpperCase(), c = typeName(t) && !['GLID', 'ULAC', 'GYRO', 'BALL', 'SHIP'].includes(t) ? '' /* a named type beats the category (playtest 2026-11-27) */ : String(cat ?? '').toUpperCase(); return t === 'BALL' || (c === 'B2' && t !== 'SHIP') ? 'balloon' : t === 'SHIP' ? 'airship' : t === 'GLID' || c === 'B1' ? 'glider' : heli ? 'heli' : isProp(t) ? 'prop' : 'jet'; }; /* js/sky-props.js since 2026-11-19 (QA: the DC-3, C-130J, A400M, C295 and An-12 were drawn as jets, the Beechjet as a prop) */
 /* Tiers and sets (docs/DESIGN-LOOP.md, approved 2026-11-17). A flight's tier is how far it goes; cargo is Rare, not
    Epic (cargo hubs made every card Epic); 14,000 km and beyond is Legendary. A plane's tier is how much of the world's
    traffic its type is (js/sky-tiers.js). Sets: js/sky-sets.js. */

@@ -14,7 +14,7 @@ export const PLANE_SETS = [
   { id: 'rarebirds', name: 'Rare Birds', color: '#9a6a00', goals: [1, 2, 4], test: (t) => /^(DC3|B17|B29|LANC|SPIT|P51|JU52|SHIP|BALL|A124|A3ST|A337|BLCF)$/ /* no retired types (A225, Concorde, Constellation: 2026-11-19) */.test(t) },
   /* the Military set is back (Sevaan 2026-11-19: "I should be able to catch a stealth bomber if I see it and it's in the api
      data"): by type only, never by callsign, registration, unit or route (js/plane-privacy.js) */
-  { id: 'military', name: 'Military', color: '#55633a', goals: [1, 3, 6], test: (t) => /^(C17|C130|C30J|C5M|A400|K35[ER]|E3[TC]F|E6|B52|B1|B2|P8|C2|C295|V22|U2|F16|F18S|F15|F35|EUFI|A10|H47|H53|H60|AN12|IL76)$/.test(t) },
+  { id: 'military', name: 'Military', color: '#55633a', goals: [1, 3, 6], test: (t) => /^(C17|C130|C30J|C5M|A400|K35[ER]|E3[TC]F|E6|E2|R135|B52|B1|B2|P8|C2|C295|CN35|C160|V22|U2|F16|F18S|F18H|F15|F22|F35|EUFI|RFAL|TOR|GRIF|SB39|MRF1|HAWK|T38|T6|TEX2|A10|H47|H53|H53S|H60|AN12|IL76)$/.test(t) }, /* every military type the feed sends that Sky names (2026-11-27, the playtest: the Hornet and Texan were left out; F18, KC10, C5, KC46 and the VIP jets are not feed codes: tests/military-feed-codes.test.mjs) */
   { id: 'giants', name: 'Giants', color: '#7a3fc4', goals: [1, 2, 4], test: (t) => /^(B74.|A38.|A34.|MD11|DC10)$/.test(t) },
   { id: 'helicopters', name: 'Helicopters', color: '#c0562e', goals: [1, 3, 6], test: (t, heli) => heli },
   { id: 'b737', name: 'The 737 Family', color: '#1f5fbf', goals: [2, 3, 5], test: (t) => /^(B73[0-9]|B3[789X]M|B37M)/.test(t) },

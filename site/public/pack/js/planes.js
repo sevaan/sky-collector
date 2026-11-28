@@ -136,9 +136,12 @@ export function catchClass(a) {
   if (a?.gov) return a?.mil ? 'mil' : 'gov';
   const t = String(a?.type ?? '').toUpperCase(), cat = String(a?.category ?? '').toUpperCase(), cs = String(a?.callsign ?? '').trim().toUpperCase();
   if (t === 'SHIP') return 'airship';
-  if (t === 'BALL' || cat === 'B2') return 'balloon';
-  if (t === 'GLID' || cat === 'B1') return 'glider';
-  if (cat === 'B4') return 'ultralight';
+  /* a type Sky names beats the broadcast category (playtest 2026-11-27: an A320 sending category B1 was a glider, a
+     Cessna 172 sending B2 a balloon); the category decides only for a type Sky can't name */
+  const named = !!t && !!typeName(t) && !['GLID', 'ULAC', 'GYRO', 'BALL', 'SHIP'].includes(t), kat = named ? '' : cat;
+  if (t === 'BALL' || kat === 'B2') return 'balloon';
+  if (t === 'GLID' || kat === 'B1') return 'glider';
+  if (kat === 'B4') return 'ultralight';
   if (cat === 'B6') return 'drone';
   if (a?.heli) return 'heli';
   const airline = !a?.anon && !a?.biz && AIRLINE_CS.test(cs);

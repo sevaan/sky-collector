@@ -5,23 +5,23 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { distText, speed, distIn } from './units.js?v=0.1.1936';
+import { distText, speed, distIn } from './units.js?v=0.1.1937';
 const speedText = (kmh) => { const v = speed(kmh); return `${v.v} ${v.u}`; }; /* the units setting (bug pass 2026-11-25: Today said km with miles on) */
-import { later } from './save-later.js?v=0.1.1936';
-import { isProp } from './sky-props.js?v=0.1.1936';
-import { routeMap } from './route-map.js?v=0.1.1936';
-import { planesUp, canCatch, isNight } from './sky-up.js?v=0.1.1936';
-import { planeKey } from './flights.js?v=0.1.1936';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1936';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1936';
-import { airlineIcon } from './airline-icons.js?v=0.1.1936';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1936';
-import { regulars, noteRegulars, clockText, regularAllowed } from './sky-regulars.js?v=0.1.1936';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1936';
-import { planeSet } from './sky-sets.js?v=0.1.1936';
-import { MIL_TYPES } from './plane-privacy.js?v=0.1.1936';
-import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1936';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1936';
+import { later } from './save-later.js?v=0.1.1937';
+import { isProp } from './sky-props.js?v=0.1.1937';
+import { routeMap } from './route-map.js?v=0.1.1937';
+import { planesUp, canCatch, isNight } from './sky-up.js?v=0.1.1937';
+import { planeKey } from './flights.js?v=0.1.1937';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1937';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1937';
+import { airlineIcon } from './airline-icons.js?v=0.1.1937';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1937';
+import { regulars, noteRegulars, clockText, regularAllowed } from './sky-regulars.js?v=0.1.1937';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1937';
+import { planeSet } from './sky-sets.js?v=0.1.1937';
+import { MIL_TYPES } from './plane-privacy.js?v=0.1.1937';
+import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1937';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1937';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -321,12 +321,17 @@ export function heroHtml({ hex, color, kick, left = null, until = null, tierLine
    flight · Finishes a mission") leaves it at the full 190 with its lines far shorter, so the card and text sat left of
    centre with an empty strip on the right. Measured from the text itself after layout; Space's lines are short enough to
    fill theirs. */
+/* Each width is kept by the column's text and the page width (perf playtest 2026-11-27: measuring every line rect cost
+   about 56 ms each time Today opened), so a Today that opens on the same plane sets the width with no layout read. */
+const heroW = new Map();
 export function fitHeroSide(root) {
   for (const side of root?.querySelectorAll?.('.now-hero .nh-side') ?? []) {
+    const key = `${innerWidth}|${side.textContent}`, known = heroW.get(key);
+    if (known) { side.style.width = known; continue; }
     side.style.width = ''; const left = side.getBoundingClientRect().left; let w = 0;
     const tw = document.createTreeWalker(side, NodeFilter.SHOW_TEXT), rg = document.createRange();
     for (let n = tw.nextNode(); n; n = tw.nextNode()) { if (!n.textContent.trim()) continue; rg.selectNodeContents(n); for (const r of rg.getClientRects()) w = Math.max(w, r.right - left); }
-    if (w > 0) side.style.width = `${Math.ceil(w) + 2}px`;
+    if (w > 0) { side.style.width = `${Math.ceil(w) + 2}px`; if (heroW.size > 40) heroW.clear(); heroW.set(key, side.style.width); }
   }
 }
 let lastFacts = null;

@@ -1,49 +1,49 @@
-import { pullToClose } from './pull-close.js?v=0.1.1936';
-import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1936';
-import { computeStats, statsHtml } from './stats.js?v=0.1.1936';
-import { nightKey } from './observation.js?v=0.1.1936';
-import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1936';
-import { sfx } from './sfx.js?v=0.1.1936';
-import { expandFacts } from './catalog-facts.js?v=0.1.1936';
-import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned, addSecretArt } from './patches.js?v=0.1.1936';
-import { registerSkySecrets } from './sky-secrets.js?v=0.1.1936';
-import { SKY_PATCH_ART } from './sky-patches.js?v=0.1.1936';
-import { registerSkyStories } from './sky-stories.js?v=0.1.1936';
-import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1936';
-import { ticket } from './toast.js?v=0.1.1936';
-import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1936';
-import { satGlobe } from './sat-globe.js?v=0.1.1936';
-import { routeMap } from './route-map.js?v=0.1.1936';
-import { dist } from './units.js?v=0.1.1936';
-import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1936';
-import { cardArt } from './art.js?v=0.1.1936';
-import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1936';
-import { applyBack } from './card-backs.js?v=0.1.1936';
-import { localStats, seenLine } from './sky-local.js?v=0.1.1936';
-import { retier, rekeyUnlisted } from './flights.js?v=0.1.1936';
-import { SETS, assignSets, albumGoals, albumList, useSets, goalsOf } from './sets.js?v=0.1.1936';
-import { SKY_ALBUM_SETS, FLIGHT_SETS, PLANE_SETS } from './sky-sets.js?v=0.1.1936';
+import { pullToClose } from './pull-close.js?v=0.1.1937';
+import { isNative, saveFile, notifyAt, shareFile, feel } from './native.js?v=0.1.1937';
+import { computeStats, statsHtml } from './stats.js?v=0.1.1937';
+import { nightKey } from './observation.js?v=0.1.1937';
+import { loadComets, comets, cometAt, NAKED_EYE } from './comets.js?v=0.1.1937';
+import { sfx } from './sfx.js?v=0.1.1937';
+import { expandFacts } from './catalog-facts.js?v=0.1.1937';
+import { patchHtml, GROUPS, GROUP_ORDER, groupOf, finishOf, fmtEarned, addSecretArt } from './patches.js?v=0.1.1937';
+import { registerSkySecrets } from './sky-secrets.js?v=0.1.1937';
+import { SKY_PATCH_ART } from './sky-patches.js?v=0.1.1937';
+import { registerSkyStories } from './sky-stories.js?v=0.1.1937';
+import { setSwitch, SLIDE_MS } from './switcher.js?v=0.1.1937';
+import { ticket } from './toast.js?v=0.1.1937';
+import { orbitGlobe, whereLine } from './orbit-view.js?v=0.1.1937';
+import { satGlobe } from './sat-globe.js?v=0.1.1937';
+import { routeMap } from './route-map.js?v=0.1.1937';
+import { dist } from './units.js?v=0.1.1937';
+import { renderCard, miniCard, lockedArt, renderCardTile, attachTilt, attachGyro, attachFlip, artImage, throwOff, retype } from './card.js?v=0.1.1937';
+import { cardArt } from './art.js?v=0.1.1937';
+import { buildCards, cardKeyFor, normalizeSighting } from './card-model.js?v=0.1.1937';
+import { applyBack } from './card-backs.js?v=0.1.1937';
+import { localStats, seenLine } from './sky-local.js?v=0.1.1937';
+import { retier, rekeyUnlisted } from './flights.js?v=0.1.1937';
+import { SETS, assignSets, albumGoals, albumList, useSets, goalsOf } from './sets.js?v=0.1.1937';
+import { SKY_ALBUM_SETS, FLIGHT_SETS, PLANE_SETS } from './sky-sets.js?v=0.1.1937';
 const FLIGHT_SET_IDS = new Set(FLIGHT_SETS.map((s) => s.id));
 /* plane albums too (playtest 2026-11-20 #13: Helicopters read "0 / 1", only the listed types counted): any helicopter is a card */
 const OPEN_SET_IDS = new Set([...FLIGHT_SET_IDS, ...PLANE_SETS.map((s) => s.id)]);
-import { skyCatalogue } from './sky-catalogue.js?v=0.1.1936';
-import { skyCardPhotoUrl, skyArtKind } from './flight-card.js?v=0.1.1936';
-import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1936';
-import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1936';
-import { STORIES } from './stories.js?v=0.1.1936';
-import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1936';
-import { conArt } from './con-art.js?v=0.1.1936';
-import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1936';
-import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1936';
-import { climbSvg, climbGeom, xpLevel } from './rank-climb.js?v=0.1.1936';
-import { cloudPic } from './cloud-pic.js?v=0.1.1936';
-import { shareCardEl } from './share-card.js?v=0.1.1936';
-import { forgetSighting } from './cloud-backup.js?v=0.1.1936';
-import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1936';
-import { allSightings, deleteSighting } from './store.js?v=0.1.1936';
-import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1936';
-import { SECRET_PATCHES, NOT_SECRET, hasPatch } from './secrets.js?v=0.1.1936';
-import { localText } from './localize.js?v=0.1.1936';
+import { skyCatalogue } from './sky-catalogue.js?v=0.1.1937';
+import { skyCardPhotoUrl, skyArtKind } from './flight-card.js?v=0.1.1937';
+import { TIERS, TIER_INFO } from './rarity.js?v=0.1.1937';
+import { loadLore, titleFor, factFor } from './lore.js?v=0.1.1937';
+import { STORIES } from './stories.js?v=0.1.1937';
+import { loadConstellations, conList, CON_BY_ID } from './constellations.js?v=0.1.1937';
+import { conArt } from './con-art.js?v=0.1.1937';
+import { setSkyProgress, setSkySize, RANKS, progress, readDeals, readWeekThemes, xpCarry } from './progress.js?v=0.1.1937';
+import { eventBadges, nextEvent, setEventsOff } from './events.js?v=0.1.1937';
+import { climbSvg, climbGeom, xpLevel } from './rank-climb.js?v=0.1.1937';
+import { cloudPic } from './cloud-pic.js?v=0.1.1937';
+import { shareCardEl } from './share-card.js?v=0.1.1937';
+import { forgetSighting } from './cloud-backup.js?v=0.1.1937';
+import { initSend, openSend, sendOpen, sendBack, closeSend } from './send-cards.js?v=0.1.1937';
+import { allSightings, deleteSighting } from './store.js?v=0.1.1937';
+import { addStarfield, attachTileTilt } from './starfield.js?v=0.1.1937';
+import { SECRET_PATCHES, NOT_SECRET, hasPatch } from './secrets.js?v=0.1.1937';
+import { localText } from './localize.js?v=0.1.1937';
 // Sky Collector (Milestone 1.5): the same Collection, with plane cards from your catches and no satellite catalogue.
 const SKY = true; /* Sky Collector: cards.html opened on its own was Space's Collection (bug pass 2026-11-25) */
 if (SKY) { /* night follows the game's own switch (html.sky-night, set where Explore decides day and night) */
@@ -1460,10 +1460,18 @@ function earnedDates() {
   const cons = conList();
   const list = state.raw.filter((x) => !x.sim).slice().sort((a, b) => a.time - b.time), dates = {};
   const want = new Set((state.achievements ?? []).filter((a) => a.done && !stored[a.id]).map((a) => a.id));
-  for (let i = 0; i < list.length && want.size; i++) {
-    const p = progress(list.slice(0, i + 1), info, { constellations: cons, albums: albumsNow(), now: list[i].time, deals: readDeals(), weekThemes: readWeekThemes(), carry: xpCarry(state.raw, info, { constellations: cons, deals: readDeals() }) });
-    for (const a of p.achievements) if (a.done && want.has(a.id)) { dates[a.id] = list[i].time; want.delete(a.id); }
-  }
+  /* perf playtest 2026-11-27 (465 ms on 124 catches): what doesn't change per step is worked out once, and instead of a
+     progress() after every catch the range is halved: at the middle catch, the patches already on go left, the rest right,
+     so a patch's first catch is found in a few steps (a patch, once on, stays on as catches are added) */
+  const albums = albumsNow(), deals = readDeals(), weekThemes = readWeekThemes(), carry = xpCarry(state.raw, info, { constellations: cons, deals });
+  const doneAt = (i) => { const p = progress(list.slice(0, i + 1), info, { constellations: cons, albums, now: list[i].time, deals, weekThemes, carry }); return new Set(p.achievements.filter((a) => a.done).map((a) => a.id)); };
+  const find = (lo, hi, ids) => { /* each id in ids is first on somewhere in [lo, hi], or not at all if hi is the end and it's off there */
+    if (!ids.length) return;
+    if (lo === hi) { for (const id of ids) dates[id] = list[lo].time; return; }
+    const mid = (lo + hi) >> 1, on = doneAt(mid);
+    find(lo, mid, ids.filter((id) => on.has(id))); find(mid + 1, hi, ids.filter((id) => !on.has(id)));
+  };
+  if (list.length && want.size) { const last = doneAt(list.length - 1); find(0, list.length - 1, [...want].filter((id) => last.has(id))); }
   /* worked out once, then kept with the ones Explore records (2026-11-11 jank audit: the replay ran a full progress() per
      sighting on every Patches open, 239 ms at phone speed) */
   if (Object.keys(dates).length) { try { localStorage.setItem('patchDates', JSON.stringify({ ...dates, ...stored })); } catch {} }
