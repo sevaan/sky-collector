@@ -3806,3 +3806,6 @@ body.night .kt-icons img { filter: grayscale(1) sepia(1) hue-rotate(-50deg) satu
 /* The why-line under the radar ("None up high enough yet", "No plane tracking reaches here yet") starts at the dial's left
    edge and wraps, so with the column pinned to the dial it never runs off the screen's left edge. */
 #radar-why { align-self:flex-start; width:max-content; max-width:170px; white-space:normal; text-align:left; }
+/* Bigger tap area for a notice's ✕ (playtest 2026-11-27: 28 x 28): an invisible 8px margin all round, about 44 x 44 */
+#toasts .ticket__x { position: relative; }
+#toasts .ticket__x::before { content: ''; position: absolute; inset: -8px; }

@@ -578,6 +578,7 @@ body.sky-only.day:not(.night) :is(#discover, #guidance) { --tk-bg:#fffdf6f2; }
 body.sky-only.day:not(.night) :is(.tk-card, #guidance:not(.first)) { background-image:repeating-linear-gradient(0deg, #0d223805 0 1px, transparent 1px 3px) !important; box-shadow:0 10px 26px rgba(13,34,56,.22), 0 0 0 1px #c9d9e6 !important; }
 body.sky-only.day:not(.night) #discover .d-ticket #d-name, body.sky-only.day:not(.night) #guidance:not(.first), body.sky-only.day:not(.night) #guidance:not(.first) :is(b, strong) { color:#0d2238 !important; text-shadow:none !important; }
 body.sky-only.day:not(.night) #discover .d-ticket :is(#d-sub, #d-switch, #d-dist), body.sky-only.day:not(.night) #guidance:not(.first) small { color:#4a6178 !important; }
+body.sky-only.day:not(.night) #guidance:not(.first) span { color:#3d5368 !important; } /* "On screen now · put it in the circle": pale #bdbea9 on paper was about 1.9:1 (playtest 2026-11-27) */
 :is(html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night), html.sky-cards:not(.sky-night)) #toasts .ticket { --tkc:#b42a20; } /* the ticket's small label was pale yellow on white */
 :is(html:not(.sky-night) body.sky-only:is(:not([data-page="explore"]), .day):not(.night), html.sky-cards:not(.sky-night)) #toasts .ticket .ticket__eyebrow { color:#b42a20 !important; }
 

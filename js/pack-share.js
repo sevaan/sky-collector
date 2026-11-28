@@ -1,10 +1,10 @@
 // Sharing cards as a pack link (2026-11-11): Send cards and "Share my night" both make the link here and hand it to the
 // phone's share sheet. The pack waits on our server (functions/index.js /api/pack, 90 days) and the link carries only its
 // id; offline, a small pack still fits in the link itself.
-import { packGift, giftCode, giftLink, packLink } from './gift.js?v=0.1.1934';
-import { plugin } from './native.js?v=0.1.1934';
-import { SKY_API as SERVER } from './server.js?v=0.1.1934'; /* Sky: short pack links on Sky's own server (/pack) */
-import { backupBid } from './cloud-backup.js?v=0.1.1934';
+import { packGift, giftCode, giftLink, packLink } from './gift.js?v=0.1.1935';
+import { plugin } from './native.js?v=0.1.1935';
+import { SKY_API as SERVER } from './server.js?v=0.1.1935'; /* Sky: short pack links on Sky's own server (/pack) */
+import { backupBid } from './cloud-backup.js?v=0.1.1935';
 
 // The link for these sightings, or null with no connection and too many cards to fit in the link.
 export async function packLinkFor(sightings, { kind = '' } = {}) {
