@@ -1,28 +1,28 @@
 // Retro space-age cards. Text remains live; the foil follows pointer or optional phone tilt.
-import { fallWords } from './last-chance.js?v=0.1.1937';
-import { useMiles } from './units.js?v=0.1.1937';
-import { feel } from './native.js?v=0.1.1937';
-import { sfx } from './sfx.js?v=0.1.1937';
-import { cardArt } from './art.js?v=0.1.1937';
-import { TIER_INFO } from './rarity.js?v=0.1.1937';
-import { SET_BY_ID } from './sets.js?v=0.1.1937';
-import { TYPE_LABEL, orbitStats, sizeLabel, formatDate, titleCase } from './facts.js?v=0.1.1937';
-import { FLEET_ABOUT, fleetAbout, factSourceUrl, debrisOf, roleOf, ownerWord, titleFor, factFor, yearsUp, lapsPerDay, thirdStat, richText, seriesKeyOf } from './lore.js?v=0.1.1937';
-import { artFileFor } from './art-keys.js?v=0.1.1937';
-import { ART_FILES, ART_STARS } from './art-files.js?v=0.1.1937';
+import { fallWords } from './last-chance.js?v=0.1.1938';
+import { useMiles } from './units.js?v=0.1.1938';
+import { feel } from './native.js?v=0.1.1938';
+import { sfx } from './sfx.js?v=0.1.1938';
+import { cardArt } from './art.js?v=0.1.1938';
+import { TIER_INFO } from './rarity.js?v=0.1.1938';
+import { SET_BY_ID } from './sets.js?v=0.1.1938';
+import { TYPE_LABEL, orbitStats, sizeLabel, formatDate, titleCase } from './facts.js?v=0.1.1938';
+import { FLEET_ABOUT, fleetAbout, factSourceUrl, debrisOf, roleOf, ownerWord, titleFor, factFor, yearsUp, lapsPerDay, thirdStat, richText, seriesKeyOf } from './lore.js?v=0.1.1938';
+import { artFileFor } from './art-keys.js?v=0.1.1938';
+import { ART_FILES, ART_STARS } from './art-files.js?v=0.1.1938';
 /* the orbit view (and its 66 KB coastline) loads when a card first needs it (perf audit 2026-10-29) */
-let orbitP = null; const orbitMod = () => (orbitP ??= import('./orbit-view.js?v=0.1.1937'));
-import { ART_SHARED } from './art-shared.js?v=0.1.1937';
-import { ART_CREDITS } from './art-credits.js?v=0.1.1937';
-import { stampsIn, fleetLevel, fleetThresholds, sightingKeys, MOON_PHASES, moonPhaseOf } from './card-model.js?v=0.1.1937';
-import { nightsIn } from './observation.js?v=0.1.1937';
-import { CON_BY_ID, conProgress } from './constellations.js?v=0.1.1937';
-import { SHINY } from './shiny.js?v=0.1.1937';
-import { conArt, cometArt } from './con-art.js?v=0.1.1937';
-import { CON_FIGURES } from './con-figures.js?v=0.1.1937';
-import { localText } from './localize.js?v=0.1.1937';
-import { isSkyCard, skyStampInfo, skyTypeCode } from './sky-cards.js?v=0.1.1937';
-import { flightCardHtml, planeCardHtml } from './flight-card.js?v=0.1.1937';
+let orbitP = null; const orbitMod = () => (orbitP ??= import('./orbit-view.js?v=0.1.1938'));
+import { ART_SHARED } from './art-shared.js?v=0.1.1938';
+import { ART_CREDITS } from './art-credits.js?v=0.1.1938';
+import { stampsIn, fleetLevel, fleetThresholds, sightingKeys, MOON_PHASES, moonPhaseOf } from './card-model.js?v=0.1.1938';
+import { nightsIn } from './observation.js?v=0.1.1938';
+import { CON_BY_ID, conProgress } from './constellations.js?v=0.1.1938';
+import { SHINY } from './shiny.js?v=0.1.1938';
+import { conArt, cometArt } from './con-art.js?v=0.1.1938';
+import { CON_FIGURES } from './con-figures.js?v=0.1.1938';
+import { localText } from './localize.js?v=0.1.1938';
+import { isSkyCard, skyStampInfo, skyTypeCode } from './sky-cards.js?v=0.1.1938';
+import { flightCardHtml, planeCardHtml } from './flight-card.js?v=0.1.1938';
 // The animal/symbol figure belongs to the completed (gold) constellation card only (2026-10-05): a single
 // star’s card draws just the star pattern with its star marked, so the figure is a reward for finishing the set.
 // A star card’s constellation figure comes into focus as you collect the constellation’s stars (design/con-focus.html B).
@@ -182,7 +182,13 @@ function renderSkyCard(o0, opts) {
   const shinyOf = own.find((x) => x.shiny && SHINY[x.shiny])?.shiny; /* a shiny moment (js/shiny.js shinyForPlane) makes the card shiny, as a satellite's */
   el.className = `card card--sky card--${o.sky} tier-${o.tier ?? 'common'} level-${opts.forceLevel ?? stampInfo.level}${own.length || opts.preview ? '' : ' card--unseen'}${shinyOf ? ' shiny' : ''}`;
   el.dataset.id = o.id; el.setAttribute('aria-label', `${o.name}, ${TIER_INFO[o.tier]?.label ?? 'Common'}, ${own.length ? 'collected' : 'not collected'}`);
-  el.innerHTML = `${html}${shinyOf ? `<span class="fc-shiny" aria-label="Shiny: ${SHINY[shinyOf].label}"><b>✦</b> ${SHINY[shinyOf].label}</span><span class="fc-shine" aria-hidden="true"></span>` : ''}<div class="card__back"></div>`;
+  /* A boarding pass carries its shiny pill inside the pass itself (2026-11-28, Sevaan: "Golden hour pill needs to be angled and
+     centered on the top edge of the boarding pass. Same for in the last nights pack"): the viewer, the pack and the gift tilt
+     the pass (.fc--land), not the card around it, so a pill beside it stayed level and off its edge. */
+  const pill = shinyOf ? `<span class="fc-shiny" aria-label="Shiny: ${SHINY[shinyOf].label}"><b>✦</b> ${SHINY[shinyOf].label}</span>` : '';
+  const land = pill && /^\s*<article class="fc [^"]*\bfc--land\b/.test(html) && html.lastIndexOf('</article>');
+  const face = land > 0 ? `${html.slice(0, land)}${pill}${html.slice(land)}` : `${html}${pill}`;
+  el.innerHTML = `${face}${shinyOf ? '<span class="fc-shine" aria-hidden="true"></span>' : ''}<div class="card__back"></div>`;
   el._card = o;
   return el;
 }

@@ -702,6 +702,7 @@ body.sky-only .tc .art .ob-stars { display:none; } /* the location picture's dra
 .card--sky.shiny .fc-shiny { position:absolute; z-index:6; left:50%; top:-.55em; transform:translateX(-50%); white-space:nowrap; padding:.2em .7em; border-radius:99px; font:500 .62em/1.2 'SC Label', sans-serif; letter-spacing:.12em; text-transform:uppercase;
   color:#5a3a00; background:linear-gradient(90deg, #ffe28a, #ffc8e6, #ffe28a); box-shadow:0 2px 6px rgba(13,34,56,.25); }
 .card--sky.shiny .fc-shiny b { font-weight:inherit; color:#b42a20; }
+.card--sky.shiny > .fc--land { position:relative; } /* the pass holds its own pill (js/card.js), so the pill turns with it and sits on its top edge */
 @media (prefers-reduced-motion: reduce) { .card--sky.shiny .fc-shine { animation:none; background-position:50% 0; opacity:.6; } }
 
 /* Circle highlights: Space's satellite chips are hidden in Sky, the plane choices shown (2026-11-19) */
