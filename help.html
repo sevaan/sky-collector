@@ -5,9 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sky Collector Help</title>
 <link rel="icon" href="icons/favicon.ico" sizes="16x16 32x32 48x48"><link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png"><link rel="apple-touch-icon" href="icons/icon-180.png">
-<meta name="description" content="Answers to common questions about Sky Collector.">
-<!-- The help page (2026-11-20): Part 1 of content/sky-help-page-v2-2026-11-20.md, word for word. Styled as privacy.html;
-     scripts/build-site.mjs copies it to skycollector.app/help. -->
+<meta name="description" content="Answers about Sky Collector: fixing common problems, how to play, cards, alerts, Plus and your collection.">
+<!-- The help page, v3 (2026-11-27): content/sky-help-page-v3-2026-11-27.md word for word, laid out by step 1 of Content's
+     help build brief (Space Collector's content/help-page-build-brief-2026-11-27.md): topic buttons, one <details> row per
+     question, each with its permanent {#anchor} as its id (/help#compass opens that answer). data-find holds the search
+     words for step 2; data-platform marks iPhone-only text (Sky has no Android build yet, so no switch). Same look as
+     privacy.html. scripts/build-site.mjs copies it to skycollector.app/help and generates its FAQPage markup from it. -->
 <style>
   @font-face { font-family: 'SC Display'; src: url('fonts/RussoOne-Regular.woff2') format('woff2'), url('fonts/RussoOne-Regular.ttf') format('truetype'); }
   @font-face { font-family: 'SC Label'; src: url('fonts/BarlowCondensed-Medium.woff2') format('woff2'), url('fonts/BarlowCondensed-Medium.ttf') format('truetype'); font-weight: 500; }
@@ -22,90 +25,279 @@
   h3 + p { margin-top: 0; }
   p { color: var(--text); }
   a { color: var(--ink); }
+  .lede { margin: 0 0 6px; }
+  .soon { margin: 0 0 18px; color: var(--muted); font-size: 14.5px; }
+  .topics { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 8px; }
+  .topics a { padding: 7px 12px 6px; border: 1px solid var(--edge); border-radius: 999px; color: var(--text); text-decoration: none; font: 500 15px 'SC Label', sans-serif; letter-spacing: .06em; }
+  .topics a:hover, .topics a:focus-visible { border-color: var(--org); }
+  .hs { scroll-margin-top: 12px; }
+  details { border-top: 1px solid var(--edge); scroll-margin-top: 12px; }
+  .hs details:last-child { border-bottom: 1px solid var(--edge); }
+  summary { cursor: pointer; list-style: none; position: relative; padding: 13px 28px 13px 0; font-weight: 700; color: var(--text); }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: '+'; position: absolute; right: 4px; top: 10px; font: 400 22px/1 -apple-system, system-ui, sans-serif; color: var(--org); }
+  details[open] > summary::after { content: '–'; }
+  summary:focus-visible { outline: 2px solid var(--org); outline-offset: 2px; }
+  .ans { padding: 0 0 14px; }
+  .ans > :first-child { margin-top: 0; } .ans > :last-child { margin-bottom: 0; }
+  .ans ol, .ans ul { padding-left: 22px; } .ans li { margin: 4px 0; }
+  b { color: var(--ink); font-weight: 600; }
 </style>
 </head>
 <body><main>
   <span class="eyebrow">Sky Collector</span>
+
   <h1>Help</h1>
+  <p class="lede">Find an answer, or write to us at <a href="mailto:hello@skycollector.app">hello@skycollector.app</a>.</p>
+  <p class="soon" id="prerelease">Sky Collector isn’t out yet. This page describes the app as it will be when it arrives.</p><!-- remove on launch day -->
+  <nav class="topics" aria-label="Topics"><a href="#t-wrong">Something’s wrong</a><a href="#t-start">Getting started</a><a href="#t-cards">Cards</a><a href="#t-today">Today and alerts</a><a href="#t-patches">Patches and missions</a><a href="#t-plus">Plus</a><a href="#t-collection">Your collection</a><a href="#t-privacy">Privacy</a></nav>
 
-  <h2>Getting started</h2>
-  <h3>How do I play?</h3>
-  <p>Point your phone at a plane. When it lines up in the circle, tap Collect. You get a card for that kind of plane, and for most airline flights a second card with the airline and where it's going.</p>
-  <h3>Do I have to be outside?</h3>
-  <p>No. The app draws the sky wherever you point, so a window works, and so does a garden or the fence by an airport. If your phone has no motion sensors, you can drag the sky with a finger.</p>
-  <h3>Nothing is overhead. What now?</h3>
-  <p>Open Today and tap Show me. It points you at the best plane up now, and lists what is due over you in the next 15 minutes.</p>
+  <section class="hs" id="t-wrong">
+    <h2>Something’s wrong</h2>
 
-  <h2>When something looks wrong</h2>
-  <h3>I can see a plane, but the app doesn't show it.</h3>
-  <p>The app shows what volunteers with receivers pick up and share. Coverage is best in North America and Europe and thinner elsewhere, and some aircraft don't broadcast at all. So now and then a real plane has no card.</p>
-  <h3>The app shows a plane I can't see.</h3>
-  <p>It may be behind cloud, a building or trees. Planes very low on the horizon are left out for that reason. If planes are often in the wrong place, line up the compass (next answer).</p>
-  <h3>The planes on screen aren't where the real ones are.</h3>
-  <p>The compass in your phone is usually the cause. Go to Settings → Compass and tap Line up. It asks you to point the circle at something you can see and sets itself from that. By day it uses the Sun: aim the phone at it, never your eyes.</p>
-  <h3>The sky doesn't move when I turn my phone.</h3>
-  <p>Go to Settings → Look around with, and choose Motion. Allow motion if your phone asks. If your phone has no motion sensors, choose Finger and drag the sky.</p>
-  <h3>Why did I only get one card for an airliner?</h3>
-  <p>The second card needs the airline and the route, and we don't always know them. You still get the card for the kind of plane. If the same flight passes again once we know more, it can earn its flight card then.</p>
-  <h3>Why doesn't this plane show an airline or a route?</h3>
-  <p>Private and business aircraft, and military, police and government aircraft, show only what kind of aircraft they are. That is on purpose. Sky Collector is a collecting game, not a flight tracker, and it can't follow a particular plane or person.</p>
+    <details id="compass" data-find="wrong direction, compass, drift, off to one side, calibrate, line up, sky drifting, needs a nudge"><summary>Planes on screen aren’t where the real ones are</summary><div class="ans">
+      <p>Your phone’s compass is almost always the cause. Line it up against something you can see:</p>
+      <ol><li>Open Settings → Aiming → Compass and tap <b>Line up</b>.</li><li>Point the circle at the thing it names: the Sun by day, or the Moon, a planet or a bright star at night. Aim the phone at the Sun, never your eyes.</li><li>If there’s nothing to aim at, it asks you to point at north, or to drag the sky until it matches.</li></ol>
+      <p>To undo it, tap Reset in the same place.</p>
+      <ul><li>“Compass · Needs a nudge”: wave the phone in a slow figure-8, away from metal.</li><li>“Sky drifting? Line it up with something you can see”: tap it. It opens the same steps.</li><li>“Approximate · planes may be drawn a little off”: your phone is sharing only a rough location. <a href="#location">See the next but one answer.</a></li></ul>
+    </div></details>
 
-  <h2>Cards</h2>
-  <h3>What do Common, Uncommon, Rare, Epic and Legendary mean?</h3>
-  <p>For a plane card, how unusual that kind of plane is. For a flight card, how far the flight goes. Rarity is never something you pay for. Each has its own shape on the card.</p>
-  <h3>What do Bronze, Silver and Gold mean?</h3>
-  <p>Cards level up when you catch them again. A flight card turns silver when you've caught that flight on 5 days, and gold on 15. A plane card turns silver after 10 different aircraft of that kind, and gold after 50.</p>
-  <h3>What is a shiny card?</h3>
-  <p>A card from a lucky moment, and they are rare: a plane crossing in front of the Moon, your first catch in the few minutes the sun sits on the horizon, or a rare kind of plane in an airline's colours you haven't collected before.</p>
-  <h3>What are sets?</h3>
-  <p>Groups of cards to fill, like The 737 Family, Giants or Short Hops. There are nineteen. Each has a bronze, silver and gold goal, so a quiet sky can still finish one.</p>
-  <h3>What are my regulars?</h3>
-  <p>Airline flights that pass over you at about the same time most days. Once the app has seen one on three days in a week, it becomes a regular and the app tells you when it is usually due. It works this out on your phone. Only airline flights can be regulars.</p>
+    <details id="motion" data-find="stuck, frozen, motion, sensors, tap to turn on motion, tap to wake the sky, drag, finger"><summary>The sky doesn’t move when I turn my phone</summary><div class="ans">
+      <ol><li>If the circle says <b>Tap to turn on motion</b> or <b>Tap to wake the sky</b>, tap it. Motion pauses whenever you leave the app.</li><li>If that doesn’t work, open Settings → Your sky → Look around with, and choose <b>Motion</b>.</li><li>If it says “Motion is unavailable”, choose <b>Finger</b> there and drag the sky to look around.</li></ol>
+    </div></details>
 
-  <h2>Missions and patches</h2>
-  <h3>What are missions?</h3>
-  <p>Three small goals a day, chosen to fit how busy your sky is. A new themed week starts every Monday. Each one you finish earns XP.</p>
-  <h3>What are patches and ranks?</h3>
-  <p>Patches are awards for milestones, like your first card or a finished set. XP raises your rank. All of it is free to earn.</p>
-  <h3>What is the pack I get in the morning?</h3>
-  <p>The morning after you've been catching, your cards from that day or night wait as a sealed pack. Tear it open and turn over the best ones.</p>
+    <details id="location" data-find="location, city, GPS, wrong sky, time zone, couldn't find you, location is off, approximate"><summary>The app has the wrong place, or can’t find me</summary><div class="ans">
+      <p>Open Settings → Your sky → Location.</p>
+      <ol><li>Tap <b>Use my location</b> and allow it when your phone asks.</li><li>Or search for a city or town, or type coordinates.</li></ol>
+      <ul><li>“Location is off for Sky Collector”: turn it on in your phone’s Settings → Sky Collector → Location, or search for a place.</li><li>“Location is switched off on this phone”: turn on location in your phone’s settings.</li><li>“Couldn’t find you just now”: try again outside, or search for a place.</li><li>If the sky is a city “picked from your phone’s time zone”, the app doesn’t have your place yet.</li></ul>
+      <p>Planes are close and fast, so a precise location draws them in the right spot. With a rough one they may be a little off.</p>
+    </div></details>
 
-  <h2>Alerts</h2>
-  <h3>How do plane alerts work?</h3>
-  <p>They are free, and off until you turn them on in Settings → Notifications. When you leave the app, it can set an alert for a rare plane or a new card due over you in the next few minutes, or for a regular flight you haven't caught. You get three a day at most, never in your quiet hours.</p>
-  <h3>Why didn't I get an alert for a plane that flew over?</h3>
-  <p>The app can't look for planes while it's closed. It can only warn you about ones it could already see coming when you left, and about your regulars. Alerts work best on days you've opened the app.</p>
-  <h3>What are the widgets?</h3>
-  <p>On iPhone, widgets for your Home Screen and Lock Screen. The small one, which shows your next regular flight, is free. The medium and large ones, and the Lock Screen ones, come with Plus. There are no widgets on Android.</p>
+    <details id="no-planes" data-find="empty, nothing overhead, quiet sky, no planes, plane feed, can't reach, no plane tracking here"><summary>There are no planes</summary><div class="ans">
+      <ul><li>“Quiet sky”: nothing is overhead right now. <b>Today</b> lists what’s coming over in the next 15 minutes.</li><li>“Can’t reach the plane feed” or “Plane feed down · retrying”: the app can’t get plane positions. Check your connection. It keeps trying.</li><li>“No plane tracking here yet”: plane positions come from volunteers’ receivers, and none reach your area yet.</li><li>“None up high enough yet”: planes are near, but too low on your horizon to catch.</li><li>Check Settings → What shows → <b>Planes</b> is on.</li></ul>
+    </div></details>
 
-  <h2>Sky Collector Plus</h2>
-  <h3>What is Plus?</h3>
-  <p>Optional extras for players who want to support the game. Everything you collect and earn is free without it, and so are plane alerts. Plus adds every card back, seven more app icons, widgets on iPhone and a members' patch.</p>
-  <h3>What does it cost, and is there a free trial?</h3>
-  <p>You can pay monthly, yearly, or once to keep it for good. The yearly plan starts with a free week for new subscribers. Your store shows the price in your own currency. Plus is on iPhone now. On Android the Plus page says "Coming soon to Google Play".</p>
-  <h3>I bought Plus and it isn't on (or I have a new phone).</h3>
-  <p>Open the Plus page, scroll to the bottom and tap Restore purchases. Use the same Apple Account you bought it with.</p>
-  <h3>How do I cancel?</h3>
-  <p>In your Apple Account settings, at least 24 hours before it renews. Deleting the app doesn't cancel it. You keep every card, and the members' patch stays on your wall.</p>
+    <details id="missing-plane" data-find="plane missing, not shown, real plane, not on screen"><summary>I can see a plane and the app doesn’t show it</summary><div class="ans">
+      <p>Not every aircraft broadcasts its position, and some are out of reach of the receivers the app relies on. If the app shows it in the wrong place instead, line up the compass (<a href="#compass">the first answer on this page</a>).</p>
+    </div></details>
 
-  <h2>Your collection</h2>
-  <h3>How do I send cards to a friend?</h3>
-  <p>Open a card, tap the share icon and choose Send the card. Your friend gets a link that opens as a pack, and you keep your own cards. The link works for 90 days. A pack never includes where you were.</p>
-  <h3>Do cards I'm sent count towards my rank?</h3>
-  <p>They join your collection, but they don't add XP, levels or patches. Only what you catch yourself does.</p>
-  <h3>How do I move to a new phone?</h3>
-  <p>On iPhone, your collection backs up to your own iCloud by itself. Sign in to the same iCloud on the new phone and open the app. On Android, it should come across with your phone's Google backup, if you have that turned on. There are no accounts, so a collection can't move between iPhone and Android.</p>
-  <h3>How do I start again?</h3>
-  <p>Settings → Reset everything. It deletes your cards, patches, settings and reminders from this phone, and your iCloud backup if you have one. It can't be undone.</p>
+    <details id="cant-catch" data-find="too low to catch, too far to catch, caught today, can't collect, won't catch"><summary>It won’t let me catch a plane</summary><div class="ans">
+      <ul><li>“Too low to catch”: wait for it to climb higher above your horizon.</li><li>“Too far to catch”: it has to come closer. Small aircraft need to be nearer than big ones, and the app shows how far away it is.</li><li>“Caught today”: you’ve already caught this aircraft today. Tap <b>View card</b> to see it.</li></ul>
+    </div></details>
 
-  <h2>Privacy</h2>
-  <h3>Does it use my location?</h3>
-  <p>Yes, to place each plane in your sky. Your exact position stays on your phone. Only a position rounded to about 5 km is sent, to find the planes near you. You can pick a city in Settings instead.</p>
-  <h3>What do you keep about me?</h3>
-  <p>There are no accounts, no ads and no tracking. Your collection stays on your phone and in your own backup. The app sends a few anonymous notes about how it is used, with no location, and you can turn them off in Settings → Help → Share anonymous usage. The full policy is at <a href="privacy.html">skycollector.app/privacy</a>.</p>
+    <details id="no-route" data-find="no airline, no route, unknown, private, military, route not known, unidentified aircraft"><summary>A plane has no airline or route</summary><div class="ans">
+      <p>Only airline flights show an airline and a route. Private, business, military and government aircraft show what kind of aircraft they are, and nothing else. That’s on purpose.</p>
+      <p>Sometimes an airline flight’s route isn’t known either. Its card then says “route not known”, and a later catch of the same flight can fill it in.</p>
+    </div></details>
 
-  <h2>Contact</h2>
-  <h3>How do I reach you?</h3>
-  <p>Write to <a href="mailto:hello@skycollector.app">hello@skycollector.app</a>, or tap Settings → Help → Send feedback. Tell us which phone you have and what you were doing when it went wrong.</p>
-</main></body>
+    <details id="sound" data-find="silent, mute, volume, music, haptics"><summary>There’s no sound, or no music</summary><div class="ans">
+      <ol><li>Open Settings → Sound and check that <b>Sounds</b> and <b>Music</b> are on and their volume sliders are up.</li><li data-platform="iphone">Check the silent switch on the side of the phone. Sky Collector stays quiet when it is on.</li><li>Turn up your phone’s volume. Music starts after your first tap.</li></ol>
+    </div></details>
+
+    <details id="no-alert" data-find="notification, alert, didn't get, notifications off, quiet hours"><summary>A plane alert didn’t arrive</summary><div class="ans">
+      <ol><li>If Settings → Notifications says “Notifications are off on this phone”, turn them on in your phone’s Settings → Sky Collector.</li><li>Check <b>Plane alerts</b> is on, and check your quiet hours, in the same place.</li><li>Alerts are set as you leave the app, from planes already on their way. If you haven’t opened the app for a while, there’s nothing to alert you about.</li><li>There are three a day at most, at least half an hour apart.</li></ol>
+    </div></details>
+
+    <details id="restore" data-find="restore, purchase, bought, paid, new phone, plus missing, charged"><summary>My purchase didn’t go through, or Plus isn’t on</summary><div class="ans">
+      <ol><li>Open Settings → Collection → Sky Collector Plus.</li><li>Scroll to the bottom and tap <b>Restore purchases</b>.</li><li>Use the same Apple Account you bought it with.</li></ol>
+      <ul><li>“The purchase didn’t go through”: you haven’t been charged. Try again in a moment.</li><li>“Waiting for approval”: a family organiser has to approve it. Plus turns on as soon as they do.</li><li>“No Plus purchase on this Apple Account”: you’re signed in to a different account from the one that bought it.</li><li>“Couldn’t reach the App Store”: check your connection and try again.</li></ul>
+    </div></details>
+
+    <details id="pack-problem" data-find="pack, link, cards expired, no connection, already in your collection, update to open, already shared"><summary>A pack someone sent me won’t open</summary><div class="ans">
+      <ul><li>“These cards have expired”: packs last 90 days. Ask for them to be shared again.</li><li>“No connection”: tap the link again once you’re online.</li><li>“Update to open these”: update Sky Collector, then tap the link again.</li><li>“The link was cut short”: ask them to send it again.</li><li>“Already in your collection” or “Already shared”: you have every card in it already.</li></ul>
+    </div></details>
+
+    <details id="save-failed" data-find="couldn't save, storage off, card didn't save, private browsing"><summary>The app says “Couldn’t save”</summary><div class="ans">
+      <p>Your phone’s storage is full or blocked. Free up some space, then catch it again. In a web browser, close private browsing. Nothing already in your collection is affected.</p>
+    </div></details>
+
+    <details id="display" data-find="text size, larger text, font, landscape, rotate, turn your phone upright"><summary>The text is too small, or the app won’t turn</summary><div class="ans">
+      <p>The app follows your phone’s text size setting, up to a point. On phones it is upright only. Tablets can turn.</p>
+    </div></details>
+
+  </section>
+
+  <section class="hs" id="t-start">
+    <h2>Getting started</h2>
+
+    <details id="play"><summary>How do I play?</summary><div class="ans">
+      <p>Point your phone at a plane. When it lines up in the circle, the app says what it is. Tap <b>Collect</b> and its card is yours. If it’s an airline flight, you get a second card too: a boarding pass for that flight.</p>
+    </div></details>
+
+    <details id="outside"><summary>Do I have to be outside?</summary><div class="ans">
+      <p>No. The app draws planes where they really are, even through a ceiling. If you’d rather not wave your phone about, choose Finger in Settings → Your sky → Look around with, and drag the sky.</p>
+    </div></details>
+
+    <details id="what"><summary>What can I collect?</summary><div class="ans">
+      <p>Two kinds of card. <b>Plane cards</b> are for the kind of aircraft: an A320, a 747, a helicopter. <b>Boarding passes</b> are for airline flights: the airline, the flight number and where it’s going. One catch can give you both.</p>
+    </div></details>
+
+    <details id="today"><summary>What is the Today page?</summary><div class="ans">
+      <p>What’s flying over you today: what’s up now, what’s coming over in the next 15 minutes, where those planes are going, your regulars, and your day so far, with the farthest, highest and fastest you’ve caught. Tap <b>Show me</b> beside a plane and the app points you to it.</p>
+    </div></details>
+
+    <details id="release" data-find="release, launch, download, available, app store, google play, android, when"><summary>When does Sky Collector come out?</summary><div class="ans">
+      <p>Soon. There’s no date yet, and it isn’t in any store today. skycollector.app will say when it is.</p>
+    </div></details>
+
+    <details id="free"><summary>Is it free?</summary><div class="ans">
+      <p>Yes. Every card, patch and mission is free to collect, and there are no ads. An optional membership, Sky Collector Plus, adds extras.</p>
+    </div></details>
+
+  </section>
+
+  <section class="hs" id="t-cards">
+    <h2>Cards</h2>
+
+    <details id="rarity"><summary>What do Common, Uncommon, Rare, Epic and Legendary mean?</summary><div class="ans">
+      <p>How unusual the catch is. For plane cards, it’s how rarely that kind of aircraft is seen. For boarding passes, it’s how far the flight is going: the longest flights are Legendary. Each rarity has its own shape on the card. Rarity is never something you pay for.</p>
+    </div></details>
+
+    <details id="levels"><summary>What do Bronze, Silver and Gold mean?</summary><div class="ans">
+      <p>How many times you’ve caught it. Cards level up as you catch the same kind of plane, or the same flight, on more days.</p>
+    </div></details>
+
+    <details id="shiny"><summary>What is a shiny card?</summary><div class="ans">
+      <p>A card from a lucky moment. There are three:</p>
+      <ul><li><b>Moon crossing</b>: the plane was right beside the Moon.</li><li><b>Golden hour</b>: your first catch in the few minutes the sun sits on the horizon.</li><li><b>New colours</b>: a rare aircraft you already have, caught flying for an airline you haven’t seen it with.</li></ul>
+    </div></details>
+
+    <details id="albums"><summary>What are albums?</summary><div class="ans">
+      <p>Cards sort into 19 albums, such as Giants, Helicopters, Long Haul and Cargo Runs. Each has bronze, silver and gold goals, and a patch.</p>
+    </div></details>
+
+    <details id="regulars"><summary>What are regulars?</summary><div class="ans">
+      <p>Airline flights that cross your sky at about the same time on most days. Once you’ve seen one on three of the last seven days, with the app open, it becomes a regular. Today shows when your regulars are next due.</p>
+    </div></details>
+
+    <details id="secrets"><summary>What are story cards and secrets?</summary><div class="ans">
+      <p>A few things are hidden. If something odd lines up in the circle, hold the circle still on it for a few seconds. That’s all we’ll say.</p>
+    </div></details>
+
+  </section>
+
+  <section class="hs" id="t-today">
+    <h2>Today and alerts</h2>
+
+    <details id="alerts"><summary>What does the app send without being asked?</summary><div class="ans">
+      <p>One kind of notification: <b>Plane alerts</b>. A new card or a rare plane about to fly over you, or one of your regulars a few minutes before its usual time. Three a day at most, and never in your quiet hours. Turn them on or off in Settings → Notifications.</p>
+    </div></details>
+
+    <details id="quiet"><summary>What are quiet hours?</summary><div class="ans">
+      <p>The hours when the app won’t send anything: 11 PM to 7 AM unless you change them in Settings → Notifications.</p>
+    </div></details>
+
+    <details id="widgets" data-platform="iphone"><summary>What are the widgets?</summary><div class="ans">
+      <p>Widgets show what’s coming over next. The small one is free. The medium, large and Lock Screen widgets come with Plus.</p>
+    </div></details>
+
+    <details id="day-pack"><summary>What is the pack I get in the morning?</summary><div class="ans">
+      <p>After a day or night of catching, your best cards from it wait as a sealed pack. Tear it open to turn them over, then share them if you like.</p>
+    </div></details>
+
+  </section>
+
+  <section class="hs" id="t-patches">
+    <h2>Patches and missions</h2>
+
+    <details id="missions"><summary>What are missions?</summary><div class="ans">
+      <p>Three small goals each day: one easy, one harder, one a stretch. They’re sized to your sky, so each can really be done. Each one you finish earns XP. A themed week runs from Monday as well, with its own patch.</p>
+    </div></details>
+
+    <details id="patches"><summary>What are patches?</summary><div class="ans">
+      <p>Awards for milestones: your first card, a finished album, a themed week, a secret found. Tap one on the wall to see how to earn it.</p>
+    </div></details>
+
+    <details id="ranks"><summary>What are ranks?</summary><div class="ans">
+      <p>Everything you catch earns XP, and XP raises your rank: Skywatcher, Spotter, Type Spotter, Plane Expert, Sky Scholar, Sky Master, Sky Legend, Hall of Fame.</p>
+    </div></details>
+
+    <details id="ambassador"><summary>How do I earn the Ambassador patch?</summary><div class="ans">
+      <p>Tell a friend. Settings → Help → <b>Tell a friend</b> sends them a sample pack of three cards that opens in their browser, no app needed.</p>
+    </div></details>
+
+  </section>
+
+  <section class="hs" id="t-plus">
+    <h2>Sky Collector Plus</h2>
+
+    <details id="plus"><summary>What is Plus?</summary><div class="ans">
+      <p>Optional extras for players who want to support the game. Everything you collect and earn is free without it. Plus adds every card back, seven more app icons, the larger widgets and a members’ patch.</p>
+    </div></details>
+
+    <details id="price"><summary>What does it cost, and is there a free trial?</summary><div class="ans">
+      <p>You can pay monthly, yearly, or once to keep it for good. The yearly plan starts with a free week for new subscribers. The store shows the price in your own currency.</p>
+    </div></details>
+
+    <details id="cancel"><summary>How do I cancel?</summary><div class="ans">
+      <p>In your Apple Account settings, under Subscriptions, at least 24 hours before it renews. Deleting the app doesn’t cancel it. You keep every card, and the members’ patch stays on your wall for good.</p>
+    </div></details>
+
+    <details id="code"><summary>I have a code</summary><div class="ans">
+      <p>Open Settings → Collection → Sky Collector Plus, scroll to the bottom and tap <b>Redeem a code</b>.</p>
+    </div></details>
+
+  </section>
+
+  <section class="hs" id="t-collection">
+    <h2>Your collection</h2>
+
+    <details id="send"><summary>How do I send cards to a friend?</summary><div class="ans">
+      <p>Open a card, tap the share icon and choose <b>Send the card</b>. Or go to Settings → Collection → Send cards to pick several. Your friend gets a link that opens as a pack, and you keep your own cards. The link works for 90 days. A pack never says where you were.</p>
+    </div></details>
+
+    <details id="gifts"><summary>Do cards I’m sent count towards my rank?</summary><div class="ans">
+      <p>They join your collection, but they don’t add XP, levels or patches. Only what you catch yourself does.</p>
+    </div></details>
+
+    <details id="new-phone"><summary>How do I move to a new phone?</summary><div class="ans">
+      <p>Your collection backs up to your own iCloud by itself. Sign in to the same iCloud on the new phone and open the app. There are no accounts.</p>
+    </div></details>
+
+    <details id="looks"><summary>Can I change how my cards and app look?</summary><div class="ans">
+      <p>Settings → Collection → <b>Card back</b> changes the back of every card. Two backs are free and the rest come with Plus. <b>App icon</b> changes the icon on your Home Screen.</p>
+    </div></details>
+
+    <details id="stats"><summary>Where are my numbers?</summary><div class="ans">
+      <p>Settings → Collection → Spotter stats.</p>
+    </div></details>
+
+    <details id="reset"><summary>How do I start again?</summary><div class="ans">
+      <p>Settings → About → Reset everything. It deletes your cards, patches and settings, here and in your iCloud backup, and can’t be undone.</p>
+    </div></details>
+
+  </section>
+
+  <section class="hs" id="t-privacy">
+    <h2>Privacy</h2>
+
+    <details id="privacy-location"><summary>Does it use my location?</summary><div class="ans">
+      <p>Yes, to work out which planes are over you. That is worked out on your phone. To get the planes and the weather near you, the app sends a rounded position, a point several kilometres across, never your exact one. It is never sold. You can pick a city in Settings instead.</p>
+    </div></details>
+
+    <details id="privacy-planes"><summary>What does it show about the planes?</summary><div class="ans">
+      <p>For airline flights: the airline, the flight number and the route. For every other aircraft, private, business, military or government: only what kind of aircraft it is. No name, no registration, no route. The app keeps no history of where any aircraft has been.</p>
+    </div></details>
+
+    <details id="privacy-data"><summary>What do you keep about me?</summary><div class="ans">
+      <p>There are no accounts, no ads and no tracking. Your collection stays on your phone and in your own backup. The app sends a few anonymous notes about how it is used, such as crashes and play counts, never your location. You can turn them off in Settings → Help → Share anonymous usage. The full policy is at <a href="privacy.html">skycollector.app/privacy</a>.</p>
+    </div></details>
+
+  </section>
+
+  <section class="hs" id="t-contact">
+    <h2>Contact</h2>
+
+    <details id="contact"><summary>How do I reach you?</summary><div class="ans">
+      <p>Write to <a href="mailto:hello@skycollector.app">hello@skycollector.app</a>, or tap Settings → Help → Send feedback. Tell us which phone you have and what you were doing when it went wrong.</p>
+    </div></details>
+
+  </section>
+</main>
+<script>
+  /* /help#anchor opens that answer (and any link to one on the page). Without script the rows still open by tapping. */
+  function openHash() { var id = ''; try { id = decodeURIComponent(location.hash.slice(1)); } catch (e) {} var d = id && document.getElementById(id); if (d && d.tagName === 'DETAILS') { d.open = true; d.scrollIntoView(); } }
+  addEventListener('hashchange', openHash); openHash();
+</script>
+</body>
 </html>

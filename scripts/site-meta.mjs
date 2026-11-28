@@ -23,13 +23,11 @@ const plain = (s) => decode(s.replace(/<[^>]+>/g, '')).replace(/\s+/g, ' ').trim
 /** An answer's HTML as FAQ answer text: the words as shown, links kept as <a href> (made absolute), list items as
  *  numbered or dashed lines, every other tag dropped. */
 export function answerText(html) {
-  let n = 0;
   let s = html
-    .replace(/<a\b[^>]*?href="([^"]*)"[^>]*>/gi, (_, h) => `\u0001${h.startsWith('/') ? SITE + h : h}\u0002`)
+    .replace(/<a\b[^>]*?href="([^"]*)"[^>]*>/gi, (_, h) => `\u0001${h.startsWith('/') ? SITE + h : h.startsWith('#') ? `${SITE}/help${h}` /* a link to another answer (help is the only page with them) */ : h}\u0002`)
     .replace(/<\/a>/gi, '\u0003')
-    .replace(/<(ol|ul)\b[^>]*>/gi, (_, t) => { n = t.toLowerCase() === 'ol' ? 1 : 0; return '\n'; })
-    .replace(/<li\b[^>]*>/gi, () => `\n${n ? `${n++}.` : '-'} `)
-    .replace(/<\/(p|li|ol|ul|div)>|<br\s*\/?>/gi, '\n');
+    .replace(/<(ol|ul)\b[^>]*>([\s\S]*?)<\/\1>/gi, (_, t, items) => { let n = 1; const ol = t.toLowerCase() === 'ol'; return `\n${items.replace(/<li\b[^>]*>/gi, () => `\n${ol ? `${n++}.` : '-'} `)}\n`; }) // each list numbered on its own
+    .replace(/<\/(p|li|div)>|<br\s*\/?>/gi, '\n');
   s = decode(s.replace(/<[^>]+>/g, ''));
   s = s.split('\n').map((l) => l.replace(/\s+/g, ' ').trim()).filter(Boolean).join('\n');
   return s.replace(/\u0001([^\u0002]*)\u0002/g, (_, h) => `<a href="${h.replaceAll('"', '&quot;')}">`).replaceAll('\u0003', '</a>');

@@ -9,11 +9,16 @@ const parse = (block) => JSON.parse(block.match(/<script type="application\/ld\+
 const help = readFileSync(new URL('../help.html', import.meta.url), 'utf8');
 
 test('every question on the help page is in the FAQ, word for word, with its answer', () => {
-  const qs = [...help.matchAll(/<h3[^>]*>([\s\S]*?)<\/h3>/g)].map((m) => m[1].replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').trim());
+  const qs = [...help.matchAll(/<(?:h3|summary)[^>]*>([\s\S]*?)<\/(?:h3|summary)>/g)].map((m) => m[1].replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').trim());
+  const ids = [...help.matchAll(/<details id="([^"]+)"/g)].map((m) => m[1]);
   const ld = parse(helpJsonLd(help, '2026-11-27'));
   assert.equal(ld['@type'], 'FAQPage');
+  assert.ok(qs.length >= 30);
   assert.deepEqual(ld.mainEntity.map((q) => q.name), qs);
+  assert.deepEqual(ld.mainEntity.map((q) => q.url), ids.map((id) => `https://skycollector.app/help#${id}`)); // every answer has its address
+  assert.equal(new Set(ids).size, ids.length, 'anchors are unique');
   for (const q of ld.mainEntity) assert.ok(q.acceptedAnswer.text.length > 20, q.name);
+  assert.ok(!/data-find|\{#/.test(JSON.stringify(ld)), 'search words and anchors stay out of the answers');
 });
 
 test('new sections, anchors, <details> and lists are read', () => {
@@ -39,4 +44,15 @@ test('before release: no app block, no store, no price, no rating; publisher is 
   assert.deepEqual(home['@graph'].map((n) => n['@type']), ['Organization', 'WebSite']);
   assert.equal(home['@graph'][0].name, 'Sky Collector');
   assert.match(LLMS_TXT, /coming soon/);
+});
+
+test('two lists in one answer are numbered and dashed on their own', () => {
+  assert.equal(answerText('<ol><li>a</li><li>b</li></ol><p>x</p><ul><li>c</li></ul>'), '1. a\n2. b\nx\n- c');
+});
+
+test('help v3 (2026-11-27): Content\'s anchors are on the page, and nothing says Sky is in a store yet', () => {
+  for (const id of ['compass', 'motion', 'location', 'no-planes', 'cant-catch', 'no-route', 'no-alert', 'restore', 'pack-problem', 'release', 'plus', 'reset']) assert.match(help, new RegExp(`<details id="${id}"`), id);
+  assert.match(help, /isn’t out yet/);
+  const shown = help.replace(/data-find="[^"]*"/g, '');
+  for (const bad of [/on iPhone now/i, /available (on|in) the/i, /download (it|Sky)/i, /on sale/i]) assert.ok(!bad.test(shown), String(bad));
 });
