@@ -5,7 +5,7 @@
 // Pure: builds SVG markup from the passes (no DOM), so js/cards-page.js can draw it and tests/route-map.test.mjs check it.
 // Coastlines: js/coast.js (Natural Earth 1:110m land, public domain), the same outlines as the orbit globe.
 
-import { COAST } from './coast.js?v=0.1.1933';
+import { COAST } from './coast.js?v=0.1.1934';
 
 const R = Math.PI / 180, EARTH_KM = 40075;
 const vec = (lon, lat) => [Math.cos(lat * R) * Math.cos(lon * R), Math.cos(lat * R) * Math.sin(lon * R), Math.sin(lat * R)];
