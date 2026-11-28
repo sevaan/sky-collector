@@ -202,7 +202,16 @@ select, .filter select, .search { border: 1px solid var(--ui-edge); border-radiu
 @keyframes patch-sheen { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
 /* tilt-driven (detail view): the sheen follows --x instead of drifting */
 .patch.tilt::after, .patch.tilt::before { animation: none; background-position: var(--x) 50%; }
-@media (prefers-reduced-motion: reduce) { .patch::after, .patch::before { animation: none !important; } }
+/* Sky's patch pictures (2026-11-27, js/patches.js picSvg): any shape, so no round clip; a soft shadow under the cloth;
+   the gold and holo sheens masked to the picture's own outline (--art) instead of a circle; not earned: grey and faint */
+.patch--art { border-radius: 0; }
+.patch--art .patch-svg, .patch--gold.patch--art .patch-svg { filter: drop-shadow(0 2px 3px rgba(13,34,56,.30)); }
+.patch--art::after, .patch--art::before { inset: 3.125%; border-radius: 0; -webkit-mask: var(--art) center / contain no-repeat; mask: var(--art) center / contain no-repeat; }
+.patch-pic-off { opacity: .34; } /* grey: an SVG filter in js/patches.js picSvg */
+.patch-pic-prog rect { fill: #0d2238; opacity: .82; } .patch-pic-prog text { fill: #fff2b3; }
+.patch-pic-in { transform-box: fill-box; transform-origin: center; animation: patch-pic-in .9s cubic-bezier(.2,.9,.25,1.15) both; }
+@keyframes patch-pic-in { from { transform: scale(.55) rotate(-8deg); opacity: 0; } 60% { opacity: 1; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .patch::after, .patch::before, .patch-pic-in { animation: none !important; } }
 :where(html[data-theme='night'], body.night) .patch { filter: grayscale(1) brightness(.6) sepia(1) saturate(4) hue-rotate(318deg); }
 :where(html[data-theme='night'], body.night) .patch::after, :where(html[data-theme='night'], body.night) .patch::before { display: none; }
 

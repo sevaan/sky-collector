@@ -3,8 +3,9 @@
 // group (or the date earned) along the bottom, one icon in the middle. Milestones get gold foil, the rarest holo
 // (css/ui.css .patch--gold / .patch--holo). Shared by Explore (the earning moment, its toast) and Collection (the wall).
 
-import { CON_BY_ID } from './constellations.js?v=0.1.1932';
-import { skyGround, skyArt, SKY_THREAD, SKY_LABEL, SKY_MERROW } from './sky-patch-colours.js?v=0.1.1932';
+import { CON_BY_ID } from './constellations.js?v=0.1.1933';
+import { skyGround, skyArt, SKY_THREAD, SKY_LABEL, SKY_MERROW } from './sky-patch-colours.js?v=0.1.1933';
+import { PATCH_PICS, patchPic } from './sky-patch-pics.js?v=0.1.1933';
 
 export const GROUPS = {
   collect: { c: '#14284a', t: 'Collection' }, rarity: { c: '#3a2259', t: 'Rarity' }, rocket: { c: '#5a2a1a', t: 'Rockets' },
@@ -198,6 +199,7 @@ export function patchIcon(a, id = 'pt') {
   return SECRET_ART[a.id] ? SECRET_ART[a.id](id) : a.id === 'ufo' ? UFO_ART(id) : fossil ? '<image href="assets/art/fossils/patch.svg" x="-46" y="-17.5" width="92" height="43"/>' : con ? conGlyph(con.data) : a.con === 'solar' ? SOLAR_GLYPH : a.album ? (ALBUM_ICON[a.album] ? glyph(ALBUM_ICON[a.album], a.icon) : ALBUM_GLYPH) : glyph(GLYPH[a.id], a.icon);
 }
 export function patchSvg(a, opts = {}) {
+  if (hasPic(a)) return picSvg(a, opts); /* Sky: the embroidered picture (js/sky-patch-pics.js) */
   const { locked = false, date = '', stitch = false } = opts;
   const con = a.con && a.con !== 'solar' ? CON_BY_ID.get(a.con) : null;
   const g0 = GROUPS[groupOf(a)], g = a.id === 'plus' && SKY_PATCH() ? { ...g0, c: '#24508c' } /* Sky: airmail blue (2026-11-19) */ : con ? { ...g0, c: CON_TWILL[[...CON_BY_ID.keys()].indexOf(a.con) % CON_TWILL.length] } : a.id === 'ufo' ? { ...g0, c: '#123a2a' } : SECRET_TWILL[a.id] ? { ...g0, c: SECRET_TWILL[a.id] } : g0, id = `pt${uid++}`, R = 60, fossil = a.id === 'fossil' || a.id === 'ufo' || !!SECRET_ART[a.id];
@@ -274,9 +276,22 @@ export function patchSvg(a, opts = {}) {
     ${fossil ? K.art : `<g transform="scale(.82)">${K.art}</g>`}</g>
     <circle r="${R}" fill="url(#${id}h)" pointer-events="none"/></svg>`;
 }
+// Sky's patch pictures (2026-11-27, Sevaan's reviewed-patches.zip): the whole patch, name and lettering stitched on, so
+// nothing is drawn over it. Not earned yet: the same picture, grey and faint, with "3 / 10" on a pill if it counts. The
+// moment it's earned (stitch) it settles in (css/ui.css .patch-pic-in) instead of having its edge stitched round.
+const absPic = (id) => { try { return new URL(patchPic(id), document.baseURI).href; } catch { return patchPic(id); } }; // a url() in a custom property resolves against the stylesheet that uses it (css/), so it goes in whole
+const hasPic = (a) => !!a?.id && SKY_PATCH() && PATCH_PICS.has(a.id);
+let picUid = 0;
+function picSvg(a, opts = {}) {
+  const { locked = false, stitch = false } = opts, href = patchPic(a.id);
+  const pr = locked && opts.prog && opts.prog[1] > 1 ? `${opts.prog[0]} / ${opts.prog[1]}` : '';
+  const fid = `pg${++picUid}`; /* grey by an SVG filter: Safari ignores a CSS filter on an SVG <image> */
+  const img = `<image href="${href}" x="-60" y="-60" width="120" height="120" preserveAspectRatio="xMidYMid meet"${locked ? ` class="patch-pic-off" filter="url(#${fid})" opacity=".34"` : ''}/>`;
+  return `<svg class="patch-svg patch-pic" viewBox="-64 -64 128 128" role="img" aria-label="${esc(a.name)}">${locked ? `<defs><filter id="${fid}" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0"/></filter></defs>` : ''}${stitch ? `<g class="patch-pic-in">${img}</g>` : img}${pr ? `<g class="patch-pic-prog"><rect x="-24" y="38" width="48" height="17" rx="8.5"/><text y="50" text-anchor="middle" font-family="SC Label, Arial Narrow, sans-serif" font-size="10.5" font-weight="600" letter-spacing="1">${pr}</text></g>` : ''}</svg>`;
+}
 // The patch wrapped with its finish layer (gold / holo sheen), as used on the wall, the detail view and the moment.
 export function patchHtml(a, opts = {}) {
-  const f = opts.locked ? '' : finishOf(a);
-  return `<span class="patch${f ? ` patch--${f}` : ''}${opts.locked ? ' patch--locked' : ''}">${patchSvg(a, opts)}</span>`;
+  const f = opts.locked ? '' : finishOf(a), pic = hasPic(a); /* a picture: the sheen is masked to its shape (css/ui.css .patch--art) */
+  return `<span class="patch${f ? ` patch--${f}` : ''}${opts.locked ? ' patch--locked' : ''}${pic ? ' patch--art' : ''}"${pic ? ` style="--art:url('${absPic(a.id)}')"` : ''}>${patchSvg(a, opts)}</span>`;
 }
 export const fmtEarned = (t) => `EARNED ${new Date(t).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase()}`;
