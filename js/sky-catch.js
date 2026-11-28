@@ -2,15 +2,15 @@
 // Collect does. Catches are kept in localStorage ('skyCatches') for now, apart from Space Collector's sightings, so the
 // old collection code never meets a flight. The Collection screen reads them in a later step.
 
-import { aircraftName, isHelicopter } from './planes.js?v=0.1.1938';
-import { lookupRoute } from './routes.js?v=0.1.1938';
-import { distText } from './units.js?v=0.1.1938';
-import { cardsFor, planeKey, unlisted, TIERS } from './flights.js?v=0.1.1938';
-import { glyphSvg, miniCardHtml } from './flight-card.js?v=0.1.1938';
-import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1938';
+import { aircraftName, isHelicopter } from './planes.js?v=0.1.1939';
+import { lookupRoute } from './routes.js?v=0.1.1939';
+import { distText } from './units.js?v=0.1.1939';
+import { cardsFor, planeKey, unlisted, TIERS } from './flights.js?v=0.1.1939';
+import { glyphSvg, miniCardHtml } from './flight-card.js?v=0.1.1939';
+import { assess, hasAirlineCallsign, flightStampInfo, planeStampInfo } from './sky-stamps.js?v=0.1.1939';
 
-import { TIER_INFO } from './rarity.js?v=0.1.1938';
-import { allCatches, addCatch } from './catch-store.js?v=0.1.1938';
+import { TIER_INFO } from './rarity.js?v=0.1.1939';
+import { allCatches, addCatch } from './catch-store.js?v=0.1.1939';
 // Catches live in js/catch-store.js (IndexedDB, with a localStorage mirror the Collection page reads).
 // Where catches are read from: Space Collector's sightings once main.js says so (Milestone 1.5), the old store until then.
 let source = allCatches;
@@ -61,9 +61,13 @@ function discoverPanel(el, hit, route, opts = {}) {
   const { fkey, out } = previewFor(hit, route);
   const gain = gainOf(out), stamped = gain === 'none', again = gain === 'stamp';
   const { flight, plane } = cardsFor(p, full ?? null, route?.airline || '');
-  const card = flight ?? plane, tier = TIERS[card?.tier] ?? TIERS.common;
+  /* the rarer of the two cards, named (2026-11-28, Sky Build's playtest: "Common · New flight" over a mini card saying
+     Uncommon read as a contradiction; it was the flight's rarity, and the plane card is the one in front) */
+  const R5 = ['common', 'uncommon', 'rare', 'epic', 'legendary'], byPlane = !flight || (plane && R5.indexOf(plane.tier) >= R5.indexOf(flight.tier));
+  const card = byPlane ? plane : flight, tier = TIERS[card?.tier] ?? TIERS.common, noun = flight && plane ? (byPlane ? kindWord(p) : 'flight') : '';
   const what = stamped ? 'Caught today' : again ? (out.stampOn === 'flight' || out.planeStamps?.day ? 'New day' : 'New aircraft') : fkey && out.flightStamps?.isNew ? 'New flight' : fkey ? `New ${kindWord(p)}` :route && !route.none && route.airline && !full ? 'Flight' : `New ${kindWord(p)}`;
-  txt('d-tier', stamped ? tier.label : `${tier.label} · ${what}`); /* seen before: just the tier, as Space Collector */
+  const tl = noun ? `${tier.label} ${noun}` : tier.label, w2 = noun && what === `New ${noun}` ? 'New' : what; /* "Legendary flight · New", not "· New flight" twice */
+  txt('d-tier', stamped ? tl : `${tl} · ${w2}`); /* seen before: just the tier, as Space Collector */
   const ti = TIER_INFO[card?.tier] ?? TIER_INFO.common, dt = $('d-tier'); /* the tier's own mark and colour, as a satellite's (▲ green for Uncommon) */
   if (dt) { dt.style.setProperty('--find-tier', again ? 'var(--cyan)' : ti.color); dt.dataset.gem = again ? '✦' : ti.gem; }
   txt('d-name', full ? `To ${full.to.city}` : route?.airline ? `${route.airline} ${(p.callsign || '').replace(/^[A-Z]{3}/, '')}` : type);

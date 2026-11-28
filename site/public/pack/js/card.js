@@ -182,7 +182,13 @@ function renderSkyCard(o0, opts) {
   const shinyOf = own.find((x) => x.shiny && SHINY[x.shiny])?.shiny; /* a shiny moment (js/shiny.js shinyForPlane) makes the card shiny, as a satellite's */
   el.className = `card card--sky card--${o.sky} tier-${o.tier ?? 'common'} level-${opts.forceLevel ?? stampInfo.level}${own.length || opts.preview ? '' : ' card--unseen'}${shinyOf ? ' shiny' : ''}`;
   el.dataset.id = o.id; el.setAttribute('aria-label', `${o.name}, ${TIER_INFO[o.tier]?.label ?? 'Common'}, ${own.length ? 'collected' : 'not collected'}`);
-  el.innerHTML = `${html}${shinyOf ? `<span class="fc-shiny" aria-label="Shiny: ${SHINY[shinyOf].label}"><b>✦</b> ${SHINY[shinyOf].label}</span><span class="fc-shine" aria-hidden="true"></span>` : ''}<div class="card__back"></div>`;
+  /* A boarding pass carries its shiny pill inside the pass itself (2026-11-28, Sevaan: "Golden hour pill needs to be angled and
+     centered on the top edge of the boarding pass. Same for in the last nights pack"): the viewer, the pack and the gift tilt
+     the pass (.fc--land), not the card around it, so a pill beside it stayed level and off its edge. */
+  const pill = shinyOf ? `<span class="fc-shiny" aria-label="Shiny: ${SHINY[shinyOf].label}"><b>✦</b> ${SHINY[shinyOf].label}</span>` : '';
+  const land = pill && /^\s*<article class="fc [^"]*\bfc--land\b/.test(html) && html.lastIndexOf('</article>');
+  const face = land > 0 ? `${html.slice(0, land)}${pill}${html.slice(land)}` : `${html}${pill}`;
+  el.innerHTML = `${face}${shinyOf ? '<span class="fc-shine" aria-hidden="true"></span>' : ''}<div class="card__back"></div>`;
   el._card = o;
   return el;
 }

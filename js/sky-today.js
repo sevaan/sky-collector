@@ -5,23 +5,23 @@
 // The seen log is kept on the phone (localStorage 'skySeen': today's date, a set of hexes, counts by hour).
 // No server. No DOM outside the container it's given.
 
-import { distText, speed, distIn } from './units.js?v=0.1.1938';
+import { distText, speed, distIn } from './units.js?v=0.1.1939';
 const speedText = (kmh) => { const v = speed(kmh); return `${v.v} ${v.u}`; }; /* the units setting (bug pass 2026-11-25: Today said km with miles on) */
-import { later } from './save-later.js?v=0.1.1938';
-import { isProp } from './sky-props.js?v=0.1.1938';
-import { routeMap } from './route-map.js?v=0.1.1938';
-import { planesUp, canCatch, isNight } from './sky-up.js?v=0.1.1938';
-import { planeKey } from './flights.js?v=0.1.1938';
-import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1938';
-import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1938';
-import { airlineIcon } from './airline-icons.js?v=0.1.1938';
-import { catches, previewFor } from './sky-catch.js?v=0.1.1938';
-import { regulars, noteRegulars, clockText, regularAllowed } from './sky-regulars.js?v=0.1.1938';
-import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1938';
-import { planeSet } from './sky-sets.js?v=0.1.1938';
-import { MIL_TYPES } from './plane-privacy.js?v=0.1.1938';
-import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1938';
-import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1938';
+import { later } from './save-later.js?v=0.1.1939';
+import { isProp } from './sky-props.js?v=0.1.1939';
+import { routeMap } from './route-map.js?v=0.1.1939';
+import { planesUp, canCatch, isNight } from './sky-up.js?v=0.1.1939';
+import { planeKey } from './flights.js?v=0.1.1939';
+import { aircraftName, isHelicopter, planePath } from './planes.js?v=0.1.1939';
+import { glyphSvg, flightPhotoFor, photoFor, FAMILY } from './flight-card.js?v=0.1.1939';
+import { airlineIcon } from './airline-icons.js?v=0.1.1939';
+import { catches, previewFor } from './sky-catch.js?v=0.1.1939';
+import { regulars, noteRegulars, clockText, regularAllowed } from './sky-regulars.js?v=0.1.1939';
+import { noteLocal, rareHere, localStats } from './sky-local.js?v=0.1.1939';
+import { planeSet } from './sky-sets.js?v=0.1.1939';
+import { MIL_TYPES } from './plane-privacy.js?v=0.1.1939';
+import { isOldType, isNewType, isBoeing, isAirbus, continentOfAirport } from './sky-kinds.js?v=0.1.1939';
+import { cloudsHtml, rainHtml } from './weather-art.js?v=0.1.1939';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const DIRS = ['north', 'northeast', 'east', 'southeast', 'south', 'southwest', 'west', 'northwest'];
@@ -366,7 +366,7 @@ export function renderToday(el, ctx) {
     const newWord = best.isNew ? (best.w.tag === 'NEW FLIGHT' ? 'new flight' : isHelicopter(p) ? 'new helicopter' : 'new plane') : '';
     const ft = Math.round(altFt(p) / 100) * 100;
     live = heroHtml({ hex: p.hex, color: tier?.color, kick: `Up now${up.length > 1 ? ` · best of ${up.length}` : ''}${sky.word ? ` · ${sky.word}` : ''}`, left: best.left, until: best.left != null ? t + best.left * 1000 : null,
-      tierLine: `${tier ? `${tier.gem ?? ''} ${tier.label}` : ''}${newWord ? ` · ${newWord}` : ''}${fin ? ' · finishes a mission' : ''}`, name: best.w.name,
+      tierLine: `${tier ? `${tier.gem ?? ''} ${tier.label}${tier.noun ? ` ${tier.noun}` : ''}` : ''}${newWord ? ` · ${tier?.noun && newWord === `new ${tier.noun}` ? 'new' : newWord}` : ''}${fin ? ' · finishes a mission' : ''}`, name: best.w.name,
       what: [best.r?.airline && best.full ? best.r.airline : null, type !== best.w.name ? type : null].filter(Boolean).join(' · ') /* never the title again */, where: [ft ? `${ft.toLocaleString('en-US')} ft` : null, where(best.a)].filter(Boolean).join(' · '),
       az: best.a.az, hint: ctx.hint?.({ az: best.a.az, el: best.a.el }) || `Look ${where(best.a)}`, line: (() => { try { return ctx.heroLine?.() ?? ''; } catch { return ''; } })() /* the weather or time of day, one line (js/main.js skyHeroLine) */ });
   } else live = `<section class="tn-wx td-wx${sky.cls}">${sky.html}<span class="k">Up now${sky.word ? `<em>${esc(sky.word)}</em>` : ''}</span>${best ? allCaught(nexts) : skyState(ctx)}</section>`;
@@ -426,8 +426,7 @@ export function renderToday(el, ctx) {
     const tierRank = (c) => ['common', 'uncommon', 'rare', 'epic', 'legendary'].indexOf(c.tier?.id ?? 'common');
     const passes = []; for (const c of ups) { const to = c.full?.to; if (to?.lat == null) continue; passes.push({ from: you, to: { lat: to.lat, lon: to.lon, iata: to.iata || to.icao || '', icao: to.icao || to.iata || to.city, city: to.city }, tier: c.tier?.id ?? 'common', _r: tierRank(c) }); }
     const m = routeMap(passes, { W: 340, H: 210, anim: false, uid: 'td-rm' }); if (!m) return '';
-    const nC = new Set([...dests.values()].map((d) => d.to.cc).filter(Boolean)).size;
-    return `${sec('Where they’re going', 'Right now')}<div class="td2-map"><div class="td2-rm">${m.svg}</div><div class="td2-cap"><b>Flights to ${dests.size} ${dests.size === 1 ? 'city' : 'cities'}</b> in ${nC} ${nC === 1 ? 'country' : 'countries'} are over you</div></div>`; })() : '';
+    return `${sec('Where they’re going', 'Right now')}<div class="td2-map"><div class="td2-rm">${m.svg}</div><div class="td2-cap"><b>Flights to ${dests.size} ${dests.size === 1 ? 'city' : 'cities'}</b> are over you right now</div>` /* no country count here (2026-11-28, Sky Build's playtest: "3 countries" sat over the board's COUNTRIES 005, today's count) */ + `</div>`; })() : '';
 
   // 7 · today so far: a departures board (2026-11-24, Sevaan picked B of the Today so far redesign, "with highest and
   // fastest"): split-flap counts, then today's records (farthest, highest, fastest), each saying when it passed so none

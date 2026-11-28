@@ -9,22 +9,22 @@
 // tilt variables that js/card.js attachTilt writes (--mx/--my/--rx/--ry/--bgx/--bgy/--o/--hyp), read with fallbacks
 // so they inherit from whichever ancestor is tilting (the reveal's holder or the card itself).
 
-import { regularFor, clockText } from './sky-regulars.js?v=0.1.1938';
-import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js?v=0.1.1938';
-import { flightFact } from './flight-facts.js?v=0.1.1938';
-import { typePhoto } from './type-photos.js?v=0.1.1938';
-import { housePhoto } from './house-photos.js?v=0.1.1938';
-import { gapPhoto } from './gap-photos.js?v=0.1.1938'; /* the types that had no photo (2026-11-18) */
-import { airlinePhoto } from './airline-photos.js?v=0.1.1938';
-import { airlineLogo } from './airline-logos.js?v=0.1.1938';
-import { fitStyle } from './photo-fit.js?v=0.1.1938';
-import { dist, speed, useMiles } from './units.js?v=0.1.1938';
-import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1938';
-import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1938';
-import { typeFact } from './sky-facts.js?v=0.1.1938';
-import { localText } from './localize.js?v=0.1.1938';
-import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1938';
-import { qrEncode, qrSvg } from './qr.js?v=0.1.1938';
+import { regularFor, clockText } from './sky-regulars.js?v=0.1.1939';
+import { TIERS, unlisted, hoursMins, tidyHours } from './flights.js?v=0.1.1939';
+import { flightFact } from './flight-facts.js?v=0.1.1939';
+import { typePhoto } from './type-photos.js?v=0.1.1939';
+import { housePhoto } from './house-photos.js?v=0.1.1939';
+import { gapPhoto } from './gap-photos.js?v=0.1.1939'; /* the types that had no photo (2026-11-18) */
+import { airlinePhoto } from './airline-photos.js?v=0.1.1939';
+import { airlineLogo } from './airline-logos.js?v=0.1.1939';
+import { fitStyle } from './photo-fit.js?v=0.1.1939';
+import { dist, speed, useMiles } from './units.js?v=0.1.1939';
+import { catchClass, CLASS_WORDS, airlineName } from './planes.js?v=0.1.1939';
+import { typeSpecs, makerLine } from './type-specs.js?v=0.1.1939';
+import { typeFact } from './sky-facts.js?v=0.1.1939';
+import { localText } from './localize.js?v=0.1.1939';
+import { hasAirlineCallsign, levelWord, THRESHOLDS } from './sky-stamps.js?v=0.1.1939';
+import { qrEncode, qrSvg } from './qr.js?v=0.1.1939';
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 // A type name escaped, with its hyphenated model codes kept on one line ('Boeing KC-135R Stratotanker' broke after 'KC-').
@@ -82,17 +82,34 @@ export function flightPhotoFor(f, type) {
   if (!type) return null; const a = airlineIcao(f);
   return airlinePhoto(a, type) || (FAMILY[a] && airlinePhoto(FAMILY[a], type)) || photoFor(type);
 }
+/* A plane card whose type photo is in some airline's paint (a gap photo with a "livery"): shown in the paint of the airline
+   you first caught that type with, when we have that photo (2026-11-28, Sky Build's playtest: an Endeavor CRJ900 caught,
+   and its plane card showed a Lufthansa Regional jet). noteTypeAirlines(sightings) is called by main.js and the
+   Collection whenever the catches change; private and other non-airline catches never count. */
+const typeAir = new Map();
+export function noteTypeAirlines(list) {
+  typeAir.clear();
+  for (const s of [...(list ?? [])].sort((a, b) => a.time - b.time)) {
+    if (s.sim) continue; const t = String(s.type || '').toUpperCase(), cs = String(s.callsign || '').trim().toUpperCase();
+    if (!t || typeAir.has(t) || !/^[A-Z]{3}\d/.test(cs)) continue;
+    const a = cs.slice(0, 3), ph = airlinePhoto(a, t) || (FAMILY[a] && airlinePhoto(FAMILY[a], t)); if (ph) typeAir.set(t, ph);
+  }
+}
+export function planePhotoFor(type) {
+  const ph = photoFor(type); if (!ph?.livery) return ph;
+  return typeAir.get(String(type).toUpperCase()) ?? ph;
+}
 // A plane card's photo as a URL (2026-11-16: the weekly recap's "rarest find" showed Space Collector's art, a satellite):
 // the flight's airline photo or the type's, sm/ (480 px) unless size is 'full'. null when the card has none.
 export function skyCardPhotoUrl(o, type, size = 'sm') {
-  const ph = o?.sky === 'flight' ? flightPhotoFor(o, type || o.type) : photoFor(type || o?.type); if (!ph) return null;
+  const ph = o?.sky === 'flight' ? flightPhotoFor(o, type || o.type) : planePhotoFor(type || o?.type); if (!ph) return null;
   return size === 'full' ? ph.url : String(ph.url).replace(/\/([^/]+)$/, `/${size}/$1`);
 }
 // The weekly recap's rarest find as fitted markup (2026-11-24, Sevaan: the A340's nose and tail were cut off by a plain
 // cover crop): a soft blurred copy fills the window, the photo sits above the caption in .rc-ph and fitPhoto keeps the
 // whole plane in it. '' when the card has no photo.
 export function skyCardPhotoHtml(o, type) {
-  const ph = o?.sky === 'flight' ? flightPhotoFor(o, type || o.type) : photoFor(type || o?.type); if (!ph) return '';
+  const ph = o?.sky === 'flight' ? flightPhotoFor(o, type || o.type) : planePhotoFor(type || o?.type); if (!ph) return '';
   return `<img class="rc-bg" src="${esc(sized(ph.url, 'tiny'))}" alt="" aria-hidden="true" decoding="async"><div class="rc-ph">${photoImg(ph, 'rc-img', true)}</div>`;
 }
 const credit = (ph) => `<span class="fc-credit">Photo: ${esc(ph.credit)}, ${esc(ph.licence)}</span>`;
@@ -317,7 +334,7 @@ function fourSpecs(cells) {
 export function planeCardHtml(p, opts = {}) {
   /* un: an aircraft the feed has no type for (js/flights.js unlisted): named for its size, with the airline as its identity */
   const un = unlisted(p.key), type = un ? '' : (p.type || ''), name = un ? un.name : p.name;
-  const ph = photoFor(type), si = opts.stampInfo, lvl = si?.level && si.level !== 'none' ? si.level : '';
+  const ph = planePhotoFor(type), si = opts.stampInfo, lvl = si?.level && si.level !== 'none' ? si.level : '';
   const last = si?.last ?? (opts.callsign != null || opts.heightFt != null ? { callsign: opts.callsign ?? '', altFt: opts.heightFt } : null);
   const k = planeCatchClass(p, last), plate = type || un?.mark || (p.glyph === 'heli' ? 'HELI' : '—');
   const label = `${name}, ${TIERS[tierOf(p.tier)].label}${k?.word && !k.airline ? `, ${k.word}` : ''}${lvl ? `, ${lvl} level` : ''}`;
