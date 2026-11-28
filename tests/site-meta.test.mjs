@@ -3,13 +3,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { helpFaq, helpJsonLd, homeJsonLd, pageTags, answerText, LLMS_TXT } from '../scripts/site-meta.mjs';
+import { helpFaq, helpJsonLd, homeJsonLd, pageTags, answerText, siteHelp, LLMS_TXT } from '../scripts/site-meta.mjs';
 
 const parse = (block) => JSON.parse(block.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
 const help = readFileSync(new URL('../help.html', import.meta.url), 'utf8');
 
 test('every question on the help page is in the FAQ, word for word, with its answer', () => {
-  const qs = [...help.matchAll(/<(?:h3|summary)[^>]*>([\s\S]*?)<\/(?:h3|summary)>/g)].map((m) => m[1].replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').trim());
+  const qs = [...help.matchAll(/<summary[^>]*>([\s\S]*?)<\/summary>/g)].map((m) => m[1].replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').trim());
   const ids = [...help.matchAll(/<details id="([^"]+)"/g)].map((m) => m[1]);
   const ld = parse(helpJsonLd(help, '2026-11-27'));
   assert.equal(ld['@type'], 'FAQPage');
@@ -51,8 +51,16 @@ test('two lists in one answer are numbered and dashed on their own', () => {
 });
 
 test('help v3 (2026-11-27): Content\'s anchors are on the page, and nothing says Sky is in a store yet', () => {
-  for (const id of ['compass', 'motion', 'location', 'no-planes', 'cant-catch', 'no-route', 'no-alert', 'restore', 'pack-problem', 'release', 'plus', 'reset']) assert.match(help, new RegExp(`<details id="${id}"`), id);
-  assert.match(help, /isn’t out yet/);
-  const shown = help.replace(/data-find="[^"]*"/g, '');
+  for (const id of ['compass', 'motion', 'location', 'no-planes', 'cant-catch', 'no-route', 'no-alert', 'restore', 'pack-problem', 'plus', 'reset']) assert.match(help, new RegExp(`<details id="${id}"><summary><h3>|<details id="${id}" `), id);
+  const shown = siteHelp(help).replace(/data-find="[^"]*"/g, '');
   for (const bad of [/on iPhone now/i, /available (on|in) the/i, /download (it|Sky)/i, /on sale/i]) assert.ok(!bad.test(shown), String(bad));
+});
+
+test('pre-launch: the website’s help says Sky isn’t out yet and has #release; the app’s own help never does', () => {
+  assert.ok(!/isn’t out yet|id="release"|come out\?/.test(help), 'help.html is the app copy: no pre-launch words');
+  const site = siteHelp(help, true);
+  assert.match(site, /<p class="lede">[\s\S]*?<\/p>\n\s*<!-- PRELAUNCH[^>]*--><p class="soon" id="prerelease">Sky Collector isn’t out yet/);
+  assert.ok(site.indexOf('id="release"') > site.indexOf('id="today"') && site.indexOf('id="release"') < site.indexOf('id="free"'), '#release sits where Content put it');
+  assert.equal(parse(helpJsonLd(site, '2026-11-27')).mainEntity.length, helpFaq(help).length + 1);
+  assert.equal(siteHelp(help, false), help, 'launch day: one switch drops both');
 });

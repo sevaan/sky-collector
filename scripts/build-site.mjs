@@ -26,14 +26,14 @@ mkdirSync(OUT + 'c', { recursive: true }); cp('site/c.html', 'c/index.html');
    fonts, icons and the help page's privacy link point at the site's own paths */
 /* 2026-11-27 (scripts/site-meta.mjs): canonical and social tags on both, and the help page's FAQPage JSON-LD, built from
    the page's own questions and answers so the two can't disagree */
-const { SITE, homeJsonLd, helpJsonLd, pageTags, intoHead, LLMS_TXT } = await import('./site-meta.mjs');
+const { SITE, homeJsonLd, helpJsonLd, pageTags, intoHead, siteHelp, LLMS_TXT } = await import('./site-meta.mjs');
 const { execFileSync } = await import('node:child_process');
 const today = new Date().toLocaleDateString('en-CA'); /* local date, YYYY-MM-DD */
 /* a page's last-changed date: today if its sources have uncommitted changes, else their last commit's date */
 const changed = (...files) => { try { const git = (...a) => execFileSync('git', ['-C', ROOT, ...a, '--', ...files], { encoding: 'utf8' }).trim(); return git('status', '--porcelain') ? today : (git('log', '-1', '--format=%cs') || today); } catch { return today; } };
-const sitePage = (f, extra) => { const html = readFileSync(ROOT + f, 'utf8').replaceAll("url('fonts/", "url('/fonts/").replaceAll('href="icons/favicon', 'href="/favicon').replace('href="icons/icon-180.png"', 'href="/apple-touch-icon.png"').replaceAll('href="privacy.html"', 'href="/privacy"'); writeFileSync(OUT + f, intoHead(html, extra(html))); };
+const sitePage = (f, extra, edit = (h) => h) => { const html = edit(readFileSync(ROOT + f, 'utf8')).replaceAll("url('fonts/", "url('/fonts/").replaceAll('href="icons/favicon', 'href="/favicon').replace('href="icons/icon-180.png"', 'href="/apple-touch-icon.png"').replaceAll('href="privacy.html"', 'href="/privacy"'); writeFileSync(OUT + f, intoHead(html, extra(html))); };
 sitePage('privacy.html', (h) => pageTags(h, '/privacy'));
-sitePage('help.html', (h) => `${pageTags(h, '/help')}\n${helpJsonLd(h, changed('help.html'))}`);
+sitePage('help.html', (h) => `${pageTags(h, '/help')}\n${helpJsonLd(h, changed('help.html', 'scripts/site-meta.mjs'))}`, siteHelp); /* the site's help adds the pre-launch blocks (site-meta.mjs PRELAUNCH); the app's copy never has them */
 const html = `<!doctype html>
 <html lang="en">
 <head>

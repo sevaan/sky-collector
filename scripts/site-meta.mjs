@@ -6,6 +6,23 @@
 // it is. That block waits for release day.
 export const SITE = 'https://skycollector.app';
 
+// ── PRELAUNCH (2026-11-27, Boss/Content): until Sky is in a store, the website's help page says so; the app's own help
+// (help.html, which the app build carries) never does, as store review and players must not read "isn't out yet".
+// On launch day: set PRELAUNCH to false (and add the app block, home text and llms.txt changes Content writes then).
+export const PRELAUNCH = true;
+const PRE_LINE = '<p class="soon" id="prerelease">Sky Collector isn’t out yet. This page describes the app as it will be when it arrives.</p>';
+const PRE_RELEASE = `<details id="release" data-find="release, launch, download, available, app store, google play, android, when"><summary><h3>When does Sky Collector come out?</h3></summary><div class="ans">
+      <p>Soon. There’s no date yet, and it isn’t in any store today. skycollector.app will say when it is.</p>
+    </div></details>`;
+/** The website's help page: help.html plus the two pre-launch blocks (Content's v3 words), while PRELAUNCH. */
+export function siteHelp(html, pre = PRELAUNCH) {
+  if (!pre) return html;
+  const a = html.replace(/(<p class="lede">[\s\S]*?<\/p>)/, `$1\n  <!-- PRELAUNCH (scripts/site-meta.mjs) -->${PRE_LINE}`);
+  const b = a.replace(/(\n\s*)(<details id="free")/, `$1<!-- PRELAUNCH (scripts/site-meta.mjs) -->${PRE_RELEASE}$1$2`);
+  if (a === html || b === a) throw new Error('siteHelp: help.html has no lede paragraph or #free answer to put the pre-launch blocks by');
+  return b;
+}
+
 const ld = (o) => `<script type="application/ld+json">\n${JSON.stringify(o, null, 2).replaceAll('</', '<\\/')}\n</script>`;
 
 export const homeJsonLd = () => ld({
